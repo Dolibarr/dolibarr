@@ -11,6 +11,7 @@
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -578,7 +579,7 @@ class FormOther
 				$userstatic->lastname = $obj_usr->lastname;
 				$userstatic->firstname = $obj_usr->firstname;
 				$userstatic->photo = $obj_usr->photo;
-				$userstatic->statut = $obj_usr->status;
+				$userstatic->status = $obj_usr->status;
 				$userstatic->entity = $obj_usr->entity;
 				$userstatic->admin = $obj_usr->admin;
 
@@ -1043,13 +1044,13 @@ class FormOther
 		global $langs;
 
 		$week = array(
-			0=>$langs->trans("Day0"),
-			1=>$langs->trans("Day1"),
-			2=>$langs->trans("Day2"),
-			3=>$langs->trans("Day3"),
-			4=>$langs->trans("Day4"),
-			5=>$langs->trans("Day5"),
-			6=>$langs->trans("Day6")
+			0 => $langs->trans("Day0"),
+			1 => $langs->trans("Day1"),
+			2 => $langs->trans("Day2"),
+			3 => $langs->trans("Day3"),
+			4 => $langs->trans("Day4"),
+			5 => $langs->trans("Day5"),
+			6 => $langs->trans("Day6")
 		);
 
 		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -1164,7 +1165,7 @@ class FormOther
 	{
 		$out = '';
 
-		$currentyear = date("Y") + $offset;
+		$currentyear = idate("Y") + $offset;
 		$max_year = $currentyear + $max_year;
 		$min_year = $currentyear - $min_year;
 		if (empty($selected) && empty($useempty)) {
@@ -1252,7 +1253,7 @@ class FormOther
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
 					$label = $label.' <span class="fas fa-chart-bar"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1271,7 +1272,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth300 hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
@@ -1433,7 +1434,7 @@ class FormOther
 			$boxlistb .= "<!-- End box right container -->\n";
 		}
 
-		return array('selectboxlist'=>count($boxactivated) ? $selectboxlist : '', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
+		return array('selectboxlist' => count($boxactivated) ? $selectboxlist : '', 'boxactivated' => $boxactivated, 'boxlista' => $boxlista, 'boxlistb' => $boxlistb);
 	}
 
 

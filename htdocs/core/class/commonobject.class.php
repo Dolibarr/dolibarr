@@ -39,12 +39,17 @@
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *
+ * @phan-forbid-undeclared-magic-properties
  */
 abstract class CommonObject
 {
+	use DolDeprecationHandler;
+
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
@@ -122,9 +127,8 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
-	 * Does this object supports the multicompany module ?
-	 *
-	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged;
 
@@ -175,7 +179,7 @@ abstract class CommonObject
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var CommonObject	To store a cloned copy of the object before editing it (to keep track of its former properties)
+	 * @var static	To store a cloned copy of the object before editing it (to keep track of its former properties)
 	 */
 	public $oldcopy;
 
@@ -225,17 +229,18 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
-	 * @var Project 		The related project object
-	 * @deprecated  Use $project instead
+	 * @var ?Project	 	The related project object
+	 * @deprecated  Use $project instead.
 	 * @see $project
 	 */
-	public $projet;
+	private $projet;
 
 	/**
-	 * @deprecated  Use $fk_project instead
+	 * @var int
+	 * @deprecated  Use $fk_project instead.
 	 * @see $fk_project
 	 */
-	public $fk_projet;
+	private $fk_projet;
 
 	/**
 	 * @var Contact|null 	A related contact object
@@ -280,19 +285,34 @@ abstract class CommonObject
 
 	/**
 	 * @var CommonObject|string|null	Sometimes the type of the originating object ('commande', 'facture', ...), sometimes the object (as with MouvementStock)
-	 * @deprecated						Use now $origin_type and $origin_id;
+	 * @deprecated						Use $origin_type and $origin_id instead.
 	 * @see fetch_origin()
 	 */
 	public $origin;
 
-	// TODO Remove this. Has been replaced with ->origin_object.
-	// This is set by fetch_origin() from this->origin and this->origin_id
-	/** @deprecated */
-	public $expedition;
-	/** @deprecated */
-	public $livraison;
-	/** @deprecated */
-	public $commandeFournisseur;
+	/**
+	 * TODO Remove this. Has been replaced with ->origin_object.
+	 * This is set by fetch_origin() from this->origin and this->origin_id
+	 *
+	 * @var CommonObject
+	 * @deprecated Use $origin_object instead.
+	 * @see $origin_object
+	 */
+	private $expedition;
+
+	/**
+	 * @var CommonObject
+	 * @deprecated Use $origin_object instead.
+	 * @see $origin_object
+	 */
+	private $livraison;
+
+	/**
+	 * @var CommonObject
+	 * @deprecated Use $origin_object instead.
+	 * @see $origin_object
+	 */
+	private $commandeFournisseur;
 
 
 	/**
@@ -321,11 +341,12 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int 		The object's status. Use status instead.
-	 * @deprecated  Use $status instead
-	 * @see setStatut()
+	 * @var int|array<int, string>      The object's status. Use status instead.
+	 * @deprecated  Use $status instead.
+	 * @see $status
+	 * @see setStatut(), $status
 	 */
-	public $statut;
+	private $statut;
 
 	/**
 	 * @var int|array<int, string>      The object's status (an int).
@@ -446,11 +467,17 @@ abstract class CommonObject
 	public $transport_mode_id;
 
 	/**
-	 * @var int 		Payment terms ID
-	 * @deprecated Use $cond_reglement_id instead - Kept for compatibility
-	 * @see cond_reglement_id;
+	 * @var int|string 		Payment terms ID
+	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
+	 * @see $cond_reglement_id
+	 *
+	 * Note: cond_reglement can not be aliased to cond_reglement!!!
 	 */
-	public $cond_reglement;
+	private $cond_reglement;  // Private to call DolDeprecationHandler
+	/**
+	 * @var int|string Internal to detect deprecated access
+	 */
+	protected $depr_cond_reglement;  // Internal value for deprecation
 
 	/**
 	 * @var int 		Delivery address ID
@@ -522,10 +549,10 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $model_pdf instead.
 	 * @see $model_pdf
 	 */
-	public $modelpdf;
+	private $modelpdf;
 
 	/**
 	 * @var string
@@ -559,10 +586,11 @@ abstract class CommonObject
 	public $note_private;
 
 	/**
-	 * @deprecated
+	 * @var string
+	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
-	public $note;
+	private $note;
 
 	/**
 	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
@@ -596,7 +624,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var CommonObjectLine[]
+	 * @var CommonObjectLine[]|CommonObject[]|stdClass[]
 	 */
 	public $lines;
 
@@ -653,6 +681,13 @@ abstract class CommonObject
 	 * @deprecated					Use $date_modification
 	 */
 	public $tms;
+
+	/**
+	 * @var int|string|null
+	 * @deprecated Use $date_modification instead.
+	 * @see $date_modification
+	 */
+	private $date_update;
 
 	/**
 	 * @var integer|string|null		Object closing date
@@ -737,8 +772,10 @@ abstract class CommonObject
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
 	 * @deprecated		Use $totalpaid instead
+	 * @see $totalpaid
 	 */
-	public $alreadypaid;
+	private $alreadypaid;
+
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
 	 */
@@ -827,6 +864,26 @@ abstract class CommonObject
 
 	// No constructor as it is an abstract class
 
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'alreadypaid' => 'totalpaid',
+			'cond_reglement' => 'depr_cond_reglement',
+			'note' => 'note_private',
+			'commandeFournisseur' => 'origin_object',
+			'expedition' => 'origin_object',
+			'fk_project' => 'fk_project',
+			'livraison' => 'origin_object',
+			'projet' => 'project',
+			'statut' => 'status',
+		);
+	}
+
 
 	/**
 	 * Check if an object id or ref exists
@@ -854,7 +911,7 @@ abstract class CommonObject
 			$sql .= " AND ref_ext = '".$db->escape($ref_ext)."'";
 		} else {
 			$error = 'ErrorWrongParameters';
-			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
+			dol_syslog(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
 		if ($ref || $ref_ext) {		// Because the same ref can exists in 2 different entities, we force the current one in priority
@@ -1988,31 +2045,28 @@ abstract class CommonObject
 	/**
 	 *	Read linked origin object.
 	 *	Set ->origin_object
-	 *	Set also ->expedition or ->livraison or ->commandFournisseur (deprecated)
+	 *	Set also ->expedition or ->livraison or ->commandeFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
 	public function fetch_origin()
 	{
 		// phpcs:enable
-		if ($this->origin == 'shipping') {
-			$this->origin = 'expedition';
-		}
-		if ($this->origin == 'delivery') {
-			$this->origin = 'livraison';
-		}
-		if ($this->origin == 'order_supplier' || $this->origin == 'supplier_order') {
-			$this->origin = 'commandeFournisseur';
-		}
+		$origin = $this->origin ? $this->origin : $this->origin_type;
 
-		$origin = $this->origin;
+		if ($origin == 'shipping') {
+			$origin = 'expedition';
+		}
+		if ($origin == 'delivery') {
+			$origin = 'livraison';
+		}
+		if ($origin == 'order_supplier' || $origin == 'supplier_order') {
+			$origin = 'commandeFournisseur';
+		}
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
 		$this->origin_object->fetch($this->origin_id);
-
-		// TODO Remove this line
-		$this->$origin = $this->origin_object;
 	}
 
 	/**
@@ -2225,8 +2279,9 @@ abstract class CommonObject
 	/**
 	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
-	 *      @param	string	$filter		Optional SQL filter. Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
-	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
+	 *      @param	string	$filter		Optional SQL filter. Use SQL or Universal Search Filter.
+	 *      							Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here with this syntax.
+	 *      							Example: "((t.field1:=:'aa') OR (t.field2:=:'bb'))".
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
 	 *      @return int         		Return integer <0 if KO, >0 if OK
@@ -2286,12 +2341,21 @@ abstract class CommonObject
 		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
-		if (!empty($filter)) {
-			if (!preg_match('/^\s*AND/i', $filter)) {
+
+		$filtermax = $filter;
+
+		// Manage filter
+		$errormessage = '';
+		$tmpsql = forgeSQLFromUniversalSearchCriteria($filtermax, $errormessage);
+		if ($errormessage) {
+			if (!preg_match('/^\s*AND/i', $filtermax)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filter;
+			$sql .= $filtermax;
+		} else {
+			$sql .= $tmpsql;
 		}
+
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
@@ -2361,12 +2425,23 @@ abstract class CommonObject
 		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
-		if (!empty($filter)) {
-			if (!preg_match('/^\s*AND/i', $filter)) {
-				$sql .= " AND "; // For backward compatibility
+
+		$filtermin = $filter;
+
+		// Manage filter
+		$errormessage = '';
+		$tmpsql = forgeSQLFromUniversalSearchCriteria($filtermin, $errormessage);
+		if ($errormessage) {
+			if (!preg_match('/^\s*AND/i', $filtermin)) {
+				$sql .= " AND ";
 			}
-			$sql .= $filter;
+			$sql .= $filtermin;
+
+			$filtermin = '';
+		} else {
+			$sql .= $tmpsql;
 		}
+
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
@@ -2523,7 +2598,7 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
 
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_mode_reglement';
 			if ($this->element == 'societe') {
@@ -2570,7 +2645,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setPaymentMethods, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -2584,7 +2659,7 @@ abstract class CommonObject
 	public function setMulticurrencyCode($code)
 	{
 		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			$fieldname = 'multicurrency_code';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
@@ -2607,7 +2682,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setMulticurrencyCode, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -2622,7 +2697,7 @@ abstract class CommonObject
 	public function setMulticurrencyRate($rate, $mode = 1)
 	{
 		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.', '.$mode.')');
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			$fieldname = 'multicurrency_tx';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
@@ -2821,7 +2896,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setMulticurrencyRate, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -2836,7 +2911,7 @@ abstract class CommonObject
 	public function setPaymentTerms($id, $deposit_percent = null)
 	{
 		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.var_export($deposit_percent, true).')');
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_cond_reglement';
 			if ($this->element == 'societe') {
@@ -2877,7 +2952,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setPaymentTerms, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -2891,7 +2966,7 @@ abstract class CommonObject
 	public function setTransportMode($id)
 	{
 		dol_syslog(get_class($this).'::setTransportMode('.$id.')');
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			$fieldname = 'fk_transport_mode';
 			if ($this->element == 'societe') {
 				$fieldname = 'transport_mode';
@@ -2918,7 +2993,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -2932,7 +3007,7 @@ abstract class CommonObject
 	public function setRetainedWarrantyPaymentTerms($id)
 	{
 		dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
-		if ($this->statut >= 0 || $this->element == 'societe') {
+		if ($this->status >= 0 || $this->element == 'societe') {
 			$fieldname = 'retained_warranty_fk_cond_reglement';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
@@ -2949,7 +3024,7 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
 	}
@@ -3861,7 +3936,7 @@ abstract class CommonObject
 
 				if ($forcedroundingmode == '1') {	// Check if we need adjustment onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
-					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
+					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
 						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
@@ -3872,7 +3947,7 @@ abstract class CommonObject
 							$error++;
 							break;
 						}
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 
 						$resqlfix = $this->db->query($sqlfix);
@@ -3881,10 +3956,10 @@ abstract class CommonObject
 							dol_print_error($this->db, 'Failed to update line');
 						}
 
-						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
-						$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
-						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
-						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
+						$this->total_tva = (float) price2num($this->total_tva - (float) $diff, '', 1);
+						$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
+						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
 					}
 				}
 
@@ -4081,15 +4156,15 @@ abstract class CommonObject
 	 *  - source id+type + target type -> will get list of targets of the type linked to source
 	 *  - target id+type + source type -> will get list of sources of the type linked to target
 	 *
-	 *	@param	int			$sourceid			Object source id (if not defined, $this->id)
+	 *	@param	?int		$sourceid			Object source id (if not defined, $this->id)
 	 *	@param  string		$sourcetype			Object source type (if not defined, $this->element)
-	 *	@param  int			$targetid			Object target id (if not defined, $this->id)
+	 *	@param  ?int		$targetid			Object target id (if not defined, $this->id)
 	 *	@param  string		$targettype			Object target type (if not defined, $this->element)
 	 *	@param  string		$clause				'OR' or 'AND' clause used when both source id and target id are provided
-	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
+	 *  @param  int<0,1>	$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
-	 *  @param	int|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
-	 *	@return int								Return integer <0 if KO, >0 if OK
+	 *  @param	int<0,1>|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
+	 *	@return int<-1,1>						Return integer <0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
@@ -4607,7 +4682,6 @@ abstract class CommonObject
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
 					} else {
-						$this->statut = $status;
 						$this->status = $status;
 					}
 				}
@@ -5224,7 +5298,7 @@ abstract class CommonObject
 		}
 
 		// Line in update mode
-		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id) {
+		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
@@ -5354,6 +5428,7 @@ abstract class CommonObject
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
 				$discount->fk_soc = $this->socid;
+				$discount->socid = $this->socid;
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
@@ -5559,7 +5634,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or $_POST for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to from obj->model_pdf or from GETPOST for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -5939,8 +6014,6 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
-		global $_POST;
-
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
 			return GETPOST($fieldname, $type, 3);
@@ -6099,8 +6172,6 @@ abstract class CommonObject
 	 */
 	public function setValuesForExtraLanguages($onlykey = '')
 	{
-		global $_POST, $langs;
-
 		// Get extra fields
 		foreach ($_POST as $postfieldkey => $postfieldvalue) {
 			$tmparray = explode('-', $postfieldkey);
@@ -8227,7 +8298,12 @@ abstract class CommonObject
 			$value = '<span class="opacitymedium">'.$langs->trans("Encrypted").'</span>';
 			//$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
-			$value = implode('<br>', $value);
+			if (is_array($value)) {
+				$value = implode('<br>', $value);
+			} else {
+				dol_syslog(__METHOD__.' Expected array from dol_eval, but got '.gettype($value), LOG_ERR);
+				return 'Error unexpected result from code evaluation';
+			}
 		} else {	// text|html|varchar
 			$value = dol_htmlentitiesbr($value);
 		}
@@ -10376,6 +10452,9 @@ abstract class CommonObject
 
 			if (!$error) {
 				$this->status = $status;
+				if (property_exists($this, 'statut')) {	// For backward compatibility
+					$this->statut = $status;
+				}
 				$this->db->commit();
 				return 1;
 			} else {

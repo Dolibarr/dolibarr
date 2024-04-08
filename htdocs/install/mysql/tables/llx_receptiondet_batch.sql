@@ -28,8 +28,8 @@ create table llx_receptiondet_batch
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_reception 	 integer  DEFAULT NULL,							-- ID of parent object
-  fk_element	 integer,                       				-- ID of main source object. TODO should be renamed into fk_element
-  fk_elementdet  integer,                  						-- ID of line of main source object. TODO should be renamed into fk_elementdet
+  fk_element	 integer,                       				-- ID of main source object.
+  fk_elementdet  integer,                  						-- ID of line of main source object.
   element_type   varchar(50) DEFAULT 'supplier_order' NOT NULL,	-- Type of source object ('supplier_order', ...)
   fk_product     integer,
   qty            float,             			-- qty to move

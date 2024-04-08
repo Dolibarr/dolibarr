@@ -99,7 +99,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($include_childs) {
@@ -203,11 +203,11 @@ class Categories extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->category->context['caller'] = $request_data['caller'];
+				$this->category->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->category->$field = $value;
+			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
@@ -234,7 +234,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -243,11 +243,11 @@ class Categories extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->category->context['caller'] = $request_data['caller'];
+				$this->category->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->category->$field = $value;
+			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
@@ -274,11 +274,11 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->category->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when delete category');
+			throw new RestException(500, 'error when delete category');
 		}
 
 		return array(
@@ -397,7 +397,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -477,7 +477,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -557,7 +557,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -635,7 +635,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -767,7 +767,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->category->getObjectsInCateg($type, $onlyids);

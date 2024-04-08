@@ -115,9 +115,9 @@ class Diff
 	 *
 	 * @param	string	$sequence1 	the first sequence
 	 * @param	string	$sequence2 	the second sequence
-	 * @param	string	$start     	the starting index
-	 * @param	string	$end1      	the ending index for the first sequence
-	 * @param	string	$end2      	the ending index for the second sequence
+	 * @param	int		$start     	the starting index
+	 * @param	int		$end1      	the ending index for the first sequence
+	 * @param	int		$end2      	the ending index for the second sequence
 	 * @return	array<array<int>>	array of diff
 	 */
 	private static function computeTable($sequence1, $sequence2, $start, $end1, $end2)
@@ -157,7 +157,7 @@ class Diff
 	 * @param	array<array{0:string,1:int<0,2>}>	$table     	the table returned by the computeTable function
 	 * @param	string	$sequence1 	the first sequence
 	 * @param	string	$sequence2 	the second sequence
-	 * @param	string	$start     	the starting index
+	 * @param	int		$start     	the starting index
 	 * @return	array<array{0:string,1:int<0,2>}>	array of diff
 	 */
 	private static function generatePartialDiff($table, $sequence1, $sequence2, $start)

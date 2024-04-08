@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ $coldisplay++;
 	<?php
 	if (is_object($hookmanager)) {
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOSTINT('fk_parent_line') : $line->fk_parent_line);
-		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+		$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
@@ -171,7 +172,7 @@ $coldisplay++;
 
 	//Line extrafield
 	if (!empty($extrafields)) {
-		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 			print $temps;
@@ -200,8 +201,8 @@ $coldisplay++;
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++; ?>
 		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
-		<?php
-		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
+					<?php
+					print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
 	}
 
 	// VAT Rate
@@ -235,7 +236,7 @@ $coldisplay++;
 		$coldisplay++;
 		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
 		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
-			$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+			$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 		}
 		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
@@ -310,13 +311,13 @@ $coldisplay++;
 			$coldisplay++; ?>
 		<td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
+						<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
-			<?php } ?>
+						<?php } ?>
 			<!-- For free product -->
 			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo(GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
-			<?php
+						<?php
 		}
 
 		if ($user->hasRight('margins', 'creer')) {

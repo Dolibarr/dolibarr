@@ -1,4 +1,26 @@
 <?php
+/*
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+ /**
+ * \file        htdocs/webportal/controllers/document.controller.class.php
+ * \ingroup     webportal
+ * \brief       This file is a controller for documents
+ */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -14,7 +36,7 @@ class DocumentController extends Controller
 	public $action;
 
 	/**
-	 * @var	string	Attachment
+	 * @var	boolean	Is Attachment
 	 */
 	public $attachment;
 
@@ -110,7 +132,7 @@ class DocumentController extends Controller
 		if (preg_match('/\.(html|htm)$/i', $original_file)) {
 			$attachment = false;
 		}
-		if (isset($_GET["attachment"])) {
+		if (GETPOSTISSET("attachment")) {
 			$attachment = GETPOST("attachment", 'alpha') ? true : false;
 		}
 		if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {

@@ -69,7 +69,7 @@ $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
-$search_country = GETPOST("search_country", 'alpha');
+$search_country = GETPOST("search_country", 'aZ09');
 
 
 // Date range

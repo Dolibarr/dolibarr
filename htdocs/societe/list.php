@@ -103,8 +103,8 @@ $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
 $searchCategorySupplierOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
-	$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
+	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
@@ -117,10 +117,10 @@ $searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
 if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
-$search_country = GETPOST("search_country", 'intcomma');
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
-$search_price_level = GETPOSTINT('search_price_level');
-$search_staff = GETPOSTINT("search_staff");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_price_level = GETPOST('search_price_level', 'int');
+$search_staff = GETPOST("search_staff", 'int');
 $search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
@@ -145,7 +145,6 @@ $search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
 $search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
 $search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
-
 
 $type = GETPOST('type', 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
@@ -203,7 +202,6 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-
 // Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -1106,7 +1104,9 @@ if ($user->hasRight("societe", "creer")) {
 }
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
+	$arrayofmassactions['unsetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("UnallocateCommercial");
 }
+
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
@@ -1198,6 +1198,7 @@ $objecttmp = new Societe($db);
 $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+/*
 if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
@@ -1205,6 +1206,7 @@ if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
+*/
 
 if ($search_all) {
 	$setupstring = '';

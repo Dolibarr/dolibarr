@@ -129,7 +129,6 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Url for CIDLookup
 //print '<div class="div-table-responsive-no-min">';
-//print $langs->trans("URLToLaunchCronJobs").':<br>';
 $url = $urlwithroot.'/public/clicktodial/cidlookup.php?securitykey='.getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP', 'ValueToDefine').'&phone=...';
 //print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 //print '</div>';

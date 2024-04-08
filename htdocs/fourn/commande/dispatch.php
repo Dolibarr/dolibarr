@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -336,7 +337,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 
 				if (!(GETPOSTINT($ent) > 0)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
-					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
+					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline).'-'.((int) $reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error++;
 				}
@@ -352,7 +353,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}*/
 				if (!GETPOST($lot, 'alpha') && !$dDLUO && !$dDLC) {
 					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
-					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
+					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' '.($numline).'-'.((int) $reg[1] + 1);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
 					$error++;
 				}
@@ -451,7 +452,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 }
 
 // Update a dispatched line
-if ($action == 'updateline' && $permissiontoreceive) {
+if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
 	$error = 0;
 

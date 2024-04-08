@@ -48,8 +48,8 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var int  	Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -131,11 +131,6 @@ class Website extends CommonObject
 	 * @var int	Position
 	 */
 	public $position;
-
-	/**
-	 * @var array List of containers
-	 */
-	public $lines;
 
 	/**
 	 * @var string name of template
@@ -368,11 +363,6 @@ class Website extends CommonObject
 			$this->db->free($resql);
 
 			if ($numrows > 0) {
-				// Lines
-				$this->fetchLines();
-			}
-
-			if ($numrows > 0) {
 				return 1;
 			} else {
 				return 0;
@@ -383,20 +373,6 @@ class Website extends CommonObject
 
 			return -1;
 		}
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		// Load lines with object MyObjectLine
-
-		return count($this->lines) ? 1 : 0;
 	}
 
 
@@ -742,7 +718,7 @@ class Website extends CommonObject
 
 		if (!$error) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, null, 2);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, [], 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
@@ -1085,16 +1061,18 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases .= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {	// We don't need to keep the PHP files of pages and aliases (they are regenerated at import) so we remove them. You can ask to keep them in the export
+			if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {
+				// We don't need to keep the PHP files of pages and aliases (they are regenerated at import) so we remove them.
 				// Delete the pageX.tpl.php page
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/page'.$objectpageold->id.'.tpl.php', 0, 0, 0, null, false, 0);
 				// Delete the alias page
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.$objectpageold->pageurl.'.php', 0, 0, 0, null, false, 0);
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.$objectpageold->pageurl.'.php', 0, 0, 0, null, false, 0);
 				// Delete alternative alias pages
-				foreach ($objectpageold->aliasalt as $tmpaliasalt) {
-					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.$tmpaliasalt.'.php', 0, 0, 0, null, false, 0);
-					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.$tmpaliasalt.'.php', 0, 0, 0, null, false, 0);
+				$arrayofaliases = explode(',', $objectpageold->aliasalt);
+				foreach ($arrayofaliases as $tmpaliasalt) {
+					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.trim($tmpaliasalt).'.php', 0, 0, 0, null, false, 0);
+					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.trim($tmpaliasalt).'.php', 0, 0, 0, null, false, 0);
 				}
 			}
 
@@ -1312,8 +1290,8 @@ class Website extends CommonObject
 				// Scan the line
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.+)\s--;/i', $buf, $reg)) {
 					// Example of line: "-- Page ID 179 -> 1__+MAX_llx_website_page__ - Aliases about-us --;"
-					$oldid = $reg[1];
-					$newid = ($reg[2] + $maxrowid);
+					$oldid = (int) $reg[1];
+					$newid = ((int) $reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
 					dol_syslog("In sql source file, we have the page ID ".$oldid." to replace with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
@@ -1321,7 +1299,7 @@ class Website extends CommonObject
 					//dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
 				} elseif (preg_match('/^-- Page ID (\d+).*Aliases\s(.*)\s--;/i', $buf, /** @var string[] $reg */ $reg)) {
 					// Example of line: "-- Page ID 1__+MAX_llx_website_page__ - Aliases about-us --;"
-					$newid = ($reg[1] + $maxrowid);
+					$newid = ((int) $reg[1] + $maxrowid);
 					$aliasesarray = explode(',', $reg[2]);
 
 					dol_syslog("In sql source file, we have the page with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[2]);
@@ -1480,7 +1458,7 @@ class Website extends CommonObject
 	 */
 	public function isMultiLang()
 	{
-		return (empty($this->otherlang) ? false : true);
+		return !empty($this->otherlang);
 	}
 
 	/**
@@ -1893,7 +1871,7 @@ class Website extends CommonObject
 	 * @param string  $str1   first string
 	 * @param string  $str2   second string
 	 * @param array  $exceptNumPge    num of page files we don't want to change
-	 * @return array|int      -1 if KO, array if OK
+	 * @return array|int<-1,-1>      -1 if KO, array if OK
 	 */
 	protected function showDifferences($str1, $str2, $exceptNumPge = array())
 	{

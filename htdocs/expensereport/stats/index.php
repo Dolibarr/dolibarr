@@ -212,7 +212,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

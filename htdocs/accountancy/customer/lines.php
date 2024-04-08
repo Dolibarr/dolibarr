@@ -24,8 +24,8 @@
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -45,7 +45,7 @@ $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
-$search_lineid = GETPOSTINT('search_lineid');
+$search_lineid = GETPOST('search_lineid', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -61,7 +61,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_country = GETPOST('search_country', 'alpha');
+$search_country = GETPOST('search_country', 'aZ09');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
@@ -392,7 +392,7 @@ if ($result) {
 
 	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -400,7 +400,7 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
@@ -507,8 +507,8 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
@@ -554,11 +554,12 @@ if ($result) {
 
 		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
-		print '<td>';
-		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+		print '<a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
-		print '</a></td>';
+		print '</a> ';
+		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print '</td>';
 
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 

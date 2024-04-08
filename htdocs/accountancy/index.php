@@ -77,10 +77,20 @@ $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacut
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
+$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$boxlist = '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
+
+
 if (isModEnabled('accounting')) {
 	$step = 0;
-
-
 
 	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
@@ -102,7 +112,7 @@ if (isModEnabled('accounting')) {
 	    </script>';
 	}
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
@@ -276,16 +286,6 @@ if (isModEnabled('accounting')) {
 /*
  * Show boxes
  */
-$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
-$boxlist = '<div class="twocolumns">';
-$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-$boxlist .= $resultboxes['boxlista'];
-$boxlist .= '</div>';
-$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist .= $resultboxes['boxlistb'];
-$boxlist .= '</div>';
-$boxlist .= "\n";
-$boxlist .= '</div>';
 print $boxlist;
 
 // End of page

@@ -40,11 +40,13 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
+
+'@phan-var-force CommonObject $object';
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -176,9 +178,9 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
-		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];

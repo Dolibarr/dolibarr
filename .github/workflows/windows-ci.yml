@@ -2,19 +2,26 @@
 name: Win CI
 # yamllint disable-line rule:truthy
 on:
-  push:
-  pull_request:
+  # push:
+  # pull_request:
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
   workflow_dispatch:
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+  group: win-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
     }}
   cancel-in-progress: true
 env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
   PHPUNIT_LOG: phpunit_tests.log
   DOLIBARR_LOG: documents/dolibarr.log
   PHPSERVER_LOG: phpserver.log
   PHPSERVER_DOMAIN_PORT: 127.0.0.1:8000  # could be 127.0.0.1:8000 if config modified
-  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+  CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
@@ -150,7 +157,7 @@ jobs:
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.4
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}

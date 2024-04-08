@@ -248,12 +248,12 @@ class ExpenseReport extends CommonObject
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
 	/**
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $labelStatus = array();
 
 	/**
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $labelStatusShort = array();
 
@@ -1036,8 +1036,8 @@ class ExpenseReport extends CommonObject
 					$objp->fk_c_expensereport_status = $obj->status;
 					$objp->rowid = $obj->rowid;
 
-					$total_HT = $total_HT + $objp->total_ht;
-					$total_TTC = $total_TTC + $objp->total_ttc;
+					$total_HT += $objp->total_ht;
+					$total_TTC += $objp->total_ttc;
 					$author = new User($this->db);
 					$author->fetch($objp->fk_user_author);
 
@@ -1732,7 +1732,7 @@ class ExpenseReport extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1759,13 +1759,13 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param array $params ex option, infologin
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,total_ht?:string,total_tva?:string,total_ttc?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs;
 
-		$langs->load('expensereport');
+		$langs->load('trips');
 
 		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
@@ -1897,9 +1897,9 @@ class ExpenseReport extends CommonObject
 	public function update_totaux_add($ligne_total_ht, $ligne_total_tva)
 	{
 		// phpcs:enable
-		$this->total_ht = $this->total_ht + $ligne_total_ht;
-		$this->total_tva = $this->total_tva + $ligne_total_tva;
-		$this->total_ttc = $this->total_ht + $this->total_tva;
+		$this->total_ht += (float) $ligne_total_ht;
+		$this->total_tva += (float) $ligne_total_tva;
+		$this->total_ttc += $this->total_tva;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " total_ht = ".$this->total_ht;
@@ -2253,8 +2253,7 @@ class ExpenseReport extends CommonObject
 			// calcul total of line
 			//$total_ttc  = price2num($qty*$value_unit, 'MT');
 
-			$tx_tva = $vatrate / 100;
-			$tx_tva = $tx_tva + 1;
+			$tx_tva = 1 + (float) $vatrate / 100;
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;
@@ -2484,7 +2483,7 @@ class ExpenseReport extends CommonObject
 	 *  @param      int         $hidedetails    Hide details of lines
 	 *  @param      int         $hidedesc       Hide description
 	 *  @param      int         $hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param  	?array  $moreparams     Array to provide more information
 	 *  @return     int                         0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -2757,7 +2756,7 @@ class ExpenseReport extends CommonObject
 		$currentUser->fetch($this->fk_user);
 		$currentUser->getrights('expensereport');
 		//Clean
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 
 		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
@@ -2787,7 +2786,7 @@ class ExpenseReport extends CommonObject
 					$cumulYearQty = $obj->cumul;
 				}
 
-				$qty = $cumulYearQty + $qty;
+				$qty += (float) $cumulYearQty;
 			}
 
 			$num = $this->db->num_rows($result);
@@ -2827,7 +2826,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with optional picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

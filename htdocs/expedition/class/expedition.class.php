@@ -75,8 +75,8 @@ class Expedition extends CommonObject
 	public $table_element_line = "expeditiondet";
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -594,7 +594,7 @@ class Expedition extends CommonObject
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', s.libelle as shipping_method';
-		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -637,7 +637,8 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande'); // For compatibility
+				$this->origin_type          = ($obj->origin_type ? $obj->origin_type : 'commande');
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
@@ -843,6 +844,7 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$this->ref = $numref;
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -1217,8 +1219,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1315,13 +1317,12 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->$origin->loadExpeditions();
+								$this->origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->$origin->expeditions) <= 0) {
-									$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+								if (count($this->origin_object->expeditions) <= 0) {
+									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
@@ -1415,8 +1416,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1517,13 +1518,12 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->$origin->loadExpeditions();
+								$this->origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->$origin->expeditions) <= 0) {
-									$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+								if (count($this->origin_object->expeditions) <= 0) {
+									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
@@ -2436,7 +2436,7 @@ class Expedition extends CommonObject
 	 */
 	public function reOpen()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2455,6 +2455,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
@@ -2542,6 +2543,7 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
+			$this->status = self::STATUS_CLOSED;
 			$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;

@@ -60,10 +60,10 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $id_availability = GETPOSTINT('id_availability');
 
-$year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
-$month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
-$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
-$day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
+$year = GETPOSTINT("year") ? GETPOSTINT("year") : idate("Y");
+$month = GETPOSTINT("month") ? GETPOSTINT("month") : idate("m");
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : idate("W");
+$day = GETPOSTINT("day") ? GETPOSTINT("day") : idate("d");
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'), 'tzuserrel');
 if ($dateselect > 0) {
 	$day = GETPOSTINT('dateselectday');
@@ -93,10 +93,10 @@ $next = dol_get_next_month($month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 
-$max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
-$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
+$max_day_in_prev_month = idate("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
+$max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-$tmpday = - (int) date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
+$tmpday = - idate("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // idate('w') is 0 for sunday
 $tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 if ($tmpday >= 1) {
 	$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -446,7 +446,7 @@ if ($action == 'afteradd') {
 				$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
 			}
 			// Get week number for the targeted date '$currdate0'
-			$numweek0 = date("W", strtotime(date($currdate0)));
+			$numweek0 = idate("W", strtotime(date($currdate0)));
 			// Show the week number, and define column width
 			echo ' <td class="center weeknumber opacitymedium hideonsmartphone" style="min-width: 40px">'.$numweek0.'</td>';
 

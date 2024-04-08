@@ -75,8 +75,8 @@ class CommandeFournisseur extends CommonOrder
 	public $picto = 'supplier_order';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -3411,7 +3411,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 * @return int
 	 */
 	public function getRights()
 	{
@@ -3774,6 +3774,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $fk_facture;
 
 	public $rang = 0;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	/**
@@ -4014,7 +4018,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->product_type)."',";
-		$sql .= "'".$this->db->escape($this->special_code)."',";
+		$sql .= (int) $this->special_code . ",";
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";

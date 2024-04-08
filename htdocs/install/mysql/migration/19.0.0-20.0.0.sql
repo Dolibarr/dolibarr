@@ -47,6 +47,8 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 
 UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
 
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
@@ -279,10 +281,17 @@ ALTER TABLE llx_ticket ADD COLUMN fk_barcode_type integer DEFAULT NULL after bar
 ALTER TABLE llx_ticket ADD UNIQUE INDEX uk_ticket_barcode_barcode_type (barcode, fk_barcode_type, entity);
 ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
-ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;
+ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+
+ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
+
+ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
+
+-- bookcal
+ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;

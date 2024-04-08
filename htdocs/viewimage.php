@@ -55,6 +55,7 @@ if (!defined('NOREQUIREAJAX')) {
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
+// Keep $_GET here, GETPOST is not available yet
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
@@ -100,7 +101,9 @@ if (!$needlogin) {
 	}
 }
 
-// For multicompany
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -129,9 +132,9 @@ require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); 	// Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp = GETPOST('hashp', 'aZ09', 1);				// Must be read only by GET
-$modulepart = GETPOST('modulepart', 'alpha', 1);	// Must be read only by GET
+$original_file = GETPOST('file', 'alphanohtml');
+$hashp = GETPOST('hashp', 'aZ09', 1);
+$modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
 $entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
 
@@ -336,6 +339,7 @@ if ($modulepart == 'barcode') {
 
 	// Load barcode class
 	$classname = "mod".ucfirst($generator);
+
 	$module = new $classname($db);
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);

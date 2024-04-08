@@ -225,7 +225,7 @@ $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmpp
 if ($tmpval <= 460) {
 	$colortextbackvmenu = 'FFFFFF';
 } else {
-	$colortextbackvmenu = '000000';
+	$colortextbackvmenu = '222222';
 }
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
@@ -363,7 +363,7 @@ print '*/'."\n";
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
-	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #2b2d2f, #2b2d2f, #2b2d2f, #e4efe8);
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--butactionbg : #<?php print $butactionbg; ?>;
 	--textbutaction : #<?php print $textbutaction; ?>;
@@ -1273,6 +1273,12 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 .stockmovement {
 	font-size: 1.4em;
 }
+.publisherlogoinline {
+	vertical-align: middle;
+	height: 14px;
+	width: 14px;
+	margin-left: 5px;
+}
 
 .text-warning{
 	color : <?php print $textWarning; ?>
@@ -1571,6 +1577,9 @@ select.flat.selectlimit {
 }
 .marginrightonlyshort {
 	margin-<?php echo $right; ?>: 4px !important;
+}
+.marginrightonlylarge {
+	margin-<?php echo $right; ?>: 20px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -2095,12 +2104,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
-	.tdoverflowonsmartphone {
-		max-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
 	.tdoverflowmax100onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
 		max-width: 100px;
 		overflow: hidden;
@@ -2651,7 +2654,7 @@ img.hideonsmartphone.pictoactionview {
 }
 
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
+	text-align: start;
 	width: 20px;
 	/* padding-right: 0; */
 }
@@ -3256,6 +3259,13 @@ div.login_block a {
 	color: var(--colortexthmenu);
 	display: inline-block;
 }
+div.login_block a .atoploginusername {
+	color: var(--colortextbackhmenu);
+	display: inline-block;
+	overflow: hidden;
+	max-width: 50px;
+	text-overflow: ellipsis;
+}
 div.login_block span.aversion {
 	color: var(--colortexthmenu);
 	filter: contrast(0.7);
@@ -3351,6 +3361,14 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.5em;
 	background-size: contain;
 	vertical-align: middle;
+}
+span.userimg div.userphoto {
+	background-color: #eee;
+	border-radius: 0.72em;
+	width: 1.4em;
+	height: 1.4em;
+	padding-top: 1px;
+	display: inline-block;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;
@@ -4086,6 +4104,11 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+/* CSS to remove the interline border */
+table.nointerlines tr:not(:last-child) td {
+	border-bottom: unset !important;
+	border-top: unset !important;
+}
 
 .liste_titre_filter {
 	background: var(--colorbacktitle1) !important;
@@ -4117,11 +4140,11 @@ tr#trlinefordates td {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 4px 6px 4px 6px;			/* t r b l */
+	padding: 4px 8px 4px 10px;			/* t r b l */
 	height: 22px;
 }
 table.liste tr.trkanban td {
@@ -5183,6 +5206,9 @@ div#card-errors {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+}
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+	z-index:1006 !important; 		/* To always be over the dialog box */
 }
 
 .ui-dialog.ui-widget.ui-widget-content {

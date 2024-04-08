@@ -78,7 +78,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('partnership', $this->partnership->id, 'partnership')) {
-			throw new RestException(401, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->partnership);
@@ -198,7 +198,7 @@ class Partnerships extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->partnership->context['caller'] = $request_data['caller'];
+				$this->partnership->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -237,7 +237,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('partnership', $this->partnership->id, 'partnership')) {
-			throw new RestException(401, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -246,7 +246,7 @@ class Partnerships extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->partnership->context['caller'] = $request_data['caller'];
+				$this->partnership->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 

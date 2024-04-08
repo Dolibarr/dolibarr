@@ -618,7 +618,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 

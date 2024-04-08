@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,18 +143,20 @@ class pdf_merou extends ModelePdfExpedition
 
 			$origin = $object->origin;
 
+			$object->fetch_origin();
+
 			//Create sender
 			$this->expediteur = $mysoc;
 
 			//Create recipient
-			$idcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$idcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 			$this->destinataire = new Contact($this->db);
 			if (!empty($idcontact[0])) {
 				$this->destinataire->fetch($idcontact[0]);
 			}
 
 			//Create deliverer
-			$idcontact = $object->$origin->getIdContact('internal', 'LIVREUR');
+			$idcontact = $object->origin_object->getIdContact('internal', 'LIVREUR');
 			$this->livreur = new User($this->db);
 			if (!empty($idcontact[0])) {
 				$this->livreur->fetch($idcontact[0]);
@@ -403,8 +406,8 @@ class pdf_merou extends ModelePdfExpedition
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -633,7 +636,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		// If SHIPPING contact defined on order, we use it
 		$usecontact = false;
-		$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+		$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 		if (count($arrayidcontact) > 0) {
 			$usecontact = true;
 			$result = $object->fetch_contact($arrayidcontact[0]);

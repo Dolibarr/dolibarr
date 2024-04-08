@@ -29,7 +29,7 @@
  */
 function printDropdownBookmarksList()
 {
-	global $conf, $user, $db, $langs, $sortfield, $sortorder;
+	global $user, $db, $langs, $sortfield, $sortorder;
 
 	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -40,7 +40,7 @@ function printDropdownBookmarksList()
 	$url = $_SERVER["PHP_SELF"];
 	$url_param = array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
-		if (is_array($_GET)) {
+		if (is_array($_GET)) {	// Parse the original GET URL. So we must keep $_GET here.
 			foreach ($_GET as $key => $val) {
 				if (is_array($val)) {
 					foreach ($val as $tmpsubval) {

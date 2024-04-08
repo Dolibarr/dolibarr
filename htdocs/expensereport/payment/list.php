@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('expensereports', 'bills', 'banks', 'compta'));
+$langs->loadLangs(array('trips', 'bills', 'banks', 'compta'));
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');

@@ -63,8 +63,8 @@ class Project extends CommonObject
 	public $fk_element = 'fk_projet';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -406,8 +406,6 @@ class Project extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 		$ret = 0;
 

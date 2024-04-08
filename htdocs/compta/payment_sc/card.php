@@ -245,7 +245,7 @@ print '<div class="tabsAction">';
 /*
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $object->statut == 0 && $action == '')
 	{
 		if ($user->hasRight('facture', 'paiement')){
 			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';

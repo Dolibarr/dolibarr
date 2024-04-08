@@ -30,7 +30,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if problem of a module
+if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if a problem occurs on a module
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
@@ -123,6 +123,13 @@ if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
 }
 
+$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+$allowonlineinstall = true;
+$allowfromweb = 1;
+if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+	$allowonlineinstall = false;
+}
+
 
 /*
  * Actions
@@ -143,7 +150,7 @@ if (GETPOST('buttonreset', 'alpha')) {
 	$search_version = '';
 }
 
-if ($action == 'install') {
+if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 
 	// $original_file should match format module_modulename-x.y[.z].zip
@@ -264,6 +271,8 @@ if ($action == 'install') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
 	}
+} elseif ($action == 'install' && !$allowonlineinstall) {
+	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
 }
 
 if ($action == 'set' && $user->admin) {
@@ -361,13 +370,17 @@ llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$arrayofnatures = array('core' => $langs->transnoentitiesnoconv("NativeModules"), 'external' => $langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofnatures = array(
+	'core' => array('label' => $langs->transnoentitiesnoconv("NativeModules")),
+	'external' => array('label' => $langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']')
+);
 $arrayofwarnings = array(); // Array of warning each module want to show when activated
 $arrayofwarningsext = array(); // Array of warning each module want to show when we activate an external module
 $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
+$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
@@ -427,9 +440,16 @@ foreach ($modulesdir as $dir) {
 								$external = ($objMod->isCoreOrExternalModule() == 'external');
 								if ($external) {
 									if ($publisher) {
-										$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
+										// Check if there is a logo forpublisher
+										/* Do not show the company logo in combo. Make combo list dirty.
+										if (!empty($objMod->editor_squarred_logo)) {
+											$publisherlogoarray['external_'.$publisher] = img_picto('', $objMod->editor_squarred_logo, 'class="publisherlogoinline"');
+										}
+										$publisherlogo = empty($publisherlogoarray['external_'.$publisher]) ? '' : $publisherlogoarray['external_'.$publisher];
+										*/
+										$arrayofnatures['external_'.$publisher] = array('label' => $langs->trans("External").' - '.$publisher, 'data-html' => $langs->trans("External").' - <span class="opacitymedium inine-block valignmiddle">'.$publisher.'</span>');
 									} else {
-										$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
+										$arrayofnatures['external_'] = array('label' => $langs->trans("External").' - ['.$langs->trans("UnknownPublishers").']');
 									}
 								}
 								ksort($arrayofnatures);
@@ -641,7 +661,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
-	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
+	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
 		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
@@ -864,6 +884,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
+				// @phan-suppress-next-line PhanUndeclaredMethodCall
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
@@ -874,6 +895,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$disableSetup++;
 				}
 			} else {
+				// @phan-suppress-next-line PhanUndeclaredMethodCall
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
@@ -1177,13 +1199,6 @@ if ($mode == 'marketplace') {
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
-
-	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
-	$allowonlineinstall = true;
-	$allowfromweb = 1;
-	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
-		$allowonlineinstall = false;
-	}
 
 	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';

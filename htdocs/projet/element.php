@@ -197,7 +197,7 @@ $hookmanager->initHooks(array('projectOverview'));
  */
 
 $title = $langs->trans('ProjectReferers').' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectReferers');
 }
 
@@ -988,6 +988,29 @@ print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
 print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
+// and the cost per attendee
+if ($object->usage_organize_event) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+	$conforboothattendee = new ConferenceOrBoothAttendee($db);
+	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
+
+	if (!is_array($result) && $result < 0) {
+		setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+	} else {
+		$nbAttendees = count($result);
+	}
+
+	if ($nbAttendees >= 2) {
+		$costperattendee_ht = $balance_ht / $nbAttendees;
+		$costperattendee_ttc = $balance_ttc / $nbAttendees;
+		print '<tr class="liste_total">';
+		print '<td class="right" colspan="2">'.$langs->trans("ProfitPerValidatedAttendee").'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ht, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ttc, 'MT')).'</td>';
+		print '</tr>';
+	}
+}
+
 // and the margin (profit / revenues)
 if ($total_revenue_ht) {
 	print '<tr class="liste_total">';
@@ -1259,7 +1282,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowraponall">';
+				print '<td class="left nowraponall tdoverflowmax250">';
 				if ($tablename == 'expensereport_det') {
 					print $expensereport->getNomUrl(1);
 				} else {
@@ -1372,7 +1395,7 @@ foreach ($listofreferent as $key => $value) {
 				print '</td>';
 
 				// Third party or user
-				print '<td class="left">';
+				print '<td class="tdoverflowmax150">';
 				if (is_object($element->thirdparty)) {
 					print $element->thirdparty->getNomUrl(1, '', 48);
 				} elseif ($tablename == 'expensereport_det') {

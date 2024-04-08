@@ -211,7 +211,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-									; // Short text ($langs->transnoentities('MailSentBy')...);
+									; // Short text ($langs->transnoentities('MailSentByTo')...);
 									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
@@ -367,8 +367,8 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
-						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
+						$nbminbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
+						$nbmaxbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', (int) $nbminbacklinkerrorforcancel + 2);
 
 						// If $nbminbacklinkerrorforemail = 0, no autoemail
 						if ($nbminbacklinkerrorforcancel > 0) {
@@ -434,7 +434,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-											; // Short text ($langs->transnoentities('MailSentBy')...);
+											; // Short text ($langs->transnoentities('MailSentByTo')...);
 											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}

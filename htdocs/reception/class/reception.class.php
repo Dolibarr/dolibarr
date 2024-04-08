@@ -68,6 +68,11 @@ class Reception extends CommonObject
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "receptiondet_batch";
+
+	/**
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 */
 	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
@@ -124,11 +129,6 @@ class Reception extends CommonObject
 
 	public $meths;
 	public $listmeths; // List of carriers
-
-	/**
-	 * @var ?CommandeFournisseur
-	 */
-	public $commandeFournisseur;
 
 	/**
 	 * @var CommandeFournisseurDispatch[]
@@ -620,17 +620,17 @@ class Reception extends CommonObject
 		}
 
 		if (!$error) {
-			// Change status of order to "reception in process" or "totally received"
+			// Change status of purchase order to "reception in process" or "totally received"
 			$status = $this->getStatusDispatch();
 			if ($status < 0) {
 				$error++;
 			} else {
 				$trigger_key = '';
-				if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-					$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
+				if ($this->origin_object instanceof CommandeFournisseur && $status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+					$ret = $this->origin_object->Livraison($user, dol_now(), 'tot', '');
 					if ($ret < 0) {
 						$error++;
-						$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+						$this->errors = array_merge($this->errors, $this->origin_object->errors);
 					}
 				} else {
 					$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
@@ -730,7 +730,7 @@ class Reception extends CommonObject
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
 			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->origin_object->lines)) {
+				if ($this->origin_object instanceof CommonObject && empty($this->origin_object->lines)) {
 					$res = $this->origin_object->fetch_lines();
 					if ($this->origin_object instanceof CommandeFournisseur) {
 						$this->commandeFournisseur = $this->origin_object;	// deprecated
@@ -767,8 +767,8 @@ class Reception extends CommonObject
 					}
 				}
 
-				// qty wished in order supplier (origin)
-				foreach ($this->commandeFournisseur->lines as $origin_line) {
+				// qty wished in origin (purchase order, ...)
+				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
 					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
 						continue;
@@ -1123,13 +1123,12 @@ class Reception extends CommonObject
 
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == 4) {     // If order source of reception is "partially received"
+							if ($this->origin_object->statut == 4) {     // If order source of reception is "partially received"
 								// Check if there is no more reception. If not, we can move back status of order to "validated" instead of "reception in progress"
-								$this->$origin->loadReceptions();
+								$this->origin_object->loadReceptions();
 								//var_dump($this->$origin->receptions);exit;
-								if (count($this->$origin->receptions) <= 0) {
-									$this->$origin->setStatut(3); // ordered
+								if (count($this->origin_object->receptions) <= 0) {
+									$this->origin_object->setStatut(3); // ordered
 								}
 							}
 						}
@@ -1449,9 +1448,8 @@ class Reception extends CommonObject
 		$this->socid                = 1;
 
 		$this->origin_id            = 1;
-		$this->origin               = 'commande';
+		$this->origin_type          = 'supplier_order';
 		$this->origin_object        = $order;
-		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -2016,13 +2014,12 @@ class Reception extends CommonObject
 			if ($this->origin == 'order_supplier') {
 				if (!empty($this->origin) && $this->origin_id > 0) {
 					$this->fetch_origin();
-					$origin = $this->origin;
-					if ($this->$origin->statut == 4) {  // If order source of reception is "partially received"
+					if ($this->origin_object->statut == 4) {  // If order source of reception is "partially received"
 						// Check if there is no more reception validated.
-						$this->$origin->fetchObjectLinked();
+						$this->origin_object->fetchObjectLinked();
 						$setStatut = 1;
-						if (!empty($this->$origin->linkedObjects['reception'])) {
-							foreach ($this->$origin->linkedObjects['reception'] as $rcption) {
+						if (!empty($this->origin_object->linkedObjects['reception'])) {
+							foreach ($this->origin_object->linkedObjects['reception'] as $rcption) {
 								if ($rcption->statut > 0) {
 									$setStatut = 0;
 									break;
@@ -2030,7 +2027,7 @@ class Reception extends CommonObject
 							}
 							//var_dump($this->$origin->receptions);exit;
 							if ($setStatut) {
-								$this->$origin->setStatut(3); // ordered
+								$this->origin_object->setStatut(3); // ordered
 							}
 						}
 					}

@@ -663,8 +663,8 @@ class ProductCombination
 	/**
 	 * Retrieves all unique attributes for a parent product
 	 *
-	 * @param int $productid 			Product rowid
-	 * @return ProductAttribute[]		Array of attributes
+	 * @param	int $productid			Product rowid
+	 * @return	ProductAttributeValue[]	Array of attributes
 	 */
 	public function getUniqueAttributesAndValuesByFkProductParent($productid)
 	{
@@ -696,6 +696,7 @@ class ProductCombination
 
 			$attrval = new ProductAttributeValue($this->db);
 			foreach ($res = $attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
+				'@phan-var-force ProductAttributeValue $val';
 				$tmp->values[] = $val;
 			}
 
@@ -720,7 +721,7 @@ class ProductCombination
 	 * @param User 			$user 				Object user
 	 * @param Product 		$product 			Parent product
 	 * @param array<array<string,string>> $combinations Attribute and value combinations.
-	 * @param array 		$variations 		Price and weight variations
+	 * @param array<string,array<string,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations
 	 * @param bool|array 	$price_var_percent 	Is the price variation a relative variation?
 	 * @param bool|float 	$forced_pricevar 	If the price variation is forced
 	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
@@ -813,7 +814,6 @@ class ProductCombination
 					return -1;
 				}
 			}
-
 			if ($forced_weightvar === false) {
 				$weight_impact += (float) price2num($variations[$currcombattr][$currcombval]['weight']);
 			}

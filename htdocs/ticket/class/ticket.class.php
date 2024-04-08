@@ -60,7 +60,8 @@ class Ticket extends CommonObject
 	public $fk_element = 'fk_ticket';
 
 	/**
-	 * @var int  Does ticketcore support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -229,11 +230,6 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
-	 * @var array tickets severity
-	 */
-	public $cache_severity_tickets;
-
-	/**
 	 * @var array cache msgs ticket
 	 */
 	public $cache_msgs_ticket;
@@ -249,7 +245,7 @@ class Ticket extends CommonObject
 	public $labelStatusShort;
 
 	/**
-	 * @var int Notify thirdparty at create
+	 * @var int 	Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
 
@@ -269,7 +265,7 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 * @var static $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
 	 */
 	public $oldcopy;
 
@@ -548,21 +544,21 @@ class Ticket extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
 			$sql .= " ".(!isset($this->track_id) ? 'NULL' : "'".$this->db->escape($this->track_id)."'").",";
-			$sql .= " ".($this->fk_soc > 0 ? $this->db->escape($this->fk_soc) : "null").",";
-			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
-			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
+			$sql .= " ".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "null").",";
+			$sql .= " ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
+			$sql .= " ".($this->fk_contract > 0 ? ((int) $this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".(!isset($this->origin_replyto) ? 'NULL' : "'".$this->db->escape($this->origin_replyto)."'").",";
 			$sql .= " ".(!isset($this->origin_references) ? 'NULL' : "'".$this->db->escape($this->origin_references)."'").",";
-			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
-			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
+			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? ((int) $user->id) : 'NULL') : ($this->fk_user_create > 0 ? ((int) $this->fk_user_create) : 'NULL')).",";
+			$sql .= " ".($this->fk_user_assign > 0 ? ((int) $this->fk_user_assign) : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
-			$sql .= " ".(!isset($this->fk_statut) ? '0' : "'".$this->db->escape($this->fk_statut)."'").",";
-			$sql .= " ".(!isset($this->resolution) ? 'NULL' : "'".$this->db->escape($this->resolution)."'").",";
-			$sql .= " ".(!isset($this->progress) ? '0' : "'".$this->db->escape($this->progress)."'").",";
+			$sql .= " ".(!isset($this->fk_statut) ? '0' : ((int) $this->fk_statut)).",";
+			$sql .= " ".(!isset($this->resolution) ? 'NULL' : ((int) $this->resolution)).",";
+			$sql .= " ".(!isset($this->progress) ? '0' : ((int) $this->progress)).",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
 			$sql .= " ".(!isset($this->type_code) ? 'NULL' : "'".$this->db->escape($this->type_code)."'").",";
 			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
@@ -571,7 +567,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
-			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? 1 : ((int) $this->notify_tiers_at_create));
 			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
@@ -1432,12 +1428,12 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $langs;
+		global $conf, $langs;
 
-		if (!empty($this->cache_severity_tickets) && count($this->cache_severity_tickets)) {
+		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
+			// Cache already loaded
 			return 0;
 		}
-		// Cache deja charge
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
@@ -1452,11 +1448,11 @@ class Ticket extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->cache_severity_tickets[$obj->rowid]['code'] = $obj->code;
+				$conf->cache['severity_tickets'][$obj->rowid]['code'] = $obj->code;
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_severity_tickets[$obj->rowid]['label'] = $label;
-				$this->cache_severity_tickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$this->cache_severity_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['severity_tickets'][$obj->rowid]['label'] = $label;
+				$conf->cache['severity_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['severity_tickets'][$obj->rowid]['pos'] = $obj->pos;
 				$i++;
 			}
 			return $num;
@@ -2635,7 +2631,7 @@ class Ticket extends CommonObject
 
 		if (!GETPOST("message")) {
 			$error++;
-			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
+			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
 			$action = 'add_message';
 		}
 
@@ -2699,10 +2695,9 @@ class Ticket extends CommonObject
 								continue;
 							}
 
-							if ($info_sendto['email'] != '') {
-								if (!empty($info_sendto['email'])) {
-									$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
-								}
+							// We check if the email address is not the assignee's address to prevent notification from being sent twice
+							if (!empty($info_sendto['email']) && $assigned_user->email != $info_sendto['email']) {
+								$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 							}
 						}
 
@@ -3020,20 +3015,22 @@ class Ticket extends CommonObject
 				if (!empty($this->email_msgid)) {
 					// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
 					$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
+					// TODO We should now be able to give the in_reply_to as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 				}
 
 				// We should add here also a header 'References:'
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				if (empty($this->origin_references)) {
-					// TODO If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
-				} else {
+				if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
 					$references .= (empty($references) ? '' : ' ').$this->origin_references;
 				}
-				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+				if (!empty($this->email_msgid) && !preg_match('/'.preg_quote($this->email_msgid, '/').'/', $references)) {
+					$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+				}
 				if ($references) {
 					$moreinheader .= 'References: '.$references."\r\n";
+					// TODO We should now be able to give the references as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 				}
 
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);

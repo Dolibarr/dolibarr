@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2023  Ferran Marcet           <fmarcet@2byte.es>
@@ -61,6 +61,7 @@ $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlist';
+$optioncss = GETPOST('optioncss', 'alpha');
 $mode        = GETPOST('mode', 'alpha');
 
 if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
@@ -82,8 +83,9 @@ $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_end_month'), GETPOSTINT('search_datedelivery_end_day'), GETPOSTINT('search_datedelivery_end_year'));
 
 $socid = GETPOSTINT('socid');
+
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_product_category = GETPOSTINT('search_product_category');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -92,14 +94,14 @@ $search_parent_name = trim(GETPOST('search_parent_name', 'alphanohtml'));
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST('search_state', 'alpha');
-$search_country = GETPOSTINT('search_country');
-$search_type_thirdparty = GETPOSTINT('search_type_thirdparty');
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
+$search_country = GETPOST('search_country', 'aZ09');
+$search_type_thirdparty = GETPOST('search_type_thirdparty', 'intcomma');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
-$search_warehouse = GETPOSTINT('search_warehouse');
+$search_warehouse = GETPOST('search_warehouse', 'intcomma');
 
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
@@ -108,18 +110,17 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 
 $search_login = GETPOST('search_login', 'alpha');
-$search_categ_cus = GETPOSTINT("search_categ_cus");
-$optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOST('search_billed', 'int');
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
 
-$search_fk_cond_reglement = GETPOSTINT('search_fk_cond_reglement');
-$search_fk_shipping_method = GETPOSTINT('search_fk_shipping_method');
-$search_fk_mode_reglement = GETPOSTINT('search_fk_mode_reglement');
-$search_fk_input_reason = GETPOSTINT('search_fk_input_reason');
+$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'intcomma');
+$search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'intcomma');
+$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'intcomma');
+$search_fk_input_reason = GETPOST('search_fk_input_reason', 'intcomma');
 
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
@@ -231,7 +232,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Security check
-$id = (GETPOST('orderid') ? GETPOSTINT('orderid') : GETPOSTINT('id'));
+$id = GETPOSTINT('orderid', GETPOSTINT('id'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -439,6 +440,7 @@ if (empty($reshook)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -495,6 +497,7 @@ if (empty($reshook)) {
 							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
 							if (!empty($createbills_onebythird)) {
+								$TFactThirdNbLines[$cmd->socid]++;
 								$rang = $TFactThirdNbLines[$cmd->socid];
 							}
 
@@ -530,9 +533,6 @@ if (empty($reshook)) {
 							);
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) { //increment rang to keep order
-									$TFactThirdNbLines[$cmd->socid]++;
-								}
 							} else {
 								$lineid = 0;
 								$error++;
@@ -681,8 +681,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
+			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -1733,14 +1733,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	print '</td>';
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-// Fields from hook
-$parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
 // Date creation
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1784,17 +1776,28 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	}
 	print '</td>';
 }
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 // Status billed
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 	print '</td>';
 }
+
 // Import key
 if (!empty($arrayfields['c.import_key']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print '</td>';
 }
+
 // Status
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1969,13 +1972,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	$totalarray['nbfield']++;
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
-// Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -2000,6 +1996,14 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	print_liste_field_titre($arrayfields['shippable']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -2502,7 +2506,7 @@ while ($i < $imaxinloop) {
 						$userstatic->lastname = $val['lastname'];
 						$userstatic->firstname = $val['firstname'];
 						$userstatic->email = $val['email'];
-						$userstatic->statut = $val['statut'];
+						$userstatic->status = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
@@ -2552,7 +2556,7 @@ while ($i < $imaxinloop) {
 
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2560,7 +2564,7 @@ while ($i < $imaxinloop) {
 
 		// Total mark rate
 		if (!empty($arrayfields['total_mark_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2575,13 +2579,6 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
 
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
@@ -2739,9 +2736,20 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed, 4).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, 4);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
