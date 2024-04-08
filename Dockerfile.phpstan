@@ -37,7 +37,7 @@ RUN mv composer.phar /usr/bin/composer
 # Download and install PHPStan
 RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
     chmod +x /usr/local/bin/phpstan
-RUN wget https://raw.githubusercontent.com/phpstan/phpstan-beberlei-assert/main/extension.neon -O vendor/phpstan/phpstan-beberlei-assert/extension.neon
+curl -o vendor/phpstan/phpstan-beberlei-assert/extension.neon https://raw.githubusercontent.com/phpstan/phpstan-beberlei-assert/main/extension.neon
 
 # Set the entry point to PHPStan
 ENTRYPOINT ["phpstan"]
