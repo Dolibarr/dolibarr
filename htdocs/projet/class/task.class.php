@@ -1365,42 +1365,27 @@ class Task extends CommonObjectLine
 	 */
 	public function mergeTimeSpentTask($origin_id, $dest_id)
 	{
-		global $user;
+		$ret = true;
 
-		$error = 0;
-		$origintask = new Task($this->db);
-		$result = $origintask->fetch($origin_id);
-		if ($result <= 0) {
-			return false;
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."element_time as et";
+		$sql .= " SET et.fk_element = ".((int) $dest_id);
+		$sql .= " WHERE et.elementtype = 'task'";
+		$sql .= " AND et.fk_element = ".((int) $origin_id);
+
+		dol_syslog(get_class($this)."::mergeTimeSpentTask", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$ret = false;
 		}
 
-		$result = $origintask->fetchTimeSpentOnTask();
-		if ($result <= 0) {
-			return false;
+		if ($ret == true) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
 		}
-		$timespentorigin = $origintask->lines;
-		foreach ($timespentorigin as $key => $timespent) {
-			$origintask->timespent_id = $timespent->timespent_line_id;
-
-			$this->timespent_date = $timespent->timespent_line_date;
-			$this->timespent_datehour = $timespent->timespent_line_datehour;
-			$this->timespent_withhour = $timespent->timespent_line_withhour;
-			$this->timespent_duration = $timespent->timespent_line_duration;
-			$this->timespent_fk_user = $timespent->timespent_line_fk_user;
-			$this->timespent_fk_product = $timespent->fk_project;
-			$this->timespent_note = $timespent->timespent_line_note;
-
-			$result = $this->addTimeSpent($user);
-			if ($result <= 0) {
-				return false;
-			}
-
-			$result = $origintask->delTimeSpent($user);
-			if ($result <= 0) {
-				return false;
-			}
-		}
-		return true;
+		return $ret;
 	}
 
 	/**
