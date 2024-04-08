@@ -21,9 +21,9 @@ pipeline {
             sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
             sh 'mkdir -p test-reports'
             // Run PHPStan
-            sh "phpstan analyse --level=max > test-reports/phpstan-report.json"
+            sh "${scannerHome}/bin/phpstan analyse --level=max > test-reports/phpstan-report.json"
             // Run Psalm
-            sh "psalm --report-json=test-reports/psalm-report.json"
+            sh "${scannerHome}/bin/psalm --report-json=test-reports/psalm-report.json"
           }
         }
       }
