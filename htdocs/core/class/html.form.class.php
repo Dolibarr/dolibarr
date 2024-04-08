@@ -8041,7 +8041,7 @@ class Form
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
 			$objectdesc = '';
-						   
+
 			// Load object according to $id and $element
 			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
 
