@@ -4176,18 +4176,3 @@ class User extends CommonObject
 		return $this->findUserIdByEmailCache[$email];
 	}
 }
-
-/**
- *	Class to manage Dolibarr users rights
- */
-class Rights
-{
-	const KEY_ID = 0;
-	const KEY_LABEL = 1;
-	const KEY_TYPE = 2;	// deprecated
-	const KEY_DEFAULT = 3;
-	const KEY_FIRST_LEVEL = 4;
-	const KEY_SECOND_LEVEL = 5;
-	const KEY_MODULE = 6;
-	const KEY_ENABLED = 7;
-}
