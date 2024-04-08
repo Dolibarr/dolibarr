@@ -11,8 +11,8 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1167,6 +1167,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->cats = array();
+		$nbcateg = 0;
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
@@ -1188,6 +1189,8 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
+			$nbcateg = $this->db->num_rows($resql);
+
 			while ($obj = $this->db->fetch_object($resql)) {
 				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
@@ -1210,7 +1213,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
-			$this->buildPathFromId($key, 0); // Process a branch from the root category key (this category has no parent)
+			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
 		}
 
 		// Include or exclude leaf including $markafterid from tree
