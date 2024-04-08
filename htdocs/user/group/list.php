@@ -93,21 +93,16 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	}
 }
 
-// Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-	accessforbidden();
-}
-
 if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
 // Defini si peux lire/modifier utilisateurs et permissions
-$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
-$permissiontodelete = ($user->admin || $user->hasRight("user", "user", "write"));
+$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
+$permissiontodelete = $caneditperms;
 // Advanced permissions
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "write")));
 }
 
 
@@ -287,7 +282,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 
 if ($caneditperms) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=', '', $caneditperms);
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);

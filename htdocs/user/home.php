@@ -38,7 +38,7 @@ if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 // Load translation files required by page
 $langs->load("users");
 
-$canreadperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : true);
+$canreadperms = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
 }
