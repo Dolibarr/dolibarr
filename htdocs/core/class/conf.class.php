@@ -1102,6 +1102,7 @@ class Conf extends stdClass
 				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 			}
 
+
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use

@@ -265,7 +265,7 @@ class Orders extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -291,7 +291,7 @@ class Orders extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
 		}
 
-		return $this->commande->id;
+		return ((int) $this->commande->id);
 	}
 
 	/**

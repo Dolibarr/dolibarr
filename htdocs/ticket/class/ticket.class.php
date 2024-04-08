@@ -60,7 +60,8 @@ class Ticket extends CommonObject
 	public $fk_element = 'fk_ticket';
 
 	/**
-	 * @var int  Does ticketcore support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -2630,7 +2631,7 @@ class Ticket extends CommonObject
 
 		if (!GETPOST("message")) {
 			$error++;
-			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
+			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
 			$action = 'add_message';
 		}
 
@@ -2694,10 +2695,9 @@ class Ticket extends CommonObject
 								continue;
 							}
 
-							if ($info_sendto['email'] != '') {
-								if (!empty($info_sendto['email'])) {
-									$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
-								}
+							// We check if the email address is not the assignee's address to prevent notification from being sent twice
+							if (!empty($info_sendto['email']) && $assigned_user->email != $info_sendto['email']) {
+								$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 							}
 						}
 

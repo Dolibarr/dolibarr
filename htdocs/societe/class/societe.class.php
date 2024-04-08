@@ -128,8 +128,8 @@ class Societe extends CommonObject
 	public $picto = 'company';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -4061,18 +4061,25 @@ class Societe extends CommonObject
 	{
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES');
+
+		// Now try to guess using different tips
 		if (!empty($this->tva_intra)) {
 			$isACompany = 1;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
 			$isACompany = 1;
-		} elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN') {
-			// TODO Add a field is_a_company into dictionary
-			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
-				$isACompany = 0;
+		} else {
+			if (!getDolGlobalString('MAIN_CUSTOMERS_ARE_COMPANIES_EVEN_IF_SET_AS_INDIVIDUAL')) {
+				// TODO Add a field is_a_company into dictionary
+				if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
+					$isACompany = 0;
+				} else {
+					$isACompany = 1;
+				}
 			} else {
 				$isACompany = 1;
 			}
 		}
+
 		return (bool) $isACompany;
 	}
 

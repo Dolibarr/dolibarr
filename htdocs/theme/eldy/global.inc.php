@@ -3169,6 +3169,12 @@ div.login_block a {
 	color: var(--colortextbackhmenu);
 	display: inline-block;
 }
+div.login_block a .atoploginusername {
+	display: inline-block;
+	overflow: hidden;
+	max-width: 60px;
+	text-overflow: ellipsis;
+}
 div.login_block span.aversion {
 	color: var(--colortextbackhmenu);
 	filter: contrast(0.7);

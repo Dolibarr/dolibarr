@@ -1,6 +1,4 @@
-# Dolibarr language file - Source file is en_US - expensereports.lang
-# copied from trips.lang
-
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 AddTrip=Create expense report

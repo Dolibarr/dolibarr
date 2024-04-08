@@ -327,6 +327,8 @@ return [
 		.'dummy'  // @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
+		// Included as stub (better analysis)
+		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
 		// Included as stub (old version + incompatible typing hints)
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
@@ -365,7 +367,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		'InvalidVariableIssetPlugin',
+		// 'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -416,214 +418,29 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
-		// 'PhanDeprecatedFunction',
-		//'PhanCompatibleNegativeStringOffset',
-		// 'PhanPluginDuplicateExpressionAssignment',
-		// Nulls are likely mostly false positives
-		'PhanPluginConstantVariableNull',
-		'PhanTypeObjectUnsetDeclaredProperty',
-		// 'PhanPluginComparisonNotStrictForScalar',
-		'PhanPluginNonBoolBranch',
-		'PhanPluginShortArray',
-		'PhanPluginNumericalComparison',
-		'PhanPluginUnknownObjectMethodCall',
-		'PhanPluginNonBoolInLogicalArith',
+
+		'PhanCompatibleNegativeStringOffset',	// return false positive
+
+		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
+		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
+		'PhanPluginShortArray',			// Dolibarr uses array()
+		'PhanPluginShortArrayList',		// Dolibarr uses array()
 		// Fixers From PHPDocToRealTypesPlugin:
 		'PhanPluginCanUseParamType',			// Fixer - Report/Add types in the function definition (function abc(string $var) (adds string)
 		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
-		// 'PhanPluginNotFullyQualifiedFunctionCall',
-		'PhanPluginConstantVariableScalar',
-		// 'PhanPluginNoCommentOnPublicProperty',
-		'PhanPluginUnknownPropertyType',
-		// 'PhanPluginUnknownMethodParamType',
-		// 'PhanPluginNotFullyQualifiedOptimizableFunctionCall',
-		// 'PhanPluginUnknownMethodReturnType',
-		'PhanPluginUnknownArrayMethodParamType',
-		'PhanPluginWhitespaceTab',   // Dolibarr uses tabs
-		// 'PhanPluginWhitespaceTrailing',
-		// 'PhanPluginCanUsePHP71Void',
-		'PhanPluginUnknownArrayMethodReturnType',
-		// 'PhanTypeMismatchArgumentInternal',
-		'PhanTypeMismatchArgumentNullableInternal',
+		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
+		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
+		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
+		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
+		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
-		'PhanTypeInvalidLeftOperandOfNumericOp',
-		'PhanTypeMismatchProperty',
-		// 'PhanPluginNoCommentOnPublicMethod',
-		'PhanRedefinedClassReference',
-		// 'PhanPluginNoCommentOnClass',
-		// 'PhanPluginNotFullyQualifiedGlobalConstant',
-		// 'PhanTypeMismatchDefault',
-		// 'PhanPluginPHPDocHashComment',
-		'PhanPluginShortArrayList',
-		'PhanPluginUnknownArrayPropertyType',
-		'PhanTypeInvalidDimOffset',
-		// 'PhanPluginNoCommentOnProtectedProperty',
-		// 'PhanPluginDescriptionlessCommentOnPublicMethod',
-		// 'PhanPluginUnknownClosureParamType',
-		// 'PhanPluginUnknownClosureReturnType',
-		// 'PhanPluginNoCommentOnProtectedMethod',
-		// 'PhanTypeArraySuspicious',
-		// 'PhanTypeMismatchPropertyProbablyReal',
-		// 'PhanPluginNoCommentOnPrivateMethod',
-		'PhanPluginUnknownArrayFunctionReturnType',
-		// 'PhanTypeInvalidLeftOperandOfAdd',
-		// 'PhanPluginNoCommentOnPrivateProperty',
-		// 'PhanPluginNoCommentOnFunction',
-		'PhanPluginUnknownArrayFunctionParamType',
-		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
-		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
-		// 'PhanTypeSuspiciousStringExpression',
-		// 'PhanPluginRedundantAssignment',
-
-		'PhanTypeExpectedObjectPropAccess',
-		// 'PhanTypeInvalidRightOperandOfNumericOp',
-		// 'PhanPluginInlineHTML',
-		// 'PhanPluginInlineHTMLTrailing',
-		// 'PhanPluginUnknownFunctionReturnType',
-		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
-		'PhanPluginRedundantAssignmentInGlobalScope',
-		// 'PhanTypeMismatchDeclaredParamNullable',
-		// 'PhanTypeInvalidRightOperandOfAdd',
-		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
-		// 'PhanTypeInvalidPropertyName',
-		'PhanPluginDuplicateCatchStatementBody',
-		'PhanPluginUndeclaredVariableIsset',
-		// 'PhanTypeInvalidUnaryOperandIncOrDec',
-		// 'PhanPluginDescriptionlessCommentOnClass',
-		'PhanPluginEmptyStatementIf',
-		// 'PhanUndeclaredStaticMethod',
-		// 'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		// 'PhanPluginPrintfIncompatibleArgumentType',
-		'PhanPossiblyNullTypeMismatchProperty',
-		'PhanRedefineClass',
-		'PhanRedefineFunction',
-		// 'PhanTypeInvalidLeftOperandOfBitwiseOp',
-		// 'PhanTypeMismatchDimAssignment',
-		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
-		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
-		// 'PhanUndeclaredVariableAssignOp',
-		// 'PhanTypeExpectedObjectOrClassName',
-		'PhanEmptyFQSENInClasslike',
-		// 'PhanTypeMismatchArgumentInternalReal',
-		// 'PhanUnextractableAnnotationElementName',
-		// 'PhanCommentParamWithoutRealParam',
-		// 'PhanRedefinedExtendedClass',
-		'PhanTypeComparisonFromArray',
-		'PhanPluginConstantVariableBool',
-		// 'PhanPluginPrintfVariableFormatString',
-		'PhanTypeMismatchDimFetch',
-		'PhanTypeMismatchDimFetchNullable',
-		'PhanTypeSuspiciousNonTraversableForeach',
-		'PhanEmptyForeach',
-		'PhanTypeInvalidRightOperandOfBitwiseOp',
-		// 'PhanPluginDuplicateConditionalUnnecessary',
-		// 'PhanTraitParentReference',
-		'PhanPluginBothLiteralsBinaryOp',
-		// 'PhanTypeMismatchDeclaredParam',
-		// 'PhanCommentDuplicateMagicMethod',
-		// 'PhanParamSpecial1',
-		// 'PhanPluginInlineHTMLLeading',
-		// 'PhanPluginUseReturnValueInternalKnown',
-		// 'PhanRedefinedInheritedInterface',
-		// 'PhanTypeComparisonToArray',
-		'PhanTypeConversionFromArray',
-		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
-		// 'PhanTypeMismatchArgumentInternalProbablyReal',
-		// 'PhanTypeMismatchBitwiseBinaryOperands',
-		'PhanTypeMismatchDimEmpty',
-		// 'PhanTypeSuspiciousEcho',
-		// 'PhanNoopBinaryOperator',
-		// 'PhanTypeInvalidBitwiseBinaryOperator',
-		// 'PhanPluginDescriptionlessCommentOnFunction',
-		// 'PhanPluginPHPDocInWrongComment',
-		'PhanRedefineClassInternal',
-		// 'PhanTypeInvalidThrowsIsInterface',
-		// 'PhanPluginRedundantAssignmentInLoop',
-		// 'PhanInvalidCommentForDeclarationType',
-		// 'PhanParamSignatureMismatchInternal',
-		// 'PhanParamSignatureMismatch',
-		// 'PhanPluginEmptyStatementForeachLoop',
-		// 'PhanCompatibleDimAlternativeSyntax',
-		'PhanInvalidFQSENInClasslike',
-		// 'PhanMismatchVariadicComment',
-		// 'PhanNoopConstant',
-		// 'PhanPluginUnknownArrayClosureParamType',
-		// 'PhanTypeInstantiateAbstractStatic',
-		'PhanEmptyForeachBody',
-		// 'PhanPluginEmptyStatementWhileLoop',
-		// 'PhanSyntaxReturnValueInVoid',
-		// 'PhanTypeInstantiateTraitStaticOrSelf',
-		// 'PhanUndeclaredInvokeInCallable',
-		// 'PhanNoopProperty',
-		// 'PhanNoopVariable',
-		// 'PhanPluginPrintfUnusedArgument',
-		// 'PhanSyntaxReturnExpectedValue',
-		// 'PhanAccessClassInternal',
-		// 'PhanCompatibleAccessMethodOnTraitDefinition',
-		// 'PhanNoopSwitchCases',
-		// 'PhanNoopTernary',
-		// 'PhanNoopUnaryOperator',
-		// 'PhanParamNameIndicatingUnusedInClosure',
-		// 'PhanParamSignatureRealMismatchTooFewParametersInternal',
-		// 'PhanPluginEmptyStatementSwitch',
-		'PhanPossiblyUnsetPropertyOfThis',
-		// 'PhanTypeInvalidLeftOperand',
-		// 'PhanTypeInvalidRightOperand',
-		// 'PhanTypeInvalidRightOperandOfIntegerOp',
-		'PhanTypeMismatchArgumentReal',
-		// 'PhanTypeMismatchDeclaredReturnNullable',
-
-		// 'PhanUndeclaredThis',
-		// 'PhanPluginMixedKeyNoKey',
-		'PhanPluginDuplicateConditionalNullCoalescing', // Suggests to optimize to ??
-		//'PhanUnreferencedClosure',  // False positives seen with closures in arrays, TODO: move closure checks closer to what is done by unused variable plugin
-		//'PhanPluginNoCommentOnProtectedMethod',
-		//'PhanPluginDescriptionlessCommentOnProtectedMethod',
-		//'PhanPluginNoCommentOnPrivateMethod',
-		//'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		//'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		// TODO: Fix edge cases in --automatic-fix for PhanPluginRedundantClosureComment
-		//'PhanPluginRedundantClosureComment',
-		// 'PhanPluginPossiblyStaticPublicMethod',
-		//'PhanPluginPossiblyStaticProtectedMethod',
-
-		// The types of ast\Node->children are all possibly unset.
-		'PhanTypePossiblyInvalidDimOffset', // Also checks optional array keys and requires that they are checked for existence.
-		'PhanUndeclaredGlobalVariable',
-		'PhanUndeclaredProperty',
-		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
-		'PhanPossiblyUndeclaredGlobalVariable',
-		// 'PhanPluginPossiblyStaticProtectedMethod',
-		// 'PhanTypeMismatchReturn',
-		// 'PhanPluginMoreSpecificActualReturnType',
-		// 'PhanTypeMismatchReturnProbablyReal',
-		'PhanPossiblyUndeclaredVariable',
-		'PhanTypeMismatchArgument',
-		// 'PhanPluginUnreachableCode',
-		// 'PhanTypeMismatchArgumentInternal',
-		// 'PhanPluginAlwaysReturnMethod',
-		// 'PhanUndeclaredClassMethod',
-		'PhanUndeclaredMethod',
-		'PhanTypeMismatchArgumentProbablyReal',
-		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
-		// 'PhanTypeMismatchPropertyDefault',
-		// 'PhanPluginAlwaysReturnMethod',
-		// 'PhanPluginMissingReturnMethod',
-		// 'PhanUndeclaredTypeReturnType',
-		// 'PhanUndeclaredClassProperty',
-		'PhanTypeArraySuspiciousNullable',
-		// 'PhanPluginInconsistentReturnMethod',
-		'PhanTypeExpectedObjectPropAccessButGotNull',
-		// 'PhanUndeclaredClassAttribute',
-		// 'PhanNonClassMethodCall',
-		// 'PhanPluginNoAssert',
-		// 'PhanTypeMismatchReturnSuperType',
-		// 'PhanTypeMismatchArgumentSuperType',
-		'PhanPluginDuplicateConditionalTernaryDuplication',
+		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
+		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
+		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,
