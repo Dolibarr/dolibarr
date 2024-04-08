@@ -40,7 +40,7 @@ pipeline {
             // Create directory for reports
             sh "mkdir -p test-reports"
             // Run PHPStan inside PHPStan container
-            sh "phpstan -vvv analyse --error-format=json --xdebug -a build/phpstan/bootstrap_action.php --config phpstan.neon > test-reports/phpstan-report.json"
+            sh "phpstan -vvv analyse --error-format=json --xdebug -a build/phpstan/bootstrap_action.php --config phpstan.neon.dist > test-reports/phpstan-report.json"
           }
         }
       }
