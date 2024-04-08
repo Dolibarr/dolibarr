@@ -589,15 +589,6 @@ class Cronjob extends CommonObject
 			$filter = '';
 		}
 
-		// Manage filter
-		$errormessage = '';
-		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-		if ($errormessage) {
-			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			return -1;
-		}
-
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit) && !empty($offset)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
