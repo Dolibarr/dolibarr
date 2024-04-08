@@ -1198,35 +1198,60 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Delete extrafield
+	 *
+	 * @param   string     $attrname         extrafield attrname
+	 * @param   string     $elementtype      extrafield elementtype
+	 * @return  array
+	 *
+	 * @url     DELETE extrafields/{elementtype}/{attrname}
+	 *
+	 */
+	public function deleteExtrafieldsFromNames($attrname, $elementtype)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can delete an extrafield by attrname and elementtype');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		if (!$extrafields->delete($attrname, $elementtype)) {
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Extrafield deleted from attrname and elementtype'
+			)
+		);
+	}
+
+	/**
 	 * Create Extrafield object
 	 *
-	 * @param array $request_data   Request datas
-	 * @return int  ID of extrafield
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @param	array	$request_data	Request datas
+	 * @return	int						ID of extrafield
 	 *
-	 * @url     POST extrafields
+	 * @url     POST	extrafields/{elementtype}/{attrname}
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 *
 	 */
-	public function postExtrafields($request_data = null)
+	public function postExtrafields($attrname, $elementtype, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only an admin user can create an extrafield');
 		}
 
 		$extrafields = new ExtraFields($this->db);
-
-		// built in validation
-		if ($request_data['attrname']) {
-			$attrname = $request_data['attrname'];
-		} else {
-			throw new RestException(400, "attrname/name field absent");
-		}
-		if ($request_data['elementtype']) {
-			$elementtype = $request_data['elementtype'];
-		} else {
-			throw new RestException(400, "elementtype field absent");
-		}
 
 		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
 		if ($result) {
@@ -1241,6 +1266,7 @@ class Setup extends DolibarrApi
 		}
 
 		// built in validation
+		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
 		if ($request_data['entity']) {
 			$entity = $request_data['entity'];
 		} else {
@@ -1259,7 +1285,6 @@ class Setup extends DolibarrApi
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
 		$computed = $request_data['computed'];
-		$enabled = $request_data['enabled'];
 		$unique = $request_data['unique'];
 		$param = $request_data['param'];
 		$perms = $request_data['perms'];
@@ -1277,7 +1302,92 @@ class Setup extends DolibarrApi
 		$sql = "SELECT t.rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
-		$sql .= " AND name = '".((string) $attrname)."'";
+		$sql .= " AND name = '".$this->db->escape($attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$tab = $this->db->fetch_object($resql);
+				$id = (int) $tab->id;
+			} else {
+				$id = (int) -1;
+			}
+		} else {
+			$id = (int) -2;
+		}
+
+		return $id;
+	}
+
+	/**
+	 * Update Extrafield object
+	 *
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @param	array	$request_data	Request datas
+	 * @return	int						ID of extrafield
+	 *
+	 * @url     PUT		extrafields/{elementtype}/{attrname}
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 */
+	public function updateExtrafields($attrname, $elementtype, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can create an extrafield');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		foreach ($request_data as $field => $value) {
+			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
+		}
+
+		// built in validation
+		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
+		if ($request_data['entity']) {
+			$entity = $request_data['entity'];
+		} else {
+			throw new RestException(400, "Entity field absent");
+		}
+		if ($request_data['label']) {
+			$label = $request_data['label'];
+		} else {
+			throw new RestException(400, "label field absent");
+		}
+
+		$alwayseditable = $request_data['alwayseditable'];
+		$default_value = $request_data['default_value'];
+		$totalizable = $request_data['totalizable'];
+		$printable = $request_data['printable'];
+		$required = $request_data['required'];
+		$langfile = $request_data['langfile'];
+		$computed = $request_data['computed'];
+		$unique = $request_data['unique'];
+		$param = $request_data['param'];
+		$perms = $request_data['perms'];
+		$size = $request_data['size'];
+		$type = $request_data['type'];
+		$list = $request_data['list'];
+		$help = $request_data['help'];
+		$pos = $request_data['pos'];
+		$moreparams = array();
+
+		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
+		if ( 0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
+		}
+
+		$sql = "SELECT t.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND name = '".$this->db->escape($attrname)."'";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
