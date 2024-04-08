@@ -7,7 +7,7 @@ WORKDIR /app
 # Install dependencies required by PHPStan
 RUN apt-get update -y \
     && apt-get dist-upgrade -y \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends wget zip\
         libc-client-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -22,7 +22,7 @@ RUN apt-get update -y \
         cron \
     && apt-get autoremove -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip calendar json opcache sqlite3 ldap xml mcrypt \
     && docker-php-ext-configure pgsql -with-pgsql \
     && docker-php-ext-install pdo_pgsql pgsql \
     && docker-php-ext-configure ldap --with-libdir=lib/$(gcc -dumpmachine)/ \
