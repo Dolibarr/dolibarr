@@ -703,10 +703,10 @@ class ExtraFields
 					$sql = '';
 					if ($unique) {
 						dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->escape($attrname)." (".$this->db->escape($attrname).")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->escape($attrname);
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
