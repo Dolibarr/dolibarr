@@ -1198,6 +1198,41 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Delete extrafield
+	 *
+	 * @param   string     $attrname         extrafield attrname
+	 * @param   string     $elementtype      extrafield elementtype
+	 * @return  array
+	 *
+	 * @url     DELETE extrafields/{elementtype}/{attrname}
+	 *
+	 */
+	public function deleteExtrafieldsFromNames($attrname, $elementtype)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can delete an extrafield by attrname and elementtype');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		if (!$extrafields->delete($attrname, $elementtype)) {
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Extrafield deleted from attrname and elementtype'
+			)
+		);
+	}
+
+	/**
 	 * Update Extrafield object
 	 *
 	 * @param	string	$attrname		extrafield attrname

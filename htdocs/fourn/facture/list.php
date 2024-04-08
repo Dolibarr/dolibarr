@@ -169,14 +169,14 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'f.ref' => array('label' => "Ref", 'checked' => 1),
-	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => 1),
-	'f.type' => array('label' => "Type", 'checked' => 0),
-	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0,),
-	'f.label' => array('label' => "Label", 'checked' => 0),
-	'f.datef' => array('label' => "DateInvoice", 'checked' => 1),
-	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => 0),
+	'f.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5),
+	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => 1, 'position' => 7),
+	'f.type' => array('label' => "Type", 'checked' => 0, 'position' => 15),
+	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
+	'f.label' => array('label' => "Label", 'checked' => 0, 'position' => 20),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => 1, 'position' => 25),
+	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 27),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => 0, 'position' => 30),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 43),
@@ -203,11 +203,16 @@ $arrayfields = array(
 	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 500),
 	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 502),
+	'f.nb_docs' => array('label' => "Documents", 'checked' => -1, 'position' => 510),
 	'f.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
-	'f.nb_docs' => array('label' => "Documents", 'checked' => 1, 'position' => 510),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
+if (empty($subtypearray)) {
+	unset($arrayfields['f.subtype']);
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1877,7 +1882,7 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 		}
 
-		// Number of attached documents
+		// Number of attached documents (may slow your application on large lists)
 		if (!empty($arrayfields['f.nb_docs']['checked'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
