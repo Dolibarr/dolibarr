@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
@@ -139,6 +140,30 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 	}
 }
 
+if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
+	$task_origin_id = GETPOSTINT('task_origin');
+	$task_origin = new Task($db);		// The Task that we will delete
+
+	if ($task_origin_id <= 0) {
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorTaskIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginTask')), null, 'errors');
+	} else {
+		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
+			setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->mergeTask($task_origin_id);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('TaskMergeSuccess'), null, 'mesgs');
+			}
+		}
+	}
+}
+
 if ($action == 'confirm_clone' && $confirm == 'yes') {
 	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
@@ -228,6 +253,7 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formproject = new FormProjets($db);
 $result = $projectstatic->fetch($object->fk_project);
 
 $title = $object->ref;
@@ -434,6 +460,17 @@ if ($id > 0 || !empty($ref)) {
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 300, 590);
 	}
 
+	if ($action == 'merge') {
+		$formquestion = array(
+			array(
+				'name' => 'task_origin',
+				'label' => $langs->trans('MergeOriginTask'),
+				'type' => 'other',
+				'value' => $formproject->selectTasks(-1, '', 'task_origin', 24, 0, $langs->trans('SelectTask'), 0, 0, 0, 'maxwidth500 minwidth200', '', '', null, 1)
+			)
+		);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeTasks"), $langs->trans("ConfirmMergeTasks"), "confirm_merge", $formquestion, 'no', 1, 250);
+	}
 
 	$head = task_prepare_head($object);
 
@@ -673,6 +710,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($user->hasRight('projet', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
+				print '<a class="butActionDelete classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}

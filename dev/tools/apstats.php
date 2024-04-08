@@ -690,7 +690,7 @@ $html .= '<h2><span class="fas fa-user pictofixedwidth"></span>Contributors</h2>
 $html .= '<div class="boxallwidth">'."\n";
 
 $html .= <<<END
-<center>Thumbs of most active contributores
+<center><br>Thumbs of most active contributors<br>
 <br>
 <a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://camo.githubusercontent.com/a641a400eef38e00a93b572dcfc30d13ceaaeefbca951d09ed9189142d20cf62/68747470733a2f2f6f70656e636f6c6c6563746976652e636f6d2f646f6c69626172722f636f6e7472696275746f72732e7376673f77696474683d38393026627574746f6e3d66616c7365" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
 </center>
@@ -821,10 +821,11 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
-$title_security = ($project ? "[".$project."] " : "")."Last security issues";
+$title_security_short = "Last security issues";
+$title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";

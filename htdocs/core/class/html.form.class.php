@@ -4902,7 +4902,7 @@ class Form
 	 * @param string 	$selected 		Id account preselected
 	 * @param string 	$htmlname 		Name of select zone
 	 * @param int 		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
-	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param string 	$filtre 		To filter the list. This parameter must not come from input of users
 	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @param string 	$moreattrib 	To add more attribute on select
 	 * @param int 		$showcurrency 	Show currency in label
@@ -4913,7 +4913,7 @@ class Form
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		$out = '';
 
@@ -4926,7 +4926,7 @@ class Form
 		if ($status != 2) {
 			$sql .= " AND clos = " . (int) $status;
 		}
-		if ($filtre) {
+		if ($filtre) {	// TODO Support USF
 			$sql .= " AND " . $filtre;
 		}
 		$sql .= " ORDER BY label";
@@ -4983,19 +4983,19 @@ class Form
 	}
 
 	/**
-	 *  Return a HTML select list of establishment
+	 * Return a HTML select list of establishment
 	 *
-	 * @param string $selected Id establishment preselected
-	 * @param string $htmlname Name of select zone
-	 * @param int $status Status of searched establishment (0=open, 1=closed, 2=both)
-	 * @param string $filtre To filter list. This parameter must not come from input of users
-	 * @param int $useempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @param string $moreattrib To add more attribute on select
-	 * @return    int                            Return integer <0 if error, Num of establishment found if OK (0, 1, 2, ...)
+	 * @param 	string 	$selected 		Id establishment preselected
+	 * @param 	string 	$htmlname 		Name of select zone
+	 * @param 	int 	$status 		Status of searched establishment (0=open, 1=closed, 2=both)
+	 * @param 	string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param 	int 	$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param 	string 	$moreattrib 	To add more attribute on select
+	 * @return  int   					Return integer <0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
 	public function selectEstablishments($selected = '', $htmlname = 'entity', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$langs->load("admin");
 		$num = 0;
@@ -5006,7 +5006,7 @@ class Form
 		if ($status != 2) {
 			$sql .= " AND status = " . (int) $status;
 		}
-		if ($filtre) {
+		if ($filtre) {	// TODO Support USF
 			$sql .= " AND " . $filtre;
 		}
 		$sql .= " ORDER BY name";
@@ -5053,13 +5053,13 @@ class Form
 	}
 
 	/**
-	 *    Display form to select bank account
+	 * Display form to select bank account
 	 *
-	 * @param string $page Page
-	 * @param string $selected Id of bank account
-	 * @param string $htmlname Name of select html field
-	 * @param int $addempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @return    void
+	 * @param string 	$page 		Page
+	 * @param string 	$selected 	Id of bank account
+	 * @param string 	$htmlname 	Name of select html field
+	 * @param int 		$addempty 	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @return    					void
 	 */
 	public function formSelectAccount($page, $selected = '', $htmlname = 'fk_account', $addempty = 0)
 	{
@@ -5107,10 +5107,11 @@ class Form
 	 * @param 	int<0,3>			$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
+	 * @param	string				$useempty		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
-	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
+	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -5153,12 +5154,17 @@ class Form
 		$outarray = array();
 		$outarrayrichhtml = array();
 
-		$output = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
+
+		$output = '<select class="flat minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo)) {
+			$num = count($cate_arbo);
+
+			if (!$num) {
 				$output .= '<option value="-1" disabled>' . $langs->trans("NoCategoriesDefined") . '</option>';
 			} else {
-				$output .= '<option value="-1">&nbsp;</option>';
+				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
+					$output .= '<option value="-1">&nbsp;</option>';
+				}
 				foreach ($cate_arbo as $key => $value) {
 					if ($cate_arbo[$key]['id'] == $selected || ($selected === 'auto' && count($cate_arbo) == 1)) {
 						$add = 'selected ';
