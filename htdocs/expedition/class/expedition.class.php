@@ -2209,7 +2209,7 @@ class Expedition extends CommonObject
 	 */
 	public function setClosed()
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -2566,8 +2566,6 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
