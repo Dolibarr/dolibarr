@@ -506,7 +506,8 @@ class Expedition extends CommonObject
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
-		$expeditionline->fk_origin_line = $origin_line_id;
+		$expeditionline->fk_elementdet = $origin_line_id;
+		$expeditionline->element_type = $this->origin;
 		$expeditionline->qty = $qty;
 		$expeditionline->rang = $rang;
 		$expeditionline->array_options = $array_options;
@@ -910,7 +911,8 @@ class Expedition extends CommonObject
 
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
-		$line->fk_origin_line = $id;
+		$line->fk_elementdet = $id;
+		$line->element_type = 'order';
 		$line->qty = $qty;
 
 		$orderline = new OrderLine($this->db);
@@ -1030,7 +1032,7 @@ class Expedition extends CommonObject
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
-			$line->fk_origin_line = $dbatch['ix_l'];
+			$line->fk_elementdet = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch = $tab;
 
@@ -1230,7 +1232,7 @@ class Expedition extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-			$sql .= " AND cd.rowid = ed.fk_origin_line";
+			$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1430,7 +1432,7 @@ class Expedition extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-			$sql .= " AND cd.rowid = ed.fk_origin_line";
+			$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1599,14 +1601,14 @@ class Expedition extends CommonObject
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
-		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
+		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_elementdet, ed.element_type, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-		$sql .= " AND ed.fk_origin_line = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";		// We need after a break on fk_origin_line but when there is no break on fk_origin_line, cd.rang is same so we can add it as first order criteria.
+		$sql .= " AND ed.fk_elementdet = cd.rowid";
+		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1634,7 +1636,7 @@ class Expedition extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 
-				if ($originline > 0 && $originline == $obj->fk_origin_line) {
+				if ($originline > 0 && $originline == $obj->fk_elementdet) {
 					'@phan-var-force ExpeditionLigne $line';  // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
@@ -1655,8 +1657,9 @@ class Expedition extends CommonObject
 				$line->id               = $obj->line_id;
 
 				$line->fk_origin = 'orderline';
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line; // TODO deprecated
+				$line->fk_elementdet 	= $obj->fk_elementdet;
+				$line->origin_line_id 	= $obj->fk_elementdet; // TODO deprecated
+				$line->element_type 	= $obj->element_type;
 
 				$line->fk_expedition    = $this->id; // id of parent
 
@@ -1732,7 +1735,7 @@ class Expedition extends CommonObject
 				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
-				if ($originline != $obj->fk_origin_line) {
+				if ($originline != $obj->fk_elementdet) {
 					$line->detail_batch = array();
 				}
 
@@ -1741,7 +1744,7 @@ class Expedition extends CommonObject
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
-						if ($originline != $obj->fk_origin_line) {
+						if ($originline != $obj->fk_elementdet) {
 							$line->detail_batch = $newdetailbatch;
 						} else {
 							$line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
@@ -1751,7 +1754,7 @@ class Expedition extends CommonObject
 
 				$line->fetch_optionals();
 
-				if ($originline != $obj->fk_origin_line) {
+				if ($originline != $obj->fk_elementdet) {
 					$this->lines[$lineindex] = $line;
 					$lineindex++;
 				} else {
@@ -1763,7 +1766,7 @@ class Expedition extends CommonObject
 				}
 
 				$i++;
-				$originline = $obj->fk_origin_line;
+				$originline = $obj->fk_elementdet;
 			}
 			$this->db->free($resql);
 			return 1;
@@ -2312,7 +2315,7 @@ class Expedition extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expedition as e ON ed.fk_expedition = e.rowid";
 		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
-		$sql .= " AND cd.rowid = ed.fk_origin_line";
+		$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 		dol_syslog(get_class($this) . "::valid select details", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2473,7 +2476,7 @@ class Expedition extends CommonObject
 				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_origin_line";
+				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2629,7 +2632,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see $fk_origin_line
+	 * @see $fk_elementdet
 	 */
 	public $origin_line_id;
 
@@ -2641,9 +2644,16 @@ class ExpeditionLigne extends CommonObjectLine
 	public $fk_origin;			// Example: 'orderline'
 
 	/**
+	 * Type of source object
+	 *
+	 * @var string
+	 */
+	public $element_type;		// Example: 'order'
+
+	/**
 	 * @var int ID
 	 */
-	public $fk_origin_line;
+	public $fk_elementdet;
 
 	/**
 	 * @var int Id of shipment
@@ -2819,7 +2829,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -2828,7 +2838,8 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->id = $objp->rowid;
 			$this->fk_expedition = $objp->fk_expedition;
 			$this->entrepot_id = $objp->fk_entrepot;
-			$this->fk_origin_line = $objp->fk_origin_line;
+			$this->fk_elementdet = $objp->fk_elementdet;
+			$this->element_type = $objp->element_type;
 			$this->qty = $objp->qty;
 			$this->rang = $objp->rang;
 
@@ -2854,7 +2865,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$error = 0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || !is_numeric($this->qty)) {
+		if (empty($this->fk_expedition) || empty($this->fk_elementdet) || !is_numeric($this->qty)) {
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
@@ -2875,13 +2886,15 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
 		$sql .= "fk_expedition";
 		$sql .= ", fk_entrepot";
-		$sql .= ", fk_origin_line";
+		$sql .= ", fk_elementdet";
+		$sql .= ", element_type";
 		$sql .= ", qty";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
 		$sql .= $this->fk_expedition;
 		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ", ".((int) $this->fk_origin_line);
+		$sql .= ", ".((int) $this->fk_elementdet);
+		$sql .= ", ".(empty($this->element_type) ? 'order' : $this->element_type);
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $ranktouse);
 		$sql .= ")";
