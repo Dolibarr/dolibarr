@@ -138,6 +138,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $rights_class;
 
+	const KEY_ID = 0;
+	const KEY_LABEL = 1;
+	const KEY_TYPE = 2;	// deprecated
+	const KEY_DEFAULT = 3;
+	const KEY_FIRST_LEVEL = 4;
+	const KEY_SECOND_LEVEL = 5;
+	const KEY_MODULE = 6;
+	const KEY_ENABLED = 7;
+
 	/**
 	 * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
@@ -1899,24 +1908,24 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 				// TODO rights parameters with integer indexes are deprecated
-				// $this->rights[$key][0] = $this->rights[$key][Rights::KEY_ID]
-				// $this->rights[$key][1] = $this->rights[$key][Rights::KEY_LABEL]
-				// $this->rights[$key][3] = $this->rights[$key][Rights::KEY_DEFAULT]
-				// $this->rights[$key][4] = $this->rights[$key][Rights::KEY_FIRST_LEVEL]
-				// $this->rights[$key][5] = $this->rights[$key][Rights::KEY_SECOND_LEVEL]
+				// $this->rights[$key][0] = $this->rights[$key][self::KEY_ID]
+				// $this->rights[$key][1] = $this->rights[$key][self::KEY_LABEL]
+				// $this->rights[$key][3] = $this->rights[$key][self::KEY_DEFAULT]
+				// $this->rights[$key][4] = $this->rights[$key][self::KEY_FIRST_LEVEL]
+				// $this->rights[$key][5] = $this->rights[$key][self::KEY_SECOND_LEVEL]
 
 				// new parameters
-				// $this->rights[$key][Rights::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
-				// $this->rights[$key][Rights::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
+				// $this->rights[$key][self::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
+				// $this->rights[$key][self::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id = $this->rights[$key][Rights::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
-					$r_label = $this->rights[$key][Rights::KEY_LABEL];
-					$r_type	= $this->rights[$key][Rights::KEY_TYPE] ?? 'w';	// TODO deprecated
-					$r_default = $this->rights[$key][Rights::KEY_DEFAULT] ?? 0;
-					$r_perms = $this->rights[$key][Rights::KEY_FIRST_LEVEL] ?? '';
-					$r_subperms = $this->rights[$key][Rights::KEY_SECOND_LEVEL] ?? '';
+					$r_id = $this->rights[$key][self::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
+					$r_label = $this->rights[$key][self::KEY_LABEL];
+					$r_type	= $this->rights[$key][self::KEY_TYPE] ?? 'w';	// TODO deprecated
+					$r_default = $this->rights[$key][self::KEY_DEFAULT] ?? 0;
+					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
+					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
 
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
@@ -1929,15 +1938,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					// name of the module from which the right comes (default: empty means same module the permission is for)
 					$r_module_origin = '';
 
-					if (isset($this->rights[$key][Rights::KEY_MODULE])) {
+					if (isset($this->rights[$key][self::KEY_MODULE])) {
 						// name of the module to which the right must be applied
-						$r_module = $this->rights[$key][Rights::KEY_MODULE];
+						$r_module = $this->rights[$key][self::KEY_MODULE];
 						// name of the module from which the right comes
 						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 					}
 
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
-					$r_enabled	= $this->rights[$key][Rights::KEY_ENABLED] ?? '1';
+					$r_enabled	= $this->rights[$key][self::KEY_ENABLED] ?? '1';
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";

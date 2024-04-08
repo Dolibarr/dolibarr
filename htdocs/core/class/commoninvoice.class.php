@@ -745,6 +745,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . 'c_invoice_subtype';
 		$sql .= " WHERE active = 1 AND fk_country = ".((int) $mysoc->country_id)." AND entity IN(".getEntity('c_invoice_subtype').")";
 		$sql .= " ORDER by rowid, code";
+
 		dol_syslog(get_class($this) . '::getArrayOfInvoiceSubtypes', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {

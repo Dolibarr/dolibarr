@@ -89,109 +89,109 @@ class modUser extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 251;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Read information of other users, groups and permissions';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'lire';
+		$this->rights[$r][self::KEY_ID] = 251;
+		$this->rights[$r][self::KEY_LABEL] = 'Read information of other users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'lire';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 252;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Read permissions of other users';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 252;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 253;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Create/modify internal and external users, groups and permissions';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 253;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify internal and external users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 254;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Create/modify external users only';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'write';
+		$this->rights[$r][self::KEY_ID] = 254;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify external users only';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 255;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Modify the password of other users';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'password';
+		$this->rights[$r][self::KEY_ID] = 255;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify the password of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 256;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Delete or disable other users';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'supprimer';
+		$this->rights[$r][self::KEY_ID] = 256;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete or disable other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 341;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Read its own permissions';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 341;
+		$this->rights[$r][self::KEY_LABEL] = 'Read its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 342;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Create/modify of its own user';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'self';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 342;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify of its own user';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 343;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Modify its own password';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'self';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'password';
+		$this->rights[$r][self::KEY_ID] = 343;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own password';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 344;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Modify its own permissions';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'writeperms';
+		$this->rights[$r][self::KEY_ID] = 344;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'writeperms';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 351;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Read groups';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'read';
+		$this->rights[$r][self::KEY_ID] = 351;
+		$this->rights[$r][self::KEY_LABEL] = 'Read groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'read';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 352;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Read permissions of groups';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 352;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 353;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Create/modify groups and permissions';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'write';
+		$this->rights[$r][self::KEY_ID] = 353;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 354;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Delete groups';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'delete';
+		$this->rights[$r][self::KEY_ID] = 354;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'delete';
 
 		$r++;
-		$this->rights[$r][Rights::KEY_ID] = 358;
-		$this->rights[$r][Rights::KEY_LABEL] = 'Export all users';
-		$this->rights[$r][Rights::KEY_DEFAULT] = 0;
-		$this->rights[$r][Rights::KEY_FIRST_LEVEL] = 'user';
-		$this->rights[$r][Rights::KEY_SECOND_LEVEL] = 'export';
+		$this->rights[$r][self::KEY_ID] = 358;
+		$this->rights[$r][self::KEY_LABEL] = 'Export all users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'export';
 
 
 		// Menus
