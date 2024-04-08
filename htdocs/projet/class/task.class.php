@@ -2628,29 +2628,6 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			// Move links
-			if (!$error) {
-				$objects = array();
-
-				//First, all core objects must update their tables
-				foreach ($objects as $object_name => $object_file) {
-					if (is_array($object_file)) {
-						if (empty($object_file['enabled'])) {
-							continue;
-						}
-						$object_file = $object_file['file'];
-					}
-
-					require_once DOL_DOCUMENT_ROOT.$object_file;
-
-					if (!$error && !$object_name::replaceThirdparty($this->db, $task_origin->id, $this->id)) {
-						$error++;
-						$this->error = $this->db->lasterror();
-						break;
-					}
-				}
-			}
-
 			// External modules should update their ones too
 			if (!$error) {
 				$parameters = array('task_origin' => $task_origin->id, 'task_dest' => $this->id);
