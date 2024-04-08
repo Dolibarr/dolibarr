@@ -702,10 +702,10 @@ class ExtraFields
 					$sql = '';
 					if ($unique) {
 						dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->escape($attrname)." (".$this->db->escape($attrname).")";
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->escape($attrname);
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -943,7 +943,7 @@ class ExtraFields
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
 		if ($attrname && $elementtype && $elementtype != 'all') {
-			$sql .= " AND name = '".((string) $attrname)."'";
+			$sql .= " AND name = '".$this->db->escape($attrname)."'";
 		}
 		$sql .= " ORDER BY pos";
 
