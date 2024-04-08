@@ -778,7 +778,9 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				$trackid = 'leav'.$object->id;
 
-				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+				$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+
+				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
 
 				// Sending the email
 				$result = $mail->sendfile();
