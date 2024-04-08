@@ -865,7 +865,7 @@ class ExtraFields
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
 		if ($attrname && $elementtype && $elementtype != 'all') {
-			$sql .= " AND name = '".((string) $attrname)."'";
+			$sql .= " AND name = '".$this->db->escape($attrname)."'";
 		}
 		$sql .= " ORDER BY pos";
 
