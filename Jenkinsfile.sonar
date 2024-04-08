@@ -32,6 +32,19 @@ pipeline {
         checkout scm
       }
     }
+
+   stage(phpstan_scan){
+      steps{
+        container('phpstan'){
+          script{
+            // Create directory for reports
+            sh "mkdir -p test-reports"
+            // Run PHPStan inside PHPStan container
+            sh "phpstan -vvv analyse --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
+          }
+        }
+      }
+    }
     stage('SonarQube Analysis') {
       environment {
              SONAR_SCANNER_OPTS = "-Xmx512m"
@@ -47,17 +60,6 @@ pipeline {
         }
       }
     }
-    stage(phpstan_scan){
-      steps{
-        container('phpstan'){
-          script{
-            // Create directory for reports
-            sh "mkdir -p test-reports"
-            // Run PHPStan using Docker
-            sh "docker run --rm -v $PWD:/htdocs phpstan analyse /htdocs --level=max > test-reports/phpstan-report.json"
-          }
-        }
-      }
-    }
+    
   }
 }
