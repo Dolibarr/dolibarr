@@ -10,19 +10,7 @@ pipeline {
             image: iyedbnaissa/phpstan:4
             command:
             - cat
-            tty: true
-          - name: docker
-            image: docker:latest
-            command:
-            - cat
-            tty: true
-            volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
-          volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock    
+            tty: true   
         '''
     }
   }
@@ -40,7 +28,7 @@ pipeline {
             // Create directory for reports
             sh "mkdir -p test-reports"
             // Run PHPStan inside PHPStan container
-            sh "phpstan -vvv analyse --error-format=json --xdebug -a build/phpstan/bootstrap_action.php --config phpstan.neon.dist > test-reports/phpstan-report.json"
+            sh "phpstan -vvv analyse --error-format=json --xdebug -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
         }
       }
