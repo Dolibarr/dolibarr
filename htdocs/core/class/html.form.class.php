@@ -4982,7 +4982,6 @@ class Form
 		return $num;
 	}
 
-
 	/**
 	 *  Return a HTML select list of establishment
 	 *
