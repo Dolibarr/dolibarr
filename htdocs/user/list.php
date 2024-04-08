@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

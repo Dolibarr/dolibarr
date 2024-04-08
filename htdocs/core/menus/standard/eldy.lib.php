@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2010-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2024	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2015	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
+ * Copyright (C) 2019-2021	Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
