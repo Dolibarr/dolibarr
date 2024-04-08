@@ -8040,7 +8040,8 @@ class Form
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
-
+			$objectdesc = '';
+						   
 			// Load object according to $id and $element
 			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
 
