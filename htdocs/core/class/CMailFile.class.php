@@ -188,9 +188,8 @@ class CMailFile
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
 	 *  @param	string	$in_reply_to		 Message-ID of the message we reply to
 	 *  @param	string	$references			 String with list of Message-ID of the thread ('<123> <456> ...')
-	 *	@param	int		$autocopyTo			'main', 'commercial', 'HMR'... (used to define which [__]_MAIL_AUTOCOPY_TO to use)
 	 */
-	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '', $in_reply_to = '', $references = '', $autocopyTo = 'main')
+	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '', $in_reply_to = '', $references = '')
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
@@ -353,9 +352,8 @@ class CMailFile
 
 		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
 		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
-		$MAIL_AUTOCOPY_TO = getDolGlobalString(strtoupper($autocopyTo).'_MAIL_AUTOCOPY_TO');
-		if ($MAIL_AUTOCOPY_TO) {
-			$listofemailstoadd = explode(',', $MAIL_AUTOCOPY_TO);
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
+			$listofemailstoadd = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
 			foreach ($listofemailstoadd as $key => $val) {
 				$emailtoadd = $listofemailstoadd[$key];
 				if (trim($emailtoadd) == '__USER_EMAIL__') {
