@@ -4957,6 +4957,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("UserCreation", 0, $_SERVER['PHP_SELF'], 'fk_user_creat', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -4969,21 +4971,37 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 			foreach ($listofpages['list'] as $answerrecord) {
 				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
 
 					// Type of container
-					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
-					print $langs->trans($answerrecord->type_container); // TODO Use label of container
+					print '<td class="nowraponall">';
+					//print $langs->trans("Container").'<br>';
+					if (!empty($conf->cache['type_of_container'][$answerrecord->type_container])) {
+						print $langs->trans($conf->cache['type_of_container'][$answerrecord->type_container]);
+					} else {
+						print $langs->trans($answerrecord->type_container);
+					}
 					print '</td>';
 
 					// Container url and label
-					print '<td>';
+					$titleofpage = ($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle"));
+					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($titleofpage).'">';
 					print $answerrecord->getNomUrl(1);
-					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
+					print ' <span class="opacitymedium">('.dol_escape_htmltag($titleofpage).')</span>';
 					//print '</td>';
 					//print '<td class="tdoverflow100">';
 					print '<br>';
-					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
+					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : '&nbsp;').'</span>';
 					print '</td>';
 
 					// Categories - Tags
@@ -5001,17 +5019,6 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					//var_dump($existing);
 					print '</td>';
 
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
-
 					// Language
 					print '<td class="center">';
 					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
@@ -5026,6 +5033,25 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						print $nbofwords.' '.$langs->trans("words");
 						$totalnbwords += $nbofwords;
 					}
+					print '</td>';
+
+					// Author
+					print '<td class="tdoverflowmax125">';
+					if (!empty($answerrecord->fk_user_creat)) {
+						if (empty($conf->cache['user'][$answerrecord->fk_user_creat])) {
+							$tmpuser = new User($db);
+							$tmpuser->fetch($answerrecord->fk_user_creat);
+							$conf->cache['user'][$answerrecord->fk_user_creat] = $tmpuser;
+						} else {
+							$tmpuser = $conf->cache['user'][$answerrecord->fk_user_creat];
+						}
+						print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
+					}
+					print '</td>';
+
+					// Date creation
+					print '<td class="center nowraponall">';
+					print dol_print_date($answerrecord->date_creation, 'dayhour');
 					print '</td>';
 
 					// Date last modification
@@ -5071,6 +5097,16 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 					print '</tr>';
 				} else {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
 
 					// Type of container
@@ -5084,22 +5120,14 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						'website_readme' => 'WEBSITE_README',
 						'website_manifestjson' => 'WEBSITE_MANIFEST_JSON'
 					);
+					print '<span class="opacitymedium">';
 					if (!empty($translateofrecordtype[$answerrecord['type']])) {
 						print $langs->trans($translateofrecordtype[$answerrecord['type']]);
 					} else {
 						print $answerrecord['type'];
 					}
+					print '</span>';
 					print '</td>';
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
 
 					// Container url and label
 					print '<td>';
