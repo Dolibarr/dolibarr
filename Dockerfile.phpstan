@@ -1,0 +1,23 @@
+# Use the official PHP 8.2 image as the base image
+FROM php:8.2
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install dependencies required by PHPStan
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        unzip \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and install PHPStan
+RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
+    chmod +x /usr/local/bin/phpstan
+
+# Set the entry point to PHPStan
+ENTRYPOINT ["phpstan"]
+
+# Set the default command for the container
+CMD ["--version"]
