@@ -51,7 +51,8 @@ class Entrepot extends CommonObject
 	public $picto = 'stock';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 

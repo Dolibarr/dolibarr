@@ -73,7 +73,7 @@ class Contacts extends DolibarrApi
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		if ($id === 0) {
@@ -121,7 +121,7 @@ class Contacts extends DolibarrApi
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		if (empty($email)) {
@@ -179,7 +179,7 @@ class Contacts extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -280,7 +280,7 @@ class Contacts extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'No permission to create/update contacts');
+			throw new RestException(403, 'No permission to create/update contacts');
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -319,7 +319,7 @@ class Contacts extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'No permission to create/update contacts');
+			throw new RestException(403, 'No permission to create/update contacts');
 		}
 
 		$result = $this->contact->fetch($id);
@@ -370,7 +370,7 @@ class Contacts extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'supprimer')) {
-			throw new RestException(401, 'No permission to delete contacts');
+			throw new RestException(403, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);
 		if (!$result) {
@@ -484,7 +484,7 @@ class Contacts extends DolibarrApi
 	public function addCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'Insufficient rights');
+			throw new RestException(403, 'Insufficient rights');
 		}
 
 		$result = $this->contact->fetch($id);
@@ -524,7 +524,7 @@ class Contacts extends DolibarrApi
 	public function deleteCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'Insufficient rights');
+			throw new RestException(403, 'Insufficient rights');
 		}
 
 		$result = $this->contact->fetch($id);

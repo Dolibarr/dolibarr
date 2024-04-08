@@ -9,7 +9,6 @@ MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos finalizados
 MenuDoneMyActions=Mis eventos finalizados
 ActionsAskedBy=Eventos reportados por
-ActionsDoneBy=Eventos terminados por
 ViewCal=Vista del mes
 ViewDay=Vista del día
 ViewWeek=Vista de la semana

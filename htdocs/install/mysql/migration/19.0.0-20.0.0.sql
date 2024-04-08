@@ -285,6 +285,9 @@ ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
+ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
+ALTER TABLE llx_expeditiondet DROP INDEX idx_expeditiondet_fk_origin_line;
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elementdet);
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
@@ -292,3 +295,9 @@ ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementd
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
 ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
+
+-- bookcal
+ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
+ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;

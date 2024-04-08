@@ -164,7 +164,7 @@ if ($action == 'order' && GETPOST('valid')) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$productsupplier = new ProductFournisseur($db);
 		for ($i = 0; $i < $linecount; $i++) {
-			if (GETPOSTINT('choose'.$i) === 'on' && GETPOSTINT('fourn'.$i) > 0) {
+			if (GETPOST('choose'.$i) === 'on' && GETPOSTINT('fourn'.$i) > 0) {
 				//one line
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
@@ -431,7 +431,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
-		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity(getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
+		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_elementdet AND e2.entity IN (".getEntity(getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
 		$sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
 		$sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
 		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";

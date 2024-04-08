@@ -2654,8 +2654,8 @@ img.hideonsmartphone.pictoactionview {
 }
 
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
-	width: 21px;
+	text-align: start;
+	width: 20px;
 	/* padding-right: 0; */
 }
 
@@ -3258,6 +3258,13 @@ div.login_block {
 div.login_block a {
 	color: var(--colortexthmenu);
 	display: inline-block;
+}
+div.login_block a .atoploginusername {
+	color: var(--colortextbackhmenu);
+	display: inline-block;
+	overflow: hidden;
+	max-width: 50px;
+	text-overflow: ellipsis;
 }
 div.login_block span.aversion {
 	color: var(--colortexthmenu);

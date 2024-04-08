@@ -2282,8 +2282,6 @@ class Task extends CommonObjectLine
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf;
-
 		$outputlangs->load("projects");
 
 		if (!dol_strlen($modele)) {

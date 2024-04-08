@@ -2536,9 +2536,10 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 21px;
+	width: 20px;
 	/* padding-right: 0; */
 }
+
 
 .colorthumb {
 	padding-left: 1px !important;
@@ -3167,6 +3168,12 @@ div.login_block {
 div.login_block a {
 	color: var(--colortextbackhmenu);
 	display: inline-block;
+}
+div.login_block a .atoploginusername {
+	display: inline-block;
+	overflow: hidden;
+	max-width: 60px;
+	text-overflow: ellipsis;
 }
 div.login_block span.aversion {
 	color: var(--colortextbackhmenu);

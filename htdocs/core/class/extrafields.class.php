@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>}> New array to store extrafields definition
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes;
 
@@ -201,7 +201,7 @@ class ExtraFields
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return int      	           		Return integer <=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = '255', $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = array(), $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
+	private function create($attrname, $type = 'varchar', $length = '255', $elementtype = '', $unique = 0, $required = 0, $default_value = '', $param = array(), $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -305,7 +305,7 @@ class ExtraFields
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -437,7 +437,7 @@ class ExtraFields
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @return int              		Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	public function delete($attrname, $elementtype = 'member')
+	public function delete($attrname, $elementtype = '')
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -495,7 +495,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @return int              			Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	private function delete_label($attrname, $elementtype = 'member')
+	private function delete_label($attrname, $elementtype = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -593,6 +593,7 @@ class ExtraFields
 				$lengthdb = '255';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
+				$lengthdb = $length;
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
@@ -823,16 +824,16 @@ class ExtraFields
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load the array of extrafields definition $this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
-	 * 	@return	array							Array of attributes keys+label for all extra fields.
+	 *  @param  string		$attrname           The name of the attribute.
+	 *  @return array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		Array of attributes keys+label for all extra fields.  Note: count set as present to avoid static analysis notices
 	 */
-	public function fetch_name_optionals_label($elementtype, $forceload = false)
+	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -864,6 +865,9 @@ class ExtraFields
 		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
+		if ($attrname && $elementtype && $elementtype != 'all') {
+			$sql .= " AND name = '".$this->db->escape($attrname)."'";
+		}
 		$sql .= " ORDER BY pos";
 
 		$resql = $this->db->query($sql);
@@ -883,6 +887,7 @@ class ExtraFields
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
 					}
+
 
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
 					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
@@ -1629,11 +1634,16 @@ class ExtraFields
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate $outputlangs 			Output language
 	 * @return	string							Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null)
 	{
 		global $conf, $langs;
+
+		if (is_null($outputlangs) || !is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 
 		if (empty($extrafieldsobjectkey)) {
 			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
@@ -1683,7 +1693,7 @@ class ExtraFields
 				//$value=price($value);
 				$sizeparts = explode(",", $size);
 				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
-				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
+				$value = price($value, 0, $outputlangs, 0, 0, $number_decimals, '');
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -1708,7 +1718,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
+				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
@@ -1719,7 +1729,7 @@ class ExtraFields
 				$value = $pricetmp[0];
 			}
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -1727,7 +1737,7 @@ class ExtraFields
 				$valstr = substr($valstr, 0, $pos);
 			}
 			if ($langfile && $valstr) {
-				$value = $langs->trans($valstr);
+				$value = $outputlangs->trans($valstr);
 			} else {
 				$value = $valstr;
 			}
@@ -1786,12 +1796,12 @@ class ExtraFields
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
 							if (!empty($obj->$field_toshow)) {
-								$translabel = $langs->trans($obj->$field_toshow);
+								$translabel = $outputlangs->trans($obj->$field_toshow);
 
 								if ($translabel != $obj->$field_toshow) {
-									$value .= dol_trunc($translabel, 24).' ';
+									$value .= dol_trunc($translabel, 24) . ' ';
 								} else {
-									$value .= $obj->$field_toshow.' ';
+									$value .= $obj->$field_toshow . ' ';
 								}
 							}
 						}
@@ -1800,7 +1810,7 @@ class ExtraFields
 						$tmppropname = $InfoFieldList[1];
 						//$obj->$tmppropname = '';
 						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
-							$translabel = $langs->trans($obj->$tmppropname);
+							$translabel = $outputlangs->trans($obj->$tmppropname);
 						}
 						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
@@ -1829,10 +1839,10 @@ class ExtraFields
 			}
 		} elseif ($type == 'radio') {
 			if (!isset($param['options'][$value])) {
-				$langs->load('errors');
-				$value = $langs->trans('ErrorNoValueForRadioType');
+				$outputlangs->load('errors');
+				$value = $outputlangs->trans('ErrorNoValueForRadioType');
 			} else {
-				$value = $langs->trans($param['options'][$value]);
+				$value = $outputlangs->trans($param['options'][$value]);
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
@@ -1896,7 +1906,7 @@ class ExtraFields
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
-										$translabel = $langs->trans($obj->$field_toshow);
+										$translabel = $outputlangs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
 										$label .= ' '.dol_trunc($translabel, 18);
@@ -1909,7 +1919,7 @@ class ExtraFields
 							} else {
 								$translabel = '';
 								if (!empty($obj->{$InfoFieldList[1]})) {
-									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+									$translabel = $outputlangs->trans($obj->{$InfoFieldList[1]});
 								}
 								if ($translabel != $obj->{$InfoFieldList[1]}) {
 									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';

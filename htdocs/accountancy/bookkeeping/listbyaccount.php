@@ -1295,7 +1295,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['t.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">'.dol_escape_htmltag($line->import_key)."</td>\n";
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($line->import_key).'">'.dol_escape_htmltag($line->import_key)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
