@@ -1710,7 +1710,7 @@ while ($i < $imaxinloop) {
 
 		// Barcode
 		if (!empty($arrayfields['p.barcode']['checked'])) {
-			print '<td>'.$product_static->barcode.'</td>';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($product_static->barcode).'">'.dol_escape_htmltag($product_static->barcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

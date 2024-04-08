@@ -261,7 +261,6 @@ foreach ($output_arrglpu as $val) {
 	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
-		$alreadyfoundtitle = '';
 		foreach ($arrayofalerts as $val) {
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
@@ -280,7 +279,7 @@ foreach ($output_arrglpu as $val) {
 			}
 			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
 				$alreadyfound = 'title';
-				$alreadyfoundtitle = $val['title'];
+				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
 		}
