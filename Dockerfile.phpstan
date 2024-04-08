@@ -11,7 +11,8 @@ RUN apt-get update && \
         unzip \
         && \
     rm -rf /var/lib/apt/lists/*
-
+RUN wget -qO - https://getcomposer.org/installer | php
+RUN mv composer.phar /usr/bin/composer
 # Download and install PHPStan
 RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
     chmod +x /usr/local/bin/phpstan
