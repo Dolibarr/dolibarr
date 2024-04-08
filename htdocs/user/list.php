@@ -198,7 +198,7 @@ if ($contextpage == 'employeelist' && !GETPOSTISSET('search_employee')) {
 }
 
 // Define value to know what current user can do on users
-$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoadd = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
 $canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
 $canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 $candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
