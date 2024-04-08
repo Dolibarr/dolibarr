@@ -37,6 +37,7 @@ The following changes may create regressions for some external modules, but were
 * Removed trigger BILLREC_CREATEBILL. This trigger was not a CRUD event. If you used it, you can already use the trigger BILL_CREATE and
   test that ($object->fac_rec > 0) to know if creation trigger is from a recurring invoice or not. Also this old trigger was never enabled
   into table llx_c_action_trigger.
+* Renamings in expedition line table and class, fk_origin_line is now fk_elementdet in table and class.
 
 
 
