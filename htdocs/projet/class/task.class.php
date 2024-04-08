@@ -2586,10 +2586,6 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			if ($this->typent_id == -1) {
-				$this->typent_id = $task_origin->typent_id;
-			}
-
 			// Concat some data
 			$listofproperties = array(
 				'note_public', 'note_private'
