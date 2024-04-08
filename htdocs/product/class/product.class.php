@@ -590,7 +590,7 @@ class Product extends CommonObject
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
 		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 15, 'csslist' => 'tdoverflowmax250'),
-		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3),
+		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
 		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61),
 		'note'          => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62),
@@ -856,10 +856,10 @@ class Product extends CommonObject
 					$sql .= ", ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 					$sql .= ", ".((int) $user->id);
 					$sql .= ", ".((int) $this->type);
-					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".price2num($price_ht, 'MT');
 					$sql .= ", ".price2num($price_ttc, 'MT');
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
+					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".((int) $this->status);
 					$sql .= ", ".((int) $this->status_buy);
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -3422,7 +3422,7 @@ class Product extends CommonObject
 		$sql .= " AND c.rowid = cd.fk_commande";
 		$sql .= " AND e.fk_soc = s.rowid";
 		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
-		$sql .= " AND ed.fk_origin_line = cd.rowid";
+		$sql .= " AND ed.fk_elementdet = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

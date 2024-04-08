@@ -630,13 +630,13 @@ if ($action == 'edit') {
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
-	print '"></td></tr>';
+	print '<td><input class="flat width300" name="MAIN_MAIL_ERRORS_TO" value="'.getDolGlobalString('MAIN_MAIL_ERRORS_TO').'">';
+	print '</td></tr>';
 
 	// Autocopy to
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO') ? $conf->global->MAIN_MAIL_AUTOCOPY_TO : '');
-	print '"></td></tr>';
+	print '<td><input class="flat width300" name="MAIN_MAIL_AUTOCOPY_TO" value="'.getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO').'">';
+	print '</td></tr>';
 
 	// Add user to select destinaries list
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';

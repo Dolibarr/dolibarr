@@ -261,7 +261,6 @@ foreach ($output_arrglpu as $val) {
 	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
-		$alreadyfoundtitle = '';
 		foreach ($arrayofalerts as $val) {
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
@@ -280,7 +279,7 @@ foreach ($output_arrglpu as $val) {
 			}
 			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
 				$alreadyfound = 'title';
-				$alreadyfoundtitle = $val['title'];
+				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
 		}
@@ -615,10 +614,27 @@ $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Code'
 //$html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
+
 $html .= '</div>';
 $html .= '</div>';
 
+// OSSINSIGHT graph
+$html .= <<<END
+<br>
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Lines of Code Changes of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
+
 $html .= '</section>'."\n";
+
 
 
 // Contributions
@@ -628,7 +644,32 @@ $html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributions</h
 
 $html .= '<div class="boxallwidth">'."\n";
 
-$html .= 'TODO...';
+$html .= <<<END
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Pushes and Commits of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+
+
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+    <img alt="Pull Request Size of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+  </picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+
+END;
+
 
 $html .= '<!-- ';
 foreach ($output_arrglpu as $line) {
@@ -641,14 +682,49 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// Contributors
+// Community - Contributors
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2><span class="fas fa-user pictofixedwidth"></span>Contributors</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 
-$html .= 'TODO...';
+$html .= <<<END
+<center><br>Thumbs of most active contributors<br>
+<br>
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://camo.githubusercontent.com/a641a400eef38e00a93b572dcfc30d13ceaaeefbca951d09ed9189142d20cf62/68747470733a2f2f6f70656e636f6c6c6563746976652e636f6d2f646f6c69626172722f636f6e7472696275746f72732e7376673f77696474683d38393026627574746f6e3d66616c7365" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
+</center>
+<br>
+END;
+
+/*
+$html .= <<<END
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/compose-contributors?repo_id=1957456&limit=200" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-contributors/thumbnail.png?repo_id=1957456&limit=200&image_size=auto&color_scheme=dark" width="655" height="auto">
+<img alt="Contributors of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/compose-contributors/thumbnail.png?repo_id=1957456&limit=200&image_size=auto&color_scheme=light" width="655" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
+*/
+
+$html .= <<<END
+<br>
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Star History of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
 
 $html .= '</div>';
 
@@ -745,10 +821,11 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
-$title_security = ($project ? "[".$project."] " : "")."Last security issues";
+$title_security_short = "Last security issues";
+$title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
