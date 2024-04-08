@@ -159,10 +159,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		//if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// TODO
-		//	return 0.0;
-		//}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
