@@ -1,0 +1,15 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
+
+parameters:
+    tmpDir: var/cache/phpstan
+    level: max
+    
+    # Directories to analyze
+    paths:
+        - ./htdocs
+    
+    # Directories to exclude from analysis
+    excludePaths:
+        - ./htdocs/langs
