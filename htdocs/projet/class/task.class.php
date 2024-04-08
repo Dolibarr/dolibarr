@@ -2595,7 +2595,7 @@ class Task extends CommonObjectLine
 			}
 
 			// Merge extrafields
-			if (is_array($task_origin->array_options)) {
+			if (!empty($task_origin->array_options) && is_array($task_origin->array_options)) {
 				foreach ($task_origin->array_options as $key => $val) {
 					if (empty($this->array_options[$key])) {
 						$this->array_options[$key] = $val;
