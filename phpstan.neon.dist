@@ -1,5 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
+
 parameters:
-	tmpDir: ./.github/tmp
+	tmpDir: var/cache/phpstan
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines
@@ -9,7 +13,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 2
+	level: 3
 	fileExtensions:
 		- php
 	paths:
