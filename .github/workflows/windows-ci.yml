@@ -29,7 +29,11 @@ jobs:
   win-test:
     strategy:
       matrix:
-        os: [windows-latest]
+        config:
+          # - {os: windows-latest}
+          # - {os: windows-latest, r: '4.1'}
+          # Fixed version to avoid mariadb installation issue
+          - {os: windows-latest, r: '4.2'}
         # php_version: [7.4, 8.0]  # Add more versions if needed
         php_version: [7.4]  # Add more versions if needed
     runs-on: ${{ matrix.os }}
