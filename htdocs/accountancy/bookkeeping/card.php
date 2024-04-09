@@ -90,6 +90,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+$permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+
 
 /*
  * Actions
@@ -106,7 +108,7 @@ if (empty($reshook)) {
 		exit;
 	}
 
-	if ($action == "confirm_update") {
+	if ($action == "confirm_update" && $permissiontoadd) {
 		$error = 0;
 
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
@@ -162,7 +164,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == "add") {
+	} elseif ($action == "add" && $permissiontoadd) {
 		$error = 0;
 
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
@@ -221,7 +223,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} elseif ($action == "confirm_delete") {
+	} elseif ($action == "confirm_delete" && $permissiontoadd) {
 		$object = new BookKeeping($db);
 
 		$result = $object->fetch($id, null, $mode);
@@ -238,7 +240,7 @@ if (empty($reshook)) {
 			}
 		}
 		$action = '';
-	} elseif ($action == "confirm_create") {
+	} elseif ($action == "confirm_create" && $permissiontoadd) {
 		$error = 0;
 
 		$object = new BookKeeping($db);
@@ -287,7 +289,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdate') {
+	if ($action == 'setdate' && $permissiontoadd) {
 		$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
 		$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
 		if ($result < 0) {
@@ -300,7 +302,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setjournal') {
+	if ($action == 'setjournal' && $permissiontoadd) {
 		$result = $object->updateByMvt($piece_num, 'code_journal', $journal_code, $mode);
 		$result = $object->updateByMvt($piece_num, 'journal_label', $journal_label, $mode);
 		if ($result < 0) {
@@ -313,7 +315,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdocref') {
+	if ($action == 'setdocref' && $permissiontoadd) {
 		$refdoc = GETPOST('doc_ref', 'alpha');
 		$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 		if ($result < 0) {
@@ -327,7 +329,7 @@ if (empty($reshook)) {
 	}
 
 	// Validate transaction
-	if ($action == 'valid') {
+	if ($action == 'valid' && $permissiontoadd) {
 		$result = $object->transformTransaction(0, $piece_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -338,9 +340,12 @@ if (empty($reshook)) {
 	}
 }
 
+
+
 /*
  * View
  */
+
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
@@ -460,12 +465,16 @@ if ($action == 'create') {
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+			print '<td class="right">';
+			if ($permissiontoadd) {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode((string) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a>';
+			}
+			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
-			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
@@ -487,12 +496,16 @@ if ($action == 'create') {
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right">';
+			if ($permissiontoadd) {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode((string) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+			}
+			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
-			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
@@ -514,12 +527,16 @@ if ($action == 'create') {
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right">';
+			if ($permissiontoadd) {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode((string) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+			}
+			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
-			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
@@ -692,20 +709,20 @@ if ($action == 'create') {
 				}
 
 				foreach ($object->linesmvt as $line) {
-					print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
+						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// Also, it is not possible to use a value that is not in the list.
-						// Also, the label is not automatically filled when a value is selected.
+						// - It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+						// - Also, it is not possible to use a value that is not in the list.
+						// - Also, the label is not automatically filled when a value is selected.
 						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
@@ -715,14 +732,16 @@ if ($action == 'create') {
 						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
+						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
+						print '<td class="right"><input type="text" class="right width50" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
+						print "</tr>\n";
 					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
-						if ($action == "" || $action == 'add') {
+						if (($action == "" || $action == 'add') && $permissiontoadd) {
+							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';
 							print '<td>';
 							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
@@ -739,24 +758,26 @@ if ($action == 'create') {
 							}
 							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
-							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
+							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';
+							print '<td class="right"><input type="text" class="right width50" name="credit" value=""/></td>';
 							print '<td class="center"><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '"></td>';
+							print "</tr>\n";
 						}
 					} else {
+						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in display mode -->';
 						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
 							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 						} else {
-							print $line->numero_compte.' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
+							print dol_escape_htmltag($line->numero_compte).' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
 						}
 						print '</td>';
 						print '<td>'.length_accounta($line->subledger_account);
 						if ($line->subledger_label) {
-							print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
+							print ' - <span class="opacitymedium">'.dol_escape_htmltag($line->subledger_label).'</span>';
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
@@ -764,34 +785,35 @@ if ($action == 'create') {
 						print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 						print '<td class="center nowraponall">';
-						if (empty($line->date_export) && empty($line->date_validation)) {
-							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
-							print img_edit('', 0, 'class="marginrightonly"');
-							print '</a> &nbsp;';
-						} else {
-							print '<a class="editfielda nohover cursornotallowed reposition disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
-							print img_edit($langs->trans("ForbiddenTransactionAlreadyExported"), 0, 'class="marginrightonly"');
-							print '</a> &nbsp;';
-						}
-
-						if (empty($line->date_validation)) {
-							$actiontodelete = 'delete';
-							if ($mode == '_tmp' || $action != 'delmouv') {
-								$actiontodelete = 'confirm_delete';
+						if ($permissiontoadd) {
+							if (empty($line->date_export) && empty($line->date_validation)) {
+								print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode((string) $mode) . '&token=' . urlencode(newToken()) . '">';
+								print img_edit('', 0, 'class="marginrightonly"');
+								print '</a> &nbsp;';
+							} else {
+								print '<a class="editfielda nohover cursornotallowed reposition disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+								print img_edit($langs->trans("ForbiddenTransactionAlreadyExported"), 0, 'class="marginrightonly"');
+								print '</a> &nbsp;';
 							}
 
-							print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
-							print img_delete();
-							print '</a>';
-						} else {
-							print '<a class="editfielda nohover cursornotallowed disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
-							print img_delete($langs->trans("ForbiddenTransactionAlreadyValidated"));
-							print '</a>';
-						}
+							if (empty($line->date_validation)) {
+								$actiontodelete = 'delete';
+								if ($mode == '_tmp' || $action != 'delmouv') {
+									$actiontodelete = 'confirm_delete';
+								}
 
+								print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode((string) $mode) . '&token=' . urlencode(newToken()) . '">';
+								print img_delete();
+								print '</a>';
+							} else {
+								print '<a class="editfielda nohover cursornotallowed disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+								print img_delete($langs->trans("ForbiddenTransactionAlreadyValidated"));
+								print '</a>';
+							}
+						}
 						print '</td>';
+						print "</tr>\n";
 					}
-					print "</tr>\n";
 				}
 
 				$total_debit = price2num($total_debit, 'MT');
@@ -804,7 +826,7 @@ if ($action == 'create') {
 				print '</table>';
 				print '</div>';
 
-				if ($mode == '_tmp' && $action == '') {
+				if ($mode == '_tmp' && $action == '' && $permissiontoadd) {
 					print '<br>';
 					print '<div class="center">';
 					if ($total_debit == $total_credit) {

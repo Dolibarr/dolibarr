@@ -1755,7 +1755,7 @@ if ($action == 'create') {
 		// Payment mode
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
+		$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOSTINT('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
 		print '</td></tr>';
 
 		// Planned delivery date
