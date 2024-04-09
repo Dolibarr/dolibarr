@@ -364,6 +364,7 @@ if ($mode == 'future') {
 	$stocklabel = $langs->trans("VirtualStockAtDate");
 }
 
+// TODO Move this action into a separated files: We should not mix output with MIME type HTML and MIME type CSV in the same file.
 if ($ext == 'csv') {
 	header("Content-Type: text/csv");
 	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d", $date):'').".csv");
