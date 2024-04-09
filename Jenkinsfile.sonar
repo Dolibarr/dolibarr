@@ -11,19 +11,6 @@ pipeline {
             command:
               - cat
             tty: true
-          - name: docker
-            image: docker:latest
-            command:
-              - cat
-            tty: true
-            volumeMounts:
-              - mountPath: /var/run/docker.sock
-                name: docker-sock
-        volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock
-   
         '''
     }
   }
@@ -33,17 +20,6 @@ pipeline {
         checkout scm
       }
     }
-    stage('Clear PHPStan Cache') {
-      steps {
-         container('docker'){
-            script {
-               // Execute the command to clear the PHPStan cache
-               sh "docker exec phpstan rm -rf /tmp/*"
-            }
-         }   
-      }
-   }
-
    stage(phpstan_scan){
       steps{
         container('phpstan'){
@@ -52,7 +28,7 @@ pipeline {
             sh "mkdir -p test-reports"
             //clear cahce
             // Run PHPStan inside PHPStan container
-            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
+            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json --xdebug -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
         }
       }
