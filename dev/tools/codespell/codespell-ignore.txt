@@ -19,6 +19,7 @@ contaxt
 courant
 datea
 datee
+doubleclick
 errorstring
 exten
 falsy
