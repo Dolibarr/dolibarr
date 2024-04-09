@@ -101,7 +101,7 @@ pipeline {
                                 break
                             case 'Full':
                                 sh """
-                                    zap-full-scan.py -t ${target} -I
+                                    zap-full-scan.py -t ${target} -x /zap/wrk/report.xml -I
                                 """
                                 break
                             default:
