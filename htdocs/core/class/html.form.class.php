@@ -8504,12 +8504,12 @@ class Form
 			foreach ($array as $key => $tmpvalue) {
 				if (is_array($tmpvalue)) {
 					$value = $tmpvalue['label'];
-					$valuehtml = $tmpvalue['data-html'];
+					//$valuehtml = empty($tmpvalue['data-html']) ? $value : $tmpvalue['data-html'];
 					$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
 					$style = empty($tmpvalue['css']) ? '' : ' class="' . $tmpvalue['css'] . '"';
 				} else {
 					$value = $tmpvalue;
-					$valuehtml = $tmpvalue;
+					//$valuehtml = $tmpvalue;
 					$disabled = '';
 					$style = '';
 				}
