@@ -316,9 +316,9 @@ class HookManager
 
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$localResPrint = $actionclassinstance->resprints;
+								$localResPrint = (string) $actionclassinstance->resprints;
 							} else {
-								$localResPrint .= $actionclassinstance->resprints;
+								$localResPrint .= (string) $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -341,7 +341,7 @@ class HookManager
 							$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$localResPrint .= $actionclassinstance->resprints;
+							$localResPrint .= (string) $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
@@ -361,7 +361,7 @@ class HookManager
 
 					//print "After hook context=".$context." ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
-					$actionclassinstance->results = null;
+					$actionclassinstance->results = array();
 					$actionclassinstance->resprints = null;
 				}
 			}
