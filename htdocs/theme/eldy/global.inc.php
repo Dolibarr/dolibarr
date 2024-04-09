@@ -1243,7 +1243,7 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	height: 24px;
+	line-height: 24px;
 	border-radius: 3px;
 }
 .search_component_searchtext {
@@ -1261,6 +1261,7 @@ div.divsearchfield {
 	padding-bottom: 3px;
 	background: #ddd;
 	border-radius: 4px;
+	display: inline-block;
 }
 .tagsearchdelete {
 	color: #999;
