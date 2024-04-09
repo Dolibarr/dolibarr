@@ -56,9 +56,9 @@ parameters:
 		- '#Constructor of class .* has an unused parameter #'
 	internalErrorsCountLimit: 50
 	cache:
+		directory: var/cache/phpstan
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-		directory: var/cache/phpstan
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
