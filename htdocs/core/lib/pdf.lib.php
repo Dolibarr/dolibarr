@@ -982,7 +982,12 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', 0);
-		$cury += 3;
+		if ($default_font_size >= 12) {
+		    $cury += 4;
+		}
+		else {
+		    $cury += 3;
+		}
 	}
 
 	if (!empty($account->bic)) {
