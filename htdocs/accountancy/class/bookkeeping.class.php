@@ -3151,6 +3151,9 @@ class BookKeepingLine extends CommonObjectLine
 	public $import_key;
 	public $code_journal;
 	public $journal_label;
+	/**
+	 * @var int accounting transaction id
+	 */
 	public $piece_num;
 
 	/**
