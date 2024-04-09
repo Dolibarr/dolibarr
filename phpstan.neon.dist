@@ -1,5 +1,5 @@
 parameters:
-	tmpDir: /tmp
+	tmpDir: /var/run/cache
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines
