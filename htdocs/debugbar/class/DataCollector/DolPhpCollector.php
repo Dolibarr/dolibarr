@@ -62,7 +62,7 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Called by the DebugBar when data needs to be collected.
 	 *
-	 * @return array Collected data.
+	 * @return array 	Array of collected data
 	 */
 	public function collect()
 	{
@@ -104,7 +104,7 @@ class PhpCollector extends DataCollector implements Renderable
 	 * Returns a hash where keys are control names and their values an array of options as defined in
 	 * {@see DebugBar\JavascriptRenderer::addControl()}
 	 *
-	 * @return array Needed details to render the widget.
+	 * @return array 	Array of details to render the widget.
 	 */
 	public function getWidgets()
 	{
