@@ -1149,6 +1149,11 @@ foreach ($listofreferent as $key => $value) {
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		// Product and qty on stock_movement
+		if ('MouvementStock' == $classname) {
+			print '<td style="width: 200px">'.$langs->trans("Product").'</td>';
+			print '<td style="width: 50px">'.$langs->trans("Qty").'</td>';
+		}
 		// Date
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
 		if (in_array($tablename, array('projet_task'))) {
@@ -1335,7 +1340,13 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 				print "</td>\n";
-
+				// Product and qty on stock movement
+				if ('MouvementStock' == $classname) {
+					$mvsProd = new Product($element->db);
+					$mvsProd->fetch($element->product_id);
+					print '<td>'.$mvsProd->getNomUrl(1).'</td>';
+					print '<td>'.$element->qty.'</td>';
+				}
 				// Date or TimeSpent
 				$date = '';
 				$total_time_by_line = null;
