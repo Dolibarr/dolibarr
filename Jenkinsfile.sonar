@@ -5,24 +5,25 @@ pipeline {
         apiVersion: v1
         kind: Pod
         spec:
-          containers:
+        containers:
           - name: phpstan
             image: oskarstark/phpstan-ga:latest
             command:
-            - cat
+              - cat
             tty: true
-         - name: docker
+          - name: docker
             image: docker:latest
             command:
-            - cat
+              - cat
             tty: true
             volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
-          volumes:
+              - mountPath: /var/run/docker.sock
+                name: docker-sock
+        volumes:
           - name: docker-sock
             hostPath:
-              path: /var/run/docker.sock    
+              path: /var/run/docker.sock
+   
         '''
     }
   }
