@@ -27,6 +27,8 @@ pipeline {
           script{
             // Create directory for reports
             sh "mkdir -p test-reports"
+            //clear cahce
+            sh "phpstan clear-result-cache -vvv"
             // Run PHPStan inside PHPStan container
             sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
