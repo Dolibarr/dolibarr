@@ -40,6 +40,7 @@ RUN mv composer.phar /usr/bin/composer
 RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
     chmod +x /usr/local/bin/phpstan
 RUN composer require --dev phpstan/phpstan
+RUN rm -rf /tmp/*
 # Set the entry point to PHPStan
 ENTRYPOINT ["phpstan"]
 
