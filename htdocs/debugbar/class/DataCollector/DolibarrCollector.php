@@ -43,9 +43,9 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	}
 
 	/**
-	 *	Return collected data
+	 * Return collected data
 	 *
-	 * @return array       Array
+	 * @return array       Array of collected data
 	 */
 	public function collect()
 	{
@@ -125,7 +125,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 * @return array       Array
+	 * 	@return array       Array
 	 */
 	public function getWidgets()
 	{
