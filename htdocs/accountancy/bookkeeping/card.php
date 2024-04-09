@@ -474,7 +474,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
-			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
+			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode((string) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
@@ -505,7 +505,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
-			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
+			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode((string) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
@@ -536,7 +536,7 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
-			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode($object->piece_num).'" method="POST">';
+			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.urlencode((string) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 			}
