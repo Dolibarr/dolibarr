@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,6 @@
 
 use DebugBar\DataCollector\RequestDataCollector;
 
-
 /**
  * DolRequestDataCollector class
  */
@@ -32,7 +32,7 @@ class DolHooksCollector extends RequestDataCollector
 	/**
 	 * Collects the data from the collectors
 	 *
-	 * @return array       Array of collected data
+	 * @return array{nb_of_hooks:int,hooks:array<string,array{contexts:string}>}       Array of collected data
 	 */
 	public function collect()
 	{
@@ -41,7 +41,7 @@ class DolHooksCollector extends RequestDataCollector
 		 */
 		global $hookmanager;
 
-		$data = ['hooks' => []];
+		$data = ['hooks' => [], 'nb_of_hooks' => 0];
 		if (empty($hookmanager->hooksHistory)) {
 			return $data;
 		}
@@ -62,7 +62,7 @@ class DolHooksCollector extends RequestDataCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return		array       Array
+	 *  @return		array<string,array{icon?:string,widget?:string,map:string,default:int|string}>  Array
 	 */
 	public function getWidgets()
 	{
