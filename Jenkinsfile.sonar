@@ -39,10 +39,10 @@ pipeline {
             script {
                // Execute the command to clear the PHPStan cache
                sh "docker exec phpstan rm -rf /tmp/*"
-               }
-            }   
-         }
+            }
+         }   
       }
+   }
 
    stage(phpstan_scan){
       steps{
