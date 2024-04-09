@@ -10,7 +10,19 @@ pipeline {
             image: oskarstark/phpstan-ga:latest
             command:
             - cat
-            tty: true   
+            tty: true
+         - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock    
         '''
     }
   }
@@ -20,6 +32,16 @@ pipeline {
         checkout scm
       }
     }
+    stage('Clear PHPStan Cache') {
+      steps {
+         container('docker'){
+            script {
+               // Execute the command to clear the PHPStan cache
+               sh "docker exec phpstan rm -rf /tmp/*"
+               }
+            }   
+         }
+      }
 
    stage(phpstan_scan){
       steps{
