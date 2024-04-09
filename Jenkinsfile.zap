@@ -32,7 +32,7 @@ pipeline {
             name: 'SCAN_TYPE'
         )
         string(
-            defaultValue: "https://example.com",
+            defaultValue: "https://dolibarr.hbenaissa.uk/",
             description: 'Target URL to scan',
             name: 'TARGET'
         )
