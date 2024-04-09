@@ -91,17 +91,17 @@ pipeline {
                         switch (scan_type) {
                             case 'Baseline':
                                 sh """
-                                    zap-baseline.py -t \${target} -x /zap/wrk/report.xml -I
+                                    zap-baseline.py -t ${target} -x /zap/wrk/report.xml -I
                                 """
                                 break
                             case 'APIS':
                                 sh """
-                                    zap-api-scan.py -t \${target} -x /zap/wrk/report.xml -I
+                                    zap-api-scan.py -t ${target} -x /zap/wrk/report.xml -I
                                 """
                                 break
                             case 'Full':
                                 sh """
-                                    zap-full-scan.py -t \${target} -I
+                                    zap-full-scan.py -t ${target} -I
                                 """
                                 break
                             default:
