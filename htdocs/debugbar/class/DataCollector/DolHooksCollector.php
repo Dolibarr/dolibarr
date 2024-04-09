@@ -1,11 +1,32 @@
 <?php
+/* Copyright (C) 2024	Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-use \DebugBar\DataCollector\RequestDataCollector;
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/DolHooksCollector.php
+ *	\brief      Class for debugbar collection
+ *	\ingroup    debugbar
+ */
+
+use DebugBar\DataCollector\RequestDataCollector;
+
 
 /**
  * DolRequestDataCollector class
  */
-
 class DolHooksCollector extends RequestDataCollector
 {
 	/**
@@ -15,25 +36,25 @@ class DolHooksCollector extends RequestDataCollector
 	 */
 	public function collect()
 	{
-        /**
-         * @global $hookmanager HookManager
-         */
-        global $hookmanager;
+		/**
+		 * @global $hookmanager HookManager
+		 */
+		global $hookmanager;
 
-        $data = ['hooks' => []];
-        if (empty($hookmanager->hooksHistory)) {
-            return $data;
-        }
+		$data = ['hooks' => []];
+		if (empty($hookmanager->hooksHistory)) {
+			return $data;
+		}
 		$i = 0;
 		foreach ($hookmanager->hooksHistory as $key => $hookHistory) {
-            $i++;
+			$i++;
 			$hookHistory['contexts'] = implode(', ', $hookHistory['contexts']);
-            $data['hooks']["[$i] {$hookHistory['name']}"] = $hookHistory;
+			$data['hooks']["[$i] {$hookHistory['name']}"] = $hookHistory;
 
-//            $data["[$key] {$hookHistory['name']}"] = "{$hookHistory['file']} (L{$hookHistory['line']}). Contexts: "
-//                . implode(', ', $hookHistory['contexts']);
+			//            $data["[$key] {$hookHistory['name']}"] = "{$hookHistory['file']} (L{$hookHistory['line']}). Contexts: "
+			//                . implode(', ', $hookHistory['contexts']);
 		}
-        $data['nb_of_hooks'] = count($data['hooks']);
+		$data['nb_of_hooks'] = count($data['hooks']);
 
 		return $data;
 	}
@@ -42,7 +63,7 @@ class DolHooksCollector extends RequestDataCollector
 	 *	Return widget settings
 	 *
 	 *  @return string[][]
-     */
+	 */
 	public function getWidgets()
 	{
 		global $langs;
@@ -55,19 +76,19 @@ class DolHooksCollector extends RequestDataCollector
 				"widget" => "PhpDebugBar.Widgets.HookListWidget",
 				"map" => "hooks.hooks",
 				"default" => "{}"
-            ],
-            "{$langs->transnoentities('Hooks')}:badge" => [
-                "map" => "hooks.nb_of_hooks",
-                "default" => 0
-            ]
-        ];
+			],
+			"{$langs->transnoentities('Hooks')}:badge" => [
+				"map" => "hooks.nb_of_hooks",
+				"default" => 0
+			]
+		];
 	}
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'hooks';
-    }
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return 'hooks';
+	}
 }

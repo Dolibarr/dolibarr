@@ -50,10 +50,10 @@ class HookManager
 	// Array with instantiated classes
 	public $hooks = array();
 
-    /**
-     * @var array List of hooks called during this request
-     */
-    public $hooksHistory = [];
+	/**
+	 * @var array List of hooks called during this request
+	 */
+	public $hooksHistory = [];
 
 	// Array result
 	public $resArray = array();
@@ -160,8 +160,9 @@ class HookManager
 	 */
 	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
-        global $debugbar;
-		if (is_object($debugbar) && get_class($debugbar) === 'DolibarrDebugBar') {
+		//global $debugbar;
+		//if (is_object($debugbar) && get_class($debugbar) === 'DolibarrDebugBar') {
+		if (isModEnabled('debugbar') && function_exists('debug_backtrace')) {
 			$trace = debug_backtrace();
 			if (isset($trace[0])) {
 				$hookInformations = [
@@ -170,7 +171,7 @@ class HookManager
 					'file' => $trace[0]['file'],
 					'line' => $trace[0]['line'],
 				];
-				$hash = md5(serialize($hookInformations));
+				$hash = md5(json_encode($hookInformations));
 				if (!empty($this->hooksHistory[$hash])) {
 					$this->hooksHistory[$hash]['count']++;
 				} else {
