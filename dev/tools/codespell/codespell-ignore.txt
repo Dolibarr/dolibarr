@@ -13,6 +13,7 @@ categorie
 categories
 clos
 crypted
+doubleclick
 errorstring
 exten
 falsy
