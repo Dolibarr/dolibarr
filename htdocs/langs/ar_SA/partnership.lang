@@ -20,7 +20,7 @@ ModulePartnershipName=إدارة الشراكة
 PartnershipDescription=وحدة إدارة الشراكة
 PartnershipDescriptionLong= وحدة إدارة الشراكة
 Partnership=شراكة
-Partnerships=Partnerships
+Partnerships=الشراكه
 AddPartnership=أضف شراكة
 CancelPartnershipForExpiredMembers=الشراكة: إلغاء شراكة الأعضاء المنتهية صلاحيتها
 PartnershipCheckBacklink=الشراكة: تحقق من إحالة الروابط الخلفية
@@ -29,7 +29,7 @@ PartnershipCheckBacklink=الشراكة: تحقق من إحالة الروابط
 # Menu
 #
 NewPartnership=شراكة جديدة
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=تمت إضافة طلب الشراكة الخاص بك بنجاح. قد نتواصل معك قريبا...
 ListOfPartnerships=قائمة الشراكات
 
 #
@@ -38,10 +38,10 @@ ListOfPartnerships=قائمة الشراكات
 PartnershipSetup=إعدادات الشراكة
 PartnershipAbout=حول الشراكة
 PartnershipAboutPage=صفحة حول الشراكة 
-partnershipforthirdpartyormember=يجب تعيين حالة الشريك على "طرف ثالث" أو "عضو"
+partnershipforthirdpartyormember=يجب تعيين الشريك حالة على "طرف ثالث" أو "عضو"
 PARTNERSHIP_IS_MANAGED_FOR=إدارة الشراكة لـ
 PARTNERSHIP_BACKLINKS_TO_CHECK=الروابط الخلفية المراد التحقق منها
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد الأيام قبل إلغاء حالة الشراكة عند انتهاء صلاحية الاشتراك
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد من الأيام قبل إلغاء حالة للشراكة عند انتهاء صلاحية الاشتراك
 ReferingWebsiteCheck=تحقق من إحالة الموقع
 ReferingWebsiteCheckDesc=يمكنك تمكين ميزة للتحقق من أن شركائك قد أضافوا رابطًا خلفيًا إلى مجالات موقع الويب الخاص بك على موقع الويب الخاص بهم.
 PublicFormRegistrationPartnerDesc=يمكن أن توفر لك Dolibarr عنوان URL / موقع ويب عام للسماح للزوار الخارجيين بطلب الانضمام إلى برنامج الشراكة.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=شراكة مكرسة لهذا العضو
 DatePartnershipStart=تاريخ البدء
 DatePartnershipEnd=تاريخ الانتهاء
 ReasonDecline=سبب الرفض
-ReasonDeclineOrCancel=سبب الرفض
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=الشراكة موجودة بالفعل
 ManagePartnership=إدارة الشراكة
 BacklinkNotFoundOnPartnerWebsite=الرابط الخلفي غير موجود على موقع الشريك
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=رفضت الشراكة
 YourPartnershipAcceptedTopic=قبلت الشراكة
 YourPartnershipCanceledTopic=تم إلغاء الشراكة
 
-YourPartnershipWillSoonBeCanceledContent=نعلمك أنه سيتم إلغاء شراكتك قريبًا (لم يتم العثور على Backlink)
-YourPartnershipRefusedContent=نعلمك أنه تم رفض طلب الشراكة الخاص بك.
-YourPartnershipAcceptedContent=نعلمك أنه تم قبول طلب الشراكة الخاص بك.
-YourPartnershipCanceledContent=نعلمك أنه تم إلغاء شراكتك.
+YourPartnershipWillSoonBeCanceledContent=نود أن نعلمك أنه سيتم إلغاء شراكتنا قريبًا (لم نحصل على التجديد أو لم يتم استيفاء أحد المتطلبات الأساسية لشراكتنا). يرجى الاتصال بنا إذا تلقيت هذا بسبب خطأ.
+YourPartnershipRefusedContent=نود أن نعلمك أنه قد تم رفض طلب الشراكة الخاص بك. لم يتم استيفاء المتطلبات الأساسية. ارجوك اتصل بنا ان كنت تريد مزيد من المعلومات.
+YourPartnershipAcceptedContent=نود أن نعلمك أنه قد تم قبول طلب الشراكة الخاص بك.
+YourPartnershipCanceledContent=نود أن نعلمك أنه تم إلغاء شراكتنا. ارجوك اتصل بنا ان كنت تريد مزيد من المعلومات.
 
 CountLastUrlCheckError=عدد الأخطاء الخاصة بآخر فحص لعنوان URL
 LastCheckBacklink=تاريخ آخر فحص لعنوان URL
-ReasonDeclineOrCancel=سبب الرفض
 
 NewPartnershipRequest=طلب شراكة جديد
 NewPartnershipRequestDesc=يسمح لك هذا النموذج بطلب أن تكون جزءًا من أحد برامج الشراكة الخاصة بنا. إذا كنت بحاجة إلى مساعدة لملء هذا النموذج ، فيرجى الاتصال عبر البريد الإلكتروني <b> %s </b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=يجب أن تحتوي هذه الصفحة على رابط واحد على الأقل إلى أحد النطاقات التالية: %s
+
+IPOfApplicant=الملكية الفكرية لمقدم الطلب
 

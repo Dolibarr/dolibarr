@@ -20,9 +20,6 @@ class NoAbstract extends DAV\Exception\PreconditionFailed
      * Adds in extra information in the xml response.
      *
      * This method adds the {DAV:}no-abstract element as defined in rfc3744
-     *
-     * @param DAV\Server  $server
-     * @param \DOMElement $errorNode
      */
     public function serialize(DAV\Server $server, \DOMElement $errorNode)
     {

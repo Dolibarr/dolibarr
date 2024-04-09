@@ -11,7 +11,3 @@ HrmSetup=Configuración del módulo HRM
 JobCard=Tarjeta de trabajo
 SkillCard=Tarjeta de habilidad
 EmployeeSkillsUpdated=Se actualizaron las habilidades de los empleados (consulte la pestaña "Habilidades" de la tarjeta de empleado)
-OrJobToCompare=Compare con los requisitos de habilidades laborales
-AddSkill=Agregue habilidades al trabajo
-TypeKnowHow=Saber cómo
-JobsExtraFields=Atributos complementarios (Emplois)

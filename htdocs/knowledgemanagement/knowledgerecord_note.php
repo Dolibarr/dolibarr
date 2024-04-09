@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_kno
 $langs->loadLangs(array("knowledgemanagement", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -134,7 +134,7 @@ if ($id > 0 || !empty($ref)) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

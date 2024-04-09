@@ -39,8 +39,6 @@ class SupportedCalendarData implements XmlSerializable
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {

@@ -58,9 +58,10 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 * 	Return description
 	 *
-	 * 	@return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 
@@ -74,9 +75,10 @@ class modPhpbarcode extends ModeleBarCode
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs;
 
@@ -129,11 +131,10 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$readable		  Code can be read (What is this ? is this used ?)
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  <0 if KO, >0 if OK
+	 *	@return	int							  Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $_GET, $_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
 
@@ -179,7 +180,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  <0 if KO, >0 if OK
+	 *	@return	int							  Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
@@ -187,12 +188,21 @@ class modPhpbarcode extends ModeleBarCode
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
-			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			if ($langs instanceof Translate) {
+				$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			} else {
+				$this->error = "ErrorFailedToWriteInTempDirectory ".$conf->barcode->dir_temp;
+			}
 			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
+		$newcode = $code;
+		if (!preg_match('/^\w+$/', $code) || dol_strlen($code) > 32) {
+			$newcode = dol_hash($newcode, 'md5');	// No need for security here, we can use md5
+		}
+
+		$file = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
 
 		$filebarcode = $file; // global var to be used in barcode_outimage called by barcode_print in buildBarCode
 

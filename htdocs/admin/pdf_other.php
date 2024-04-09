@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'propal', 'receptions', 'stocks', 'trips'));
+$langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'propal', 'receptions', 'stocks', 'trips', 'orders'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -62,22 +62,38 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE", GETPOST("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE"), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN", GETPOST("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')) {
-		dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOSTINT("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_ZATCA_QR_CODE')) {
-		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOST("INVOICE_ADD_ZATCA_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOSTINT("INVOICE_ADD_ZATCA_QR_CODE"), 'chaine', 0, '', $conf->entity);
+		if (GETPOSTINT('INVOICE_ADD_ZATCA_QR_CODE') == 1) {
+			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+		}
 	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
+		if (GETPOST('INVOICE_ADD_SWISS_QR_CODE', 'alpha') != '0') {
+			dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
+		}
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
-		dolibarr_set_const($db, "INVOICE_CATEGORY_OF_OPERATION", GETPOST("INVOICE_CATEGORY_OF_OPERATION", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "INVOICE_CATEGORY_OF_OPERATION", GETPOSTINT("INVOICE_CATEGORY_OF_OPERATION"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_SHOW_SHIPPING_ADDRESS')) {
-		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOST("INVOICE_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOSTINT("INVOICE_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
@@ -149,7 +165,76 @@ if (isModEnabled('propal')) {
 }
 
 
-if (isModEnabled('facture')) {
+if (isModEnabled('supplier_proposal')) {
+	$langs->load("supplier_proposal");
+	print load_fiche_titre($langs->trans("SupplierProposal"), '', 'supplier_proposal');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE", $arrval, $conf->global->MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN", $arrval, $conf->global->MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN);
+	}
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+
+
+if (isModEnabled('supplier_order')) {
+	$langs->load("supplier_order");
+	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE", $arrval, $conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN", $arrval, $conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN);
+	}
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+
+if (isModEnabled('invoice')) {
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -163,19 +248,22 @@ if (isModEnabled('facture')) {
 		print ajax_constantonoff('INVOICE_ADD_ZATCA_QR_CODE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("INVOICE_ADD_ZATCA_QR_CODE", $arrval, $conf->global->INVOICE_ADD_ZATCA_QR_CODE);
+		print $form->selectarray("INVOICE_ADD_ZATCA_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_ZATCA_QR_CODE'));
 	}
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
+	if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
+	} else {
+		print $langs->trans("INVOICE_ADD_SWISS_QR_CODE");
+	}
 	print '</td><td>';
-	//if ($conf->use_javascript_ajax) {
-	//	print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
-	//} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"), 'bottom' => $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+)');
-	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
-	//}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+		$arrval['bottom'] = $langs->trans("AtBottomOfPage").' ('.$langs->trans("Experimental").' - Need PHP 8.1+ and some PHP libs)';
+	}
+	print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE'));
 	print '</td></tr>';
 
 	// Mention category of operations

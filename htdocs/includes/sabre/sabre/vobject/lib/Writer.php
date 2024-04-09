@@ -19,8 +19,6 @@ class Writer
     /**
      * Serializes a vCard or iCalendar object.
      *
-     * @param Component $component
-     *
      * @return string
      */
     public static function write(Component $component)
@@ -31,8 +29,7 @@ class Writer
     /**
      * Serializes a jCal or jCard object.
      *
-     * @param Component $component
-     * @param int       $options
+     * @param int $options
      *
      * @return string
      */
@@ -43,8 +40,6 @@ class Writer
 
     /**
      * Serializes a xCal or xCard object.
-     *
-     * @param Component $component
      *
      * @return string
      */

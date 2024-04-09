@@ -44,8 +44,6 @@ class SimplePDO extends AbstractBackend
 
     /**
      * Creates the backend.
-     *
-     * @param \PDO $pdo
      */
     public function __construct(\PDO $pdo)
     {
@@ -103,7 +101,6 @@ class SimplePDO extends AbstractBackend
      *
      * @param string $principalUri
      * @param string $calendarUri
-     * @param array  $properties
      *
      * @return string
      */

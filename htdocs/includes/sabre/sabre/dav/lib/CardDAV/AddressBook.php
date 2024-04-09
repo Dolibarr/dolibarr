@@ -36,9 +36,6 @@ class AddressBook extends DAV\Collection implements IAddressBook, DAV\IPropertie
 
     /**
      * Constructor.
-     *
-     * @param Backend\BackendInterface $carddavBackend
-     * @param array                    $addressBookInfo
      */
     public function __construct(Backend\BackendInterface $carddavBackend, array $addressBookInfo)
     {
@@ -132,19 +129,19 @@ class AddressBook extends DAV\Collection implements IAddressBook, DAV\IPropertie
      * This method may return an ETag.
      *
      * @param string   $name
-     * @param resource $vcardData
+     * @param resource $data
      *
      * @return string|null
      */
-    public function createFile($name, $vcardData = null)
+    public function createFile($name, $data = null)
     {
-        if (is_resource($vcardData)) {
-            $vcardData = stream_get_contents($vcardData);
+        if (is_resource($data)) {
+            $data = stream_get_contents($data);
         }
         // Converting to UTF-8, if needed
-        $vcardData = DAV\StringUtil::ensureUTF8($vcardData);
+        $data = DAV\StringUtil::ensureUTF8($data);
 
-        return $this->carddavBackend->createCard($this->addressBookInfo['id'], $name, $vcardData);
+        return $this->carddavBackend->createCard($this->addressBookInfo['id'], $name, $data);
     }
 
     /**
@@ -181,8 +178,6 @@ class AddressBook extends DAV\Collection implements IAddressBook, DAV\IPropertie
      *
      * To update specific properties, call the 'handle' method on this object.
      * Read the PropPatch documentation for more information.
-     *
-     * @param DAV\PropPatch $propPatch
      */
     public function propPatch(DAV\PropPatch $propPatch)
     {
@@ -322,7 +317,7 @@ class AddressBook extends DAV\Collection implements IAddressBook, DAV\IPropertie
      * @param int    $syncLevel
      * @param int    $limit
      *
-     * @return array
+     * @return array|null
      */
     public function getChanges($syncToken, $syncLevel, $limit = null)
     {

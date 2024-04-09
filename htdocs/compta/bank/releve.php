@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('account') ? GETPOSTINT('account') : GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $dvid = GETPOST('dvid', 'alpha');
 $numref = GETPOST('num', 'alpha');
@@ -65,31 +65,22 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
-// Security check
-$fieldid = (!empty($ref) ? $ref : $id);
-$fieldname = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-$result = restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
-
-if ($user->rights->banque->consolidate && $action == 'dvnext' && !empty($dvid)) {
+if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && !empty($dvid)) {
 	$al = new AccountLine($db);
 	$al->datev_next($dvid);
 }
 
-if ($user->rights->banque->consolidate && $action == 'dvprev' && !empty($dvid)) {
+if ($user->hasRight('banque', 'consolidate') && $action == 'dvprev' && !empty($dvid)) {
 	$al = new AccountLine($db);
 	$al->datev_previous($dvid);
 }
 
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$pageplusone = GETPOST("pageplusone", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$pageplusone = GETPOSTINT("pageplusone");
 if ($pageplusone) {
 	$page = $pageplusone - 1;
 }
@@ -113,73 +104,86 @@ if ($id > 0 || !empty($ref)) {
 	$id = $object->id; // Force the search field on id of account
 }
 
-
 // Initialize technical object to manage context to save list fields
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 
-
-// Define number of receipt to show (current, previous or next one ?)
-$found = false;
-if ($rel == 'prev') {
-	// Recherche valeur pour num = numero releve precedent
-	$sql = "SELECT DISTINCT(b.num_releve) as num";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".((int) $object->id);
-	$sql .= " ORDER BY b.num_releve DESC";
-
-	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$numrows = $db->num_rows($resql);
-		if ($numrows > 0) {
-			$obj = $db->fetch_object($resql);
-			$numref = $obj->num;
-			$found = true;
-		}
-	}
-} elseif ($rel == 'next') {
-	// Recherche valeur pour num = numero releve precedent
-	$sql = "SELECT DISTINCT(b.num_releve) as num";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".((int) $object->id);
-	$sql .= " ORDER BY b.num_releve ASC";
-
-	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$numrows = $db->num_rows($resql);
-		if ($numrows > 0) {
-			$obj = $db->fetch_object($resql);
-			$numref = $obj->num;
-			$found = true;
-		}
-	}
-} else {
-	// On veut le releve num
-	$found = true;
+// Security check
+$fieldid = (!empty($ref) ? $ref : $id);
+$fieldname = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
 }
 
+$result = restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
+
+$error = 0;
+
+// Define number of receipt to show (current, previous or next one ?)
+$foundprevious = '';
+$foundnext = '';
+// Search previous receipt number
+$sql = "SELECT b.num_releve as num";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+$sql .= " AND b.fk_account = ".((int) $object->id);
+$sql .= " ORDER BY b.num_releve DESC";
+$sql .= $db->plimit(1);
+
+dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+	$numrows = $db->num_rows($resql);
+	if ($numrows > 0) {
+		$obj = $db->fetch_object($resql);
+		if ($rel == 'prev') {
+			$numref = $obj->num;
+		}
+		$foundprevious = $obj->num;
+	}
+} else {
+	dol_print_error($db);
+}
+// Search next receipt
+$sql = "SELECT b.num_releve as num";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
+$sql .= " AND b.fk_account = ".((int) $object->id);
+$sql .= " ORDER BY b.num_releve ASC";
+$sql .= $db->plimit(1);
+
+dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+	$numrows = $db->num_rows($resql);
+	if ($numrows > 0) {
+		$obj = $db->fetch_object($resql);
+		if ($rel == 'next') {
+			$numref = $obj->num;
+		}
+		$foundnext = $obj->num;
+	}
+} else {
+	dol_print_error($db);
+}
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql .= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " b.fk_bordereau,";
 $sql .= " bc.ref,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= ", ".MAIN_DB_PREFIX."bank as b";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba,";
+$sql .= " ".MAIN_DB_PREFIX."bank as b";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
-$sql .= " WHERE b.num_releve='".$db->escape($numref)."'";
+$sql .= " WHERE b.num_releve = '".$db->escape($numref)."'";
 if (empty($numref)) {
 	$sql .= " OR b.num_releve is null";
 }
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " AND b.fk_account = ba.rowid";
+$sql .= " AND ba.entity IN (".getEntity($object->element).")";
 $sql .= $db->order("b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 
 $sqlrequestforbankline = $sql;
-
 
 
 /*
@@ -187,12 +191,32 @@ $sqlrequestforbankline = $sql;
  */
 
 if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
-	// TODO Add a test to check newbankreceipt does not exists yet
-	$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."bank SET num_releve = '".$db->escape($newbankreceipt)."'";
-	$sqlupdate .= " WHERE num_releve = '".$db->escape($oldbankreceipt)."' AND fk_account = ".((int) $id);
-	$result = $db->query($sqlupdate);
-	if ($result < 0) {
+	// Test to check newbankreceipt does not exists yet
+	$sqltest = "SELECT b.rowid FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
+	$sqltest .= " WHERE b.fk_account = ba.rowid AND ba.entity = ".((int) $conf->entity);
+	$sqltest .= " AND num_releve = '".$db->escape($newbankreceipt)."'";
+	$sqltest .= $db->plimit(1);	// Need the first one only
+
+	$resql = $db->query($sqltest);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->rowid) {
+			setEventMessages('ErrorBankReceiptAlreadyExists', null, 'errors');
+			$error++;
+		}
+	} else {
 		dol_print_error($db);
+	}
+
+	// Update bank receipt name
+	if (!$error) {
+		$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."bank SET num_releve = '".$db->escape($newbankreceipt)."'";
+		$sqlupdate .= " WHERE num_releve = '".$db->escape($oldbankreceipt)."' AND fk_account = ".((int) $id);
+
+		$resql = $db->query($sqlupdate);
+		if (!$resql) {
+			dol_print_error($db);
+		}
 	}
 
 	$action = 'view';
@@ -202,6 +226,7 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
+
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -225,7 +250,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 
 if (empty($numref)) {
@@ -289,7 +314,7 @@ if (empty($numref)) {
 			}
 
 			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) {
+			if ($user->hasRight('banque', 'consolidate')) {
 				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
@@ -298,7 +323,7 @@ if (empty($numref)) {
 
 			if ($allowautomaticconciliation) {
 				// If not cash account and can be reconciliate
-				if ($user->rights->banque->consolidate) {
+				if ($user->hasRight('banque', 'consolidate')) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
 					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
@@ -346,8 +371,8 @@ if (empty($numref)) {
 				} else {
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
-					print '<input type="submit" class="button small" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button smallpaddingimp" name="actionnewbankreceipt" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -362,7 +387,7 @@ if (empty($numref)) {
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -375,10 +400,10 @@ if (empty($numref)) {
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
+				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 				print '<td class="center">';
-				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
+				if ($user->hasRight('banque', 'consolidate') && $action != 'editbankreceipt') {
 					print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&token='.newToken().'&brref='.urlencode($objp->numr).'">'.img_edit().'</a>';
 				}
 				print '</td>';
@@ -406,9 +431,13 @@ if (empty($numref)) {
 
 	$morehtmlright = '';
 	$morehtmlright .= '<div class="pagination"><ul>';
-	$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+	if ($foundprevious) {
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?num='.urlencode($foundprevious).'&amp;ve='.urlencode($ve).'&amp;account='.((int) $object->id).'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+	}
 	$morehtmlright .= '<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
-	$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+	if ($foundnext) {
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?num='.urlencode($foundnext).'&amp;ve='.urlencode($ve).'&amp;account='.((int) $object->id).'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+	}
 	$morehtmlright .= '</ul></div>';
 
 	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
@@ -443,6 +472,8 @@ if (empty($numref)) {
 		$total = $obj->amount;
 		$db->free($resql);
 	}
+
+	$totalc = $totald = 0;
 
 	// Recherche les ecritures pour le releve
 	$sql = $sqlrequestforbankline;
@@ -497,11 +528,12 @@ if (empty($numref)) {
 			print '<td valign="center">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'">';
 			$reg = array();
-			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
+
+			preg_match('/\((.+)\)/i', $objp->label, $reg); // If text rounded by parenthesis, we try to search translation
+			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '</a>';
 
@@ -651,7 +683,7 @@ if (empty($numref)) {
 
 			print '<td class="nowrap right">'.price(price2num($total, 'MT'))."</td>\n";
 
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
+			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 				print '<td class="center"><a class="editfielda reposition" href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
@@ -662,10 +694,12 @@ if (empty($numref)) {
 			$i++;
 		}
 		$db->free($result);
+	} else {
+		dol_print_error($db);
 	}
 
 	// Line Total
-	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total")." :</td><td class=\"right\">".price($totald)."</td><td class=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total").' :</td><td class="right">'.price($totald).'</td><td class="right">'.price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
 	print "\n<tr>";

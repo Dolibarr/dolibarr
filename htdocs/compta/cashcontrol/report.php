@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1'); // Disable browser notification
 }
 
-$_GET['optioncss'] = "print";
+$optioncss = "print";
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -49,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("bills", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new CashControl($db);
 $object->fetch($id);
@@ -59,13 +60,13 @@ $sortorder = 'ASC';
 $sortfield = 'b.datev,b.dateo,b.rowid';
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
-	'b.num_chq'=>array('label'=>$langs->trans("Number"), 'checked'=>1),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),
-	'cp.code'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => 1),
+	'b.num_chq' => array('label' => $langs->trans("Number"), 'checked' => 1),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => 1),
+	'cp.code' => array('label' => $langs->trans("PaymentMode"), 'checked' => 1),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 600),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 605),
 );
 
 $syear  = $object->year_close;
@@ -80,7 +81,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (empty($user->rights->cashdesk->run) && empty($user->rights->takepos->run)) {
+if (!$user->hasRight('cashdesk', 'run') && !$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -114,7 +115,7 @@ $sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
 elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-else dol_print_error('', 'Year not defined');
+else dol_print_error(null, 'Year not defined');
 // Define filter on bank account
 $sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
 $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
@@ -133,7 +134,7 @@ elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
 elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
 else
 {
-	dol_print_error('Value for key = '.$key.' not supported');
+	dol_print_error(null, 'Value for key = '.$key.' not supported');
 	exit;
 }*/
 if ($syear && !$smonth) {
@@ -143,7 +144,7 @@ if ($syear && !$smonth) {
 } elseif ($syear && $smonth && $sday) {
 	$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 } else {
-	dol_print_error('', 'Year not defined');
+	dol_print_error(null, 'Year not defined');
 }
 
 $resql = $db->query($sql);
@@ -209,7 +210,7 @@ if ($resql) {
 	$transactionspertype = array();
 	$amountpertype = array();
 
-	$totalarray = array();
+	$totalarray = array('nbfield' => 0, 'pos' => array());
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
@@ -281,10 +282,10 @@ if ($resql) {
 			}
 			$transactionspertype[$objp->code] += 1;
 		} else {
-			if ($conf->global->$var1 == $bankaccount->id) {
+			if (getDolGlobalString($var1) == $bankaccount->id) {
 				$cash += $objp->amount;
-				// } elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
-				//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+				// } elseif (getDolGlobalString($var2) == $bankaccount->id) $bank+=$objp->amount;
+				//elseif (getDolGlobalString($var3) == $bankaccount->id) $cheque+=$objp->amount;
 				if (empty($transactionspertype['CASH'])) {
 					$transactionspertype['CASH'] = 0;
 				}
@@ -355,7 +356,7 @@ if ($resql) {
 	print "</div>";
 
 	//$cash = $amountpertype['LIQ'] + $object->opening;
-	$cash = price2num($cash + $object->opening, 'MT');
+	$cash = price2num($cash + (float) $object->opening, 'MT');
 
 	print '<div style="text-align: right">';
 	print '<h2>';
@@ -386,7 +387,7 @@ if ($resql) {
 		print '<br>';
 	}
 
-	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price($cash + $cheque + $bank + $other).'</div>';
+	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price((float) $cash + (float) $cheque + (float) $bank + (float) $other).'</div>';
 
 	print '<br>'.$langs->trans("TotalVAT").' : <div class="inline-block amount width100">'.price($totalvat).'</div>';
 

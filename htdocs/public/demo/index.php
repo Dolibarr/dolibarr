@@ -40,11 +40,11 @@ require_once '../../core/lib/functions2.lib.php';
 
 $langs->loadLangs(array("main", "install", "other"));
 
-$conf->dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
-$conf->dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
-$conf->dol_optimize_smallscreen = GETPOST('dol_optimize_smallscreen', 'int');
-$conf->dol_no_mouse_hover = GETPOST('dol_no_mouse_hover', 'int');
-$conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
+$conf->dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
+$conf->dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu');
+$conf->dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen');
+$conf->dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover');
+$conf->dol_use_jmobile = GETPOSTINT('dol_use_jmobile');
 
 // Security check
 global $dolibarr_main_demo;
@@ -110,7 +110,7 @@ if (empty($reshook)) {
 
 	// Visible
 	$alwayscheckedmodules = array('barcode', 'bookmark', 'categorie', 'externalrss', 'fckeditor', 'geoipmaxmind', 'gravatar', 'memcached', 'syslog', 'user', 'webservices'); // Technical module we always want
-	$alwaysuncheckedmodules = array('dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'skype', 'website'); // Module we dont want by default
+	$alwaysuncheckedmodules = array('ai', 'dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'socialnetworks', 'webhook', 'webportal', 'website', 'zapier'); // Module we don't want by default
 	// Not visible
 	$alwayshiddencheckedmodules = array('accounting', 'api', 'barcode', 'blockedlog', 'bookmark', 'clicktodial', 'comptabilite', 'cron', 'document', 'domain', 'externalrss', 'externalsite', 'fckeditor', 'geoipmaxmind', 'gravatar', 'label', 'ldap',
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
@@ -134,7 +134,6 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 
@@ -162,10 +161,10 @@ foreach ($modulesdir as $dir) {
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 
@@ -174,7 +173,6 @@ foreach ($modulesdir as $dir) {
 							$filename[$i] = $modName;
 							$orders[$i]  = $objMod->family."_".$j; // Tri par famille puis numero module
 							//print "x".$modName." ".$orders[$i]."\n<br>";
-							$dirmod[$i] = $dirroot;
 							$j++;
 							$i++;
 						}
@@ -308,7 +306,7 @@ foreach ($demoprofiles as $profilearray) {
 			$urlwithmod = $profilearray['url'];
 			$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'urlfrom='.urlencode($urlfrom);
 			if (!empty($profilearray['disablemodules'])) {
-				  $urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
+				$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
 			}
 		}
 
@@ -330,7 +328,7 @@ foreach ($demoprofiles as $profilearray) {
 		print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i % 2 == 0 ? '1' : '0').'">'."\n";
 
 
-		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer' : 'nomodulelines').'">';
+		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer maxwidth1000' : 'nomodulelines').'">';
 
 		print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url']) ? 'modulelineshow' : 'nomodulelines').'">';
 		print '<div style="padding: 10px;">';
@@ -349,9 +347,9 @@ foreach ($demoprofiles as $profilearray) {
 
 		// Modules (a profile you must choose modules)
 		if (empty($profilearray['url'])) {
-			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; line-height: 130%; padding-bottom: 8px">';
+			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; padding-bottom: 8px">';
 
-			print '<span class="opacitymedium">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
+			print '<span class="opacitymedium small">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 
 			print '<div class="csscolumns">';
 
@@ -368,10 +366,10 @@ foreach ($demoprofiles as $profilearray) {
 				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
+				if ($val->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
+				if ($val->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && !getDolGlobalString($const_name)) {
 					$modulequalified = 0;
 				}
 				if (!$modulequalified) {
@@ -434,14 +432,14 @@ print '<br>';
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
 	if (empty($conf->dol_use_jmobile)) {
 		print '<div align="center">'."\n";
 		print '<script><!--'."\n";
-		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
-		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
-		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
+		print 'google_ad_client = "' . getDolGlobalString('MAIN_GOOGLE_AD_CLIENT').'";'."\n";
+		print 'google_ad_slot = "' . getDolGlobalString('MAIN_GOOGLE_AD_SLOT').'";'."\n";
+		print 'google_ad_width = ' . getDolGlobalString('MAIN_GOOGLE_AD_WIDTH').';'."\n";
+		print 'google_ad_height = ' . getDolGlobalString('MAIN_GOOGLE_AD_HEIGHT').';'."\n";
 		print '//-->'."\n";
 		print '</script>'."\n";
 		print '<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>'."\n";

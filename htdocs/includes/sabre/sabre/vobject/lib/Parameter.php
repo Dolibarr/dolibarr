@@ -52,11 +52,12 @@ class Parameter extends Node
      */
     public function __construct(Document $root, $name, $value = null)
     {
-        $this->name = strtoupper($name);
         $this->root = $root;
         if (is_null($name)) {
             $this->noName = true;
             $this->name = static::guessParameterNameByValue($value);
+        } else {
+            $this->name = strtoupper($name);
         }
 
         // If guessParameterNameByValue() returns an empty string
@@ -95,13 +96,11 @@ class Parameter extends Node
             case 'WORK':
             case 'HOME':
             case 'PREF':
-
             // Delivery Label Type
             case 'DOM':
             case 'INTL':
             case 'POSTAL':
             case 'PARCEL':
-
             // Telephone types
             case 'VOICE':
             case 'FAX':
@@ -113,7 +112,6 @@ class Parameter extends Node
             case 'CAR':
             case 'ISDN':
             case 'VIDEO':
-
             // EMAIL types (lol)
             case 'AOL':
             case 'APPLELINK':
@@ -127,7 +125,6 @@ class Parameter extends Node
             case 'PRODIGY':
             case 'TLX':
             case 'X400':
-
             // Photo / Logo format types
             case 'GIF':
             case 'CGM':
@@ -143,12 +140,10 @@ class Parameter extends Node
             case 'MPEG2':
             case 'AVI':
             case 'QTIME':
-
             // Sound Digital Audio Type
             case 'WAVE':
             case 'PCM':
             case 'AIFF':
-
             // Key types
             case 'X509':
             case 'PGP':
@@ -201,8 +196,6 @@ class Parameter extends Node
 
     /**
      * Sets multiple values for this parameter.
-     *
-     * @param array $value
      */
     public function setParts(array $value)
     {
@@ -301,7 +294,7 @@ class Parameter extends Node
                 // https://tools.ietf.org/html/rfc6868
                 //
                 // But we've found that iCal (7.0, shipped with OSX 10.9)
-                // severaly trips on + characters not being quoted, so we
+                // severely trips on + characters not being quoted, so we
                 // added + as well.
                 if (!preg_match('#(?: [\n":;\^,\+] )#x', $item)) {
                     return $out.$item;
@@ -329,6 +322,7 @@ class Parameter extends Node
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->value;
@@ -340,7 +334,7 @@ class Parameter extends Node
      *
      * @param Xml\Writer $writer XML writer
      */
-    public function xmlSerialize(Xml\Writer $writer)
+    public function xmlSerialize(Xml\Writer $writer): void
     {
         foreach (explode(',', $this->value) as $value) {
             $writer->writeElement('text', $value);
@@ -362,6 +356,7 @@ class Parameter extends Node
      *
      * @return ElementList
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if (!is_null($this->iterator)) {

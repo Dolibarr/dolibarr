@@ -49,8 +49,6 @@ class GuessContentType extends DAV\ServerPlugin
 
     /**
      * Initializes the plugin.
-     *
-     * @param DAV\Server $server
      */
     public function initialize(DAV\Server $server)
     {
@@ -63,9 +61,6 @@ class GuessContentType extends DAV\ServerPlugin
      * Our PROPFIND handler.
      *
      * Here we set a contenttype, if the node didn't already have one.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFind(PropFind $propFind, INode $node)
     {
@@ -85,10 +80,12 @@ class GuessContentType extends DAV\ServerPlugin
      */
     protected function getContentType($fileName)
     {
-        // Just grabbing the extension
-        $extension = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
-        if (isset($this->extensionMap[$extension])) {
-            return $this->extensionMap[$extension];
+        if (null !== $fileName) {
+            // Just grabbing the extension
+            $extension = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
+            if (isset($this->extensionMap[$extension])) {
+                return $this->extensionMap[$extension];
+            }
         }
 
         return 'application/octet-stream';

@@ -58,7 +58,6 @@ interface SubscriptionSupport extends BackendInterface
      *
      * @param string $principalUri
      * @param string $uri
-     * @param array  $properties
      *
      * @return mixed
      */

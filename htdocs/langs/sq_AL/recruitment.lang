@@ -18,62 +18,63 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Rekrutimi
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Menaxhoni dhe ndiqni fushatat e rekrutimit për pozicione të reja pune
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Konfigurimi i rekrutimit
+RecruitmentSetupPage = Vendosni këtu konfigurimin e opsioneve kryesore për modulin e rekrutimit
+RecruitmentArea=Zona e rekrutimit
+PublicInterfaceRecruitmentDesc=Faqet publike të punëve janë URL publike për t'u shfaqur dhe për t'iu përgjigjur punëve të hapura. Ekziston një lidhje e ndryshme për çdo punë të hapur, që gjendet në çdo regjistrim pune.
+EnablePublicRecruitmentPages=Aktivizo faqet publike të punëve të hapura
 
 #
 # About page
 #
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+RecruitmentAbout = Rreth Rekrutimit
+RecruitmentAboutPage = Rekrutimi rreth faqes
+NbOfEmployeesExpected=Nb e pritur e punonjësve
+JobLabel=Etiketa e pozicionit të punës
+WorkPlace=Vendi i punës
+DateExpected=Data e pritshme
+FutureManager=Menaxher i ardhshëm
+ResponsibleOfRecruitement=Përgjegjës i rekrutimit
+IfJobIsLocatedAtAPartner=Nëse puna ndodhet në një vend partneri
+PositionToBeFilled=Pozicioni i punës
+PositionsToBeFilled=Pozicionet e punës
+ListOfPositionsToBeFilled=Lista e pozicioneve të punës
+NewPositionToBeFilled=Pozicione të reja pune
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+JobOfferToBeFilled=Vendi i punës që duhet plotësuar
+ThisIsInformationOnJobPosition=Informacion për pozicionin e punës që do të plotësohet
+ContactForRecruitment=Kontaktoni për rekrutim
+EmailRecruiter=Rekrutuesi i postës elektronike
+ToUseAGenericEmail=Për të përdorur një email gjenerik. Nëse nuk përcaktohet, do të përdoret emaili i përgjegjësit të rekrutimit
+NewCandidature=Aplikim i ri
+ListOfCandidatures=Lista e aplikacioneve
 Remuneration=Rrogë
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+RequestedRemuneration=Paga e kërkuar
+ProposedRemuneration=Paga e propozuar
+ContractProposed=Kontrata e propozuar
+ContractSigned=Kontrata e nënshkruar
+ContractRefused=Kontrata u refuzua
+RecruitmentCandidature=Aplikacion
+JobPositions=Pozicionet e punës
+RecruitmentCandidatures=Aplikacionet
+InterviewToDo=Kontaktet për t'u ndjekur
+AnswerCandidature=Përgjigja e aplikacionit
+YourCandidature=Aplikimi juaj
+YourCandidatureAnswerMessage=Faleminderit për aplikimin tuaj.<br>...
+JobClosedTextCandidateFound=Vendi i punës është i mbyllur. Pozicioni është plotësuar.
+JobClosedTextCanceled=Vendi i punës është i mbyllur.
+ExtrafieldsJobPosition=Atributet plotësuese (pozicionet e punës)
+ExtrafieldsApplication=Atributet plotësuese (aplikimet për punë)
+MakeOffer=Bëni një ofertë
+WeAreRecruiting=Ne jemi duke rekrutuar. Kjo është lista e pozicioneve të hapura për t'u plotësuar...
+NoPositionOpen=Asnjë pozicion i hapur për momentin
+ConfirmClose=Konfirmo anulimin
+ConfirmCloseAsk=Jeni i sigurt që dëshironi ta anuloni këtë kandidaturë rekrutimi
+recruitment=Rekrutimi

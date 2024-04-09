@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Απόθεμα προς χρήση για μείωση αποθεμάτων όταν πραγματοποιείται η ηλεκτρονική πληρωμή <br> (TODO Όταν η επιλογή μείωσης αποθεμάτων γίνεται σε μια ενέργεια στο τιμολόγιο και η ηλεκτρονική πληρωμή δημιουργεί από μόνη της το τιμολόγιο;)
 StripeLiveEnabled=Η λειτουργία Stripe live είναι ενεργοποιημένη (διαφορετικά η λειτουργία test / sandbox)
 StripeImportPayment=Εισαγωγή πληρωμών Stripe
-ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμή SEPA: %s => έγκυρο, %s => σφάλμα CVC, %s => έληξε, %s => η χρέωση αποτυγχάνει
+ExampleOfTestCreditCard=Παράδειγμα πιστωτικής κάρτας για δοκιμαστική πληρωμή: %s => έγκυρο, %s => σφάλμα CVC, %s => ληγμένη, %s => η χρέωση αποτυγχάνει
 ExampleOfTestBankAcountForSEPA=Παράδειγμα BAN τραπεζικού λογαριασμού για δοκιμή πάγιας εντολής: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Το αναγνωριστικό πελάτη Stripe Connect (ca _...)
@@ -51,6 +51,7 @@ StripeAccount=Λογαριασμός Stripe
 StripeChargeList=Λίστα χρεώσεων Stripe
 StripeTransactionList=Κατάλογος των συναλλαγών Stripe
 StripeCustomerId=Αναγνωριστικό πελάτη Sripe
+StripePaymentId=Αναγνωριστικό πληρωμής Stripe
 StripePaymentModes=Λειτουργίες πληρωμής Stripe
 LocalID=Τοπικό αναγνωριστικό
 StripeID=Αναγνωριστικό Stripe
@@ -70,9 +71,10 @@ ToOfferALinkForTestWebhook=Σύνδεσμος για τη ρύθμιση του 
 ToOfferALinkForLiveWebhook=Σύνδεσμος για τη ρύθμιση του Stripe WebHook για κλήση του IPN (κανονική λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των κανόνων ισχυρού ελέγχου ταυτότητας πελατών, η δημιουργία κάρτας πρέπει να γίνει από την Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των ισχυρών κανόνων ελέγχου ταυτότητας πελάτης, η δημιουργία μιας κάρτας πρέπει να γίνει από το Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή  πελάτη Stripe: %s
 STRIPE_CARD_PRESENT=Δώροκάρτα για τερματικά Stripe
 TERMINAL_LOCATION=Τοποθεσία (διεύθυνση) για Stripe Terminals
 RequestDirectDebitWithStripe=Άμεση Χρέωση με Stripe
+RequesCreditTransferWithStripe=Αίτηση μεταφοράς πίστωσης με το Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Ενεργοποιήστε τις πληρωμές άμεσης χρέωσης μέσω Stripe
-
+StripeConnect_Mode=Stripe Connect mode

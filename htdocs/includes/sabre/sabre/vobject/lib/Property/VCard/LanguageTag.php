@@ -2,8 +2,7 @@
 
 namespace Sabre\VObject\Property\VCard;
 
-use
-    Sabre\VObject\Property;
+use Sabre\VObject\Property;
 
 /**
  * LanguageTag property.

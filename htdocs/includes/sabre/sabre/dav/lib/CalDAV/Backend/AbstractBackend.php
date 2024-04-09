@@ -30,8 +30,7 @@ abstract class AbstractBackend implements BackendInterface
      *
      * Read the PropPatch documentation for more info and examples.
      *
-     * @param mixed                $calendarId
-     * @param \Sabre\DAV\PropPatch $propPatch
+     * @param mixed $calendarId
      */
     public function updateCalendar($calendarId, \Sabre\DAV\PropPatch $propPatch)
     {
@@ -46,7 +45,6 @@ abstract class AbstractBackend implements BackendInterface
      * If the backend supports this, it may allow for some speed-ups.
      *
      * @param mixed $calendarId
-     * @param array $uris
      *
      * @return array
      */
@@ -80,7 +78,7 @@ abstract class AbstractBackend implements BackendInterface
      *
      * This default may well be good enough for personal use, and calendars
      * that aren't very large. But if you anticipate high usage, big calendars
-     * or high loads, you are strongly adviced to optimize certain paths.
+     * or high loads, you are strongly advised to optimize certain paths.
      *
      * The best way to do so is override this method and to optimize
      * specifically for 'common filters'.
@@ -97,13 +95,12 @@ abstract class AbstractBackend implements BackendInterface
      * Note that especially time-range-filters may be difficult to parse. A
      * time-range filter specified on a VEVENT must for instance also handle
      * recurrence rules correctly.
-     * A good example of how to interprete all these filters can also simply
+     * A good example of how to interpret all these filters can also simply
      * be found in \Sabre\CalDAV\CalendarQueryFilter. This class is as correct
      * as possible, so it gives you a good idea on what type of stuff you need
      * to think of.
      *
      * @param mixed $calendarId
-     * @param array $filters
      *
      * @return array
      */
@@ -124,9 +121,6 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * This method validates if a filter (as passed to calendarQuery) matches
      * the given object.
-     *
-     * @param array $object
-     * @param array $filters
      *
      * @return bool
      */

@@ -5,6 +5,7 @@
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
-// Securit check
+// Security check
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'stock';
@@ -48,6 +50,7 @@ $type = 'stock';
 /*
  * Action
  */
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
 
@@ -90,7 +93,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 if ($action == 'warehouse') {
 	$value = GETPOST('default_warehouse', 'alpha');
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
-	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
+	if ($value == -1 || empty($value) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
 	if (!($res > 0)) {
@@ -105,21 +108,22 @@ if ($action == 'specimen') {
 	$object->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/stock/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($object, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=stock&file=SPECIMEN.pdf");
@@ -194,7 +198,7 @@ if (isModEnabled('productbatch')) {
 		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
 		$incmode = $langs->trans('StockOnReceptionOnClosing');
 	}
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
+	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
 
@@ -207,6 +211,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="warehouse">';
 
 // Title rule for stock decrease
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
@@ -215,10 +220,11 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -236,10 +242,11 @@ print "</td>\n</tr>\n";
 $found++;
 
 
+print '<!-- STOCK_CALCULATE_ON_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -259,10 +266,11 @@ $found++;
 //if (isModEnabled('expedition'))
 //{
 
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
-if (isModEnabled("expedition")) {
+if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 	} else {
@@ -275,16 +283,16 @@ if (isModEnabled("expedition")) {
 print "</td>\n</tr>\n";
 $found++;
 
-
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT_CLOSE -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
-if (isModEnabled("expedition")) {
+if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
@@ -293,12 +301,13 @@ print "</td>\n</tr>\n";
 $found++;
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
 
 // Title rule for stock increase
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
@@ -307,6 +316,7 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
@@ -328,7 +338,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 
-
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
@@ -350,6 +360,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -378,6 +389,7 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 } else {
+	print '<!-- STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
@@ -396,9 +408,11 @@ if (isModEnabled("reception")) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
@@ -419,7 +433,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -433,7 +447,7 @@ if (isModEnabled('facture')) {
 	print "</tr>\n";
 }
 
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';
@@ -447,7 +461,7 @@ if (isModEnabled('commande')) {
 	print "</tr>\n";
 }
 
-if (isModEnabled("expedition")) {
+if (isModEnabled("shipping")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td class="right">';
@@ -461,20 +475,22 @@ if (isModEnabled("expedition")) {
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')
 	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
 if ($virtualdiffersfromphysical) {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
@@ -495,6 +511,7 @@ if ($virtualdiffersfromphysical) {
 	print "</td>\n";
 	print "</tr>\n";
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 }
@@ -533,8 +550,9 @@ if ($resql) {
 }
 
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -553,6 +571,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -567,18 +586,19 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force ModelePDFStock $module';
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -602,7 +622,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->STOCK_ADDON_PDF == $name) {
+								if (getDolGlobalString('STOCK_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -646,6 +666,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 
@@ -658,6 +679,7 @@ print '<input type="hidden" name="action" value="warehouse">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -668,7 +690,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses(!empty($conf->global->MAIN_DEFAULT_WAREHOUSE) ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
+print $formproduct->selectWarehouses(getDolGlobalString('MAIN_DEFAULT_WAREHOUSE') ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
 print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
@@ -685,7 +707,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
-if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 	print '<td class="right">';
@@ -758,11 +780,12 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, $conf->global->STOCK_SUPPORTS_SERVICES);
+	print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
 }
 print "</td>\n";
 print "</tr>\n";
 
+// Add option to allow a "Limit for warning" and a "Desired stock" per warehouse.
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
 print '<td class="right">';
@@ -804,6 +827,7 @@ if (isModEnabled('productbatch')) {
 */
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

@@ -137,7 +137,7 @@ CountryLV=Lotyšsko
 CountryLB=Libanon
 CountryLS=Lesotho
 CountryLR=Libéria
-CountryLY=Líbyjská
+CountryLY=Libya
 CountryLI=Lichtenštajnsko
 CountryLT=Litva
 CountryLU=Luxembursko
@@ -247,6 +247,7 @@ CountryJE=Trikot
 CountryME=Čierna Hora
 CountryBL=Saint Barthelemy
 CountryMF=Svätý Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Pani

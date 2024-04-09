@@ -50,6 +50,7 @@ if (!defined('USESUFFIXINLOG')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -61,11 +62,11 @@ if (php_sapi_name() == "cli") {
 	exit(-1);
 }
 
-// librarie core
+// core library
 // Dolibarr environment
 require '../../main.inc.php';
 
-// librarie jobs
+// cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
 
 global $langs, $conf;

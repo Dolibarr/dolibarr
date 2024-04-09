@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -45,7 +45,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
@@ -56,7 +56,7 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
-	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checkcustomercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
@@ -67,7 +67,7 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
-	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
+	<?php if ($this->control->tpl['checksuppliercode'] != 0) { ?>
 	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
@@ -106,6 +106,8 @@ if ($this->control->tpl['action_delete']) {
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><?php echo $this->control->tpl['phone']; ?></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>
@@ -144,7 +146,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -162,7 +164,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -174,7 +176,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (isModEnabled('adherent')) { ?>
+<?php if (isModEnabled('member')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -186,7 +188,7 @@ if ($this->control->tpl['action_delete']) {
 <?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
-<?php if ($user->rights->societe->creer) { ?>
+<?php if ($user->hasRight('societe', 'creer')) { ?>
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 

@@ -3,14 +3,14 @@
 /**
  * Automatically generated timezone file.
  *
- * Last update: 2016-08-24T17:35:38-04:00
- * Source: http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml
+ * Last update: 2020-12-13T17:38:12+05:45
+ * Source: https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/windowsZones.xml
  *
- * @copyright Copyright (C) 2011-2015 fruux GmbH (https://fruux.com/).
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/).
  * @license http://sabre.io/license/ Modified BSD License
  */
 
-return  [
+return [
   'AUS Central Standard Time' => 'Australia/Darwin',
   'AUS Eastern Standard Time' => 'Australia/Sydney',
   'Afghanistan Standard Time' => 'Asia/Kabul',
@@ -74,6 +74,7 @@ return  [
   'Line Islands Standard Time' => 'Pacific/Kiritimati',
   'Lord Howe Standard Time' => 'Australia/Lord_Howe',
   'Magadan Standard Time' => 'Asia/Magadan',
+  'Magallanes Standard Time' => 'America/Punta_Arenas',
   'Marquesas Standard Time' => 'Pacific/Marquesas',
   'Mauritius Standard Time' => 'Indian/Mauritius',
   'Middle East Standard Time' => 'Asia/Beirut',
@@ -91,11 +92,13 @@ return  [
   'North Asia East Standard Time' => 'Asia/Irkutsk',
   'North Asia Standard Time' => 'Asia/Krasnoyarsk',
   'North Korea Standard Time' => 'Asia/Pyongyang',
+  'Omsk Standard Time' => 'Asia/Omsk',
   'Pacific SA Standard Time' => 'America/Santiago',
   'Pacific Standard Time' => 'America/Los_Angeles',
   'Pacific Standard Time (Mexico)' => 'America/Tijuana',
   'Pakistan Standard Time' => 'Asia/Karachi',
   'Paraguay Standard Time' => 'America/Asuncion',
+  'Qyzylorda Standard Time' => 'Asia/Qyzylorda',
   'Romance Standard Time' => 'Europe/Paris',
   'Russia Time Zone 10' => 'Asia/Srednekolymsk',
   'Russia Time Zone 11' => 'Asia/Kamchatka',
@@ -108,9 +111,12 @@ return  [
   'Saint Pierre Standard Time' => 'America/Miquelon',
   'Sakhalin Standard Time' => 'Asia/Sakhalin',
   'Samoa Standard Time' => 'Pacific/Apia',
+  'Sao Tome Standard Time' => 'Africa/Sao_Tome',
+  'Saratov Standard Time' => 'Europe/Saratov',
   'Singapore Standard Time' => 'Asia/Singapore',
   'South Africa Standard Time' => 'Africa/Johannesburg',
   'Sri Lanka Standard Time' => 'Asia/Colombo',
+  'Sudan Standard Time' => 'Africa/Khartoum',
   'Syria Standard Time' => 'Asia/Damascus',
   'Taipei Standard Time' => 'Asia/Taipei',
   'Tasmania Standard Time' => 'Australia/Hobart',
@@ -125,6 +131,7 @@ return  [
   'US Mountain Standard Time' => 'America/Phoenix',
   'UTC' => 'Etc/GMT',
   'UTC+12' => 'Etc/GMT-12',
+  'UTC+13' => 'Etc/GMT-13',
   'UTC-02' => 'Etc/GMT+2',
   'UTC-08' => 'Etc/GMT+8',
   'UTC-09' => 'Etc/GMT+9',
@@ -132,6 +139,7 @@ return  [
   'Ulaanbaatar Standard Time' => 'Asia/Ulaanbaatar',
   'Venezuela Standard Time' => 'America/Caracas',
   'Vladivostok Standard Time' => 'Asia/Vladivostok',
+  'Volgograd Standard Time' => 'Europe/Volgograd',
   'W. Australia Standard Time' => 'Australia/Perth',
   'W. Central Africa Standard Time' => 'Africa/Lagos',
   'W. Europe Standard Time' => 'Europe/Berlin',
@@ -140,4 +148,5 @@ return  [
   'West Bank Standard Time' => 'Asia/Hebron',
   'West Pacific Standard Time' => 'Pacific/Port_Moresby',
   'Yakutsk Standard Time' => 'Asia/Yakutsk',
+  'Yukon Standard Time' => 'America/Whitehorse',
 ];

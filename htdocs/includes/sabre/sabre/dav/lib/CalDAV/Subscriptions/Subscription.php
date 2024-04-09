@@ -40,9 +40,6 @@ class Subscription extends Collection implements ISubscription, IACL
 
     /**
      * Constructor.
-     *
-     * @param SubscriptionSupport $caldavBackend
-     * @param array               $subscriptionInfo
      */
     public function __construct(SubscriptionSupport $caldavBackend, array $subscriptionInfo)
     {
@@ -78,7 +75,7 @@ class Subscription extends Collection implements ISubscription, IACL
     /**
      * Returns the last modification time.
      *
-     * @return int
+     * @return int|null
      */
     public function getLastModified()
     {
@@ -115,8 +112,6 @@ class Subscription extends Collection implements ISubscription, IACL
      *
      * To update specific properties, call the 'handle' method on this object.
      * Read the PropPatch documentation for more information.
-     *
-     * @param PropPatch $propPatch
      */
     public function propPatch(PropPatch $propPatch)
     {

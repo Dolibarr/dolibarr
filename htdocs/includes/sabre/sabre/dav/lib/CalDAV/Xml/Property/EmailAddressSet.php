@@ -30,8 +30,6 @@ class EmailAddressSet implements XmlSerializable
 
     /**
      * __construct.
-     *
-     * @param array $emails
      */
     public function __construct(array $emails)
     {
@@ -63,8 +61,6 @@ class EmailAddressSet implements XmlSerializable
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {

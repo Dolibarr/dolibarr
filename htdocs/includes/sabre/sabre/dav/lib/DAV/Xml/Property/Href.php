@@ -35,12 +35,22 @@ class Href implements Element, HtmlOutput
     protected $hrefs;
 
     /**
+     * Automatically prefix the url with the server base directory.
+     * Note: use of this property in code was removed in PR:
+     * https://github.com/sabre-io/dav/pull/801
+     * But the property is left here because old data may still exist
+     * that has this property saved.
+     * See discussion in issue:
+     * https://github.com/sabre-io/Baikal/issues/1154.
+     *
+     * @var bool
+     */
+    protected $autoPrefix = true;
+
+    /**
      * Constructor.
      *
      * You must either pass a string for a single href, or an array of hrefs.
-     *
-     * If auto-prefix is set to false, the hrefs will be treated as absolute
-     * and not relative to the servers base uri.
      *
      * @param string|string[] $hrefs
      */
@@ -87,8 +97,6 @@ class Href implements Element, HtmlOutput
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {
@@ -108,8 +116,6 @@ class Href implements Element, HtmlOutput
      *
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
-     *
-     * @param HtmlOutputHelper $html
      *
      * @return string
      */
@@ -140,8 +146,6 @@ class Href implements Element, HtmlOutput
      *
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
-     *
-     * @param Reader $reader
      *
      * @return mixed
      */

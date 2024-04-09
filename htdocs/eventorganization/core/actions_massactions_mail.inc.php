@@ -4,6 +4,7 @@
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if (empty($objectclass) || empty($uploaddir)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -66,7 +67,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectid = array();
 
 	$listofobjectref = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
+	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
@@ -91,6 +92,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 		}
 	}
+	'@phan-var-force CommonObject $objecttmp';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -107,7 +109,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
+	if (!trim(GETPOST('sendto', 'alphawithlgt')) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend_attendees';
@@ -140,7 +142,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				}
 			}
 			$tmparray = array();
-			if (trim($_POST['sendtocc'])) {
+			if (trim(GETPOST('sendtocc', 'alphawithlgt'))) {
 				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			$sendtocc = implode(',', $tmparray);
@@ -153,12 +155,12 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			if ($fromtype === 'user') {
 				$from = $user->getFullName($langs) . ' <' . $user->email . '>';
 			} elseif ($fromtype === 'company') {
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM . ' <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
+				$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
-				$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
@@ -181,11 +183,11 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $attendees);
 
-			if (!empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+			if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT;
 				$url_link = $urlwithroot . '/public/agenda/agendaexport.php?format=ical' . ($conf->entity > 1 ? "&entity=" . $conf->entity : "");
-				$url_link .= '&exportkey=' . ($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
+				$url_link .= '&exportkey=' . ($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
 				$url_link .= "&project=" . $listofselectedref[$email]->fk_project . '&module=' . urlencode('@eventorganization') . '&status=' . ConferenceOrBooth::STATUS_CONFIRMED;
 				$html_link = '<a href="' . $url_link . '">' . $langs->trans('DownloadICSLink') . '</a>';
 			}
@@ -221,7 +223,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 					dol_syslog("Try to insert email event into agenda for objid=" . $attendees->id . " => objectobj=" . get_class($attendees));
 
-					$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
+					$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 					if ($message) {
 						if ($sendtocc) {
 							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
@@ -260,7 +262,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					if ($mailfile->error) {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$resaction .= '<br><div class="error">' . $mailfile->error . '</div>';
-					} elseif (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
+					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 					} else {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
@@ -276,7 +278,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction .= $langs->trans("NbSent") . ': ' . ($nbsent ? $nbsent : 0) . "\n<br>";
 
 	if ($nbsent) {
-		$action = ''; // Do not show form post if there was at least one successfull sent
+		$action = ''; // Do not show form post if there was at least one successful sent
 		//setEventMessages($langs->trans("EMailSentToNRecipients", $nbsent.'/'.count($toselect)), null, 'mesgs');
 		setEventMessages($langs->trans("EMailSentForNElements", $nbsent . '/' . count($toselect)), null, 'mesgs');
 		setEventMessages($resaction, null, 'mesgs');

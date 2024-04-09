@@ -24,4 +24,4 @@ SalariesStatistics=تنخواہ کے اعدادوشمار
 SalariesAndPayments=تنخواہیں اور ادائیگیاں
 ConfirmDeleteSalaryPayment=کیا آپ اس تنخواہ کی ادائیگی کو حذف کرنا چاہتے ہیں؟
 FillFieldFirst=پہلے ملازم کی فیلڈ کو بھریں۔
-UpdateAmountWithLastSalary=آخری تنخواہ کے ساتھ رقم مقرر کریں۔
+UpdateAmountWithLastSalary=Set amount of last salary

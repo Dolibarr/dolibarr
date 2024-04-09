@@ -27,9 +27,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 	// Redirection vers la page de l'utilisateur
 	header("Location: card.php?id=".$user->id);
 	exit;
@@ -39,7 +39,7 @@ if (!$user->rights->user->user->lire && !$user->admin) {
 $langs->load("users");
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
 }
 
@@ -63,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "1");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -168,9 +168,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';

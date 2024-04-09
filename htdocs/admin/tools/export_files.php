@@ -47,7 +47,7 @@ $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2|\.zst)$/i', '', $
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -59,7 +59,7 @@ if ($page < 0) {
 } elseif (empty($page)) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {

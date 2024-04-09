@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Charlene BENKE		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 
 /**
  * \file       htdocs/core/lib/contract.lib.php
- * \brief      Ensemble de fonctions de base pour le module contrat
+ * \brief      Ensemble de functions de base pour le module contrat
  */
 
 /**
@@ -40,7 +41,7 @@ function contract_prepare_head(Contrat $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
@@ -51,13 +52,21 @@ function contract_prepare_head(Contrat $object)
 		$h++;
 	}
 
+	/* deprecated. Contracts and tickets are already linked with the generic "Link to" feature */
+	if (isModEnabled('ticket') && getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/ticket.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tickets");
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -90,7 +99,7 @@ function contract_prepare_head(Contrat $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -130,7 +139,7 @@ function contract_prepare_head(Contrat $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

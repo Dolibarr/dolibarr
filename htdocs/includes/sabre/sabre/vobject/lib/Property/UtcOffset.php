@@ -17,9 +17,9 @@ class UtcOffset extends Text
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
-    public $delimiter = null;
+    public $delimiter = '';
 
     /**
      * Returns the type of value.
@@ -38,8 +38,6 @@ class UtcOffset extends Text
      * Sets the JSON value, as it would appear in a jCard or jCal object.
      *
      * The value must always be an array.
-     *
-     * @param array $value
      */
     public function setJsonValue(array $value)
     {

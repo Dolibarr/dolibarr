@@ -29,11 +29,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'companies'));
 
 // Get parameters
-$id         = GETPOST('id', 'int');
+$id         = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -54,8 +56,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->workstation->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->workstation->workstation->write;      // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->workstation->workstation->write;     // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');     // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
 $isdraft = 0;
@@ -104,7 +106,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -134,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

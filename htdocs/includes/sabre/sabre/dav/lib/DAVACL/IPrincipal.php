@@ -60,8 +60,6 @@ interface IPrincipal extends DAV\INode
      * The list of members is always overwritten, never appended to.
      *
      * This method should throw an exception if the members could not be set.
-     *
-     * @param array $principals
      */
     public function setGroupMemberSet(array $principals);
 

@@ -4,7 +4,6 @@ LabelBankCashAccount=label van bank of kas
 TransferTo=Aan
 BankChecksToReceipt=Te innen cheques
 BankChecksToReceiptShort=Te innen cheques
-InputReceiptNumber=Kies het bankafschrift in verband met de bemiddeling. Gebruik een sorteerbaar numerieke waarde: YYYYMM of YYYYMMDD
 EventualyAddCategory=Tenslotte een categorie opgeven waarin de gegevens bewaard kunnen worden
 ThenCheckLinesAndConciliate=Duid dan de lijnen aan van het bankafschrift en klik
 DeleteARib=Verwijderen BAN gegeven

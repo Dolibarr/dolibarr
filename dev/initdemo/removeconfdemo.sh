@@ -6,15 +6,15 @@
 # Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# WARNING: This script erase setup of instance, 
+# WARNING: This script erase setup of instance,
 # but not the database
 #------------------------------------------------------
-
+# shellcheck disable=2006,2034,2046,2064,2068,2086,2155,2166,2186,2172,2268
 
 export mydir=`echo "$0" | sed -e 's/removedemo.sh//'`;
 if [ "x$mydir" = "x" ]
 then
-    export mydir="./"
+	export mydir="./"
 fi
 export id=`id -u`;
 
@@ -22,8 +22,8 @@ export id=`id -u`;
 # ----------------------------- check if root
 if [ "x$id" != "x0" -a "x$id" != "x1001" ]
 then
-    echo "Script must be ran as root"
-    exit
+	echo "Script must be ran as root"
+	exit
 fi
 
 
@@ -32,15 +32,15 @@ DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Remove Dolibarr install" --clear \
-		--yesno "Do you confirm ?" 15 40
+	--yesno "Do you confirm ?" 15 40
 valret=$?
 case $valret in
-  0)
-base=`cat $fichtemp`;;
-  1)
-exit;;
-  255)
-exit;;
+	0)
+		base=`cat $fichtemp` ;;
+	1)
+		exit ;;
+	255)
+		exit ;;
 esac
 
 # ---------------------------- remove conf file

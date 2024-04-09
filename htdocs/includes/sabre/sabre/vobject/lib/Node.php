@@ -73,6 +73,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     abstract public function jsonSerialize();
 
     /**
@@ -81,7 +82,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @param Xml\Writer $writer XML writer
      */
-    abstract public function xmlSerialize(Xml\Writer $writer);
+    abstract public function xmlSerialize(Xml\Writer $writer): void;
 
     /**
      * Call this method on a document if you're done using it.
@@ -102,6 +103,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @return ElementList
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         if (!is_null($this->iterator)) {
@@ -115,8 +117,6 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      * Sets the overridden iterator.
      *
      * Note that this is not actually part of the iterator interface
-     *
-     * @param ElementList $iterator
      */
     public function setIterator(ElementList $iterator)
     {
@@ -159,6 +159,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $it = $this->getIterator();
@@ -179,6 +180,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $iterator = $this->getIterator();
@@ -195,6 +197,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $iterator = $this->getIterator();
@@ -210,6 +213,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      * @param int   $offset
      * @param mixed $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $iterator = $this->getIterator();
@@ -230,6 +234,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @param int $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $iterator = $this->getIterator();

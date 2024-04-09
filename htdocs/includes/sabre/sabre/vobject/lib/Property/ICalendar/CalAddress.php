@@ -2,8 +2,7 @@
 
 namespace Sabre\VObject\Property\ICalendar;
 
-use
-    Sabre\VObject\Property\Text;
+use Sabre\VObject\Property\Text;
 
 /**
  * CalAddress property.
@@ -20,9 +19,9 @@ class CalAddress extends Text
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
-    public $delimiter = null;
+    public $delimiter = '';
 
     /**
      * Returns the type of value.
@@ -54,7 +53,11 @@ class CalAddress extends Text
             return $input;
         }
         list($schema, $everythingElse) = explode(':', $input, 2);
+        $schema = strtolower($schema);
+        if ('mailto' === $schema) {
+            $everythingElse = strtolower($everythingElse);
+        }
 
-        return strtolower($schema).':'.$everythingElse;
+        return $schema.':'.$everythingElse;
     }
 }

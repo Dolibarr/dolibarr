@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2023 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
+	/** Force subclass to implement LANGFILE */
+	const LANGFILE = self::LANGFILE;
+
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -41,6 +45,20 @@ class PrintingDriver
 	 */
 	public $error = '';
 
+	/**
+	 * @var string Name
+	 */
+	public $name;
+
+	/**
+	 * @var string Description
+	 */
+	public $desc;
+
+	/**
+	 * @var string Html string returned for print
+	 */
+	public $resprint;
 
 	/**
 	 *  Constructor
@@ -56,8 +74,8 @@ class PrintingDriver
 	 *  Return list of printing driver
 	 *
 	 *  @param  DoliDB  $db                 Database handler
-	 *  @param  integer  $maxfilenamelength  Max length of value to show
-	 *  @return array                       List of drivers
+	 *  @param  int		$maxfilenamelength	Max length of value to show
+	 *  @return array<string,string>		List of drivers
 	 */
 	public static function listDrivers($db, $maxfilenamelength = 0)
 	{

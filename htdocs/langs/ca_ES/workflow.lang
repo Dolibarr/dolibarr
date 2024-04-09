@@ -7,30 +7,32 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automàticament una comanda de client 
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crea automàticament una factura del client després de signar un pressupost (la nova factura tindrà el mateix import que el pressupost)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automàticament una factura a client després de validar un contracte
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automàticament una factura de client després de tancar una comanda de client (la nova factura tindrà el mateix import que la comanda)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=En crear el bitllet, creeu automàticament una intervenció.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=En crear el tiquet, creeu automàticament una intervenció.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica el pressupost d'origen com a facturat quan la comanda del client es posi com a facturada (i si l'import de la comanda és igual a l'import total del pressupost signat vinculat)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica els pressupostos vinculats d'origen com a facturats quan la factura del client es validi (i si l'import de la factura és igual a l'import total dels pressupostos signats vinculats)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica les comandes de client vinculades d'origen com a facturades quan la factura del client es validi (i si l'import de la factura és igual a l'import total de les comandes vinculades)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica les comandes de client vinculades d'origen com a facturades quan la factura del client es posi com a pagada (i si l'import de la factura és igual a l'import total de les comandes vinculades)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica les comandes vinculades com a enviades quan l'expedició es validi (i si la quantitat enviada per totes les expedicions és igual que la comanda a actualitzar)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classifiqueu la comanda de venda d'origen enllaçada com a enviada quan es tanca un enviament (i si la quantitat enviada per tots els enviaments és la mateixa que a l'ordre d'actualització)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica les propostes d'origen enllaçades com a facturades quan una comanda de venda s'estableix com a facturació (i si l'import de la comanda és el mateix que l'import total de les propostes enllaçades signades)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica les propostes d'origen enllaçades com a facturades quan es valida una factura de client (i si l'import de la factura és el mateix que l'import total de les propostes enllaçades signades)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica la comanda de venda d'origen enllaçada com a facturada quan es valida una factura de client (i si l'import de la factura és el mateix que l'import total de les comandes de venda enllaçades). Si teniu 1 factura validada per a n comandes, és possible que totes les comandes també es facin.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifiqueu les comandes de venda d'origen enllaçades com a facturades quan una factura de client s'estableix com a pagada (i si l'import de la factura és el mateix que l'import total de les comandes de venda enllaçades). Si teniu 1 conjunt de factures facturades per a n comandes, això també pot establir que totes les comandes es facturaran.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica les comandes de vendes d'origen enllaçades com a enviades quan es valida un enviament (i si la quantitat enviada per tots els enviaments és la mateixa que a la comanda d'actualització)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Marca la comanda de venda d'origen enllaçada com a enviada quan es tanca un enviament (i si la quantitat enviada per tots els enviaments és la mateixa que a la comanda a actualitzar)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classifica el pressupost de proveïdor vinculat com facturat quan la factura de proveïdor és validada (i si l'import de la factura és igual a l'import total del pressupost vinculat)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classifica la proposta de proveïdor d'origen enllaçada com a facturada quan es valida la factura del proveïdor (i si l'import de la factura és el mateix que l'import total de les propostes enllaçades)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica la comanda de proveïdor vinculada com facturada quan la factura de proveïdor és validada (i si l'import de la factura és igual a l'import total de la comanda vinculada)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es valida una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es tanca una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica la comanda de compra d'origen enllaçada com a facturada quan es valida la factura del proveïdor (i si l'import de la factura és el mateix que l'import total de les comandes enllaçades)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Marca com a rebuda l'ordre de compra d'origen enllaçada quan es valida una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Marca com a rebuda l'ordre de compra d'origen enllaçada quan es tanca una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classifica l'enviament d'origen enllaçat com a tancat quan es valida una factura de client (i si l'import de la factura és el mateix que l'import total dels enviaments enllaçats)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classifica l'enviament d'origen enllaçat com a facturat quan es valida una factura de client (i si l'import de la factura és el mateix que l'import total dels enviaments enllaçats)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classifica les recepcions d'origen enllaçades com a facturades quan es valida una factura de compra (i si l'import de la factura és el mateix que l'import total de les recepcions enllaçades)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classifica les recepcions d'origen enllaçades com a facturades quan es valida una factura de compra (i si l'import de la factura és el mateix que l'import total de les recepcions enllaçades)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Quan creeu un bitllet, enllaceu els contractes disponibles del tercer coincident
+descWORKFLOW_TICKET_LINK_CONTRACT=Quan creeu un bitllet, enllaceu tots els contractes disponibles de tercers coincidents
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=En enllaçar contractes, cerqueu entre els de les empreses matrius
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Tanca totes les intervencions vinculades quan es tanca un tiquet
 AutomaticCreation=Creació automàtica
 AutomaticClassification=Classificació automàtica
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Tancament automàtic
 AutomaticLinking=Enllaç automàtic

@@ -39,7 +39,7 @@ function stock_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($user->rights->stock->mouvement->lire)) {
+	if ($user->hasRight('stock', 'mouvement', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("StockMovements");
 		$head[$h][2] = 'movements';
@@ -56,8 +56,8 @@ function stock_prepare_head($object)
 	/* Disabled because will never be implemented. Table always empty.
 	if (!empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
 	{
-		// Should not be enabled by defaut because does not work yet correctly because
-		// personnal stocks are not tagged into table llx_entrepot
+		// Should not be enabled by default because does not work yet correctly because
+		// personal stocks are not tagged into table llx_entrepot
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Users");
 		$head[$h][2] = 'user';
@@ -84,7 +84,7 @@ function stock_prepare_head($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

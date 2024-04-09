@@ -37,15 +37,15 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
+	$object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
@@ -117,8 +117,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project

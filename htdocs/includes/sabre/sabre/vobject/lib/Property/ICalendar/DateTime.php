@@ -38,8 +38,6 @@ class DateTime extends Property
      * Sets a multi-valued property.
      *
      * You may also specify DateTime objects here.
-     *
-     * @param array $parts
      */
     public function setParts(array $parts)
     {
@@ -175,7 +173,6 @@ class DateTime extends Property
     /**
      * Sets the property as a DateTime object.
      *
-     * @param DateTimeInterface $dt
      * @param bool isFloating If set to true, timezones will be ignored
      */
     public function setDateTime(DateTimeInterface $dt, $isFloating = false)
@@ -187,7 +184,7 @@ class DateTime extends Property
      * Sets the property as multiple date-time objects.
      *
      * The first value will be used as a reference for the timezones, and all
-     * the otehr values will be adjusted for that timezone
+     * the other values will be adjusted for that timezone
      *
      * @param DateTimeInterface[] $dt
      * @param bool isFloating If set to true, timezones will be ignored
@@ -279,8 +276,6 @@ class DateTime extends Property
      * Sets the json value, as it would appear in a jCard or jCal object.
      *
      * The value must always be an array.
-     *
-     * @param array $value
      */
     public function setJsonValue(array $value)
     {
@@ -305,6 +300,7 @@ class DateTime extends Property
      * @param string $name
      * @param mixed  $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($name, $value)
     {
         parent::offsetSet($name, $value);
@@ -343,8 +339,8 @@ class DateTime extends Property
         $messages = parent::validate($options);
         $valueType = $this->getValueType();
         $values = $this->getParts();
-        try {
-            foreach ($values as $value) {
+        foreach ($values as $value) {
+            try {
                 switch ($valueType) {
                     case 'DATE':
                         DateTimeParser::parseDate($value);
@@ -353,13 +349,14 @@ class DateTime extends Property
                         DateTimeParser::parseDateTime($value);
                         break;
                 }
+            } catch (InvalidDataException $e) {
+                $messages[] = [
+                    'level' => 3,
+                    'message' => 'The supplied value ('.$value.') is not a correct '.$valueType,
+                    'node' => $this,
+                ];
+                break;
             }
-        } catch (InvalidDataException $e) {
-            $messages[] = [
-                'level' => 3,
-                'message' => 'The supplied value ('.$value.') is not a correct '.$valueType,
-                'node' => $this,
-            ];
         }
 
         return $messages;

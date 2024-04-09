@@ -56,16 +56,16 @@ $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL_
 // Editing global variables not related to a specific theme
 $constantes = array(
 	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member'),
-	'ADHERENT_MAIL_FROM'							=>array('type'=>'string'),
-	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string'),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string'),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext)
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext,'label'=>'')
 );
 
 
@@ -105,7 +105,7 @@ if ($action == 'updateall') {
 
 // Action to update or add a constant
 if ($action == 'update' || $action == 'add') {
-	$constlineid = GETPOST('rowid', 'int');
+	$constlineid = GETPOSTINT('rowid');
 	$constname = GETPOST('constname', 'alpha');
 
 	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));

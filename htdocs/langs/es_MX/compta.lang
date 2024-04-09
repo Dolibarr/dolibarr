@@ -5,5 +5,9 @@ TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa 
 OptionMode=Opción de contabilidad
 OptionModeVirtual=Opción Reclamaciones-Deudas
 Param=Configuración
+AccountancyTreasuryArea=Área contable
 PaymentSocialContribution=Pago de impuesto social/fiscal
+Refund=Reembolso
 ByThirdParties=Por terceros
+CheckReceipt=Ficha de depósito
+CheckReceiptShort=Ficha de depósito

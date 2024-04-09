@@ -62,7 +62,6 @@ ChooseFileToImport=Augšupielādējiet failu, pēc tam noklikšķiniet uz %s iko
 SourceFileFormat=Avota faila formāts
 FieldsInSourceFile=Lauki sākotnējā failā
 FieldsInTargetDatabase=Mērķa lauki Dolibarr datu bāzē (treknrakstā = obligāti)
-Field=Lauks
 NoFields=Nav lauki
 MoveField=Pārvietot lauka kolonnas numurs %s
 ExampleOfImportFile=Importa_faila_piemers
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Izvēlieties avota faila laukus, kurus vēlaties impo
 MandatoryTargetFieldsNotMapped=Daži obligātie mērķa lauki nav kartēti
 AllTargetMandatoryFieldsAreMapped=Visi mērķa lauki, kuriem nepieciešama obligāta vērtība, ir kartēti
 ResultOfSimulationNoError=Simulācijas rezultāts: nav kļūdu
+NumberOfLinesLimited=Ierobežots rindu skaits

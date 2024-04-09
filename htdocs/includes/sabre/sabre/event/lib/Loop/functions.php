@@ -1,16 +1,15 @@
-<?php declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sabre\Event\Loop;
 
 /**
  * Executes a function after x seconds.
- *
- * @return void
  */
-function setTimeout(callable $cb, float $timeout) {
-
+function setTimeout(callable $cb, float $timeout)
+{
     instance()->setTimeout($cb, $timeout);
-
 }
 
 /**
@@ -19,34 +18,26 @@ function setTimeout(callable $cb, float $timeout) {
  * The value this function returns can be used to stop the interval with
  * clearInterval.
  */
-function setInterval(callable $cb, float $timeout) : array {
-
+function setInterval(callable $cb, float $timeout): array
+{
     return instance()->setInterval($cb, $timeout);
-
 }
 
 /**
  * Stops a running interval.
- *
- * @return void
  */
-function clearInterval(array $intervalId) {
-
+function clearInterval(array $intervalId)
+{
     instance()->clearInterval($intervalId);
-
 }
 
 /**
  * Runs a function immediately at the next iteration of the loop.
- *
- * @return void
  */
-function nextTick(callable $cb) {
-
+function nextTick(callable $cb)
+{
     instance()->nextTick($cb);
-
 }
-
 
 /**
  * Adds a read stream.
@@ -58,12 +49,10 @@ function nextTick(callable $cb) {
  * prevent the eventloop from never stopping.
  *
  * @param resource $stream
- * @return void
  */
-function addReadStream($stream, callable $cb) {
-
+function addReadStream($stream, callable $cb)
+{
     instance()->addReadStream($stream, $cb);
-
 }
 
 /**
@@ -76,51 +65,41 @@ function addReadStream($stream, callable $cb) {
  * prevent the eventloop from never stopping.
  *
  * @param resource $stream
- * @return void
  */
-function addWriteStream($stream, callable $cb) {
-
+function addWriteStream($stream, callable $cb)
+{
     instance()->addWriteStream($stream, $cb);
-
 }
 
 /**
  * Stop watching a stream for reads.
  *
  * @param resource $stream
- * @return void
  */
-function removeReadStream($stream) {
-
+function removeReadStream($stream)
+{
     instance()->removeReadStream($stream);
-
 }
 
 /**
  * Stop watching a stream for writes.
  *
  * @param resource $stream
- * @return void
  */
-function removeWriteStream($stream) {
-
+function removeWriteStream($stream)
+{
     instance()->removeWriteStream($stream);
-
 }
-
 
 /**
  * Runs the loop.
  *
- * This function will run continiously, until there's no more events to
+ * This function will run continuously, until there's no more events to
  * handle.
- *
- * @return void
  */
-function run() {
-
+function run()
+{
     instance()->run();
-
 }
 
 /**
@@ -135,34 +114,30 @@ function run() {
  * This function will return true if there are _any_ events left in the
  * loop after the tick.
  */
-function tick(bool $block = false) : bool {
-
+function tick(bool $block = false): bool
+{
     return instance()->tick($block);
-
 }
 
 /**
- * Stops a running eventloop
- *
- * @return void
+ * Stops a running eventloop.
  */
-function stop() {
-
+function stop()
+{
     instance()->stop();
-
 }
 
 /**
  * Retrieves or sets the global Loop object.
  */
-function instance(Loop $newLoop = null) : Loop {
-
+function instance(Loop $newLoop = null): Loop
+{
     static $loop;
     if ($newLoop) {
         $loop = $newLoop;
     } elseif (!$loop) {
         $loop = new Loop();
     }
-    return $loop;
 
+    return $loop;
 }

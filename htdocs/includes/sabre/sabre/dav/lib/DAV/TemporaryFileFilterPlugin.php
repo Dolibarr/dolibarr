@@ -90,8 +90,6 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      *
      * This is called automatically be the Server class after this plugin is
      * added with Sabre\DAV\Server::addPlugin()
-     *
-     * @param Server $server
      */
     public function initialize(Server $server)
     {
@@ -105,9 +103,6 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      *
      * This method intercepts any GET, DELETE, PUT and PROPFIND calls to
      * filenames that are known to match the 'temporary file' regex.
-     *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
      *
      * @return bool
      */
@@ -137,11 +132,10 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      * This is used to deal with HTTP LOCK requests which create a new
      * file.
      *
-     * @param string      $uri
-     * @param resource    $data
-     * @param ICollection $parent
-     * @param bool        $modified should be set to true, if this event handler
-     *                              changed &$data
+     * @param string   $uri
+     * @param resource $data
+     * @param bool     $modified should be set to true, if this event handler
+     *                           changed &$data
      *
      * @return bool
      */
@@ -190,9 +184,7 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      * If the file doesn't exist, it will return false which will kick in
      * the regular system for the GET method.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $hR
-     * @param string            $tempLocation
+     * @param string $tempLocation
      *
      * @return bool
      */
@@ -214,9 +206,7 @@ class TemporaryFileFilterPlugin extends ServerPlugin
     /**
      * This method handles the PUT method.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $hR
-     * @param string            $tempLocation
+     * @param string $tempLocation
      *
      * @return bool
      */
@@ -242,9 +232,7 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      * If the file didn't exist, it will return false, which will make the
      * standard HTTP DELETE handler kick in.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $hR
-     * @param string            $tempLocation
+     * @param string $tempLocation
      *
      * @return bool
      */
@@ -268,9 +256,7 @@ class TemporaryFileFilterPlugin extends ServerPlugin
      * for which properties were requested, and just sends back a default
      * set of properties.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $hR
-     * @param string            $tempLocation
+     * @param string $tempLocation
      *
      * @return bool
      */

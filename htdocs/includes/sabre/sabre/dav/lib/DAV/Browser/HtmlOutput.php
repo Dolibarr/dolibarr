@@ -28,8 +28,6 @@ interface HtmlOutput
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
      *
-     * @param HtmlOutputHelper $html
-     *
      * @return string
      */
     public function toHtml(HtmlOutputHelper $html);

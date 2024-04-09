@@ -137,7 +137,7 @@ CountryLV=Latvija
 CountryLB=Libanas
 CountryLS=Lesotas
 CountryLR=Liberija
-CountryLY=Libija
+CountryLY=Libya
 CountryLI=Lichtenšteinas
 CountryLT=Lithuania
 CountryLU=Liuksemburgas
@@ -247,6 +247,7 @@ CountryJE=Džersis
 CountryME=Juodkalnija
 CountryBL=Švento Baltramiejaus sala
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=p.

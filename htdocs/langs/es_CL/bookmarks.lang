@@ -1,9 +1,0 @@
-# Dolibarr language file - Source file is en_US - bookmarks
-AddThisPageToBookmarks=Agregar página actual a marcadores
-ListOfBookmarks=Lista de marcadores
-EditBookmarks=Listar/editar Marcadores
-ShowBookmark=Mostrar marcador
-OpenANewWindow=Abre una nueva pestaña
-BehaviourOnClick=Comportamiento cuando se selecciona una URL de marcador
-SetHereATitleForLink=Establecer un nombre para el marcador
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página vinculada debería abrirse en la pestaña actual o en una nueva pestaña

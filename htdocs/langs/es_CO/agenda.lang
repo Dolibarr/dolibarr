@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID de Evento
 ActionsOwnedBy=Evento propiedad de
-Event=Acción
 EventsNb=Numero de eventos
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día(s)
@@ -30,7 +29,6 @@ MemberSubscriptionAddedInDolibarr=Se agregó la suscripción %s para el miembro 
 MemberSubscriptionModifiedInDolibarr=Suscripción %s para el miembro %s modificada
 MemberSubscriptionDeletedInDolibarr=Se eliminó la suscripción %s para el miembro %s
 ShipmentValidatedInDolibarr=Envío %s validado
-ShipmentClassifyClosedInDolibarr=Envío %s clasificado facturado
 ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabierto
 ShipmentBackToDraftInDolibarr=Envío %s volver al estado de borrador
 ShipmentDeletedInDolibarr=Envío %s eliminado
@@ -61,6 +59,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO establecido en estado de borrador
 MRP_MO_PRODUCEDInDolibarr=MO producido
 MRP_MO_DELETEInDolibarr=MO eliminado
 MRP_MO_CANCELInDolibarr=MO cancelado
+CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b> logina = %s </b> para restringir la salida a acciones propiedad de un usuario <b> %s </b>.

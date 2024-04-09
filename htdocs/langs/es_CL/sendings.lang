@@ -24,7 +24,6 @@ StatusSendingProcessed=Procesada
 StatusSendingProcessedShort=Procesada
 SendingSheet=Hoja de envío
 ConfirmDeleteSending=¿Seguro que quieres eliminar este envío?
-ConfirmValidateSending=¿Estas seguro que quieres validar este envió con referencia <b>%s</b>?
 ConfirmCancelSending=¿Seguro que quieres cancelar este envío?
 WarningNoQtyLeftToSend=Advertencia, no hay productos esperando ser enviados.
 DateDeliveryPlanned=Fecha planificada de entrega

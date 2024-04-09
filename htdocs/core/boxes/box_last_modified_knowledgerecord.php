@@ -41,34 +41,14 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boximg = "knowledgemanagement";
 
 	/**
-	 * @var string boc label
+	 * @var string box label
 	 */
 	public $boxlabel;
 
 	/**
-	 * @var array box dependancies
+	 * @var array box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string param
-	 */
-	public $param;
-
-	/**
-	 * @var array box info heads
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array box info content
-	 */
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor
@@ -78,7 +58,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public function __construct($db, $param = '')
 	{
 		global $langs;
-		$langs->load("boxes", "knowledgemanagement", "languages");
+		$langs->loadLangs(array("boxes", "knowledgemanagement", "languages"));
 		$this->db = $db;
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedKnowledgerecord");

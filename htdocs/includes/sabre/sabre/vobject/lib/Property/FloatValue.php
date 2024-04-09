@@ -21,7 +21,7 @@ class FloatValue extends Property
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
     public $delimiter = ';';
 
@@ -93,8 +93,6 @@ class FloatValue extends Property
     /**
      * Hydrate data from a XML subtree, as it would appear in a xCard or xCal
      * object.
-     *
-     * @param array $value
      */
     public function setXmlValue(array $value)
     {

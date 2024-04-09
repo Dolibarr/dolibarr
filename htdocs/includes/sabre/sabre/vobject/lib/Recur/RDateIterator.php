@@ -24,8 +24,7 @@ class RDateIterator implements Iterator
     /**
      * Creates the Iterator.
      *
-     * @param string|array      $rrule
-     * @param DateTimeInterface $start
+     * @param string|array $rrule
      */
     public function __construct($rrule, DateTimeInterface $start)
     {
@@ -36,6 +35,7 @@ class RDateIterator implements Iterator
 
     /* Implementation of the Iterator interface {{{ */
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if (!$this->valid()) {
@@ -50,6 +50,7 @@ class RDateIterator implements Iterator
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->counter;
@@ -61,6 +62,7 @@ class RDateIterator implements Iterator
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->counter <= count($this->dates);
@@ -68,7 +70,10 @@ class RDateIterator implements Iterator
 
     /**
      * Resets the iterator.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->currentDate = clone $this->startDate;
@@ -77,7 +82,10 @@ class RDateIterator implements Iterator
 
     /**
      * Goes on to the next iteration.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         ++$this->counter;
@@ -107,8 +115,6 @@ class RDateIterator implements Iterator
     /**
      * This method allows you to quickly go to the next occurrence after the
      * specified date.
-     *
-     * @param DateTimeInterface $dt
      */
     public function fastForward(DateTimeInterface $dt)
     {

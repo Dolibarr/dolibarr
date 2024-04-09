@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
-ZapierDescription=Interface with Zapier
-ZapierAbout=About the module Zapier
-ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+ModuleZapierForDolibarrName = Dolibarr জন্য Zapier
+ModuleZapierForDolibarrDesc = Dolibarr মডিউল জন্য Zapier
+ZapierForDolibarrSetup=Dolibarr জন্য Zapier সেটআপ
+ZapierDescription=Zapier সঙ্গে ইন্টারফেস
+ZapierAbout=মডিউল Zapier সম্পর্কে
+ZapierSetupPage=Zapier ব্যবহার করার জন্য Dolibarr পাশে একটি সেটআপের প্রয়োজন নেই। যাইহোক, Dolibarr এর সাথে Zapier ব্যবহার করতে আপনাকে অবশ্যই zapier-এ একটি প্যাকেজ তৈরি এবং প্রকাশ করতে হবে। <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">এই উইকি পৃষ্ঠা</a>-এ ডকুমেন্টেশন দেখুন।

@@ -25,10 +25,16 @@ use Sabre\VObject\Property;
 class RRuleIterator implements Iterator
 {
     /**
+     * Constant denoting the upper limit on how long into the future
+     * we want to iterate. The value is a unix timestamp and currently
+     * corresponds to the datetime 9999-12-31 11:59:59 UTC.
+     */
+    const dateUpperLimit = 253402300799;
+
+    /**
      * Creates the Iterator.
      *
-     * @param string|array      $rrule
-     * @param DateTimeInterface $start
+     * @param string|array $rrule
      */
     public function __construct($rrule, DateTimeInterface $start)
     {
@@ -39,6 +45,7 @@ class RRuleIterator implements Iterator
 
     /* Implementation of the Iterator interface {{{ */
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if (!$this->valid()) {
@@ -53,6 +60,7 @@ class RRuleIterator implements Iterator
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->counter;
@@ -65,6 +73,7 @@ class RRuleIterator implements Iterator
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         if (null === $this->currentDate) {
@@ -79,7 +88,10 @@ class RRuleIterator implements Iterator
 
     /**
      * Resets the iterator.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->currentDate = clone $this->startDate;
@@ -88,7 +100,10 @@ class RRuleIterator implements Iterator
 
     /**
      * Goes on to the next iteration.
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         // Otherwise, we find the next event in the normal RRULE
@@ -132,8 +147,6 @@ class RRuleIterator implements Iterator
     /**
      * This method allows you to quickly go to the next occurrence after the
      * specified date.
-     *
-     * @param DateTimeInterface $dt
      */
     public function fastForward(DateTimeInterface $dt)
     {
@@ -325,14 +338,17 @@ class RRuleIterator implements Iterator
             return;
         }
 
+        $recurrenceHours = [];
         if (!empty($this->byHour)) {
             $recurrenceHours = $this->getHours();
         }
 
+        $recurrenceDays = [];
         if (!empty($this->byDay)) {
             $recurrenceDays = $this->getDays();
         }
 
+        $recurrenceMonths = [];
         if (!empty($this->byMonth)) {
             $recurrenceMonths = $this->getMonths();
         }
@@ -357,6 +373,12 @@ class RRuleIterator implements Iterator
 
             // Current hour of the day
             $currentHour = $this->currentDate->format('G');
+
+            if ($this->currentDate->getTimestamp() > self::dateUpperLimit) {
+                $this->currentDate = null;
+
+                return;
+            }
         } while (
             ($this->byDay && !in_array($currentDay, $recurrenceDays)) ||
             ($this->byHour && !in_array($currentHour, $recurrenceHours)) ||
@@ -375,10 +397,12 @@ class RRuleIterator implements Iterator
             return;
         }
 
+        $recurrenceHours = [];
         if ($this->byHour) {
             $recurrenceHours = $this->getHours();
         }
 
+        $recurrenceDays = [];
         if ($this->byDay) {
             $recurrenceDays = $this->getDays();
         }
@@ -439,6 +463,7 @@ class RRuleIterator implements Iterator
             return;
         }
 
+        $occurrence = -1;
         while (true) {
             $occurrences = $this->getMonthlyOccurrences();
 
@@ -465,9 +490,16 @@ class RRuleIterator implements Iterator
             // beginning.
             $currentDayOfMonth = 0;
 
+            // For some reason the "until" parameter was not being used here,
+            // that's why the workaround of the 10000 year bug was needed at all
+            // let's stop it before the "until" parameter date
+            if ($this->until && $this->currentDate->getTimestamp() >= $this->until->getTimestamp()) {
+                return;
+            }
+
             // To prevent running this forever (better: until we hit the max date of DateTimeImmutable) we simply
             // stop at 9999-12-31. Looks like the year 10000 problem is not solved in php ....
-            if ($this->currentDate->getTimestamp() > 253402300799) {
+            if ($this->currentDate->getTimestamp() > self::dateUpperLimit) {
                 $this->currentDate = null;
 
                 return;
@@ -533,7 +565,7 @@ class RRuleIterator implements Iterator
                     foreach ($this->byWeekNo as $byWeekNo) {
                         foreach ($dayOffsets as $dayOffset) {
                             $date = clone $this->currentDate;
-                            $date->setISODate($currentYear, $byWeekNo, $dayOffset);
+                            $date = $date->setISODate($currentYear, $byWeekNo, $dayOffset);
 
                             if ($date > $this->currentDate) {
                                 $checkDates[] = $date;
@@ -570,11 +602,12 @@ class RRuleIterator implements Iterator
                     // loop through all YearDay and Days to check all the combinations
                     foreach ($this->byYearDay as $byYearDay) {
                         $date = clone $this->currentDate;
-                        $date = $date->setDate($currentYear, 1, 1);
                         if ($byYearDay > 0) {
-                            $date = $date->add(new \DateInterval('P'.$byYearDay.'D'));
+                            $date = $date->setDate($currentYear, 1, 1);
+                            $date = $date->add(new \DateInterval('P'.($byYearDay - 1).'D'));
                         } else {
-                            $date = $date->sub(new \DateInterval('P'.abs($byYearDay).'D'));
+                            $date = $date->setDate($currentYear, 12, 31);
+                            $date = $date->sub(new \DateInterval('P'.abs($byYearDay + 1).'D'));
                         }
 
                         if ($date > $this->currentDate && in_array($date->format('N'), $dayOffsets)) {
@@ -608,6 +641,7 @@ class RRuleIterator implements Iterator
         // If we got a byDay or getMonthDay filter, we must first expand
         // further.
         if ($this->byDay || $this->byMonthDay) {
+            $occurrence = -1;
             while (true) {
                 $occurrences = $this->getMonthlyOccurrences();
 
@@ -638,6 +672,14 @@ class RRuleIterator implements Iterator
                     (int) $currentMonth,
                     (int) $currentDayOfMonth
                 );
+
+                // To prevent running this forever (better: until we hit the max date of DateTimeImmutable) we simply
+                // stop at 9999-12-31. Looks like the year 10000 problem is not solved in php ....
+                if ($this->currentDate->getTimestamp() > self::dateUpperLimit) {
+                    $this->currentDate = null;
+
+                    return;
+                }
             }
 
             // If we made it here, it means we got a valid occurrence
@@ -713,7 +755,6 @@ class RRuleIterator implements Iterator
                     break;
 
                 case 'INTERVAL':
-
                 case 'COUNT':
                     $val = (int) $value;
                     if ($val < 1) {
@@ -873,7 +914,7 @@ class RRuleIterator implements Iterator
             foreach ($this->byMonthDay as $monthDay) {
                 // Removing values that are out of range for this month
                 if ($monthDay > $startDate->format('t') ||
-                $monthDay < 0 - $startDate->format('t')) {
+                    $monthDay < 0 - $startDate->format('t')) {
                     continue;
                 }
                 if ($monthDay > 0) {

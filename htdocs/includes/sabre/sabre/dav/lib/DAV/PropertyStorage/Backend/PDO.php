@@ -53,8 +53,6 @@ class PDO implements BackendInterface
 
     /**
      * Creates the PDO property storage engine.
-     *
-     * @param \PDO $pdo
      */
     public function __construct(\PDO $pdo)
     {
@@ -74,8 +72,7 @@ class PDO implements BackendInterface
      * However, you can also support the 'allprops' property here. In that
      * case, you should check for $propFind->isAllProps().
      *
-     * @param string   $path
-     * @param PropFind $propFind
+     * @param string $path
      */
     public function propFind($path, PropFind $propFind)
     {
@@ -115,8 +112,7 @@ class PDO implements BackendInterface
      * Usually you would want to call 'handleRemaining' on this object, to get;
      * a list of all properties that need to be stored.
      *
-     * @param string    $path
-     * @param PropPatch $propPatch
+     * @param string $path
      */
     public function propPatch($path, PropPatch $propPatch)
     {

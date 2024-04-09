@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostava
 DeliveryRef=Ref Delivery
-DeliveryCard=Receipt card
+DeliveryCard=Stock receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Generate delivery receipt

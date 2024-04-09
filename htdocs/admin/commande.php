@@ -10,6 +10,7 @@
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,21 +85,22 @@ if ($action == 'updateMask') {
 	$commande->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFCommandes $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
@@ -294,16 +296,16 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -412,6 +414,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -428,16 +431,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -531,7 +534,7 @@ print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
-if (!isModEnabled('facture')) {
+if (!isModEnabled('invoice')) {
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
@@ -540,8 +543,8 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (!isModEnabled('facture')) {
-	if (isModEnabled("banque")) {
+if (!isModEnabled('invoice')) {
+	if (isModEnabled("bank")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -579,7 +582,7 @@ print "</td></tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-if (!isModEnabled('facture')) {
+if (!isModEnabled('invoice')) {
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
@@ -645,7 +648,7 @@ print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'ORDER_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

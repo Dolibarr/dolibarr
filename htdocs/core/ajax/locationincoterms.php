@@ -63,8 +63,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog('location_incoterms call with MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY='.(empty($conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY) ? '' : $conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY));
-//var_dump($_GET);
+dol_syslog('location_incoterms call with MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY='.getDolGlobalString('MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY', ''));
 
 // Generation of list of zip-town
 if (GETPOST('location_incoterms')) {
@@ -73,7 +72,7 @@ if (GETPOST('location_incoterms')) {
 	// Define filter on text typed
 	$location_incoterms = GETPOST('location_incoterms');
 
-	if (!empty($conf->global->MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY)) {   // Use location_incoterms
+	if (getDolGlobalString('MAIN_USE_LOCATION_INCOTERMS_DICTIONNARY')) {   // Use location_incoterms
 		$sql = "SELECT z.location as location_incoterms, z.label as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_location_incoterms as z";
 		$sql .= " WHERE z.active = 1 AND z.location LIKE '%".$db->escape($db->escapeforlike($location_incoterms))."%'";
@@ -96,8 +95,9 @@ if (GETPOST('location_incoterms')) {
 	$resql = $db->query($sql);
 	//var_dump($db);
 	if ($resql) {
+		$row_array = array();
 		while ($row = $db->fetch_array($resql)) {
-			$row_array['label'] = $row['location_incoterms'].($row['label']?' - '.$row['label'] : '');
+			$row_array['label'] = $row['location_incoterms'].($row['label'] ? ' - '.$row['label'] : '');
 			if ($location_incoterms) {
 				$row_array['value'] = $row['location_incoterms'];
 			}

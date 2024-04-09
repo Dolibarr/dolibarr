@@ -21,9 +21,6 @@ class VFreeBusy extends VObject\Component
      * Checks based on the contained FREEBUSY information, if a timeslot is
      * available.
      *
-     * @param DateTimeInterface $start
-     * @param DateTimeInterface $end
-     *
      * @return bool
      */
     public function isFree(DateTimeInterface $start, DatetimeInterface $end)

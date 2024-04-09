@@ -30,7 +30,7 @@ abstract class Property extends Node
      *
      * This is only used in vcards
      *
-     * @var string
+     * @var string|null
      */
     public $group;
 
@@ -52,7 +52,7 @@ abstract class Property extends Node
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
     public $delimiter = ';';
 
@@ -123,8 +123,6 @@ abstract class Property extends Node
 
     /**
      * Sets a multi-valued property.
-     *
-     * @param array $parts
      */
     public function setParts(array $parts)
     {
@@ -262,8 +260,6 @@ abstract class Property extends Node
      * Sets the JSON value, as it would appear in a jCard or jCal object.
      *
      * The value must always be an array.
-     *
-     * @param array $value
      */
     public function setJsonValue(array $value)
     {
@@ -280,6 +276,7 @@ abstract class Property extends Node
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $parameters = [];
@@ -309,8 +306,6 @@ abstract class Property extends Node
     /**
      * Hydrate data from a XML subtree, as it would appear in a xCard or xCal
      * object.
-     *
-     * @param array $value
      */
     public function setXmlValue(array $value)
     {
@@ -323,7 +318,7 @@ abstract class Property extends Node
      *
      * @param Xml\Writer $writer XML writer
      */
-    public function xmlSerialize(Xml\Writer $writer)
+    public function xmlSerialize(Xml\Writer $writer): void
     {
         $parameters = [];
 
@@ -393,6 +388,7 @@ abstract class Property extends Node
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($name)
     {
         if (is_int($name)) {
@@ -419,6 +415,7 @@ abstract class Property extends Node
      *
      * @return Node
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($name)
     {
         if (is_int($name)) {
@@ -439,6 +436,7 @@ abstract class Property extends Node
      * @param string $name
      * @param mixed  $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($name, $value)
     {
         if (is_int($name)) {
@@ -459,6 +457,7 @@ abstract class Property extends Node
      *
      * @param string $name
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($name)
     {
         if (is_int($name)) {

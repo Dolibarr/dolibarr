@@ -70,7 +70,7 @@ Note: *Le processus de migration peut être lancé manuellement et plusieurs foi
 
 ## CE QUI EST NOUVEAU
 
-See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+Voir le fichier [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog).
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -88,11 +88,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Gestion de contrats de services
 - Gestion de stock et inventaires
 - Gestion des expéditions
-- Gestion des demandes de congès
+- Gestion des demandes de congés
 - Gestion des notes de frais
 - Gestion de recrutement
 - GED (Gestion Electronique de Documents)
-- EMailings de masse
+- E-Mailings de masse
 - Réalisation de sondages
 - Gestion d'adhérents
 - Point de vente/Caisse enregistreuse
@@ -107,17 +107,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Support des codes barres
 - Calcul des marges
 - Connectivité LDAP
-- Intégratn de ClickToDial
+- Intégration de ClickToDial
 - Intégration RSS
-- Intégation Skype
-- Intégration de système de paiements (Paypal, Stripe, Paybox...)
+- Intégration Skype
+- Intégration de système de paiements (PayPal, Stripe, Paybox...)
 - …
 
 ### Divers
 
 - Multi-langue.
 - Multi-utilisateurs avec différents niveaux de permissions par module.
-- Multi-devise.
+- Multidevise.
 - Peux être multi-société par ajout du module externe multi-société.
 - Plusieurs thèmes visuels.
 - Application simple à utiliser.
@@ -127,7 +127,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
 - Support natif de nombreuses fonctions spécifiques aux pays comme:
-  - La tax espagnole TE et ISPF
+  - La taxe espagnole TE et ISPF
   - Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
   - La loi française Finance 2016 et logiciels de caisse
   - La double taxe canadienne
@@ -139,7 +139,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Extension
 
-Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
+Dolibarr peut aussi être étendu à volonté avec l'ajout de modules/applications externes développées par des développeurs tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
 ## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
@@ -168,15 +168,15 @@ Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/CO
 
 ## ACTUALITES ET RESEAUX SOCIAUX
 
-Suivez le projet Dolibarr project sur les réseaux francophones
+Suivez le projet Dolibarr sur les réseaux francophones
 
 - [Facebook](https://www.facebook.com/dolibarr.fr)
-- [Twitter](https://www.twitter.com/dolibarr_france)
+- [X](https://www.twitter.com/dolibarr_france)
 
 ou sur les réseaux anglophones
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Twitter](https://www.twitter.com/dolibarr)
+- [X](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

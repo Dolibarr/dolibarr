@@ -14,7 +14,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -22,7 +22,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -93,41 +93,41 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-project{
-	color: #6c6aa8 !important;
+	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080 !important;
+	color: #a47080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
 .infobox-facture:not(.pictotitle):not(.error),
 .infobox-commande:not(.pictotitle):not(.error) {
-	color: #65953d !important;
+	color: #65953d;
 }
 /* Color for vendor object */
 .infobox-supplier_proposal:not(.pictotitle):not(.error),
 .infobox-invoice_supplier:not(.pictotitle):not(.error),
 .infobox-order_supplier:not(.pictotitle):not(.error) {
-	color: #599caf !important;
+	color: #599caf;
 }
 
 .infobox-contrat, .infobox-ticket{
-	color: #46a676 !important;
+	color: #46a676;
 }
 .infobox-bank_account{
-	color: #b0a53e !important;
+	color: #b0a53e;
 }
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-expensereport{
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-holiday{
-	color: #755114 !important;
+	color: #755114;
 }
 
 
@@ -146,7 +146,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -197,11 +197,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	overflow: hidden;
 	float: left;
-	/* height: 90px; */
-	width: 86px;
 	text-align: center;
 	font-size: 45px;
-	line-height: 90px;
+	line-height: 94px;;	/* must be same height as min-height of .info-box */
+	height: 94px;;		/* must be same height as min-height of .info-box */
+	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
@@ -252,6 +252,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 
 .info-box-line {
 	line-height: 1.2em;
+}
+.info-box-line-text {
+	overflow: hidden;
+	width: calc(100% - 76px);
+	text-overflow: ellipsis;
 }
 
 .info-box-icon-text {
@@ -328,7 +333,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 
-<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+<?php if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS') && getDolGlobalString('MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD')) { ?>
 .info-box-icon-text{
 	opacity: 1;
 }
@@ -343,7 +348,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -401,7 +409,7 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -409,7 +417,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 ?>
 .bg-infobox-project i.fa{
@@ -509,7 +517,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
+/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
 /* For other themes just uncomment this part */
 /*.info-box-weather-level0,
 .info-box-weather-level1,
@@ -559,7 +567,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-shrink: 1;
 	flex-basis: auto;
 
-	width: 280px;
+	width: 290px;
 	margin: 5px 0px 0px 15px;
 }
 .box-flex-item.filler{
@@ -587,7 +595,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		max-width: 315px;
 	}
 }
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
@@ -597,7 +605,23 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.info-box-sm .info-box-content {
 		margin-left: 60px;
 	}
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 92px);
+		max-width: calc(100% - 82px);
+	}
 }
 
-
-
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}

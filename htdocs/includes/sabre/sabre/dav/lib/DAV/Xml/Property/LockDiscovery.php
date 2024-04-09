@@ -62,8 +62,6 @@ class LockDiscovery implements XmlSerializable
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
      */
     public function xmlSerialize(Writer $writer)
     {

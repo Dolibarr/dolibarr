@@ -23,7 +23,7 @@ class Period extends Property
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
     public $delimiter = ',';
 
@@ -67,8 +67,6 @@ class Period extends Property
      * Sets the json value, as it would appear in a jCard or jCal object.
      *
      * The value must always be an array.
-     *
-     * @param array $value
      */
     public function setJsonValue(array $value)
     {

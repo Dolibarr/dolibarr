@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Yangi ish joylariga ishga qabul qilish kampaniyalarini b
 # Admin page
 #
 RecruitmentSetup = Ishga qabul qilishni sozlash
-Settings = Sozlamalar
 RecruitmentSetupPage = Ishga qabul qilish moduli uchun asosiy variantlarni sozlashni kiriting
 RecruitmentArea=Ishga qabul qilish maydoni
 PublicInterfaceRecruitmentDesc=Ishlarning ochiq sahifalari - bu ochiq ish joylarini ko'rsatish va ularga javob berish uchun ochiq URL manzillar. Har bir ochiq ish uchun har bir ish yozuvida bir xil havola mavjud.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Ochiq ish joylarining ommaviy sahifalarini yoqing
 #
 # About page
 #
-About = Haqida
 RecruitmentAbout = Ishga qabul qilish to'g'risida
 RecruitmentAboutPage = Sahifa haqida yollash
 NbOfEmployeesExpected=Kutilayotgan ishchilar soni
@@ -57,16 +55,16 @@ EmailRecruiter=Elektron pochta orqali yollovchi
 ToUseAGenericEmail=Umumiy elektron pochtadan foydalanish uchun. Agar aniqlanmagan bo'lsa, ishga qabul qilish uchun mas'ul bo'lgan elektron pochtadan foydalaniladi
 NewCandidature=Yangi dastur
 ListOfCandidatures=Arizalar ro'yxati
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=Ish haqi
+RequestedRemuneration=Talab qilingan ish haqi
+ProposedRemuneration=Taklif etilgan ish haqi
 ContractProposed=Shartnoma taklif qilingan
 ContractSigned=Shartnoma imzolandi
 ContractRefused=Shartnoma rad etildi
 RecruitmentCandidature=Ilova
 JobPositions=Ish joylari
 RecruitmentCandidatures=Ilovalar
-InterviewToDo=Contacts to follow
+InterviewToDo=Kuzatiladigan kontaktlar
 AnswerCandidature=Ariza javobi
 YourCandidature=Sizning arizangiz
 YourCandidatureAnswerMessage=Arizangiz uchun tashakkur. <br> ...
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Qo'shimcha atributlar (ish uchun arizalar)
 MakeOffer=Taklif qiling
 WeAreRecruiting=Biz ishga qabul qilamiz. Bu to'ldirilishi kerak bo'lgan ochiq lavozimlar ro'yxati...
 NoPositionOpen=Ayni paytda hech qanday lavozim ochilmagan
+ConfirmClose=Bekor qilishni tasdiqlang
+ConfirmCloseAsk=Haqiqatan ham bu ishga yollash nomzodini bekor qilmoqchimisiz
+recruitment=Ishga qabul qilish

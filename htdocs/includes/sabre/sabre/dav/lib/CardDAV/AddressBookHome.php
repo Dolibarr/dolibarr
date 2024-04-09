@@ -39,8 +39,7 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
     /**
      * Constructor.
      *
-     * @param Backend\BackendInterface $carddavBackend
-     * @param string                   $principalUri
+     * @param string $principalUri
      */
     public function __construct(Backend\BackendInterface $carddavBackend, $principalUri)
     {
@@ -93,10 +92,10 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * This is currently not allowed
      *
-     * @param string   $filename
+     * @param string   $name
      * @param resource $data
      */
-    public function createFile($filename, $data = null)
+    public function createFile($name, $data = null)
     {
         throw new DAV\Exception\MethodNotAllowed('Creating new files in this collection is not supported');
     }
@@ -152,7 +151,6 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * Creates a new address book.
      *
      * @param string $name
-     * @param MkCol  $mkCol
      *
      * @throws DAV\Exception\InvalidResourceType
      */

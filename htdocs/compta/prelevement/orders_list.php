@@ -45,10 +45,10 @@ $mode = GETPOST('mode', 'alpha');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -64,20 +64,22 @@ if (!$sortfield) {
 }
 
 // Get supervariables
-$statut = GETPOST('statut', 'int');
+$statut = GETPOSTINT('statut');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
 $bon = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
-$usercancreate = $user->rights->prelevement->bons->creer;
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
+$permissiontodelete = $user->hasRight('prelevement', 'creer');
 if ($type == 'bank-transfer') {
-	$usercancreate = $user->rights->paymentbybanktransfer->create;
+	$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
+	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'create');
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -97,6 +99,66 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_amount = "";
 }
 
+// Mass actions
+
+// Delete draft
+if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete) {
+	$TMsg = array();
+	$db->begin();
+	$objecttmp = new BonPrelevement($db);
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			if ($objecttmp->status != $objecttmp::STATUS_DRAFT || $objecttmp->credite > 0 || $objecttmp->date_creation != null) {
+				$langs->load("errors");
+				$nbignored++;
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+			$result = $objecttmp->delete($user);
+			if ($result < 0) { // if delete returns is < 0, there is an error, we break and rollback later
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+	if (empty($error)) {
+		// Message for elements well deleted
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+		} elseif ($nbok > 0) {
+			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
+		}
+
+		// Message for elements which can't be deleted
+		if (!empty($TMsg)) {
+			sort($TMsg);
+			setEventMessages('', array_unique($TMsg), 'warnings');
+		}
+
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+	$massaction = '';
+}
+$objectclass = 'BonPrelevement';
+$objectlabel = 'BonPrelevement';
+if ($type == 'bank-transfer') {
+	$uploaddir = $conf->paymentbybanktransfer->dir_output;
+} else {
+	$uploaddir = $conf->prelevement->dir_output;
+}
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 /*
  * View
@@ -172,9 +234,8 @@ $num = $db->num_rows($resql);
 llxHeader('', $title, $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-
 $param = '';
-$param .= "&statut=".urlencode($statut);
+$param .= "&statut=".urlencode((string) ($statut));
 if ($type == 'bank-transfer') {
 	$param .= '&type=bank-transfer';
 }
@@ -191,6 +252,14 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 
+$arrayofmassactions = array(
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+);
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -211,13 +280,17 @@ if ($type != '') {
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 
 $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
@@ -242,10 +315,10 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -319,7 +392,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban

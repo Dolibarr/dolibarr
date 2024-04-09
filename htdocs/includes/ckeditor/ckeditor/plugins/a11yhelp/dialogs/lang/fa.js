@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("a11yhelp","fa",{title:"دستورالعمل‌های دسترسی",contents:"راهنمای فهرست مطالب. برای بستن این کادر محاوره‌ای ESC را فشار دهید.",legend:[{name:"عمومی",items:[{name:"نوار ابزار ویرایشگر",legend:"برای باز کردن نوار ابزار،  {toolbarFocus}$ را بفشارید. با کلید Tab و Shift+Tab به مجموعه نوار ابزار بعدی و یا قبلی بروید. با کلید های جهت نمای راست و چپ روی دکمه های نوار ابزار حرکت کنید. برای فعال کردن دکمه مورد نظر کلید Enter و یا Space را بفشارید. با فعال کردن دکمه مورد نظر، تمرکز به محیط ویرایش باز خواهد گشت."},

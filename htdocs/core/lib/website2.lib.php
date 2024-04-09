@@ -22,7 +22,6 @@
  */
 
 
-
 /**
  * Save content of a page on disk
  *
@@ -31,10 +30,9 @@
  */
 function dolSaveMasterFile($filemaster)
 {
-	global $conf;
-
 	// Now generate the master.inc.php page
-	dol_syslog("We regenerate the master file");
+	dol_syslog("We regenerate the master.inc.php file");
+
 	dol_delete_file($filemaster);
 
 	$mastercontent = '<?php'."\n";
@@ -62,10 +60,8 @@ function dolSaveMasterFile($filemaster)
  */
 function dolSavePageAlias($filealias, $object, $objectpage)
 {
-	global $conf;
-
 	// Now create the .tpl file
-	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
+	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias." and a wrapper into all language subdirectories");
 
 	$aliascontent = '<?php'."\n";
 	$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -85,6 +81,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$filename = basename($filealias);
 		$filealiassub = $dirname.'/'.$objectpage->lang.'/'.$filename;
 
+		dol_mkdir($dirname.'/'.$objectpage->lang, DOL_DATA_ROOT);
+
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
 		$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
@@ -98,12 +96,14 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		dolChmod($filealiassub);
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
-		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
+		if (!getDolGlobalString('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR') && !empty($object->otherlang)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
 				// Avoid to erase main alias file if $sublang is empty string
-				if (empty(trim($sublang))) continue;
+				if (empty(trim($sublang))) {
+					continue;
+				}
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
@@ -121,7 +121,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		}
 	}
 
-	return ($result ?true:false);
+	return ($result ? true : false);
 }
 
 
@@ -138,7 +138,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $conf, $db;
+	global $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -176,7 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
 	$tplcontent .= "// END PHP ?>\n";
-	if (!empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5)) {
+	if (getDolGlobalString('WEBSITE_FORCE_DOCTYPE_HTML5')) {
 		$tplcontent .= "<!DOCTYPE html>\n";
 	}
 	$tplcontent .= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"' : '').'>'."\n";
@@ -191,6 +191,12 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+
+	// Add favicon
+	if ($objectpage->id == $object->fk_default_home) {
+		$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
+	}
+
 	// Add canonical reference
 	if ($object->virtualhost) {
 		$tplcontent .= '<link rel="canonical" href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" />'."\n";
@@ -248,7 +254,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	// Add js
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include link to JS file -->'."\n";
-	$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php"></script>'."\n";
+	$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 	// Add headers
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";
@@ -287,7 +293,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
  */
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
-	global $conf, $db;
+	global $db;
 
 	$result1 = false;
 	$result2 = false;
@@ -318,11 +324,13 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 
 			// Create a version for sublanguages
 			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
-				if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && is_object($object) && !empty($object->otherlang)) {
+				if (!getDolGlobalString('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR') && is_object($object) && !empty($object->otherlang)) {
 					$dirname = dirname($fileindex);
 					foreach (explode(',', $object->otherlang) as $sublang) {
 						// Avoid to erase main alias file if $sublang is empty string
-						if (empty(trim($sublang))) continue;
+						if (empty(trim($sublang))) {
+							continue;
+						}
 						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
 
 						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.
@@ -374,7 +382,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
  */
 function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save html header into ".$filehtmlheader);
 
@@ -394,7 +402,7 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
  */
 function dolSaveCssFile($filecss, $csscontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save css file into ".$filecss);
 
@@ -414,7 +422,7 @@ function dolSaveCssFile($filecss, $csscontent)
  */
 function dolSaveJsFile($filejs, $jscontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save js file into ".$filejs);
 
@@ -434,7 +442,7 @@ function dolSaveJsFile($filejs, $jscontent)
  */
 function dolSaveRobotFile($filerobot, $robotcontent)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save robot file into ".$filerobot);
 
@@ -454,7 +462,7 @@ function dolSaveRobotFile($filerobot, $robotcontent)
  */
 function dolSaveHtaccessFile($filehtaccess, $htaccess)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save htaccess file into ".$filehtaccess);
 
@@ -474,7 +482,7 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
  */
 function dolSaveManifestJson($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save manifest.js.php file into ".$file);
 
@@ -494,7 +502,7 @@ function dolSaveManifestJson($file, $content)
  */
 function dolSaveReadme($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save README.md file into ".$file);
 
@@ -514,7 +522,7 @@ function dolSaveReadme($file, $content)
  */
 function dolSaveLicense($file, $content)
 {
-	global $conf, $pathofwebsite;
+	global $pathofwebsite;
 
 	dol_syslog("Save LICENSE file into ".$file);
 
@@ -533,14 +541,16 @@ function dolSaveLicense($file, $content)
  */
 function showWebsiteTemplates(Website $website)
 {
-	global $conf, $langs, $db, $form, $user;
+	global $conf, $langs, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
-	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
+	/*
+	if (!empty($conf->modules_parts['websitetemplates'])) {
 		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
 			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
 		}
 	}
+	*/
 	$dirthemes = array_unique($dirthemes);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
@@ -551,9 +561,9 @@ function showWebsiteTemplates(Website $website)
 
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield">';
-	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.implode(", ", $dirthemes));
 	print ' ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" target="_blank" rel="noopener noreferrer external">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" rel="noopener noreferrer external">';
 	print img_picto('', 'refresh');
 	print '</a>';
 	print '</th>';
@@ -566,18 +576,22 @@ function showWebsiteTemplates(Website $website)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="display-flex">';
 
 	if (count($dirthemes)) {
 		$i = 0;
 		foreach ($dirthemes as $dir) {
-			//print $dirroot.$dir;exit;
-			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (preg_match('/^\/doctemplates\//', $dir)) {
+				$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			} else {
+				$dirtheme = dol_buildpath($dir); // This include loop on $conf->file->dol_document_root
+			}
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						//var_dump($dirtheme.'/'.$subdir);
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
@@ -588,7 +602,7 @@ function showWebsiteTemplates(Website $website)
 								continue;
 							}
 
-							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$templatedir = $dirtheme."/".$subdir;
 							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
@@ -628,6 +642,11 @@ function showWebsiteTemplates(Website $website)
 							$i++;
 						}
 					}
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
+					print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px;margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;"></div>';
 				}
 			}
 		}
@@ -647,14 +666,14 @@ function showWebsiteTemplates(Website $website)
  * - Block if bad code in the new string.
  * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
- * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
+ * @param	string		$phpfullcodestringold		PHP old string. For example "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 {
-	global $conf, $langs, $user;
+	global $langs, $user;
 
 	$error = 0;
 
@@ -663,11 +682,11 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	// First check forbidden commands
-	$forbiddenphpcommands = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
-		$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+	$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
+		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
 	}
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
 		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 	}
 	foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
@@ -679,7 +698,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 	// This char can be used to execute RCE for example using with echo `ls`
 	$forbiddenphpchars = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 		$forbiddenphpchars = array("`");
 	}
 	foreach ($forbiddenphpchars as $forbiddenphpchar) {
@@ -701,7 +720,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	if ($phpfullcodestringold != $phpfullcodestring) {
-		if (!$error && empty($user->rights->website->writephp)) {
+		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
 		}

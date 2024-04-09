@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,25 +35,26 @@ $langs->loadLangs(array('intracommreport'));
 // Get Parameters
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
-$search_type = GETPOST("search_type", 'int');
+$search_type = GETPOSTINT("search_type");
 $optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOST("type", "int");
+$type = GETPOSTINT("type");
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -64,14 +66,16 @@ if (!$sortorder) {
 }
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'intracommreportlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'intracommreportlist';
 if ((string) $type == '1') {
-	$contextpage = 'DESlist'; if ($search_type == '') {
+	$contextpage = 'DESlist';
+	if ($search_type == '') {
 		$search_type = '1';
 	}
 }
 if ((string) $type == '0') {
-	$contextpage = 'DEBlist'; if ($search_type == '') {
+	$contextpage = 'DEBlist';
+	if ($search_type == '') {
 		$search_type = '0';
 	}
 }
@@ -110,20 +114,20 @@ else $result=restrictedArea($user, 'produit|service', '', '', '', '', '', $objca
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'i.ref'=>"Ref",
-	'pfi.ref_fourn'=>"RefSupplier",
-	'i.label'=>"ProductLabel",
-	'i.description'=>"Description",
-	"i.note"=>"Note",
+	'i.ref' => "Ref",
+	'pfi.ref_fourn' => "RefSupplier",
+	'i.label' => "ProductLabel",
+	'i.description' => "Description",
+	"i.note" => "Note",
 );
 
 $isInEEC = isInEEC($mysoc);
 
 // Definition of fields for lists
 $arrayfields = array(
-	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service"))),
+	'i.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'i.label' => array('label' => $langs->trans("Label"), 'checked' => 1),
+	'i.fk_product_type' => array('label' => $langs->trans("Type"), 'checked' => 0, 'enabled' => (isModEnabled("product") && isModEnabled("service"))),
 );
 
 /*
@@ -140,6 +144,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 if ($search_type == '0') {
@@ -150,8 +155,8 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 
 /*
@@ -178,7 +183,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		$sall = "";
+		$search_all = "";
 		$search_ref = "";
 		$search_label = "";
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
@@ -206,31 +211,34 @@ if (empty($reshook)) {
  */
 
 $formother = new FormOther($db);
+$intracommreport_static = new IntracommReport($db);
 
 $title = $langs->trans('IntracommReportList'.$type);
+$helpurl = 'EN:Module_IntracommReport|FR:Module_ProDouane';
 
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = 'SELECT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
-
-/*
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+	}
 }
-*/
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= $hookmanager->resPrint;
 
-$sqlfields = $sql;
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'intracommreport as i';
 // if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
 $sql .= ' WHERE i.entity IN ('.getEntity('intracommreport').')';
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($search_type) && $search_type != '-1') {
@@ -256,23 +264,24 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 */
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity";
-
+// Add groupby from hooks
 /*
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
-}
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
 */
 
-// Add fields from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-
+// Add HAVING from hooks
+/*
+ $parameters = array();
+ $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+ */
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -288,7 +297,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -309,7 +318,10 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-$helpurl = 'EN:Module_IntracommReport|FR:Module_ProDouane';
+
+// Output page
+// --------------------------------------------------------------------
+
 llxHeader('', $title, $helpurl, '');
 
 // Displays product removal confirmation
@@ -329,8 +341,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if ($sall) {
-	$param .= "&sall=".urlencode($sall);
+if ($search_all) {
+	$param .= "&search_all=".urlencode($search_all);
 }
 if ($search_ref) {
 	$param = "&search_ref=".urlencode($search_ref);
@@ -350,7 +362,7 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
@@ -363,11 +375,11 @@ if (in_array($massaction, array('presend', 'predelete'))) {
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->intracommreport->write) {
+if ($user->hasRight('intracommreport', 'write')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans("NewDeclaration"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
 }
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -377,6 +389,9 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if (empty($arrayfields['i.fk_product_type']['checked'])) {
 	print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
@@ -390,38 +405,53 @@ $objecttmp = new IntracommReport($db);
 $trackid = 'prod'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall) {
+if ($search_all) {
+	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	print '<!-- Search done like if INTRACOMM_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (!isset($moreforfilter)) {
+	$moreforfilter = '';
+}
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
 
-if ($moreforfilter) {
+if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-if ($massactionbutton) {
-	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-}
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-// Lines with input filters
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['i.ref']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
@@ -445,7 +475,7 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 
 if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 	print '<td class="liste_titre left">';
-	$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
+	$array = array('-1' => '&nbsp;', '0' => $langs->trans('Product'), '1' => $langs->trans('Service'));
 	print $form->selectarray('search_type', $array, $search_type);
 	print '</td>';
 }
@@ -455,8 +485,8 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 */
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['i.datec']['checked'])) {
@@ -468,22 +498,38 @@ if (!empty($arrayfields['i.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-print '<td class="liste_titre center maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
-print '</tr>';
+print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['i.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['i.ref']['label'], $_SERVER["PHP_SELF"], "i.ref", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['i.label']['checked'])) {
 	print_liste_field_titre($arrayfields['i.label']['label'], $_SERVER["PHP_SELF"], "i.label", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 	print_liste_field_titre($arrayfields['i.fk_product_type']['label'], $_SERVER["PHP_SELF"], "i.fk_product_type", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 
 /*
@@ -491,26 +537,37 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 */
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['i.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['i.datec']['label'], $_SERVER["PHP_SELF"], "i.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['i.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['i.tms']['label'], $_SERVER["PHP_SELF"], "i.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+print '</tr>'."\n";
 
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-print "</tr>\n";
 
-
-$intracommreport_static = new IntracommReport($db);
-
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
-while ($i < min($num, $limit)) {
+$totalarray['nbfield'] = 0;
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
 	$intracommreport_static->id = $obj->rowid;
 	$intracommreport_static->ref = $obj->ref;
@@ -522,46 +579,87 @@ while ($i < min($num, $limit)) {
 	$intracommreport_static->status_batch = $obj->tobatch;
 	$intracommreport_static->entity = $obj->entity;
 
-	print '<tr class="oddeven">';
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<div class="box-flex-container kanban">';
+		}
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('selected' => $selected));
+		if ($i == ($imaxinloop - 1)) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		// Show line of result
+		$j = 0;
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
-	// Ref
-	if (!empty($arrayfields['i.ref']['checked'])) {
-		print '<td class="tdoverflowmax200">';
-		print $intracommreport_static->getNomUrl(1);
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($object->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	// Label
-	if (!empty($arrayfields['i.label']['checked'])) {
-		print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 80).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+
+		// Ref
+		if (!empty($arrayfields['i.ref']['checked'])) {
+			print '<td class="tdoverflowmax200">';
+			print $intracommreport_static->getNomUrl(1);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	// Type
-	if (!empty($arrayfields['i.fk_product_type']['checked'])) {
-		print '<td>'.$obj->fk_product_type.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		// Label
+		if (!empty($arrayfields['i.label']['checked'])) {
+			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 80).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	// Action
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+		// Type
+		if (!empty($arrayfields['i.fk_product_type']['checked'])) {
+			print '<td>'.$obj->fk_product_type.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		print '</tr>'."\n";
 	}
 
-	print "</tr>\n";
 	$i++;
 }
 

@@ -30,18 +30,12 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_new_vs_close_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 * Constructor
@@ -134,7 +128,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseries));
+					$px1->SetDataColor($colorseries);
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
@@ -157,14 +151,14 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity"),
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("BoxNoTicketSeverity").'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

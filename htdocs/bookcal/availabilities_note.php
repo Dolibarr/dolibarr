@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       availabilities_note.php
- *  \ingroup    bookcal
- *  \brief      Tab for notes on Availabilities
+ *   \file       htdocs/bookcal/availabilities_note.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for notes on Availabilities
  */
 
 // Load Dolibarr environment
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 $langs->loadLangs(array("agenda", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -70,8 +70,12 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('bookcal')) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('bookcal')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -118,7 +122,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -148,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

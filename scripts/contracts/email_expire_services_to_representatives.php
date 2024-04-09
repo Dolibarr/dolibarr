@@ -37,7 +37,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'))) {
@@ -46,7 +46,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 
@@ -58,6 +58,9 @@ $langs->loadLangs(array('main', 'contracts'));
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -109,7 +112,7 @@ if ($resql) {
 			if (($obj->email != $oldemail || $obj->uid != $olduid) || $oldemail == 'none') {
 				// Break onto sales representative (new email or uid)
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
+					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 				} else {
 					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -136,7 +139,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -157,7 +160,7 @@ if ($resql) {
 		// Si il reste des envois en buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
+				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 			} else {
 				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -173,22 +176,22 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_expire_services_to_representatives.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**
  * Send email
  *
- * @param string $mode					Mode (test | confirm)
- * @param string $oldemail				Old email
- * @param string $message				Message to send
- * @param string $total					Total amount of unpayed invoices
- * @param string $userlang				Code lang to use for email output.
- * @param string $oldsalerepresentative	Old sale representative
- * @param int $duration_value			Duration value
- * @return int 							<0 if KO, >0 if OK
+ * @param string 	$mode					Mode (test | confirm)
+ * @param string 	$oldemail				Target Email
+ * @param string 	$message				Message to send
+ * @param string 	$total					Total amount of unpayed invoices
+ * @param string 	$userlang				Code lang to use for email output.
+ * @param string 	$oldtarget				Target name of sale representative
+ * @param int 		$duration_value			Duration value
+ * @return int 								Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative, $duration_value)
+function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -197,7 +200,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? getDolGlobalString('MAIN_LANG_DEFAULT', 'auto') : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("contracts");
 
@@ -211,35 +214,35 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT);
+	$subject = getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT', $title);
 	$sendto = $oldemail;
-	$from = empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	$errorsto = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+	$msgishtml = -1;
 
-	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
+	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER) && dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER) && dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER'))) {
 		$usehtml += 1;
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER;
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER');
 	} else {
 		$allmessage .= $title.($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourExpiredServices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER');
+		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER'))) {
 			$usehtml += 1;
 		}
 	}

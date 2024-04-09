@@ -39,7 +39,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -49,10 +49,9 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 
 // Security check
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
-
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
@@ -87,8 +86,8 @@ function llxFooterVierge()
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -111,11 +110,15 @@ if (!$sortfield) {
  * View
  */
 
+if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
+	httponly_accessforbidden('Public access of list of members is not enabled');
+}
+
 $form = new Form($db);
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
-	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }

@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021-2022 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -52,10 +53,10 @@ if ($socid > 0) {
 }
 
 // Sort & Order fields
-$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 $optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
@@ -74,8 +75,8 @@ if (!$sortfield) {
 // Search fields
 $sref = GETPOST("sref");
 $sprod_fulldescr = GETPOST("sprod_fulldescr");
-$month = GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+$month = GETPOSTINT('month');
+$year = GETPOSTINT('year');
 
 // Clean up on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
@@ -86,7 +87,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Customer or supplier selected in drop box
-$thirdTypeSelect = GETPOST("third_select_id", 'az09');
+$thirdTypeSelect = GETPOST("third_select_id", 'aZ09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
 
@@ -98,7 +99,7 @@ $hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -115,7 +116,7 @@ $formother = new FormOther($db);
 $productstatic = new Product($db);
 
 $title = $langs->trans("Referers", $object->name);
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -143,7 +144,7 @@ print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><t
 print $object->getTypeUrl(1);
 print '</td></tr>';
 
-if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -167,22 +168,23 @@ if ($object->client) {
 
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
+	$thirdTypeArray = array();
 	$thirdTypeArray['customer'] = $langs->trans("customer");
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
 
-if (isModEnabled('ficheinter') && !empty($user->rights->ficheinter->lire)) {
+if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
@@ -205,10 +207,10 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 	if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
@@ -410,7 +412,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode((string) ($socid))."&type_element=".urlencode((string) ($type_element));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -424,10 +426,10 @@ if ($sql_select) {
 		$param .= "&sref=".urlencode($sref);
 	}
 	if ($month) {
-		$param .= "&month=".urlencode($month);
+		$param .= "&month=".urlencode((string) ($month));
 	}
 	if ($year) {
-		$param .= "&year=".urlencode($year);
+		$param .= "&year=".urlencode((string) ($year));
 	}
 	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -513,8 +515,10 @@ if ($sql_select) {
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
 		} elseif ($type_element == 'invoice') {
+			// @phan-suppress-next-line PhanParamTooMany
 			print $documentstatic->getLibStatut(5, $objp->paid);
 		} elseif ($type_element == 'supplier_invoice') {
+			// @phan-suppress-next-line PhanParamTooMany
 			print $documentstatic->getLibStatut(5, $objp->paid);
 		} else {
 			print $documentstatic->getLibStatut(5);
@@ -543,7 +547,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
@@ -591,26 +595,26 @@ if ($sql_select) {
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 				}
 				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
-					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+					if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 						echo ' ('.dol_print_date($discount->datec).')';
 					}
 				} else {
-					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
+					echo($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
 		} else {

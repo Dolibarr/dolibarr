@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_propaldet_extrafields ADD INDEX idx_propaldet_extrafields (fk_object);
+ALTER TABLE llx_propaldet_extrafields ADD UNIQUE INDEX uk_propaldet_extrafields (fk_object);

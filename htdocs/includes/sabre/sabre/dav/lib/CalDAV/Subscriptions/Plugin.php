@@ -28,8 +28,6 @@ class Plugin extends ServerPlugin
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param Server $server
      */
     public function initialize(Server $server)
     {
@@ -57,9 +55,6 @@ class Plugin extends ServerPlugin
 
     /**
      * Triggered after properties have been fetched.
-     *
-     * @param PropFind $propFind
-     * @param INode    $node
      */
     public function propFind(PropFind $propFind, INode $node)
     {
