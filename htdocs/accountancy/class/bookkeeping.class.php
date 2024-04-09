@@ -1383,7 +1383,7 @@ class BookKeeping extends CommonObject
 			$this->piece_num = trim($this->piece_num);
 		}
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -2351,13 +2351,13 @@ class BookKeeping extends CommonObject
 
 			$bookkeeping = new BookKeeping($this->db);
 			$result = $bookkeeping->fetch($id);
+
 			if ($result <= 0) {
 				return $result;
 			}
-
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}
@@ -2401,7 +2401,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}
