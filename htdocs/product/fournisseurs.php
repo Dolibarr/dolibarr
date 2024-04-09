@@ -181,6 +181,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'save_price') {
+		$ref_fourn_price_id = GETPOSTINT('ref_fourn_price_id');
 		$id_fourn = GETPOST("id_fourn");
 		if (empty($id_fourn)) {
 			$id_fourn = GETPOST("search_id_fourn");
@@ -265,15 +266,18 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			if (!$error) {
+			if (empty($ref_fourn_price_id)) {
 				$ret = $object->add_fournisseur($user, $id_fourn, $ref_fourn_old, $quantity); // This insert record with no value for price. Values are update later with update_buyprice
 				if ($ret == -3) {
 					$error++;
 
-					$object->fetch($object->product_id_already_linked);
-					$productLink = $object->getNomUrl(1, 'supplier');
+					$tmpobject = new Product($db);
+					$tmpobject->fetch($object->product_id_already_linked);
+					$productLink = $tmpobject->getNomUrl(1, 'supplier');
 
-					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", $productLink), null, 'errors');
+					$texttoshow = $langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", '{s1}');
+					$texttoshow = str_replace('{s1}', $productLink, $texttoshow);
+					setEventMessages($texttoshow, null, 'errors');
 				} elseif ($ret < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -283,8 +287,8 @@ if (empty($reshook)) {
 			if (!$error) {
 				$supplier = new Fournisseur($db);
 				$result = $supplier->fetch($id_fourn);
-				if (GETPOSTISSET('ref_fourn_price_id')) {
-					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
+				if ($ref_fourn_price_id > 0) {
+					$object->fetch_product_fournisseur_price($ref_fourn_price_id);
 				}
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
