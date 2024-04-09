@@ -5,12 +5,12 @@ pipeline {
         apiVersion: v1
         kind: Pod
         spec:
-        containers:
+          containers:
           - name: phpstan
-            image: oskarstark/phpstan-ga:latest
+            image: oskarstark/phpstan-ga
             command:
-              - cat
-            tty: true
+            - cat
+            tty: true   
         '''
     }
   }
@@ -26,9 +26,8 @@ pipeline {
           script{
             // Create directory for reports
             sh "mkdir -p test-reports"
-            //clear cahce
             // Run PHPStan inside PHPStan container
-            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json --xdebug -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
+            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
         }
       }
