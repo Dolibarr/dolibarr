@@ -1,6 +1,7 @@
 pipeline {
-  agent {
-    kubernetes {
+    agent {
+        kubernetes {
+            // Define Kubernetes pod template
             yaml '''
                 apiVersion: v1
                 kind: Pod
@@ -10,32 +11,122 @@ pipeline {
                   containers:
                   - name: zap
                     image: owasp/zap2docker-stable
-                    command: ["sleep", "infinity"]  # Keep container running indefinitely
+                    command:
+                      - sleep
+                      - infinity
                     tty: true
                     volumeMounts:
                     - name: zap-workdir
                       mountPath: /zap/wrk
                   volumes:
                   - name: zap-workdir
-                    emptyDir: {}  # Use an emptyDir volume (ephemeral storage)
+                    emptyDir: {}
             '''
         }
-  }
-  stages {
- stage('Security Testing with ZAP') {
+    }
+    
+    parameters {
+        choice(
+            choices: ["Baseline", "APIS", "Full"],
+            description: 'Type of scan that is going to be performed',
+            name: 'SCAN_TYPE'
+        )
+        string(
+            defaultValue: "https://example.com",
+            description: 'Target URL to scan',
+            name: 'TARGET'
+        )
+        booleanParam(
+            defaultValue: true,
+            description: 'Generate report?',
+            name: 'GENERATE_REPORT'
+        )
+    }
+
+    stages {
+        stage('Pipeline Info') {
             steps {
-              container('zap'){
                 script {
-                        def targetUrl = "https://dolibarr.hbenaissa.uk"
-                        
-                        // Execute ZAP scan inside Kubernetes pod
-                        sh "zap-baseline.py -t ${targetUrl} -x /zap/wrk/report.xml -I"
-                        
-                        // Copy ZAP report from pod to Jenkins workspace
-                        sh "kubectl cp zap:/zap/wrk/report.xml ./report.xml"
-                    }
-              }
+                    echo "<--Parameter Initialization-->"
+                    echo """
+                    The current parameters are:
+                        Scan Type: \${params.SCAN_TYPE}
+                        Target: \${params.TARGET}
+                        Generate report: \${params.GENERATE_REPORT}
+                    """
+                }
             }
         }
-  }
+
+        stage('Prepare wrk directory') {
+            when {
+                expression {
+                    params.GENERATE_REPORT == true
+                }
+            }
+            steps {
+                container('zap') {
+                    script {
+                        sh """
+                            mkdir -p /zap/wrk
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Scanning target on owasp container') {
+            steps {
+                container('zap') {
+                    script {
+                        def scan_type = "${params.SCAN_TYPE}"
+                        def target = "${params.TARGET}"
+                        echo "----> scan_type: \${scan_type}"
+
+                        switch (scan_type) {
+                            case 'Baseline':
+                                sh """
+                                    zap-baseline.py -t \${target} -x /zap/wrk/report.xml -I
+                                """
+                                break
+                            case 'APIS':
+                                sh """
+                                    zap-api-scan.py -t \${target} -x /zap/wrk/report.xml -I
+                                """
+                                break
+                            case 'Full':
+                                sh """
+                                    zap-full-scan.py -t \${target} -I
+                                """
+                                break
+                            default:
+                                echo "Invalid scan type"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Copy Report to Workspace') {
+            steps {
+                container('zap') {
+                    script {
+                        sh '''
+                            cp /zap/wrk/report.xml \${WORKSPACE}/report.xml
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            container('zap') {
+                script {
+                    echo "Removing container"
+                }
+            }
+        }
+    }
 }
