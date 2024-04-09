@@ -748,14 +748,14 @@ print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' https://youtube.com; img-src * data:;";
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' *.twitter.com *.facebook.com https://youtube.com; img-src * data:;";
 print $examplecsprule;
 print '")</span><br>';
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' https://youtube.com; img-src * data:;";
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' *.twitter.com *.facebook.com https://youtube.com; img-src * data:;";
 print $examplecsprule;
 print '")</span><br>';
 print '<br>';
