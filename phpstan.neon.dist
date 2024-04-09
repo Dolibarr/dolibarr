@@ -1,7 +1,3 @@
-includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-mockery/extension.neon
-
 parameters:
 	tmpDir: var/cache/phpstan
 	parallel:
