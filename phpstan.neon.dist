@@ -1,5 +1,4 @@
 includes:
-    - vendor/phpstan/phpstan-beberlei-assert/extension.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-mockery/extension.neon
 
