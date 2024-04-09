@@ -1,5 +1,6 @@
 parameters:
 	tmpDir: tmp
+	resultCachePath: %tmpDir%/resultCache-project.php
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines
