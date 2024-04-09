@@ -1,5 +1,5 @@
 parameters:
-	tmpDir: var/cache/phpstan
+	tmpDir: tmp
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines
@@ -56,7 +56,6 @@ parameters:
 		- '#Constructor of class .* has an unused parameter #'
 	internalErrorsCountLimit: 50
 	cache:
-		directory: var/cache/phpstan
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
