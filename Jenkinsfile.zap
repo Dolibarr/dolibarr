@@ -26,7 +26,7 @@ pipeline {
             steps {
               container('zap'){
                 script {
-                        def targetUrl = "https://dolibarr.hbenaissa.uk/"
+                        def targetUrl = "https://dolibarr.hbenaissa.uk"
                         
                         // Execute ZAP scan inside Kubernetes pod
                         sh "zap-baseline.py -t ${targetUrl} -x /zap/wrk/report.xml -I"
