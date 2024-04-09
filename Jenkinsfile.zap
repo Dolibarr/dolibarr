@@ -1,7 +1,6 @@
 pipeline {
     agent {
         kubernetes {
-            // Define Kubernetes pod template
             yaml '''
                 apiVersion: v1
                 kind: Pod
@@ -33,7 +32,7 @@ pipeline {
         )
         string(
             defaultValue: "https://dolibarr.hbenaissa.uk/",
-            description: 'Target URL to scan',
+            description: 'Target URL to scan (must start with http:// or https://)',
             name: 'TARGET'
         )
         booleanParam(
@@ -81,8 +80,14 @@ pipeline {
                     script {
                         def scan_type = "${params.SCAN_TYPE}"
                         def target = "${params.TARGET}"
-                        echo "----> scan_type: \${scan_type}"
+                        echo "----> Scan Type: \${scan_type}, Target: \${target}"
 
+                        // Validate target URL protocol
+                        if (!(target.startsWith("http://") || target.startsWith("https://"))) {
+                            error "Invalid target URL format. Target URL must start with 'http://' or 'https://'."
+                        }
+
+                        // Execute ZAP scan based on scan type
                         switch (scan_type) {
                             case 'Baseline':
                                 sh """
@@ -100,7 +105,7 @@ pipeline {
                                 """
                                 break
                             default:
-                                echo "Invalid scan type"
+                                error "Invalid scan type"
                         }
                     }
                 }
