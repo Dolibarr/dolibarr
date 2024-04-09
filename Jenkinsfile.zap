@@ -1,30 +1,25 @@
 pipeline {
   agent {
     kubernetes {
-      yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          containers:
-          - name: zap
-            image: owasp/zap2docker-stable
-            command:
-            - cat
-            tty: true
-          - name: docker
-            image: docker:latest
-            command:
-            - cat
-            tty: true
-            volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
-          volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock    
-        '''
-    }
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  name: zap-pod
+                spec:
+                  containers:
+                  - name: zap
+                    image: owasp/zap2docker-stable
+                    command: ["sleep", "infinity"]  # Keep container running indefinitely
+                    tty: true
+                    volumeMounts:
+                    - name: zap-workdir
+                      mountPath: /zap/wrk
+                  volumes:
+                  - name: zap-workdir
+                    emptyDir: {}  # Use an emptyDir volume (ephemeral storage)
+            '''
+        }
   }
   stages {
  stage('Security Testing with ZAP') {
