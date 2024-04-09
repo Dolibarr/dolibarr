@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers:
           - name: phpstan
-            image: iyedbnaissa/phpstan:17
+            image: oskarstark/phpstan-ga
             command:
             - cat
             tty: true   
@@ -28,7 +28,7 @@ pipeline {
             // Create directory for reports
             sh "mkdir -p test-reports"
             // Run PHPStan inside PHPStan container
-            sh "phpstan -vvv analyse --error-format=json --xdebug -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
+            sh "/composer/vendor/bin/phpstan -vvv analyse --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
         }
       }
