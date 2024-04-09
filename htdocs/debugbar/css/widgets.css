@@ -1,3 +1,7 @@
+span.phpdebugbar-widgets-value {
+    white-space: pre;
+}
+
 dl.phpdebugbar-widgets-kvlist.phpdebugbar-widgets-hooklist dt {
     float: left;
     width: 230px;
@@ -42,4 +46,3 @@ dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(3) {
     min-width: 80px;
     margin-right: 20px;
 }
-
