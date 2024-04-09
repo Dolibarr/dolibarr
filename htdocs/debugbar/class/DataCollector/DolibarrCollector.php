@@ -172,7 +172,8 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		return array(
 			'base_url' => dol_buildpath('/debugbar', 1),
-			'js' => 'js/widgets.js'
+			'js' => 'js/widgets.js',
+			'css' => 'css/widgets.css'
 		);
 	}
 }
