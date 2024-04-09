@@ -999,7 +999,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 			}
 
-			if (empty($hidetop)) {
+			if (empty($hidetop) && array_key_exists('title', $colDef) && array_key_exists('width', $colDef)) {
 				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
