@@ -31,7 +31,7 @@ pipeline {
             name: 'SCAN_TYPE'
         )
         string(
-            defaultValue: "http://dolibarr.hbenaissa.uk",
+            defaultValue: "http://dolibarr.dolibarr.svc.hbenaissa.local",
             description: 'Target URL to scan (must start with http:// or https://)',
             name: 'TARGET'
         )
