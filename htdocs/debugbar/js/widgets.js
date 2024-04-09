@@ -80,7 +80,6 @@
      *  - data
      */
     var HookListWidget = PhpDebugBar.Widgets.HookListWidget = PhpDebugBar.Widgets.KVListWidget.extend({
-
         className: csscls('widgets-kvlist widgets-hooklist'),
 
         itemRenderer: function(dt, dd, key, object) {
