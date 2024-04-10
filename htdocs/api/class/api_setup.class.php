@@ -1233,7 +1233,8 @@ class Setup extends DolibarrApi
 	}
 
 	/**
-	 * Create Extrafield object
+
+* Create Extrafield object
 	 *
 	 * @param	string	$attrname		extrafield attrname
 	 * @param	string	$elementtype	extrafield elementtype
@@ -1320,6 +1321,7 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+
 	 * Update Extrafield object
 	 *
 	 * @param	string	$attrname		extrafield attrname
