@@ -1158,6 +1158,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Document ref
+	$modulepart = '';
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
 		if ($line->doc_type == 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
