@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Compatibility with PHP 8.2 (with no need to disable warnings)
+NEW: Font param Look and Feel THEME_FONT_FAMILY
 ...
 
 For developers or integrators:
