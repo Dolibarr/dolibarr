@@ -2121,6 +2121,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					} else {
+						'@phan-var-force ActionComm $event';
 						if (empty($reshook)) {
 							// Other calendar
 							if (empty($event->fulldayevent)) {
