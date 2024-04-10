@@ -1361,7 +1361,6 @@ if (empty($reshook)) {
 											}
 											$db->free($resql);
 										}
-										
 									}
 								} else {
 									$ref_supplier = $lines[$i]->ref_fourn;
