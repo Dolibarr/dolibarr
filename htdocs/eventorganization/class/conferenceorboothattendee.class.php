@@ -1121,7 +1121,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
-	
+
 	/**
 	 *	Return full name ('name+' '+lastname)
 	 *
