@@ -221,7 +221,8 @@ class ActionsTicket extends CommonHookActions
 		} else {
 			print '<div class="longmessagecut">';
 			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
-			print dolPrintHTML($object->message);
+			//print dolPrintHTML($object->message);
+			print dol_nl2br($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
 			print $langs->trans("More").'...';
