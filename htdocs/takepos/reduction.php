@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2023  Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2023  	Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
 </head>
+
 <body>
 
 <script>
@@ -217,14 +218,19 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 		}
 		return false;
 	}
+
+	// console.log("Set initial focus");
+	// $("#reduction_total").focus();
 </script>
 
 <div style="position:absolute; top:2%; left:5%; width:91%;">
 <center>
 <?php
-	print '<input type="text" class="takepospay width100" id="reduction_total" name="reduction_total" placeholder="'.$langs->trans('Reduction').'" autofocus>';
+print '<input type="text" class="takepospay width125" id="reduction_total" name="reduction_total" placeholder="'.$langs->trans('Reduction').'" autofocus>';
+if (getDolGlobalString('TAKEPOS_ADD_BUTTON_TO_ENTER_DISCOUNT_WITH_KEYBOARD')) {
 	print '<input type="button" class="butAction" value="'.$langs->trans('AmountTTC').'" onclick="return formvalid(\'amount\');">';
 	print '<input type="button" class="butAction" value="'.$langs->trans('Percentage').'" onclick="return formvalid(\'percent\');">';
+}
 ?>
 </center>
 </div>
