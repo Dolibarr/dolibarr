@@ -5,6 +5,7 @@
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024        Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1232,9 +1233,83 @@ class Setup extends DolibarrApi
 		);
 	}
 
-	/**
 
-* Create Extrafield object
+
+	/** get Extrafield object
+	 *
+	 * @param	string	$attrname		extrafield attrname
+	 * @param	string	$elementtype	extrafield elementtype
+	 * @return	array					List of extra fields
+	 *
+	 * @url     GET		extrafields/{elementtype}/{attrname}
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 *
+	 */
+	public function getExtrafields($attrname, $elementtype)
+	{
+		$answer = array();
+
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		}
+
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
+		$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND t.name = '".$this->db->escape($attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				while ($tab = $this->db->fetch_object($resql)) {
+					// New usage
+					$answer[$tab->elementtype][$tab->name]['id'] = $tab->id;
+					$answer[$tab->elementtype][$tab->name]['type'] = $tab->type;
+					$answer[$tab->elementtype][$tab->name]['label'] = $tab->label;
+					$answer[$tab->elementtype][$tab->name]['size'] = $tab->size;
+					$answer[$tab->elementtype][$tab->name]['elementtype'] = $tab->elementtype;
+					$answer[$tab->elementtype][$tab->name]['default'] = $tab->fielddefault;
+					$answer[$tab->elementtype][$tab->name]['computed'] = $tab->fieldcomputed;
+					$answer[$tab->elementtype][$tab->name]['unique'] = $tab->fieldunique;
+					$answer[$tab->elementtype][$tab->name]['required'] = $tab->fieldrequired;
+					$answer[$tab->elementtype][$tab->name]['param'] = ($tab->param ? jsonOrUnserialize($tab->param) : '');	// This may be a string encoded with serialise() or json_encode()
+					$answer[$tab->elementtype][$tab->name]['pos'] = $tab->pos;
+					$answer[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
+					$answer[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
+					$answer[$tab->elementtype][$tab->name]['list'] = $tab->list;
+					$answer[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$answer[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
+					$answer[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
+					$answer[$tab->elementtype][$tab->name]['help'] = $tab->help;
+					$answer[$tab->elementtype][$tab->name]['css'] = $tab->css;
+					$answer[$tab->elementtype][$tab->name]['cssview'] = $tab->cssview;
+					$answer[$tab->elementtype][$tab->name]['csslist'] = $tab->csslist;
+					$answer[$tab->elementtype][$tab->name]['fk_user_author'] = $tab->fk_user_author;
+					$answer[$tab->elementtype][$tab->name]['fk_user_modif'] = $tab->fk_user_modif;
+					$answer[$tab->elementtype][$tab->name]['datec'] = $tab->datec;
+					$answer[$tab->elementtype][$tab->name]['tms'] = $tab->tms;
+				}
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
+		}
+
+		return $answer;
+	}
+
+	/**
+	 * Create Extrafield object
 	 *
 	 * @param	string	$attrname		extrafield attrname
 	 * @param	string	$elementtype	extrafield elementtype
