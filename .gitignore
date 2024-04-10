@@ -1,10 +1,9 @@
 htdocs/conf/conf.php
-htdocs/conf/conf*.php
 htdocs/conf/conf.php.old
 htdocs/conf/conf.php.sav
 htdocs/conf/conf.php.back
-documents/*
-custom/*
+documents/
+custom2/*
 test/report/
 nbproject
 default.properties

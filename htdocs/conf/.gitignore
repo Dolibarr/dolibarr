@@ -1,4 +1,4 @@
-/conf*.php
+/conf.php
 /conf.php.old
 /conf.php.sav
 /conf.php.mysql
