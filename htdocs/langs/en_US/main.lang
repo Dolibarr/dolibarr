@@ -457,6 +457,7 @@ VATNPR=Tax Rate NPR
 DefaultTaxRate=Default tax rate
 Average=Average
 Sum=Sum
+StandardDeviationPop=Standard deviation
 Delta=Delta
 StatusToPay=To pay
 RemainToPay=Remain to pay

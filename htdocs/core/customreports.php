@@ -606,7 +606,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 	if (!empty($object)) {
-		print '<div class="divadvancedsearchfield quatrevingtpercent">';
+		print '<div class="divadvancedsearchfield">';
 		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
 		print '</div>';
 	}

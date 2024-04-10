@@ -112,6 +112,10 @@ if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 
 // Define image path files and other constants
 $fontlist = 'roboto,arial,tahoma,verdana,helvetica'; //$fontlist='verdana,helvetica,arial,sans-serif';
+if (getDolGlobalString('THEME_FONT_FAMILY')) {
+	$fontlist = getDolGlobalString('THEME_FONT_FAMILY').', '.$fontlist;
+}
+
 $img_head = '';
 $img_button = dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
 $dol_hide_topmenu = $conf->dol_hide_topmenu;
@@ -1415,7 +1419,7 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	height: 24px;
+	line-height: 24px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1432,6 +1436,7 @@ div.divsearchfield {
 	padding-bottom: 3px;
 	background: #ddd;
 	border-radius: 4px;
+	display: inline-block;
 }
 .tagsearchdelete {
 	color: #999;

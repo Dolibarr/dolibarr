@@ -1291,6 +1291,7 @@ while ($i < min($num, $limit)) {
 			//$modulepart = 'invoice_supplier';
 
 			if ($objectstatic->id > 0) {
+				$modulepart = 'invoice_supplier';
 				$filename = dol_sanitizeFileName($line->doc_ref);
 				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
