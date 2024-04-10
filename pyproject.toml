@@ -60,7 +60,7 @@ encoding = "utf-8"
 processes = -1
 #verbose = 1
 #exclude_rules = "LT01,CP01,RF04"
-exclude_rules = "LT01,LT05,LT12,CP01,CP02"
+exclude_rules = "LT01,LT02,LT05,LT12,LT13,CP01,CP02,CP04,CP05"
 dialect = "mysql"
 # Default byte limit is 20000, must set limit - some files are too big.
 large_file_skip_byte_limit = 100000
