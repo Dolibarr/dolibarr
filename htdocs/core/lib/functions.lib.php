@@ -765,6 +765,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				global $object;
 				'@phan-var-force CommonObject $object'; // Suppose it's a CommonObject for analysis, but other objects have the $fields field as well
 				if (is_object($object) && isset($object->fields[$paramname]['default'])) {
+					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 					$out = $object->fields[$paramname]['default'];
 				}
 			}
@@ -1416,6 +1417,7 @@ function dol_get_object_properties($obj, $properties = [])
  *  @param	int		$native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
  *	@return T					Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
+ *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
 function dol_clone($object, $native = 0)
 {
