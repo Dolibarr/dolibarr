@@ -548,13 +548,8 @@ if (empty($reshook)) {
 					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
-						} else {
-							setEventMessages($object->error, $object->errors, 'errors');
-							$action = 'edit';
-						}
+						setEventMessages($object->error, $object->errors, 'errors');
+						$action = 'edit';
 					}
 				}
 
