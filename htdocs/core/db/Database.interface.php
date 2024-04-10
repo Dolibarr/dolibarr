@@ -42,7 +42,7 @@ interface Database
 	 * @param	string	$nameoffield	Name of field
 	 * @return	string					SQL string
 	 */
-	public function stddevPop($nameoffield);
+	public function stddevpop($nameoffield);
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

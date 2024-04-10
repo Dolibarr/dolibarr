@@ -1177,8 +1177,8 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$objectstatic = new FactureFournisseur($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'invoice_supplier';
 
+			$modulepart = 'invoice_supplier';
 			$filename = dol_sanitizeFileName($line->doc_ref);
 			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);

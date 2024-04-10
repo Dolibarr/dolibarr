@@ -619,6 +619,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 // OSSINSIGHT graph
+/*
 $html .= <<<END
 <br>
 <!-- Copy-paste in your Readme.md file -->
@@ -632,6 +633,7 @@ $html .= <<<END
 
 <!-- Made with [OSS Insight](https://ossinsight.io/) -->
 END;
+*/
 
 $html .= '</section>'."\n";
 

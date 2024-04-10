@@ -10712,9 +10712,9 @@ class Form
 
 		$ret = '';
 
-		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
+		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth hideonsmartphone" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
 		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
