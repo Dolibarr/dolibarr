@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
@@ -51,13 +52,14 @@ if ($type == 'sub') {
 } else {
 	$context_default = 'bookkeepingbyaccountlist';
 }
+
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
-$search_date_startyear = GETPOSTINT('search_date_startyear');
-$search_date_startmonth = GETPOSTINT('search_date_startmonth');
-$search_date_startday = GETPOSTINT('search_date_startday');
-$search_date_endyear = GETPOSTINT('search_date_endyear');
-$search_date_endmonth = GETPOSTINT('search_date_endmonth');
-$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_startyear = SESSIONGETPOSTINT('search_date_startyear');
+$search_date_startmonth = SESSIONGETPOSTINT('search_date_startmonth');
+$search_date_startday = SESSIONGETPOSTINT('search_date_startday');
+$search_date_endyear = SESSIONGETPOSTINT('search_date_endyear');
+$search_date_endmonth = SESSIONGETPOSTINT('search_date_endmonth');
+$search_date_endday = SESSIONGETPOSTINT('search_date_endday');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
