@@ -2771,7 +2771,7 @@ if ($action == 'merge') {
 			'value' => $form->select_produits('', 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, 'minwidth200', 0, '', null, 1),
 		)
 	);
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 250);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 300);
 }
 
 // Clone confirmation
