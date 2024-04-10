@@ -12,6 +12,7 @@
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2024      Nick Fragoulis
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -1333,10 +1334,34 @@ if (empty($reshook)) {
 								$product_fourn_price_id = 0;
 								if ($origin == "commande") {
 									$productsupplier = new ProductFournisseur($db);
-									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
+									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $object->socid);
 									if ($result > 0) {
 										$ref_supplier = $productsupplier->ref_supplier;
 										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
+										// we need supplier subprice
+										foreach ($srcobject->lines as $li) {
+											$sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
+											$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+											$sql .= ' WHERE fk_product = '.((int) $li->fk_product);
+											$sql .= ' AND fk_soc = '.((int) $object->socid);
+											$sql .= ' ORDER BY unitprice ASC';
+
+											$resql = $db->query($sql);
+											if ($resql) {
+												$num_row = $db->num_rows($resql);
+												if (empty($num_row)) {
+													// No product subprice for this supplier, we set to zero so user is forced to change
+													$li->subprice = 0;
+												} else {
+													$obj = $db->fetch_object($resql);
+													$li->subprice = $obj->unitprice;
+												}
+											} else {
+												dol_print_error($db);
+											}
+											$db->free($resql);
+										}
+										
 									}
 								} else {
 									$ref_supplier = $lines[$i]->ref_fourn;
@@ -1361,7 +1386,7 @@ if (empty($reshook)) {
 									$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
 									$product_fourn_price_id,
 									$ref_supplier,
-									$lines[$i]->remise_percent,
+									0,     // $lines[$i]->remise_percent must not be carried over from client to vendor
 									'HT',
 									0,
 									$lines[$i]->product_type,
