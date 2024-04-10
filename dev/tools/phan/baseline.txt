@@ -542,7 +542,6 @@ return [
         'htdocs/core/class/fiscalyear.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/class/google.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/class/hookmanager.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
-        'htdocs/core/class/html.form.class.php' => ['PhanTypeConversionFromArray', 'PhanTypeInvalidDimOffset', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredProperty', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/class/html.formaccounting.class.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPossiblyUndeclaredVariable'],
         'htdocs/core/class/html.formadmin.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/class/html.formbarcode.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
