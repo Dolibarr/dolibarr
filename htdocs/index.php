@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +44,15 @@ $hookmanager->initHooks(array('index'));
  */
 
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('fckeditor', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('export', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('import', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
 
 // Check if company name is defined (first install)
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
@@ -522,6 +529,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				if (!empty($groupElement['lang'])) {
 					$langs->load($groupElement['lang']);
 				}
+				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$groupName = $langs->trans($groupElement['groupName']);
 				$groupKeyLowerCase = strtolower($groupKey);
 

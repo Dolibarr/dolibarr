@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,15 +198,15 @@ if ($contextpage == 'employeelist' && !GETPOSTISSET('search_employee')) {
 }
 
 // Define value to know what current user can do on users
-$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoadd = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
 $canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$canedituser = $permissiontoadd;
+$candisableuser = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "delete")));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+	$caneditgroup = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "group_advance", "write")));
 }
 
 $error = 0;
