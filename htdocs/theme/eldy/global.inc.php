@@ -5498,11 +5498,11 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 5px 5px 5px 5px;
 	z-index: 1000;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	padding: 5px 5px 5px 5px;
 	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {

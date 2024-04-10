@@ -564,7 +564,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$prod->id."'>";
+						print '<a class="reposition" href= "'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".$prod->id.'">';
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
