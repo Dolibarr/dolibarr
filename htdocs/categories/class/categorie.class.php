@@ -926,7 +926,7 @@ class Categorie extends CommonObject
 
 					$obj = new $classnameforobj($this->db);
 					$obj->fetch($rec['fk_object']);
-					if ($obj->id > 0) {
+					if ($obj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
 						$objs[] = $obj;
 					}
 				}
