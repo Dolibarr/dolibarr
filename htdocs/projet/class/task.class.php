@@ -1329,6 +1329,66 @@ class Task extends CommonObjectLine
 		return $contactAlreadySelected;
 	}
 
+	/**
+	 * Merge contact of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeContactTask($origin_id, $dest_id)
+	{
+		$error = 0;
+		$origintask = new Task($this->db);
+		$result = $origintask->fetch($origin_id);
+		if ($result <= 0) {
+			return false;
+		}
+
+		//Get list of origin contacts
+		$arraycontactorigin = array_merge($origintask->liste_contact(-1, 'internal'), $origintask->liste_contact(-1, 'external'));
+		if (is_array($arraycontactorigin)) {
+			foreach ($arraycontactorigin as $key => $contact) {
+				$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
+				if ($result < 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Merge time spent of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeTimeSpentTask($origin_id, $dest_id)
+	{
+		$ret = true;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."element_time as et";
+		$sql .= " SET et.fk_element = ".((int) $dest_id);
+		$sql .= " WHERE et.elementtype = 'task'";
+		$sql .= " AND et.fk_element = ".((int) $origin_id);
+
+		dol_syslog(get_class($this)."::mergeTimeSpentTask", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$ret = false;
+		}
+
+		if ($ret == true) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+		return $ret;
+	}
 
 	/**
 	 *  Add time spent
@@ -2488,5 +2548,130 @@ class Task extends CommonObjectLine
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	/**
+	 *    Merge a task with another one, deleting the given task.
+	 *    The task given in parameter will be removed.
+	 *
+	 *    @param	int     $task_origin_id		Task to merge the data from
+	 *    @return	int							-1 if error
+	 */
+	public function mergeTask($task_origin_id)
+	{
+		global $conf, $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$task_origin = new Task($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeTask merge task id=".$task_origin_id." (will be deleted) into the task id=".$this->id);
+
+		$langs->load('error');
+
+		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$listofproperties = array(
+				'label', 'description', 'duration_effective', 'planned_workload', 'datec', 'date_start',
+				'date_end', 'fk_user_creat', 'fk_user_valid', 'fk_statut', 'progress', 'budget_amount',
+				'priority', 'rang', 'fk_projet', 'fk_task_parent'
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $task_origin->$property;
+				}
+			}
+
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $task_origin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($task_origin->array_options)) {
+				foreach ($task_origin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// Update
+			$result = $this->update($user);
+
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Merge time spent
+			if (!$error) {
+				$result = $this->mergeTimeSpentTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
+
+			// Merge contacts
+			if (!$error) {
+				$result = $this->mergeContactTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('task_origin' => $task_origin->id, 'task_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge' => 1, 'mergefromid' => $task_origin->id, 'mergefromref' => $task_origin->ref);
+
+				// Call trigger
+				$result = $this->call_trigger('TASK_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// We finally remove the old task
+				if ($task_origin->delete($user) < 1) {
+					$this->error = $task_origin->error;
+					$this->errors = $task_origin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsTaskMerge');
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		return -1;
 	}
 }

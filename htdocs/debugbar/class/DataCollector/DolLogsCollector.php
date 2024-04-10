@@ -91,7 +91,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return array  Array
+	 *  @return array  Array of collected data
 	 */
 	public function collect()
 	{

@@ -2892,7 +2892,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= $this->fk_expedition;
 		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql .= ", ".((int) $this->fk_elementdet);
-		$sql .= ", ".(empty($this->element_type) ? 'order' : $this->element_type);
+		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $ranktouse);
 		$sql .= ")";
