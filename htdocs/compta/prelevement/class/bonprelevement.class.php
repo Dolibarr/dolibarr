@@ -1790,7 +1790,9 @@ class BonPrelevement extends CommonObject
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
-
+				if($conf->global->SEPA_ROUND_TWO_ZERO){
+					$this->total=number_format($this->total,2,".","");
+				}
 				/**
 				 * SECTION CREATION SEPA FILE - ISO200022
 				 */
@@ -1925,6 +1927,10 @@ class BonPrelevement extends CommonObject
 				// Define $fileEmetteurSection. Start of block PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
+				}
+
+				if($conf->global->SEPA_ROUND_TWO_ZERO){
+					$this->total=number_format($this->total,2,".","");
 				}
 
 				/**
@@ -2159,6 +2165,11 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		if($conf->global->SEPA_ROUND_TWO_ZERO){
+			$row_somme=number_format($row_somme,2,".","");
+		}else{
+			$row_somme=round($row_somme,2);
+		}
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$CrLf = "\n";
@@ -2419,6 +2430,11 @@ class BonPrelevement extends CommonObject
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
 
+			
+			if($configuration->global->SEPA_ROUND_TWO_ZERO){
+				$this->total=number_format($this->total,2,".","");
+			}
+			
 			if ($type != 'bank-transfer') {
 				// SEPA Paiement Information of my company for Direct Debit
 				$XML_SEPA_INFO = '';
