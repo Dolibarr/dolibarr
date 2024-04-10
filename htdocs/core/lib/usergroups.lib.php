@@ -588,6 +588,23 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		 print "</tr>";*/
 	}
 
+	// Main menu color logo
+	if ($foruserprofile) {
+		// Nothing
+	} else {
+		// Show logo
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("THEME_MENU_COLORLOGO").'</td>';
+		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_MENU_COLORLOGO', array(), null, 0, 0, 1);
+		} else {
+			print yn(getDolGlobalString('THEME_MENU_COLORLOGO'));
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		print '</td>';
+		print '</tr>';
+	}
+
 	// BorderTableActive
 	if ($foruserprofile) {
 	} else {
