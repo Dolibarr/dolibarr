@@ -5252,7 +5252,7 @@ class Form
 			$postconfirmas = 'GET';
 
 			$formconfirm .= '
-                    resizable: false,
+                    resizable: true,
                     height: "'.$height.'",
                     width: "'.$width.'",
                     modal: true,
