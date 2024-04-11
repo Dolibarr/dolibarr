@@ -840,7 +840,7 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
-	 *  @param	int | Aray[int]	$dids	ID(s) of existing payment request(s). If $did is defined, no entry. If $did is an array, the createdBonsPrelevement will include these apyment requests. 
+	 *  @param	int | Aray[int]	$dids	ID(s) of existing payment request(s). If $did is defined, no entry. If $did is an array, the createdBonsPrelevement will include these payment requests. 
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param	Array(int)		$invoices	IDs of invoices to include;			
 	 *	@return	int							<0 if KO, No of invoice included into file if OK
