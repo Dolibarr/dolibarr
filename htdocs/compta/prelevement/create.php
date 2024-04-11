@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2024       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Thomas Nerge     		<tnegre@open-dsi.fr>
+ * Copyright (C) 2024       Thomas Negre     		<tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
