@@ -153,7 +153,7 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	dol_syslog("Page is called without code parameter defined");
+	dol_syslog("Page is called without the 'code' parameter defined");
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
