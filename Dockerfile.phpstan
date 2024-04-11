@@ -34,13 +34,15 @@ RUN apt-get update -y \
     && mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -qO - https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/bin/composer
+COPY --from=ghcr.io/phpstan/phpstan:nightly-php8.2 /composer/vendor/phpstan/phpstan/phpstan.phar /app/phpstan.phar
+RUN composer global require phpstan/phpstan
+#RUN wget -qO - https://getcomposer.org/installer | php
+#RUN mv composer.phar /usr/bin/composer
 # Download and install PHPStan
-RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
-    chmod +x /usr/local/bin/phpstan
-RUN composer require --dev phpstan/phpstan
-RUN rm -rf /tmp/*
+#RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
+#    chmod +x /usr/local/bin/phpstan
+#RUN composer require --dev phpstan/phpstan
+#RUN rm -rf /tmp/*
 # Set the entry point to PHPStan
 ENTRYPOINT ["phpstan"]
 
