@@ -876,9 +876,13 @@ if (!defined('NOLOGIN')) {
 			// $authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
 			$oauthmodetotestarray = array('google');
 			foreach ($oauthmodetotestarray as $oauthmodetotest) {
-				if (in_array($oauthmodetotest.'oauth', $authmode) && GETPOST('beforeoauthloginredirect') != $oauthmodetotest) {
-					// If we did not click on the link to use OAuth authentication, we do not try it.
-					dol_syslog("User did not click on link for OAuth so we disable check using googleoauth");
+				if (in_array($oauthmodetotest.'oauth', $authmode)) {	// This is an authmode that is currently qualified. Do we have to remove it ?
+					// If we click on the link to use OAuth authentication or if we goes after callback return, we do nothing
+					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn')) {
+						// TODO Use: if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
+						continue;
+					}
+					dol_syslog("User did not click on link for OAuth or is not on the OAuth return, so we disable check using ".$oauthmodetotest);
 					foreach ($authmode as $tmpkey => $tmpval) {
 						if ($tmpval == $oauthmodetotest.'oauth') {
 							unset($authmode[$tmpkey]);
@@ -888,6 +892,7 @@ if (!defined('NOLOGIN')) {
 				}
 			}
 
+			// Check login for all qualified modes in array $authmode.
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
 				$login = '';
