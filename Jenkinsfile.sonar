@@ -26,9 +26,8 @@ pipeline {
           script{
             // Create directory for reports
             sh "mkdir -p test-reports"
-            sh "mkdir -p phpstan-cache"
             // Run PHPStan inside PHPStan container
-            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json --cache-file=phpstan-cache/phpstan-cache.ser -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
+            sh "/composer/vendor/bin/phpstan -vvv analyse --memory-limit 1G --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json"
           }
         }
       }
