@@ -59,6 +59,7 @@ $hookmanager->initHooks(array('takeposfrontend'));
 
 // get user authorized terminals
 $nb_auth_terms = 0;
+$curterm = 0;
 $numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
 for ($i = 1; $i <= $numterminals; $i++) {
 	if ($user->hasRights('takepos', 'access_takepos_' . $i)) {
