@@ -67,7 +67,7 @@ $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price l
 if ($action == 'closeTerminal') {
 	unset($_SESSION["takeposterminal"]);
 	unset($_COOKIE["takeposterminal"]);
-	setcookie("takeposterminal", "", time()-3600, '/', null, (empty($dolibarr_main_force_https) ? false : true), true);
+	setcookie("takeposterminal", "", time()-3600, '/', "", (empty($dolibarr_main_force_https) ? false : true), true);
 	exit;
 }
 
