@@ -10,7 +10,7 @@
 return [
     // # Issue statistics:
     // PhanPluginUnknownPropertyType : 2250+ occurrences
-    // PhanTypePossiblyInvalidDimOffset : 1610+ occurrences
+    // PhanTypePossiblyInvalidDimOffset : 1560+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 1450+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 1400+ occurrences
     // PhanPluginUnknownObjectMethodCall : 1050+ occurrences
@@ -50,9 +50,9 @@ return [
     // PhanPluginSuspiciousParamPosition : 10+ occurrences
     // PhanRedefineClass : 10+ occurrences
     // PhanEmptyFQSENInClasslike : 5 occurrences
-    // PhanTypeConversionFromArray : 5 occurrences
     // PhanInvalidFQSENInClasslike : 4 occurrences
     // PhanParamTooMany : 4 occurrences
+    // PhanTypeConversionFromArray : 3 occurrences
     // PhanTypeComparisonToArray : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
@@ -1405,7 +1405,7 @@ return [
         'htdocs/user/document.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/user/group/card.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/user/group/perms.php' => ['PhanPluginUnknownObjectMethodCall'],
-        'htdocs/user/list.php' => ['PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/user/list.php' => ['PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypePossiblyInvalidDimOffset'],
         'htdocs/user/param_ihm.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/user/passwordforgotten.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/user/perms.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanRedefinedClassReference'],
