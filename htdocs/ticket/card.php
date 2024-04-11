@@ -337,7 +337,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && $permissiontoadd && $object->status < Ticket::STATUS_CLOSED) {
 		$error = 0;
 
-		$ret = $object->fetch(GETPOSTINT('id'), GETPOSTINT('ref'), GETPOSTINT('track_id'));
+		$ret = $object->fetch(GETPOSTINT('id'), GETPOSTINT('ref'), GETPOST('track_id', 'alpha'));
 		if ($ret < 0) {
 			$error++;
 			array_push($object->errors, $langs->trans('ErrorTicketIsNotValid'));
@@ -490,7 +490,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
-		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
@@ -505,7 +505,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
-		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
@@ -523,7 +523,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $permissiontodelete) {
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			if ($object->delete($user) > 0) {
 				setEventMessages('<div class="confirm">'.$langs->trans('TicketDeletedSuccess').'</div>', null, 'mesgs');
 				header("Location: ".DOL_URL_ROOT."/ticket/list.php");
@@ -538,7 +538,7 @@ if (empty($reshook)) {
 
 	// Set parent company
 	if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 			$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
@@ -548,7 +548,7 @@ if (empty($reshook)) {
 
 	// Set progress status
 	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
 
 			$url = 'card.php?track_id='.$object->track_id;
@@ -559,7 +559,7 @@ if (empty($reshook)) {
 
 	// Set categories
 	if ($action == 'set_categories' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
 
 			$url = 'card.php?track_id='.$object->track_id;
@@ -593,7 +593,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_reopen' && $user->hasRight('ticket', 'manage') && !GETPOST('cancel')) {
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
@@ -613,7 +613,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $permissiontoadd) {
 		// Categorisation dans projet
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setProject($projectid);
 			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
@@ -621,7 +621,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setcontract' && $permissiontoadd) {
 		// Categorisation dans contrat
-		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setContract(GETPOSTINT('contractid'));
 			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
@@ -650,7 +650,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	} elseif ($action == 'confirm_set_status' && $permissiontoadd && !GETPOST('cancel')) {
 		// Reopen ticket
-		if ($object->fetch(GETPOSTINT('id'), GETPOSTINT('track_id')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
 			//$old_status = $object->status;
 			$res = $object->setStatut($new_status);
@@ -667,7 +667,7 @@ if (empty($reshook)) {
 
 	// Action to update an extrafield
 	if ($action == "update_extras" && $permissiontoadd) {
-		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) {
@@ -691,7 +691,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $permissiontoadd) {
-		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
 		$object->type_code = GETPOST('update_value_type', 'aZ09');
 		$object->severity_code = GETPOST('update_value_severity', 'aZ09');
