@@ -116,6 +116,8 @@ if ($rss) {
 	if (is_array($arrayofblogs)) {
 		foreach ($arrayofblogs as $blog) {
 			$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+			$blog->image = preg_replace('/__WEBSITE_KEY__/', $websitekey, $blog->image);
+
 			$eventarray[] = $blog;
 		}
 	}
