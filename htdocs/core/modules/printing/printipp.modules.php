@@ -101,8 +101,6 @@ class printing_printipp extends PrintingDriver
 	 */
 	public $db;
 
-	const LANGFILE = 'printipp';
-
 
 	/**
 	 *  Constructor

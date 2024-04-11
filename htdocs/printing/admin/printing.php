@@ -151,7 +151,7 @@ if ($mode == 'setup' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -287,7 +287,7 @@ if ($mode == 'config' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 		//print '<pre>'.print_r($printer, true).'</pre>';
 
 		print '<tr class="oddeven">';
@@ -333,9 +333,10 @@ if ($mode == 'test' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$langs->load($driver);
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load($driver);
+		$langs->load('printing');
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {
