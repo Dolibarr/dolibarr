@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers:
           - name: phpstan
-            image: iyedbnaissa/phpstan:18
+            image: oskarstark/phpstan-ga:latest
             command:
             - cat
             tty: true   
