@@ -1031,14 +1031,17 @@ function GETPOSTINT($paramname, $method = 0)
  */
 function SESSIONGETPOSTINT($key)
 {
+	if (!empty($_POST['button_removefilter_x'])) {
+		//unset session value on remove filter button clic
+		unset($_SESSION[$key]);
+	}
 	//getpost is always priority if set : that's the last user choice
 	$getpost=GETPOSTINT($key);
 	if (empty($getpost) &&  !empty($_SESSION[$key])) {
 		return $_SESSION[$key];
-	} else {
-		//save value in session for next time
-		$_SESSION[$key] = $getpost;
 	}
+	//save value in session for next time
+	$_SESSION[$key] = $getpost;
 	return $getpost;
 }
 
