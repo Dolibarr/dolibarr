@@ -227,6 +227,7 @@ if (empty($reshook)) {
 				$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 				$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 				$paiement->note = GETPOST("note", 'restricthtml');
+				$paiement->note_private = GETPOST("note", 'restricthtml');
 
 				if (!$error) {
 					$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));

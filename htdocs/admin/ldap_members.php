@@ -444,7 +444,7 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 }
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmember') {
+	if ($action == 'testmember') {
 		// Create object
 		$object = new Adherent($db);
 		$object->initAsSpecimen();

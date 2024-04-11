@@ -167,6 +167,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		print 'Erreur temp dir api/temp not writable';
+		header('HTTP/1.1 500 temp dir api/temp not writable');
 		exit(0);
 	}
 }

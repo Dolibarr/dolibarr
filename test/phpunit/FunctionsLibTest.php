@@ -216,6 +216,11 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		global $conf, $langs, $db;
 
+		// Test on NOW
+		$filter = "(client:!=:8) AND (datefin:>=:'__NOW__')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertStringContainsStringIgnoringCase(" AND ((client <> 8) AND (datefin >= '", $sql);
+
 		// An attempt for SQL injection
 		$filter = 'if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);

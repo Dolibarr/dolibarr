@@ -1041,7 +1041,7 @@ foreach ($fieldlist as $field => $value) {
 		}
 		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
 		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse .= 'type_template,lang,position,label';
+			$sortfieldtouse .= ',lang,position,label';
 		}
 		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
 	}

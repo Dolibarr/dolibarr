@@ -84,7 +84,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
 	}
-	if (!$error && price2num($amount_ttc_1 + $amount_ttc_2) != $discount->amount_ttc) {
+	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
 		$error++;
 		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
 	}
@@ -118,7 +118,9 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
 		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
 		$newdiscount1->discount_type = $discount->discount_type;
 		$newdiscount2->discount_type = $discount->discount_type;
 		$newdiscount1->datec = $discount->datec;
@@ -134,7 +136,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
 		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
 
-		$newdiscount1->multicurrency_amount_ttc = $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+		$newdiscount1->multicurrency_amount_ttc = (float) $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
 		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
 		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
 		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
@@ -558,7 +560,7 @@ if ($socid > 0) {
 
 			if (count($showconfirminfo)) {
 				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - $amount1);
+				$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
 					0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
@@ -705,7 +707,7 @@ if ($socid > 0) {
 
 			if (count($showconfirminfo)) {
 				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - $amount1);
+				$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
 					0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),

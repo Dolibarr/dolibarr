@@ -11,6 +11,7 @@
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024      Rafael San José      <rsanjose@alxarafe.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +67,8 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-
 // Maximum elements of the tables
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 $maxLatestEditCount = 5;
 $maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
@@ -339,7 +339,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
 				$facstatic->statut = $obj->status;
+				$facstatic->status = $obj->status;
 				$facstatic->paye = $obj->paye;
+				$facstatic->paid = $obj->paye;
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
 

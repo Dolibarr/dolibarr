@@ -45,6 +45,7 @@ IPP_Device
 InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
+MailSentBy
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
@@ -403,11 +404,6 @@ EventFee
 EventIntoASerie
 EventOrganizationArea
 EventParticipant
-ExampleOnlyForATBEDEITNLESCustomers
-ExampleOnlyForBECustomers
-ExampleOnlyForDECustomers
-ExampleOnlyForKlarnaCustomers
-ExampleOnlyForNLCustomers
 Expedition
 Experimental
 Expired
@@ -440,9 +436,7 @@ FileDidAlreadyExist
 FileIsNotCorrect
 Filename
 FilteredFrom
-FiscalYear
 Flashy
-ForceEmailFrom
 ForcedByGlobalSetup
 Form for public lead registration has not been enabled
 Free
@@ -518,7 +512,6 @@ MO
 MRP
 MYDATA_AADE_KEY
 MYDATA_AADE_USER
-Mailman
 MainAccountForRevenueStampSaleNotDefined
 Manual
 Map
@@ -754,18 +747,11 @@ Roles
 Rowid
 RulesPurchaseTurnoverCollectedOfExpenseAccounts
 SID
-SOAPError
-SPIP
 SQL
 SQLSort
 STATE_
 STATE_IPP_
 STRIPE_APPLICATION_FEE_PLATFORM
-STRIPE_BANCONTACT
-STRIPE_GIROPAY
-STRIPE_IDEAL
-STRIPE_KLARNA
-STRIPE_SOFORT
 ST_
 SaveFailed
 Saved
@@ -1155,8 +1141,6 @@ XSubsriptionError
 centimes
 email
 id
-leftmenu
-message
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 ref

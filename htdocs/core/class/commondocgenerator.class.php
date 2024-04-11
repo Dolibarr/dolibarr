@@ -147,18 +147,18 @@ abstract class CommonDocGenerator
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
 	/**
-	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
+	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
 
@@ -744,8 +744,8 @@ abstract class CommonDocGenerator
 			'line_localtax2_rate' => vatrate($line->localtax1_tx),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
-			'line_total_up' => price2num($line->subprice * $line->qty),
-			'line_total_up_locale' => price($line->subprice * $line->qty, 0, $outputlangs),
+			'line_total_up' => price2num($line->subprice * (float) $line->qty),
+			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
@@ -856,7 +856,7 @@ abstract class CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 
 		$array_shipment = array(
 			$array_key.'_id' => $object->id,
@@ -1369,7 +1369,7 @@ abstract class CommonDocGenerator
 
 		$extrafieldOutputContent = '';
 		if (isset($object->array_options[$extrafieldOptionsKey])) {
-			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element, $outputlangs);
 		}
 
 		// TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...

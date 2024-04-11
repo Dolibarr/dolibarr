@@ -231,7 +231,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea class="quatrevingpercent" name="note" wrap="soft" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
+	print '<td class="tdtop"><textarea class="quatrevingtpercent" name="note" wrap="soft" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
 	print '</tr>';
 
 	print '</table>';

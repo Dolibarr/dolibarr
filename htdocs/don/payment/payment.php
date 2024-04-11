@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +167,7 @@ if ($action == 'create') {
 		print "\n".'<script type="text/javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
-		print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
 							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
 						});';
 		print '	});'."\n";
@@ -253,7 +254,7 @@ if ($action == 'create') {
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
 			}
 			print '<input type="text" size="8" name="'.$namef.'">';
 		} else {

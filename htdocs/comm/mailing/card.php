@@ -96,6 +96,11 @@ if (empty($action) && empty($object->id)) {
 
 $upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
+//$permissiontoread = $user->hasRight('maling', 'read');
+$permissiontocreate = $user->hasRight('mailing', 'creer');
+$permissiontovalidatesend = $user->hasRight('mailing', 'valider');
+$permissiontodelete = $user->hasRight('mailing', 'supprimer');
+
 
 /*
  * Actions
@@ -135,7 +140,7 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes') {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontocreate) {
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -151,7 +156,7 @@ if (empty($reshook)) {
 	}
 
 	// Action send emailing for everybody
-	if ($action == 'sendallconfirmed' && $confirm == 'yes') {
+	if ($action == 'sendallconfirmed' && $confirm == 'yes' && $permissiontovalidatesend) {
 		if (!getDolGlobalString('MAILING_LIMIT_SENDBYWEB')) {
 			// As security measure, we don't allow send from the GUI
 			setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
@@ -360,7 +365,7 @@ if (empty($reshook)) {
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -464,7 +469,7 @@ if (empty($reshook)) {
 	}
 
 	// Action send test emailing
-	if ($action == 'send' && ! $cancel) {
+	if ($action == 'send' && ! $cancel && $permissiontovalidatesend) {
 		$error = 0;
 
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
@@ -539,7 +544,7 @@ if (empty($reshook)) {
 	}
 
 	// Action add emailing
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontocreate) {
 		$mesgs = array();
 
 		$object->messtype       = (string) GETPOST("messtype");
@@ -580,7 +585,7 @@ if (empty($reshook)) {
 	}
 
 	// Action update description of emailing
-	if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') {
+	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') {
@@ -615,7 +620,7 @@ if (empty($reshook)) {
 	/*
 	 * Action of adding a file in email form
 	 */
-	if (GETPOST('addfile')) {
+	if (GETPOST('addfile') && $permissiontocreate) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -627,7 +632,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of file remove
-	if (GETPOST("removedfile")) {
+	if (GETPOST("removedfile") && $permissiontocreate) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -638,7 +643,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of emailing update
-	if ($action == 'update' && !GETPOST("removedfile") && !$cancel) {
+	if ($action == 'update' && !GETPOST("removedfile") && !$cancel && $permissiontocreate) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$isupload = 0;
@@ -676,7 +681,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of validation confirmation
-	if ($action == 'confirm_valid' && $confirm == 'yes') {
+	if ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidatesend) {
 		if ($object->id > 0) {
 			$object->valid($user);
 			setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
@@ -688,7 +693,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of validation confirmation
-	if ($action == 'confirm_settodraft' && $confirm == 'yes') {
+	if ($action == 'confirm_settodraft' && $confirm == 'yes' && $permissiontocreate) {
 		if ($object->id > 0) {
 			$result = $object->setStatut(0);
 			if ($result > 0) {
@@ -704,7 +709,7 @@ if (empty($reshook)) {
 	}
 
 	// Resend
-	if ($action == 'confirm_reset' && $confirm == 'yes') {
+	if ($action == 'confirm_reset' && $confirm == 'yes' && $permissiontocreate) {
 		if ($object->id > 0) {
 			$db->begin();
 
@@ -727,7 +732,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of delete confirmation
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		if ($object->delete($user)) {
 			$url = (!empty($urlfrom) ? $urlfrom : 'list.php');
 			header("Location: ".$url);
@@ -972,7 +977,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')) {
 						setEventMessages($langs->trans("MailSendSetupIs3", getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')), null, 'warnings');
 					}
-					$_GET["action"] = '';
+					$action = '';
 				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
@@ -987,7 +992,7 @@ if ($action == 'create') {
 					if ($conf->file->mailing_limit_sendbyweb != '-1') {  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed to increase it.
 						setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings'); // You can send online with constant...
 					}
-					$_GET["action"] = '';
+					$action = '';
 				} else {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
@@ -1066,12 +1071,33 @@ if ($action == 'create') {
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$email = CMailFile::getValidAddress($object->email_errorsto, 2);
-				if ($email && !isValidEmail($email)) {
-					$langs->load("errors");
-					print img_warning($langs->trans("ErrorBadEMail", $email));
-				} elseif ($email && !isValidMailDomain($email)) {
-					$langs->load("errors");
-					print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				if ($action != 'editemail_errorsto') {
+					if ($email && !isValidEmail($email)) {
+						$langs->load("errors");
+						print img_warning($langs->trans("ErrorBadEMail", $email));
+					} elseif ($email && !isValidMailDomain($email)) {
+						$langs->load("errors");
+						print img_warning($langs->trans("ErrorBadMXDomain", $email));
+					}
+				}
+				print '</td></tr>';
+			}
+
+			// Reply to
+			if ($object->messtype != 'sms') {
+				print '<tr><td>';
+				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				print '</td><td>';
+				print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				$email = CMailFile::getValidAddress($object->email_replyto, 2);
+				if ($action != 'editemail_replyto') {
+					if ($email && !isValidEmail($email)) {
+						$langs->load("errors");
+						print img_warning($langs->trans("ErrorBadEMail", $email));
+					} elseif ($email && !isValidMailDomain($email)) {
+						$langs->load("errors");
+						print img_warning($langs->trans("ErrorBadMXDomain", $email));
+					}
 				}
 				print '</td></tr>';
 			}
@@ -1123,7 +1149,7 @@ if ($action == 'create') {
 				print $text;
 				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
 					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 					}
 				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
 					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';

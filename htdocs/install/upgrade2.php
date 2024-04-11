@@ -2778,9 +2778,9 @@ function migrate_project_task_actors($db, $langs, $conf)
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
  * @param	string		$table			Table name
- * @param	int			$fk_source		Id of element source
+ * @param	string		$fk_source		Id of element source (name of field)
  * @param	string		$sourcetype		Type of element source
- * @param	int			$fk_target		Id of element target
+ * @param	string		$fk_target		Id of element target
  * @param	string		$targettype		Type of element target
  * @return	void
  */

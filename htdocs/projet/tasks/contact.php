@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -413,7 +414,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'position');
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button button-add" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
 
 			// Line to add an external contact. Only if project linked to a third party.
@@ -426,7 +427,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<td>';
 				$thirdpartyofproject = $projectstatic->getListContactId('thirdparty');
-				$selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $projectstatic->socid;
+				$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany") : $projectstatic->socid;
 				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
 				print '</td>';
 
@@ -438,7 +439,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'position');
 				print '</td>';
-				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
+				print '<td class="right" colspan="3" ><input type="submit" class="button button-add small" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
 				if (!$nbofcontacts) {
 					print ' disabled';
 				}
@@ -501,7 +502,7 @@ if ($id > 0 || !empty($ref)) {
 					$userstatic->photo = $tab[$i]['photo'];
 					$userstatic->login = $tab[$i]['login'];
 					$userstatic->email = $tab[$i]['email'];
-					$userstatic->statut = $tab[$i]['statuscontact'];
+					$userstatic->status = $tab[$i]['statuscontact'];
 
 					print $userstatic->getNomUrl(-1);
 				}

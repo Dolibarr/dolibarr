@@ -421,11 +421,11 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 		// Clean some POST vars
 		if (!$error) {
-			$_POST["subscription"] = '';
-			$_POST["accountid"] = '';
-			$_POST["operation"] = '';
-			$_POST["label"] = '';
-			$_POST["num_chq"] = '';
+			$accountid = '';
+			$operation = '';
+			$label = '';
+			$num_chq = '';
+			$option = '';
 		}
 	}
 }

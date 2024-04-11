@@ -143,7 +143,8 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
 $listofwrappers = stream_get_wrappers();
 // We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
 // phar stream does not auto unserialize content (possible code execution) since PHP 8.1
-$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
 if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
 	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
 }
@@ -220,7 +221,7 @@ $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($d
 $dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
-if (empty($dolibarr_main_db_port)) {
+if (!isset($dolibarr_main_db_port)) {
 	$dolibarr_main_db_port = 3306; // For compatibility with old configs, if not defined, we take 'mysql' type
 }
 if (empty($dolibarr_main_db_type)) {

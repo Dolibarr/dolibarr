@@ -64,6 +64,7 @@ if (!function_exists('gzdecode')) {
 	 *
 	 * @param string    $data   data to deflate
 	 * @return string           data deflated
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function gzdecode($data)
 	{

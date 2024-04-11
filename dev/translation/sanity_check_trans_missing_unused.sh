@@ -129,7 +129,7 @@ if [ -s "${MISSING_AND_UNUSED_FILE}" ] ; then
 	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
 	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
 	echo "##   so that they are ignored for this report."
-	echo "## :warning: Unused Translations may be commented in the code"
+	echo "## :warning: Unused Translations may also be commented in the code"
 	echo "##   You can add such 'disabled' keys to $(basename "$EXCLUDE_KEYS_SRC_FILE")"
 	echo "##   so that they are ignored for this report."
 	echo

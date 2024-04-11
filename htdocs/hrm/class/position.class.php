@@ -51,8 +51,8 @@ class Position extends CommonObject
 	public $table_element = 'hrm_job_user';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -1001,7 +1001,7 @@ class Position extends CommonObject
 				$dir = dol_buildpath($reldir . "core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir . $file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {

@@ -170,8 +170,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function create($user, $closepaidvat = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();

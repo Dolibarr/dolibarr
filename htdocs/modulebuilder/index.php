@@ -2102,8 +2102,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	//chercher la table dicname
-	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($newdicname) . "'";
-	$checkTable = $db->query($query);
+	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
 	if ($checkTable && $db->num_rows($checkTable) <= 0) {
 		$error++;
 	}
@@ -2767,7 +2766,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	if (GETPOST('type', 'alpha') == 'left' && !empty(GETPOST('lefmenu', 'alpha'))) {
 		if (!str_contains(GETPOST('leftmenu'), strtolower($module))) {
 			$error++;
-			setEventMessages($langs->trans("WarningFieldsMustContains", $langs->transnoentities("leftmenu")), null, 'errors');
+			setEventMessages($langs->trans("WarningFieldsMustContains", $langs->transnoentities("LeftmenuId")), null, 'errors');
 		}
 	}
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -2777,7 +2776,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	if (GETPOST('type', 'alpha') == 'left') {
 		if (empty(GETPOST('leftmenu')) && count($objects) > 0) {
 			$error++;
-			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("leftmenu"), $langs->transnoentities("type")), null, 'errors');
+			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("LeftmenuId"), $langs->transnoentities("type")), null, 'errors');
 		}
 	}
 	if (GETPOST('type', 'alpha') == 'top') {
@@ -2942,7 +2941,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 			}
 		}
 	} else {
-		$_POST['type'] = '';
+		$_POST['type'] = '';	// TODO Use a var here and later
 		$_POST['titre'] = '';
 		$_POST['fk_menu'] = '';
 		$_POST['leftmenu'] = '';
@@ -4960,7 +4959,7 @@ if ($module == 'initmodule') {
 
 					print '<span class="opacitymedium">'.$langs->trans("EnterNameOfDictionaryDesc").'</span><br><br>';
 
-					print dol_get_fiche_head('');
+					print dol_get_fiche_head();
 					print '<table class="border centpercent">';
 					print '<tbody>';
 					print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Table").'</td><td><input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus></td>';

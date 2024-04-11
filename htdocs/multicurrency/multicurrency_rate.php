@@ -12,6 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,23 +94,24 @@ if (empty($action)) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'cr.date_sync'=>"date_sync",
-	'cr.rate'=>"rate",
-	'cr.rate_indirect'=>"rate_indirect",
-	'm.code'=>"code",
+	'cr.date_sync' => "date_sync",
+	'cr.rate' => "rate",
+	'cr.rate_indirect' => "rate_indirect",
+	'm.code' => "code",
 );
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cr.date_sync'=>array('label'=>'Date', 'checked'=>1),
-	'cr.rate'=>array('label'=>'Rate', 'checked'=>1),
-	'cr.rate_indirect'=>array('label'=>'RateIndirect', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
-	'm.code'=>array('label'=>'Code', 'checked'=>1),
+	'cr.date_sync' => array('label' => 'Date', 'checked' => 1),
+	'cr.rate' => array('label' => 'Rate', 'checked' => 1),
+	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => 0, 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
+	'm.code' => array('label' => 'Code', 'checked' => 1),
 );
 
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
@@ -242,7 +244,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sall = "";
 		$search_date_sync = "";
-		$search_date_sync_end="";
+		$search_date_sync_end = "";
 		$search_rate = "";
 		$search_code = "";
 		$search_array_options = array();
@@ -403,13 +405,13 @@ if ($resql) {
 		$param = "&search_date_sync=".$search_date_sync;
 	}
 	if ($search_date_sync_end) {
-		$param="&search_date_sync_end=".$search_date_sync_end;
+		$param = "&search_date_sync_end=".$search_date_sync_end;
 	}
 	if ($search_rate) {
 		$param = "&search_rate=".urlencode($search_rate);
 	}
 	if ($search_code != '') {
-		$param.="&search_code=".urlencode($search_code);
+		$param .= "&search_code=".urlencode($search_code);
 	}
 
 	// Add $param from extra fields
@@ -504,7 +506,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -533,7 +535,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -669,5 +671,5 @@ if ($resql) {
 }
 
 
-	llxFooter();
-	$db->close();
+llxFooter();
+$db->close();

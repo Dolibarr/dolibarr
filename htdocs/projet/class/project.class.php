@@ -63,8 +63,8 @@ class Project extends CommonObject
 	public $fk_element = 'fk_projet';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -406,8 +406,6 @@ class Project extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 		$ret = 0;
 
@@ -1697,6 +1695,7 @@ class Project extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
+		$clone_project_id = 0;   // For static toolcheck
 
 		dol_syslog("createFromClone clone_contact=".json_encode($clone_contact)." clone_task=".json_encode($clone_task)." clone_project_file=".json_encode($clone_project_file)." clone_note=".json_encode($clone_note)." move_date=".json_encode($move_date), LOG_DEBUG);
 
@@ -1900,7 +1899,7 @@ class Project extends CommonObject
 
 		unset($clone_project->context['createfromclone']);
 
-		if (!$error) {
+		if (!$error && $clone_project_id != 0) {
 			$this->db->commit();
 			return $clone_project_id;
 		} else {

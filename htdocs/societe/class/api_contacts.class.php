@@ -73,7 +73,7 @@ class Contacts extends DolibarrApi
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		if ($id === 0) {
@@ -87,7 +87,7 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includecount) {
@@ -121,7 +121,7 @@ class Contacts extends DolibarrApi
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		if (empty($email)) {
@@ -135,7 +135,7 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includecount) {
@@ -179,7 +179,7 @@ class Contacts extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
-			throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(403, 'No permission to read contacts');
 		}
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -280,7 +280,7 @@ class Contacts extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'No permission to create/update contacts');
+			throw new RestException(403, 'No permission to create/update contacts');
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -288,12 +288,12 @@ class Contacts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contact->context['caller'] = $request_data['caller'];
+				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $val;
+					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
 				}
 				continue;
 			}
@@ -319,7 +319,7 @@ class Contacts extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'No permission to create/update contacts');
+			throw new RestException(403, 'No permission to create/update contacts');
 		}
 
 		$result = $this->contact->fetch($id);
@@ -328,7 +328,7 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -337,12 +337,12 @@ class Contacts extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contact->context['caller'] = $request_data['caller'];
+				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $val;
+					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
 				}
 				continue;
 			}
@@ -370,7 +370,7 @@ class Contacts extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'supprimer')) {
-			throw new RestException(401, 'No permission to delete contacts');
+			throw new RestException(403, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);
 		if (!$result) {
@@ -378,7 +378,7 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
 		return $this->contact->delete(DolibarrApiAccess::$user);
@@ -484,7 +484,7 @@ class Contacts extends DolibarrApi
 	public function addCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'Insufficient rights');
+			throw new RestException(403, 'Insufficient rights');
 		}
 
 		$result = $this->contact->fetch($id);
@@ -498,10 +498,10 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$category->add_type($this->contact, 'contact');
@@ -524,7 +524,7 @@ class Contacts extends DolibarrApi
 	public function deleteCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'creer')) {
-			throw new RestException(401, 'Insufficient rights');
+			throw new RestException(403, 'Insufficient rights');
 		}
 
 		$result = $this->contact->fetch($id);
@@ -538,10 +538,10 @@ class Contacts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$category->del_type($this->contact, 'contact');

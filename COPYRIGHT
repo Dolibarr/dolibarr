@@ -68,7 +68,7 @@ jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes            
 jQuery jquerytreeview  1.4.1         MIT License                 Yes             JS library for filetree
 jQuery TableDnD        0.6           GPL and MIT License         Yes             JS library plugin TableDnD (to reorder table rows)
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
-jsGanttImproved        2.7.3         BSD License                 Yes             JS library (to build Gantt reports)
+jsGanttImproved        2.8.10        BSD License                 Yes             JS library (to build Gantt reports)
 SwaggerUI              2.2.10        GPL-2+                      Yes             JS library to offer the REST API explorer
 
 Image libraries:

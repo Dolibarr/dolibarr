@@ -42,6 +42,7 @@ class modMyModule extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -70,7 +71,8 @@ class modMyModule extends DolibarrModules
 
 		// Author
 		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
+		$this->editor_url = 'https://www.example.com';		// Must be an external online web site
+		$this->editor_squarred_logo = '';					// Must be image filename into the module/img directory followed with @modulename. Example: 'myimage.png@mymodule'
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
@@ -150,7 +152,7 @@ class modMyModule extends DolibarrModules
 
 		// Prerequisites
 		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
 
 		// Messages at activation

@@ -389,14 +389,14 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *  Execute a SQL request and return the resultset
+	 *	Execute a SQL request and return the resultset
 	 *
-	 * 	@param	string	$query			SQL query string
-	 * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *	@param	string	$query			SQL query string
+	 *	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @param	int		$result_mode	Result mode (not used with sqlite)
-	 *	@return	bool|SQLite3Result		Resultset of answer
+	 *	@param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 *	@param	int		$result_mode	Result mode (not used with sqlite)
+	 *	@return	bool|SQLite3Result|null	Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
@@ -959,7 +959,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -970,51 +970,62 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
 		// phpcs:enable
-		// FIXME: $fulltext_keys parameter is unused
+		// @TODO: $fulltext_keys parameter is unused
 
-		$sqlfields = array();
 		$sqlk = array();
 		$sqluq = array();
 
-		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
-		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "create table ".$table."(";
+		// Keys found into the array $fields: type,value,attribute,null,default,extra
+		// ex. : $fields['rowid'] = array(
+		//			'type'=>'int' or 'integer',
+		//			'value'=>'11',
+		//			'null'=>'not null',
+		//			'extra'=> 'auto_increment'
+		//		);
+		$sql = "CREATE TABLE ".$this->sanitize($table)."(";
 		$i = 0;
+		$sqlfields = array();
 		foreach ($fields as $field_name => $field_desc) {
-			$sqlfields[$i] = $field_name." ";
-			$sqlfields[$i] .= $field_desc['type'];
-			if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-				$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			} elseif (preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-				$sqlfields[$i]  .= " ".$field_desc['attribute'];
-			} elseif (preg_match("/^[^\s]/i", $field_desc['default'])) {
-				if (preg_match("/null/i", $field_desc['default'])) {
-					$sqlfields[$i] .= " default ".$field_desc['default'];
+			$sqlfields[$i] = $this->sanitize($field_name)." ";
+			$sqlfields[$i] .= $this->sanitize($field_desc['type']);
+			if (!is_null($field_desc['value']) && $field_desc['value'] !== '') {
+				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
+			}
+			if (!is_null($field_desc['attribute']) && $field_desc['attribute'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+			}
+			if (!is_null($field_desc['default']) && $field_desc['default'] !== '') {
+				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+					$sqlfields[$i] .= " DEFAULT ".((float) $field_desc['default']);
+				} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+					$sqlfields[$i] .= " DEFAULT ".$this->sanitize($field_desc['default']);
 				} else {
-					$sqlfields[$i] .= " default '".$this->escape($field_desc['default'])."'";
+					$sqlfields[$i] .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 				}
-			} elseif (preg_match("/^[^\s]/i", $field_desc['null'])) {
-				$sqlfields[$i] .= " ".$field_desc['null'];
-			} elseif (preg_match("/^[^\s]/i", $field_desc['extra'])) {
-				$sqlfields[$i] .= " ".$field_desc['extra'];
+			}
+			if (!is_null($field_desc['null']) && $field_desc['null'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
+			}
+			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
 			$i++;
 		}
 		if ($primary_key != "") {
-			$pk = "primary key(".$primary_key.")";
+			$pk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
 		}
 
 		if (is_array($unique_keys)) {
 			$i = 0;
 			foreach ($unique_keys as $key => $value) {
-				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$this->escape($value)."')";
+				$sqluq[$i] = "UNIQUE KEY '".$this->sanitize($key)."' ('".$this->escape($value)."')";
 				$i++;
 			}
 		}
 		if (is_array($keys)) {
 			$i = 0;
 			foreach ($keys as $key => $value) {
-				$sqlk[$i] = "KEY ".$key." (".$value.")";
+				$sqlk[$i] = "KEY ".$this->sanitize($key)." (".$value.")";
 				$i++;
 			}
 		}
@@ -1022,19 +1033,20 @@ class DoliDBSqlite3 extends DoliDB
 		if ($primary_key != "") {
 			$sql .= ",".$pk;
 		}
-		if (is_array($unique_keys)) {
+		if ($unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}
 		if (is_array($keys)) {
 			$sql .= ",".implode(',', $sqlk);
 		}
-		$sql .= ") type=".$type;
+		$sql .= ")";
+		//$sql .= " engine=".$this->sanitize($type);
 
-		dol_syslog($sql, LOG_DEBUG);
-		if (!$this -> query($sql)) {
+		if (!$this->query($sql)) {
 			return -1;
+		} else {
+			return 1;
 		}
-		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1082,7 +1094,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 				Table name
 	 *	@param	string	$field_name 		Field name to add
-	 *	@param	string	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
 	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1093,28 +1105,30 @@ class DoliDBSqlite3 extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('date', 'datetime'))) {
 				$sql .= "(".$field_desc['value'].")";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-			$sql .= " ".$field_desc['attribute'];
+		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
+			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
+			$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
-			if (preg_match("/null/i", $field_desc['default'])) {
-				$sql .= " default ".$field_desc['default'];
+		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= " DEFAULT ".((float) $field_desc['default']);
+			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+				$sql .= " DEFAULT ".$this->sanitize($field_desc['default']);
 			} else {
-				$sql .= " default '".$this->escape($field_desc['default'])."'";
+				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$field_desc['extra'];
+		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$field_position;
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
@@ -1129,16 +1143,16 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		$sql = "ALTER TABLE ".$this->sanitize($table);
+		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
-			$sql .= "(".$field_desc['value'].")";
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 
 		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
@@ -1161,7 +1175,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
 
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." DROP COLUMN `".$this->sanitize($tmp_field_name)."`";
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;

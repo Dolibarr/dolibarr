@@ -90,6 +90,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFBom $module';
 
 		if ($module->write_file($bom, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bom&file=SPECIMEN.pdf");

@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@
  * @param string	$urloption			More parameters on URL request
  * @param int		$minLength			Minimum number of chars to trigger that Ajax search
  * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array		$ajaxoptions		Multiple options array
- *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                      - Ex: array('disabled'=> )
- *                                      - Ex: array('show'=> )
- *                                      - Ex: array('update_textarea'=> )
- *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
+ *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                      - Ex: array('disabled'=> )
+ *                                                      - Ex: array('show'=> )
+ *                                                      - Ex: array('update_textarea'=> )
+ *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @param string	$moreparams			More params provided to ajax call
  * @return string   					Script
  */
@@ -168,7 +169,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												multicurrency_unitprice: item.multicurrency_unitprice,
 		';
 	}
-		$script .= '
+	$script .= '
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
@@ -690,9 +691,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {';
 		if (empty($setzeroinsteadofdel)) {
-			$out .=' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
+			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
 		} else {
-			$out .=' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
+			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
 		}
 		$out .= '	}
 				});

@@ -178,9 +178,6 @@ class RejetPrelevement
 			// Make a negative payment
 			// Amount must be an array (id of invoice -> amount)
 			$pai->amounts = array();
-
-			//var_dump($this->type);exit;
-
 			$pai->amounts[$facs[$i][0]] = price2num($amountrejected * -1);		// The payment must be negative because it is a refund
 
 			$pai->datepaye = $date_rejet;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015-2021  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ class box_task extends ModeleBoxes
 					$taskstatic->ref = $objp->ref;
 					$taskstatic->label = $objp->label;
 					$taskstatic->progress = $objp->progress;
-					$taskstatic->fk_statut = $objp->fk_statut;
+					$taskstatic->status = $objp->fk_statut;
 					$taskstatic->date_end = $this->db->jdate($objp->datee);
 					$taskstatic->planned_workload = $objp->planned_workload;
 					$taskstatic->duration_effective = $objp->duration_effective;

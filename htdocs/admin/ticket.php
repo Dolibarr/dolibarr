@@ -3,6 +3,7 @@
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,6 +290,7 @@ foreach ($dirmodels as $reldir) {
 					include_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefTicket $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -423,6 +425,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force CommonDocGenerator $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

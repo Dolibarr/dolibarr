@@ -288,8 +288,8 @@ if ($action == 'delete') {
 
 // Confirmation of payment validation
 if ($action == 'valide') {
-	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
+	$facid = GETPOSTINT('facid');
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&facid='.((int) $facid), $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
 }
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

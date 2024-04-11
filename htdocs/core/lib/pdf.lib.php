@@ -925,7 +925,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$curx = $savcurx;
 			$cury += 8;
 		}
-	} else {
+	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
@@ -1018,6 +1018,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$outputlangs->load("dict");
 	$line = '';
 	$reg = array();
+	$marginwithfooter = 0;  // Return value
 
 	$dims = $pdf->getPageDimensions();
 
@@ -1356,9 +1357,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	if (getDolGlobalString('PDF_USE_GETALIASNBPAGE_FOR_TOTAL')) {
 		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); 	// works with $pdf->Cell
-		$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();	// seems to not works with all fonts like ru_UK
+		$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();	// seems to not work with all fonts like ru_UK
 	} else {
-		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();		// seems to always work even with $pdf->Cell. But some users has reported wrong nb (no way to reproduce)
+		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();		// seems to always work even with $pdf->Cell. But some users have reported wrong nb (no way to reproduce)
 	}
 
 	$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
@@ -2674,7 +2675,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
+			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
 	return 0;

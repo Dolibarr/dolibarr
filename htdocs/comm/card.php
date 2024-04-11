@@ -313,14 +313,13 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Customer');
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
-
 
 if ($object->id > 0) {
 	$head = societe_prepare_head($object);

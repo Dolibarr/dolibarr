@@ -87,8 +87,8 @@ $search_dv_end = dol_mktime(0, 0, 0, GETPOSTINT('search_end_dvmonth'), GETPOSTIN
 $search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ? GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
-$search_conciliated = GETPOSTINT("search_conciliated");
-$search_fk_bordereau = GETPOSTINT("search_fk_bordereau");
+$search_conciliated = GETPOST("search_conciliated", 'int');
+$search_fk_bordereau = GETPOST("search_fk_bordereau", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $num_releve = GETPOST("num_releve", "alpha");
@@ -152,7 +152,7 @@ $search_array_options = $extrafields->getOptionalsFromPost('banktransaction', ''
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
 	'b.label' => array('label' => $langs->trans("Description"), 'checked' => 1,'position' => 20),
-	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => 1,'position' => 30),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => -1,'position' => 30),
 	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
 	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
 	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 1,'position' => 60),
@@ -1798,7 +1798,8 @@ if ($resql) {
 					if ($objp->num_releve) {
 						print '&nbsp;';
 					}
-					print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($_POST['rowid'][$objp->rowid]) ? ' checked' : '').'>';
+					$tmparray = GETPOST('rowid', 'array:int');
+					print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 				}
 			}
 			print '</td>';

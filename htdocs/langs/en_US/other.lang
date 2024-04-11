@@ -42,6 +42,7 @@ notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Sales order validated
 Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_CLOSE=Sales order delivered
+Notify_ORDER_CANCEL=Sales order canceled
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
 Notify_ORDER_SUPPLIER_VALIDATE=Purchase order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Purchase order approved

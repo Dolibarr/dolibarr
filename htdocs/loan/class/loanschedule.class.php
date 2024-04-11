@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,7 +168,7 @@ class LoanSchedule extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
+		$totalamount = (float) $this->amount_capital + (float) $this->amount_insurance + (float) $this->amount_interest;
 		$totalamount = price2num($totalamount);
 
 		// Check parameters

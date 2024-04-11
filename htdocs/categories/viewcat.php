@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2020		Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ if ($elemid && $action == 'addintocategory' &&
 		$newobject = new Account($db);
 		$elementtype = 'bank_account';
 	} else {
-		dol_print_error("Not supported value of type = ".$type);
+		dol_print_error(null, "Not supported value of type = ".$type);
 	}
 	$result = $newobject->fetch($elemid);
 
@@ -506,6 +507,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Product[] $prods */
+			'@phan-var-force Product[] $prods';
 			// Form to add record into the category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -562,7 +564,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$prod->id."'>";
+						print '<a class="reposition" href= "'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".$prod->id.'">';
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -593,6 +595,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Societe[] $socs */
+			'@phan-var-force Societe[] $socs';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -675,10 +678,12 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		$permission = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
+
 		if ($socs < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Fournisseur[] $socs */
+			'@phan-var-force Fournisseur[] $socs';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -734,7 +739,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit?'&limit='.$limit:'').'">';
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -768,6 +773,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Adherent[] $members */
+			'@phan-var-force Adherent[] $members';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -856,6 +862,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Contact[] $contacts */
+			'@phan-var-force Contact[] $contacts';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -949,6 +956,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Account[] $accounts */
+			'@phan-var-force Account[] $accounts';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1038,6 +1046,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Project $object */
+			'@phan-var-force Project $object';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1125,6 +1134,7 @@ if ($type == Categorie::TYPE_USER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var User[] $users */
+			'@phan-var-force User[] $users';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1211,6 +1221,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Entrepot[] $objects */
+			'@phan-var-force Entrepot[] $objects';
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -1278,6 +1289,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Ticket[] $tickets */
+			'@phan-var-force Ticket[] $tickets';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {

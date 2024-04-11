@@ -164,7 +164,7 @@ if (empty($reshook)) {
 				$idprod = $bom_child->fk_product;
 			}
 		} else {
-			$idprod = (!empty(GETPOSTINT('idprodservice')) ? GETPOSTINT('idprodservice') : GETPOSTINT('idprod'));
+			$idprod = (GETPOSTINT('idprodservice') ? GETPOSTINT('idprodservice') : GETPOSTINT('idprod'));
 		}
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');

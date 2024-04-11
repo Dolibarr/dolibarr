@@ -224,7 +224,6 @@ UndoExpandAll=Ausklappen rückgängig machen
 SeeAll=Zeige alles an
 CloseWindow=Fenster schliessen
 Priority=Wichtigkeit
-MailSentBy=E-Mail Absender
 NotSent=Nicht gesendet
 SendAcknowledgementByMail=Bestätigungsemail senden
 SendMail=sende E-Mail

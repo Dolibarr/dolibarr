@@ -67,6 +67,8 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
+
 $param = '';
 $info_admin = '';
 
@@ -113,6 +115,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
 
 								$modules[$objMod->numero] = $objMod;
 								$modules_files[$objMod->numero] = $file;
@@ -130,6 +133,7 @@ foreach ($modulesdir as $dir) {
 		closedir($handle);
 	}
 }
+'@phan-var-force array<string,DolibarrModules> $modules';
 
 // create pre-filtered list for modules
 foreach ($modules as $key => $module) {

@@ -15,6 +15,7 @@
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -890,7 +891,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	dol_set_focus('#lastname');
 

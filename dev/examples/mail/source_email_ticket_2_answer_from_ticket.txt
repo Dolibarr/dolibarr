@@ -10,7 +10,8 @@ To: customer@customercompany.fr
 Subject: [MyBigCompany - Ticket #TS2008-0040] Nouveau message
 Date: Thu, 20 Aug 2020 18:31:37 +0200
 Message-ID: <1597941097.SMTPs-dolibarr-tic58@83b5bc91f83a56e458db71e0adac2b62>
-References: <1597941097.SMTPs-dolibarr-tic58@83b5bc91f83a56e458db71e0adac2b62>
+References: <CALeEO_kij-ogXKzrjV_pTgqVbUB9j=287VkX34iVSWgDHFA8eg@mail.gmail.com>
+In-Reply-To: <CALeEO_kij-ogXKzrjV_pTgqVbUB9j=287VkX34iVSWgDHFA8eg@mail.gmail.com>
 X-Dolibarr-TRACKID: tic58@83b5bc91f83a56e458db71e0adac2b62
 X-RemoteAddr: 127.0.0.1
 X-Mailer: Dolibarr version 13.0.0-alpha (using SMTPs Mailer)
@@ -25,17 +26,17 @@ Content-Type: multipart/alternative; boundary="mul_872cdd6a64216735955664484832b
 --mul_872cdd6a64216735955664484832b075
 Content-Type: text/plain; charset=UTF-8
 
-Bonjour 
+Bonjour
 
- 
+
 Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici
-le message :PredefinedMailContentTicket_send 
- 
- 
+le message :PredefinedMailContentTicket_send
+
+
 Vous pouvez voir la progression du ticket en cliquant sur le lien
-ci-dessus. : fr5uw2yospypn2rz 
- Cordialement, 
- 
+ci-dessus. : fr5uw2yospypn2rz
+ Cordialement,
+
 --
 --mul_872cdd6a64216735955664484832b075
 Content-Type: text/html; charset=UTF-8

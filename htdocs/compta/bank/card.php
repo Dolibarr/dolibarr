@@ -69,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
-$id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOSTINT('ref');
+$id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOST('ref');
 $fieldid = GETPOSTINT("id") ? 'rowid' : 'ref';
 
 if (GETPOSTINT("id") || GETPOST("ref")) {
@@ -319,11 +319,11 @@ if (empty($reshook)) {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$_GET["id"] = GETPOSTINT("id"); // Force chargement page en mode visu
+				$id = GETPOSTINT("id"); // Force load of this page
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'edit'; // Force chargement page edition
+				$action = 'edit'; // Force load of page in edit mode
 			}
 		}
 

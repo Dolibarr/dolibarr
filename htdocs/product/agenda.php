@@ -141,7 +141,7 @@ if ($id > 0 || $ref) {
 
 	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title, $help_url);
@@ -160,7 +160,7 @@ if ($id > 0 || $ref) {
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 	print dol_get_fiche_head($head, 'agenda', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;

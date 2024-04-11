@@ -204,7 +204,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 		//$parent = $task["task_parent"];
 	}
 	// Define percent
-	$percent = $task['task_percent_complete'] ? $task['task_percent_complete'] : 0;
+	$percent = empty($task['task_percent_complete']) ? 0 : $task['task_percent_complete'];
 	// Link (more information)
 	if ($task["task_id"] < 0) {
 		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
@@ -264,9 +264,9 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	$taskid = $task["task_alternate_id"];
 	//$taskid = $task['task_id'];
 
-	$note = $task['note'];
+	$note = empty($task['note']) ? '' : $task['note'];
 
-	$note = dol_concatdesc($note, $langs->trans("Workload").' : '.($task['task_planned_workload'] ? convertSecondToTime($task['task_planned_workload'], 'allhourmin') : ''));
+	$note = dol_concatdesc($note, $langs->trans("Workload").' : '.(empty($task['task_planned_workload']) ? '' : convertSecondToTime($task['task_planned_workload'], 'allhourmin')));
 
 	$s .= "g.AddTaskItem(new JSGantt.TaskItem('".$taskid."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($note)."', g));";
 	echo $s;

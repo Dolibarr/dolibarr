@@ -123,6 +123,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $className($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");

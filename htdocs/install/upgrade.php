@@ -418,9 +418,9 @@ if (!$ok && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- upgrade: end ".((int) (!$ok && empty($_GET["ignoreerrors"])))." dirmodule=".$dirmodule);
+dolibarr_install_syslog("--- upgrade: end ".((int) (!$ok && !GETPOST("ignoreerrors")))." dirmodule=".$dirmodule);
 
-$nonext = (!$ok && empty($_GET["ignoreerrors"])) ? 2 : 0;
+$nonext = (!$ok && !GETPOST("ignoreerrors")) ? 2 : 0;
 if ($dirmodule) {
 	$nonext = 1;
 }

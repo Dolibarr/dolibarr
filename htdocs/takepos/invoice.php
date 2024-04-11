@@ -209,8 +209,9 @@ if (empty($reshook)) {
 		if ($invoice->total_ttc < 0) {
 			$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE";
-			$sql .= " fk_soc = ".((int) $invoice->socid);
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE entity IN (".getEntity('invoice').")";
+			$sql .= " AND fk_soc = ".((int) $invoice->socid);
 			$sql .= " AND type <> ".Facture::TYPE_CREDIT_NOTE;
 			$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
 			$sql .= " ORDER BY rowid DESC";
@@ -520,6 +521,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// If we add a line by click on product (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
@@ -711,6 +713,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	// If we add a line by submitting freezone form (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
@@ -728,7 +731,10 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$res = $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		if ($res < 0) {
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
 		$invoice->fetch($placeid);
 	}
 
@@ -804,7 +810,8 @@ if (empty($reshook)) {
 				$varforconst = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 				$sql .= " SET fk_soc = ".((int) getDolGlobalString($varforconst)).", ";
 				$sql .= " datec = '".$db->idate(dol_now())."'";
-				$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+				$sql .= " WHERE entity IN (".getEntity('invoice').")";
+				$sql .= " AND ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 				$resql1 = $db->query($sql);
 
 				if ($resdeletelines && $resql1) {
@@ -1359,14 +1366,14 @@ $( document ).ready(function() {
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE entity IN (".getEntity('invoice').")";
 	if (!getDolGlobalString('TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED')) {
 		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
-		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%' AND entity IN (".getEntity('invoice').")";
+		$sql .= " AND ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%'";
 	} else {
 		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
-		$sql .= " WHERE pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
+		$sql .= " AND pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
 		$sql .= " AND module_source = 'takepos'";
-		$sql .= " AND entity IN (".getEntity('invoice').")";
 	}
 
 	$sql .= $db->order('datec', 'ASC');

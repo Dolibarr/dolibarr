@@ -345,7 +345,7 @@ if ($object->id > 0) {
 				// Show break line
 				print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
 				// Picto and label of module
-				print '<td class="maxwidthonsmartphone tdoverflowonsmartphone tdforbreakperms" data-hide-perms="'.$obj->module.'">';
+				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName).'">';
 				print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
@@ -382,7 +382,7 @@ if ($object->id > 0) {
 
 
 			// Picto and label of module
-			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 			print '</td>';

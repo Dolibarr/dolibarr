@@ -130,7 +130,7 @@ if ($user->socid > 0) {
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $upload_dir));
 	exit;
 }
 // Check permissions

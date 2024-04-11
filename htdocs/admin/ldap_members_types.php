@@ -200,7 +200,7 @@ if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDA
 }
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmembertype') {
+	if ($action == 'testmembertype') {
 		// Create object
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();

@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if ($type == 'bank-transfer') {
 // Load object
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
-	$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+	$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
 	}
@@ -146,7 +147,7 @@ if (empty($reshook)) {
 		} else {
 			// We refresh object data
 			$ret = $object->fetch($id, $ref);
-			$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+			$isdraft = (($object->status == Facture::STATUS_DRAFT) ? 1 : 0);
 			if ($ret > 0) {
 				$object->fetch_thirdparty();
 			}
@@ -161,7 +162,7 @@ if (empty($reshook)) {
 		} else {
 			// We refresh object data
 			$ret = $object->fetch($id, $ref);
-			$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+			$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 			if ($ret > 0) {
 				$object->fetch_thirdparty();
 			}
@@ -280,7 +281,7 @@ if ($object->id > 0) {
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
-	if ($object->paye) {
+	if ($object->paid) {
 		$resteapayer = 0;
 	}
 	$resteapayeraffiche = $resteapayer;
@@ -755,7 +756,7 @@ if ($object->id > 0) {
 	}
 
 	// Add a transfer request
-	if ($object->statut > $object::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $num == 0) {
 		if ($resteapayer > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
@@ -794,7 +795,7 @@ if ($object->id > 0) {
 		}
 	} else {
 		if ($num == 0) {
-			if ($object->statut > $object::STATUS_DRAFT) {
+			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';

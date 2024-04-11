@@ -16,7 +16,7 @@
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
-	 * @var Product
+	 * @var static
 	 */
 	public $oldcopy;
 
@@ -90,9 +90,8 @@ class Product extends CommonObject
 	);
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 *
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -562,7 +561,7 @@ class Product extends CommonObject
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -591,7 +590,7 @@ class Product extends CommonObject
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
 		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 15, 'csslist' => 'tdoverflowmax250'),
-		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3),
+		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
 		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61),
 		'note'          => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62),
@@ -777,6 +776,7 @@ class Product extends CommonObject
 				}
 				dol_include_once('/core/modules/product/'.$module.'.php');
 				$modCodeProduct = new $module();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 				if (!empty($modCodeProduct->code_auto)) {
 					$this->ref = $modCodeProduct->getNextValue($this, $this->type);
 				}
@@ -856,10 +856,10 @@ class Product extends CommonObject
 					$sql .= ", ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 					$sql .= ", ".((int) $user->id);
 					$sql .= ", ".((int) $this->type);
-					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".price2num($price_ht, 'MT');
 					$sql .= ", ".price2num($price_ttc, 'MT');
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
+					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".((int) $this->status);
 					$sql .= ", ".((int) $this->status_buy);
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -1048,6 +1048,7 @@ class Product extends CommonObject
 			}
 
 			$mod = new $module();
+			'@phan-var-force ModeleNumRefBarCode $mod';
 
 			dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
 			$result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
@@ -1114,11 +1115,11 @@ class Product extends CommonObject
 
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
-			$this->surface = $this->length * $this->width;
+			$this->surface = (float) $this->length * (float) $this->width;
 			$this->surface_units = measuring_units_squared($this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
-			$this->volume = $this->surface * $this->height;
+			$this->volume = $this->surface * (float) $this->height;
 			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
@@ -1898,13 +1899,13 @@ class Product extends CommonObject
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
 				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
-					$this->label        = $obj->label;
+					$this->label       = $obj->label;
 					$this->description = $obj->description;
-					$this->other        = $obj->other;
+					$this->other       = $obj->other;
 				}
-				$this->multilangs["$obj->lang"]["label"]        = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["other"]        = $obj->other;
+				$this->multilangs[(string) $obj->lang]["label"]       = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["other"]       = $obj->other;
 			}
 			return 1;
 		} else {
@@ -2360,12 +2361,12 @@ class Product extends CommonObject
 		if ($newprice !== '' || $newprice === 0) {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
-				$price = price2num($newprice) / (1 + ($newvat / 100));
+				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
 				$price = price2num($price, 'MU');
 
 				if ($newminprice != '' || $newminprice == 0) {
 					$price_min_ttc = price2num($newminprice, 'MU');
-					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
+					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = price2num($price_min, 'MU');
 				} else {
 					$price_min = 0;
@@ -2378,7 +2379,7 @@ class Product extends CommonObject
 
 				if ($newminprice !== '' || $newminprice === 0) {
 					$price_min = price2num($newminprice, 'MU');
-					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
+					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {
@@ -3421,7 +3422,7 @@ class Product extends CommonObject
 		$sql .= " AND c.rowid = cd.fk_commande";
 		$sql .= " AND e.fk_soc = s.rowid";
 		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
-		$sql .= " AND ed.fk_origin_line = cd.rowid";
+		$sql .= " AND ed.fk_elementdet = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -3501,7 +3502,7 @@ class Product extends CommonObject
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE cf.rowid = fd.fk_commande";
+		$sql .= " WHERE cf.rowid = fd.fk_element";
 		$sql .= " AND cf.fk_soc = s.rowid";
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
@@ -6358,6 +6359,7 @@ class Product extends CommonObject
 			}
 			$var = getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM');
 			$mod = new $var();
+			'@phan-var-force ModeleNumRefBarCode $module';
 
 			$result = $mod->getNextValue($object, $type);
 
@@ -6704,7 +6706,7 @@ class Product extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+			$return .= '<br><span class="info-box-label opacitymedium inline-block tdoverflowmax150 valignmiddle" title="'.dol_escape_htmltag($this->label).'">'.dol_escape_htmltag($this->label).'</span>';
 		}
 		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
 			if ($this->price_base_type == 'TTC') {

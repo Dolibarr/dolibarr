@@ -61,7 +61,7 @@ function dolSaveMasterFile($filemaster)
 function dolSavePageAlias($filealias, $object, $objectpage)
 {
 	// Now create the .tpl file
-	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
+	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias." and a wrapper into all language subdirectories");
 
 	$aliascontent = '<?php'."\n";
 	$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -80,6 +80,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$dirname = dirname($filealias);
 		$filename = basename($filealias);
 		$filealiassub = $dirname.'/'.$objectpage->lang.'/'.$filename;
+
+		dol_mkdir($dirname.'/'.$objectpage->lang, DOL_DATA_ROOT);
 
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";

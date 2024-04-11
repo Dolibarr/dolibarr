@@ -745,6 +745,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . 'c_invoice_subtype';
 		$sql .= " WHERE active = 1 AND fk_country = ".((int) $mysoc->country_id)." AND entity IN(".getEntity('c_invoice_subtype').")";
 		$sql .= " ORDER by rowid, code";
+
 		dol_syslog(get_class($this) . '::getArrayOfInvoiceSubtypes', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2000,12 +2001,21 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
+	/**
+	 * List of special options to define line:
+	 * 1: shipment cost lines
+	 * 2: ecotaxe
+	 * 3: ??
+	 * id of module: a meaning for the module
+	 *  @var int
+	 */
 	public $special_code = 0;
 
 	/**
 	 * @deprecated	Use user_creation_id
 	 */
 	public $fk_user_author;
+
 	/**
 	 * @deprecated	Use user_modification_id
 	 */

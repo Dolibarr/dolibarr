@@ -984,7 +984,7 @@ if (empty($reshook)) {
 			}
 			$i = 0;
 			foreach ($listfieldmodify as $field) {
-				$keycode = $listfieldvalue[$i];
+				$keycode = empty($listfieldvalue[$i]) ? '' : $listfieldvalue[$i];
 				if (empty($keycode)) {
 					$keycode = $field;
 				}
@@ -1001,7 +1001,7 @@ if (empty($reshook)) {
 					$sql .= ",";
 				}
 				$sql .= $field."=";
-				if ($listfieldvalue[$i] == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
+				if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 					$sql .= GETPOSTINT('position');
 				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 					$sql .= "null"; // For vat, we want/accept code = ''

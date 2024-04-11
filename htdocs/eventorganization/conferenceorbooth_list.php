@@ -296,7 +296,7 @@ if ($projectid > 0 || $projectref) {
 
 	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 	$title = $langs->trans("Project") . ' - ' . $langs->trans("EventOrganizationConfOrBoothes") . ' - ' . $project->ref . ' ' . $project->name;
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $project->name) {
 		$title = $project->ref . ' ' . $project->name . ' - ' . $langs->trans("ListOfConferencesOrBooths");
 	}
 }

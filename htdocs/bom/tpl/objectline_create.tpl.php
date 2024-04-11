@@ -196,11 +196,11 @@ if ($filtertype != 1) {
 	print '</td>';
 }
 
-	$coldisplay += $colspan;
-	print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="' . $colspan . '">';
-	print '<input type="submit" class="button button-add" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
-	print '</td>';
-	print '</tr>';
+$coldisplay += $colspan;
+print '<td class="bordertop nobottom linecoledit right valignmiddle" colspan="' . $colspan . '">';
+print '<input type="submit" class="button button-add small" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
+print '</td>';
+print '</tr>';
 
 ?>
 

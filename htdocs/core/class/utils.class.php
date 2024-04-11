@@ -129,23 +129,23 @@ class Utils
 			}
 
 			if ($choice == 'allfiles') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'allfilesold') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (isModEnabled('syslog')) {
@@ -816,12 +816,12 @@ class Utils
 				$moduleobj = new $class($this->db);
 			} catch (Exception $e) {
 				$error++;
-				dol_print_error($e->getMessage());
+				dol_print_error(null, $e->getMessage());
 			}
 		} else {
 			$error++;
 			$langs->load("errors");
-			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			dol_print_error(null, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
 		}
 
@@ -1228,7 +1228,7 @@ class Utils
 						} elseif (is_string($row[$j]) && $row[$j] == '') {
 							// if it's an empty string, we set it as an empty string
 							$row[$j] = "''";
-						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ($row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ((float) $row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 							// if it's a number, we return it as-is
 							//	                    $row[$j] = $row[$j];
 						} else { // else for all other cases we escape the value and put quotes around
