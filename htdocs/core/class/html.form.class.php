@@ -5450,8 +5450,9 @@ class Form
 							array_push($inputok, $input['name']);
 						}
 					}
-					// Add name of fields to propagate with the GET when submitting the form with button KO.  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-					if (array_key_exists('inputko', $input) && $input['inputko'] == 1 && isset($input['name'])) {
+					// Add name of fields to propagate with the GET when submitting the form with button KO.
+					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
+					if (is_array($input) && isset($input['inputko']) && $input['inputko'] == 1 && isset($input['name'])) {
 						array_push($inputko, $input['name']);
 					}
 				}
