@@ -957,6 +957,10 @@ div.floatright
 {
 	display:block;
 }
+.inline
+{
+	display:inline;
+}
 .inline-block
 {
 	display:inline-block;
