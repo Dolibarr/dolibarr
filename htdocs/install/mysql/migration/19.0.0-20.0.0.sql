@@ -301,3 +301,5 @@ ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AF
 
 ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
 ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
+
+DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
