@@ -77,7 +77,7 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/status$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
