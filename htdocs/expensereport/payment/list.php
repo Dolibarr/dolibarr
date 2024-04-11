@@ -59,12 +59,12 @@ if ($user->socid) {
 }
 
 $search_ref				= GETPOST('search_ref', 'alpha');
-$search_date_startday	= SESSIONGETPOSTINT('search_date_startday');
-$search_date_startmonth	= SESSIONGETPOSTINT('search_date_startmonth');
-$search_date_startyear	= SESSIONGETPOSTINT('search_date_startyear');
-$search_date_endday		= SESSIONGETPOSTINT('search_date_endday');
-$search_date_endmonth	= SESSIONGETPOSTINT('search_date_endmonth');
-$search_date_endyear	= SESSIONGETPOSTINT('search_date_endyear');
+$search_date_startday	= GETPOSTSESSIONINT('search_date_startday');
+$search_date_startmonth	= GETPOSTSESSIONINT('search_date_startmonth');
+$search_date_startyear	= GETPOSTSESSIONINT('search_date_startyear');
+$search_date_endday		= GETPOSTSESSIONINT('search_date_endday');
+$search_date_endmonth	= GETPOSTSESSIONINT('search_date_endmonth');
+$search_date_endyear	= GETPOSTSESSIONINT('search_date_endyear');
 $search_date_start		= dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end		= dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_user			= GETPOST('search_user', 'alpha');

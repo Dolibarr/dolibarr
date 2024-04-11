@@ -592,20 +592,20 @@ if ($action != 'export_csv') {
 			if ($line->subledger_account) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&search_accountancy_code_start=' . urlencode($line->subledger_account) . '&search_accountancy_code_end=' . urlencode($line->subledger_account);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . SESSIONGETPOSTINT('date_startmonth') . '&search_date_startday=' . SESSIONGETPOSTINT('date_startday') . '&search_date_startyear=' . SESSIONGETPOSTINT('date_startyear');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTSESSIONINT('date_startmonth') . '&search_date_startday=' . GETPOSTSESSIONINT('date_startday') . '&search_date_startyear=' . GETPOSTSESSIONINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . SESSIONGETPOSTINT('date_endmonth') . '&search_date_endday=' . SESSIONGETPOSTINT('date_endday') . '&search_date_endyear=' . SESSIONGETPOSTINT('date_endyear');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTSESSIONINT('date_endmonth') . '&search_date_endday=' . GETPOSTSESSIONINT('date_endday') . '&search_date_endyear=' . GETPOSTSESSIONINT('date_endyear');
 				}
 			}
 		} else {
 			if ($line->numero_compte) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($line->numero_compte) . '&search_accountancy_code_end=' . urlencode($line->numero_compte);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . SESSIONGETPOSTINT('date_startmonth') . '&search_date_startday=' . SESSIONGETPOSTINT('date_startday') . '&search_date_startyear=' . SESSIONGETPOSTINT('date_startyear');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTSESSIONINT('date_startmonth') . '&search_date_startday=' . GETPOSTSESSIONINT('date_startday') . '&search_date_startyear=' . GETPOSTSESSIONINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . SESSIONGETPOSTINT('date_endmonth') . '&search_date_endday=' . SESSIONGETPOSTINT('date_endday') . '&search_date_endyear=' . SESSIONGETPOSTINT('date_endyear');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTSESSIONINT('date_endmonth') . '&search_date_endday=' . GETPOSTSESSIONINT('date_endday') . '&search_date_endyear=' . GETPOSTSESSIONINT('date_endyear');
 				}
 			}
 		}

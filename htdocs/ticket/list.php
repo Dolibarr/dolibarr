@@ -63,8 +63,8 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOSTINT('search_fk_project') ? GETPOSTINT('search_fk_project') : GETPOSTINT('projectid');
 $search_fk_contract = GETPOSTINT('search_fk_contract') ? GETPOSTINT('search_fk_contract') : GETPOSTINT('contractid');
 
-$search_date_start = dol_mktime(0, 0, 0, SESSIONGETPOSTINT('search_date_startmonth'), SESSIONGETPOSTINT('search_date_startday'), SESSIONGETPOSTINT('search_date_startyear'));
-$search_date_end = dol_mktime(23, 59, 59, SESSIONGETPOSTINT('search_date_endmonth'), SESSIONGETPOSTINT('search_date_endday'), SESSIONGETPOSTINT('search_date_endyear'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOSTSESSIONINT('search_date_startmonth'), GETPOSTSESSIONINT('search_date_startday'), GETPOSTSESSIONINT('search_date_startyear'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOSTSESSIONINT('search_date_endmonth'), GETPOSTSESSIONINT('search_date_endday'), GETPOSTSESSIONINT('search_date_endyear'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateread_startmonth'), GETPOSTINT('search_dateread_startday'), GETPOSTINT('search_dateread_startyear'));
 $search_dateread_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateread_endmonth'), GETPOSTINT('search_dateread_endday'), GETPOSTINT('search_dateread_endyear'));
 $search_dateclose_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateclose_startmonth'), GETPOSTINT('search_dateclose_startday'), GETPOSTINT('search_dateclose_startyear'));

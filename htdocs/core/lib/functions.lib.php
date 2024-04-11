@@ -1029,7 +1029,7 @@ function GETPOSTINT($paramname, $method = 0)
  *  @param  string  $key Name of parameter to found
  *  @return int                  Value found (int)
  */
-function SESSIONGETPOSTINT($key)
+function GETPOSTSESSIONINT($key)
 {
 	if (!empty($_POST['button_removefilter_x'])) {
 		//unset session value on remove filter button clic
