@@ -944,6 +944,8 @@ if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
+
+$massactionbutton = '';
 if ($contextpage != 'poslist') {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 }

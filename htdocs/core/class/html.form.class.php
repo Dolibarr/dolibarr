@@ -9842,7 +9842,7 @@ class Form
 	/**
 	 *  Return HTML code to output a barcode
 	 *
-	 * @param Object $object Object containing data to retrieve file name
+	 * @param CommonObject $object Object containing data to retrieve file name
 	 * @param int $width Width of photo
 	 * @param string $morecss More CSS on img of barcode
 	 * @return string                    HTML code to output barcode
