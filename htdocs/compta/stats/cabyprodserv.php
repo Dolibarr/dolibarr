@@ -432,7 +432,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	//select thirdparty
 	print '</br>';
 	print img_picto('', 'category', 'class="paddingrightonly"');
-	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CategoryThirparty"));
+	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
 	print '</br>';
 	print img_picto('', 'company', 'class="paddingrightonly"');
 	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
