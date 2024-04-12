@@ -172,6 +172,7 @@ class Task extends CommonObject
 		$sql .= ", datee";
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
+		$sql .= ", priority";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -185,6 +186,7 @@ class Task extends CommonObject
 		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? $this->planned_workload : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null');
+		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? $this->priority : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -752,6 +754,7 @@ class Task extends CommonObject
 		$this->duration_effective = '';
 		$this->fk_user_creat = null;
 		$this->progress = '25';
+		$this->priority = 0;
 		$this->fk_statut = null;
 		$this->note = 'This is a specimen task not';
 	}
