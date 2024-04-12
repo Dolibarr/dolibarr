@@ -19,7 +19,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ARG PHPSTAN_VERSION
 
-RUN composer global require phpstan/phpstan:"$PHPSTAN_VERSION" --prefer-dist \
+RUN composer global require phpstan/phpstan:"1.10.66" --prefer-dist \
 	&& composer clear-cache
 
 ENTRYPOINT ["phpstan"]
