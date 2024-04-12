@@ -43,19 +43,16 @@ pipeline {
     }
 
     stages {
-        
-
-    stage {
-        always {
-            container('owasp') {
-                script {
-                    echo "Removing container"
-                    sh """
-                    kubectl delete pod zap-pod
-                """
+        stage('Copy Report to Workspace') {
+            steps {
+                container('zap') {
+                    script {
+                        sh '''
+                            kubectl delete pod zap-pod
+                        '''
                     }
                 }
             }
         }
     }
-}
+    }
