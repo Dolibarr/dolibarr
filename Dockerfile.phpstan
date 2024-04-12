@@ -26,6 +26,7 @@ RUN set -ex; \
 		imagemagick-dev \
 		imagemagick-libs \
 		libmcrypt-dev \
+		oniguruma-dev \
 		libltdl \
 		libpng-dev \
 		libtool \
