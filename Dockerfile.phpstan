@@ -1,50 +1,25 @@
-# Use the official PHP 8.2 image as the base image
-FROM php:8.2
+FROM php:8.2-cli-alpine
 
-# Set the working directory inside the container
+ENV COMPOSER_HOME="/composer" \
+    COMPOSER_ALLOW_SUPERUSER="1" \
+    PATH="/composer/vendor/bin:$PATH" \
+    PHP_CONF_DIR="/usr/local/etc/php/conf.d" \
+    PHPSTAN_PRO_WEB_PORT="11111"
+
+RUN echo "memory_limit=-1" > $PHP_CONF_DIR/99_memory-limit.ini \
+    && apk add --no-cache git
+
+VOLUME ["/app"]
+
 WORKDIR /app
 
-# Install dependencies required by PHPStan
-RUN apt-get update -y \
-    && apt-get dist-upgrade -y \
-    && apt-get install -y --no-install-recommends wget zip unzip \
-        libc-client-dev \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libkrb5-dev \
-        libldap2-dev \
-        libpng-dev \
-        libpq-dev \
-        libxml2-dev \
-        libzip-dev \
-        default-mysql-client \
-        postgresql-client \
-        cron \
-    && apt-get autoremove -y \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip opcache \
-    && docker-php-ext-configure pgsql -with-pgsql \
-    && docker-php-ext-install pdo_pgsql pgsql \
-    && docker-php-ext-configure ldap --with-libdir=lib/$(gcc -dumpmachine)/ \
-    && docker-php-ext-install -j$(nproc) ldap \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install imap \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini \
-    && rm -rf /var/lib/apt/lists/*
+EXPOSE 11111
 
-#COPY --from=ghcr.io/phpstan/phpstan:nightly-php8.2 /composer/vendor/phpstan/phpstan/phpstan.phar /app/phpstan.phar
-#RUN composer global require phpstan/phpstan
-RUN wget -qO - https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/bin/composer
-# Download and install PHPStan
-RUN wget https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar -O /usr/local/bin/phpstan && \
-    chmod +x /usr/local/bin/phpstan
-RUN composer require --dev phpstan/phpstan
-RUN rm -rf /tmp/*
-# Set the entry point to PHPStan
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+ARG PHPSTAN_VERSION
+
+RUN composer global require phpstan/phpstan:"$PHPSTAN_VERSION" --prefer-dist \
+	&& composer clear-cache
+
 ENTRYPOINT ["phpstan"]
-
-# Set the default command for the container
-CMD ["--version"]
