@@ -55,9 +55,9 @@ parameters:
 		- '#Sprain\\SwissQrBill\\#'
 		- '#Constructor of class .* has an unused parameter #'
 	internalErrorsCountLimit: 50
-	cache:
-		nodesByFileCountMax: 512
-		nodesByStringCountMax: 512
+	#cache:
+	#	nodesByFileCountMax: 512
+	#	nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
