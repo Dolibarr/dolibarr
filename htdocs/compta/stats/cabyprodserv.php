@@ -22,7 +22,7 @@
 
 /**
  *	   \file		htdocs/compta/stats/cabyprodserv.php
- *	   \brief	   Page reporting TO by Products & Services
+ *	   \brief	   	Page reporting Turnover billed by Products & Services
  */
 
 // Load Dolibarr environment
@@ -299,19 +299,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	if ($selected_soc > 0) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
-	}
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-	/*
-	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	}
-	if ($selected_catsoc === -2) {	// Without any category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as ct ON soc.rowid = ct.fk_soc";
-	}
-	*/
 
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
@@ -337,15 +326,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$searchCategoryProductList = array($selected_cat);
 	if ($subcat) {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
-
-		$listofcatsql = "";
+		$searchCategoryProductList = array();
 		foreach ($TListOfCats as $key => $cat) {
-			if ($key !== 0) {
-				$listofcatsql .= ",";
-			}
-			$listofcatsql .= $cat['rowid'];
+			$searchCategoryProductList[] = $cat['rowid'];
 		}
-		$searchCategoryProductList = explode(',', $listofcatsql);
 	}
 	if (!empty($searchCategoryProductList)) {
 		$searchCategoryProductSqlList = array();
@@ -407,7 +391,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	if ($selected_soc > 0) {
-		$sql .= " AND soc.rowid=".((int) $selected_soc);
+		$sql .= " AND f.fk_soc = ".((int) $selected_soc);
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 
@@ -464,16 +448,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
-	print $langs->trans("SubCats").'? ';
-	print '<input type="checkbox" name="subcat" value="yes"';
+	print '<input type="checkbox" class="marginleft" id="subcat" name="subcat" value="yes"';
 	if ($subcat) {
 		print ' checked';
 	}
 	print '>';
+	print '<label for="subcat" class="marginrightonly">'.$langs->trans("SubCats").'?</label>';
 	// type filter (produit/service)
-	print ' ';
-	print $langs->trans("Type").': ';
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
+	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
 
 	//select thirdparty
 	print '<br>';
@@ -482,7 +464,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<br>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
-	//print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '</td>';
 
 	print '<td colspan="5" class="right">';

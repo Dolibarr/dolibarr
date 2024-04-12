@@ -1148,11 +1148,11 @@ class Form
 	 * Return list of types of lines (product or service)
 	 * Example: 0=product, 1=service, 9=other (for external module)
 	 *
-	 * @param 	string 		$selected 	Preselected type
-	 * @param 	string 		$htmlname 	Name of field in html form
-	 * @param 	int<0,1> 	$showempty 	Add an empty field
-	 * @param 	int 		$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-	 * @param 	integer 	$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
+	 * @param 	string 				$selected 	Preselected type
+	 * @param 	string 				$htmlname 	Name of field in html form
+	 * @param 	int<0,1>|string 	$showempty 	Add an empty field
+	 * @param 	int 				$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
+	 * @param 	integer 			$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
 	 * @return  void
 	 */
 	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
@@ -1172,7 +1172,13 @@ class Form
 				if ($selected == -1) {
 					print ' selected';
 				}
-				print '>&nbsp;</option>';
+				print '>';
+				if (is_numeric($showempty)) {
+					print '&nbsp;';
+				} else {
+					print $showempty;
+				}
+				print '</option>';
 			}
 
 			print '<option value="0"';
