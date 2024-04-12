@@ -65,9 +65,9 @@ if (!$sortfield) {
 }
 
 // Category
-$selected_cat = GETPOSTINT('search_categ');
-$selected_catsoc = (int) GETPOST('search_categ_soc', 'int');
-$selected_soc = GETPOSTINT('search_soc');
+$selected_cat = GETPOST('search_categ', 'intcomma');
+$selected_catsoc = GETPOST('search_categ_soc', 'intcomma');
+$selected_soc = GETPOST('search_soc', 'intcomma');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -75,7 +75,7 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 $categorie = new Categorie($db);
 
 // product/service
-$selected_type = GETPOSTINT('search_type');
+$selected_type = GETPOST('search_type', 'intcomma');
 if ($selected_type == '') {
 	$selected_type = -1;
 }
@@ -216,7 +216,7 @@ $tableparams = array_merge($commonparams, $tableparams);
 
 $paramslink = "";
 foreach ($allparams as $key => $value) {
-	$paramslink .= '&'.$key.'='.$value;
+	$paramslink .= '&'.urlencode($key).'='.urlencode($value);
 }
 
 
@@ -282,7 +282,6 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 }
 
 
-
 $name = array();
 
 // SQL request
@@ -291,7 +290,7 @@ $catotal_ht = 0;
 $qtytotal = 0;
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
+	$sql = "SELECT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
 
@@ -305,12 +304,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
+	/*
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
 	if ($selected_catsoc === -2) {	// Without any category
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as ct ON soc.rowid = ct.fk_soc";
 	}
+	*/
 
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
@@ -330,38 +331,81 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_type >= 0) {
 		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
-	if ($selected_cat === -2) {	// Without any category
-		$sql .= " AND cp.fk_product is null";
-	} elseif ($selected_cat > 0) {	// Into a specific category
-		if ($subcat) {
-			$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 
-			$listofcatsql = "";
-			foreach ($TListOfCats as $key => $cat) {
-				if ($key !== 0) {
-					$listofcatsql .= ",";
+	// Search for tag/category ($searchCategoryProductList is an array of ID)
+	$searchCategoryProductOperator = -1;
+	$searchCategoryProductList = array($selected_cat);
+	if ($subcat) {
+		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
+
+		$listofcatsql = "";
+		foreach ($TListOfCats as $key => $cat) {
+			if ($key !== 0) {
+				$listofcatsql .= ",";
+			}
+			$listofcatsql .= $cat['rowid'];
+		}
+		$searchCategoryProductList = explode(',', $listofcatsql);
+	}
+	if (!empty($searchCategoryProductList)) {
+		$searchCategoryProductSqlList = array();
+		$listofcategoryid = '';
+		foreach ($searchCategoryProductList as $searchCategoryProduct) {
+			if (intval($searchCategoryProduct) == -2) {
+				$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product)";
+			} elseif (intval($searchCategoryProduct) > 0) {
+				if ($searchCategoryProductOperator == 0) {
+					$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+				} else {
+					$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 				}
-				$listofcatsql .= $cat['rowid'];
 			}
 		}
-
-		$sql .= " AND (p.rowid IN ";
-		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
-		if ($subcat) {
-			$sql .= "cp.fk_categorie IN (".$db->sanitize($listofcatsql).")";
-		} else {
-			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
+		if ($listofcategoryid) {
+			$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE l.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 		}
-		$sql .= "))";
+		if ($searchCategoryProductOperator == 1) {
+			if (!empty($searchCategoryProductSqlList)) {
+				$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
+			}
+		} else {
+			if (!empty($searchCategoryProductSqlList)) {
+				$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+			}
+		}
 	}
-	if ($selected_catsoc === -2) {	// Without any category
-		$sql .= " AND ct.fk_soc is null";
-	} elseif ($selected_catsoc > 0) {	// Into a specific category
-		$sql .= " AND (soc.rowid IN ";
-		$sql .= " (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ct WHERE ";
-		$sql .= "ct.fk_categorie = ".((int) $selected_catsoc);
-		$sql .= "))";
+
+	// Search for tag/category ($searchCategorySocieteList is an array of ID)
+	$searchCategorySocieteOperator = -1;
+	$searchCategorySocieteList = array($selected_catsoc);
+	if (!empty($searchCategorySocieteList)) {
+		$searchCategorySocieteSqlList = array();
+		$listofcategoryid = '';
+		foreach ($searchCategorySocieteList as $searchCategorySociete) {
+			if (intval($searchCategorySociete) == -2) {
+				$searchCategorySocieteSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc)";
+			} elseif (intval($searchCategorySociete) > 0) {
+				if ($searchCategorySocieteOperator == 0) {
+					$searchCategorySocieteSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategorySociete).")";
+				} else {
+					$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySociete);
+				}
+			}
+		}
+		if ($listofcategoryid) {
+			$searchCategorySocieteSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE f.fk_soc = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		}
+		if ($searchCategorySocieteOperator == 1) {
+			if (!empty($searchCategorySocieteSqlList)) {
+				$sql .= " AND (".implode(' OR ', $searchCategorySocieteSqlList).")";
+			}
+		} else {
+			if (!empty($searchCategorySocieteSqlList)) {
+				$sql .= " AND (".implode(' AND ', $searchCategorySocieteSqlList).")";
+			}
+		}
 	}
+
 	if ($selected_soc > 0) {
 		$sql .= " AND soc.rowid=".((int) $selected_soc);
 	}
@@ -376,6 +420,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
+
 	$amount_ht = array();
 	$amount = array();
 	$qty = array();
@@ -384,6 +429,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
+
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
@@ -415,7 +461,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print img_picto('', 'category', 'class="paddingrightonly"');
+	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
 	print $langs->trans("SubCats").'? ';
@@ -430,12 +476,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
 
 	//select thirdparty
-	print '</br>';
-	print img_picto('', 'category', 'class="paddingrightonly"');
+	print '<br>';
+	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
-	print '</br>';
-	print img_picto('', 'company', 'class="paddingrightonly"');
-	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
+	print '<br>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
+	//print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
@@ -573,6 +620,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '</tr>';
 
 		$db->free($result);
+	} else {
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound");'</span></td></tr>';
 	}
 	print "</table>";
 	print '</div>';
