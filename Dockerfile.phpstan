@@ -1,25 +1,64 @@
-FROM php:8.2-cli-alpine
-
-ENV COMPOSER_HOME="/composer" \
-    COMPOSER_ALLOW_SUPERUSER="1" \
-    PATH="/composer/vendor/bin:$PATH" \
-    PHP_CONF_DIR="/usr/local/etc/php/conf.d" \
-    PHPSTAN_PRO_WEB_PORT="11111"
-
-RUN echo "memory_limit=-1" > $PHP_CONF_DIR/99_memory-limit.ini \
-    && apk add --no-cache git
-
-VOLUME ["/app"]
-
-WORKDIR /app
-
-EXPOSE 11111
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-ARG PHPSTAN_VERSION
-
-RUN composer global require phpstan/phpstan:"1.10.66" --prefer-dist \
-	&& composer clear-cache
-
-ENTRYPOINT ["phpstan"]
+FROM ghcr.io/phpstan/phpstan:latest
+RUN set -ex; \
+	apk add --no-cache \
+		bzip2 \
+		icu-libs \
+		imagemagick \
+		libldap \
+		libpq \
+		libpng \
+		mysql-client \
+		rsync \
+		ssmtp \
+		shadow \
+		unzip \
+		zip \
+	; \
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		autoconf \
+		curl-dev \
+		freetype-dev \
+		gcc \
+		g++ \
+		icu-dev \
+		libjpeg-turbo-dev \
+		imagemagick-dev \
+		imagemagick-libs \
+		libmcrypt-dev \
+		libltdl \
+		libpng-dev \
+		libtool \
+		libxml2-dev \
+		libzip-dev \
+		make \
+		openldap-dev \
+		postgresql-dev \
+		postgresql-libs \
+		unzip \
+		zlib-dev \
+	; \
+	docker-php-ext-configure ldap; \
+	docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr; \
+	docker-php-ext-configure intl; \
+	docker-php-ext-configure zip; \
+	&& docker-php-ext-configure mcrypt; \
+	docker-php-ext-install -j "$(nproc)" \
+		calendar \
+		gd \
+		intl \
+		ldap \
+		mbstring \
+		mysqli \
+		pdo \
+		pdo_mysql \
+		pdo_pgsql \
+		pgsql \
+		soap \
+		zip \
+		mcrypt \
+	; \
+	pecl install imagick; \
+	docker-php-ext-enable imagick; \
+	apk --purge del .build-deps; \
+	rm -rf /var/cache/apk/*
