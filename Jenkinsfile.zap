@@ -131,8 +131,7 @@ pipeline {
                 script {
                     echo "Removing container"
                     sh """
-                    docker stop owasp-zap
-                    docker rm owasp-zap
+                    kubectl delete pod zap-pod
                 """
                 }
             }
