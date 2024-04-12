@@ -53,9 +53,9 @@ pipeline {
                     sh """
                     kubectl delete pod zap-pod
                 """
+                    }
                 }
             }
         }
     }
-}
 }
