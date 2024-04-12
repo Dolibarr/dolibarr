@@ -1,10 +1,6 @@
 parameters:
 	tmpDir: /tmp
 	resultCachePath: /tmp/*
-	services:
-            	- PHPStan\Analyser\ResultCache\ResultCacheManager:
-            		setup:
-                	restore: yes
 	parallel:
 		# Commented some of the settings, reminding the defaults:
 		#   should adapt better to target machines
