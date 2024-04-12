@@ -383,6 +383,7 @@ class Task extends CommonObject
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
+		$sql .= " priority=".((!empty($this->priority)) ? $this->priority : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -790,7 +791,7 @@ class Task extends CommonObject
 		}
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang, t.priority";
 		$sql .= " t.description, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
@@ -896,7 +897,7 @@ class Task extends CommonObject
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
-			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
+			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority";
 			$sql .= " t.description, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
@@ -971,6 +972,7 @@ class Task extends CommonObject
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
 					$tasks[$i]->rang	   		= $obj->rang;
+					$tasks[$i]->priority   		= $obj->priority;
 
 					$tasks[$i]->socid           = $obj->thirdparty_id; // For backward compatibility
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
@@ -1712,6 +1714,7 @@ class Task extends CommonObject
 		$clone_task->date_c = $datec;
 		$clone_task->planned_workload = $origin_task->planned_workload;
 		$clone_task->rang = $origin_task->rang;
+		$clone_task->priority = $origin_task->priority;
 
 		//Manage Task Date
 		if ($clone_change_dt) {
