@@ -32,6 +32,7 @@ PRINTIPP_HOST=Print server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Password
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=No default printer defined
 DefaultPrinter=Default printer
 Printer=Printer
