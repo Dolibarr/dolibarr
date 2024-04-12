@@ -95,6 +95,15 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 				'table' => $object->table_element,
 				'tablefromt' => $tablepath
 			);
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+				$arrayofmesures[$tablealias.'.'.$key.'-stddevpop'] = array(
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
+					'position' => ($position + ($count * 100000)).'.5',
+					'table' => $object->table_element,
+					'tablefromt' => $tablepath
+				);
+			}
 		}
 	}
 	// Add extrafields to Measures
@@ -131,6 +140,15 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-stddevpop'] = array(
+						'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("StandardDeviationPop").')</span>',
+						'labelnohtml' => $labelofobject.': '.$langs->trans($val),
+						'position' => ($position + ($count * 100000)).'.5',
+						'table' => $object->table_element,
+						'tablefromt' => $tablepath
+					);
+				}
 			}
 		}
 	}

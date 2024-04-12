@@ -1532,8 +1532,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
+	 * @param array<int,float|int>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float					$qty		qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1557,7 +1557,7 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param array<int,array{bom:BOM,parent_id:int,qty:float,level:int}> $TNetNeeds Array of ChildBom and infos linked to
 	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
