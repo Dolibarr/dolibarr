@@ -41,18 +41,4 @@ pipeline {
             name: 'GENERATE_REPORT'
         )
     }
-
-    stages {
-        stage('Copy Report to Workspace') {
-            steps {
-                container('zap') {
-                    script {
-                        sh '''
-                            kubectl delete pod zap-pod
-                        '''
-                    }
-                }
-            }
-        }
-    }
-    }
+}
