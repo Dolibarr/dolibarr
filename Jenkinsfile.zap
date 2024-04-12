@@ -130,6 +130,10 @@ pipeline {
             container('zap') {
                 script {
                     echo "Removing container"
+                    sh """
+                    docker stop zap
+                    docker rm zap
+                """
                 }
             }
         }
