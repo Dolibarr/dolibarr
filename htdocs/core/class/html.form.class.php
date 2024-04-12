@@ -831,7 +831,7 @@ class Form
 		$reshook = $hookmanager->executeHooks('addMoreMassActions', $parameters); // Note that $action and $object may have been modified by hook
 		// check if there is a mass action
 
-		if (is_array($arrayofaction) &&  count($arrayofaction) == 0 && empty($hookmanager->resPrint)) {
+		if (is_array($arrayofaction) && count($arrayofaction) == 0 && empty($hookmanager->resPrint)) {
 			return;
 		}
 		if (empty($reshook)) {
