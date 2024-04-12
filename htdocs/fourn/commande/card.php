@@ -1335,6 +1335,7 @@ if (empty($reshook)) {
 								if ($origin == "commande") {
 									$productsupplier = new ProductFournisseur($db);
 									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $object->socid);
+									$lines[$i]->subprice = 0;
 									if ($result > 0) {
 										$ref_supplier = $productsupplier->ref_supplier;
 										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
@@ -1351,8 +1352,6 @@ if (empty($reshook)) {
 											if ($resql) {
 												$num_row = $db->num_rows($resql);
 												if (empty($num_row)) {
-													// No matching supplier price is found in the table, we set to 1 so user is forced to change
-													$li->subprice = 1;
 													$li->remise_percent = 0;
 												} else {
 													$obj = $db->fetch_object($resql);
