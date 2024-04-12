@@ -1385,6 +1385,7 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf)
  */
 function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference, $due_date)
 {
+	$barcodeData = '';
 	if (!empty($bank_reference)) {
 		if (substr($bank_reference, 0, 2) === "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
@@ -1400,8 +1401,7 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$barcodeData .= sprintf('%02d', (int) $cents); // Cents
 			$barcodeData .= $referencetobarcode; // Reference number
 			$barcodeData .= (int) $due_date; // Due date YYMMDD
-		}
-		elseif (substr($bank_reference, 0, 2) !== "RF") {
+		} elseif (substr($bank_reference, 0, 2) !== "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
@@ -1419,6 +1419,5 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 	} else {
 		$barcodeData = '';
 	}
-	
 	return $barcodeData;
 }
