@@ -39,7 +39,7 @@ RUN set -ex; \
 		zlib-dev \
 	; \
 	docker-php-ext-configure ldap; \
-	docker-php-ext-configure gd \
+	docker-php-ext-configure gd; \
 	docker-php-ext-configure intl; \
 	docker-php-ext-configure zip; \
 	docker-php-ext-configure mcrypt; \
