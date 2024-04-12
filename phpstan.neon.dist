@@ -59,7 +59,6 @@ parameters:
 	cache:
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-		#directory: /tmp/phpstan_cache
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass
