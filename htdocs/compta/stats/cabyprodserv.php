@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,7 @@ if (!$sortfield) {
 
 // Category
 $selected_cat = GETPOSTINT('search_categ');
+$selected_catsoc = (int) GETPOST('search_categ_soc', 'int');
 $selected_soc = GETPOSTINT('search_soc');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
@@ -196,6 +198,9 @@ $tableparams = array();
 if (!empty($selected_cat)) {
 	$tableparams['search_categ'] = $selected_cat;
 }
+if (!empty($selected_catsoc)) {
+	$tableparams['search_categ_soc'] = $selected_catsoc;
+}
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
@@ -303,6 +308,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
+	if ($selected_catsoc === -2) {	// Without any category
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as ct ON soc.rowid = ct.fk_soc";
+	}
 
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
@@ -344,6 +352,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 		} else {
 			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
 		}
+		$sql .= "))";
+	}
+	if ($selected_catsoc === -2) {	// Without any category
+		$sql .= " AND ct.fk_soc is null";
+	} elseif ($selected_catsoc > 0) {	// Into a specific category
+		$sql .= " AND (soc.rowid IN ";
+		$sql .= " (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ct WHERE ";
+		$sql .= "ct.fk_categorie = ".((int) $selected_catsoc);
 		$sql .= "))";
 	}
 	if ($selected_soc > 0) {
@@ -414,6 +430,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
 
 	//select thirdparty
+	print '</br>';
+	print img_picto('', 'category', 'class="paddingrightonly"');
+	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
 	print '</br>';
 	print img_picto('', 'company', 'class="paddingrightonly"');
 	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));
