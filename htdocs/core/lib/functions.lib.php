@@ -12027,6 +12027,14 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
+	} elseif ($element_type == 'commande_fournisseurdet') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.commande';
+		$element = 'commande_fournisseurdet';
+		$subelement = '';
+		$classname = 'CommandeFournisseurLigne';
+		$table_element = 'commande_fournisseurdet';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
