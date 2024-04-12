@@ -1340,9 +1340,10 @@ if (empty($reshook)) {
 										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
 										// we need supplier subprice
 										foreach ($srcobject->lines as $li) {
-											$sql = 'SELECT price, unitprice, tva_tx, remise_percent, ref_fourn';
+											$sql = 'SELECT price, unitprice, tva_tx, remise_percent, entity, ref_fourn';
 											$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
 											$sql .= ' WHERE fk_product = '.((int) $li->fk_product);
+											$sql .= ' AND entity IN ('.getEntity('product_fournisseur_price').')';
 											$sql .= ' AND fk_soc = '.((int) $object->socid);
 											$sql .= ' ORDER BY unitprice ASC';
 
