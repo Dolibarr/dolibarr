@@ -34,7 +34,7 @@ RUN apt-get update -y \
 RUN mkdir /var/documents
 RUN chown www-data:www-data /var/documents
 
-COPY docker-run.sh /usr/local/bin/
+COPY ./build/docker/docker-run.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-run.sh
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
