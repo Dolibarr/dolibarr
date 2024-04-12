@@ -2428,7 +2428,7 @@ class Societe extends CommonObject
 	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
 	 *		@return	int							Return integer <0 if KO, id of discount record if OK
 	 */
-	public function set_remise_except($remise, User $user, $desc, $vatrate = '0', $discount_type = 0, $price_base_type = 'HT')
+	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
 		global $langs;
@@ -2454,8 +2454,6 @@ class Societe extends CommonObject
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
-			} else {
-				$vatrate = 0;
 			}
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
