@@ -1349,7 +1349,7 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf)
 	if ($statut >= 1) {
 		$invoice_number = preg_replace('/[^0-9]/', '', $invoice_number); // Keep only numbers
 		$invoice_number = ltrim($invoice_number, '0'); //Remove any leading zero or zeros
-		$invoice_number = strrev($invoice_number); // Reverse the reference number
+		$invoice_number = (int) strrev($invoice_number); // Reverse the reference number
 		$coefficients = array(7, 3, 1, 7, 3); // Define the coefficient numbers
 		$sum = 0;
 		$stlen_invoice_number = (int) strlen($invoice_number);
@@ -1373,7 +1373,6 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf)
 			$bank_reference = $bank_reference_fi;
 		}
 	}
-		
 	else {
 		$bank_reference = '';
 	}
@@ -1397,31 +1396,31 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
 			$referencetobarcode = substr($referencetobarcode, 0, 2) . str_pad(substr($referencetobarcode, 2), 21, '0', STR_PAD_LEFT);
-			$euros = (int) floor($amount); // Separate euros and cents
-			$cents = (int) round(($amount - $euros) * 100);
-			$due_date = date('ymd', $due_date); // Format the due date to YYMMDD
+			$euros = floor($amount); // Separate euros and cents
+			$cents = round(($amount - $euros) * 100);
+			$due_date = date('ymd', (int) $due_date); // Format the due date to YYMMDD
 			$barcodeData = '5'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)
-			$barcodeData .= sprintf('%06d', $euros); // Euros
-			$barcodeData .= sprintf('%02d', $cents); // Cents
+			$barcodeData .= sprintf('%06d', (int) $euros); // Euros
+			$barcodeData .= sprintf('%02d', (int) $cents); // Cents
 			$barcodeData .= $referencetobarcode; // Reference number
 			$barcodeData .= (int) $due_date; // Due date YYMMDD
-		} 
+		}
 		elseif (substr($bank_reference, 0, 2) !== "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
-			$euros = (int) floor($amount); // Separate euros and cents
-			$cents = (int) round(($amount - $euros) * 100);
-			$due_date = date('ymd', $due_date); // Format the due date to YYMMDD
+			$euros = floor($amount); // Separate euros and cents
+			$cents = round(($amount - $euros) * 100);
+			$due_date = date('ymd', (int) $due_date); // Format the due date to YYMMDD
 			$barcodeData = '4'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)
-			$barcodeData .= sprintf('%06d', $euros); // Euros
-			$barcodeData .= sprintf('%02d', $cents); // Cents
+			$barcodeData .= sprintf('%06d', (int) $euros); // Euros
+			$barcodeData .= sprintf('%02d', (int) $cents); // Cents
 			$barcodeData .= '000'; // Reserved
 			$barcodeData .= str_pad($referencetobarcode, 20, '0', STR_PAD_LEFT); // Reference number
 			$barcodeData .= (int) $due_date; // Due date YYMMDD
-		} 
+		}
 	}
 	else {
 		$barcodeData = '';
