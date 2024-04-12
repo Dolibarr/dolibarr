@@ -24,8 +24,8 @@ pipeline {
       steps{
         container('phpstan'){
           script{
-            //sh " touch /tmp/resultCache.php"
-            //sh " chmod 755 /tmp/resultCache.php"
+            sh "mkdir -p /tmp/phpstan_cache"
+            sh "chmod 755 /tmp/phpstan_cache"
             // Create directory for reports
             sh "mkdir -p test-reports"
             // Run PHPStan inside PHPStan container
