@@ -2000,7 +2000,7 @@ class Form
 	 * @param int 				$disabled 		If select list must be disabled
 	 * @param int[]|string 		$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|string		$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string 			$force_entity 	'0' or list of Ids of environment to force separated by a coma
+	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a coma
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 			$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
@@ -2055,6 +2055,7 @@ class Form
 
 		// Do we want to show the label of entity into the combo list ?
 		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity);
+		$userissuperadminonentityone = isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && empty($user->entity);
 
 		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
@@ -2065,9 +2066,8 @@ class Form
 		if ($showlabelofentity) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
 		}
-		// The rule here to link with entity was not the same tham into getSalesRepresentatives->getSalesRepresentatives
-		// So i modified to match the samerule.
-		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
+		// Condition here should be the same than into societe->getSalesRepresentatives().
+		if ($userissuperadminonentityone) {
 			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {
