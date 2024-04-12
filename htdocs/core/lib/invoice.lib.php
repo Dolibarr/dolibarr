@@ -1344,14 +1344,16 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
  *                                      Structured Creditor Reference standard (SEPA RF creditor reference)
  * @return 	string                      String Payment reference number or RF creditor reference
  */
-function calculate_payment_reference($invoice_number, $statut, $use_rf) {
+function calculate_payment_reference($invoice_number, $statut, $use_rf) 
+{
 	if ($statut >= 1) {
 		$invoice_number = preg_replace('/[^0-9]/', '', $invoice_number); // Keep only numbers
 		$invoice_number = ltrim($invoice_number, '0'); //Remove any leading zero or zeros
 		$invoice_number = strrev($invoice_number); // Reverse the reference number
 		$coefficients = array(7, 3, 1, 7, 3); // Define the coefficient numbers
 		$sum = 0;
-		for ($i = 0; $i < strlen($invoice_number); $i++) { // Calculate the sum using coefficients
+		$stlen_invoice_number = strlen($invoice_number);
+		for ($i = 0; $i < $stlen_invoice_number; $i++) { // Calculate the sum using coefficients
 			$sum += $invoice_number[$i] * $coefficients[$i % 5];
 		}
 		$check_digit = (10 - ($sum % 10)) % 10; // Calculate the check digit
@@ -1385,15 +1387,16 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf) {
  * @param 	string $due_date			Payments due to date
  * @return 	string String              String for FI/RF Payment barcode
  */
-function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference, $due_date) {
+function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference, $due_date) 
+{
 	if (!empty($bank_reference)) {
 		if (substr($bank_reference, 0, 2) === "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
 			$referencetobarcode = substr($referencetobarcode, 0, 2) . str_pad(substr($referencetobarcode, 2), 21, '0', STR_PAD_LEFT);
-			$euros = (int)floor($amount); // Separate euros and cents
-			$cents = (int)round(($amount - $euros) * 100);
+			$euros = (int) floor($amount); // Separate euros and cents
+			$cents = (int) round(($amount - $euros) * 100);
 			$due_date = date('ymd', $due_date); // Format the due date to YYMMDD
 			$barcodeData = '5'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)
@@ -1406,8 +1409,8 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
 			$recipient_account = str_pad($recipient_account, 16, '0', STR_PAD_LEFT); // Add leading zeros if necessary
 			$referencetobarcode = preg_replace('/[^0-9]/', '', $bank_reference); // Remove non-numeric characters (spaces)
-			$euros = (int)floor($amount); // Separate euros and cents
-			$cents = (int)round(($amount - $euros) * 100);
+			$euros = (int) floor($amount); // Separate euros and cents
+			$cents = (int) round(($amount - $euros) * 100);
 			$due_date = date('ymd', $due_date); // Format the due date to YYMMDD
 			$barcodeData = '4'; // Version number // Construct the string
 			$barcodeData .= $recipient_account; // Recipient's account number (IBAN)
@@ -1416,7 +1419,7 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$barcodeData .= '000'; // Reserved
 			$barcodeData .= str_pad($referencetobarcode, 20, '0', STR_PAD_LEFT); // Reference number
 			$barcodeData .= $due_date; // Due date YYMMDD
-		}
+		} 
 	}
 	else {
 		$barcodeData = '';
