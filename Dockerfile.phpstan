@@ -1,4 +1,4 @@
-FROM ghcr.io/phpstan/phpstan:latest
+FROM ghcr.io/phpstan/phpstan:latest-php8.2
 RUN set -ex; \
 	apk add --no-cache \
 		bzip2 \
@@ -42,7 +42,8 @@ RUN set -ex; \
 	docker-php-ext-configure gd; \
 	docker-php-ext-configure intl; \
 	docker-php-ext-configure zip; \
-	docker-php-ext-configure mcrypt; \
+	pecl install mcrypt-1.0.6; \
+	docker-php-ext-enable mcrypt; \ 
 	docker-php-ext-install -j "$(nproc)" \
 		calendar \
 		gd \
@@ -56,7 +57,6 @@ RUN set -ex; \
 		pgsql \
 		soap \
 		zip \
-		mcrypt \
 	; \
 	pecl install imagick; \
 	docker-php-ext-enable imagick; \
