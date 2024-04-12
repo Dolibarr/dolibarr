@@ -1352,7 +1352,7 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf)
 		$invoice_number = strrev($invoice_number); // Reverse the reference number
 		$coefficients = array(7, 3, 1, 7, 3); // Define the coefficient numbers
 		$sum = 0;
-		$stlen_invoice_number = strlen($invoice_number);
+		$stlen_invoice_number = (int) strlen($invoice_number);
 		for ($i = 0; $i < $stlen_invoice_number; $i++) { // Calculate the sum using coefficients
 			$sum += $invoice_number[$i] * $coefficients[$i % 5];
 		}
@@ -1361,17 +1361,19 @@ function calculate_payment_reference($invoice_number, $statut, $use_rf)
 		
 		if ($use_rf) { // SEPA RF creditor reference
 			$reference_with_suffix = $bank_reference_fi . "271500"; // Append "271500" to the end of the payment reference number
-			$remainder = bcmod($reference_with_suffix, '97'); // Calculate the remainder when dividing by 97
+			$remainder = (int) bcmod($reference_with_suffix, '97'); // Calculate the remainder when dividing by 97
 			$check_digit = 98 - $remainder; // Subtract the remainder from 98
 			if ($check_digit < 10) { // If below 10 -> add leading zero
 				$check_digit = '0' . $check_digit;
 			}
 			$bank_reference = "RF" . $check_digit . $bank_reference_fi; // Add "RF" and the check digit in front of the payment reference number
-		} 
+		}
+			
 		else { // FI payment reference number
 			$bank_reference = $bank_reference_fi;
 		}
-	} 
+	}
+		
 	else {
 		$bank_reference = '';
 	}
@@ -1403,7 +1405,7 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$barcodeData .= sprintf('%06d', $euros); // Euros
 			$barcodeData .= sprintf('%02d', $cents); // Cents
 			$barcodeData .= $referencetobarcode; // Reference number
-			$barcodeData .= $due_date; // Due date YYMMDD
+			$barcodeData .= (int) $due_date; // Due date YYMMDD
 		} 
 		elseif (substr($bank_reference, 0, 2) !== "RF") {
 			$recipient_account = preg_replace('/[^0-9]/', '', $recipient_account); // Remove non-numeric characters from account number
@@ -1418,11 +1420,12 @@ function generateInvoiceBarcodeData($recipient_account, $amount, $bank_reference
 			$barcodeData .= sprintf('%02d', $cents); // Cents
 			$barcodeData .= '000'; // Reserved
 			$barcodeData .= str_pad($referencetobarcode, 20, '0', STR_PAD_LEFT); // Reference number
-			$barcodeData .= $due_date; // Due date YYMMDD
+			$barcodeData .= (int) $due_date; // Due date YYMMDD
 		} 
 	}
 	else {
 		$barcodeData = '';
-	} 
+	}
+	
 	return $barcodeData;
 }
