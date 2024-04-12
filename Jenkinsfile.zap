@@ -41,4 +41,19 @@ pipeline {
             name: 'GENERATE_REPORT'
         )
     }
+stages {
+        stage('Pipeline Info') {
+            steps {
+                script {
+                    echo "<--Parameter Initialization-->"
+                    echo """
+                    The current parameters are:
+                        Scan Type: \${params.SCAN_TYPE}
+                        Target: \${params.TARGET}
+                        Generate report: \${params.GENERATE_REPORT}
+                    """
+                }
+            }
+        }
+}
 }
