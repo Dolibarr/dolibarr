@@ -41,7 +41,8 @@ if ($action == 'editsalesrepresentatives') {
 	print '<input type="hidden" name="action" value="set_salesrepresentatives" />';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="socid" value="'.$object->id.'" />';
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 'default', 0, 0, '', 0, '', '', 0, 1);
+
 	$arrayselected = GETPOST('commercial', 'array');
 	if (empty($arrayselected)) {
 		$arrayselected = $object->getSalesRepresentatives($user, 1);
