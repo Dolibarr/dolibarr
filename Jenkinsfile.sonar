@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers:
           - name: phpstan
-            image: ghcr.io/phpstan/phpstan
+            image: iyedbnaissa/phpstan:29
             command:
             - cat
             tty: true   
