@@ -45,7 +45,7 @@ pipeline {
     stages {
         
 
-    post {
+    stage {
         always {
             container('owasp') {
                 script {
