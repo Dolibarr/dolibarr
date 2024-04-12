@@ -548,8 +548,13 @@ if (empty($reshook)) {
 					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
-						$action = 'edit';
+						if ($db->errno() == 'ErrorUpdateCanceledDueToDuplicatedUniqueValue') {
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+							$action = 'edit';
+						}
 					}
 				}
 
