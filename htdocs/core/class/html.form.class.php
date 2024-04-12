@@ -836,12 +836,11 @@ class Form
 		}
 		if (empty($reshook)) {
 			$ret .= '<option value="0"' . ($disabled ? ' disabled="disabled"' : '') . '>-- ' . $langs->trans("SelectAction") . ' --</option>';
-			if (is_array($arrayofaction)){
+			if (is_array($arrayofaction)) {
 				foreach ($arrayofaction as $code => $label) {
 					$ret .= '<option value="' . $code . '"' . ($disabled ? ' disabled="disabled"' : '') . ' data-html="' . dol_escape_htmltag($label) . '">' . $label . '</option>';
 				}
 			}
-
 		}
 		$ret .= $hookmanager->resPrint;
 
