@@ -43,7 +43,7 @@ pipeline {
     }
 
     stages {
-        stage('Pipeline Info') {
+        /*stage('Pipeline Info') {
             steps {
                 script {
                     echo "<--Parameter Initialization-->"
@@ -123,7 +123,7 @@ pipeline {
                 }
             }
         }
-    }
+    }*/
 
     post {
         always {
