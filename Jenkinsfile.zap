@@ -8,11 +8,9 @@ pipeline {
                   name: zap-pod
                 spec:
                   containers:
-                  - name: owasp
+                  - name: zap
                     image: owasp/zap2docker-stable
                     command:
-                    - sleep
-                    - infinity
                     tty: true
                     volumeMounts:
                     - name: zap-workdir
@@ -41,7 +39,8 @@ pipeline {
             name: 'GENERATE_REPORT'
         )
     }
-stages {
+
+    stages {
         stage('Pipeline Info') {
             steps {
                 script {
@@ -55,5 +54,85 @@ stages {
                 }
             }
         }
-}
+
+        stage('Prepare wrk directory') {
+            when {
+                expression {
+                    params.GENERATE_REPORT == true
+                }
+            }
+            steps {
+                container('zap') {
+                    script {
+                        sh """
+                            mkdir -p /zap/wrk
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Scanning target on owasp container') {
+            steps {
+                container('zap') {
+                    script {
+                        def scan_type = "${params.SCAN_TYPE}"
+                        def target = "${params.TARGET}"
+                        echo "----> Scan Type: \${scan_type}, Target: \${target}"
+
+                        // Validate target URL protocol
+                        if (!(target.startsWith("http://") || target.startsWith("https://"))) {
+                            error "Invalid target URL format. Target URL must start with 'http://' or 'https://'."
+                        }
+
+                        // Execute ZAP scan based on scan type
+                        switch (scan_type) {
+                            case 'Baseline':
+                                sh """
+                                    zap-baseline.py -t ${target} -x /zap/wrk/report.xml -I
+                                """
+                                break
+                            case 'APIS':
+                                sh """
+                                    zap-api-scan.py -t ${target} -x /zap/wrk/report.xml -I
+                                """
+                                break
+                            case 'Full':
+                                sh """
+                                    zap-full-scan.py -t ${target} -x /zap/wrk/report.xml -I
+                                """
+                                break
+                            default:
+                                error "Invalid scan type"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Copy Report to Workspace') {
+            steps {
+                container('zap') {
+                    script {
+                        sh '''
+                            cp /zap/wrk/report.xml \${WORKSPACE}/report.xml
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            container('zap') {
+                script {
+                    echo "Removing container"
+                    sh """
+                    kubectl delete pod zap-pod
+                """
+                }
+            }
+        }
+    }
 }
