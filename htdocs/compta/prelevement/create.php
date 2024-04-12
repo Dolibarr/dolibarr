@@ -574,7 +574,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 
 	if (!empty($arrayfields['f.ref']['checked'])) {
@@ -604,7 +604,9 @@ if ($resql) {
 	if (!empty($arrayfields['pfd.date_demande']['checked'])) {
 		print_liste_field_titre($arrayfields['pfd.date_demande']['label'], $_SERVER['PHP_SELF'], 'pfd.date_demande', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 
 	print "</tr>\n";
 
