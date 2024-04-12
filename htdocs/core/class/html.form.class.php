@@ -1993,23 +1993,23 @@ class Form
 	/**
 	 *    Return select list of users
 	 *
-	 * @param string|int|User	$selected 	User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
-	 * @param string 		$htmlname 		Field name in form
+	 * @param string|int|User	$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
+	 * @param string 			$htmlname 		Field name in form
 	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
-	 * @param int[]|null	$exclude 		Array list of users id to exclude
-	 * @param int 			$disabled 		If select list must be disabled
-	 * @param int[]|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string 		$force_entity 	'0' or list of Ids of environment to force separated by a coma
-	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
-	 * @param int<-1,1>		$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
-	 * @param integer 		$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
-	 * @param string 		$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
-	 * @param string 		$morecss 		More css
-	 * @param int<0,1> 		$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int<0,2>		$outputmode 	0=HTML select string, 1=Array
-	 * @param bool 			$multiple 		add [] in the name of element and add 'multiple' attribute
+	 * @param int[]|null		$exclude 		Array list of users id to exclude
+	 * @param int 				$disabled 		If select list must be disabled
+	 * @param int[]|string 		$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param array|string		$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
+	 * @param string 			$force_entity 	'0' or list of Ids of environment to force separated by a coma
+	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
+	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param string 			$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
+	 * @param integer 			$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
+	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
+	 * @param string 			$morecss 		More css
+	 * @param int<0,1> 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array
+	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
@@ -2053,14 +2053,21 @@ class Form
 		$outarray = array();
 		$outarray2 = array();
 
+		// Do we want to show the label of entity into the combo list ?
+		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity);
+
 		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
-		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
+		if ($showlabelofentity) {
 			$sql .= ", e.label";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "user as u";
-		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
+		if ($showlabelofentity) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
+		}
+		// The rule here to link with entity was not the same tham into getSalesRepresentatives->getSalesRepresentatives
+		// So i modified to match the samerule.
+		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {
@@ -2073,6 +2080,7 @@ class Form
 				$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
 			}
 		}
+
 		if (!empty($user->socid)) {
 			$sql .= " AND u.fk_soc = " . ((int) $user->socid);
 		}
@@ -2182,14 +2190,14 @@ class Form
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans('Disabled');
 						}
 					}
-					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity)) {
+					if ($showlabelofentity) {
 						if (empty($obj->entity)) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (') . $langs->trans("AllEntities");
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans("AllEntities");
 						} else {
 							if ($obj->entity != $conf->entity) {
 								$moreinfo .= ($moreinfo ? ' - ' : ' (') . ($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
-								$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . ($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+								$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 							}
 						}
 					}

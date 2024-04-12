@@ -51,6 +51,7 @@ if ($action == 'editsalesrepresentatives') {
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
+
 	$nbofsalesrepresentative = count($listsalesrepresentatives);
 	if ($nbofsalesrepresentative > 0 && is_array($listsalesrepresentatives)) {
 		$userstatic = new User($db);
