@@ -5218,7 +5218,7 @@ class Form
 	 * @param string $title Title
 	 * @param string $question Question
 	 * @param string $action Action
-	 * @param array<array{label:string,type:string,size:string,morecss:string,moreattr:string,style:string}>	$formquestion 	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 * @param array{text:string}|array<array{label:string,type:string,size:string,morecss:string,moreattr:string,style:string}>	$formquestion 	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
 	 * @param string $selectedchoice "" or "no" or "yes"
 	 * @param int|string $useajax 0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int $height Force height of box
@@ -5252,8 +5252,8 @@ class Form
 	 * @param array<array{name:string,value:string,values:string[],default:string,label:string,type:string,size:string,morecss:string,moreattr:string,style:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
 	 *                                                                                                                                                                                                                  'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
 	 *                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
-	 * @param int|string 	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
-	 * @param int|string 	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * @param int<0,1>|''|'no'|'yes'|'1'|'0'	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
+	 * @param int<0,2>|string	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int|string 	$height 			Force height of box (0 = auto)
 	 * @param int 			$width 				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
@@ -5459,7 +5459,8 @@ class Form
 						}
 					}
 					// Add name of fields to propagate with the GET when submitting the form with button KO.
-					if (isset($input['inputko']) && $input['inputko'] == 1 && isset($input['name'])) {
+					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
+					if (is_array($input) && isset($input['inputko']) && $input['inputko'] == 1 && isset($input['name'])) {
 						array_push($inputko, $input['name']);
 					}
 				}
@@ -5467,7 +5468,7 @@ class Form
 
 			// Show JQuery confirm box.
 			$formconfirm .= '<div id="' . $dialogconfirm . '" title="' . dol_escape_htmltag($title) . '" style="display: none;">';
-			if (is_array($formquestion) && !empty($formquestion['text'])) {
+			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">' . $formquestion['text'] . '</div>' . "\n";
 			}
 			if (!empty($more)) {
@@ -5608,7 +5609,7 @@ class Form
 			$formconfirm .= '</td></tr>' . "\n";
 
 			// Line text
-			if (is_array($formquestion) && !empty($formquestion['text'])) {
+			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">' . $formquestion['text'] . '</td></tr>' . "\n";
 			}
 
@@ -8115,8 +8116,10 @@ class Form
 				}
 			} else {
 				// For a property in ->fields
-				$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
-				$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+				if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
+					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+					$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+				}
 			}
 		}
 
@@ -9022,13 +9025,13 @@ class Form
 				//$listoffieldsforselection .= '<li>-----</li>';
 				continue;
 			}
-			if ($val['label']) {
+			if (!empty($val['label']) && $val['label']) {
 				if (!empty($val['langfile']) && is_object($langs)) {
 					$langs->load($val['langfile']);
 				}
 
-				// Note: $val['checked'] <> 0 means we must show the field into the combo list
-				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . '/><label for="checkbox' . $key . '">' . dol_escape_htmltag($langs->trans($val['label'])) . '</label></li>';
+				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
+				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . '/><label for="checkbox' . $key . '">' . dol_escape_htmltag($langs->trans($val['label'])) . '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}
@@ -9805,6 +9808,7 @@ class Form
 				}
 			}
 		} elseif ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			$ret .= $object->ref . '<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
@@ -9817,6 +9821,7 @@ class Form
 		} elseif ($object->element == 'usergroup') {
 			$ret .= dol_htmlentities($object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
+			'@phan-var-force ActionComm $object';
 			$ret .= $object->ref . '<br>' . $object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {
 			$ret .= $object->label;
@@ -9845,7 +9850,7 @@ class Form
 	/**
 	 *  Return HTML code to output a barcode
 	 *
-	 * @param Object $object Object containing data to retrieve file name
+	 * @param CommonObject $object Object containing data to retrieve file name
 	 * @param int $width Width of photo
 	 * @param string $morecss More CSS on img of barcode
 	 * @return string                    HTML code to output barcode
@@ -9861,6 +9866,7 @@ class Form
 
 		// Complete object if not complete
 		if (empty($object->barcode_type_code) || empty($object->barcode_type_coder)) {
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			$result = $object->fetch_barcode();
 			//Check if fetch_barcode() failed
 			if ($result < 1) {
@@ -9868,7 +9874,7 @@ class Form
 			}
 		}
 
-		// Barcode image
+		// Barcode image  @phan-suppress-next-line PhanUndeclaredProperty
 		$url = DOL_URL_ROOT . '/viewimage.php?modulepart=barcode&generator=' . urlencode($object->barcode_type_coder) . '&code=' . urlencode($object->barcode) . '&encoding=' . urlencode($object->barcode_type_code);
 		$out = '<!-- url barcode = ' . $url . ' -->';
 		$out .= '<img src="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . '>';
@@ -9898,7 +9904,7 @@ class Form
 		global $conf, $langs;
 
 		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
-		$id = (empty($object->id) ? $object->rowid : $object->id);
+		$id = (empty($object->id) ? $object->rowid : $object->id);  // @phan-suppress-current-line PhanUndeclaredProperty (->rowid)
 
 		$dir = '';
 		$file = '';
