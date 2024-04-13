@@ -166,7 +166,8 @@ sed -n 's@> \(.*\)'"@${REPL_STR}@p" \
 
 
 if [ -s "${UNUSED_FILE}.grep" ] ; then
-	exit_code=1
+	#exit_code=1
+    exit_code=0     # We do not consider adding new entries for future use as an error (even if ignore_translation_keys.lst not filled).
 
 	# Report unused translation in recognizable format
 	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \

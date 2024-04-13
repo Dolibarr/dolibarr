@@ -26,7 +26,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
-$leftmenuwidth = 210;
+$leftmenuwidth = 240;
 
 '
 @phan-var-force string $badgeDanger

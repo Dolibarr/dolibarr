@@ -2520,10 +2520,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of third party or <0 if KO
+	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2531,16 +2531,14 @@ class Societe extends CommonObject
 
 		$reparray = array();
 
-		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
+		// Condition here should be the same than into select_dolusers()
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
-			$sql .= " AND ug.entity = ".$conf->entity.")";
-			$sql .= " OR u.admin = 1)";
+			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
-			$sql .= " WHERE entity in (0, ".$conf->entity.")";
+			$sql .= " WHERE entity IN (0, ".$this->db->sanitize($conf->entity).")";
 		}
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);

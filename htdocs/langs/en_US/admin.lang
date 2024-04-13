@@ -2135,6 +2135,7 @@ oauthToken=OAuth2 token
 accessType=Access type
 oauthService=Oauth service
 TokenMustHaveBeenCreated=Module OAuth2 must be enabled and an oauth2 token must have been created with the correct permissions (for example scope "gmail_full" with OAuth for Gmail).
+TokenNotRequiredForOAuthLogin=Token unnecessary for OAuth entry used for Login
 ImapEncryption = IMAP encryption method
 ImapEncryptionHelp = Example: none, ssl, tls, notls
 NoRSH = Use the NoRSH configuration
