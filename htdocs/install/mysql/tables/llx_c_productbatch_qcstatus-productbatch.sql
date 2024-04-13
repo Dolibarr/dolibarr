@@ -23,5 +23,5 @@ CREATE TABLE llx_c_productbatch_qcstatus
   entity 	 integer NOT NULL DEFAULT 1,
   code     varchar(16)        NOT NULL,
   label    varchar(128)        NOT NULL,
-  active   integer  DEFAULT 1 NOT NULL  
+  active   integer  DEFAULT 1 NOT NULL
 )ENGINE=innodb;
