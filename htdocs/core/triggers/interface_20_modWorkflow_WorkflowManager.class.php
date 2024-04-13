@@ -234,15 +234,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			// First classify billed the order to allow the proposal classify process
 			if (isModEnabled('order') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER')) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
-				if (count($object->linkedObjects['commande']) == 1) {
+				if (count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
 					$orderLinked = reset($object->linkedObjects['commande']);
 					$orderLinked->fetchObjectLinked($orderLinked->id, '', $orderLinked->element);
-					if (count($orderLinked->linkedObjects['facture']) > 1) {
+					if (count($orderLinked->linkedObjects['facture']) >= 1) {
 						$totalHTInvoices = 0;
 						$areAllInvoicesValidated = true;
 						foreach ($orderLinked->linkedObjects['facture'] as $key => $invoice) {
 							if ($invoice->statut == Facture::STATUS_VALIDATED || $object->id == $invoice->id) {
-								$totalHTInvoices += floatval($invoice->total_ht);
+								$totalHTInvoices += (float) $invoice->total_ht;
 							} else {
 								$areAllInvoicesValidated = false;
 								break;
