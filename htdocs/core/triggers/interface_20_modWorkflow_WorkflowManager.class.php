@@ -232,7 +232,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// First classify billed the order to allow the proposal classify process
-			if (isModEnabled('commande') && ! empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER')) {
+			if (isModEnabled('order') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER')) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
 				if (count($object->linkedObjects['commande']) == 1) {
 					$orderLinked = reset($object->linkedObjects['commande']);
