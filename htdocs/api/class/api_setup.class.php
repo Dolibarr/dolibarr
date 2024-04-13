@@ -1165,7 +1165,6 @@ class Setup extends DolibarrApi
 				while ($tab = $this->db->fetch_object($resql)) {
 					// New usage
 					$list[$tab->elementtype][$tab->name]['id'] = $tab->id;
-					$list[$tab->elementtype][$tab->name]['entity'] = $tab->entity;
 					$list[$tab->elementtype][$tab->name]['type'] = $tab->type;
 					$list[$tab->elementtype][$tab->name]['label'] = $tab->label;
 					$list[$tab->elementtype][$tab->name]['size'] = $tab->size;
@@ -1276,7 +1275,6 @@ class Setup extends DolibarrApi
 				while ($tab = $this->db->fetch_object($resql)) {
 					// New usage
 					$answer[$tab->elementtype][$tab->name]['id'] = $tab->id;
-					$answer[$tab->elementtype][$tab->name]['entity'] = $tab->entity;
 					$answer[$tab->elementtype][$tab->name]['type'] = $tab->type;
 					$answer[$tab->elementtype][$tab->name]['label'] = $tab->label;
 					$answer[$tab->elementtype][$tab->name]['size'] = $tab->size;
@@ -1345,13 +1343,11 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
+		$entity = getEntity('extrafields');
+
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
-		if ($request_data['entity']) {
-			$entity = $request_data['entity'];
-		} else {
-			throw new RestException(400, "entity field absent in json at root level");
-		}
+
 		if ($request_data['label']) {
 			$label = $request_data['label'];
 		} else {
@@ -1430,13 +1426,10 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
+		$entity = getEntity('extrafields');
+
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
-		if ($request_data['entity']) {
-			$entity = $request_data['entity'];
-		} else {
-			throw new RestException(400, "Entity field absent in json at root level");
-		}
 		if ($request_data['label']) {
 			$label = $request_data['label'];
 		} else {
