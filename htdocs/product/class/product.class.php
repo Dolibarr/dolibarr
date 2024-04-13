@@ -825,10 +825,10 @@ class Product extends CommonObject
 					$sql .= ", label";
 					$sql .= ", fk_user_author";
 					$sql .= ", fk_product_type";
+					$sql .= ", price_label";
 					$sql .= ", price";
 					$sql .= ", price_ttc";
 					$sql .= ", price_base_type";
-					$sql .= ", price_label";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
