@@ -249,8 +249,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							}
 						}
 						if ($areAllInvoicesValidated) {
-							dol_syslog("Amount of linked invoices = ".$totalHTInvoices.", of order = ".$orderLinked->total_ht.", egality is ".($totalHTInvoices == $orderLinked->total_ht), LOG_DEBUG);
-							if ($totalHTInvoices == $orderLinked->total_ht) {
+							$isSameTotal = (price2num($totalHTInvoices, 'MT') == price2num($orderLinked->total_ht, 'MT'));
+							dol_syslog("Amount of linked invoices = ".$totalHTInvoices.", of order = ".$orderLinked->total_ht.", isSameTotal = ".(string) $isSameTotal, LOG_DEBUG);
+							if ($isSameTotal) {
 								$ret = $orderLinked->classifyBilled($user);
 								if ($ret < 0) {
 									return $ret;
