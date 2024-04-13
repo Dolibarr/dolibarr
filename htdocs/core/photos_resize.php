@@ -3,6 +3,7 @@
  * Copyright (C) 2009		Meos
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,7 +404,6 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }
@@ -466,7 +466,6 @@ if ($action == 'confirm_crop') {
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }
@@ -560,11 +559,11 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	if (empty($conf->dol_no_mouse_hover)) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';
 		print '</div><br>';
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.$num : '').'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.urlencode($num) : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 		print '
@@ -581,7 +580,7 @@ if (!empty($conf->use_javascript_ajax)) {
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
-		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.($_SESSION['dol_screenwidth'] ?? 'null').'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
@@ -608,7 +607,7 @@ jQuery(document).ready(function() {
         console.log("We click on submitcrop");
 	    var idClicked = e.target.id;
 	    if (parseInt(jQuery(\'#w\').val())) return true;
-	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Dimension"))).'\');
+	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"))).'\');
 	    return false;
 	});
 });

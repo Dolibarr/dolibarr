@@ -10,6 +10,7 @@
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2023		Waël Almoman		<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,6 +287,7 @@ foreach ($dirModMember as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -339,6 +341,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Start date of new membership
+$startpoint = array();
 $startpoint[0] = $langs->trans("SubscriptionPayment");
 $startpoint["m"] = $langs->trans("Month");
 $startpoint["Y"] = $langs->trans("Year");
@@ -393,7 +396,7 @@ print "</td></tr>\n";
 
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
-$arraychoices = array('0'=>$langs->trans("None"));
+$arraychoices = array('0' => $langs->trans("None"));
 if (isModEnabled("bank")) {
 	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
 }
@@ -416,7 +419,7 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("bank")) {
 		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
 		print '</td>';
 	} else {
 		print '<td class="right">';
@@ -494,6 +497,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}

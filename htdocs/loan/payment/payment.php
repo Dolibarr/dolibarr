@@ -114,16 +114,16 @@ if ($action == 'add_payment') {
 	if (!$error) {
 		$paymentid = 0;
 
-		$pay_amount_capital = price2num(GETPOST('amount_capital'));
-		$pay_amount_insurance = price2num(GETPOST('amount_insurance'));
+		$pay_amount_capital = (float) price2num(GETPOST('amount_capital'));
+		$pay_amount_insurance = (float) price2num(GETPOST('amount_insurance'));
 		// User can't set interest him self if schedule is set (else value in schedule can be incoherent)
 		if (!empty($line)) {
 			$pay_amount_interest = $line->amount_interest;
 		} else {
-			$pay_amount_interest = price2num(GETPOST('amount_interest'));
+			$pay_amount_interest = (float) price2num(GETPOST('amount_interest'));
 		}
-		$remaindertopay = price2num(GETPOST('remaindertopay'));
-		$amount = $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
+		$remaindertopay = (float) price2num(GETPOST('remaindertopay'));
+		$amount = (float) price2num($pay_amount_capital + $pay_amount_insurance + $pay_amount_interest, 'MT');
 
 		// This term is already paid
 		if (!empty($line) && !empty($line->fk_bank)) {
@@ -289,7 +289,7 @@ if ($action == 'create') {
 	} else {
 		$datepayment = $datepaid;
 	}
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 

@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ $id_bankaccount = GETPOSTINT('id_bankaccount');
 $executiondate = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -185,7 +186,7 @@ if (empty($reshook)) {
 					setEventMessages($texttoshow, null);
 				}
 
-				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode($bprev->id).'&type='.urlencode($type));
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode((string) ($bprev->id)).'&type='.urlencode((string) ($type)));
 				exit;
 			}
 		}
@@ -241,6 +242,7 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title);
 
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 $head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
@@ -258,7 +260,7 @@ if ($sourcetype != 'salary') {
 	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');
 }
 if ($nb < 0) {
-	dol_print_error($bprev->error);
+	dol_print_error($db, $bprev->error);
 }
 print '<table class="border centpercent tableforfield">';
 
@@ -462,7 +464,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($option) {
 		$param .= "&option=".urlencode($option);
@@ -479,7 +481,7 @@ if ($resql) {
 	}
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	$picto = 'bill';
-	if ($type =='bank-transfer') {
+	if ($type == 'bank-transfer') {
 		if ($sourcetype != 'salary') {
 			$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 		} else {

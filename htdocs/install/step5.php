@@ -136,6 +136,11 @@ if (empty($versionfrom) && empty($versionto) && !is_writable($conffile)) {
 	exit;
 }
 
+// Ensure $modulesdir is set and array
+if (!isset($modulesdir) || !is_array($modulesdir)) {
+	$modulesdir = array();
+}
+
 if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 

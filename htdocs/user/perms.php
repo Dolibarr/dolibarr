@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -192,6 +193,8 @@ foreach ($modulesdir as $dir) {
 }
 
 $db->commit();
+
+'@phan-var-force DolibarrModules[] $modules';
 
 // Read permissions of edited user
 $permsuser = array();
@@ -323,7 +326,7 @@ if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
-$parameters = array('permsgroupbyentity'=>$permsgroupbyentity);
+$parameters = array('permsgroupbyentity' => $permsgroupbyentity);
 $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -586,7 +589,7 @@ if ($result) {
 		print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 		print '</td>';
 
 		// Permission and tick (2 columns)
@@ -695,7 +698,7 @@ if ($result) {
 		if ($user->admin) {
 			print '<td class="right">';
 			$htmltext = $langs->trans("ID").': '.$obj->id;
-			$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
 			print $form->textwithpicto('', $htmltext);
 			//print '<span class="opacitymedium">'.$obj->id.'</span>';
 			print '</td>';

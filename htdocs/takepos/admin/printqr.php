@@ -33,7 +33,7 @@ $langs->load("cashdesk");
 
 $id = GETPOSTINT('id');
 
-$_GET['optioncss'] = "print";
+//$_GET['optioncss'] = "print";
 
 print '<center>';
 

@@ -272,7 +272,7 @@ print '<br>';
 if (file_exists($installlock)) {	// If install not locked, no need to show this.
 	if (file_exists($upgradeunlock)) {
 		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
-		print img_warning().' '.$langs->trans("UpgradeHasBeenUnlocked", $upgradeunlock);
+		print img_warning().' '.$langs->trans("WarningUpgradeHasBeenUnlocked", $upgradeunlock);
 		print '<br>';
 	}
 }
@@ -341,12 +341,13 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 }
 
 print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
+// $arrayofstreamtodisable is defined into filefunc.inc.php
 if (empty($dolibarr_main_stream_to_disable)) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.implode(', ', $arrayofstreamtodisable).'</span>';
 } else {
 	print implode(', ', $dolibarr_main_stream_to_disable);
 }
-print '<span class="bold"> -> PHP streams allowed = </span>';
+print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
@@ -737,7 +738,7 @@ $examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-
 print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
+print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
 print '<br>';
 
 print '<strong>MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
@@ -746,20 +747,26 @@ print '<br>';
 // For websites
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+print $examplecsprule;
+print '")</span><br>';
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+print $examplecsprule;
+print '")</span><br>';
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' "strict-origin-when-cross-origin")</span><br>';
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('>WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: (); microphone: ();\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
 print '<br>';
 
 

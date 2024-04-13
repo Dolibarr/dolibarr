@@ -1,16 +1,22 @@
 ---
 on:
-  pull_request:
-  push:
-  schedule:
-    # execute once a day, the 1st
-    - cron: 10 9 * * *
+  # pull_request:
+  # push:
+  # schedule:
+  #   # execute once a day, the 1st
+  #   - cron: 10 9 * * *
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
   workflow_dispatch:
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: phan-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 env:
-  # Do pull analysis on schedule or manual dispatch
+  gh_event: ${{ inputs.gh_event || github.event_name }}
   PHAN_CONFIG: >
     ${{
       ( github.event.schedule || github.event_name == 'workflow_dispatch' )
@@ -21,6 +27,7 @@ env:
   PHAN_MIN_PHP: 7.0
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
 name: phan
 jobs:
   phan:

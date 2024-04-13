@@ -8,6 +8,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
-$id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOSTINT('ref');
+$id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOST('ref');
 $fieldid = GETPOSTINT("id") ? 'rowid' : 'ref';
 
 if (GETPOSTINT("id") || GETPOST("ref")) {
@@ -221,8 +222,8 @@ if (empty($reshook)) {
 
 			$db->commit();
 
-			$urltogo = $backtopage ? str_replace('__ID__', $object->id, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $object->id, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
 			if (empty($noback)) {
 				header("Location: " . $urltogo);
@@ -318,11 +319,11 @@ if (empty($reshook)) {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$_GET["id"] = GETPOSTINT("id"); // Force chargement page en mode visu
+				$id = GETPOSTINT("id"); // Force load of this page
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'edit'; // Force chargement page edition
+				$action = 'edit'; // Force load of page in edit mode
 			}
 		}
 

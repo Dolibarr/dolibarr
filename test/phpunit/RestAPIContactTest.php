@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +230,7 @@ class RestAPIContactTest extends CommonClassTest
 		print_r($updateResponse);
 
 		// Check if the updated fields match the changes you made
-		$this->assertTrue($updateResponse['firstname'] === $updateBody['firstname'], 'Update might have failed');
+		$this->assertEquals($updateBody['firstname'], $updateResponse['firstname'], 'Update failed for request body: '.$updateRequestBody);
 
 		// Deleting the Contact
 		/*

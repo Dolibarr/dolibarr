@@ -66,7 +66,7 @@ $result = restrictedArea($user, 'contrat', $fieldvalue, '', '', '', $fieldtype);
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -146,7 +146,7 @@ if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$title = $langs->trans("Agenda");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
 	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';

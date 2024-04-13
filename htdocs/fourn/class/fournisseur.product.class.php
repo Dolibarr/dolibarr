@@ -6,8 +6,9 @@
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,8 +166,15 @@ class ProductFournisseur extends Product
 	 */
 	public $fk_supplier_price_expression;
 
-	public $supplier_reputation; // reputation of supplier
-	public $reputations = array(); // list of available supplier reputations
+	/**
+	 * @var string reputation of supplier
+	 */
+	public $supplier_reputation;
+
+	/**
+	 * @var string[] list of available supplier reputations
+	 */
+	public $reputations = array();
 
 	// Multicurreny
 	public $fourn_multicurrency_id;
@@ -217,7 +225,7 @@ class ProductFournisseur extends Product
 
 		$this->db = $db;
 		$langs->load("suppliers");
-		$this->reputations = array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'), 'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
+		$this->reputations = array('-1' => '', 'FAVORITE' => $langs->trans('Favorite'), 'NOTTHGOOD' => $langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER' => $langs->trans('DoNotOrderThisProductToThisSupplier'));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -407,10 +415,10 @@ class ProductFournisseur extends Product
 			$fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $multicurrency_code);
 		}
 
-		$buyprice = price2num($buyprice, 'MU');
-		$charges = price2num($charges, 'MU');
-		$qty = price2num($qty, 'MS');
-		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
+		$buyprice = (float) price2num($buyprice, 'MU');
+		$charges = (float) price2num($charges, 'MU');
+		$qty = (float) price2num($qty, 'MS');
+		$unitBuyPrice = (float) price2num($buyprice / $qty, 'MU');
 
 		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
@@ -437,10 +445,6 @@ class ProductFournisseur extends Product
 		}
 		if (empty($localtax2)) {
 			$localtax2 = 0; // If = '' then = 0
-		}
-
-		// Check parameters
-		if ($buyprice != '' && !is_numeric($buyprice)) {
 		}
 
 		$this->db->begin();
@@ -471,6 +475,7 @@ class ProductFournisseur extends Product
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql .= " SET fk_user = ".((int) $user->id)." ,";
+			$sql .= " datec = '".$this->db->idate($now)."' ,";	// Note: Even if this is an update, we update the creation date as the log of each change is tracked into product_fournisseur_log.
 			$sql .= " ref_fourn = '".$this->db->escape($ref_fourn)."',";
 			$sql .= " desc_fourn = '".$this->db->escape($desc_fourn)."',";
 			$sql .= " price = ".((float) $buyprice).",";
@@ -508,7 +513,7 @@ class ProductFournisseur extends Product
 					$productfournisseurprice = new ProductFournisseurPrice($this->db);
 					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 					if ($res > 0) {
-						foreach ($options as $key=>$value) {
+						foreach ($options as $key => $value) {
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
@@ -612,7 +617,7 @@ class ProductFournisseur extends Product
 						$productfournisseurprice = new ProductFournisseurPrice($this->db);
 						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 						if ($res > 0) {
-							foreach ($options as $key=>$value) {
+							foreach ($options as $key => $value) {
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
@@ -877,7 +882,7 @@ class ProductFournisseur extends Product
 	 *  Load properties for minimum price
 	 *
 	 *  @param	int		$prodid	    Product id
-	 *  @param	int		$qty		Minimum quantity
+	 *  @param	float	$qty		Minimum quantity
 	 *  @param	int		$socid		get min price for specific supplier
 	 *  @return int					Return integer <0 if KO, 0=Not found of no product id provided, >0 if OK
 	 *  @see list_product_fournisseur_price()
@@ -1387,7 +1392,7 @@ class ProductFournisseur extends Product
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

@@ -201,7 +201,7 @@ if ($id > 0 && empty($object->id)) {
 
 if ($object->id > 0) {
 	$title = $langs->trans("ThirdParty")." - ".$langs->trans('Supplier');
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$langs->trans('Supplier');
 	}
 	$help_url = '';

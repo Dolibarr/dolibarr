@@ -81,8 +81,8 @@ $search_duration = GETPOSTINT('search_duration');
 $search_value = GETPOSTINT('search_value');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
-$search_user = GETPOSTINT('search_user');
-$search_valuebilled = GETPOSTINT('search_valuebilled');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_valuebilled = GETPOST('search_valuebilled', 'intcomma');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
 $search_company = GETPOST('$search_company', 'alpha');
 $search_company_alias = GETPOST('$search_company_alias', 'alpha');
@@ -96,7 +96,7 @@ $search_timespent_endmin = GETPOSTINT("search_timespent_duration_endmin");
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }        // If $page is not defined, or '' or -1
@@ -1009,7 +1009,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Budget
 			print '<tr><td>' . $langs->trans("Budget") . '</td><td>';
 			if (!is_null($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print '<span class="amount">' . price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency) . '</span>';
+				print '<span class="amount">' . price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency) . '</span>';
 			}
 			print '</td></tr>';
 
@@ -1288,6 +1288,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 		$arrayfields = dol_sort_array($arrayfields, 'position');
+		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 		$param = '';
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -1297,10 +1298,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_month > 0) {
-			$param .= '&search_month=' . urlencode($search_month);
+			$param .= '&search_month=' . urlencode((string) ($search_month));
 		}
 		if ($search_year > 0) {
-			$param .= '&search_year=' . urlencode($search_year);
+			$param .= '&search_year=' . urlencode((string) ($search_year));
 		}
 		if (!empty($search_user)) { 	// We keep param if -1 because default value is forced to user id if not set
 			$param .= '&search_user='.urlencode($search_user);
@@ -1327,40 +1328,40 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_note=' . urlencode($search_note);
 		}
 		if ($search_duration != '') {
-			$param .= '&amp;search_field2=' . urlencode($search_duration);
+			$param .= '&amp;search_field2=' . urlencode((string) ($search_duration));
 		}
 		if ($optioncss != '') {
 			$param .= '&optioncss=' . urlencode($optioncss);
 		}
 		if ($search_date_startday) {
-			$param .= '&search_date_startday=' . urlencode($search_date_startday);
+			$param .= '&search_date_startday=' . urlencode((string) ($search_date_startday));
 		}
 		if ($search_date_startmonth) {
-			$param .= '&search_date_startmonth=' . urlencode($search_date_startmonth);
+			$param .= '&search_date_startmonth=' . urlencode((string) ($search_date_startmonth));
 		}
 		if ($search_date_startyear) {
-			$param .= '&search_date_startyear=' . urlencode($search_date_startyear);
+			$param .= '&search_date_startyear=' . urlencode((string) ($search_date_startyear));
 		}
 		if ($search_date_endday) {
-			$param .= '&search_date_endday=' . urlencode($search_date_endday);
+			$param .= '&search_date_endday=' . urlencode((string) ($search_date_endday));
 		}
 		if ($search_date_endmonth) {
-			$param .= '&search_date_endmonth=' . urlencode($search_date_endmonth);
+			$param .= '&search_date_endmonth=' . urlencode((string) ($search_date_endmonth));
 		}
 		if ($search_date_endyear) {
-			$param .= '&search_date_endyear=' . urlencode($search_date_endyear);
+			$param .= '&search_date_endyear=' . urlencode((string) ($search_date_endyear));
 		}
 		if ($search_timespent_starthour) {
-			$param .= '&search_timespent_duration_starthour=' . urlencode($search_timespent_starthour);
+			$param .= '&search_timespent_duration_starthour=' . urlencode((string) ($search_timespent_starthour));
 		}
 		if ($search_timespent_startmin) {
-			$param .= '&search_timespent_duration_startmin=' . urlencode($search_timespent_startmin);
+			$param .= '&search_timespent_duration_startmin=' . urlencode((string) ($search_timespent_startmin));
 		}
 		if ($search_timespent_endhour) {
-			$param .= '&search_timespent_duration_endhour=' . urlencode($search_timespent_endhour);
+			$param .= '&search_timespent_duration_endhour=' . urlencode((string) ($search_timespent_endhour));
 		}
 		if ($search_timespent_endmin) {
-			$param .= '&search_timespent_duration_endmin=' . urlencode($search_timespent_endmin);
+			$param .= '&search_timespent_duration_endmin=' . urlencode((string) ($search_timespent_endmin));
 		}
 
 		/*
@@ -1368,13 +1369,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		 */
 		if ($id) {
-			$param .= '&id=' . urlencode($id);
+			$param .= '&id=' . urlencode((string) ($id));
 		}
 		if ($projectid) {
-			$param .= '&projectid=' . urlencode($projectid);
+			$param .= '&projectid=' . urlencode((string) ($projectid));
 		}
 		if ($withproject) {
-			$param .= '&withproject=' . urlencode($withproject);
+			$param .= '&withproject=' . urlencode((string) ($withproject));
 		}
 		// Add $param from hooks
 		$parameters = array();
@@ -1418,7 +1419,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('DateInvoice');
 				print '</td>';
 				print '<td>';
-				print $form->selectDate('', '', '', '', '', '', 1, 1);
+				print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 				print '</td>';
 				print '</tr>';
 
@@ -1548,7 +1549,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$tasks = array();
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
@@ -1927,11 +1928,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Author
 		if (!empty($arrayfields['author']['checked'])) {
-			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
+			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth125').'</td>';
 		}
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) {
-			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
 		}
 		// Duration
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
@@ -1985,6 +1986,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		print '</tr>' . "\n";
+
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -2245,7 +2247,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task label
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
+					print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($task_time->label).'">';
 					print dol_escape_htmltag($task_time->label);
 					print '</td>';
 					if (!$i) {
@@ -2337,7 +2339,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Product
 			if (!empty($arrayfields['t.fk_product']['checked'])) {
 				print '<td class="nowraponall">';
-				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
 					print $form->select_produits($task_time->fk_product, 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
@@ -2394,7 +2396,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+								if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
 								} else {
 									print $tmpinvoice->getNomUrl(1);
@@ -2695,7 +2697,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// User
 				if (!empty($arrayfields['author']['checked'])) {
-					print '<td class="nowraponall">';
+					print '<td class="nowraponall tdoverflowmax100">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
 							$object->fetch($id);

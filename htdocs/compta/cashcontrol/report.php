@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1'); // Disable browser notification
 }
 
-$_GET['optioncss'] = "print";
+$optioncss = "print";
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -59,13 +60,13 @@ $sortorder = 'ASC';
 $sortfield = 'b.datev,b.dateo,b.rowid';
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
-	'b.num_chq'=>array('label'=>$langs->trans("Number"), 'checked'=>1),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),
-	'cp.code'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => 1),
+	'b.num_chq' => array('label' => $langs->trans("Number"), 'checked' => 1),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => 1),
+	'cp.code' => array('label' => $langs->trans("PaymentMode"), 'checked' => 1),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 600),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 605),
 );
 
 $syear  = $object->year_close;
@@ -209,7 +210,7 @@ if ($resql) {
 	$transactionspertype = array();
 	$amountpertype = array();
 
-	$totalarray = array();
+	$totalarray = array('nbfield' => 0, 'pos' => array());
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
@@ -355,7 +356,7 @@ if ($resql) {
 	print "</div>";
 
 	//$cash = $amountpertype['LIQ'] + $object->opening;
-	$cash = price2num($cash + $object->opening, 'MT');
+	$cash = price2num($cash + (float) $object->opening, 'MT');
 
 	print '<div style="text-align: right">';
 	print '<h2>';
@@ -386,7 +387,7 @@ if ($resql) {
 		print '<br>';
 	}
 
-	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price($cash + $cheque + $bank + $other).'</div>';
+	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price((float) $cash + (float) $cheque + (float) $bank + (float) $other).'</div>';
 
 	print '<br>'.$langs->trans("TotalVAT").' : <div class="inline-block amount width100">'.price($totalvat).'</div>';
 

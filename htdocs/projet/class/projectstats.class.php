@@ -1,6 +1,7 @@
 <?php
 /* Lead
  * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,7 +290,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array|int				Array of values or <0 if error
+	 * @return 	array|int<-1,-1>		Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -328,6 +329,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
@@ -438,6 +440,7 @@ class ProjectStats extends Stats
 		if ($foundintocache) { // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array $data';  // Phan can not interpret json_decode
 		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {

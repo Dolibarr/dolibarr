@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ class box_factures_imp extends ModeleBoxes
 		$langs->load("bills");
 
 		$textHead = $langs->trans("BoxTitleOldestUnpaidCustomerBills");
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max), 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max), 'limit' => dol_strlen($textHead));
 
 		if ($user->hasRight('facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";
@@ -171,13 +172,14 @@ class box_factures_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
+						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $facturestatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1,
 					);
 
@@ -212,7 +214,7 @@ class box_factures_imp extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
 					);
 				}
 
@@ -249,7 +251,7 @@ class box_factures_imp extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}

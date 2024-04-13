@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024  	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024		Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,7 +279,7 @@ class modWebPortal extends DolibarrModules
 
 		// Main menu entries to add
 		$this->menu = array();
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		// Add here entries to declare new menus
 		/*
 		$this->menu[$r++] = array(

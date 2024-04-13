@@ -61,6 +61,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 	}
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
+// Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
@@ -98,7 +99,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
+$original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');

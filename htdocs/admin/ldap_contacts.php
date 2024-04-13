@@ -293,7 +293,7 @@ show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'test') {
+	if ($action == 'test') {
 		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();

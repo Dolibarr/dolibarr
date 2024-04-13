@@ -66,6 +66,7 @@ $object->info($id);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("BankTransaction");
 $h++;

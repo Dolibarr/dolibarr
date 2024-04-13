@@ -37,7 +37,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'))) {
@@ -46,7 +46,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 
@@ -176,7 +176,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_expire_services_to_representatives.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**

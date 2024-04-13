@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ class FormCategory extends Form
 			$filter .= $langs->trans('UseOrOperatorShort');
 			$filter .= '</label>';
 
-			$filter .= '<script>'."\n";;
+			$filter .= '<script>'."\n";
 			$filter .= "var nbSelected = jQuery('#".$htmlName."').val().length;";
 			$filter .= "console.log('Nb of element now = '+nbSelected);\n";
 			$filter .= "if (nbSelected > 1) { jQuery('.".$htmlName2."').show(); } else { jQuery('.".$htmlName2."').hide(); }\n";

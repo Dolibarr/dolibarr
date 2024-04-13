@@ -3,6 +3,7 @@
  * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
  * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,9 +124,9 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
-			2=>array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
-			3=>array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
+			1 => array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
+			2 => array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
+			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -176,7 +177,7 @@ class modBom extends DolibarrModules
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in bom/core/boxes that contains class to show a widget.
 		$this->boxes = array(
-			0=>array('file' => 'box_boms.php', 'note' => '', 'enabledbydefaulton' => 'Home')
+			0 => array('file' => 'box_boms.php', 'note' => '', 'enabledbydefaulton' => 'Home')
 		);
 
 
@@ -281,7 +282,7 @@ class modBom extends DolibarrModules
 		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforclass = 'BOMLine';
-		$keyforclassfile = '/bom/class/bom.class.php';
+		$keyforclassfile = '/bom/class/bom.class.php';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$keyforelement = 'bomline';
 		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -294,7 +295,7 @@ class modBom extends DolibarrModules
 		$keyforaliasextra = 'extraline';
 		$keyforelement = 'bomline';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		$this->export_dependencies_array[$r] = array('bomline' => 'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
@@ -485,6 +486,7 @@ class modBom extends DolibarrModules
 			}
 		}
 
+		// @phan-suppress-next-line PhanPluginRedundantAssignment
 		$sql = array(
 			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".((int) $conf->entity),
 			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".((int) $conf->entity).")"

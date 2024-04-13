@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
  * @param	int				$usergroupid		Id of group to filter on users
  * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
- * @param	array   		$search_categ_cus	Tag id
+ * @param	int     		$search_categ_cus	Tag id
  * @return	void
  */
 function print_actions_filter(

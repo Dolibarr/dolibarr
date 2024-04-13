@@ -175,7 +175,7 @@ class pdf_paiement extends CommonDocGenerator
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'object' => $this, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $this, $action); // Note that $action and $this may have been modified by some hooks
 
@@ -337,6 +337,7 @@ class pdf_paiement extends CommonDocGenerator
 			$pdf->SetCompression(false);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 		$pdf->SetAutoPageBreak(1, 0);
 
@@ -365,7 +366,7 @@ class pdf_paiement extends CommonDocGenerator
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'object' => $this, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -375,7 +376,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		return 1;
 	}
@@ -495,7 +496,7 @@ class pdf_paiement extends CommonDocGenerator
 				if ($yp > $this->tab_height - 15) {
 					$pdf->SetFillColor(255, 255, 255);
 					$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
-					$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
+					$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash' => 1));
 					$pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
 					$pdf->SetFont('', 'B', $default_font_size - 1);
 					$pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
@@ -556,7 +557,7 @@ class pdf_paiement extends CommonDocGenerator
 			if ((($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) && ($mod != $lines[$j + 1][2])) {
 				$pdf->SetFillColor(245, 245, 245);
 				$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
-				$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
+				$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash' => 1));
 				$pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
 				$pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
 				$pdf->SetFont('', 'I', $default_font_size - 1);
@@ -580,7 +581,7 @@ class pdf_paiement extends CommonDocGenerator
 		$total += $total_page;
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
-		$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
+		$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash' => 1));
 		$pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
 		$pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
 		$pdf->SetFont('', 'B');

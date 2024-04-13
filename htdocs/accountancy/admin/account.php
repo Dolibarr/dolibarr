@@ -67,7 +67,7 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 }
 
 // Load variable for pagination
-$limit = GETPOSTINT('limit', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
@@ -203,21 +203,21 @@ if (empty($reshook)) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
 	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
 	}
 }
 
@@ -387,6 +387,7 @@ if ($resql) {
 	}
 
 	// List of mass actions available
+	$arrayofmassactions = array();
 	if ($user->hasRight('accounting', 'chartofaccount')) {
 		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	}
@@ -455,7 +456,7 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	$moreforfilter = '';

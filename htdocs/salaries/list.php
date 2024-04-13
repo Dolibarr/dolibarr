@@ -51,7 +51,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -84,7 +84,7 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_date_start_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_start_frommonth'), GETPOSTINT('search_date_start_fromday'), GETPOSTINT('search_date_start_fromyear'));
@@ -93,8 +93,8 @@ $search_date_end_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_end_frommont
 $search_date_end_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_end_tomonth'), GETPOSTINT('search_date_end_today'), GETPOSTINT('search_date_end_toyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOSTINT('search_account');
-$search_status = GETPOSTINT('search_status');
-$search_type_id = GETPOSTINT('search_type_id');
+$search_status = GETPOST('search_status', 'intcomma');
+$search_type_id = GETPOST('search_type_id', 'intcomma');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
@@ -128,11 +128,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -164,6 +164,93 @@ if (GETPOST('cancel', 'alpha')) {
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
+}
+
+//credit transfer request
+if ($massaction == 'withdrawrequest') {
+	$langs->load("withdrawals");
+
+	if (!$user->hasRight('paymentbybanktransfer', 'create')) {
+		$error++;
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+	} else {
+		//Checking error
+		$error = 0;
+		$listofSalries =  array();
+		$arrayofselected = is_array($toselect) ? $toselect : array();
+		foreach ($arrayofselected as $toselectid) {
+			$objecttmp = new Salary($db);
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$totalpaid = $objecttmp->getSommePaiement();
+				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('remaintopay' => $objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
+				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+				} elseif ($resteapayer < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+				}
+
+				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+				$rsql .= " , pfd.date_traite as date_traite";
+				$rsql .= " , pfd.amount";
+				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+				$rsql .= " WHERE fk_salary = ".((int) $objecttmp->id);
+				$rsql .= " AND pfd.fk_user_demande = u.rowid";
+				$rsql .= " AND pfd.traite = 0";
+				$rsql .= " ORDER BY pfd.date_demande DESC";
+
+				$result_sql = $db->query($rsql);
+				if ($result_sql) {
+					$numprlv = $db->num_rows($result_sql);
+				}
+
+				if ($numprlv > 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				} elseif (!empty($objecttmp->type_payment) && $objecttmp->type_payment != '2') {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				} else {
+					$listofSalries[] = $objecttmp;
+				}
+			}
+		}
+
+		if (!empty($listofSalries)) {
+			$nbwithdrawrequestok = 0;
+			foreach ($listofSalries as $salary) {
+				$db->begin();
+				$result = $salary->demande_prelevement($user, (float) $salary->resteapayer, 'salaire');
+				if ($result > 0) {
+					$db->commit();
+					$nbwithdrawrequestok++;
+				} else {
+					$db->rollback();
+					setEventMessages($aBill->error, $aBill->errors, 'errors');
+				}
+			}
+			if ($nbwithdrawrequestok > 0) {
+				setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+			}
+		}
+	}
 }
 
 $parameters = array();
@@ -380,7 +467,7 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_account) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -413,6 +500,10 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
+	$langs->load("withdrawals");
+	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
+}
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -439,8 +530,8 @@ if (!empty($socid)) {
 }
 
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -473,7 +564,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -499,20 +590,20 @@ print '<td class="liste_titre"><input type="text" class="flat width100" name="se
 // Date start
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 
 // Date End
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 
@@ -539,6 +630,7 @@ print '<td class="liste_titre right"><input name="search_amount" class="flat" ty
 // Status
 print '<td class="liste_titre right parentonrightofpage">';
 $liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td>';
 
@@ -546,7 +638,7 @@ print '</td>';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -592,7 +684,7 @@ $totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -784,7 +876,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
@@ -829,7 +921,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

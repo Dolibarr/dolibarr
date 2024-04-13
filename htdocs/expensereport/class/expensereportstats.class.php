@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,34 @@ class ExpenseReportStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+
+	/**
+	 * @var string
+	 */
 	public $field;
+
+	/**
+	 * @var string
+	 */
 	public $where;
 
+	/**
+	 * @var string
+	 */
 	private $datetouse = 'date_valid';
 
 
@@ -120,7 +142,7 @@ class ExpenseReportStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -142,7 +164,7 @@ class ExpenseReportStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 

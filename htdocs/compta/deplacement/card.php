@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 		$error = 0;
 
 		$object->date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
+		$object->km = (float) price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
 		$object->type = GETPOST('type', 'alpha');
 		$object->socid = GETPOSTINT('socid');
 		$object->fk_user = GETPOSTINT('fk_user');
@@ -140,9 +140,9 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
-		$object->date			= dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
-		$object->type			= GETPOST('type', 'alpha');
+		$object->date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+		$object->km = (float) price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formatted amount
+		$object->type = GETPOST('type', 'alpha');
 		$object->socid = GETPOSTINT('socid');
 		$object->fk_user = GETPOSTINT('fk_user');
 		$object->note_private = GETPOST('note_private', 'alpha');
@@ -221,7 +221,7 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($datec ? $datec : -1, '', '', '', '', 'add', 1, 1);
+	print $form->selectDate($datec ? $datec : -1, '', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Km
@@ -367,7 +367,7 @@ if ($action == 'create') {
 			 * Confirm delete trip
 			 */
 			if ($action == 'delete') {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".urlencode($id), $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".urlencode((string) ($id)), $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
 			}
 
 			$soc = new Societe($db);
@@ -451,7 +451,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 			// Other attributes
-			$parameters = array('socid'=>$object->id);
+			$parameters = array('socid' => $object->id);
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print "</table><br>";

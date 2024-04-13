@@ -220,6 +220,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
+	$morphys = array();
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';

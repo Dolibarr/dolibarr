@@ -3,6 +3,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * Prepare array of tabs for Evaluation
  *
  * @param	Evaluation	$object		Evaluation
- * @return 	array					Array of tabs
+ * @return 	array<array<int,string>>	Array of tabs
  */
 function evaluationPrepareHead($object)
 {
@@ -129,7 +130,7 @@ function GetLegendSkills()
 }
 
 /**
- * @param  $obj  object  object need to handle
+ * @param  object $obj Object needed to be represented
  * @return string
  */
 function getRankOrderResults($obj)
@@ -163,8 +164,9 @@ function getRankOrderResults($obj)
 
 /**
  * Grouped rows with same ref in array
- * @param   array  $objects   all rows getted by sql
- * @return array |int
+ *
+ * @param   object[]  $objects   all rows retrieve from sql query
+ * @return	array<object>|int 			Object by groiup, -1 if error (empty or bad argument)
  */
 function getGroupedEval($objects)
 {

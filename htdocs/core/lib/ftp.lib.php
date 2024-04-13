@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022-2023	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2022	    Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	$error = 0;
 	$connect_id = null;
 	$newsectioniso = '';
-	$mesg="";
+	$mesg = "";
 
 	if (!is_numeric($ftp_port)) {
 		$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
@@ -54,13 +55,13 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');
-			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
+			$tmp_conn_id = ssh2_connect($ftp_server, (int) $ftp_port);
 		} elseif (getDolGlobalString('FTP_CONNECT_WITH_SSL')) {
 			dol_syslog('Try to connect with ftp_ssl_connect');
-			$connect_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_ssl_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		} else {
 			dol_syslog('Try to connect with ftp_connect');
-			$connect_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		}
 		if (!empty($connect_id) || !empty($tmp_conn_id)) {
 			if ($ftp_user) {
@@ -88,18 +89,20 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 					}
 				} else {
 					if (ftp_login($connect_id, $ftp_user, $ftp_password)) {
-						// Turn on passive mode transfers (must be after a successful login
+						// Turn on passive mode transfers (must be after a successful login)
 						if ($ftp_passive) {
 							ftp_pasv($connect_id, true);
 						}
 
 						// Change the dir
 						$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
-						ftp_chdir($connect_id, $newsectioniso);
+						if (!ftp_chdir($connect_id, $newsectioniso)) {
+							$ok = 0;
+							$mesg = $langs->transnoentitiesnoconv("FailedToChdirOnFTPServer");
+						}
 					} else {
-						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 						$ok = 0;
-						$error++;
+						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 					}
 				}
 			}
@@ -110,7 +113,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		}
 	}
 
-	$arrayresult = array('conn_id'=>$connect_id, 'ok'=>$ok, 'mesg'=>$mesg, 'curdir'=>$section, 'curdiriso'=>$newsectioniso);
+	$arrayresult = array('conn_id' => $connect_id, 'ok' => $ok, 'mesg' => $mesg, 'curdir' => $section, 'curdiriso' => $newsectioniso);
 	return $arrayresult;
 }
 
@@ -144,10 +147,7 @@ function dol_ftp_close($connect_id)
 
 	// Close FTP connection
 	if ($connect_id) {
-		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
-		} elseif (getDolGlobalString('FTP_CONNECT_WITH_SSL')) {
-			return ftp_close($connect_id);
-		} else {
+		if (!getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			return ftp_close($connect_id);
 		}
 	}

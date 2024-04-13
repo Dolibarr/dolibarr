@@ -67,7 +67,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 
 	$result = $payment->delete($user);
 	if ($result > 0) {
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode($fk_loan));
+		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode((string) ($fk_loan)));
 		exit;
 	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
@@ -103,9 +103,9 @@ if ($action == 'delete') {
 
 $linkback = '';
 $morehtmlref = '';
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
@@ -145,7 +148,7 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -430,36 +433,36 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 if ($action == 'setwebsiteonline' && $usercanedit) {
 	$website->setStatut($website::STATUS_VALIDATED, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'setwebsiteoffline' && $usercanedit) {
 	$result = $website->setStatut($website::STATUS_DRAFT, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unseteditinline') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'setshowsubcontainers') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unsetshowsubcontainers') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 
@@ -682,7 +685,7 @@ if ($action == 'adddir' && $permtouploadfile)
 }
 */
 
-// Add site
+// Add a website
 if ($action == 'addsite' && $usercanedit) {
 	$db->begin();
 
@@ -747,6 +750,8 @@ if ($action == 'addsite' && $usercanedit) {
 	}
 }
 
+'@phan-var-force int $error';
+
 // Add page/container
 if ($action == 'addcontainer' && $usercanedit) {
 	dol_mkdir($pathofwebsite);
@@ -761,6 +766,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		// The include seems to break typing on variables
 
 		if (empty($urltograb)) {
 			$error++;
@@ -1149,9 +1155,19 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
 		$substitutionarray = array();
-		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+		$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
 
-		// Define id of page the new page is translation of
+		// Define id of the page the new page is translation of
+		/*
+		if ($objectpage->lang == $object->lang) {
+			// If
+			$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
+			if ($pageidfortranslation > 0) {
+				// We must update the page $pageidfortranslation to set fk_page = $object->id.
+				// But what if page $pageidfortranslation is already linked to another ?
+			}
+		} else {
+		*/
 		$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		if ($pageidfortranslation > 0) {
 			// Check if the page we are translation of is already a translation of a source page. if yes, we will use source id instead
@@ -1162,16 +1178,25 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 		}
 		$objectpage->fk_page = $pageidfortranslation;
+		//}
 
-		$sample = GETPOST('sample', 'alpha');
-		if (empty($sample)) {
-			$sample = 'empty';
+		$content = '';
+		if (GETPOSTISSET('content')) {
+			//$content = GETPOST('content', 'restricthtmlallowunvalid');	// @TODO Use a restricthtmlallowunvalidwithphp
+			$content = GETPOST('content', 'none');	// @TODO Use a restricthtmlallowunvalidwithphp
+
+			$objectpage->content = make_substitutions($content, $substitutionarray);
+		} else {
+			/*$sample = GETPOST('sample', 'alpha');
+			if (empty($sample)) {
+				$sample = 'empty';
+			}
+
+			$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($sample)).'.html';
+			*/
+			// Init content with content into page-sample-...
+			//$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 		}
-
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($sample).'.html';
-
-		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
-		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
 
 	if (!$error) {
@@ -1208,6 +1233,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 	}
 
+	$pageid = 0;
 	if (!$error) {
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
@@ -1249,7 +1275,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 	}
 
 	if (!$error) {
-		if (!empty($objectpage->content)) {
+		if ($pageid > 0) {
 			$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
 			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
 
@@ -2402,6 +2428,22 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 	}
 }
 
+if ($action == 'deletelang' && $usercanedit) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."website_page SET fk_page = NULL";
+	$sql .= " WHERE rowid = ".GETPOSTINT('deletelangforid');
+	//$sql .= " AND fk_page = ".((int) $objectpage->id);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$objectpage->fk_page = null;
+	}
+
+	$action = 'editmeta';
+}
+
+
 // Export site
 if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	$fileofzip = $object->exportWebSite();
@@ -3076,7 +3118,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			if (isModEnabled('category')) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
-				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.urlencode($website->ref), $disabled);
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
 			}
 
 			print '</span>';
@@ -3366,7 +3408,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag("CKEditor").'</a>';
 				}
 
 				print '</span>';
@@ -3406,16 +3448,16 @@ if (!GETPOST('hide_websitemenu')) {
 							{
 								if (! isEditingEnabled || forceenable)
 								{
-									console.log("Enable inline edit");
+									console.log("Enable inline edit for some html tags with contenteditable=true attribute");
 
-									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
+									jQuery(\'section[contenteditable="true"],div[contenteditable="true"],header[contenteditable="true"],main[contenteditable="true"],footer[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
 										if (idtouse !== undefined) {
 											var inlineditor = CKEDITOR.inline(idtouse, {
 												// Allow some non-standard markup that we used in the introduction.
 												// + a[target];div{float,display} ?
-												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);main(*);footer(*);button(*);h1(*);h2(*);h3(*);\',
 												//extraPlugins: \'sourcedialog\',
 												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
 												// Show toolbar on startup (optional).
@@ -3446,6 +3488,8 @@ if (!GETPOST('hide_websitemenu')) {
 											    // ...
 											//});
 
+										} else {
+											console.warn("A html section has the contenteditable=true attribute but has no id attribute");
 										}
 									})
 
@@ -3969,7 +4013,7 @@ if ($action == 'createsite') {
 	   $head[$h][2] = 'card';
 	$h++;
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
+	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
 	*/
 	if ($action == 'createcontainer') {
 		print load_fiche_titre($langs->trans("AddSite"));
@@ -4124,7 +4168,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	   $head[$h][2] = 'card';
 	$h++;
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
 	*/
 	if ($action == 'createcontainer') {
 		print load_fiche_titre($langs->trans("AddPage"));
@@ -4257,10 +4301,65 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	// Example/templates of page
 	if ($action == 'createcontainer') {
-		print '<tr><td class="titlefield fieldrequired">';
+		$formmail = new FormMail($db);
+		$formmail->withaiprompt = 'html';
+
+		print '<tr><td class="titlefield fieldrequired tdtop">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1, 'minwidth300');
+		print '</td><td class="tdtop">';
+
+		$out = '';
+		// Add link to add layout
+		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillPageWithALayout").'...';
+		$out .= '</a> &nbsp; &nbsp; ';
+
+		$out .= '<script>
+			$(document).ready(function() {
+				$("#linkforlayouttemplates").click(function() {
+					console.log("We click on linkforlayouttemplates");
+					event.preventDefault();
+					jQuery("#template-selector").toggle();
+					//jQuery("#template-selector").attr("style", "aaa");
+					jQuery("#ai_input").hide();
+					jQuery("#pageContent").show();
+				});
+			});
+		</script>
+		';
+
+		// Add link to add AI content
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+			$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+			$out .= $langs->trans("FillMessageWithAIContent").'...';
+			$out .= '</a>';
+			$out .= '<script>
+						$(document).ready(function() {
+							$("#linkforaiprompt").click(function() {
+								console.log("We click on linkforaiprompt");
+								event.preventDefault();
+								jQuery("#ai_input").toggle();
+								jQuery("#template-selector").hide();
+								if (!jQuery("ai_input").is(":hidden")) {
+									console.log("Set focus on input field");
+									jQuery("#ai_instructions").focus();
+									if (!jQuery("pageContent").is(":hidden")) {
+										jQuery("#pageContent").show();
+									}
+								}
+							});
+						});
+					</script>';
+		}
+
+		$out .= $formwebsite->getContentPageTemplate('content');
+
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= $formmail->getSectionForAIPrompt('', 'content');
+		}
+		print $out;
 		print '</td></tr>';
 	}
 
@@ -4356,7 +4455,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						if ($i > 0) {
 							$tmpstring .= '<br>';
 						}
-						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$tmpstring .= $tmppage->getNomUrl(1).' '.picto_from_langcode($tmppage->lang).' '.$tmppage->lang;
+						// Button unlink
+						$tmpstring .= ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $tmppage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 						$translatedby++;
 						$i++;
 					}
@@ -4372,29 +4473,30 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 			dol_print_error($db);
 		}
 	}
-	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
+	if ((empty($translatedby) || ($objectpage->lang != $object->lang)) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
 		$sourcepage = new WebsitePage($db);
-		$result = $sourcepage->fetch($objectpage->fk_page);
-		if ($result == 0) {
-			// not found, we can reset value to clean database
-		} elseif ($result > 0) {
+		$result = 1;
+		if ($objectpage->fk_page > 0) {
+			$result = $sourcepage->fetch($objectpage->fk_page);
+			if ($result == 0) {
+				// not found, we can reset value to clean database
+				// TODO
+			}
+		}
+		if ($result >= 0) {
+			if ($translatedby) {
+				print '<br>';
+			}
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			print $sourcepage->getNomUrl(2).' '.$formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
 			if ($translationof > 0 && $sourcepage->lang) {
-				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+				print picto_from_langcode($sourcepage->lang).' '.$sourcepage->lang;
+				// Button unlink
+				print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $objectpage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 			}
 		}
 	}
-	print '</td></tr>';
-
-	// Allowed in frames
-	print '<tr><td>';
-	print $langs->trans('AllowedInFrames');
-	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
-	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
-	print '</td><td>';
-	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
 
 	// Categories
@@ -4418,6 +4520,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
 		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'minwidth200 widthcentpercentminusxx');
+
+		print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/index.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
+
 		print "</td></tr>";
 	}
 
@@ -4478,6 +4583,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
+	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
+	print $langs->trans('PreviewPageContent');
+	print '</td><td>';
+	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+	$doleditor->Create();
+	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
+	print '</div>';
+	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+	print '</td></tr>';
+
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
 	$htmlhelp .= $langs->trans("Example").' :<br>';
@@ -4487,6 +4603,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
+	print '</td></tr>';
+
+	// Allowed in frames
+	print '<tr><td>';
+	print $langs->trans('AllowedInFrames');
+	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
+	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
+	print '</td><td>';
+	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -4554,7 +4679,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					jQuery(".tablecheckboxcreatefromfetching").hide();
 					jQuery(".tablecheckboxcreatemanually").hide();
 					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\') {
-						console.log("show a");
+						console.log("show create from spider form");
 						if (selectedf != \'createfromfetching\') {
 							jQuery(".tablecheckboxcreatefromfetching").show();
 							selectedf = \'createfromfetching\';
@@ -4565,7 +4690,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						}
 					}
 					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\') {
-						console.log("show b");
+						console.log("show create from scratch or template form");
 						if (selectedm != \'createmanually\') {
 							jQuery(".tablecheckboxcreatemanually").show();
 							selectedm = \'createmanually\';
@@ -4783,15 +4908,15 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			$massactionbutton .= ' <input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
 			$massactionbutton .= '</div>';
 			$massactionbutton .= '<div class="massactionother massactionsetcategory massactiondelcategory hidden">';
-			$massactionbutton .= img_picto('', 'category').' '.$langs->trans("Category");
-			$massactionbutton .= ' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
+			$massactionbutton .= img_picto('', 'category', 'class="pictofixedwidth"');
+			$massactionbutton .= $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$massactionbutton .= ajax_combobox('setcategory');
 			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 			$selectedfields = '';
 			$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -4827,14 +4952,23 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("UserCreation", 0, $_SERVER['PHP_SELF'], 'fk_user_creat', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
-			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print '</tr>';
 
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -4844,21 +4978,52 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 			foreach ($listofpages['list'] as $answerrecord) {
 				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
 
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						}
+						print '</td>';
+					}
+
 					// Type of container
-					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
-					print $langs->trans($answerrecord->type_container); // TODO Use label of container
+					print '<td class="nowraponall">';
+					//print $langs->trans("Container").'<br>';
+					if (!empty($conf->cache['type_of_container'][$answerrecord->type_container])) {
+						print $langs->trans($conf->cache['type_of_container'][$answerrecord->type_container]);
+					} else {
+						print $langs->trans($answerrecord->type_container);
+					}
 					print '</td>';
 
 					// Container url and label
-					print '<td>';
+					$titleofpage = ($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle"));
+					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($titleofpage).'">';
 					print $answerrecord->getNomUrl(1);
-					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
+					print ' <span class="opacitymedium">('.dol_escape_htmltag($titleofpage).')</span>';
 					//print '</td>';
 					//print '<td class="tdoverflow100">';
 					print '<br>';
-					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
+					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : '&nbsp;').'</span>';
 					print '</td>';
 
 					// Categories - Tags
@@ -4876,17 +5041,6 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					//var_dump($existing);
 					print '</td>';
 
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
-
 					// Language
 					print '<td class="center">';
 					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
@@ -4901,6 +5055,25 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						print $nbofwords.' '.$langs->trans("words");
 						$totalnbwords += $nbofwords;
 					}
+					print '</td>';
+
+					// Author
+					print '<td class="tdoverflowmax125">';
+					if (!empty($answerrecord->fk_user_creat)) {
+						if (empty($conf->cache['user'][$answerrecord->fk_user_creat])) {
+							$tmpuser = new User($db);
+							$tmpuser->fetch($answerrecord->fk_user_creat);
+							$conf->cache['user'][$answerrecord->fk_user_creat] = $tmpuser;
+						} else {
+							$tmpuser = $conf->cache['user'][$answerrecord->fk_user_creat];
+						}
+						print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
+					}
+					print '</td>';
+
+					// Date creation
+					print '<td class="center nowraponall">';
+					print dol_print_date($answerrecord->date_creation, 'dayhour');
 					print '</td>';
 
 					// Date last modification
@@ -4932,21 +5105,39 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
 
-					print '<!-- Status of page -->'."\n";
-					if ($massactionbutton || $massaction) {
-						$selected = 0;
-						if (in_array($answerrecord->id, $arrayofselected)) {
-							$selected = 1;
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
 						}
-						print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						print '</td>';
 					}
-					print '</td>';
 
 					print '</tr>';
 				} else {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
+
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					// Type of container
 					print '<td>';
@@ -4959,22 +5150,14 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						'website_readme' => 'WEBSITE_README',
 						'website_manifestjson' => 'WEBSITE_MANIFEST_JSON'
 					);
+					print '<span class="opacitymedium">';
 					if (!empty($translateofrecordtype[$answerrecord['type']])) {
 						print $langs->trans($translateofrecordtype[$answerrecord['type']]);
 					} else {
 						print $answerrecord['type'];
 					}
+					print '</span>';
 					print '</td>';
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
 
 					// Container url and label
 					print '<td>';
@@ -4994,6 +5177,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<td>';
 					print '</td>';
 
+					print '<td>';
+					print '</td>';
+
+					print '<td>';
+					print '</td>';
+
 					// Date last modification
 					print '<td class="center nowraponall">';
 					//print dol_print_date(filemtime());
@@ -5004,8 +5193,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
-					print '</td>';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					print '</tr>';
 				}
@@ -5014,6 +5205,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			if (count($listofpages['list']) >= 2) {
 				// Total
 				print '<tr class="lite_titre">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				// Type of container
 				print '<td>';
@@ -5037,6 +5234,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print $totalnbwords.' '.$langs->trans("words");
 				print '</td>';
 
+				print '<td>';
+				print '</td>';
+
+				print '<td>';
+				print '</td>';
+
 				// Date last modification
 				print '<td>';
 				print '</td>';
@@ -5046,8 +5249,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print '</td>';
 
 				// Action column
-				print '<td class="nowrap center">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				print '</tr>';
 			}
@@ -5142,7 +5347,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		$out .= $tmpout;
 		$out .= '</style>'."\n";
 
-		// Note: <div> or <section> with contenteditable="true" inside this can be edited with inline ckeditor
+		// Note: <div>, <section>, ... with contenteditable="true" inside this can be edited with inline ckeditor
 
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
@@ -5157,6 +5362,12 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+
+			// Get session info and obfuscate session cookie
+			$savsessionname = session_name();
+			$savsessionid = $_COOKIE[$savsessionname];
+			$_COOKIE[$savsessionname] = 'obfuscatedcookie';
+
 			ob_start();
 			try {
 				$res = include $filephp;
@@ -5168,12 +5379,15 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
+			// Restore data
+			$_COOKIE[$savsessionname] = $savsessionid;
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
 			// Remove the contenteditable="true"
-			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
+			$newcontent = preg_replace('/(div|section|header|main|footer)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		} else {
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}

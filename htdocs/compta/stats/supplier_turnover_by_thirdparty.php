@@ -69,7 +69,7 @@ $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
-$search_country = GETPOST("search_country", 'alpha');
+$search_country = GETPOST("search_country", 'aZ09');
 
 
 // Date range
@@ -245,6 +245,9 @@ $catotal_ht = 0;
 $name = array();
 $amount = array();
 $amount_ht = array();
+$address_zip = array();
+$address_town = array();
+$address_pays = array();
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";

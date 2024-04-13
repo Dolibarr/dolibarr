@@ -100,7 +100,7 @@ if ($action == 'add') {
 		$error++;
 	}
 	if (!$error && !GETPOST('type')) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Position")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
@@ -274,7 +274,8 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
-	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?action=add&token='.newToken().'&menuId='.GETPOSTINT('menuId').'" method="post" name="formmenucreate">';
+	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId='.GETPOSTINT('menuId').'" method="POST" name="formmenucreate">';
+	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print dol_get_fiche_head();
@@ -346,7 +347,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// MenuId Parent
-	print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
+	print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
 	if ($parent_rowid) {
 		print '<td>'.$parent_rowid.'<input type="hidden" name="menuIdParent" value="'.$parent_rowid.'"></td>';
 	} else {
@@ -360,13 +361,13 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
 	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
-	// Picto
-	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
-
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
 	print '<td><input type="text" class="minwidth500" name="url" value="'.dol_escape_htmltag(GETPOST("url", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
+	// Picto
+	print '<tr><td>'.$langs->trans('Image').'</td>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
 
 	// Langs
 	print '<tr><td>'.$langs->trans('LangFile').'</td>';
@@ -505,7 +506,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
 	if (!empty($menu->enabled)) {
-		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->enabled, 1, 1, '1')).')';
+		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn((int) dol_eval($menu->enabled, 1, 1, '1') <= 0 ? 0 : 1).')';
 	}
 	print '</td></tr>';
 
@@ -513,7 +514,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
 	if (!empty($menu->perms)) {
-		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->perms, 1, 1, '1')).')';
+		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn((int) dol_eval($menu->perms, 1, 1, '1') <= 0 ? 0 : 1).')';
 	}
 	print '</td></tr>';
 

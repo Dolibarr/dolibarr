@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -351,6 +352,7 @@ class BlockedLog
 		global $langs, $cachedUser;
 
 		if (empty($cachedUser)) {
+			// @phan-suppress-next-line PhanPluginRedundantAssignment
 			$cachedUser = array();
 		}
 
@@ -369,13 +371,13 @@ class BlockedLog
 	}
 
 	/**
-	 *      Populate properties of log from object data
+	 *	Populate properties of log from object data
 	 *
-	 *      @param		Object		$object     object to store
-	 *      @param		string		$action     action
-	 *      @param		string		$amounts    amounts
-	 *      @param		User		$fuser		User object (forced)
-	 *      @return		int						>0 if OK, <0 if KO
+	 *	@param	CommonObject	$object		object to store
+	 *	@param	string			$action		action
+	 *	@param	string			$amounts	amounts
+	 *	@param	?User			$fuser		User object (forced)
+	 *	@return	int							>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
@@ -1014,7 +1016,7 @@ class BlockedLog
 				unset($keyforsignature);
 				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
 			} else {	// Consume much memory ($keyforsignature is a large var)
-				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature'=>$keyforsignature);
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $keyforsignature);
 			}
 		} else {
 			unset($keyforsignature);
@@ -1094,7 +1096,7 @@ class BlockedLog
 	 *  @param	string	$search_ref		search ref
 	 *  @param	string	$search_amount	search amount
 	 *  @param	string	$search_code	search code
-	 *	@return	array|int				Array of object log or <0 if error
+	 *	@return	BlockedLog[]|int<-2,-1>	Array of object log or <0 if error
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
@@ -1227,7 +1229,7 @@ class BlockedLog
 			dol_print_error($this->db);
 		}
 
-		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".$result);
+		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".json_encode($result));
 
 		return $result;
 	}

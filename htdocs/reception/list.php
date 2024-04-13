@@ -5,6 +5,7 @@
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +58,8 @@ $search_company = GETPOST("search_company");
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_date_delivery_startday = GETPOSTINT('search_date_delivery_startday');
 $search_date_delivery_startmonth = GETPOSTINT('search_date_delivery_startmonth');
 $search_date_delivery_startyear = GETPOSTINT('search_date_delivery_startyear');
@@ -75,14 +76,14 @@ $search_date_create_endmonth = GETPOSTINT('search_date_create_endmonth');
 $search_date_create_endyear = GETPOSTINT('search_date_create_endyear');
 $search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, $search_date_create_startday, $search_date_create_startyear);	// Use tzserver
 $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
-$search_billed = GETPOSTINT("search_billed");
+$search_billed = GETPOST("search_billed", 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortfield) {
 	$sortfield = "e.ref";
 }
@@ -140,6 +141,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -163,7 +165,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -285,8 +287,8 @@ if (empty($reshook)) {
 					}
 
 					// try to get from source of reception (supplier order)
-					if (!empty($rcp->commandeFournisseur)) {
-						$supplierOrder = $rcp->commandeFournisseur;
+					if (!empty($rcp->origin_object)) {
+						$supplierOrder = $rcp->origin_object;
 						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
 							$cond_reglement_id = $supplierOrder->cond_reglement_id;
 						}
@@ -409,6 +411,7 @@ if (empty($reshook)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -485,7 +488,7 @@ if (empty($reshook)) {
 								$product_type,
 								$rang,
 								false,
-								0,
+								array(),
 								null,
 								$lines[$i]->rowid,
 								0,
@@ -560,7 +563,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -569,8 +572,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages($object->error, $errors, 'errors');
 			$error++;
 		}
@@ -765,7 +768,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$param .= "&search_billed=".urlencode($search_billed);
+	$param .= "&search_billed=".urlencode((string) ($search_billed));
 }
 if ($search_town) {
 	$param .= "&search_town=".urlencode($search_town);
@@ -780,46 +783,46 @@ if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_country) {
-	$param .= "&search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode((string) ($search_country));
 }
 if ($search_type_thirdparty) {
-	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
+	$param .= "&search_type_thirdparty=".urlencode((string) ($search_type_thirdparty));
 }
 if ($search_date_delivery_startday) {
-	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+	$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 }
 if ($search_date_delivery_startmonth) {
-	$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+	$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 }
 if ($search_date_delivery_startyear) {
-	$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+	$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 }
 if ($search_date_delivery_endday) {
-	$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+	$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 }
 if ($search_date_delivery_endmonth) {
-	$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+	$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 }
 if ($search_date_delivery_endyear) {
-	$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 }
 if ($search_date_create_startday) {
-	$param .= '&search_date_create_startday='.urlencode($search_date_create_startday);
+	$param .= '&search_date_create_startday='.urlencode((string) ($search_date_create_startday));
 }
 if ($search_date_create_startmonth) {
-	$param .= '&search_date_create_startmonth='.urlencode($search_date_create_startmonth);
+	$param .= '&search_date_create_startmonth='.urlencode((string) ($search_date_create_startmonth));
 }
 if ($search_date_create_startyear) {
-	$param .= '&search_date_create_startyear='.urlencode($search_date_create_startyear);
+	$param .= '&search_date_create_startyear='.urlencode((string) ($search_date_create_startyear));
 }
 if ($search_date_create_endday) {
-	$param .= '&search_date_create_endday='.urlencode($search_date_create_endday);
+	$param .= '&search_date_create_endday='.urlencode((string) ($search_date_create_endday));
 }
 if ($search_date_create_endmonth) {
-	$param .= '&search_date_create_endmonth='.urlencode($search_date_create_endmonth);
+	$param .= '&search_date_create_endmonth='.urlencode((string) ($search_date_create_endmonth));
 }
 if ($search_date_create_endyear) {
-	$param .= '&search_date_create_endyear='.urlencode($search_date_create_endyear);
+	$param .= '&search_date_create_endyear='.urlencode((string) ($search_date_create_endyear));
 }
 if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
@@ -886,6 +889,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($massaction == 'createbills') {
@@ -898,7 +902,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	print '<td>';
-	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -951,7 +955,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', ''));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }

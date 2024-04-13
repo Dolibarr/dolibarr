@@ -679,7 +679,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('delivery_note') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {

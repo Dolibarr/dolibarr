@@ -165,25 +165,28 @@ if (empty($reshook)) {
 
 $searchform .= '<br>';
 
-// Add search on URL
-$ret = '';
-$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
-$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
-$ret .= '<input type="hidden" name="action" value="redirect">';
-$ret .= '<div class="tagtd">';
-$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
-$ret .= '<input type="text" class="flat minwidth200"';
-$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
-$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
-$ret .= ' name="url" id="url" />';
-$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
-$ret .= '<span class="fa fa-search"></span>';
-$ret .= '</button>';
-$ret .= '</div>';
-$ret .= "</form>\n";
 
-$searchform .= $ret;
+// Add search on URL
+if ($conf->dol_use_jmobile) {
+	$ret = '';
+	$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
+	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
+	$ret .= '<input type="hidden" name="action" value="redirect">';
+	$ret .= '<div class="tagtd">';
+	$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
+	$ret .= '<input type="text" class="flat minwidth200"';
+	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
+	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
+	$ret .= ' name="url" id="url" />';
+	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<span class="fa fa-search"></span>';
+	$ret .= '</button>';
+	$ret .= '</div>';
+	$ret .= "</form>\n";
+
+	$searchform .= $ret;
+}
 
 
 // Show all forms

@@ -51,7 +51,7 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-	// Security check
+// Security check
 $id = GETPOSTINT("id");
 $ref = GETPOST('ref');
 $lineid = GETPOSTINT('lineid');
@@ -90,9 +90,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 }
 
@@ -272,7 +272,7 @@ if ($action == 'updatelines' && $usercancreate) {
 					} else {
 						$expeditiondispatch->fk_expedition = $object->id;
 						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
-						$expeditiondispatch->fk_origin_line = GETPOSTINT($fk_commandedet);
+						$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
 						$expeditiondispatch->qty = $newqty;
 
 						if ($newqty > 0) {
@@ -380,8 +380,8 @@ $morejs = array('/expedition/js/lib_dispatch.js.php');
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
 if ($object->id > 0 || !empty($object->ref)) {
-	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_origin_line, then each line may have sub data
-	//var_dump($lines[0]->fk_origin_line); exit;
+	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_elementdet, then each line may have sub data
+	//var_dump($lines[0]->fk_elementdet); exit;
 
 	$num_prod = count($lines);
 
@@ -389,8 +389,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 		$object->origin = 'commande';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
-		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+
+		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
 	}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -423,13 +423,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Print form confirm
 	print $formconfirm;
 
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	// Shipment card
@@ -474,7 +474,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -482,7 +482,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -510,7 +510,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_livraison", 1, 0);
 		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -550,10 +550,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
 		$products_dispatched = array();
-		$sql = "SELECT ed.fk_origin_line as rowid, sum(ed.qty) as qty";
+		$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
-		$sql .= " GROUP BY ed.fk_origin_line";
+		$sql .= " GROUP BY ed.fk_elementdet";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -677,7 +677,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 			$nbfreeproduct = 0; // Nb of lins of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();
 
@@ -773,18 +773,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						/*$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
-
 						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";
 						$sql .= " eb.batch, eb.eatby, eb.sellby, cd.fk_product";
 						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
-						$sql .= " WHERE ed.fk_origin_line =".(int) $objp->rowid;
+						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_elementdet = cd.rowid";
+						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
 						$sql .= " AND ed.fk_expedition =".(int) $object->id;
-						$sql .= " ORDER BY ed.rowid, ed.fk_origin_line";
+						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
 
 						$resultsql = $db->query($sql);
 						$j = 0;
@@ -838,13 +834,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 										print '<td class="nowraponall">';
 										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
+										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
 									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 										print '<td class="nowraponall">';
 										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
+										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
 									print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
@@ -895,10 +891,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td>';
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 									$type = 'batch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j+1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								} else {
 									$type = 'dispatch';
-									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j+1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								}
 
 								print '</td>';
@@ -983,13 +979,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="nowraponall">';
 									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
+									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
 								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="nowraponall">';
 									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
+									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
 								print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched

@@ -50,6 +50,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -68,9 +69,7 @@ print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -94,10 +93,11 @@ if ($resql) {
 	$total = 0;
 	$totalinprocess = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num>0) {
+	if ($num > 0) {
 		while ($row = $db->fetch_row($resql)) {
 			if (!isset($vals[$row[1]])) {
 				$vals[$row[1]] = 0;
@@ -215,8 +215,6 @@ if (isModEnabled('intervention')) {
 
 print '</div><div class="fichetwothirdright">';
 
-
-$max = 5;
 
 /*
  * Last modified interventions

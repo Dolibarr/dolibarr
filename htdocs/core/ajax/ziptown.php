@@ -57,7 +57,6 @@ if (!getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog('ziptown call with MAIN_USE_ZIPTOWN_DICTIONNARY='.getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY'));
-//var_dump($_GET);
 
 // Generation of list of zip-town
 if (GETPOST('zipcode') || GETPOST('town')) {
@@ -111,6 +110,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	//var_dump($db);
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
+			$row_array = [];
 			$country = $row['country_id'] ? ($langs->transnoentitiesnoconv('Country'.$row['country_code']) != 'Country'.$row['country_code'] ? $langs->transnoentitiesnoconv('Country'.$row['country_code']) : $row['country_label']) : '';
 			$county = $row['state_id'] ? ($langs->transnoentitiesnoconv($row['state_code']) != $row['state_code'] ? $langs->transnoentitiesnoconv($row['state_code']) : ($row['state_label'] != '-' ? $row['state_label'] : '')) : '';
 

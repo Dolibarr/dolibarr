@@ -73,6 +73,9 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+//avoid warning on missing/undef entity
+$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
@@ -105,6 +108,10 @@ if (!$permissiontoread) {
 }
 
 
+
+
+
+
 /*
  * Actions
  */
@@ -132,8 +139,39 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+	$startday = GETPOST('startday', 'int');
+	$startmonth = GETPOST('startmonth', 'int');
+	$startyear = GETPOST('startyear', 'int');
+	$starthour = GETPOST('startHour', 'int');
+
+	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
+
+	$endday = GETPOST('endday', 'int');
+	$endmonth = GETPOST('endmonth', 'int');
+	$endyear = GETPOST('endyear', 'int');
+	$endhour = GETPOST('endHour', 'int');
+
+
+	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);
+
+	// check hours
+	if ($starthour > $endhour) {
+		if ($dateStartTimestamp === $dateEndTimestamp) {
+			$error++;
+			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), null, 'errors');
+		}
+	}
+
+	// check date
+	if ($dateStartTimestamp > $dateEndTimestamp) {
+		$error++;
+		setEventMessages($langs->trans("ErrorIncoherentDates"), null, 'errors');
+	}
+
+
+		// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -201,11 +239,14 @@ if ($action == 'create') {
 		exit;
 	}
 
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Availabilities")), '', 'object_'.$object->picto);
-
+	print load_fiche_titre($langs->trans("NewAvailabilities"), '', '', 'object_'.$object->picto);
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
+	if ($error != 0) {
+		print '<input type="hidden" name="action" value="create">';
+	} else {
+		print '<input type="hidden" name="action" value="add">';
+	}
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -214,9 +255,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 

@@ -75,7 +75,7 @@ if (empty($permissiontoread)) {
  */
 
 if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
 		exit;

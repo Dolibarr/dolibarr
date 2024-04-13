@@ -61,7 +61,7 @@ function dolSaveMasterFile($filemaster)
 function dolSavePageAlias($filealias, $object, $objectpage)
 {
 	// Now create the .tpl file
-	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
+	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias." and a wrapper into all language subdirectories");
 
 	$aliascontent = '<?php'."\n";
 	$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -80,6 +80,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$dirname = dirname($filealias);
 		$filename = basename($filealias);
 		$filealiassub = $dirname.'/'.$objectpage->lang.'/'.$filename;
+
+		dol_mkdir($dirname.'/'.$objectpage->lang, DOL_DATA_ROOT);
 
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -671,7 +673,7 @@ function showWebsiteTemplates(Website $website)
  */
 function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 {
-	global $conf, $langs, $user;
+	global $langs, $user;
 
 	$error = 0;
 
@@ -680,9 +682,9 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	// First check forbidden commands
-	$forbiddenphpcommands = array();
+	$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
 	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
-		$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
 	}
 	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
 		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));

@@ -15,6 +15,7 @@
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -742,6 +743,7 @@ if (empty($reshook)) {
 					$ldap_mobile = $attribute[getDolGlobalString('LDAP_FIELD_MOBILE')];
 					$ldap_mail = $attribute[getDolGlobalString('LDAP_FIELD_MAIL')];
 					$ldap_sid = $attribute[getDolGlobalString('LDAP_FIELD_SID')];
+					$ldap_social = array();
 
 					if (isModEnabled('socialnetworks')) {
 						$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');
@@ -889,7 +891,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	dol_set_focus('#lastname');
 
@@ -1021,7 +1023,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
 	print '</td></tr>';
 
@@ -1581,8 +1583,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Employee
 			print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-			//print yn($object->employee);
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+				print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+			} else {
+				print yn($object->employee);
+			}
 			print '</td></tr>'."\n";
 
 			// TODO This is also available into the tab RH
@@ -1657,7 +1662,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Salary
 				print '<tr><td>'.$langs->trans("Salary").'</td>';
 				print '<td>';
-				print($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
+				print($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, 0, $langs, 1, -1, -1, $conf->currency) : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 
@@ -1667,7 +1672,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print($object->thm != '' ? price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
+				print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				print '</td>';
 				print "</tr>\n";
 
@@ -1677,7 +1682,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 				print '</td>';
 				print '<td>';
-				print($object->tjm != '' ? price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
+				print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -2314,7 +2319,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Gender
 			print '<tr><td>'.$langs->trans("Gender").'</td>';
 			print '<td>';
-			$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+			$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 			if ($caneditfield) {
 				print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender') : $object->gender, 1);
 			} else {
@@ -2399,6 +2404,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($object->socid) {
 					$type = $langs->trans("External");
 				}
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
 				if ($object->ldap_sid) {
 					print ' ('.$langs->trans("DomainUser").')';
@@ -2570,7 +2576,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
+					print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
 				} else {
 					print $object->state;
 				}
@@ -2860,7 +2866,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($caneditfield) {
 					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm') ? GETPOST('thm') : $object->thm).'">';
 				} else {
-					print($object->thm != '' ? price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
+					print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2874,7 +2880,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($caneditfield) {
 					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm') ? GETPOST('tjm') : $object->tjm).'">';
 				} else {
-					print($object->tjm != '' ? price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
+					print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 				}
 				print '</td>';
 				print "</tr>\n";

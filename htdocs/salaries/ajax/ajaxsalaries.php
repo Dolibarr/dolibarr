@@ -65,6 +65,7 @@ if (!empty(GETPOSTINT('fk_user'))) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$label = "Salary amount";
+		$row_array = array();
 		$row_array['label'] = $label;
 		$row_array['value'] = price2num($obj->amount, 'MT');
 		$row_array['key'] = "Amount";
@@ -72,8 +73,8 @@ if (!empty(GETPOSTINT('fk_user'))) {
 		array_push($return_arr, $row_array);
 		echo json_encode($return_arr);
 	} else {
-		echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+		echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 	}
 } else {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 }

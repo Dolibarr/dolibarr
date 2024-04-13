@@ -192,9 +192,21 @@ class CActionComm
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
 				$idforallfornewmodule = 96;
-				$TSystem = array();
-				$TSystemAuto = array();
-				$TModule = array();
+				$TSystem = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TSystemAuto = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TModule = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
 				$i = 0;
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
@@ -228,7 +240,7 @@ class CActionComm
 						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (!isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && isModEnabled("delivery_note") && $user->hasRight('expedition', 'lire')) {
+						if ($obj->module == 'shipping' && isModEnabled("shipping") && $user->hasRight('expedition', 'lire')) {
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'
@@ -319,8 +331,8 @@ class CActionComm
 						}
 
 						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
-							$TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
-							$TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+							array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['code'][$obj->code] = ' ('.$langs->trans("Module").': '.$obj->module.')');
+							array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['all'][$obj->code]['label'] = ' ('.$langs->trans("Module").': '.$obj->module.')');
 						}
 					}
 					$i++;

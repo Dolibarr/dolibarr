@@ -517,7 +517,7 @@ if ($action != "create" && $action != "edit") {
 	$limit = 0;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 		// If $page is not defined, or '' or -1 or if we click on clear filters
 		$page = 0;
@@ -570,7 +570,7 @@ if ($action != "create" && $action != "edit") {
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+				'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);

@@ -117,7 +117,7 @@ if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on s
 	$action = 'add';
 	$attribute_id = GETPOSTINT('attribute');
 	$attribute_value_id = GETPOSTINT('value');
-	if ($attribute_id> 0 && $attribute_value_id > 0) {
+	if ($attribute_id > 0 && $attribute_value_id > 0) {
 		$feature = $attribute_id . '-' . $attribute_value_id;
 		$selectedvariant[$feature] = $feature;
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
@@ -792,11 +792,11 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
+					"combinations.php?id=".urlencode((string) ($id))."&valueid=".urlencode((string) ($valueid)),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					array(array('label'=> $langs->trans('DeleteLinkedProduct'), 'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
+					array(array('label' => $langs->trans('DeleteLinkedProduct'), 'type' => 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);

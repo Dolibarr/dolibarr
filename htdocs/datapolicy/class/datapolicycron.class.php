@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -463,6 +464,7 @@ class DataPolicyCron
 
 		foreach ($arrayofparameters as $key => $params) {
 			if (getDolGlobalInt($key) > 0) {
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);
@@ -486,7 +488,7 @@ class DataPolicyCron
 							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
 								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
-										$object->$field = $field.'-anonymous-'.$obj->rowid;
+										$object->$field = $field.'-anonymous-'.$obj->rowid; // @phpstan-ignore-line
 									} else {
 										$object->$field = $val;
 									}
@@ -501,11 +503,7 @@ class DataPolicyCron
 						}
 
 						if ($action == 'delete') {									// If object to clean is not used
-							if ($object->element == 'adherent') {
-								$result = $object->delete($obj->rowid, $user);
-							} else {
-								$result = $object->delete($user);
-							}
+							$result = $object->delete($user);
 							if ($result < 0) {
 								$errormsg = $object->error;
 								$error++;

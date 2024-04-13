@@ -264,6 +264,7 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
+	$total_ttc = 0.;
 	$totalrecu = 0;
 
 	while ($i < $num) {

@@ -116,9 +116,9 @@ if ($id > 0 || !empty($ref)) {
 
 	//$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	$morehtmlright = '';
+	$morehtmlstatus = '';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 
 	print '<div class="fichecenter">';

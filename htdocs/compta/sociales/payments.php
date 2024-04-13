@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -123,10 +124,10 @@ if ($sortorder) {
 	$param .= '&sortorder='.urlencode($sortorder);
 }
 if ($year) {
-	$param .= '&year='.urlencode($year);
+	$param .= '&year='.urlencode((string) ($year));
 }
 if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
+	$param .= '&search_sc_type='.urlencode((string) ($search_sc_type));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -307,7 +308,7 @@ while ($i < min($num, $limit)) {
 		$userstatic->admin = $obj->admin;
 		$userstatic->login = $obj->login;
 		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->status = $obj->statut;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 	}

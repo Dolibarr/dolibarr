@@ -2,7 +2,7 @@
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 global $conf, $hookmanager, $langs;
@@ -112,10 +112,13 @@ $parameters = array(
 );
 
 $reshook = $hookmanager->executeHooks('PrintTopMenu', $parameters, $context, $context->action);    // Note that $action and $object may have been modified by hook
-if ($reshook < 0) $context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	$context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	if (!empty($hookmanager->resArray)) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 		$navMenu = array_replace($navMenu, $hookmanager->resArray);
 	}
 

@@ -228,6 +228,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Title
 	print '<tr><td class="titlefield">';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -247,6 +248,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
+	// URL
 	print '<tr><td>';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -255,7 +257,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '</span>';
 	}
-	print '</td><td>';
+	print '</td><td class="tdoverflowmax500">';
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {

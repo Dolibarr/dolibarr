@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +185,7 @@ class FormAdmin
 	 *    @param    string		$htmlname        Name of html select
 	 *    @param    array		$dirmenuarray    Array of directories to scan
 	 *    @param    string		$moreattrib      More attributes on html select tag
-	 *    @return	integer|null
+	 *    @return	integer|void
 	 */
 	public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
 	{
@@ -379,31 +380,31 @@ class FormAdmin
 		print '<option value="-1">&nbsp;</option>';
 
 		$arraytz = array(
-			"Pacific/Midway"=>"GMT-11:00",
-			"Pacific/Fakaofo"=>"GMT-10:00",
-			"America/Anchorage"=>"GMT-09:00",
-			"America/Los_Angeles"=>"GMT-08:00",
-			"America/Dawson_Creek"=>"GMT-07:00",
-			"America/Chicago"=>"GMT-06:00",
-			"America/Bogota"=>"GMT-05:00",
-			"America/Anguilla"=>"GMT-04:00",
-			"America/Araguaina"=>"GMT-03:00",
-			"America/Noronha"=>"GMT-02:00",
-			"Atlantic/Azores"=>"GMT-01:00",
-			"Africa/Abidjan"=>"GMT+00:00",
-			"Europe/Paris"=>"GMT+01:00",
-			"Europe/Helsinki"=>"GMT+02:00",
-			"Europe/Moscow"=>"GMT+03:00",
-			"Asia/Dubai"=>"GMT+04:00",
-			"Asia/Karachi"=>"GMT+05:00",
-			"Indian/Chagos"=>"GMT+06:00",
-			"Asia/Jakarta"=>"GMT+07:00",
-			"Asia/Hong_Kong"=>"GMT+08:00",
-			"Asia/Tokyo"=>"GMT+09:00",
-			"Australia/Sydney"=>"GMT+10:00",
-			"Pacific/Noumea"=>"GMT+11:00",
-			"Pacific/Auckland"=>"GMT+12:00",
-			"Pacific/Enderbury"=>"GMT+13:00"
+			"Pacific/Midway" => "GMT-11:00",
+			"Pacific/Fakaofo" => "GMT-10:00",
+			"America/Anchorage" => "GMT-09:00",
+			"America/Los_Angeles" => "GMT-08:00",
+			"America/Dawson_Creek" => "GMT-07:00",
+			"America/Chicago" => "GMT-06:00",
+			"America/Bogota" => "GMT-05:00",
+			"America/Anguilla" => "GMT-04:00",
+			"America/Araguaina" => "GMT-03:00",
+			"America/Noronha" => "GMT-02:00",
+			"Atlantic/Azores" => "GMT-01:00",
+			"Africa/Abidjan" => "GMT+00:00",
+			"Europe/Paris" => "GMT+01:00",
+			"Europe/Helsinki" => "GMT+02:00",
+			"Europe/Moscow" => "GMT+03:00",
+			"Asia/Dubai" => "GMT+04:00",
+			"Asia/Karachi" => "GMT+05:00",
+			"Indian/Chagos" => "GMT+06:00",
+			"Asia/Jakarta" => "GMT+07:00",
+			"Asia/Hong_Kong" => "GMT+08:00",
+			"Asia/Tokyo" => "GMT+09:00",
+			"Australia/Sydney" => "GMT+10:00",
+			"Pacific/Noumea" => "GMT+11:00",
+			"Pacific/Auckland" => "GMT+12:00",
+			"Pacific/Enderbury" => "GMT+13:00"
 		);
 		foreach ($arraytz as $lib => $gmt) {
 			print '<option value="'.$lib.'"';
@@ -441,6 +442,8 @@ class FormAdmin
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
 		}
+
+		$paperformat = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

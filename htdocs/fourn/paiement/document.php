@@ -63,7 +63,7 @@ $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -126,7 +126,7 @@ if ($object->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 
 	// Amount
-	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, '', $langs, 0, 0, -1, $conf->currency);
+	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
 
 	$allow_delete = 1;
 	// Bank account

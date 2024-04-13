@@ -47,7 +47,7 @@ body > nav {
 .spacer{
   --spacer-margin: calc(var(--font-size) * 2);
   margin-top: var(--spacer-margin);
-  margin-bottom: var(--spacer-margin);;
+  margin-bottom: var(--spacer-margin);
 }
 
 html{

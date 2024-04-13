@@ -4,6 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +91,7 @@ class MultiCurrency extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var CurrencyRate 	The currency rate
+	 * @var ?CurrencyRate 	The currency rate
 	 */
 	public $rate;
 
@@ -519,12 +521,12 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB	$dbs	        Object db
-	 * @param string	$code	        Code value search
-	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param DoliDB			$dbs	        Object db
+	 * @param string			$code	        Code value search
+	 * @param integer|string	$date_document	Date from document (propal, order, invoice, ...)
 	 *
-	 * @return 	array	[0] => id currency
-	 *						[1] => rate
+	 * @return 	array			[0] => id currency
+	 *							[1] => rate
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
@@ -650,7 +652,7 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf, $db, $langs;
 
-		if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+		if (getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 			if ($mode == "cron") {
 				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
 			} else {

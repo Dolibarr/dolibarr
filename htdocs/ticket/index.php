@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -405,7 +406,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Category
 				print '<td class="nowrap">';
-				if (!empty($obp->category_code)) {
+				if (!empty($objp->category_code)) {
 					$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
 					print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				}

@@ -21,7 +21,6 @@ MenuDoneMyActions=My terminated events
 ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Events reported by
 ActionsToDoBy=Events assigned to
-ActionsDoneBy=Events done by
 ActionAssignedTo=Event assigned to
 ViewCal=Month view
 ViewDay=Day view

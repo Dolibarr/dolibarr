@@ -53,7 +53,7 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -358,11 +358,11 @@ class SecurityTest extends CommonClassTest
 
 		$result = GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, $_GET["param2"], 'Test on param2');
+		$this->assertEquals($result, 'a/b#e(pr)qq-rr/cc', 'Test on param2');
 
 		$result = GETPOST("param3", 'alpha');  // Must return string sanitized from char "
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
+		$this->assertEquals($result, 'na/b#e(pr)qq-rr/cc', 'Test on param3');
 
 		$result = GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
@@ -984,6 +984,14 @@ class SecurityTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		// Declare classes found into string to evaluate
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
+		print "result0 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
 		$this->assertTrue($result);
@@ -992,11 +1000,18 @@ class SecurityTest extends CommonClassTest
 		print "result2 = ".$result."\n";
 		$this->assertFalse($result);
 
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$s = '((($reloadedobj = new ClassThatDoesNotExists($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$result3a = dol_eval($s, 1, 1, '2');
+		print "result3a = ".$result3a."\n";
+		$this->assertEquals('Exception during evaluation: '.$s, $result3a);
+
+		$s = '((($reloadedobj = new Project($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$result3b = dol_eval($s, 1, 1, '2');
+		print "result3b = ".$result."\n";
+		$this->assertEquals('0', $result3b);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
-		$result = dol_eval($s, 1, 1, '2');
+		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result3 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
@@ -1004,6 +1019,17 @@ class SecurityTest extends CommonClassTest
 		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
+
+		$s = 'new abc->invoke(\'whoami\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new abc__forbiddenstring__(\'whoami\')', $result);
+
+		$s = 'new ReflectionFunction(\'abc\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new __forbiddenstring__(\'abc\')', $result);
+
 
 		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result5 = ".$result."\n";

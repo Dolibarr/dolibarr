@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,10 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$id = GETPOSTINT('socid') || GETPOSTINT('id_fourn');
+$id = GETPOSTINT('socid');
+if ($id == 0) {
+	$id = GETPOSTINT('id_fourn');
+}
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -83,7 +87,7 @@ if (!$socid) {
 
 // Generate list of companies
 if (! $socid) {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 	exit;
 }
 
@@ -147,6 +151,7 @@ if ($resql) {
 		if ($socid) {
 			$label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		}
+		$row_array = array();
 		$row_array['label'] = $label;
 
 		$row_array['value'] = $row['nom'];
@@ -175,5 +180,5 @@ if ($resql) {
 
 	echo json_encode($return_arr);
 } else {
-	echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+	echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 }

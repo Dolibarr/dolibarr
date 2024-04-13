@@ -65,7 +65,7 @@ $showbirthday = 0;
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -99,10 +99,10 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  //
 
 $mode = 'show_peruser';
 $resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
-$year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
-$month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
-$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
-$day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
+$year = GETPOSTINT("year") ? GETPOSTINT("year") : idate("Y");
+$month = GETPOSTINT("month") ? GETPOSTINT("month") : idate("m");
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : idate("W");
+$day = GETPOSTINT("day") ? GETPOSTINT("day") : idate("d");
 $pid = GETPOSTISSET("search_projectid") ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
@@ -129,8 +129,8 @@ if ($dateselect > 0) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS') ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOSTINT('begin_h') != '' ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOSTINT('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOSTISSET('begin_h') ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOSTISSET('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) {
 	$begin_h = 9;
 }
@@ -144,8 +144,8 @@ if ($end_h <= $begin_h) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_d = GETPOSTINT('begin_d') ? GETPOSTINT('begin_d') : ($tmparray[0] != '' ? $tmparray[0] : 1);
-$end_d   = GETPOSTINT('end_d') ? GETPOSTINT('end_d') : ($tmparray[1] != '' ? $tmparray[1] : 5);
+$begin_d = GETPOSTISSET('begin_d') ? GETPOSTINT('begin_d') : ($tmparray[0] != '' ? $tmparray[0] : 1);
+$end_d   = GETPOSTISSET('end_d') ? GETPOSTINT('end_d') : ($tmparray[1] != '' ? $tmparray[1] : 5);
 if ($begin_d < 1 || $begin_d > 7) {
 	$begin_d = 1;
 }
@@ -170,12 +170,12 @@ if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' &
 } // View by month
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
 	$mode = 'show_week';
-	$week = ($week ? $week : date("W"));
-	$day = ($day ? $day : date("d"));
+	$week = ($week ? $week : idate("W"));
+	$day = ($day ? $day : idate("d"));
 } // View by week
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$mode = 'show_day';
-	$day = ($day ? $day : date("d"));
+	$day = ($day ? $day : idate("d"));
 } // View by day
 
 $object = new ActionComm($db);
@@ -257,7 +257,7 @@ $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
 
-$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year));
+$max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year));
 
 $tmpday = $first_day;
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
@@ -282,7 +282,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	}
 }
 if ($resourceid > 0) {
-	$param .= "&search_resourceid=".urlencode($resourceid);
+	$param .= "&search_resourceid=".urlencode((string) ($resourceid));
 }
 
 if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
@@ -295,16 +295,16 @@ if ($filtert) {
 	$param .= "&search_filtert=".urlencode($filtert);
 }
 if ($usergroup > 0) {
-	$param .= "&search_usergroup=".urlencode($usergroup);
+	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
 }
 if ($socid > 0) {
-	$param .= "&search_socid=".urlencode($socid);
+	$param .= "&search_socid=".urlencode((string) ($socid));
 }
 if ($showbirthday) {
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
-	$param .= "&search_projectid=".urlencode($pid);
+	$param .= "&search_projectid=".urlencode((string) ($pid));
 }
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
@@ -313,21 +313,21 @@ if ($mode != 'show_peruser') {
 	$param .= '&mode='.urlencode($mode);
 }
 if ($begin_h != '') {
-	$param .= '&begin_h='.urlencode($begin_h);
+	$param .= '&begin_h='.((int) $begin_h);
 }
 if ($end_h != '') {
-	$param .= '&end_h='.urlencode($end_h);
+	$param .= '&end_h='.((int) $end_h);
 }
 if ($begin_d != '') {
-	$param .= '&begin_d='.urlencode($begin_d);
+	$param .= '&begin_d='.((int) $begin_d);
 }
 if ($end_d != '') {
-	$param .= '&end_d='.urlencode($end_d);
+	$param .= '&end_d='.((int) $end_d);
 }
 if ($search_categ_cus != 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
-$param .= "&maxprint=".urlencode($maxprint);
+$param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
 
@@ -358,7 +358,7 @@ $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print dol_print_date($firstdaytoshow, 'dayhour', 'gmt');
 //print dol_print_date($lastdaytoshow,'dayhour', 'gmt');
 
-$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
+$max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
 
 $tmpday = $first_day;
 $picto = 'calendarweek';
@@ -377,7 +377,7 @@ $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav .= ' <button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 
 // Must be after the nav definition
-$param .= '&year='.urlencode($year).'&month='.urlencode($month).($day ? '&day='.urlencode($day) : '');
+$param .= '&year='.urlencode((string) ($year)).'&month='.urlencode((string) ($month)).($day ? '&day='.urlencode((string) ($day)) : '');
 //print 'x'.$param;
 
 
@@ -482,23 +482,25 @@ $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-	$newparam .= '&month='.urlencode(str_pad($month, 2, "0", STR_PAD_LEFT)).'&year='.urlencode($tmpforcreatebutton['year']);
+	$newparam .= '&month='.urlencode(str_pad((string) $month, 2, "0", STR_PAD_LEFT)).'&year='.((int) $tmpforcreatebutton['year']);
 	if ($begin_h !== '') {
-		$newparam .= '&begin_h='.urlencode($begin_h);
+		$newparam .= '&begin_h='.((int) $begin_h);
 	}
 	if ($end_h !== '') {
-		$newparam .= '&end_h='.urlencode($end_h);
+		$newparam .= '&end_h='.((int) $end_h);
 	}
 	if ($begin_d !== '') {
-		$newparam .= '&begin_d='.urlencode($begin_d);
+		$newparam .= '&begin_d='.((int) $begin_d);
 	}
 	if ($end_d !== '') {
-		$newparam .= '&end_d='.urlencode($end_d);
+		$newparam .= '&end_d='.((int) $end_d);
 	}
 
-	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = '100000';
-	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
+	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+
+	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 $num = '';
@@ -714,20 +716,11 @@ if ($resql) {
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
 		// They are date start and end of action but modified to not be outside calendar view.
-		if ($event->percentage <= 0) {
-			$event->date_start_in_calendar = $datep;
-			if ($datep2 != '' && $datep2 >= $datep) {
-				$event->date_end_in_calendar = $datep2;
-			} else {
-				$event->date_end_in_calendar = $datep;
-			}
+		$event->date_start_in_calendar = $datep;
+		if ($datep2 != '' && $datep2 >= $datep) {
+			$event->date_end_in_calendar = $datep2;
 		} else {
-			$event->date_start_in_calendar = $datep;
-			if ($datep2 != '' && $datep2 >= $datep) {
-				$event->date_end_in_calendar = $datep2;
-			} else {
-				$event->date_end_in_calendar = $datep;
-			}
+			$event->date_end_in_calendar = $datep;
 		}
 
 		//print '<br>'.$i.' - eventid='.$event->id.' '.dol_print_date($event->date_start_in_calendar, 'dayhour').' '.dol_print_date($firstdaytoshow, 'dayhour').' - '.dol_print_date($event->date_end_in_calendar, 'dayhour').' '.dol_print_date($lastdaytoshow, 'dayhour').'<br>'."\n";
@@ -1503,7 +1496,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string1 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style1 = 'peruser_notbusy';
 			} else {
@@ -1520,7 +1513,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string2 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style2 = 'peruser_notbusy';
 			} else {
@@ -1537,7 +1530,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if (count($cases3[$h]) > 1) {
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string3 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style3 = 'peruser_notbusy';
 			} else {
@@ -1554,7 +1547,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if (count($cases4[$h]) > 1) {
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string4 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style4 = 'peruser_notbusy';
 			} else {

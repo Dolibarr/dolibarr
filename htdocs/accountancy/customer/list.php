@@ -55,7 +55,7 @@ $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
-$search_lineid = GETPOSTINT('search_lineid');
+$search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -71,7 +71,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_country = GETPOST('search_country', 'alpha');
+$search_country = GETPOST('search_country', 'aZ09');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Define begin binding date
@@ -83,7 +83,7 @@ if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDI
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -116,7 +116,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -230,7 +230,7 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("CustomersVentilation"), $help_url);
 
@@ -399,25 +399,25 @@ if ($result) {
 		$param .= '&search_societe='.urlencode($search_societe);
 	}
 	if ($search_lineid) {
-		$param .= '&search_lineid='.urlencode($search_lineid);
+		$param .= '&search_lineid='.urlencode((string) ($search_lineid));
 	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($search_invoice) {
 		$param .= '&search_invoice='.urlencode($search_invoice);
@@ -445,13 +445,14 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
-		,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
+		,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+	$massactionbutton = '';
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 	}
@@ -467,10 +468,12 @@ if ($result) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	if ($massaction == 'set_default_account') {
-		$formquestion[]=array('type' => 'other',
+		$formquestion = array();
+		$formquestion[] = array('type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
 			'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
@@ -599,26 +602,26 @@ if ($result) {
 		$facture_static_det->desc = $objp->description;
 
 		$accountingAccountArray = array(
-			'dom'=>$objp->aarowid,
-			'intra'=>$objp->aarowid_intra,
-			'export'=>$objp->aarowid_export,
-			'thirdparty' =>$objp->aarowid_thirdparty);
+			'dom' => $objp->aarowid,
+			'intra' => $objp->aarowid_intra,
+			'export' => $objp->aarowid_export,
+			'thirdparty' => $objp->aarowid_thirdparty);
 
 		$code_sell_p_notset = '';
 		$code_sell_t_notset = '';
 
 		$suggestedid = 0;
 
-		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
-		if (!is_array($return) && $return<0) {
+		$return = $accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
+		if (!is_array($return) && $return < 0) {
 			setEventMessage($accountingAccount->error, 'errors');
 		} else {
-			$suggestedid=$return['suggestedid'];
-			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
-			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_sell_l=$return['code_l'];
-			$code_sell_p=$return['code_p'];
-			$code_sell_t=$return['code_t'];
+			$suggestedid = $return['suggestedid'];
+			$suggestedaccountingaccountfor = $return['suggestedaccountingaccountfor'];
+			$suggestedaccountingaccountbydefaultfor = $return['suggestedaccountingaccountbydefaultfor'];
+			$code_sell_l = $return['code_l'];
+			$code_sell_p = $return['code_p'];
+			$code_sell_t = $return['code_t'];
 		}
 		//var_dump($return);
 
@@ -660,8 +663,8 @@ if ($result) {
 		print '</td>';
 
 		// Description of line
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
@@ -780,7 +783,7 @@ if ($result) {
 		if (!empty($toselect)) {
 			$ischecked = 0;
 			if (in_array($objp->rowid."_".$i, $toselect)) {
-				$ischecked=1;
+				$ischecked = 1;
 			}
 		}
 

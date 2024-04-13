@@ -47,7 +47,7 @@ if (isModEnabled('category')) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -448,6 +448,7 @@ if ($object->fetch($id) >= 0) {
 	$nbemail = ($object->nbemail ? $object->nbemail : '0');
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) {
 		$text = $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		print $form->textwithpicto($nbemail, $text, 1, 'warning');
 	} else {
 		print $nbemail;

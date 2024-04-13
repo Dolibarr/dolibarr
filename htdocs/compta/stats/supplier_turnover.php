@@ -251,8 +251,8 @@ $sql .= " ORDER BY dm";
 
 $minyearmonth = $maxyearmonth = 0;
 
-$cum = array();
-$cum_ht = array();
+$cumulative = array();
+$cumulative_ht = array();
 $total_ht = array();
 $total = array();
 
@@ -262,8 +262,8 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$cum_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
-		$cum[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
+		$cumulative_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
+		$cumulative[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
 		if ($obj->amount_ttc) {
 			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -365,9 +365,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Value turnover of month w/o VAT
 				print '<td class="right">';
-				if (!empty($cum_ht[$case])) {
+				if (!empty($cumulative_ht[$case])) {
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
-					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
+					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
 				} else {
 					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
 						print '0';
@@ -380,12 +380,12 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Value turnover of month
 			print '<td class="right">';
-			if (!empty($cum[$case])) {
+			if (!empty($cumulative[$case])) {
 				$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 				if ($modecompta != 'BOOKKEEPING') {
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
 				}
-				print price($cum[$case], 1);
+				print price($cumulative[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') {
 					print '</a>';
 				}
@@ -400,22 +400,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Percentage of month
 			if ($annee_decalage > $minyear && $case <= $casenow) {
-				if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
-					$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
-					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+				if (!empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
+					$percent = (round(($cumulative[$case] - $cumulative[$caseprev]) / $cumulative[$caseprev], 4) * 100);
+					//print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
 					print '<td class="borderrightlight right">'.($percent >= 0 ? "+$percent" : "$percent").'%</td>';
 				}
-				if (!empty($cum[$caseprev]) && empty($cum[$case])) {
+				if (!empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">-100%</td>';
 				}
-				if (empty($cum[$caseprev]) && !empty($cum[$case])) {
+				if (empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
 					//print '<td class="right">+Inf%</td>';
 					print '<td class="borderrightlight right">-</td>';
 				}
-				if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
+				if (isset($cumulative[$caseprev]) && empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">+0%</td>';
 				}
-				if (!isset($cum[$caseprev]) && empty($cum[$case])) {
+				if (!isset($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">-</td>';
 				}
 			} else {
@@ -434,14 +434,14 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		}
 
 		if (empty($total_ht[$annee])) {
-			$total_ht[$annee] = ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+			$total_ht[$annee] = ((!empty($cumulative_ht[$case])) ? $cumulative_ht[$case] : 0);
 		} else {
-			$total_ht[$annee] += ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+			$total_ht[$annee] += ((!empty($cumulative_ht[$case])) ? $cumulative_ht[$case] : 0);
 		}
 		if (empty($total[$annee])) {
-			$total[$annee] = (empty($cum[$case]) ? 0 : $cum[$case]);
+			$total[$annee] = (empty($cumulative[$case]) ? 0 : $cumulative[$case]);
 		} else {
-			$total[$annee] += (empty($cum[$case]) ? 0 : $cum[$case]);
+			$total[$annee] += (empty($cumulative[$case]) ? 0 : $cumulative[$case]);
 		}
 	}
 

@@ -1053,7 +1053,7 @@ if (empty($reshook)) {
 	}
 
 	// Force mandatory order method
-	if ($action == 'commande') {
+	if ($action == 'commande') {	// Not a real action so no permission test
 		$methodecommande = GETPOSTINT('methodecommande');
 
 		if ($cancel) {
@@ -1189,11 +1189,10 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->fournisseur->commande->dir_output;
-	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from add form
@@ -1221,7 +1220,7 @@ if (empty($reshook)) {
 	/*
 	 * Create an order
 	 */
-	if ($action == 'add' && $usercancreate) {
+	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
 		$selectedLines = GETPOST('toselect', 'array');
 		if ($socid < 1) {
@@ -1350,8 +1349,6 @@ if (empty($reshook)) {
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
 								}
 
-								$object->special_code = $lines[$i]->special_code;
-
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -1374,7 +1371,9 @@ if (empty($reshook)) {
 									$lines[$i]->fk_unit,
 									0,
 									$element,
-									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
+									-1,
+									$lines[$i]->special_code
 								);
 
 								if ($result < 0) {
@@ -1421,16 +1420,15 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				$db->rollback();
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
 			} else {
 				$db->commit();
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
 				exit;
 			}
 		}
 	}
 
-	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'webservice' && $permissiontoadd && GETPOST('mode', 'alpha') == "send" && !GETPOST('cancel', 'alpha')) {
 		$ws_url         = $object->thirdparty->webservices_url;
 		$ws_key         = $object->thirdparty->webservices_key;
 		$ws_user        = GETPOST('ws_user', 'alpha');
@@ -1448,9 +1446,9 @@ if (empty($reshook)) {
 			'entity' => $ws_entity
 		);
 
-		//Is sync supplier web services module activated? and everything filled?
-		if (empty($conf->syncsupplierwebservices->enabled)) {
-			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2650Name")), null, 'mesgs');
+		// Is sync supplier web services module activated? and everything filled?
+		if (isModEnabled('webservicesclient')) {
+			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2660Name")), null, 'mesgs');
 		} elseif (empty($ws_url) || empty($ws_key)) {
 			setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
 		} elseif (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
@@ -1504,16 +1502,16 @@ if (empty($reshook)) {
 			$result_order = $soapclient_order->call("createOrder", $ws_parameters, $ws_ns, '');
 
 			if (empty($result_order["result"]["result_code"])) { //No result, check error str
-				setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
+				setEventMessages($langs->trans("Error")." '".$soapclient_order->error_str."'", null, 'errors');
 			} elseif ($result_order["result"]["result_code"] != "OK") { //Something went wrong
-				setEventMessages($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
+				setEventMessages($langs->trans("Error")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
 			} else {
 				setEventMessages($langs->trans("RemoteOrderRef")." ".$result_order["ref"], null, 'mesgs');
 			}
 		}
 	}
 
-	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $permissiontoadd) {
 		if ($action == 'addcontact') {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
@@ -1757,7 +1755,7 @@ if ($action == 'create') {
 		// Payment mode
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
+		$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOSTINT('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
 		print '</td></tr>';
 
 		// Planned delivery date
@@ -1770,7 +1768,7 @@ if ($action == 'create') {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, '', "set");
+		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, 0, "set");
 		print '</td></tr>';
 
 		// Bank Account
@@ -2165,7 +2163,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($action != 'editconditions') {
+		if ($action != 'editconditions' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -2184,7 +2182,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode') {
+		if ($action != 'editmode' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -2204,7 +2202,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT) {
+			if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT && $permissiontoadd) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -2252,7 +2250,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			print $langs->trans('BankAccount');
 			print '<td>';
-			if ($action != 'editbankaccount' && $usercancreate) {
+			if ($action != 'editbankaccount' && $permissiontoadd) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -2290,7 +2288,7 @@ if ($action == 'create') {
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 				$usehourmin = 1;
 			}
-			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
+			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, 0, "setdate_livraison");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -2341,20 +2339,20 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount HT
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		print '<tr>';
 		// Amount VAT
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount VAT
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
@@ -2362,18 +2360,18 @@ if ($action == 'create') {
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
 			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
 				print '<tr>';
 				print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-					print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+					print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 				}
 				print '</tr>';
 			}
@@ -2387,10 +2385,10 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount TTC
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . $alert . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . $alert . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount TTC
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
@@ -2655,7 +2653,7 @@ if ($action == 'create') {
 				}
 
 				// Create a remote order using WebService only if module is activated
-				if (!empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) { // 2 means accepted
+				if (isModEnabled('webservicesclient') && $object->statut >= 2) { // 2 means accepted
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=webservice&token='.newToken().'&mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
 				}
 
@@ -2696,7 +2694,7 @@ if ($action == 'create') {
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-			print $form->selectDate($date_com ?: '', '', 0, 0, '', "commande", 1, 1);
+			print $form->selectDate($date_com ?: '', '', 0, 0, 0, "commande", 1, 1);
 			print '</td></tr>';
 
 			// Force mandatory order method
@@ -2757,7 +2755,7 @@ if ($action == 'create') {
 					//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 					print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
 					$datepreselected = dol_now();
-					print $form->selectDate($datepreselected, '', 1, 1, '', "commande", 1, 1);
+					print $form->selectDate($datepreselected, '', 1, 1, 0, "commande", 1, 1);
 					print "</td></tr>\n";
 
 					print '<tr><td class="fieldrequired">'.$langs->trans("Delivery")."</td><td>\n";
@@ -2894,7 +2892,7 @@ if ($action == 'create') {
 							$ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ref_supplier);
 							$result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
 							if (!$result_product) {
-								setEventMessages($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, null, 'errors');
+								setEventMessages($line_id.$langs->trans("Error")." SOAP ".$soapclient_product->error_str." - ".$soapclient_product->response, null, 'errors');
 								$error_occurred = true;
 								break;
 							}
@@ -2902,7 +2900,7 @@ if ($action == 'create') {
 							// Check the result code
 							$status_code = $result_product["result"]["result_code"];
 							if (empty($status_code)) { //No result, check error str
-								setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
+								setEventMessages($langs->trans("Error")." SOAP '".$soapclient_order->error_str."'", null, 'errors');
 							} elseif ($status_code != "OK") { //Something went wrong
 								if ($status_code == "NOT_FOUND") {
 									setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');

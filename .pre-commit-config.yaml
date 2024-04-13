@@ -62,7 +62,9 @@ repos:
     rev: v6.2.1
     hooks:
       - id: beautysh
-        exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
+        exclude: |
+          (?x)^(dev/setup/git/hooks/pre-commit
+               )$
         args: [--tab]
 
   # Run local script
@@ -77,6 +79,13 @@ repos:
   #   ```
   - repo: local
     hooks:
+      - name: Find missing/unused/duplicate language keys
+        id: check-translations
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/translation/sanity_check_trans_missing_unused.sh
+        pass_filenames: false
+        args: [list]
       - id: local-precommit-script
         name: Run local script before commit if it exists
         language: system

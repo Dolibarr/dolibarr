@@ -152,7 +152,7 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	dol_syslog("Page is called without code parameter defined");
+	dol_syslog("Page is called without the 'code' parameter defined");
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
@@ -161,22 +161,8 @@ if (!GETPOST('code')) {
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
-	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
-	/*
-	if (!empty($_POST["tz"])) {
-		$_SESSION["tz"] = $_POST["tz"];
-	}
-	if (!empty($_POST["tz_string"])) {
-		$_SESSION["tz_string"] = $_POST["tz_string"];
-	}
-	if (!empty($_POST["dst_first"])) {
-		$_SESSION["dst_first"] = $_POST["dst_first"];
-	}
-	if (!empty($_POST["dst_second"])) {
-		$_SESSION["dst_second"] = $_POST["dst_second"];
-	}
-	*/
+	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
+	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
 	if ($forlogin) {
 		$apiService->setApprouvalPrompt('force');

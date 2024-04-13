@@ -267,7 +267,8 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
-		if ($i > 0 && $json[$i] == '"' && $json[($i - 1)] != "\\") {
+		// @phan-suppress-next-line PhanCompatibleNegativeStringOffset
+		if ($i >= 1 && $json[$i] == '"' && $json[$i - 1] != "\\") {
 			$comment = !$comment;
 		}
 	}
@@ -282,7 +283,7 @@ function dol_json_decode($json, $assoc = false)
 			// @phan-suppress-next-line PhanPluginUnsafeEval
 			eval('$array = '.$out.';');
 		} catch (Exception $e) {
-			$array = array();
+			$array = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 	}
 
