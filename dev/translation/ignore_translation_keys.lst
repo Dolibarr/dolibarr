@@ -102,7 +102,6 @@ Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
 Agents
-AllEntities
 AllFilesDidAlreadyExist
 AlreadyInV7
 AmountOfOrders
@@ -311,7 +310,6 @@ Empty
 End
 EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
-EntityNameNotDefined
 Entries
 ErrSCAAuthentication
 Error sql

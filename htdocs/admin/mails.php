@@ -308,19 +308,19 @@ if ($action == 'edit') {
                         }
                     }
 					function change_smtp_auth_method() {
-						console.log(jQuery("#radio_pw").prop("checked"));
+						console.log("Call smtp auth method");
 						if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\' && jQuery("#radio_oauth").prop("checked")) {
-							jQuery(".smtp_oauth_service").show();
 							jQuery(".smtp_pw").hide();
+							jQuery(".smtp_oauth_service").show();
 						} else if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\' && jQuery("#radio_oauth").prop("checked")) {
+							jQuery(".smtp_pw").hide();
 							jQuery(".smtp_oauth_service").show();
-							jQuery(".smtp_pw").hide();
 						} else if(jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\'){
-							jQuery(".smtp_oauth_service").hide();
 							jQuery(".smtp_pw").hide();
-						} else {
 							jQuery(".smtp_oauth_service").hide();
+						} else {
 							jQuery(".smtp_pw").show();
+							jQuery(".smtp_oauth_service").hide();
 						}
 					}
                     initfields();
@@ -329,7 +329,7 @@ if ($action == 'edit') {
                         initfields();
 						change_smtp_auth_method();
                     });
-					jQuery("#radio_pw, #radio_oauth").change(function() {
+					jQuery("#radio_pw, #radio_plain, #radio_oauth").change(function() {
 						change_smtp_auth_method();
 					});
                     jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
@@ -450,7 +450,10 @@ if ($action == 'edit') {
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
 			print '<input type="radio" id="radio_pw" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="LOGIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
-			print '<label for="radio_pw" >'.$langs->trans("UsePassword").'</label>';
+			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
+			print '&nbsp; &nbsp; &nbsp;';
+			print '<input type="radio" id="radio_plain" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="PLAIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
 			print '&nbsp; &nbsp; &nbsp;';
 			print '<input type="radio" id="radio_oauth" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="XOAUTH2"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') == 'XOAUTH2' ? ' checked' : '').'> ';
 			print '<label for="radio_oauth" >'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
@@ -698,7 +701,14 @@ if ($action == 'edit') {
 		// AUTH method
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
 			$authtype = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
-			$text = ($authtype === "LOGIN") ? $langs->trans("UsePassword") : ($authtype === "XOAUTH2" ? $langs->trans("UseOauth") : '') ;
+			$text = '';
+			if ($authtype === "LOGIN") {
+				$text = $langs->trans("UseAUTHLOGIN");
+			} elseif ($authtype === "PLAIN") {
+				$text = $langs->trans("UseAUTHPLAIN");
+			} elseif ($authtype === "XOAUTH2") {
+				$text = $langs->trans("UseOauth");
+			}
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>'.$text.'</td></tr>';
 		}
 
