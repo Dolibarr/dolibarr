@@ -10825,8 +10825,8 @@ function printCommonFooter($zone = 'private')
 		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
 			$debugbar['time']->stopMeasure('pageaftermaster');
 			print '<!-- Output debugbar data -->'."\n";
-			$renderer = $debugbar->getRenderer();
-			print $debugbar->getRenderer()->render();
+			$renderer = $debugbar->getJavascriptRenderer();
+			print $renderer->render();
 		} elseif (count($conf->logbuffer)) {    // If there is some logs in buffer to show
 			print "\n";
 			print "<!-- Start of log output\n";
