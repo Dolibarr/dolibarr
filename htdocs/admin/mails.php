@@ -308,7 +308,7 @@ if ($action == 'edit') {
                         }
                     }
 					function change_smtp_auth_method() {
-						console.log("We change smtp auth method radio_pw="+jQuery("#radio_pw").prop("checked"));
+						console.log("Call smtp auth method");
 						if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\' && jQuery("#radio_oauth").prop("checked")) {
 							jQuery(".smtp_pw").hide();
 							jQuery(".smtp_oauth_service").show();
