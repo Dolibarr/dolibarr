@@ -251,6 +251,17 @@ function dpChangeDay(dateFieldID, format)
 	}
 }
 
+//add event on each date components to change session value via an ajax call
+function sessionUpdateDate(e) {
+	//previous value was stored into same hidden field id suffixed by _prev
+	let old = document.getElementById(e.id + '_prev');
+	if(old.value != e.value) {
+		//then call ajax to update session value
+		//and set new value on old for next time
+		jQuery.ajax({url: '<?php print DOL_URL_ROOT.'/core/ajax/update_session_value.php?';?>' + e.id + '=' + e.value});
+	}
+}
+
 /*
  * =================================================================
  * Function: formatDate(javascript object Date(), format)
