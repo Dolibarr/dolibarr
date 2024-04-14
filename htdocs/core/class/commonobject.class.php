@@ -94,7 +94,7 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
-	 * @var array   	To store error results of ->validateField()
+	 * @var array<string,string>	To store error results of ->validateField()
 	 */
 	private $validateFieldsErrors = array();
 
@@ -207,8 +207,13 @@ abstract class CommonObject
 	 */
 	public $context = array();
 
-	// Properties set and used by Agenda trigger
+	/**
+	 * @var string	Properties set and used by Agenda trigger
+	 */
 	public $actionmsg;
+	/**
+	 * @var string	Properties set and used by Agenda trigger
+	 */
 	public $actionmsg2;
 
 	/**
@@ -757,10 +762,13 @@ abstract class CommonObject
 	public $fk_user_modif;
 
 
+	/**
+	 * @var string XX
+	 */
 	public $next_prev_filter;
 
 	/**
-	 * @var int 1 if object is specimen
+	 * @var int<0,1> 1 if object is specimen
 	 */
 	public $specimen = 0;
 
@@ -782,12 +790,12 @@ abstract class CommonObject
 	public $totalpaid;
 
 	/**
-	 * @var array		Array with labels of status
+	 * @var array<int,string>		Array with labels of status
 	 */
 	public $labelStatus = array();
 
 	/**
-	 * @var array		Array with short labels of status
+	 * @var array<int,string>	Array with short labels of status
 	 */
 	public $labelStatusShort = array();
 
@@ -861,6 +869,12 @@ abstract class CommonObject
 	 * @var int 		Populated by setWarehouse()
 	 */
 	public $warehouse_id;
+
+	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
 
 	// No constructor as it is an abstract class
 
@@ -951,8 +965,8 @@ abstract class CommonObject
 	 * Return array of data to show into a tooltip. This method must be implemented in each object class.
 	 *
 	 * @since v18
-	 * @param array $params params to construct tooltip data
-	 * @return array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @return array<string,string>	Data to show in tooltip
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1844,8 +1858,9 @@ abstract class CommonObject
 	/**
 	 *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
 	 *
-	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								Return integer <0 if KO, >0 if OK
+	 *		@param		int<0,1>	$force_thirdparty_id	Force thirdparty id
+	 *		@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 *		@phan-suppress PhanUndeclaredProperty
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
@@ -1886,7 +1901,7 @@ abstract class CommonObject
 	 * It does only work when $this->table_ref_field is set
 	 *
 	 * @param 	string 	$ref 	Wildcard
-	 * @return 	int 			>1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
+	 * @return 	int<-1,1>		>1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
 	 */
 	public function fetchOneLike($ref)
 	{
@@ -8620,7 +8635,7 @@ abstract class CommonObject
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $label) {
 					$i++;
 
-					// Show only the key field in params
+					// Show only the key field in params  @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) {
 						continue;
 					}
@@ -9110,7 +9125,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string	$modulepart		Module part
 	 * @param 	string	$imagesize		Image size
-	 * @return 	array					Array of data to show photo
+	 * @return	array{dir:string,file:string,originalfile:string,altfile:string,email:string,capture:string)	Array of data to show photo
 	 */
 	public function getDataToShowPhoto($modulepart, $imagesize)
 	{
@@ -9812,7 +9827,7 @@ abstract class CommonObject
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
 
-			// If value is null and there is a default value for field
+			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default'])) {
 				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
 			}
@@ -9858,6 +9873,7 @@ abstract class CommonObject
 
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
+			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			if (array_key_exists('ref', $this->fields) && array_key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && array_key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
@@ -9929,11 +9945,11 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database. This does not load line. This is done by parent fetch() that call fetchCommon
 	 *
-	 * @param	int    	$id				Id object
-	 * @param	string 	$ref			Ref
-	 * @param	string	$morewhere		More SQL filters (' AND ...')
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int			$id				Id object
+	 * @param	string		$ref			Ref
+	 * @param	string		$morewhere		More SQL filters (' AND ...')
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
@@ -9995,9 +10011,9 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param	string	$morewhere		More SQL filters (' AND ...')
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	string		$morewhere		More SQL filters (' AND ...')
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>        			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesCommon($morewhere = '', $noextrafields = 0)
 	{
@@ -10008,6 +10024,7 @@ abstract class CommonObject
 		}
 
 		$objectline = new $objectlineclassname($this->db);
+		'@phan-var-force CommonObjectLine $objectline';
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
@@ -10027,6 +10044,7 @@ abstract class CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$newline = new $objectlineclassname($this->db);
+					'@phan-var-force CommonObjectLine $newline';
 					$newline->setVarsFromFetchObj($obj);
 
 					// Note: extrafields load of line not yet supported
@@ -10051,9 +10069,9 @@ abstract class CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      	User that modifies
-	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param  User		$user     	User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,1>           	Return integer <0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = 0)
 	{
@@ -10161,10 +10179,10 @@ abstract class CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param 	User 	$user       			User that deletes
-	 * @param 	int 	$notrigger  			0=launch triggers after, 1=disable triggers
-	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @param 	User 		$user       		User that deletes
+	 * @param 	int<0,1>	$notrigger  		0=launch triggers after, 1=disable triggers
+	 * @param	int<0,1>	$forcechilddeletion	0=no, 1=Force deletion of children
+	 * @return 	int<-1,1>						Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = 0, $forcechilddeletion = 0)
 	{
@@ -10211,6 +10229,7 @@ abstract class CommonObject
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
+							'@phan-var-force CommonObject $childObject';
 							$result = $childObject->deleteByParentField($this->id, $columnName, $filter);
 							if ($result < 0) {
 								$error++;
@@ -10400,6 +10419,7 @@ abstract class CommonObject
 		if (empty($error)) {
 			// Remove extrafields
 			$tmpobjectline = new $tmpforobjectlineclass($this->db);
+			'@phan-var-force CommonObjectLine $tmpobjectline';
 			if (!isset($tmpobjectline->isextrafieldmanaged) || !empty($tmpobjectline->isextrafieldmanaged)) {
 				$tmpobjectline->id = $idline;
 				$result = $tmpobjectline->deleteExtraFields();
@@ -10804,6 +10824,7 @@ abstract class CommonObject
 				default:
 					$element = $this->element;
 			}
+			'@phan-var-force string $element';
 
 			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
