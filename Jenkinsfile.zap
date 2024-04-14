@@ -9,8 +9,9 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-stable:2.14.0
+                    image: owasp/zap2docker-stable:
                     command:
+                    
                     tty: true
                     volumeMounts:
                     - name: zap-workdir
@@ -59,6 +60,7 @@ pipeline {
             when {
                 expression {
                     params.GENERATE_REPORT == true
+                    echo "test"
                 }
             }
             steps {
