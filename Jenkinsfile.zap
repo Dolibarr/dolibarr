@@ -5,10 +5,10 @@ pipeline {
                 apiVersion: v1
                 kind: Pod
                 metadata:
-                  name: owasp-pod
+                  name: zap-pod
                 spec:
                   containers:
-                  - name: owasp
+                  - name: zap
                     image: owasp/zap2docker-stable
                     command:
                     - sleep
@@ -72,7 +72,7 @@ pipeline {
                 }
             }
             steps {
-                container('owasp') {
+                container('zap') {
                     script {
                         sh """
                             mkdir -p /zap/wrk
@@ -84,7 +84,7 @@ pipeline {
 
         stage('Scanning target on owasp container') {
             steps {
-                container('owasp') {
+                container('zap') {
                     script {
                         def scan_type = "${params.SCAN_TYPE}"
                         def target = "${params.TARGET}"
@@ -122,7 +122,7 @@ pipeline {
 
         stage('Copy Report to Workspace') {
             steps {
-                container('owasp') {
+                container('zap') {
                     script {
                         sh '''
                             cp /zap/wrk/report.xml \${WORKSPACE}/report.xml
