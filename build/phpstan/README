@@ -5,17 +5,22 @@ PHPStan requires PHP >= 7.1
 
 Config File is: ./phpstan.neon
 
-Install phpstan:  
-cd git; mkdir phpstan
+= Installation =
+
+cd ./build/phpstan
+mkdir phpstan
 cd phpstan
 composer require --dev phpstan/phpstan
 
-Build report from CLI:
-cd git/dolibarr; mv htdocs/custom /tmp/
-php ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/commande/class 
-php ../phpstan/htdocs/includes/bin/phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table 
+
+= Build report from CLI =
+
+In dolibarr/
+mv htdocs/custom /tmp/
+php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/commande/class
+php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/
 mv /tmp/custom htdocs
 
 Build HTML report from Cron:
 Example of line to add into a cron to generate a HTML report:
-0 1 5 * * cd /home/dolibarr/preview.dolibarr.org/dolibarr; chmod -R u+w /home/dolibarr/preview.dolibarr.org/dolibarr; git pull; /home/dolibarr/phpstan/vendor/bin/phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=github | awk ' BEGIN{ print "Date "strftime("%Y-%m-%d")"<br>" } { print $0"<br>" } END{ print NR } ' > /home/dolibarr/doxygen.dolibarr.org/phpstan/index.html
+0 1 5 * * cd /home/dolibarr/preview.dolibarr.org/dolibarr; chmod -R u+w /home/dolibarr/preview.dolibarr.org/dolibarr; git pull; /home/dolibarr/phpstan/vendor/bin/phpstan -v analyze --memory-limit 4G --error-format=github | awk ' BEGIN{ print "Date "strftime("%Y-%m-%d")"<br>" } { print $0"<br>" } END{ print NR } ' > /home/dolibarr/doxygen.dolibarr.org/phpstan/index.html

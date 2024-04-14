@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,10 +71,10 @@ abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
- *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	DoliDB		$db  			object base de donnee
  *  @param	Object		$object			Object fichinter
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	string		$modele			force le modele a utiliser ('' par default)
+ *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
@@ -91,8 +92,8 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
-			$modele = $conf->global->FICHEINTER_ADDON_PDF;
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
+			$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
 		} else {
 			$modele = 'soleil';
 		}
@@ -108,7 +109,6 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -117,21 +117,20 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$modele.".modules.php";
 
-			// On verifie l'emplacement du modele
+			// Get the location of the module and verify it exists
 			$file = dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$modele;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 	// Charge le modele
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);

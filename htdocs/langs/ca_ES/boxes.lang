@@ -115,7 +115,7 @@ BoxLastCustomerShipments=Últims enviaments de clients
 BoxTitleLastCustomerShipments=Últims %s enviaments de clients
 BoxTitleLastLeaveRequests=Últimes %s peticions de dies lliures modificades
 NoRecordedShipments=Cap enviament de client registrat
-BoxCustomersOutstandingBillReached=Clients que superen el límit pendent
+BoxCustomersOutstandingBillReached=Clients amb límit pendent assolit
 # Pages
 UsersHome=Usuaris i grups domèstics
 MembersHome=Membres a casa

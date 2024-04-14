@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 // if (! $user->rights->knowledgemanagement->myobject->read) {
 // 	accessforbidden();
 // }
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -148,7 +148,7 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright">';
 
 
-$NBMAX = (empty($conf->global->MAIN_SIZE_SHORTLIST_LIMIT) ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
+$NBMAX = (!getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
 $max = $NBMAX;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT

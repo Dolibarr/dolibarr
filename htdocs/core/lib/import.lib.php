@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/core/lib/import.lib.php
- *  \brief      Ensemble de fonctions de base pour le module import
+ *  \brief      Ensemble de functions de base pour le module import
  *  \ingroup    import
  */
 

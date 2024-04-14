@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Управление на партньорство
+PartnershipDescription=Модул Управление на партньорство
+PartnershipDescriptionLong= Модул Управление на партньорство
+Partnership=Партньорство
+Partnerships=Партньорства
+AddPartnership=Добавете партньорство
+CancelPartnershipForExpiredMembers=Партньорство: Отменете партньорството на членове с изтекъл абонамент
+PartnershipCheckBacklink=Партньорство: Проверете препращащата обратна връзка
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Ново партньорство
+NewPartnershipbyWeb=Вашето партньорство Искане е добавено успешно. Може да се свържем с вас скоро...
+ListOfPartnerships=Списък на партньорство
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Настройка на партньорство
+PartnershipAbout=Относно Партньорството
+PartnershipAboutPage=Страница за партньорство
+partnershipforthirdpartyormember=Статусът на партньор трябва да бъде зададен на „трета страна“ или „член“
+PARTNERSHIP_IS_MANAGED_FOR=Партньорство, управлявано за
+PARTNERSHIP_BACKLINKS_TO_CHECK=Обратни връзки за проверка
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Брой дни преди анулиране на статус на партньорство, когато абонаментът е изтекъл
+ReferingWebsiteCheck=Проверка на препращане към уебсайт
+ReferingWebsiteCheckDesc=Можете да активирате функция, за да проверите дали вашите партньори са добавили обратна връзка към домейните на вашия уебсайт на собствения си уебсайт.
+PublicFormRegistrationPartnerDesc=Dolibarr може да ви предостави публичен URL/уебсайт, за да позволи на външните посетители на Искане да бъдат част от програмата за партньорство.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Изтриване на партньорство
+PartnershipDedicatedToThisThirdParty=Партньорство, посветено на тази трета страна
+PartnershipDedicatedToThisMember=Партньорство, посветено на този член
 DatePartnershipStart=Начална дата
 DatePartnershipEnd=Крайна дата
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Причина за отказ
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Вече съществува партньорство
+ManagePartnership=Управлявайте партньорство
+BacklinkNotFoundOnPartnerWebsite=Обратната връзка не е намерена на уебсайта на партньора
+ConfirmClosePartnershipAsk=Сигурни ли сте, че искате да прекратите това партньорство?
+PartnershipType=Тип партньорство
+PartnershipRefApproved=Партньорството %s одобрено
+KeywordToCheckInWebsite=Ако искате да проверите дали дадена ключова дума присъства в уебсайта на всеки партньор, дефинирайте тази ключова дума тук
 PartnershipDraft=Чернова
 PartnershipAccepted=Прието
 PartnershipRefused=Отхвърлено
 PartnershipCanceled=Анулирана
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Партньорите са
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Партньорството скоро ще бъде прекратено
+SendingEmailOnPartnershipRefused=Отказано партньорство
+SendingEmailOnPartnershipAccepted=Партньорството е прието
+SendingEmailOnPartnershipCanceled=Партньорството е отменено
+
+YourPartnershipWillSoonBeCanceledTopic=Партньорството скоро ще бъде прекратено
+YourPartnershipRefusedTopic=Отказано партньорство
+YourPartnershipAcceptedTopic=Партньорството е прието
+YourPartnershipCanceledTopic=Партньорството е отменено
+
+YourPartnershipWillSoonBeCanceledContent=Бихме искали да ви информираме, че нашето партньорство скоро ще бъде анулирано (не получихме подновяване или не са изпълнени предпоставки за нашето партньорство). Моля, свържете се с нас, ако сте получили това поради грешка.
+YourPartnershipRefusedContent=Бихме искали да ви информираме, че вашето партньорство Искане е отказано. Не са налице предпоставки. Моля, свържете се с нас, ако имате нужда от повече информация.
+YourPartnershipAcceptedContent=Бихме искали да ви информираме, че вашето партньорство Искане е прието.
+YourPartnershipCanceledContent=Бихме искали да ви информираме, че нашето партньорство е прекратено. Моля, свържете се с нас, ако имате нужда от повече информация.
+
+CountLastUrlCheckError=Брой грешки за последната проверка на URL
+LastCheckBacklink=Дата от последната проверка на URL адреса
+
+NewPartnershipRequest=Ново партньорство Искане
+NewPartnershipRequestDesc=Този формуляр ви позволява Искане да станете част от една от нашите партньорски програми. Ако имате нужда от помощ за попълване на този формуляр, моля, свържете се по имейл <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Тази страница трябва да съдържа поне една връзка към един от следните домейни: %s
+
+IPOfApplicant=IP на заявителя
+

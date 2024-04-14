@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,11 +65,11 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product		$objproduct		Object product
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Product|string	$objproduct	Object product
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -118,13 +120,13 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("ProductCodeDesc").'<br>';
@@ -132,7 +134,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 			$s .= $langs->trans("ServiceCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';

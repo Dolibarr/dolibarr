@@ -62,7 +62,6 @@ ChooseFileToImport=Ajoutez le fichier à importer puis cliquez sur le pictogramm
 SourceFileFormat=Format du fichier source
 FieldsInSourceFile=Champs dans le fichier source
 FieldsInTargetDatabase=Champs cibles dans la base Dolibarr (gras=obligatoire)
-Field=Champ
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
 ExampleOfImportFile=Exemple_de_fichier_import
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Choisissez les champs du fichier source que vous souh
 MandatoryTargetFieldsNotMapped=Certains champs cibles obligatoires ne sont pas mis en correspondance
 AllTargetMandatoryFieldsAreMapped=Tous les champs cibles qui ont besoin d'une valeur obligatoire sont affectés.
 ResultOfSimulationNoError=Résultat de la simulation : Aucune erreur
+NumberOfLinesLimited=Nombre de lignes limité

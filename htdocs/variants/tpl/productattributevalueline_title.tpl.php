@@ -18,8 +18,8 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight('element', 'creer'))
+ * $permtoedit  (used to replace test $user->hasright('element', 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
@@ -30,7 +30,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE productattributevalueline_title.tpl.php -->\n";
@@ -41,7 +41,7 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">&nbsp;</td>';
 }
 

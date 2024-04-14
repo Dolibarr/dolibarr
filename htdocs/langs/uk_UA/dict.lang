@@ -137,7 +137,7 @@ CountryLV=Латвія
 CountryLB=Ліван
 CountryLS=Лесото
 CountryLR=Ліберія
-CountryLY=Libya
+CountryLY=Лівія
 CountryLI=Ліхтенштейн
 CountryLT=Литва
 CountryLU=Люксембург
@@ -247,13 +247,13 @@ CountryJE=Джерсі
 CountryME=Чорногорія
 CountryBL=Сен-Бартелемі
 CountryMF=Святий Мартін
-CountryXK=Kosovo
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=Пані.
-CivilityMMEShort=Mrs.
+CivilityMMEShort=Місіс
 CivilityMR=Містер.
-CivilityMRShort=Mr.
+CivilityMRShort=Містер
 CivilityMLE=РС.
 CivilityMTRE=Майстер
 CivilityDR=лікар

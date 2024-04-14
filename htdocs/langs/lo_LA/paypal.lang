@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=ການຕັ້ງຄ່າໂມດູນ PayPal
-PaypalDesc=ໂມດູນນີ້ອະນຸຍາດໃຫ້ການຊໍາລະໂດຍລູກຄ້າຜ່ານ <a href="http://www.paypal.com" target="_blank"> PayPal </a>. ອັນນີ້ສາມາດໃຊ້ສໍາລັບການຈ່າຍເງິນສະເພາະຫຼືສໍາລັບການຊໍາລະທີ່ກ່ຽວຂ້ອງກັບວັດຖຸ Dolibarr (ໃບເກັບເງິນ, ຄໍາສັ່ງ, ... )
+PaypalDesc=ໂມດູນນີ້ອະນຸຍາດໃຫ້ລູກຄ້າຊໍາລະຜ່ານ <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. ນີ້ສາມາດຖືກນໍາໃຊ້ສໍາລັບການຈ່າຍເງິນສະເພາະຫຼືສໍາລັບການຈ່າຍເງິນທີ່ກ່ຽວຂ້ອງກັບວັດຖຸ Dolibarr (ໃບແຈ້ງຫນີ້, ຄໍາສັ່ງຊື້, ... )
 PaypalOrCBDoPayment=ຈ່າຍດ້ວຍ PayPal (ບັດຫຼື PayPal)
 PaypalDoPayment=ຈ່າຍດ້ວຍ PayPal
 PAYPAL_API_SANDBOX=ການທົດສອບໂModeດ/ກ່ອງຊາຍ
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=ການຖອຍຫຼັງໄດ້ຖື
 ValidationOfPaymentFailed=ການກວດສອບການຊໍາລະບໍ່ສໍາເລັດ
 CardOwner=ຜູ້ຖືບັດ
 PayPalBalance=ສິນເຊື່ອ Paypal
+OnlineSubscriptionPaymentLine=ການສະໝັກໃຊ້ອອນໄລນ໌ທີ່ບັນທຶກໄວ້ໃນ %s<br>ຈ່າຍຜ່ານ %s<br>ທີ່ຢູ່ IP ທີ່ມາ: %s<br>ID ທຸລະກຳ:  

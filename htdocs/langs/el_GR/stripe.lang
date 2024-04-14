@@ -71,9 +71,10 @@ ToOfferALinkForTestWebhook=Σύνδεσμος για τη ρύθμιση του 
 ToOfferALinkForLiveWebhook=Σύνδεσμος για τη ρύθμιση του Stripe WebHook για κλήση του IPN (κανονική λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των κανόνων ισχυρού ελέγχου ταυτότητας πελατών, η δημιουργία κάρτας πρέπει να γίνει από την Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των ισχυρών κανόνων ελέγχου ταυτότητας πελάτης, η δημιουργία μιας κάρτας πρέπει να γίνει από το Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή  πελάτη Stripe: %s
 STRIPE_CARD_PRESENT=Δώροκάρτα για τερματικά Stripe
 TERMINAL_LOCATION=Τοποθεσία (διεύθυνση) για Stripe Terminals
 RequestDirectDebitWithStripe=Άμεση Χρέωση με Stripe
+RequesCreditTransferWithStripe=Αίτηση μεταφοράς πίστωσης με το Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Ενεργοποιήστε τις πληρωμές άμεσης χρέωσης μέσω Stripe
-
+StripeConnect_Mode=Stripe Connect mode

@@ -71,6 +71,7 @@ BOM_DELETEInDolibarr=Materialliste (BOM) gelöscht
 MRP_MO_VALIDATEInDolibarr=Arbeitsauftrag (MO) genehmigt
 MRP_MO_PRODUCEDInDolibarr=Arbeitsauftrag (MO) fertig gestellt.
 MRP_MO_DELETEInDolibarr=Arbeitsauftrag (MO) gelöscht
+CANCELInDolibarr=widerrufen
 AgendaModelModule=Vorlagen zum Ereignis
 DateActionStart=Beginnt
 DateActionEnd=Endet

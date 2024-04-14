@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('members', 'languages'));
 
-$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $ref = GETPOST('ref', 'alphanohtml');
@@ -216,7 +216,7 @@ if ($action == 'edit') {
 			$s = picto_from_langcode($key);
 			print '<br>';
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
@@ -242,7 +242,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
@@ -279,7 +279,7 @@ if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="rowid" value="'.GETPOST("rowid", 'int').'">';
+	print '<input type="hidden" name="rowid" value="'.GETPOSTINT("rowid").'">';
 
 	print dol_get_fiche_head();
 

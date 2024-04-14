@@ -45,6 +45,33 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	public $tab_height;
 
 	/**
+	 * @var int line_height
+	 */
+	public $line_height;
+
+	/**
+	 * @var int line per page
+	 */
+	public $line_per_page;
+
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	public $amount;
+	public $date;
+	public $nbcheque;
+	public $ref;
+	public $ref_ext;
+
+
+	/**
+	 * @var array lines
+	 */
+	public $lines;
+
+	/**
 	 *	Constructor
 	 *
 	 *	@param	DoliDB	$db		Database handler
@@ -104,7 +131,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output = $outputlangs->charset_output;
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -130,7 +157,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -139,7 +166,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$heightforinfotot = 50; // Height reserved to output the info and total part
 		$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 		$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 			$heightforfooter += 6;
 		}
 		$pdf->SetAutoPageBreak(1, 0);
@@ -163,6 +190,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->SetCompression(false);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 		$nboflines = count($this->lines);
@@ -199,7 +227,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -209,7 +237,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		$outputlangs->charset_output = $sav_charset_output;
 		return 1; // No error
@@ -263,7 +291,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
-		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 		pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
 		$pdf->SetFont('', '', $default_font_size);
@@ -348,7 +376,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$lineinpage = 0;
 		$num = count($this->lines);
 		for ($j = 0; $j < $num; $j++) {
-			// Dynamic max line heigh calculation
+			// Dynamic max line height calculation
 			$dynamic_line_height = array();
 			$dynamic_line_height[] = $pdf->getStringHeight(60, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
 			$dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq));
@@ -417,7 +445,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (!empty($conf->global->$paramfreetext)) {
-			$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 
 		return pdf_pagefoot($pdf, $outputlangs, $newfreetext, $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

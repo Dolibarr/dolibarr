@@ -27,6 +27,7 @@
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
@@ -116,7 +117,7 @@ class ActionsTicket extends CommonHookActions
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return int              		<0 if KO, >0 if OK
+	 * @return int              		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -178,19 +179,18 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Show ticket original message
 	 *
-	 * @param 	User		$user		User wich display
+	 * @param 	User		$user		User which display
 	 * @param 	string 		$action    	Action mode
 	 * @param	Ticket		$object		Object ticket
 	 * @return	void
 	 */
 	public function viewTicketOriginalMessage($user, $action, $object)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		print '<!-- initial message of ticket -->'."\n";
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
@@ -198,9 +198,8 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="underbanner clearboth"></div>';
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable margintablenotop">';
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<table class="border centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -216,33 +215,27 @@ class ActionsTicket extends CommonHookActions
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
-			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
+			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			if (!$ckeditorenabledforticket) {
+				$msg = dol_string_nohtmltag($msg, 2);
+			}
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			// Deal with format differences (text / HTML)
-			if (dol_textishtml($object->message)) {
-				print '<div class="longmessagecut">';
-				print dol_htmlwithnojs($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			} else {
-				print '<div class="longmessagecut">';
-				print dol_nl2br($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			}
+			print '<div class="longmessagecut">';
+			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
+			print dolPrintHTML($object->message);
+			print '</div>';
+			/*print '<div class="clear center">';
+			print $langs->trans("More").'...';
+			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
 		}
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
 		print '</td>';
@@ -250,7 +243,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
@@ -266,7 +259,7 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();
@@ -276,10 +269,15 @@ class ActionsTicket extends CommonHookActions
 
 		$action = GETPOST('action', 'aZ09');
 
+		print '<div class="ticketpublicarea ticketlargemargin centpercent" style="padding-top: 0">';
 		$this->viewTicketOriginalMessage($user, $action, $object);
+		print '</div>';
 
 		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-			print '<table class="border" style="width:100%;">';
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border centpercent">';
 
 			print '<tr class="liste_titre">';
 
@@ -328,14 +326,74 @@ class ActionsTicket extends CommonHookActions
 					print '<tr class="oddeven">';
 					print '<td colspan="2">';
 					print $arraymsgs['message'];
+
+					//attachment
+
+					$documents = array();
+
+					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
+					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
+					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
+					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
+					$sql .= ' ORDER BY ecm.position ASC';
+
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						if ($this->db->num_rows($resql)) {
+							while ($obj = $this->db->fetch_object($resql)) {
+								$documents[$obj->id] = $obj;
+							}
+						}
+					}
+					if (!empty($documents)) {
+						$isshared = 0;
+						$footer = '<div class="timeline-documents-container">';
+						foreach ($documents as $doc) {
+							if (!empty($doc->share)) {
+								$isshared = 1;
+								$footer .= '<span id="document_'.$doc->id.'" class="timeline-documents" ';
+								$footer .= ' data-id="'.$doc->id.'" ';
+								$footer .= ' data-path="'.$doc->filepath.'"';
+								$footer .= ' data-filename="'.dol_escape_htmltag($doc->filename).'" ';
+								$footer .= '>';
+
+								$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
+								$mime = dol_mimetype($filePath);
+								$thumb = $arraymsgs['id'].'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
+								$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
+
+								$mimeAttr = ' mime="'.$mime.'" ';
+								$class = '';
+								if (in_array($mime, array('image/png', 'image/jpeg', 'application/pdf'))) {
+									$class .= ' documentpreview';
+								}
+
+								$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
+								$footer .= img_mime($filePath).' '.$doc->filename;
+								$footer .= '</a>';
+
+								$footer .= '</span>';
+							}
+						}
+						$footer .= '</div>';
+						if ($isshared == 1) {
+							print '<br>';
+							print '<br>';
+							print $footer;
+						}
+					}
 					print '</td>';
 					print '</tr>';
 				}
 			}
 
 			print '</table>';
+			print '</div>';
+			print '</div>';
 		} else {
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 			print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
+			print '</div>';
 		}
 	}
 
@@ -412,12 +470,16 @@ class ActionsTicket extends CommonHookActions
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
 		// Exclude actual status
-		$exclude_status = array_merge($exclude_status, array(intval($object->fk_statut)));
+		$exclude_status = array_merge($exclude_status, array((int) $object->status));
+		// Exclude also the Waiting/Pending/Suspended status
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			$exclude_status[] = $object::STATUS_WAITING;
+		}
 
 		// Sort results to be similar to status object list
 		//sort($exclude_status);
 
-		foreach ($object->statuts_short as $status => $status_label) {
+		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
 				print '<div class="inline-block center marginbottomonly">';
 
@@ -429,8 +491,8 @@ class ActionsTicket extends CommonHookActions
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
 				print $object->LibStatut($status, 3, 1).' ';
-				//print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
-				print $langs->trans($object->statuts_short[$status]);
+				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				print $langs->trans($object->labelStatusShort[$status]);
 				print '</a>';
 				print '</div>';
 			}

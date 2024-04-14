@@ -80,7 +80,7 @@ html,body {
 }
 
 .bodytakepos {
-	background-color: #EEE;
+	background-color: var(--colorbackgrey);
 }
 
 .center {
@@ -184,6 +184,7 @@ button.productbutton {
 
 button.actionbutton {
 	background: #EABCA6;
+	color: #222;
 	border: 2px solid #EEE;
 	min-height: 40px;
 	border-radius: 3px;
@@ -219,7 +220,7 @@ button.item_value.selected {
 
 div[aria-describedby="dialog-info"] button:before {
 	content: "\f788";
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	padding-right: 5px;
 }
@@ -382,7 +383,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
-	overflow: hidden;
+	overflow-x: hidden;
 }
 
 .div1{
@@ -479,9 +480,9 @@ tr.selected, tr.selected td {
 }
 
 .centerinmiddle {
-	transform: translate(0,-50%);
 	position: relative;
-	top: 50%;
+	/* transform: translate(0,-50%);
+	top: 50%; */
 }
 .trunc {
 	white-space: nowrap;
@@ -572,10 +573,11 @@ div.description_content {
 .topnav-left a {
 	padding: 7px 4px 7px 4px;
 	margin: 8px;
-	margin-left: 4px;
+	margin-left: 5px;
+	margin-right: 5px;
 	border-radius: 3px;
 }
-.topnav-left a:hover, .topnav .login_block_other a:hover {
+.topnav-left a:hover:not(.nohover), .topnav .login_block_other a:hover:not(.nohover) {
 	background-color: #ddd;
 	color: black;
 }
@@ -973,7 +975,8 @@ if (!getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
 	display: none;
 }
 
-<?php } else { ?>
+	<?php
+} else { ?>
 .indicator {
 	background: #00000042;
 	padding: 15px 5px;

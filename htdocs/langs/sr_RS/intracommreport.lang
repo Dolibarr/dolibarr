@@ -16,7 +16,7 @@ INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 # Menu
 MenuIntracommReport=Intracomm report
 MenuIntracommReportNew=New declaration
-MenuIntracommReportList=Lista
+MenuIntracommReportList=List
 
 # View
 NewDeclaration=New declaration
@@ -32,7 +32,7 @@ IntracommReportTitle=Preparation of an XML file in ProDouane format
 # List
 IntracommReportList=List of generated declarations
 IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
+IntracommReportPeriod=Period of analysis
 IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
 

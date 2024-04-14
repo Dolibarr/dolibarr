@@ -34,9 +34,12 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
+
 include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
 
 
 $id = GETPOST('id', 'aZ09');
@@ -44,7 +47,7 @@ $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mym
 
 $params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
-	$params['infologin'] = GETPOST('infologin', 'int');
+	$params['infologin'] = GETPOSTINT('infologin');
 }
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');
@@ -60,7 +63,7 @@ $module = $object->module;
 $element = $object->element;
 
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 
@@ -82,7 +85,7 @@ if (is_object($object)) {
 	if ($object->id > 0 || !empty($object->ref)) {
 		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);
-	} elseif ($res == 0) {
+	} elseif ($id > 0) {
 		$html = $langs->trans('Deleted');
 	}
 	unset($object);

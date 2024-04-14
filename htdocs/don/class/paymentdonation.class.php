@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +57,6 @@ class PaymentDonation extends CommonObject
 
 	public $datec = '';
 
-	public $tms = '';
-
 	public $datep = '';
 
 	public $amount; // Total amount of payment
@@ -67,6 +66,10 @@ class PaymentDonation extends CommonObject
 	public $fk_typepayment;	// Payment mode ID
 	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -122,13 +125,11 @@ class PaymentDonation extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user			User making payment
-	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
-	 *  @return     int     					<0 if KO, id of payment if OK
+	 *  @param      int 		$notrigger 		0=launch triggers after, 1=disable triggers
+	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -203,7 +204,7 @@ class PaymentDonation extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 			} else {
 				$error++;
 			}
@@ -234,7 +235,7 @@ class PaymentDonation extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -302,7 +303,7 @@ class PaymentDonation extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -396,7 +397,7 @@ class PaymentDonation extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -412,7 +413,8 @@ class PaymentDonation extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -539,24 +541,26 @@ class PaymentDonation extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_donation = '';
+		$this->fk_donation = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
 		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = dol_now();
+		$this->fk_user_modif = dol_now();
+
+		return 1;
 	}
 
 
@@ -570,7 +574,7 @@ class PaymentDonation extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -578,7 +582,7 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -686,7 +690,7 @@ class PaymentDonation extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 

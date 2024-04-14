@@ -67,8 +67,8 @@ class RejetPrelevement
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
+	 *  @param	DoliDB	$db			Database handler
+	 *  @param 	User	$user       Object user
 	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
@@ -82,7 +82,7 @@ class RejetPrelevement
 		$this->motifs = array();
 		$this->labelsofinvoicing = array();
 
-		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
+		$this->motifs[0] = "";
 		$this->motifs[1] = $langs->trans("StatusMotif1");
 		$this->motifs[2] = $langs->trans("StatusMotif2");
 		$this->motifs[3] = $langs->trans("StatusMotif3");
@@ -97,27 +97,28 @@ class RejetPrelevement
 	}
 
 	/**
-	 * Create
+	 * Create a reject
 	 *
 	 * @param 	User		$user				User object
 	 * @param 	int			$id					Id
 	 * @param 	string		$motif				Motif
-	 * @param 	int	$date_rejet			Date rejet
+	 * @param 	int			$date_rejet			Date reject
 	 * @param 	int			$bonid				Bon id
-	 * @param 	int			$facturation		Facturation
-	 * @return	void
+	 * @param 	int			$facturation		1=Bill the reject
+	 * @return	int								Return >=0 if OK, <0 if KO
 	 */
 	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
 		$now = dol_now();
 
-		dol_syslog("RejetPrelevement::Create id $id");
-		$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		dol_syslog("RejetPrelevement::Create id ".$id);
+
+		$bankaccount = ($this->type == 'bank-transfer' ? getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT'));
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -146,7 +147,6 @@ class RejetPrelevement
 		$result = $this->db->query($sql);
 
 		if (!$result) {
-			dol_syslog("RejetPrelevement::create Erreur 4");
 			dol_syslog("RejetPrelevement::create Erreur 4 $sql");
 			$error++;
 		}
@@ -173,30 +173,31 @@ class RejetPrelevement
 
 			$fac->fetch($facs[$i][0]);
 
+			$amountrejected = $facs[$i][1];
+
 			// Make a negative payment
-			//$pai = new Paiement($this->db);
-
+			// Amount must be an array (id of invoice -> amount)
 			$pai->amounts = array();
+			$pai->amounts[$facs[$i][0]] = price2num($amountrejected * -1);		// The payment must be negative because it is a refund
 
-			/*
-			 * We replace the comma with a point otherwise some
-			 * PHP installs sends only the part integer negative
-			*/
-
-			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1 : -1));
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
-			$pai->num_paiement = $fac->ref;
-			$pai->num_payment = $fac->ref;
+			$pai->num_paiement = $langs->trans('Rejection').' '.$fac->ref;
+			$pai->num_payment = $langs->trans('Rejection').' '.$fac->ref;
 			$pai->id_prelevement = $this->bon_id;
 			$pai->num_prelevement = $lipre->bon_ref;
 
 			if ($pai->create($this->user) < 0) {
-				// we call with no_commit
 				$error++;
 				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
 			} else {
-				$result = $pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
+				// We record entry into bank
+				$mode = 'payment';
+				if ($this->type == 'bank-transfer') {
+					$mode = 'payment_supplier';
+				}
+
+				$result = $pai->addPaymentToBank($user, $mode, '(InvoiceRefused)', $bankaccount, '', '');
 				if ($result < 0) {
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
 					$error++;
@@ -221,9 +222,13 @@ class RejetPrelevement
 		if ($error == 0) {
 			dol_syslog("RejetPrelevement::Create Commit");
 			$this->db->commit();
+
+			return 1;
 		} else {
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
+
+			return -1;
 		}
 	}
 
@@ -291,7 +296,7 @@ class RejetPrelevement
 				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
 			}
 		} else {
-			dol_syslog("RejetPrelevement::_send_email Userid invalide");
+			dol_syslog("RejetPrelevement::_send_email Userid invalid");
 		}
 	}
 
@@ -308,7 +313,7 @@ class RejetPrelevement
 
 		$arr = array();
 
-		 //Returns all invoices of a withdrawal
+		//Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as pf";
 		if ($this->type == 'bank-transfer') {

@@ -10803,6 +10803,7 @@ process.nextTick = (function () {
     if (canPost) {
         var queue = [];
         window.addEventListener('message', function (ev) {
+			console.log("postMessage sent"+ev.data);	/* Added by LDR to track postMessage event coming from same or other web page/sites */
             var source = ev.source;
             if ((source === window || source === null) && ev.data === 'process-tick') {
                 ev.stopPropagation();

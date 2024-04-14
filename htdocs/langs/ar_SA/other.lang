@@ -5,7 +5,7 @@ Tools=أدوات
 TMenuTools=أدوات
 ToolsDesc=جميع الأدوات غير المدرجة في إدخالات القائمة الأخرى مجمعة هنا. <br> يمكن الوصول إلى جميع الأدوات عبر القائمة اليسرى.
 Birthday=عيد ميلاد
-BirthdayAlert=Birthday alert
+BirthdayAlert=تنبيه عيد ميلاد
 BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
 BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
 TransKey=ترجمة المفتاح TransKey
@@ -31,7 +31,7 @@ PreviousYearOfInvoice=السنة السابقة لتاريخ الفاتورة
 NextYearOfInvoice=السنة التالية لتاريخ الفاتورة
 DateNextInvoiceBeforeGen=تاريخ الفاتورة التالية (قبل التوليد)
 DateNextInvoiceAfterGen=تاريخ الفاتورة التالية (بعد التوليد)
-GraphInBarsAreLimitedToNMeasures=قطع العنب محدودة بمقاييس %s في وضع "أشرطة". تم تحديد الوضع "Lines" تلقائيًا بدلاً من ذلك.
+GraphInBarsAreLimitedToNMeasures=تقتصر الرسومات على %s في وضع "الأشرطة". تم تحديد الوضع "الخطوط" تلقائيًا بدلاً من ذلك.
 OnlyOneFieldForXAxisIsPossible=حقل واحد فقط ممكن حاليًا كمحور س. تم تحديد الحقل الأول المحدد فقط.
 AtLeastOneMeasureIsRequired=مطلوب حقل واحد على الأقل للقياس
 AtLeastOneXAxisIsRequired=مطلوب حقل واحد على الأقل للمحور السيني
@@ -41,10 +41,11 @@ notiftofixedemail=إلى البريد الثابت
 notiftouserandtofixedemail=للمستخدم والبريد الثابت
 Notify_ORDER_VALIDATE=تم التحقق من صحة أمر المبيعات
 Notify_ORDER_SENTBYMAIL=تم إرسال أمر المبيعات بالبريد
-Notify_ORDER_CLOSE=Sales order delivered
+Notify_ORDER_CLOSE=تم تسليم المبيعات طلب
 Notify_ORDER_SUPPLIER_SENTBYMAIL=تم إرسال طلب الشراء عن طريق البريد الإلكتروني
 Notify_ORDER_SUPPLIER_VALIDATE=تم تسجيل أمر الشراء
 Notify_ORDER_SUPPLIER_APPROVE=تمت الموافقة على أمر الشراء
+Notify_ORDER_SUPPLIER_SUBMIT=تم إرسال عملية الشراء طلب
 Notify_ORDER_SUPPLIER_REFUSE=تم رفض أمر الشراء
 Notify_PROPAL_VALIDATE=التحقق من صحة اقتراح العملاء
 Notify_PROPAL_CLOSE_SIGNED=تم توقيع اقتراح العميل
@@ -54,7 +55,7 @@ Notify_WITHDRAW_TRANSMIT=انتقال انسحاب
 Notify_WITHDRAW_CREDIT=انسحاب الائتمان
 Notify_WITHDRAW_EMIT=Isue انسحاب
 Notify_COMPANY_CREATE=طرف ثالث إنشاء
-Notify_COMPANY_SENTBYMAIL=Mails sent from the page of third party
+Notify_COMPANY_SENTBYMAIL=الرسائل المرسلة من صفحة الطرف الثالث
 Notify_BILL_VALIDATE=فاتورة مصادق
 Notify_BILL_UNVALIDATE=فاتورة العميل unvalidated
 Notify_BILL_PAYED=فاتورة العميل مدفوعة
@@ -63,9 +64,10 @@ Notify_BILL_SENTBYMAIL=فاتورة الزبون إرسالها عن طريق ا
 Notify_BILL_SUPPLIER_VALIDATE=التحقق من صحة فاتورة البائع
 Notify_BILL_SUPPLIER_PAYED=دفع فاتورة البائع
 Notify_BILL_SUPPLIER_SENTBYMAIL=فاتورة البائع المرسلة بالبريد
-Notify_BILL_SUPPLIER_CANCELED=تم إلغاء فاتورة البائع
+Notify_BILL_SUPPLIER_CANCELED=تم إلغاء فاتورة مورد
 Notify_CONTRACT_VALIDATE=التحقق من صحة العقد
 Notify_FICHINTER_VALIDATE=التحقق من التدخل
+Notify_FICHINTER_CLOSE=التدخل مغلق
 Notify_FICHINTER_ADD_CONTACT=تمت إضافة جهة اتصال إلى التدخل
 Notify_FICHINTER_SENTBYMAIL=تدخل ترسل عن طريق البريد
 Notify_SHIPPING_VALIDATE=التحقق من صحة الشحن
@@ -183,35 +185,39 @@ SizeUnitfoot=قدم
 SizeUnitpoint=نقطة
 BugTracker=علة تعقب
 SendNewPasswordDesc=يتيح لك هذا النموذج طلب كلمة مرور جديدة. سيتم إرسالها إلى عنوان بريدك الإلكتروني. <br> سيصبح التغيير ساريًا بمجرد النقر فوق ارتباط التأكيد في البريد الإلكتروني. <br> تحقق من صندوق الوارد الخاص بك.
-EnterNewPasswordHere=Enter your new password here
+EnterNewPasswordHere=أدخل كلمة المرور الجديدة هنا
 BackToLoginPage=عودة إلى صفحة تسجيل الدخول
 AuthenticationDoesNotAllowSendNewPassword=طريقة التوثيق <b>٪ ق.</b> <br> في هذا الوضع ، لا يمكن معرفة Dolibarr أو تغيير كلمة السر الخاصة بك. <br> اتصل بمسؤول النظام إذا كنت تريد تغيير كلمة السر الخاصة بك.
 EnableGDLibraryDesc=قم بتثبيت أو تمكين مكتبة GD على تثبيت PHP الخاص بك لاستخدام هذا الخيار.
 ProfIdShortDesc=<b>الأستاذ عيد ٪ ق</b> هي المعلومات التي تعتمد على طرف ثالث. <br> على سبيل المثال ، لبلد <b>ق ٪</b> انها رمز <b>٪ ق.</b>
 DolibarrDemo=Dolibarr تخطيط موارد المؤسسات وإدارة علاقات العملاء التجريبي
-StatsByAmount=Statistics on amount of products/services
+StatsByAmount=إحصاءات عن كمية المنتجات / الخدمات
+StatsByAmountProducts=إحصاءات عن كمية المنتجات
+StatsByAmountServices=إحصائيات حول حجم الخدمات
 StatsByNumberOfUnits=إحصائيات لمجموع كمية المنتجات / الخدمات
+StatsByNumberOfUnitsProducts=إحصائيات لمجموع الكمية من المنتجات
+StatsByNumberOfUnitsServices=إحصائيات مجموع كمية الخدمات
 StatsByNumberOfEntities=إحصائيات لعدد الكيانات المحيلة (عدد الفواتير أو الطلبات ...)
-NumberOf=Number of %s
-NumberOfUnits=Number of units on %s
-AmountIn=Amount in %s
+NumberOf=عدد %s
+NumberOfUnits=عدد الوحدات في %s
+AmountIn=المبلغ في %s
 NumberOfUnitsMos=عدد الوحدات المطلوب إنتاجها في أوامر التصنيع
 EMailTextInterventionAddedContact=تم تعيين تدخل جديد لك %s.
 EMailTextInterventionValidated=التدخل ٪ ق المصادق
+EMailTextInterventionClosed=تم إغلاق التدخل %s.
 EMailTextInvoiceValidated=تم التحقق من صحة الفاتورة %s.
 EMailTextInvoicePayed=تم دفع الفاتورة %s.
 EMailTextProposalValidated=تم التحقق من صحة الاقتراح %s.
 EMailTextProposalClosedSigned=تم إغلاق الاقتراح %s وتوقيعه.
-EMailTextProposalClosedSignedWeb=Proposal %s has been closed signed on portal page.
-EMailTextProposalClosedRefused=Proposal %s has been closed refused.
-EMailTextProposalClosedRefusedWeb=Proposal %s has been closed refuse on portal page.
+EMailTextProposalClosedSignedWeb=تم إغلاق الاقتراح %s وتوقيعه على صفحة البوابة.
+EMailTextProposalClosedRefused=تم إغلاق الاقتراح %s.
+EMailTextProposalClosedRefusedWeb=تم إغلاق الاقتراح %s على صفحة البوابة.
 EMailTextOrderValidated=تم التحقق من صحة الطلب %s.
-EMailTextOrderClose=Order %s has been delivered.
-EMailTextOrderApproved=تمت الموافقة على الطلب %s.
-EMailTextOrderValidatedBy=تم تسجيل الطلب %s بواسطة %s.
-EMailTextOrderApprovedBy=تمت الموافقة على الطلب %s بواسطة %s.
-EMailTextOrderRefused=تم رفض الطلب %s.
-EMailTextOrderRefusedBy=تم رفض الطلب %s بواسطة %s.
+EMailTextOrderClose=تم تسليم طلب %s.
+EMailTextSupplierOrderApprovedBy=تمت الموافقة على عملية الشراء طلب %s بواسطة %s.
+EMailTextSupplierOrderValidatedBy=تم تسجيل عملية الشراء طلب %s بواسطة %s.
+EMailTextSupplierOrderSubmittedBy=تم إرسال عملية الشراء طلب %s بواسطة %s.
+EMailTextSupplierOrderRefusedBy=تم رفض عملية الشراء طلب %s بواسطة %s.
 EMailTextExpeditionValidated=تم التحقق من صحة الشحن %s.
 EMailTextExpenseReportValidated=تم التحقق من صحة تقرير المصاريف %s.
 EMailTextExpenseReportApproved=تمت الموافقة على تقرير المصاريف %s.
@@ -289,10 +295,12 @@ LinesToImport=خطوط للاستيراد
 
 MemoryUsage=استخدام الذاكرة
 RequestDuration=مدة الطلب
-ProductsPerPopularity=المنتجات / الخدمات حسب الشعبية
-PopuProp=المنتجات / الخدمات حسب الشعبية في العروض
-PopuCom=المنتجات / الخدمات حسب الشعبية في الطلبات
-ProductStatistics=إحصاءات المنتجات / الخدمات
+ProductsServicesPerPopularity=المنتجات|الخدمات حسب الشعبية
+ProductsPerPopularity=المنتجات حسب الشعبية
+ServicesPerPopularity=الخدمات حسب الشعبية
+PopuProp=المنتجات|الخدمات حسب الشعبية في المقترحات
+PopuCom=المنتجات|الخدمات حسب الشعبية في الطلبات
+ProductStatistics=المنتجات|إحصاءات الخدمات
 NbOfQtyInOrders=الكمية بالطلبات
 SelectTheTypeOfObjectToAnalyze=حدد كائنًا لعرض الإحصائيات الخاصة به ...
 
@@ -300,6 +308,7 @@ ConfirmBtnCommonContent = هل أنت متأكد أنك تريد "%s"؟
 ConfirmBtnCommonTitle = قم بتأكيد عملك
 CloseDialog = إغلاق
 Autofill = الملء التلقائي
+OrPasteAnURL=أو الصق عنوان URL
 
 # externalsite
 ExternalSiteSetup=إعداد رابط لموقع خارجي
@@ -309,8 +318,8 @@ ExampleMyMenuEntry=مُدخل قائمتي
 
 # ftp
 FTPClientSetup=إعداد وحدة FTP أو SFTP Client
-NewFTPClient=New FTP/SFTP connection setup
-FTPArea=FTP/SFTP Area
+NewFTPClient=إعداد اتصال FTP/SFTP جديد
+FTPArea=FTP/SFTP منطقة
 FTPAreaDesc=تعرض هذه الشاشة طريقة عرض لخادم FTP و SFTP.
 SetupOfFTPClientModuleNotComplete=يبدو أن إعداد وحدة عميل FTP أو SFTP غير مكتمل
 FTPFeatureNotSupportedByYourPHP=PHP لا يدعم وظائف FTP أو SFTP
@@ -321,9 +330,9 @@ FTPFailedToRemoveDir=فشل إزالة الدليل <b> %s </b>: تحقق من �
 FTPPassiveMode=الوضع السلبي
 ChooseAFTPEntryIntoMenu=اختر موقع FTP / SFTP من القائمة ...
 FailedToGetFile=فشل في الحصول على الملفات %s
-ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
-FileWasUpload=File <b>%s</b> was uploaded
-FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
-AddFolder=Create folder
-FileWasCreateFolder=Folder <b>%s</b> has been created
-FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.
+ErrorFTPNodisconnect=حدث خطأ أثناء قطع اتصال خادم FTP/SFTP
+FileWasUpload=تم تحميل الملف <b>%s</b>
+FTPFailedToUploadFile=فشل تحميل الملف <b>%s</b>.
+AddFolder=أنشئ مجلد
+FileWasCreateFolder=تم إنشاء المجلد <b>%s</b>
+FTPFailedToCreateFolder=فشل إنشاء المجلد <b>%s</b>.

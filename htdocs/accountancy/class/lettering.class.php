@@ -282,14 +282,14 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function updateLettering($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = 0)
 	{
 		$error = 0;
 
-		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
+		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
 		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
 		$sql = "SELECT DISTINCT ab2.lettering_code";
@@ -363,10 +363,10 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function deleteLettering($ids, $notrigger = false)
+	public function deleteLettering($ids, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -400,7 +400,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
-	 * @return	int									<0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
+	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
 	public function bookkeepingLetteringAll($bookkeeping_ids, $unlettering = false)
 	{
@@ -432,7 +432,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
-	 * @return	int									<0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
+	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
 	public function bookkeepingLettering($bookkeeping_ids, $unlettering = false)
 	{
@@ -469,9 +469,15 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
-					if (!empty($line_infos['lettering_code'])) $do_it = true;
-				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
+					if (!isset($lettering_code)) {
+						$lettering_code = (string) $line_infos['lettering_code'];
+					}
+					if (!empty($line_infos['lettering_code'])) {
+						$do_it = true;
+					}
+				} elseif (!empty($line_infos['lettering_code'])) {
+					$do_it = false;
+				}
 			}
 
 			// Check balance amount
@@ -482,8 +488,11 @@ class Lettering extends BookKeeping
 
 			// Lettering/Unlettering the group of bookkeeping lines
 			if (!$group_error && $do_it) {
-				if ($unlettering) $result = $this->deleteLettering($bookkeeping_lines);
-				else $result = $this->updateLettering($bookkeeping_lines);
+				if ($unlettering) {
+					$result = $this->deleteLettering($bookkeeping_lines);
+				} else {
+					$result = $this->updateLettering($bookkeeping_lines);
+				}
 				if ($result < 0) {
 					$group_error++;
 				} elseif ($result > 0) {
@@ -509,7 +518,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$bookkeeping_ids				Lettering specific list of bookkeeping id
 	 * @param	bool			$only_has_subledger_account		Get only lines who have subledger account
-	 * @return	array|int										<0 if error otherwise all linked lines by block
+	 * @return	array|int										Return integer <0 if error otherwise all linked lines by block
 	 */
 	public function getLinkedLines($bookkeeping_ids, $only_has_subledger_account = true)
 	{
@@ -534,7 +543,9 @@ class Lettering extends BookKeeping
 			$sql .= "  AND pn.piece_num = ab.piece_num";
 			$sql .= " )";
 		}
-		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+		if ($only_has_subledger_account) {
+			$sql .= " AND ab.subledger_account != ''";
+		}
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -608,7 +619,9 @@ class Lettering extends BookKeeping
 				$sql .= "  AND dpn.piece_num = ab.piece_num";
 				$sql .= " )";
 				$sql .= ")";
-				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+				if ($only_has_subledger_account) {
+					$sql .= " AND ab.subledger_account != ''";
+				}
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -629,7 +642,9 @@ class Lettering extends BookKeeping
 				}
 				$this->db->free($resql);
 
-				if (!empty($group)) $grouped_lines[] = $group;
+				if (!empty($group)) {
+					$grouped_lines[] = $group;
+				}
 			}
 		}
 
@@ -640,7 +655,7 @@ class Lettering extends BookKeeping
 	 * Get all fk_doc by doc_type from list of bank ids
 	 *
 	 * @param	array			$bank_ids		List of bank ids
-	 * @return	array|int						<0 if error otherwise all fk_doc by doc_type
+	 * @return	array|int						Return integer <0 if error otherwise all fk_doc by doc_type
 	 */
 	public function getDocTypeAndFkDocFromBankLines($bank_ids)
 	{
@@ -656,11 +671,11 @@ class Lettering extends BookKeeping
 		$bookkeeping_lines_by_type = array();
 		foreach (self::$doc_type_infos as $doc_type => $doc_type_info) {
 			// Get all fk_doc by doc_type from bank ids
-			$sql = "SELECT DISTINCT dp." . $doc_type_info['doc_payment_table_fk_doc'] . " AS fk_doc";
-			$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
-			$sql .= " WHERE p." . $doc_type_info['payment_table_fk_bank'] . " IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
-			$sql .= " AND dp." . $doc_type_info['doc_payment_table_fk_doc'] . " > 0";
+			$sql = "SELECT DISTINCT dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " AS fk_doc";
+			$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+			$sql .= " WHERE p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+			$sql .= " AND dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " > 0";
 
 			dol_syslog(__METHOD__ . " - Get all fk_doc by doc_type from list of bank ids for '" . $doc_type . "'", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -683,7 +698,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all all bank ids from list of document ids of a type
+	 * @return	array|int						Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
 	{
@@ -711,11 +726,11 @@ class Lettering extends BookKeeping
 		$bank_ids = array();
 
 		// Get all fk_doc by doc_type from bank ids
-		$sql = "SELECT DISTINCT p." . $doc_type_info['payment_table_fk_bank'] . " AS fk_doc";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
-		$sql .= " WHERE dp." . $doc_type_info['doc_payment_table_fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
-		$sql .= " AND p." . $doc_type_info['payment_table_fk_bank'] . " > 0";
+		$sql = "SELECT DISTINCT p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " AS fk_doc";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+		$sql .= " WHERE dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+		$sql .= " AND p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " > 0";
 
 		dol_syslog(__METHOD__ . " - Get all bank ids from list of document ids of a type '" . $doc_type . "'", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -737,7 +752,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
+	 * @return	array|int						Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
 	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
@@ -766,10 +781,10 @@ class Lettering extends BookKeeping
 		$link_by_element = array();
 		$element_by_link = array();
 		foreach ($doc_type_info['linked_info'] as $linked_info) {
-			$sql = "SELECT DISTINCT tl2." . $linked_info['fk_link'] . " AS fk_link, tl2." . $linked_info['fk_doc'] . " AS fk_doc";
-			$sql .= " FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl2 ON tl2." . $linked_info['fk_link'] . " = tl." . $linked_info['fk_link'];
-			$sql .= " WHERE tl." . $linked_info['fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+			$sql = "SELECT DISTINCT tl2." . $this->db->sanitize($linked_info['fk_link']) . " AS fk_link, tl2." . $this->db->sanitize($linked_info['fk_doc']) . " AS fk_doc";
+			$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table']) . " AS tl";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table']) . " AS tl2 ON tl2." . $this->db->sanitize($linked_info['fk_link']) . " = tl." . $this->db->sanitize($linked_info['fk_link']);
+			$sql .= " WHERE tl." . $this->db->sanitize($linked_info['fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
 
 			dol_syslog(__METHOD__ . " - Get document lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -831,7 +846,9 @@ class Lettering extends BookKeeping
 
 			foreach ($element_ids as $element_id) {
 				// Continue if element id in not found
-				if (!isset($link_by_element[$element_id])) continue;
+				if (!isset($link_by_element[$element_id])) {
+					continue;
+				}
 
 				// Set the element in the current group
 				$current_group[$element_id] = $element_id;

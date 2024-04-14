@@ -9,28 +9,30 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=معاہدے کی توثیق کے بع�
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=سیلز آرڈر بند ہونے کے بعد خودکار طور پر کسٹمر انوائس بنائیں (نئے انوائس میں آرڈر کے برابر رقم ہوگی)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=جب سیلز آرڈر کو بل پر سیٹ کیا جاتا ہے تو لنکڈ سورس پروپوزل کو بطور بل کی درجہ بندی کریں (اور اگر آرڈر کی رقم دستخط شدہ لنکڈ پروپوزل کی کل رقم کے برابر ہے)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=جب گاہک کی انوائس کی توثیق کی جاتی ہے تو لنک شدہ سورس پروپوزل کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم دستخط شدہ لنکڈ پروپوزل کی کل رقم کے برابر ہے)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=جب کسٹمر انوائس کی توثیق کی جاتی ہے تو لنکڈ سورس سیلز آرڈر کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم منسلک آرڈر کی کل رقم کے برابر ہے)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=جب کسٹمر انوائس کو ادائیگی پر سیٹ کیا جاتا ہے تو لنکڈ سورس سیلز آرڈر کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم منسلک آرڈر کی کل رقم کے برابر ہے)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=جب کھیپ کی توثیق کی جاتی ہے تو منسلک سورس سیلز آرڈر کو بھیجے گئے کے طور پر درجہ بندی کریں (اور اگر تمام کھیپوں کے ذریعے بھیجی گئی مقدار وہی ہے جو اپ ڈیٹ کرنے کے حکم میں ہے)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=کھیپ بند ہونے پر لنکڈ سورس سیلز آرڈر کو بھیجے جانے کے طور پر درجہ بندی کریں (اور اگر تمام کھیپوں کے ذریعے بھیجی گئی مقدار وہی ہے جو اپ ڈیٹ کرنے کے لیے ہے)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=جب وینڈر انوائس کی توثیق کی جاتی ہے تو لنکڈ سورس وینڈر پروپوزل کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم منسلک پروپوزل کی کل رقم کے برابر ہے)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=جب وینڈر انوائس کی توثیق کی جاتی ہے تو لنکڈ سورس پرچیز آرڈر کو بل کے طور پر درجہ بندی کریں (اور اگر انوائس کی رقم منسلک آرڈر کی کل رقم کے برابر ہے)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=جب کسی استقبالیہ کی توثیق ہو جاتی ہے تو منسلک ذریعہ خریداری کے آرڈر کو موصول ہونے کے مطابق درجہ بندی کریں (اور اگر تمام استقبالیوں کو موصول ہونے والی مقدار وہی ہے جو اپ ڈیٹ کرنے کے لیے خریداری آرڈر میں ہے)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=ریسیپشن بند ہونے پر موصول ہونے والے لنکڈ سورس پرچیز آرڈر کی درجہ بندی کریں (اور اگر تمام ریسپشنز کو موصول ہونے والی مقدار وہی ہے جو اپ ڈیٹ کرنے کے لیے خریداری آرڈر میں ہے)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=ٹکٹ بند ہونے پر ٹکٹ سے منسلک تمام مداخلتوں کو بند کر دیں۔
 AutomaticCreation=خودکار تخلیق
 AutomaticClassification=خودکار درجہ بندی
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Automatic closing
 AutomaticLinking=Automatic linking

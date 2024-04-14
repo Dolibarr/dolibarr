@@ -31,9 +31,14 @@ Consumption=Consommation
 ValueOfMeansLoss=Une valeur de 0,95 signifie une moyenne de 5%% de perte lors de la fabrication ou du désassemblage
 ValueOfMeansLossForProductProduced=Une valeur de 0,95 signifie une moyenne de 5%% de perte de produit fabriqué
 DeleteBillOfMaterials=Supprimer la nomenclature
+CancelMo=Annuler Ordre de Fabrication
+MoCancelConsumedAndProducedLines=Annule également toutes les lignes consommées et produites (supprime les lignes et annule les mouvements de stocks)
+ConfirmCancelMo=Êtes-vous sûr de vouloir annuler cet ordre de fabrication ?
 DeleteMo=Supprimer l'ordre de fabrication
 ConfirmDeleteBillOfMaterials=Êtes-vous sûr de vouloir supprimer cette nomenclature?
 ConfirmDeleteMo=Êtes-vous sûr de vouloir supprimer cet ordre de fabrication ?
+DeleteMoChild = Supprimer les OF enfants liés à cet OF %s
+MoChildsDeleted = Tous les OF enfants ont été supprimés
 MenuMRP=Ordres de fabrication
 NewMO=Nouvel Ordre de fabrication
 QtyToProduce=Quantité à produire
@@ -60,6 +65,8 @@ ToProduce=Produire
 ToObtain=A obtenir
 QtyAlreadyConsumed=Qté déjà consommée
 QtyAlreadyProduced=Qté déjà produite
+QtyAlreadyConsumedShort=Qté consommée
+QtyAlreadyProducedShort=Qté produite
 QtyRequiredIfNoLoss=Qté nécessaire pour produire la quantité définie dans la nomenclature s'il n'y a pas de perte (si le rendement de fabrication est de 100%%)
 ConsumeOrProduce=Consommer ou Produire
 ConsumeAndProduceAll=Consommer et Produire tout
@@ -123,3 +130,10 @@ Manufacturing=Fabrication
 Disassemble=Déassemblage
 ProducedBy=Produit par
 QtyTot=Qté totale
+
+QtyCantBeSplit= Quantité non fractionnable
+NoRemainQtyToDispatch=Aucune quantité restant à fractionner
+
+THMOperatorEstimatedHelp=Coût estimé de l'opérateur par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
+THMMachineEstimatedHelp=Coût estimé de la machine par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
+

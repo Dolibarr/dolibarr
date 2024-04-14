@@ -39,7 +39,7 @@ StatusSendingValidatedShort=சரிபார்க்கப்பட்டத�
 StatusSendingProcessedShort=செயலாக்கப்பட்டது
 SendingSheet=ஏற்றுமதி தாள்
 ConfirmDeleteSending=இந்த ஏற்றுமதியை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
-ConfirmValidateSending=<b> %s </b> குறிப்புடன் இந்தக் கப்பலைச் சரிபார்க்க விரும்புகிறீர்களா?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=இந்த ஏற்றுமதியை நிச்சயமாக ரத்து செய்ய விரும்புகிறீர்களா?
 DocumentModelMerou=Merou A5 மாடல்
 WarningNoQtyLeftToSend=எச்சரிக்கை, எந்த தயாரிப்புகளும் அனுப்பப்படுவதற்கு காத்திருக்கவில்லை.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=ஏற்கனவே பெற்�
 NoProductToShipFoundIntoStock=<b> %s </b> கிடங்கில் அனுப்ப வேண்டிய தயாரிப்பு எதுவும் இல்லை. சரியான இருப்பு அல்லது மற்றொரு கிடங்கைத் தேர்வு செய்ய திரும்பவும்.
 WeightVolShort=எடை/தொகுதி.
 ValidateOrderFirstBeforeShipment=ஷிப்மென்ட் செய்வதற்கு முன் நீங்கள் முதலில் ஆர்டரைச் சரிபார்க்க வேண்டும்.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=தயாரிப்பு எடைகளின் கூ�
 # warehouse details
 DetailWarehouseNumber= கிடங்கு விவரங்கள்
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=Shipment distribution
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

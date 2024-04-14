@@ -38,10 +38,10 @@ ListOfPartnerships=Overzicht van partnerschappen
 PartnershipSetup=Partnerschap instellingen
 PartnershipAbout=Over module partnerschap
 PartnershipAboutPage=Over module Partnerschap page
-partnershipforthirdpartyormember=Partnerstatus moet zijn ingesteld op een 'relatie' of een 'lid'
+partnershipforthirdpartyormember=De partnerstatus moet worden ingesteld op een 'derde partij' of een 'lid'
 PARTNERSHIP_IS_MANAGED_FOR=Partnerschap beheerd voor
 PARTNERSHIP_BACKLINKS_TO_CHECK=Te controleren backlinks
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Aantal dagen voordat de status van een partnerschap wordt opgezegd wanneer een abonnement is verlopen
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Aantal dagen voordat de status van een partnerschap wordt geannuleerd wanneer een abonnement is verlopen
 ReferingWebsiteCheck=Controle van de website die verwijst
 ReferingWebsiteCheckDesc=U kunt een functie inschakelen om te controleren of uw partners een backlink hebben toegevoegd aan uw websitedomeinen op hun eigen website.
 PublicFormRegistrationPartnerDesc=Dolibarr kan u een openbare URL/website verstrekken zodat externe bezoekers kunnen verzoeken om deel uit te maken van het partnerschapsprogramma.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerschap opgedragen aan dit lid
 DatePartnershipStart=Begindatum
 DatePartnershipEnd=Einddatum
 ReasonDecline=Reden afwijzing
-ReasonDeclineOrCancel=Reden afwijzing
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnerschap bestaat reeds
 ManagePartnership=Partnerschap beheren
 BacklinkNotFoundOnPartnerWebsite=Backlink niet gevonden op partnerwebsite
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Partnerschap geweigerd
 YourPartnershipAcceptedTopic=Partnerschap geaccepteerd
 YourPartnershipCanceledTopic=Partnerschap geannuleerd
 
-YourPartnershipWillSoonBeCanceledContent=Wij informeren u dat uw partnerschap binnenkort wordt geannuleerd (Backlink niet gevonden)
-YourPartnershipRefusedContent=Wij informeren u dat uw partnerschapsverzoek is afgewezen.
-YourPartnershipAcceptedContent=Wij informeren u dat uw partnerschapsverzoek is geaccepteerd.
-YourPartnershipCanceledContent=Wij informeren u dat uw partnerschap is beëindigd.
+YourPartnershipWillSoonBeCanceledContent=Wij willen u graag informeren dat ons partnerschap binnenkort wordt beëindigd (we hebben geen verlenging gekregen of er is niet voldaan aan een voorwaarde voor ons partnerschap). Neem contact met ons op als u deze heeft ontvangen vanwege een fout.
+YourPartnershipRefusedContent=Wij willen u laten weten dat uw partnerschapsverzoek is afgewezen. Er is niet voldaan aan de vereisten. Neem contact met ons op als u meer informatie nodig heeft.
+YourPartnershipAcceptedContent=Wij willen u graag laten weten dat uw partnerschapsverzoek is geaccepteerd.
+YourPartnershipCanceledContent=Graag willen wij u informeren dat onze samenwerking is opgezegd. Neem contact met ons op als u meer informatie nodig heeft.
 
 CountLastUrlCheckError=Aantal fouten voor laatste URL-controle
 LastCheckBacklink=Datum van laatste URL-controle
-ReasonDeclineOrCancel=Reden afwijzing
 
 NewPartnershipRequest=Nieuw partnerschapsverzoek
 NewPartnershipRequestDesc=Met dit formulier kunt u een aanvraag indienen om deel uit te maken van een van onze partnerprogramma's. Als je hulp nodig hebt bij het invullen van dit formulier, neem dan contact op via e-mail <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Deze pagina moet ten minste één link naar een van de volgende domeinen bevatten: %s
+
+IPOfApplicant=IP van aanvrager
 

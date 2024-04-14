@@ -1,32 +1,31 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Ler tarefa 'Agendada'
 Permission23102 = Criar/atualizar tarefa 'Agendada'
 Permission23103 = Eliminar tarefa 'Agendada'
 Permission23104 = Executar tarefa 'Agendada'
 # Admin
 CronSetup=Configuração da gestão de tarefas agendadas
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=URL para verificar e iniciar cron jobs qualificados a partir de um navegador
+OrToLaunchASpecificJob=Ou para verificar e iniciar um trabalho específico em um navegador
 KeyForCronAccess=Código de segurança para URL para iniciar tarefas qualificadas
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+FileToLaunchCronJobs=comando linha para verificar e iniciar cron jobs qualificados
+CronExplainHowToRunUnix=No ambiente Unix você deve usar a seguinte entrada crontab para executar a linha comando a cada 5 minutos
+CronExplainHowToRunWin=No ambiente Microsoft(tm) Windows você pode usar ferramentas de Tarefas Agendadas para executar a linha comando a cada 5 minutos
+CronMethodDoesNotExists=A classe %s não contém nenhum método %s
+CronMethodNotAllowed=O método %s da classe %s está na lista de bloqueio de métodos proibidos
+CronJobDefDesc=Os perfis de trabalho Cron são definidos no descritor módulo ficheiro. Quando módulo é ativado, eles são carregados e para que você possa administrar os trabalhos a partir do  Administrador menu de ferramentas %s.
+CronJobProfiles=Lista de perfis de cron jobs predefinidos
 # Menu
 EnabledAndDisabled=Ativado e desativado
 # Page list
-CronLastOutput=Latest run output
-CronLastResult=Latest result code
+CronLastOutput=Resultado da última execução
+CronLastResult=Resultado mais recente Código
 CronCommand=Comando
 CronList=Trabalhos agendadas
 CronDelete=Eliminar tarefas agendadas
 CronConfirmDelete=Tem a certeza que deseja eliminar estas tarefas agendadas?
-CronExecute=Launch now
+CronExecute=Lançar agora
 CronConfirmExecute=Tem a certeza de que deseja executar agora estas tarefas agendadas?
 CronInfo=O módulo de tarefas agendadas permite agendar tarefas para executá-las automaticamente. As tarefas também podem ser iniciadas manualmente.
 CronTask=Tarefa
@@ -43,11 +42,11 @@ CronModule=Módulo
 CronNoJobs=Sem tarefas registadas
 CronPriority=Prioridade
 CronLabel=Etiqueta
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=Número de lançamentos
+CronMaxRun=Número máximo de lançamentos
 CronEach=Cada
 JobFinished=Tarefa iniciada e concluída
-Scheduled=Scheduled
+Scheduled=Agendado
 #Page card
 CronAdd= Adicionar tarefas
 CronEvery=Executar cada tarefa
@@ -58,43 +57,44 @@ CronNote=Comentário
 CronFieldMandatory=Os campos %s são obrigatórios
 CronErrEndDateStartDt=A data de fim não pode ser anterior à data de início
 StatusAtInstall=Estado da instalação do módulo
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Habilitar agendamento
 CronStatusInactiveBtn=Desativar
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Este trabalho é Desativado (não agendado)
 CronId=Id
-CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
-CronCommandHelp=The system command line to execute.
+CronClassFile=Nome do arquivo com classe
+CronModuleHelp=Nome de Dolibarr módulo diretoria (também funciona com Dolibarr externo módulo). <BR> Por exemplo, para chamar o método de busca do objeto Dolibarr Product /htdocs/<u>product</u> /class/product.class.php, o valor de módulo é<br><i>produto</i>
+CronClassFileHelp=O caminho relativo e ficheiro nome para carregar (o caminho é relativo à raiz do servidor web diretoria). <BR> Por exemplo, para chamar o método fetch do objeto Dolibarr Product htdocs/product/class/<u>product.class.php</u>, o valor do nome da classe ficheiro é<br><i>product/class/product.class.php</i>
+CronObjectHelp=O nome do objeto a ser carregado. <BR> Por exemplo, para chamar o método de busca do objeto Dolibarr Product /htdocs/product/class/product.class.php, o valor da classe ficheiro  o nome é<br><i>Produto</i>
+CronMethodHelp=O método do objeto a ser iniciado. <BR> Por exemplo, para chamar o método fetch do objeto Dolibarr Product /htdocs/product/class/product.class.php, o valor do método é <br><i>buscar</i>
+CronArgsHelp=Os argumentos do método. <BR> Por exemplo, para chamar o método de busca do objeto Dolibarr Product /htdocs/product/class/product.class.php, o valor dos parâmetros pode ser<br><i>0, ProductRef</i>
+CronCommandHelp=A linha do sistema comando a ser executada.
 CronCreateJob=Criar nova 'Tarefa Agendada'
 CronFrom=De
 # Info
 # Common
 CronType=Tipo de tarefa
-CronType_method=Call method of a PHP Class
-CronType_command=Shell command
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
-JobDisabled=Job disabled
-MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
-WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+CronType_method=Método de chamada de uma classe PHP
+CronType_command=Concha comando
+CronCannotLoadClass=Não pode carrega a classe ficheiro %s (para usar a classe %s)
+CronCannotLoadObject=A classe ficheiro %s foi carregada, mas o objeto %s não foi encontrado nela
+UseMenuModuleToolsToAddCronJobs=Vá para o menu "<a href="%s">Home - Administrador ferramentas - Trabalhos agendados</a>" para ver e editar trabalhos agendados.
+JobDisabled=Trabalho Desativado
+MakeLocalDatabaseDumpShort=Banco de dados local cópia de segurança
+MakeLocalDatabaseDump=Crie um dump de banco de dados local. Os parâmetros são: compressão ('gz' ou 'bz' ou 'none'), cópia de segurança tipo ('mysql', 'pgsql', 'auto'), 1, 'auto ' ou nome do arquivo a ser compilado, número de arquivos cópia de segurança a serem mantidos
+MakeSendLocalDatabaseDumpShort=Enviar banco de dados local cópia de segurança
+MakeSendLocalDatabaseDump=Envie o banco de dados local cópia de segurança por e-mail. Os parâmetros são: para, de, assunto, mensagem, nome do arquivo (Nome do ficheiro enviado), filtro ('sql' para cópia de segurança apenas do banco de dados)
+BackupIsTooLargeSend=Desculpe, o último cópia de segurança ficheiro é muito grande para ser enviado por e-mail
+CleanUnfinishedCronjobShort=Limpe o cronjob inacabado
+CleanUnfinishedCronjob=Limpe o cronjob preso no processamento quando o processo não estiver mais em execução
+WarningCronDelayed=Atenção, para fins de desempenho, seja qual for o próximo data da execução dos trabalhos habilitados, seus trabalhos poderão ser atrasados até um máximo de %s horas, antes de ser executado.
+DATAPOLICYJob=Limpador de dados e anonimizador
+JobXMustBeEnabled=O trabalho %s deve estar ativado
+EmailIfError=E-mail para aviso de erro
+JobNotFound=Trabalho %s não encontrado na lista de trabalhos (tente desativar/ativar módulo)
+ErrorInBatch=Erro ao executar o job %s
 
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+LastExecutedScheduledJob=Último trabalho agendado executado
+NextScheduledJobExecute=Próximo trabalho agendado a ser executado
+NumberScheduledJobError=Número de jobs agendados com erro
+NumberScheduledJobNeverFinished=Número de trabalhos agendados nunca concluídos

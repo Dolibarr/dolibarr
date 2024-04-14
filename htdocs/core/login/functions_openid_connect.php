@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Jeritiana Ravelojaona <jeritiana.rav@smartone.ai>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
- * @return	string					Login if OK, '' if KO
+ * @return	string|false			Login if OK, false if KO
  */
 function check_user_password_openid_connect($usertotest, $passwordtotest, $entitytotest)
 {
@@ -40,7 +41,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -61,10 +62,10 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		// Step 2: turn the authorization code into an access token, using client_secret
 		$auth_param = [
 			'grant_type'    => 'authorization_code',
-			'client_id'     => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_ID,
-			'client_secret' => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET,
+			'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
+			'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
 			'code'          => $auth_code,
-			'redirect_uri'  => $conf->global->MAIN_AUTHENTICATION_OIDC_REDIRECT_URL
+			'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
 		];
 
 		$token_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_TOKEN_URL, 'POST', http_build_query($auth_param));
@@ -81,8 +82,8 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 			// Get the user attribute (claim) matching the Dolibarr login
 			$login_claim = 'email'; // default
-			if (!empty($conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM)) {
-				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
+			if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
+				$login_claim = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM');
 			}
 
 			if (property_exists($userinfo_content, $login_claim)) {
@@ -98,20 +99,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
-						/* $now = dol_now();
-						if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
-							// Load translation files required by the page
-							$langs->loadLangs(array('main', 'errors'));
-							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-							return '--bad-login-validity--';
-						}
-						if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
-							// Load translation files required by the page
-							$langs->loadLangs(array('main', 'errors'));
-							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-							return '--bad-login-validity--';
-						} */
+						// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
 						$login = $obj->login;
 					}
 				}

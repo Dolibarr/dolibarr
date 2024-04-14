@@ -34,7 +34,6 @@ PaymentEvent=イベントの支払
 NewRegistration=登録
 EventOrganizationSetup=イベント組織の設定
 EventOrganization=イベント主催
-Settings=設定
 EventOrganizationSetupPage = イベント組織設定ページ
 EVENTORGANIZATION_TASK_LABEL = プロジェクトは検証済なら自動的に作成するタスクのラベル
 EVENTORGANIZATION_TASK_LABELTooltip = 整理するイベントを検証と、プロジェクトにいくつかのタスクが自動的に作成される<br><br>例: <br>カンファレンス募集を送信<br>ブース募集を送信<br>カンファレンス提案を検証<br>ブース申請を検証<br>出席者向けのイベント参加登録を開始<br>話者にイベント催告を送信<br>ブース主催者にイベント催告を送信<br>出席者にイベント催告を送信
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=イベントの登録または参加に支払う価格
 PriceOfBooth=ブース立ちのサブスクリプション価格
 PriceOfBoothHelp=ブース出展用サブスクリプション価格
 EventOrganizationICSLink=会議用のリンクICS
-ConferenceOrBoothInformation=会議またはブース情報
+ConferenceOrBoothInformation=カンファレンスまたはブース情報
 Attendees=参加者
 ListOfAttendeesOfEvent=イベントプロジェクトの参加者リスト
 DownloadICSLink = ICS リンクをダウンロード
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = 会議を提案するための公開登録ペー�
 SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = イベントへの参加者のサブスクリプションに関する請求書の行に使用されるサービス
 NbVotes=投票数
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = 確定済み
 EvntOrgNotQualified = 資格なし
 EvntOrgDone = 済
 EvntOrgCancelled = キャンセル
+
 #
-# Public page
+# Other
 #
 SuggestForm = 提案ページ
 SuggestOrVoteForConfOrBooth = 提案または投票のためのページ
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=これは、参加者としてのイベン�
 OrganizationEventBulkMailToSpeakers=これは、スピーカーとしてのイベントへの参加を思い出させるものだ。
 OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライヤー、またはパートナー）へのリンク
 OrganizationEvenLabelName=会議またはブースの公開名
-
 NewSuggestionOfBooth=ブース申請
 NewSuggestionOfConference=カンファレンスの開催申し込み
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = 会議またはブースの提案ページへようこそ。
 EvntOrgRegistrationConfWelcomeMessage = カンファレンスの提案ページへようこそ。
 EvntOrgRegistrationBoothWelcomeMessage = ブース提案ページへようこそ。
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = ここで、プロジェクトの提案されたイベ�
 VoteOk = あなたの投票が承認された。
 AlreadyVoted = あなたは既にこのイベントに投票している。
 VoteError = 投票中にエラーが発生した。もう一度やり直し願う。
-
 SubscriptionOk=登録が記録された
+AmountOfRegistrationPaid=支払った登録料の金額
 ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確定
 Attendee = 参加者
 PaymentConferenceAttendee = 会議参加者の支払
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と�
 EmailAttendee=参加者の電子メール
 EmailCompany=法人のメール
 EmailCompanyForInvoice=法人の電子メール（請求書に対して、参加者の電子メールと異なる場合）
-ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
-ErrorSeveralCompaniesWithNameContactUs=この名前の会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
+ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している企業が数社見つかったため、お客様の登録を自動的に 検証することができない。手動検証については、%s まで問合せすることを願う。
+ErrorSeveralCompaniesWithNameContactUs=この名前の会社が複数見つかったため、あなたの登録を自動的に 確認することができない。手動検証については、%s まで問合せすることを願う。
 NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは公開されていない
 MaxNbOfAttendees=参加者の最大数
 DateStartEvent=イベント開始日

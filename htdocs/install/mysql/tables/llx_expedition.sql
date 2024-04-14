@@ -17,6 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- Note: a shipment is linked to an order or other object using llx_element_element table.
 -- ===================================================================
 
 create table llx_expedition
@@ -31,11 +32,11 @@ create table llx_expedition
   ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
   ref_customer          varchar(255),					-- customer number
   
-  date_creation         datetime,						-- date de creation
+  date_creation         datetime,						-- date of creation
   fk_user_author        integer,						-- author of creation
   fk_user_modif         integer,						-- author of last change
-  date_valid            datetime,						-- date de validation
-  fk_user_valid         integer,						-- valideur
+  date_valid            datetime,						-- date of validation
+  fk_user_valid         integer,						-- user that validate
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
   date_expedition       datetime,						-- not used (deprecated)
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)

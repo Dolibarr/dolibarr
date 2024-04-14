@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - marque pages / bookmarks
 
 AddThisPageToBookmarks = Pievienot pašreizējo lapu grāmatzīmēm
-BehaviourOnClick = Behaviour when a bookmark URL is selected
+BehaviourOnClick = Rīcība, kad ir atlasīts grāmatzīmes URL
 Bookmark = Grāmatzīme
 Bookmarks = Grāmatzīmes
 BookmarkTargetNewWindowShort = Jauna cilne

@@ -28,7 +28,7 @@ ErrorPHPVersionTooLow=إصدار PHP قديم جدًا. مطلوب إصدار %s
 ErrorPHPVersionTooHigh=إصدار PHP مرتفع جدًا. مطلوب إصدار %s أو أقل.
 ErrorConnectedButDatabaseNotFound=الاتصال بالخادم ناجح ولكن قاعدة البيانات "%s" غير موجودة.
 ErrorDatabaseAlreadyExists=قاعدة البيانات '٪ ق' موجود بالفعل.
-ErrorNoMigrationFilesFoundForParameters=No migration file found for the selected versions
+ErrorNoMigrationFilesFoundForParameters=لم يتم العثور على ملف ترحيل للإصدارات المحددة
 IfDatabaseNotExistsGoBackAndUncheckCreate=إذا كانت قاعدة البيانات غير موجودة ، فارجع وحدد الخيار "إنشاء قاعدة بيانات".
 IfDatabaseExistsGoBackAndCheckCreate=إذا كانت قاعدة البيانات موجود بالفعل ، من العودة وإلغاء "إنشاء قاعدة بيانات" الخيار.
 WarningBrowserTooOld=إصدار المتصفح قديم جدًا. يوصى بشدة بترقية متصفحك إلى إصدار حديث من Firefox أو Chrome أو Opera.
@@ -88,7 +88,7 @@ LoginAlreadyExists=موجود بالفعل
 DolibarrAdminLogin=ادخل Dolibarr مشرف
 AdminLoginAlreadyExists=حساب مسؤول Dolibarr '<b> %s </b>' موجود بالفعل. ارجع إذا كنت تريد إنشاء واحدة أخرى.
 FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
+WarningRemoveInstallDir=تحذير، لأسباب أمنية، بمجرد اكتمال عملية التثبيت، يجب عليك إضافة ملف يسمى <b>install.lock</b> في دليل مستند Dolibarr في طلب لمنع الاستخدام غير المقصود/الضار لأدوات التثبيت مرة أخرى.
 FunctionNotAvailableInThisPHP=غير متوفر في PHP هذا
 ChoosedMigrateScript=اختار الهجرة سكريبت
 DataMigration=ترحيل قاعدة البيانات (البيانات)
@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=ترحيل الشحن لتخزين أوامر ا�
 MigrationShippingDelivery=ترقية تخزين الشحن
 MigrationShippingDelivery2=ترقية تخزين الشحن 2
 MigrationFinished=الانتهاء من الهجرة
-LastStepDesc= <strong> الخطوة الأخيرة </strong>: حدد هنا تسجيل الدخول وكلمة المرور اللذين ترغب في استخدامهما للاتصال بـ Dolibarr. <b> لا تفقد هذا لأنه الحساب الرئيسي لإدارة جميع حسابات المستخدمين الأخرى / الإضافية. </b>
+LastStepDesc=<strong>الخطوة الأخيرة</strong>: حدد هنا كلمة المرور و التي ترغب في تسجيل الدخول إليها تستخدم للاتصال Dolibarr. <b>لا تفقد هذا لأنه الحساب الرئيسي لإدارة جميع حسابات المستخدمين الأخرى/الإضافية.</b>
 ActivateModule=تفعيل وحدة %s
 ShowEditTechnicalParameters=انقر هنا لعرض/تحرير المعلمات المتقدمة (وضع الخبراء)
 WarningUpgrade=تحذير:\nهل قمت بتشغيل نسخة احتياطية لقاعدة البيانات أولاً؟\nينصح بهذا بشدة. قد يكون فقدان البيانات (بسبب الأخطاء الموجودة في الإصدار 5.5.40 / 41/42/43 من mysql على سبيل المثال) ممكنًا أثناء هذه العملية ، لذلك من الضروري تفريغ قاعدة البيانات بالكامل قبل بدء أي ترحيل.\n\nانقر فوق "موافق" لبدء عملية الترحيل ...
@@ -208,12 +208,12 @@ HideNotAvailableOptions=إخفاء الخيارات غير المتاحة
 ErrorFoundDuringMigration=تم الإبلاغ عن خطأ (أخطاء) أثناء عملية الترحيل ، لذا فإن الخطوة التالية غير متاحة. لتجاهل الأخطاء ، يمكنك النقر هنا <a href="%s"> </a> ، لكن التطبيق أو بعض الميزات قد لا تعمل بشكل صحيح حتى يتم حل الأخطاء.
 YouTryInstallDisabledByDirLock=حاول التطبيق الترقية الذاتية ، ولكن تم تعطيل صفحات التثبيت / الترقية للأمان (تمت إعادة تسمية الدليل بلاحقة .lock). <br>
 YouTryInstallDisabledByFileLock=حاول التطبيق الترقية الذاتية ، ولكن تم تعطيل صفحات التثبيت / الترقية للأمان (من خلال وجود ملف قفل <strong> install.lock </strong> في دليل مستندات dolibarr). <br>
-YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
+YouTryUpgradeDisabledByMissingFileUnLock=حاول التطبيق الترقية الذاتية، لكن عملية الترقية غير مسموح بها حاليًا.<br>
 ClickHereToGoToApp=انقر هنا للذهاب إلى التطبيق الخاص بك
 ClickOnLinkOrRemoveManualy=إذا كانت الترقية قيد التقدم ، يرجى الانتظار. إذا لم يكن كذلك ، انقر فوق الارتباط التالي. إذا كنت ترى نفس الصفحة دائمًا ، فيجب عليك إزالة / إعادة تسمية الملف install.lock في دليل المستندات.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=إذا كانت الترقية قيد التقدم، فيرجى الانتظار... إذا لم يكن الأمر كذلك، فيجب عليك إزالة الملف install.lock أو إنشاء ملف Upgrade.unlock في دليل مستندات Dolibarr.
 Loaded=محمل
 FunctionTest=اختبار الوظيفة
-NodoUpgradeAfterDB=No action requested by external modules after upgrade of database
-NodoUpgradeAfterFiles=No action requested by external modules after upgrade of files or directories
-MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)
+NodoUpgradeAfterDB=لا يوجد إجراء مطلوب من قبل الوحدات الخارجية بعد ترقية قاعدة البيانات
+NodoUpgradeAfterFiles=لا يوجد إجراء مطلوب من قبل الوحدات الخارجية بعد ترقية الملفات أو الدلائل
+MigrationContractLineRank=ترحيل سطر العقد لاستخدام الرتبة (و تمكين إعادة الطلب)
