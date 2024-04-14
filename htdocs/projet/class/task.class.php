@@ -900,7 +900,7 @@ class Task extends CommonObject
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
-			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority";
+			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority,";
 			$sql .= " t.description, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
