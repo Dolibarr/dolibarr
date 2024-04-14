@@ -443,7 +443,7 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
-	$renderer = $debugbar->getRenderer();
+	$renderer = $debugbar->getJavascriptRenderer();
 	if (!getDolGlobalString('MAIN_HTML_HEADER')) {
 		$conf->global->MAIN_HTML_HEADER = '';
 	}
@@ -2654,7 +2654,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 
 		//if ($conf->theme != 'md') {
-			$btnUser .= '
+		$btnUser .= '
 	            jQuery("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-login-dropdown .dropdown-toggle");
 					event.preventDefault();
