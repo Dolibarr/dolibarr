@@ -170,8 +170,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 				}
 
-				// Send email to assignee
-				if ($object->fk_user_assign >0 && $object->fk_user_assign != $user->id) {
+				// Send email to assignee if an assignee was set at creation
+				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id) {
 					$userstat = new User($this->db);
 					$res = $userstat->fetch($object->fk_user_assign);
 					if ($res > 0) {
