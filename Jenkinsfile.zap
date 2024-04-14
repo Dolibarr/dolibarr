@@ -43,12 +43,13 @@ pipeline {
     }
 
     stages {
-    stage('Checkout') {
-      steps {
-        // Checkout your source code
-        checkout scm
-     }
-  }
+        stage('Checkout') {
+            steps {
+                // Checkout your source code
+                checkout scm
+            }
+        }
+
         stage('Pipeline Info') {
             steps {
                 script {
@@ -68,7 +69,6 @@ pipeline {
             when {
                 expression {
                     params.GENERATE_REPORT == true
-                    
                 }
             }
             steps {
@@ -133,5 +133,12 @@ pipeline {
         }
     }
 
-
+    post {
+        always {
+            script {
+                // Use kubectl to delete the pod after pipeline execution
+                sh "kubectl delete pod zap-pod"
+            }
+        }
+    }
 }
