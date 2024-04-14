@@ -72,7 +72,7 @@ pipeline {
                 }
             }
             steps {
-                container('zap') {
+                container('owasp') {
                     script {
                         sh """
                             mkdir -p /zap/wrk
@@ -84,7 +84,7 @@ pipeline {
 
         stage('Scanning target on owasp container') {
             steps {
-                container('zap') {
+                container('owasp') {
                     script {
                         def scan_type = "${params.SCAN_TYPE}"
                         def target = "${params.TARGET}"
@@ -122,7 +122,7 @@ pipeline {
 
         stage('Copy Report to Workspace') {
             steps {
-                container('zap') {
+                container('owasp') {
                     script {
                         sh '''
                             cp /zap/wrk/report.xml \${WORKSPACE}/report.xml
