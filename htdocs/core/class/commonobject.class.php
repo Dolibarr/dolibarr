@@ -1120,7 +1120,7 @@ abstract class CommonObject
 			$this->region       = $tmparray['region'];
 		}
 
-		return dol_format_address($this, $withcountry, $sep, '', 0, $extralangcode);
+		return dol_format_address($this, $withcountry, $sep, null, 0, $extralangcode);
 	}
 
 
@@ -7660,7 +7660,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
-			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, $morecss, 0, '100%');
+			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, 0, 0, $morecss, 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			foreach ($param['options'] as $keyopt => $valopt) {
@@ -7816,14 +7816,14 @@ abstract class CommonObject
 						}
 						$this->db->free($resql);
 
-						$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, '', 0, $morecss, 0, '100%');
+						$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 					} else {
 						print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
-					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, '', 0, $morecss, 0, '100%');
+					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
 			}
 		} elseif ($type == 'link') {
