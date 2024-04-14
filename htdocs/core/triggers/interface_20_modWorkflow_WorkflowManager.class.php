@@ -545,8 +545,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			// Auto link contract
-			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('intervention') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
+			// Auto link ticket to contract
+			if (isModEnabled('contract') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -554,7 +554,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
-					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
+					$list = $contrat->getListOfContracts('all', array(Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED), array(getDolGlobalString('TICKET_PRODUCT_CATEGORY')), array(ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN));
 					if (!is_array($list) || empty($list)) {
 						continue;
 					}
@@ -569,13 +569,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 
 					if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
-						setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+						setEventMessages($langs->trans('TicketManyContractsLinked'), null, 'warnings');
 					}
 					break;
 				}
 				if ($number_contracts_found == 0) {
 					if (empty(NOLOGIN)) {
-						setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+						setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 					}
 				}
 			}
