@@ -132,16 +132,5 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            container('zap') {
-                script {
-                    echo "Removing container"
-                    sh """
-                    kubectl delete pod zap-pod
-                """
-                }
-            }
-        }
-    }
+
 }
