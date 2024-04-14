@@ -154,7 +154,7 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
-	 * @var array		To store result of ->liste_contact()
+	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>	 	To store result of ->liste_contact()
 	 */
 	public $contacts_ids;
 
@@ -394,7 +394,7 @@ abstract class CommonObject
 	public $state_id;
 
 	/**
-	 * var	int			State ID
+	 * @var	int			State ID
 	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
 	 */
 	public $fk_departement;
@@ -800,7 +800,7 @@ abstract class CommonObject
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array		Array to store lists of tpl
+	 * @var array<string,string>	Array to store lists of tpl
 	 */
 	public $tpl;
 
@@ -976,7 +976,7 @@ abstract class CommonObject
 	/**
 	 * getTooltipContent
 	 *
-	 * @param array $params params
+	 * @param array<string,mixed>	$params	params
 	 * @since v18
 	 * @return string
 	 */
@@ -1103,9 +1103,9 @@ abstract class CommonObject
 	/**
 	 * 	Return full address of contact
 	 *
-	 * 	@param		int			$withcountry		1=Add country into address string
+	 * 	@param		int<0,1>	$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
-	 *  @param		int		    $withregion			1=Add region into address string
+	 *  @param		int<0,1>    $withregion			1=Add region into address string
 	 *  @param		string		$extralangcode		User extralanguages as value
 	 *	@return		string							Full address string
 	 */
@@ -1120,7 +1120,7 @@ abstract class CommonObject
 
 		if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_code))) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-			$tmparray = getState($this->state_id, 'all', 0, 1);
+			$tmparray = getState($this->state_id, 'all', null, 1);
 			$this->state_code   = $tmparray['code'];
 			$this->state        = $tmparray['label'];
 			$this->region_code  = $tmparray['region_code'];
@@ -1482,11 +1482,11 @@ abstract class CommonObject
 	 *
 	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
 	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
-	 *    @param	int         $list       	0:Returned array contains all properties, 1:Return array contains just id
+	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
 	 *    @param	array		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
-	 *    @return	array|int		        	Array of contacts, -1 if error
+	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
@@ -7301,7 +7301,7 @@ abstract class CommonObject
 				$morecss = 'minwidth100imp';
 			} elseif ($type == 'datetime' || $type == 'link') {	// link means an foreign key to another primary id
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
+			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', (string) $type)) {
 				$morecss = 'maxwidth75';
 			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
@@ -7355,11 +7355,11 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($newsize > 0 ? ' maxlength="'.$newsize.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (preg_match('/varchar/', $type)) {
+		} elseif (preg_match('/varchar/', (string) $type)) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (preg_match('/^text/', $type)) {
+		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
@@ -7367,7 +7367,7 @@ abstract class CommonObject
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif (preg_match('/^html/', $type)) {
+		} elseif (preg_match('/^html/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
@@ -7388,7 +7388,7 @@ abstract class CommonObject
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
-		} elseif (preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
+		} elseif (preg_match('/^double(\([0-9],[0-9]\)){0,1}/', (string) $type)) {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
@@ -8147,7 +8147,7 @@ abstract class CommonObject
 		} elseif ($type == 'radio') {
 			$value = $param['options'][$value];
 		} elseif ($type == 'checkbox') {
-			$value_arr = explode(',', $value);
+			$value_arr = explode(',', (string) $value);
 			$value = '';
 			if (is_array($value_arr) && count($value_arr) > 0) {
 				$toprint = array();
@@ -9125,7 +9125,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string	$modulepart		Module part
 	 * @param 	string	$imagesize		Image size
-	 * @return	array{dir:string,file:string,originalfile:string,altfile:string,email:string,capture:string)	Array of data to show photo
+	 * @return	array{dir:string,file:string,originalfile:string,altfile:string,email:string,capture:string}	Array of data to show photo
 	 */
 	public function getDataToShowPhoto($modulepart, $imagesize)
 	{
