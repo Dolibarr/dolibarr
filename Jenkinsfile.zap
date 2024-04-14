@@ -45,6 +45,7 @@ pipeline {
         stage('Pipeline Info') {
             steps {
                 script {
+                    echo "test"
                     echo "<--Parameter Initialization-->"
                     echo """
                     The current parameters are:
@@ -60,7 +61,7 @@ pipeline {
             when {
                 expression {
                     params.GENERATE_REPORT == true
-                    echo "test"
+                    
                 }
             }
             steps {
