@@ -7756,7 +7756,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 					//var_dump($attrs->item($ii));
 					if (!empty($attrs->item($ii)->name)) {
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
-							// Delete attribute if not into allowed_attributes
+							// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
 							// If attribute is 'style'
@@ -8410,7 +8410,7 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
  * @param	string[]|null	$include		Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @return	array<string,string>			Array of substitutions
  * @see setSubstitFromObject()
- * @phan-suppress PhanTypeArraySuspiciousNullable,PhanTypePossiblyInvalidDimOffset
+ * @phan-suppress PhanTypeArraySuspiciousNullable,PhanTypePossiblyInvalidDimOffset,PhanUndeclaredProperty
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null, $object = null, $include = null)
 {
@@ -8584,7 +8584,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		} else {
-			'@phan-var-force Adherent|Delivery|Expedition|Fichinter $object';
+			'@phan-var-force Adherent|Delivery $object';
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__NEWREF__'] = $object->newref;
@@ -8952,6 +8952,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 	}
 	if ((empty($exclude) || !in_array('objectamount', $exclude)) && (empty($include) || in_array('objectamount', $include))) {
+		'@phan-var-force Facture|FactureRec $object';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
@@ -9240,10 +9241,13 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 							if (method_exists($class, $method)) {
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
 									$memory_object_list[$class]['list'][$id] = $tmpobj;
 								} else {
+									// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 									$tmpobj = $memory_object_list[$class]['list'][$id];
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
 								}
 
@@ -9718,6 +9722,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 				if (is_object($array[$key])) {
 					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
 				} else {
+					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
 				}
 				if ($natsort == -1) {
@@ -10547,6 +10552,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 									$obj = new $classtoload($db);
 									$function = $labeltemp[3];
 									if ($obj && $function && method_exists($obj, $function)) {
+										// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 										$nbrec = $obj->$function($object->id, $obj);
 										if (!empty($nbrec)) {
 											$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
@@ -10823,7 +10829,10 @@ function printCommonFooter($zone = 'private')
 
 		// Add DebugBar data
 		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
-			$debugbar['time']->stopMeasure('pageaftermaster');
+			if (isset($debugbar['time'])) {
+				// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+				$debugbar['time']->stopMeasure('pageaftermaster');
+			}
 			print '<!-- Output debugbar data -->'."\n";
 			$renderer = $debugbar->getJavascriptRenderer();
 			print $renderer->render();
