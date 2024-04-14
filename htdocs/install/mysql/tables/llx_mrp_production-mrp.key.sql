@@ -18,4 +18,3 @@ ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_product FOREIGN 
 ALTER TABLE llx_mrp_production ADD CONSTRAINT fk_mrp_production_stock_movement FOREIGN KEY (fk_stock_movement) REFERENCES llx_stock_mouvement (rowid);
 
 ALTER TABLE llx_mrp_production ADD INDEX idx_mrp_production_fk_mo (fk_mo);
-

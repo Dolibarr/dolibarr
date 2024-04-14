@@ -602,7 +602,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound");'</span></td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 	print "</table>";
 	print '</div>';
