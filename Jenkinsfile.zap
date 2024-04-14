@@ -8,7 +8,7 @@ pipeline {
                   name: owasp-pod
                 spec:
                   containers:
-                  - name: zap
+                  - name: owasp
                     image: owasp/zap2docker-stable
                     command:
                     - sleep
