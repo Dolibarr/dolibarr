@@ -9,7 +9,7 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-stable
+                    image: owasp/zap2docker-stable:2.14.0
                     command:
                     tty: true
                     volumeMounts:
