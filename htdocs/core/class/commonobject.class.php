@@ -7229,6 +7229,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
+		// @phan-suppress-next-line: PhanTypeArraySuspiciousNullable
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7273,13 +7274,20 @@ abstract class CommonObject
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
