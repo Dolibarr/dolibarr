@@ -1791,7 +1791,8 @@ class BonPrelevement extends CommonObject
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
 				if($conf->global->SEPA_ROUND_TWO_ZERO){
-					$this->total=number_format($this->total,2,".","");
+					$this->total=number_format( price2num($this->total,'MT'),2,".","");
+                  $this->total=number_format( price2num($this->total,'MT'),2,".","");
 				}
 				/**
 				 * SECTION CREATION SEPA FILE - ISO200022
@@ -1930,7 +1931,7 @@ class BonPrelevement extends CommonObject
 				}
 
 				if($conf->global->SEPA_ROUND_TWO_ZERO){
-					$this->total=number_format($this->total,2,".","");
+					$this->total=number_format(price2num($this->total,'MT'),2,".","");
 				}
 
 				/**
@@ -2166,10 +2167,11 @@ class BonPrelevement extends CommonObject
 		global $conf;
 
 		if($conf->global->SEPA_ROUND_TWO_ZERO){
-			$row_somme=number_format($row_somme,2,".","");
+			$row_somme=number_format(price2num($row_somme,'MT'),2,".","");
 		}else{
-			$row_somme=round($row_somme,2);
+			$row_somme=round((float) $row_somme, 2);
 		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$CrLf = "\n";
@@ -2190,7 +2192,7 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_DEBITOR .= '					<EndToEndId>'.((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('DD-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_DEBITOR .= '				</PmtId>'.$CrLf;
-			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'. $row_somme .'</InstdAmt>'.$CrLf;
 			$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
 			$XML_DEBITOR .= '					<MndtRltdInf>'.$CrLf;
 			$XML_DEBITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
@@ -2432,7 +2434,7 @@ class BonPrelevement extends CommonObject
 
 			
 			if($configuration->global->SEPA_ROUND_TWO_ZERO){
-				$this->total=number_format($this->total,2,".","");
+				$total=number_format(price2num($total,'MT'),2,".","");
 			}
 			
 			if ($type != 'bank-transfer') {
