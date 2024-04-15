@@ -26,7 +26,7 @@ pipeline {
           script{
             sh "mkdir -p /tmp/phpstan_cache"
             sh "chmod 755 /tmp/phpstan_cache"
-            sh "chown -R jenkins:jenkins /tmp/phpstan_cache"
+            sh "chown -R admin:admin /tmp/phpstan_cache"
             // Create directory for reports
             sh "mkdir -p test-reports"
             sh "phpstan clear-result-cache "
