@@ -29,6 +29,8 @@ pipeline {
             sh "chown -R root:root /tmp/phpstan_cache"
             // Create directory for reports
             sh "mkdir -p test-reports"
+            sh "ls -l /tmp "
+            sh "ls -l"
             sh "phpstan clear-result-cache "
             // Run PHPStan inside PHPStan container
             sh "phpstan -vvv "
