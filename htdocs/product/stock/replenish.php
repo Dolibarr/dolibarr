@@ -684,7 +684,7 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 	}
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$filters .= '&limit=' . ((int)$limit);
+	$filters .= '&limit=' . ((int) $limit);
 }
 if (!empty($includeproductswithoutdesiredqty)) $filters .= '&includeproductswithoutdesiredqty=' . urlencode($includeproductswithoutdesiredqty);
 if (!empty($salert)) $filters .= '&salert=' . urlencode($salert);
