@@ -3906,7 +3906,7 @@ abstract class CommonObject
 						}
 						$obj->total_tva = $tmpcal[1];
 						$obj->total_ttc = $tmpcal[2];
-					} elseif ($diff_when_using_price_ht && $forcedroundingmode == '0') {
+					} elseif ($diff_when_using_price_ht) {
 						// After calculation from HT, total is consistent but we have found a difference between VAT part in calculation and into database and
 						// we ask to force the use of rounding on line (like done on calculation) so we force update of line
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
