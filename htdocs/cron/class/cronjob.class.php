@@ -577,11 +577,11 @@ class Cronjob extends CommonObject
 		// Manage filter
 		if (is_array($filter)) {
 			if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
-				} else {
-						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid') {
+						$sql .= " AND " . $this->db->sanitize($key) . " = " . ((int)$value);
+					} else {
+						$sql .= ' AND ' . $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 					}
 				}
 			}
