@@ -230,8 +230,8 @@ if ($action == 'order' && GETPOST('valid')) {
 
 			// Check if an order for the supplier exists
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "commande_fournisseur";
-			$sql .= " WHERE fk_soc = " . ((int)$suppliersid[$i]);
-			$sql .= " AND source = " . ((int)$order::SOURCE_ID_REPLENISHMENT) . " AND fk_statut = " . ((int)$order::STATUS_DRAFT);
+			$sql .= " WHERE fk_soc = " . ((int) $suppliersid[$i]);
+			$sql .= " AND source = " . ((int) $order::SOURCE_ID_REPLENISHMENT) . " AND fk_statut = " . ((int) $order::STATUS_DRAFT);
 			$sql .= " AND entity IN (" . getEntity('commande_fournisseur') . ")";
 			$sql .= " ORDER BY date_creation DESC";
 			$resql = $db->query($sql);
@@ -372,7 +372,7 @@ if ($list_warehouse_selected == 0) {
 
 //$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
-	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = ' . ((int)$fk_entrepot) . ')';
+	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = ' . ((int) $fk_entrepot) . ')';
 }
 // Add fields from hooks
 $parameters = array();
@@ -825,7 +825,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'product_lang';
-			$sql .= ' WHERE fk_product = ' . ((int)$objp->rowid);
+			$sql .= ' WHERE fk_product = ' . ((int) $objp->rowid);
 			$sql .= " AND lang = '" . $db->escape($langs->getDefaultLang()) . "'";
 			$sql .= ' LIMIT 1';
 
