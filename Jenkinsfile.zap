@@ -10,9 +10,6 @@ pipeline {
                   containers:
                   - name: zap
                     image: owasp/zap2docker-stable
-                    command:
-                    - sleep
-                    - infinity
                     tty: true
                     volumeMounts:
                     - name: zap-workdir
