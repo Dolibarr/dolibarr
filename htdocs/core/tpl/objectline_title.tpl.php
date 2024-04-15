@@ -53,7 +53,23 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 }
 
 // Description
-print '<th class="linecoldescription">'.$langs->trans('Description').'</th>';
+print '<th class="linecoldescription">'.$langs->trans('Description');
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'servicedateforalllines') {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=servicedateforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
+	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
+		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
+		$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print ' '.$langs->trans('to').' ';
+		print $form->selectDate('', 'alldate_end', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '</div>';
+	}
+}
+print '</th>';
 
 // Supplier ref
 if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
