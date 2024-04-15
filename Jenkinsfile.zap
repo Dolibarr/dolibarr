@@ -7,7 +7,7 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-stable
+                    image: owasp/zap2docker-bare
                     tty: true
                     volumeMounts:
                     - name: zap-workdir
