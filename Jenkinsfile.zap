@@ -137,9 +137,9 @@ pipeline {
         always {
             script {
                 // Use kubectl to delete the pod after pipeline execution
-                sh """
-                    kubectl delete pod zap-pod
-                """
+                #sh """
+                    #kubectl delete pod zap-pod
+                #"""
             }
         }
     }
