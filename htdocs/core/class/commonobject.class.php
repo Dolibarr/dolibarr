@@ -138,7 +138,7 @@ abstract class CommonObject
 	public $import_key;
 
 	/**
-	 * @var mixed		Contains data to manage extrafields
+	 * @var array<string,mixed>	Contains data to manage extrafields
 	 */
 	public $array_options = array();
 
@@ -149,7 +149,8 @@ abstract class CommonObject
 	public $fields = array();
 
 	/**
-	 * @var mixed		Array to store alternative languages values of object
+	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
+	 * Note: call fetchValuesForExtraLanguages() before using this
 	 */
 	public $array_languages = null; // Value is array() when load already tried
 
@@ -811,7 +812,7 @@ abstract class CommonObject
 	public $showphoto_on_popup;
 
 	/**
-	 * @var array 		nb used in load_stateboard
+	 * @var array{actionscomm?:int,banklines?:int,cheques?:int,contacts?:int,contracts?:int,customers?:int,dolresource?:int,donations?:int,expensereports?:int,holidays?:int,interventions?:int,invoices?:int,members?:int,orders?:int,products?:int,projects?:int,proposals?:int,prospects?:int,services?:int,supplier_invoices?:int,supplier_orders?:int,supplier_proposals?:int,suppliers?:int,tasks?:int,ticket?:int,users?:int}		nb used in load_stateboard
 	 */
 	public $nb = array();
 
@@ -6121,7 +6122,7 @@ abstract class CommonObject
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
 	 *
-	 *  @return	int						Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @return	int<-1,1>					Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
 	 */
 	public function fetchValuesForExtraLanguages()
@@ -6191,7 +6192,7 @@ abstract class CommonObject
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
 	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
-	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @return	int<-1,1>				1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setValuesForExtraLanguages($onlykey = '')
 	{
@@ -6274,7 +6275,7 @@ abstract class CommonObject
 	 * Function to make a fetch but set environment to avoid to load computed values before.
 	 *
 	 * @param	int		$id			ID of object
-	 * @return	int					>0 if OK, 0 if not found, <0 if KO
+	 * @return	int<-1,1>			>0 if OK, 0 if not found, <0 if KO
 	 */
 	public function fetchNoCompute($id)
 	{
@@ -6413,7 +6414,7 @@ abstract class CommonObject
 	/**
 	 *	Delete all extra fields values for the current object.
 	 *
-	 *  @return	int		Return integer <0 if KO, >0 if OK
+	 *  @return	int<-1,1>	Return integer <0 if KO, >0 if OK
 	 *  @see deleteExtraLanguages(), insertExtraField(), updateExtraField(), setValueFrom()
 	 */
 	public function deleteExtraFields()
@@ -6453,7 +6454,7 @@ abstract class CommonObject
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
-	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @return int<-1,1>					-1=error, O=did nothing, 1=OK
 	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
@@ -6751,7 +6752,7 @@ abstract class CommonObject
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
-	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @return int<-1,1>					-1=error, O=did nothing, 1=OK
 	 *  @see insertExtraFields(), updateExtraField(), setValueFrom()
 	 */
 	public function insertExtraLanguages($trigger = '', $userused = null)
@@ -6869,7 +6870,7 @@ abstract class CommonObject
 	 *  @param  string      $key    		Key of the extrafield to update (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
-	 *  @return int                 		-1=error, O=did nothing, 1=OK
+	 *  @return int<-1,1>              		-1=error, O=did nothing, 1=OK
 	 *  @see updateExtraLanguages(), insertExtraFields(), deleteExtraFields(), setValueFrom()
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
@@ -7192,12 +7193,12 @@ abstract class CommonObject
 	 *
 	 * @param  array|null	$val	       Array of properties for field to show (used only if ->fields not defined)
 	 * @param  string  		$key           Key of attribute
-	 * @param  string|array	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
-	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
+	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
@@ -8599,7 +8600,7 @@ abstract class CommonObject
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output ('view') or input ('create' or 'edit') for extrafield
-	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
+	 * @param 	array<string,mixed>	$params	Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
@@ -9010,12 +9011,12 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param  DoliDB 	   $dbs			  Database handler
-	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
-	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
-	 * @param  string[]    $tables        Tables that need to be changed
-	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
-	 * @return bool						  True if success, False if error
+	 * @param  DoliDB	$dbs			Database handler
+	 * @param  int		$origin_id		Old thirdparty id (the thirdparty to delete)
+	 * @param  int		$dest_id		New thirdparty id (the thirdparty that will received element of the other)
+	 * @param  string[]	$tables			Tables that need to be changed
+	 * @param  int<0,1>	$ignoreerrors	Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
+	 * @return bool						True if success, False if error
 	 */
 	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
@@ -9039,12 +9040,12 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceProduct with the appropriate tables
 	 * Column name fk_product MUST be used to identify products
 	 *
-	 * @param  DoliDB 	   $dbs			  Database handler
-	 * @param  int 		   $origin_id     Old product id (the product to delete)
-	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
-	 * @param  string[]    $tables        Tables that need to be changed
-	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
-	 * @return bool						  True if success, False if error
+	 * @param  DoliDB		$dbs			Database handler
+	 * @param  int			$origin_id		Old product id (the product to delete)
+	 * @param  int 			$dest_id		New product id (the product that will received element of the other)
+	 * @param  string[]		$tables			Tables that need to be changed
+	 * @param  int<0,1>		$ignoreerrors	Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
+	 * @return bool							True if success, False if error
 	 */
 	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
@@ -9070,10 +9071,10 @@ abstract class CommonObject
 	 *	 elseif calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
-	 * @param float		$unitPrice		 Product unit price
-	 * @param float		$discountPercent Line discount percent
-	 * @param int		$fk_product		 Product id
-	 * @return float|int                 Return buy price if OK, integer <0 if KO
+	 * @param float		$unitPrice			Product unit price
+	 * @param float		$discountPercent	Line discount percent
+	 * @param int		$fk_product			Product id
+	 * @return float|int<-1,-1>				Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9580,7 +9581,7 @@ abstract class CommonObject
 	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
 	 * $this->${field} should be a clean and string value (so date are formatted for SQL insert).
 	 *
-	 * @return array		Array with all values of each properties to update
+	 * @return array<string,null|int|float|string>	Array with all values of each property to update
 	 */
 	protected function setSaveQuery()
 	{
@@ -9672,7 +9673,7 @@ abstract class CommonObject
 							$this->$field = (float) $obj->$field;
 						}
 					} else {
-						if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
+						if (isset($obj->$field) && (!is_null($obj->$field) || (!empty($info['notnull']) && $info['notnull'] == 1))) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9687,7 +9688,7 @@ abstract class CommonObject
 						$this->$field = (float) $obj->$field;
 					}
 				} else {
-					if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
+					if (isset($obj->$field) && (!is_null($obj->$field) || (!empty($info['notnull']) && $info['notnull'] == 1))) {
 						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;
@@ -9718,9 +9719,9 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   string  $alias   		String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields definition.
-	 * @param	array	$excludefields	Array of fields to exclude
-	 * @return  string					List of alias fields
+	 * @param   string		$alias			String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields definition.
+	 * @param	string[]	$excludefields	Array of fields to exclude
+	 * @return  string						List of alias fields
 	 */
 	public function getFieldList($alias = '', $excludefields = array())
 	{
@@ -9745,7 +9746,7 @@ abstract class CommonObject
 	 * Add quote to field value if necessary
 	 *
 	 * @param 	string|int	$value			Value to protect
-	 * @param	array		$fieldsentry	Properties of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$fieldsentry	Properties of field
 	 * @return 	string|int
 	 */
 	protected function quote($value, $fieldsentry)
@@ -9753,7 +9754,7 @@ abstract class CommonObject
 		if (is_null($value)) {
 			return 'NULL';
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
-			return price2num("$value");
+			return price2num((string) $value);
 		} elseif (preg_match('/int$/i', $fieldsentry['type'])) {
 			return (int) $value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
@@ -9769,11 +9770,11 @@ abstract class CommonObject
 
 
 	/**
-	 * Create object into database
+	 * Create object in the database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user		User that creates
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,-1>			Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = 0)
 	{
@@ -9801,6 +9802,7 @@ abstract class CommonObject
 			$this->user_creation_id = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
@@ -9820,35 +9822,40 @@ abstract class CommonObject
 
 		// Clean and check mandatory
 		foreach ($keys as $key) {
+			if (!isset($this->fields[$key])) {
+				continue;
+			}
+			$key_fields = $this->fields[$key];
+
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
+			if (preg_match('/^integer:/i', $key_fields['type']) && $values[$key] == '-1') {
 				$values[$key] = '';
 			}
-			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') {
+			if (!empty($key_fields['foreignkey']) && $values[$key] == '-1') {
 				$values[$key] = '';
 			}
 
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && is_null($this->fields[$key]['default'])) {
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
 				$error++;
 				$langs->load("errors");
 				dol_syslog("Mandatory field '".$key."' is empty and required into ->fields definition of class");
-				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+				$this->errors[] = $langs->trans("ErrorFieldRequired", isset($key_fields['label']) ? $key_fields['label'] : $key);
 			}
 
 			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default'])) {
-				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($key_fields['default'])) {
+				$values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
-				if (isset($this->fields[$key]['default'])) {
-					$values[$key] = ((int) $this->fields[$key]['default']);
+			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($values[$key])) {
+				if (isset($key_fields['default'])) {
+					$values[$key] = ((int) $key_fields['default']);
 				} else {
 					$values[$key] = 'null';
 				}
 			}
-			if (!empty($this->fields[$key]['foreignkey']) && empty($values[$key])) {
+			if (!empty($key_fields['foreignkey']) && empty($values[$key])) {
 				$values[$key] = 'null';
 			}
 		}
