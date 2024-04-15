@@ -26,6 +26,9 @@ class FormSetup
 	 */
 	public $db;
 
+	/** @var int */
+	public $entity;
+
 	/** @var FormSetupItem[]  */
 	public $items = array();
 
@@ -86,7 +89,8 @@ class FormSetup
 	 */
 	public function __construct($db, $outputLangs = false)
 	{
-		global $langs;
+		global $conf, $langs;
+
 		$this->db = $db;
 		$this->form = new Form($this->db);
 		$this->formAttributes['action'] = $_SERVER["PHP_SELF"];
@@ -94,6 +98,7 @@ class FormSetup
 		$this->formHiddenInputs['token'] = newToken();
 		$this->formHiddenInputs['action'] = 'update';
 
+		$this->entity = (is_null($this->entity) ? $conf->entity : $this->entity);
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -446,6 +451,8 @@ class FormSetup
 	{
 		$item = new FormSetupItem($confKey);
 
+		$item->entity = $this->entity;
+
 		// set item rank if not defined as last item
 		if (empty($item->rank)) {
 			$item->rank = $this->getCurentItemMaxRank() + 1;
@@ -638,7 +645,7 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param string $confKey the conf key used in database
+	 * @param string	$confKey	the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
@@ -652,7 +659,7 @@ class FormSetupItem
 		}
 
 		$this->langs = $langs;
-		$this->entity = $conf->entity;
+		$this->entity = (is_null($this->entity) ? $conf->entity : ((int) $this->entity));
 
 		$this->confKey = $confKey;
 		$this->loadValueFromConf();
@@ -1089,7 +1096,7 @@ class FormSetupItem
 			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out.= ajax_constantonoff($this->confKey);
+				$out.= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out.= $langs->trans('yes');

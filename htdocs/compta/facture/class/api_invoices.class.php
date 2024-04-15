@@ -318,7 +318,7 @@ class Invoices extends DolibarrApi
 		if ($this->invoice->create(DolibarrApiAccess::$user, 0, (empty($request_data["date_lim_reglement"]) ? 0 : $request_data["date_lim_reglement"])) < 0) {
 			throw new RestException(500, "Error creating invoice", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
-		return $this->invoice->id;
+		return ((int) $this->invoice->id);
 	}
 
 	 /**

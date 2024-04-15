@@ -162,7 +162,7 @@ function showDirectPublicLink($object)
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
 	$url = '';
 	if ($email) {
-		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
+		$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'view.php?track_id='.$object->track_id.'&email='.$email;
 	}
 
 	$out = '';
