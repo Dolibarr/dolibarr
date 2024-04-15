@@ -398,11 +398,11 @@ if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
 }
 $sql .= ' AND p.tobuy = 1';
-if (!empty($conf->variants->eabled) && empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {    // Add test to exclude products that has variants
+if (isModEnabled('variants') && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {    // Add test to exclude products that has variants
 	$sql .= ' AND p.rowid NOT IN (SELECT pac.fk_product_parent FROM ' . MAIN_DB_PREFIX . 'product_attribute_combination as pac WHERE pac.entity IN (' . getEntity('product') . '))';
 }
 if ($fk_supplier > 0) {
-	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int)$fk_supplier) . ' AND pfp.entity IN (' . getEntity('product_fournisseur_price') . '))';
+	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int) $fk_supplier) . ' AND pfp.entity IN (' . getEntity('product_fournisseur_price') . '))';
 }
 // Add where from hooks
 $parameters = array();
