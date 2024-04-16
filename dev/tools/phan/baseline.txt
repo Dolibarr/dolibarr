@@ -10,21 +10,21 @@
 return [
     // # Issue statistics:
     // PhanPluginUnknownPropertyType : 2250+ occurrences
-    // PhanTypePossiblyInvalidDimOffset : 1560+ occurrences
+    // PhanTypePossiblyInvalidDimOffset : 1550+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 1450+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 1400+ occurrences
-    // PhanPluginUnknownObjectMethodCall : 1050+ occurrences
-    // PhanUndeclaredProperty : 940+ occurrences
+    // PhanPluginUnknownObjectMethodCall : 1040+ occurrences
+    // PhanUndeclaredProperty : 840+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 780+ occurrences
     // PhanUndeclaredGlobalVariable : 730+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 620+ occurrences
     // PhanPossiblyUndeclaredVariable : 420+ occurrences
-    // PhanTypeArraySuspiciousNullable : 360+ occurrences
+    // PhanTypeArraySuspiciousNullable : 340+ occurrences
     // PhanTypeMismatchProperty : 300+ occurrences
     // PhanPluginDuplicateExpressionAssignmentOperation : 280+ occurrences
     // PhanPluginUnknownArrayFunctionReturnType : 230+ occurrences
     // PhanTypeObjectUnsetDeclaredProperty : 230+ occurrences
-    // PhanPluginUnknownArrayFunctionParamType : 190+ occurrences
+    // PhanPluginUnknownArrayFunctionParamType : 180+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 180+ occurrences
     // PhanTypeInvalidDimOffset : 170+ occurrences
     // PhanTypeExpectedObjectPropAccess : 150+ occurrences
@@ -53,10 +53,10 @@ return [
     // PhanInvalidFQSENInClasslike : 4 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanTypeConversionFromArray : 3 occurrences
+    // PhanNoopStringLiteral : 2 occurrences
     // PhanTypeComparisonToArray : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
-    // PhanNoopStringLiteral : 1 occurrence
     // PhanPluginWhitespaceTrailing : 1 occurrence
     // PhanTypeArraySuspiciousNull : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
@@ -172,7 +172,7 @@ return [
         'htdocs/admin/supplier_order.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/admin/supplier_payment.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/admin/supplier_proposal.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
-        'htdocs/admin/syslog.php' => ['PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredMethod'],
+        'htdocs/admin/syslog.php' => ['PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/admin/system/constall.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/admin/system/database-tables.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/admin/system/dbtable.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeArraySuspiciousNullable'],
@@ -613,7 +613,6 @@ return [
         'htdocs/core/lib/fiscalyear.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/core/lib/fourn.lib.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/core/lib/ftp.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal'],
-        'htdocs/core/lib/functions.lib.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanTypeArraySuspiciousNullable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/functions2.lib.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayFunctionReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypePossiblyInvalidDimOffset'],
         'htdocs/core/lib/functions_ch.lib.php' => ['PhanTypeMismatchDimFetch'],
         'htdocs/core/lib/functionsnumtoword.lib.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPossiblyUndeclaredVariable', 'PhanTypeInvalidLeftOperandOfNumericOp'],
