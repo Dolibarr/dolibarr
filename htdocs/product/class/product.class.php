@@ -837,14 +837,6 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
-	/**
-	 * Advanced feature: assembly kit
-	 */
-	const TYPE_ASSEMBLYKIT = 2;
-	/**
-	 * Advanced feature: stock kit
-	 */
-	const TYPE_STOCKKIT = 3;
 
 	/**
 	 * Stockable product
