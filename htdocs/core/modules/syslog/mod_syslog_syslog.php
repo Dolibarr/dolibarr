@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
@@ -7,7 +8,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 /**
  * Class to manage logging to syslog
  */
-class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
+class mod_syslog_syslog extends LogHandler
 {
 	public $code = 'syslog';
 
@@ -104,10 +105,11 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 	Array containing the info about the message
-	 * @return	void
+	 * @param   array   $content            Array containing the info about the message
+	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
+	 * @return  void
 	 */
-	public function export($content)
+	public function export($content, $suffixinfilename = '')
 	{
 		global $conf;
 
