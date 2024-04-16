@@ -584,7 +584,7 @@ class CMailFile
 			$smtps->setBCC($this->addr_bcc);
 			$smtps->setErrorsTo($this->errors_to);
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
-			if (!empty($conf->global->$keyforsslseflsigned)) {
+			if (getDolGlobalString($keyforsslseflsigned)) {
 				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 			}
 

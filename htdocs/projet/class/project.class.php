@@ -1325,7 +1325,7 @@ class Project extends CommonObject
 
 		$langs->load('projects');
 		$option = $params['option'] ?? '';
-		$moreinpopup = $params['morinpopup'] ?? '';
+		$moreinpopup = $params['moreinpopup'] ?? '';
 
 		$datas = [];
 		if ($option != 'nolink') {

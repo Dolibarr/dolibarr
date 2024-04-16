@@ -26,7 +26,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
-$leftmenuwidth = 210;
+$leftmenuwidth = 240;
 
 '
 @phan-var-force string $badgeDanger
@@ -770,6 +770,10 @@ div.floatright
 {
 	display:block;
 }
+.inline
+{
+	display:inline;
+}
 .inline-block
 {
 	display:inline-block;
@@ -1243,7 +1247,7 @@ div.divsearchfield {
 	padding-<?php echo $left; ?>: 0;
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
-	height: 24px;
+	line-height: 24px;
 	border-radius: 3px;
 }
 .search_component_searchtext {
@@ -1261,6 +1265,7 @@ div.divsearchfield {
 	padding-bottom: 3px;
 	background: #ddd;
 	border-radius: 4px;
+	display: inline-block;
 }
 .tagsearchdelete {
 	color: #999;
@@ -3168,6 +3173,12 @@ div.login_block {
 div.login_block a {
 	color: var(--colortextbackhmenu);
 	display: inline-block;
+}
+div.login_block a .atoploginusername {
+	display: inline-block;
+	overflow: hidden;
+	max-width: 60px;
+	text-overflow: ellipsis;
 }
 div.login_block span.aversion {
 	color: var(--colortextbackhmenu);
@@ -5491,11 +5502,11 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 5px 5px 5px 5px;
 	z-index: 1000;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	padding: 5px 5px 5px 5px;
 	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {

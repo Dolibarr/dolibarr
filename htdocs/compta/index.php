@@ -630,7 +630,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">';
 			print $langs->trans("OrdersDeliveredToBill").' ';
-			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&amp;billed=0">';
+			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&search_billed=0">';
 			print '<span class="badge">'.$num.'</span>';
 			print '</a>';
 			print '</th>';

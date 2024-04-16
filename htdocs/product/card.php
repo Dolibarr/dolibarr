@@ -2495,7 +2495,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 					}
 					print '</tr></table>';
-					print '</td><td>';
+					print '</td><td class="wordbreak">';
 					if ($action == 'editbarcode') {
 						$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 						if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
