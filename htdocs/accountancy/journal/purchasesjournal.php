@@ -1197,7 +1197,7 @@ if (empty($action) || $action == 'view') {
 					}
 				}
 			}
-			
+
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
