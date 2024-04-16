@@ -174,7 +174,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 								}
 							}, "json");
 						},
-						appendTo: $("input#search_'.$htmlnamejquery.'").parent(),
 						dataType: "json",
     					minLength: '.((int) $minLength).',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
