@@ -6,11 +6,6 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: sonar-scanner
-            image: sonarsource/sonar-scanner-cli:latest
-            command:
-            - cat
-            tty: true
           - name: git
             image: alpine/git:latest
             command:
