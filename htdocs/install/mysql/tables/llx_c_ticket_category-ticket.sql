@@ -15,8 +15,9 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 --
--- Table with the custom category tree for the category of a ticket
--- 
+-- Table with the custom group tree for the group of a ticket.
+-- This is for classification. It is different of the tag/category table.
+--
 
 create table llx_c_ticket_category
 (

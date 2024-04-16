@@ -2209,7 +2209,7 @@ class Expedition extends CommonObject
 	 */
 	public function setClosed()
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -2566,8 +2566,6 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
@@ -2894,7 +2892,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= $this->fk_expedition;
 		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql .= ", ".((int) $this->fk_elementdet);
-		$sql .= ", ".(empty($this->element_type) ? 'order' : $this->element_type);
+		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $ranktouse);
 		$sql .= ")";

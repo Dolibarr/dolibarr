@@ -112,7 +112,7 @@ abstract class DoliDB implements Database
 	 * @param	string	$nameoffield	Name of field
 	 * @return	string					SQL string
 	 */
-	public function stddevPop($nameoffield)
+	public function stddevpop($nameoffield)
 	{
 		return 'STDDEV_POP('.$nameoffield.')';
 	}

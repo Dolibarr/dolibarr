@@ -49,7 +49,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			$classname = 'printing_'.$driver;
 			$printer = new $classname($db);
 			'@phan-var-force PrintingDriver $printer';
-			$langs->load($printer::LANGFILE);
+			$langs->load('printing');
 			//print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {

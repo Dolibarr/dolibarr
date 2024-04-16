@@ -218,7 +218,7 @@ $form = new Form($db);
 $now = dol_now();
 //$help_url = "EN:Module_Target|FR:Module_Target_FR|ES:Módulo_Target";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Targets"));
+$title = $langs->trans("Targets");
 
 $morejs = array();
 $morecss = array();

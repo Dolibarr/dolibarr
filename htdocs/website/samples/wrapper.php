@@ -116,6 +116,8 @@ if ($rss) {
 	if (is_array($arrayofblogs)) {
 		foreach ($arrayofblogs as $blog) {
 			$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+			$blog->image = preg_replace('/__WEBSITE_KEY__/', $websitekey, $blog->image);
+
 			$eventarray[] = $blog;
 		}
 	}
@@ -153,7 +155,8 @@ if ($rss) {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($l);
 		$outputlangs->loadLangs(array("main", "other"));
-		$title = $desc = $outputlangs->transnoentities('LatestBlogPosts');
+		$title = $outputlangs->transnoentities('LatestBlogPosts').' - '.$website->virtualhost;
+		$desc = $title.($l ? ' ('.$l.')' : '');
 
 		// Create temp file
 		$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads

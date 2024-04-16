@@ -4908,8 +4908,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			$massactionbutton .= ' <input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
 			$massactionbutton .= '</div>';
 			$massactionbutton .= '<div class="massactionother massactionsetcategory massactiondelcategory hidden">';
-			$massactionbutton .= img_picto('', 'category').' '.$langs->trans("Category");
-			$massactionbutton .= ' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
+			$massactionbutton .= img_picto('', 'category', 'class="pictofixedwidth"');
+			$massactionbutton .= $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$massactionbutton .= ajax_combobox('setcategory');
 			$massactionbutton .= '</div>';
@@ -4952,6 +4952,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
@@ -4961,7 +4965,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
-			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print '</tr>';
 
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -4982,6 +4989,21 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					$param .= '&searchstring='.urlencode($searchkey);
 
 					print '<tr>';
+
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						}
+						print '</td>';
+					}
 
 					// Type of container
 					print '<td class="nowraponall">';
@@ -5083,17 +5105,19 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
 
-					print '<!-- Status of page -->'."\n";
-					if ($massactionbutton || $massaction) {
-						$selected = 0;
-						if (in_array($answerrecord->id, $arrayofselected)) {
-							$selected = 1;
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
 						}
-						print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						print '</td>';
 					}
-					print '</td>';
 
 					print '</tr>';
 				} else {
@@ -5108,6 +5132,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					$param .= '&searchstring='.urlencode($searchkey);
 
 					print '<tr>';
+
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					// Type of container
 					print '<td>';
@@ -5147,6 +5177,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<td>';
 					print '</td>';
 
+					print '<td>';
+					print '</td>';
+
+					print '<td>';
+					print '</td>';
+
 					// Date last modification
 					print '<td class="center nowraponall">';
 					//print dol_print_date(filemtime());
@@ -5157,8 +5193,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
-					print '</td>';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					print '</tr>';
 				}
@@ -5167,6 +5205,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			if (count($listofpages['list']) >= 2) {
 				// Total
 				print '<tr class="lite_titre">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				// Type of container
 				print '<td>';
@@ -5190,6 +5234,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print $totalnbwords.' '.$langs->trans("words");
 				print '</td>';
 
+				print '<td>';
+				print '</td>';
+
+				print '<td>';
+				print '</td>';
+
 				// Date last modification
 				print '<td>';
 				print '</td>';
@@ -5199,8 +5249,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print '</td>';
 
 				// Action column
-				print '<td class="nowrap center">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				print '</tr>';
 			}
