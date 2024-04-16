@@ -1238,10 +1238,10 @@ if ($step == 4 && $datatoimport) {
 			} elseif ($modetoautofillmapping == 'session' && !empty($_SESSION['dol_array_match_file_to_database_select'])) {
 				$tmpselectioninsession = dolExplodeIntoArray($_SESSION['dol_array_match_file_to_database_select'], ',', '=');
 				//var_dump($code);
-				if (!empty($tmpselectioninsession[($i + 1)]) && $tmpselectioninsession[($i + 1)] == $tmpcode) {
+				if (!empty($tmpselectioninsession[(string) ($i + 1)]) && $tmpselectioninsession[(string) ($i + 1)] == $tmpcode) {
 					$selectforline .= ' selected';
 				}
-				$selectforline .= ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i + 1)]) ? $tmpselectioninsession[($i + 1)] : "").'"';
+				$selectforline .= ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[(string) ($i + 1)]) ? $tmpselectioninsession[(string) ($i + 1)] : "").'"';
 			}
 			$selectforline .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 			$selectforline .= '>';
