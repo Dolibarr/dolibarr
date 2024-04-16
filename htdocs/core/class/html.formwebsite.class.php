@@ -131,6 +131,7 @@ class FormWebsite
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
+
 					if ($selected == $obj->rowid || $selected == $obj->code) {
 						print '<option value="'.$obj->code.'" selected>';
 					} else {
@@ -138,6 +139,9 @@ class FormWebsite
 					}
 					print $langs->trans($obj->label);
 					print '</option>';
+
+					$conf->cache['type_of_container'][$obj->code] = $obj->label;
+
 					$i++;
 				}
 				print "</select>";
@@ -170,7 +174,7 @@ class FormWebsite
 	 */
 	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
-		global $langs, $conf, $user;
+		global $langs, $user;
 
 		$langs->load("admin");
 

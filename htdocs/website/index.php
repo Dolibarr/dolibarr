@@ -4908,8 +4908,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			$massactionbutton .= ' <input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
 			$massactionbutton .= '</div>';
 			$massactionbutton .= '<div class="massactionother massactionsetcategory massactiondelcategory hidden">';
-			$massactionbutton .= img_picto('', 'category').' '.$langs->trans("Category");
-			$massactionbutton .= ' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
+			$massactionbutton .= img_picto('', 'category', 'class="pictofixedwidth"');
+			$massactionbutton .= $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$massactionbutton .= ajax_combobox('setcategory');
 			$massactionbutton .= '</div>';
@@ -4952,14 +4952,23 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("UserCreation", 0, $_SERVER['PHP_SELF'], 'fk_user_creat', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
-			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+			}
 			print '</tr>';
 
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -4969,21 +4978,52 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 			foreach ($listofpages['list'] as $answerrecord) {
 				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
 
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						}
+						print '</td>';
+					}
+
 					// Type of container
-					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
-					print $langs->trans($answerrecord->type_container); // TODO Use label of container
+					print '<td class="nowraponall">';
+					//print $langs->trans("Container").'<br>';
+					if (!empty($conf->cache['type_of_container'][$answerrecord->type_container])) {
+						print $langs->trans($conf->cache['type_of_container'][$answerrecord->type_container]);
+					} else {
+						print $langs->trans($answerrecord->type_container);
+					}
 					print '</td>';
 
 					// Container url and label
-					print '<td>';
+					$titleofpage = ($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle"));
+					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($titleofpage).'">';
 					print $answerrecord->getNomUrl(1);
-					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
+					print ' <span class="opacitymedium">('.dol_escape_htmltag($titleofpage).')</span>';
 					//print '</td>';
 					//print '<td class="tdoverflow100">';
 					print '<br>';
-					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
+					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : '&nbsp;').'</span>';
 					print '</td>';
 
 					// Categories - Tags
@@ -5001,17 +5041,6 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					//var_dump($existing);
 					print '</td>';
 
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
-
 					// Language
 					print '<td class="center">';
 					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
@@ -5026,6 +5055,25 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						print $nbofwords.' '.$langs->trans("words");
 						$totalnbwords += $nbofwords;
 					}
+					print '</td>';
+
+					// Author
+					print '<td class="tdoverflowmax125">';
+					if (!empty($answerrecord->fk_user_creat)) {
+						if (empty($conf->cache['user'][$answerrecord->fk_user_creat])) {
+							$tmpuser = new User($db);
+							$tmpuser->fetch($answerrecord->fk_user_creat);
+							$conf->cache['user'][$answerrecord->fk_user_creat] = $tmpuser;
+						} else {
+							$tmpuser = $conf->cache['user'][$answerrecord->fk_user_creat];
+						}
+						print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
+					}
+					print '</td>';
+
+					// Date creation
+					print '<td class="center nowraponall">';
+					print dol_print_date($answerrecord->date_creation, 'dayhour');
 					print '</td>';
 
 					// Date last modification
@@ -5057,21 +5105,39 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
 
-					print '<!-- Status of page -->'."\n";
-					if ($massactionbutton || $massaction) {
-						$selected = 0;
-						if (in_array($answerrecord->id, $arrayofselected)) {
-							$selected = 1;
+						print '<!-- Status of page -->'."\n";
+						if ($massactionbutton || $massaction) {
+							$selected = 0;
+							if (in_array($answerrecord->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
 						}
-						print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+						print '</td>';
 					}
-					print '</td>';
 
 					print '</tr>';
 				} else {
+					$param = '?mode=replacesite';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<tr>';
+
+					// Action column
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					// Type of container
 					print '<td>';
@@ -5084,22 +5150,14 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						'website_readme' => 'WEBSITE_README',
 						'website_manifestjson' => 'WEBSITE_MANIFEST_JSON'
 					);
+					print '<span class="opacitymedium">';
 					if (!empty($translateofrecordtype[$answerrecord['type']])) {
 						print $langs->trans($translateofrecordtype[$answerrecord['type']]);
 					} else {
 						print $answerrecord['type'];
 					}
+					print '</span>';
 					print '</td>';
-
-					$param = '?mode=replacesite';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
-					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
-					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
-					$param .= '&searchstring='.urlencode($searchkey);
 
 					// Container url and label
 					print '<td>';
@@ -5119,6 +5177,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<td>';
 					print '</td>';
 
+					print '<td>';
+					print '</td>';
+
+					print '<td>';
+					print '</td>';
+
 					// Date last modification
 					print '<td class="center nowraponall">';
 					//print dol_print_date(filemtime());
@@ -5129,8 +5193,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					print '<td class="nowrap center">';
-					print '</td>';
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td class="nowrap center">';
+						print '</td>';
+					}
 
 					print '</tr>';
 				}
@@ -5139,6 +5205,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			if (count($listofpages['list']) >= 2) {
 				// Total
 				print '<tr class="lite_titre">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				// Type of container
 				print '<td>';
@@ -5162,6 +5234,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print $totalnbwords.' '.$langs->trans("words");
 				print '</td>';
 
+				print '<td>';
+				print '</td>';
+
+				print '<td>';
+				print '</td>';
+
 				// Date last modification
 				print '<td>';
 				print '</td>';
@@ -5171,8 +5249,10 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print '</td>';
 
 				// Action column
-				print '<td class="nowrap center">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					print '</td>';
+				}
 
 				print '</tr>';
 			}

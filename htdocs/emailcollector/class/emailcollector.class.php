@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024  MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ class EmailCollector extends CommonObject
 	public $table_element = 'emailcollector_emailcollector';
 
 	/**
-	 * @var int<0,2>|string 	Does this object support the multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -2858,10 +2858,10 @@ class EmailCollector extends CommonObject
 
 								foreach ($arrayobject as $key => $objectdesc) {
 									$sql = 'SELECT DISTINCT t.rowid ';
-									$sql .= ' FROM ' . MAIN_DB_PREFIX . $objectdesc['table'] . ' AS t';
+									$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->db->sanitize($objectdesc['table']) . ' AS t';
 									$sql .= ' WHERE ';
 									foreach ($objectdesc['fields'] as $field) {
-										$sql .= "'" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') OR ";
+										$sql .= "('" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $this->db->sanitize($field) . ", '%') AND t." . $this->db->sanitize($field) . " <> '') OR ";
 									}
 									$sql = substr($sql, 0, -4);
 

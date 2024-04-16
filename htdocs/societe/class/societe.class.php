@@ -128,8 +128,8 @@ class Societe extends CommonObject
 	public $picto = 'company';
 
 	/**
-	 * @var int<0,2>|string 	Does this object support the multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -2145,12 +2145,8 @@ class Societe extends CommonObject
 				$toute_categs = array();
 
 				// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
-				if ($this->client || $this->prospect) {
-					$toute_categs['customer'] = $static_cat->containing($this->id, Categorie::TYPE_CUSTOMER);
-				}
-				if ($this->fournisseur) {
-					$toute_categs['supplier'] = $static_cat->containing($this->id, Categorie::TYPE_SUPPLIER);
-				}
+				$toute_categs['customer'] = $static_cat->containing($this->id, Categorie::TYPE_CUSTOMER);
+				$toute_categs['supplier'] = $static_cat->containing($this->id, Categorie::TYPE_SUPPLIER);
 
 				// Remove each "Categorie"
 				foreach ($toute_categs as $type => $categs_type) {
@@ -2522,10 +2518,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of third party or <0 if KO
+	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2533,16 +2529,14 @@ class Societe extends CommonObject
 
 		$reparray = array();
 
-		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
+		// Condition here should be the same than into select_dolusers()
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
-			$sql .= " AND ug.entity = ".$conf->entity.")";
-			$sql .= " OR u.admin = 1)";
+			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
-			$sql .= " WHERE entity in (0, ".$conf->entity.")";
+			$sql .= " WHERE entity IN (0, ".$this->db->sanitize($conf->entity).")";
 		}
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);

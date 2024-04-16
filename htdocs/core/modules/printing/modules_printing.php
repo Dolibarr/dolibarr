@@ -32,9 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
-	/** Force subclass to implement LANGFILE */
-	const LANGFILE = self::LANGFILE;
-
 	/**
 	 * @var DoliDB Database handler.
 	 */

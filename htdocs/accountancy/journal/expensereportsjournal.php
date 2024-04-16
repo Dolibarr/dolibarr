@@ -67,7 +67,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -110,7 +110,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
+$sql = "SELECT er.rowid, er.ref, er.date_debut as de, er.date_fin as df,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -183,7 +183,11 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->df);
+		} else {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
 		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;

@@ -7,7 +7,7 @@
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open-Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
+It's an Open-Source Software suite (written in PHP with JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
 You can freely use, study, modify or distribute it according to its license.
 
@@ -187,7 +187,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country-specific features:
-  - Spanish Tax RE and ISPF
+  - Spanish Tax RE and IRPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp

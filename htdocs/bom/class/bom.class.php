@@ -59,8 +59,8 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
-	 * @var int<0,2>|string 	Does this object support the multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -1532,8 +1532,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
+	 * @param array<int,float|int>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float					$qty		qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1557,7 +1557,7 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param array<int,array{bom:BOM,parent_id:int,qty:float,level:int}> $TNetNeeds Array of ChildBom and infos linked to
 	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
@@ -1679,7 +1679,8 @@ class BOMLine extends CommonObjectLine
 	public $table_element = 'bom_bomline';
 
 	/**
-	 * @var int<0,2>|string  Does bomline support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
 

@@ -30,4 +30,3 @@ ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
 --ALTER TABLE llx_mrp_mo ADD UNIQUE INDEX uk_mrp_mo_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_mrp_mo ADD CONSTRAINT llx_mrp_mo_fk_field FOREIGN KEY (fk_field) REFERENCES llx_mrp_myotherobject(rowid);
-

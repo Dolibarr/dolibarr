@@ -305,7 +305,7 @@ class Mos extends DolibarrApi
 		$error = 0;
 
 		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
-			throw new RestException(401, 'Not enough permission');
+			throw new RestException(403, 'Not enough permission');
 		}
 		$result = $this->mo->fetch($id);
 		if (!$result) {
@@ -313,7 +313,7 @@ class Mos extends DolibarrApi
 		}
 
 		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {
-			throw new RestException(401, 'Error bad status of MO');
+			throw new RestException(405, 'Error bad status of MO');
 		}
 
 		// Code for consume and produce...

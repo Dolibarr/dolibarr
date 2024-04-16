@@ -13,14 +13,21 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-
--- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
-ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
-ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
--- END MODULEBUILDER INDEXES
-
---ALTER TABLE llx_bom_bomline ADD UNIQUE INDEX uk_bom_bomline_fieldxy(fieldx, fieldy);
-
-ALTER TABLE llx_bom_bomline ADD CONSTRAINT llx_bom_bomline_fk_bom FOREIGN KEY (fk_bom) REFERENCES llx_bom_bom(rowid);
-
+CREATE TABLE llx_bom_bomline(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_bom integer NOT NULL,
+	fk_product integer NOT NULL,
+	fk_bom_child integer NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	description text,
+	import_key varchar(14),
+	qty double(24,8) NOT NULL,
+    qty_frozen smallint DEFAULT 0,
+    disable_stock_change smallint DEFAULT 0,
+	efficiency double(24,8) NOT NULL DEFAULT 1,
+	fk_unit integer NULL,
+	position integer NOT NULL DEFAULT 0,
+	fk_default_workstation integer DEFAULT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;

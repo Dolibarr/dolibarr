@@ -207,9 +207,9 @@ $arrayfields = array(
 	'f.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5),
 	'f.ref_client' => array('label' => "RefCustomer", 'checked' => -1, 'position' => 10),
 	'f.type' => array('label' => "Type", 'checked' => 0, 'position' => 15),
+	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
 	'f.datef' => array('label' => "DateInvoice", 'checked' => 1, 'position' => 20),
 	'f.date_valid' => array('label' => "DateValidation", 'checked' => 0, 'position' => 22),
-	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 25),
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => 0, 'position' => 30),
 	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
@@ -262,6 +262,12 @@ $arrayfields = array(
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => 0, 'position' => 86);
 }
+
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
+if (empty($subtypearray)) {
+	unset($arrayfields['f.subtype']);
+}
+
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -289,6 +295,7 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -605,7 +612,6 @@ $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 
 $company_url_list = array();
-$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 
 if ($socid > 0) {
 	$soc = new Societe($db);

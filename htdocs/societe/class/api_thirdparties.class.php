@@ -447,7 +447,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
-			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
@@ -460,7 +460,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (empty(DolibarrApi::_checkAccessToResource('societe', $this->company->id))) {
-			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->setPriceLevel($priceLevel, DolibarrApiAccess::$user);
