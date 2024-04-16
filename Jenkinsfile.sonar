@@ -5,12 +5,12 @@ pipeline {
         apiVersion: v1
         kind: Pod
         spec:
-          containers:
-          - name: phpstan
-            image: iyedbnaissa/phpstan:29
+          containers: 
+          - name: trivy
+            image: bitnami/trivy
             command:
             - cat
-            tty: true   
+            tty: true
         '''
     }
   }
@@ -20,24 +20,14 @@ pipeline {
         checkout scm
       }
     }
-   stage(phpstan_scan){
+
+   stage('trivy scan'){
       steps{
-        container('phpstan'){
-          script{
-            sh "mkdir -p /tmp/phpstan_cache"
-            sh "chmod 755 /tmp/phpstan_cache"
-            sh "chown -R root:root /tmp/phpstan_cache"
-            // Create directory for reports
-            sh "mkdir -p test-reports"
-            sh "ls -l /tmp "
-            sh "ls -l"
-            sh "phpstan clear-result-cache "
-            // Run PHPStan inside PHPStan container
-            sh "phpstan -vvv analyse --error-format=json -a build/phpstan/bootstrap_action.php > test-reports/phpstan-report.json "
+          container('trivy'){
+            sh "trivy image iyedbnaissa/dolibarr_build --output trivy_report.html"
           }
-        }
       }
-    }
+   }
     stage('SonarQube Analysis') {
       environment {
              SONAR_SCANNER_OPTS = "-Xmx512m"
