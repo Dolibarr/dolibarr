@@ -24,7 +24,8 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy image iyedbnaissa/dolibarr_build --output trivy_report.html"
+            sh "mkdir test-reports"
+            sh "trivy image iyedbnaissa/dolibarr_build --output test-reports/trivy_report.json"
           }
       }
    }
