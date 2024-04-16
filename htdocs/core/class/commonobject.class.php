@@ -801,7 +801,7 @@ abstract class CommonObject
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array<string,string>	Array to store lists of tpl
+	 * @var array<string,int|string>	Array to store lists of tpl
 	 */
 	public $tpl;
 
@@ -1339,7 +1339,7 @@ abstract class CommonObject
 	 *    Copy contact from one element to current
 	 *
 	 *    @param    CommonObject    $objFrom    Source element
-	 *    @param    string          $source     Nature of contact ('internal' or 'external')
+	 *    @param    'internal'|'external'	$source	Nature of contact ('internal' or 'external')
 	 *    @return   int                         >0 if OK, <0 if KO
 	 */
 	public function copy_linked_contact($objFrom, $source = 'internal')
@@ -1482,11 +1482,11 @@ abstract class CommonObject
 	 *    Get array of all contacts for an object
 	 *
 	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
-	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *    @param	'external'|'thirdparty'|'internal'		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
 	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
-	 *    @param	array		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can make a ec.fk_c_type_contact in ($arrayoftcids) to avoid link on tc table. TODO Not implemented.
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
@@ -1617,12 +1617,12 @@ abstract class CommonObject
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
-	 *      @param	string	$source     'internal', 'external' or 'all'
+	 *      @param	'internal'|'external'|'all'	$source	'internal', 'external' or 'all'
 	 *      @param	string	$order		Sort order by : 'position', 'code', 'rowid'...
-	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
-	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
+	 *      @param  int<0,1>	$option     0=Return array id->label, 1=Return array code->label
+	 *      @param  int<0,1>	$activeonly 0=all status of contact, 1=only the active
 	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array|null          Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
+	 *      @return array<int,string>|array<string,string>|null	Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
@@ -1680,12 +1680,12 @@ abstract class CommonObject
 	 *      Return array with list of possible values for type of contacts
 	 *
 	 *      @param	string	$source     		'internal', 'external' or 'all'
-	 *      @param  int		$option     		0=Return array id->label, 1=Return array code->label
-	 *      @param  int		$activeonly 		0=all status of contact, 1=only the active
+	 *      @param  int<0,1>	$option     		0=Return array id->label, 1=Return array code->label
+	 *      @param  int<0,1>	$activeonly 		0=all status of contact, 1=only the active
 	 *		@param	string	$code				Type of contact (Example: 'CUSTOMER', 'SERVICE')
 	 *		@param	string	$element			Filter on 1 element type
 	 *      @param	string	$excludeelement		Exclude 1 element type. Example: 'agenda'
-	 *      @return array|null     				Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
+	 *      @return array<int,string>|array<string,string>|null	Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
@@ -1767,7 +1767,7 @@ abstract class CommonObject
 	 *		@param	string	$source		'external' or 'internal'
 	 *		@param	string	$code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
 	 *		@param	int		$status		limited to a certain status
-	 *      @return array|null     		List of id for such contacts, or null if error
+	 *      @return int[]|null     		List of id for such contacts, or null if error
 	 */
 	public function getIdContact($source, $code, $status = 0)
 	{
@@ -1834,8 +1834,8 @@ abstract class CommonObject
 	/**
 	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
-	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
-	 *		@return	int						Return integer <0 if KO, >0 if OK
+	 *		@param	?int		$contactid	Id du contact. Use this->contact_id if empty.
+	 *		@return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
@@ -1938,7 +1938,7 @@ abstract class CommonObject
 	 *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
 	 *  if it is not defined, ->element must be defined to know default barcode type.
 	 *
-	 *	@return		int			Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
+	 *	@return		int<-1,1>		Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
 	 */
 	public function fetch_barcode()
 	{
@@ -1985,7 +1985,7 @@ abstract class CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			Return integer <0 if KO, >=0 if OK
+	 *		@return		int<-1,1>		Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_project()
 	{
@@ -2023,18 +2023,20 @@ abstract class CommonObject
 	/**
 	 *		Load the product with id $this->fk_product into this->product
 	 *
-	 *		@return		int			Return integer <0 if KO, >=0 if OK
+	 *		@return		int<-1,1>	Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_product()
 	{
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (empty($this->fk_product)) {
 			return 0;
 		}
 
 		$product = new Product($this->db);
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$result = $product->fetch($this->fk_product);
 
 		$this->product = $product;
@@ -2046,7 +2048,7 @@ abstract class CommonObject
 	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
-	 *		@return	int						Return integer <0 if KO, >0 if OK
+	 *		@return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_user($userid)
 	{
@@ -2082,6 +2084,7 @@ abstract class CommonObject
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
+		// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 		$this->origin_object->fetch($this->origin_id);
 	}
 
@@ -2092,7 +2095,7 @@ abstract class CommonObject
 	 *  @param	string	$field		Field selected
 	 *  @param	string	$key		Import key
 	 *  @param	string	$element	Element name
-	 *	@return	int|false			Return -1 or false if KO, >0 if OK
+	 *	@return	int<-1,1>|false		Return -1 or false if KO, >0 if OK
 	 */
 	public function fetchObjectFrom($table, $field, $key, $element = null)
 	{
@@ -2134,7 +2137,7 @@ abstract class CommonObject
 	 *	@param	string	$table		Table of element or element line
 	 *	@param	int		$id			Element id
 	 *	@param	string	$field		Field selected
-	 *	@return	int					Return integer <0 if KO, >0 if OK
+	 *	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function getValueFrom($table, $id, $field)
 	{
@@ -2166,7 +2169,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
-	 *	@return	int							Return integer <0 if KO, >0 if OK
+	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
 	 *  @see updateExtraField()
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
@@ -2198,9 +2201,8 @@ abstract class CommonObject
 			$fk_user_field = '';
 		}
 
+		$oldvalue = null;
 		if ($trigkey) {
-			$oldvalue = null;
-
 			$sql = "SELECT " . $field;
 			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
 			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
@@ -2299,8 +2301,8 @@ abstract class CommonObject
 	 *      							Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here with this syntax.
 	 *      							Example: "((t.field1:=:'aa') OR (t.field2:=:'bb'))".
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
-	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
-	 *      @return int         		Return integer <0 if KO, >0 if OK
+	 *		@param	int<0,1>	$nodbprefix	Do not include DB prefix to forge table name
+	 *      @return int<-1,1>      		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_previous_next_ref($filter, $fieldid, $nodbprefix = 0)
 	{
@@ -2507,7 +2509,7 @@ abstract class CommonObject
 	 *      Return list of id of contacts of object
 	 *
 	 *      @param	string	$source     Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
-	 *      @return array				Array of id of contacts (if source=external or internal)
+	 *      @return int[]				Array of id of contacts (if source=external or internal)
 	 * 									Array of id of third parties with at least one contact on object (if source=thirdparty)
 	 */
 	public function getListContactId($source = 'external')
@@ -2531,9 +2533,9 @@ abstract class CommonObject
 	/**
 	 *	Link element with a project
 	 *
-	 *	@param     	int		$projectid		Project id to link element to
-	 *  @param		int		$notrigger		Disable the trigger
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param     	int			$projectid	Project id to link element to
+	 *  @param		int<0,1>	$notrigger	Disable the trigger
+	 *	@return		int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function setProject($projectid, $notrigger = 0)
 	{
@@ -3355,9 +3357,9 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int		$id		            Id of parent line
-	 * 	@param	int		$includealltree		0 = 1st level child, 1 = All level child
-	 * 	@return	array			            Array with list of children lines id
+	 * 	@param	int			$id				Id of parent line
+	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@return	int[]			            Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
@@ -3436,7 +3438,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 * 	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
@@ -3465,7 +3467,7 @@ abstract class CommonObject
 	/**
 	 * 	Update position of line with ajax (rang)
 	 *
-	 * 	@param	array	$rows	Array of rows
+	 * 	@param	int[]	$rows	Array of rows
 	 * 	@return	void
 	 */
 	public function line_ajaxorder($rows)
@@ -3774,10 +3776,10 @@ abstract class CommonObject
 	 *  Must be called at end of methods addline or updateline.
 	 *
 	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
-	 *  @param	int		$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
-	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
-	 *	@return	int    			           	Return integer <0 if KO, >0 if OK
+	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
+	 *  @param	int<0,1>	$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
+	 *  @param	?Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
+	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
 	{
@@ -3812,7 +3814,7 @@ abstract class CommonObject
 			$isElementForSupplier = true;
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_PROPOSAL";
 		}
-		if ($isElementForSupplier === true) {
+		if ($isElementForSupplier) {
 			$roundTotalConstName = 'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER'; // const for supplier
 		}
 
@@ -4957,7 +4959,7 @@ abstract class CommonObject
 	 * Return into unit=0, the calculated total of weight and volume of all lines * qty
 	 * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
 	 *
-	 * @return  array                           array('weight'=>...,'volume'=>...)
+	 * @return	array{weight:int|float,volume:int|float,ordered:int|float,toship:int|float}		array('weight'=>...,'volume'=>...)
 	 */
 	public function getTotalWeightVolume()
 	{
@@ -5360,8 +5362,8 @@ abstract class CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
-	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
-	 *  @param  array       $selectedLines      Array of lines id for selected lines
+	 *	@param	''|'services'	$restrictlist	''=All lines, 'services'=Restrict to services only
+	 *  @param  int[]       $selectedLines      Array of lines id for selected lines
 	 *  @return	void
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
@@ -5416,7 +5418,7 @@ abstract class CommonObject
 	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
-	 *  @param  array       		$selectedLines      Array of lines id for selected lines
+	 *  @param  int[]       		$selectedLines      Array of lines id for selected lines
 	 * 	@return	void
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
@@ -5657,14 +5659,14 @@ abstract class CommonObject
 	/**
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
-	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to from obj->model_pdf or from GETPOST for example.
-	 * @param 	Translate 	$outputlangs 	Output language to use
-	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
-	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
-	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
-	 * @param   null|array  $moreparams     Array to provide more information
-	 * @return 	int 						>0 if OK, <0 if KO
+	 * @param	string 		$modelspath 	Relative folder where generators are placed
+	 * @param	string 		$modele 		Generator to use. Caller must set it to from obj->model_pdf or from GETPOST for example.
+	 * @param	Translate 	$outputlangs 	Output language to use
+	 * @param	int<0,1>	$hidedetails 	1 to hide details. 0 by default
+	 * @param	int<0,1>	$hidedesc 		1 to hide product description. 0 by default
+	 * @param	int<0,1>	$hideref 		1 to hide product reference. 0 by default
+	 * @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 * @return	int<-1,1> 				>0 if OK, <0 if KO
 	 * @see	addFileIntoDatabaseIndex()
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams = null)
@@ -5806,6 +5808,7 @@ abstract class CommonObject
 		$this->model_pdf = $saved_model;
 
 		if (in_array(get_class($this), array('Adherent'))) {
+			'@phan-var-force Adherent $this';
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
@@ -6297,8 +6300,8 @@ abstract class CommonObject
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
-	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
-	 *  @return	int						Return integer <0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
+	 *  @param array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		$optionsArray	Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
+	 *  @return	int<-1,1>				Return integer <0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 *  @see fetchValuesForExtraLanguages()
 	 */
 	public function fetch_optionals($rowid = null, $optionsArray = null)
@@ -6782,7 +6785,7 @@ abstract class CommonObject
 
 				switch ($attributeType) {
 					case 'int':
-						if (!is_numeric($value) && $value != '') {
+						if (is_array($value) || (!is_numeric($value) && $value != '')) {
 							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '') {
@@ -7656,6 +7659,8 @@ abstract class CommonObject
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				'@phan-var-force array{0:string,1:string,2:string,3:string,3:string,5:string,6:string} $InfoFieldList';
+
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
@@ -8685,6 +8690,7 @@ abstract class CommonObject
 					}
 
 					$colspan = 0;
+					$value = null;
 					if (is_array($params) && count($params) > 0 && $display_type == 'card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
@@ -9088,6 +9094,7 @@ abstract class CommonObject
 		} else {
 			// Get cost price for margin calculation
 			if (!empty($fk_product) && $fk_product > 0) {
+				$result = 0;
 				if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -9417,7 +9424,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is array
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if array
 	 */
 	protected function isArray($info)
@@ -9435,7 +9442,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is date
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if date
 	 */
 	public function isDate($info)
@@ -9449,7 +9456,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is duration
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if field of type duration
 	 */
 	public function isDuration($info)
@@ -9468,7 +9475,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is integer
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	Properties of field
 	 * @return  bool			true if integer
 	 */
 	public function isInt($info)
@@ -9487,7 +9494,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is float
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if float
 	 */
 	public function isFloat($info)
@@ -9505,7 +9512,7 @@ abstract class CommonObject
 	/**
 	 * Function test if type is text
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	Properties of field
 	 * @return  bool			true if type text
 	 */
 	public function isText($info)
@@ -9523,7 +9530,7 @@ abstract class CommonObject
 	/**
 	 * Function test if field can be null
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if it can be null
 	 */
 	protected function canBeNull($info)
@@ -9541,7 +9548,7 @@ abstract class CommonObject
 	/**
 	 * Function test if field is forced to null if zero or empty
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return  bool			true if forced to null
 	 */
 	protected function isForcedToNullIfZero($info)
@@ -9559,7 +9566,7 @@ abstract class CommonObject
 	/**
 	 * Function test if is indexed
 	 *
-	 * @param   array   $info   content information of field
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$info	content information of field
 	 * @return                  bool
 	 */
 	protected function isIndex($info)
