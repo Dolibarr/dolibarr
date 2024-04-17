@@ -1364,7 +1364,7 @@ class Account extends CommonObject
 		$sql .= " WHERE b.rappro=0";
 		$sql .= " AND b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
+		$sql .= " AND (ba.rappro = 1 AND ba.courant != " . Account::TYPE_CASH . ")"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
@@ -1460,7 +1460,7 @@ class Account extends CommonObject
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
-			$sql .= " AND ba.courant != 2";
+			$sql .= " AND ba.courant != " . Account::TYPE_CASH;
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
