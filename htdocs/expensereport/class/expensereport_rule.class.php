@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
- * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+/* Copyright (C) 2017		ATM Consulting				<support@atm-consulting.fr>
+ * Copyright (C) 2017		Pierre-Henry Favre			<phf@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -94,7 +94,6 @@ class ExpenseReportRule extends CommonObject
 	 */
 	public $code_expense_rules_type;
 
-
 	/**
 	 * rule for all
 	 * @var int
@@ -165,25 +164,7 @@ class ExpenseReportRule extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
-		return $result;
-	}
-
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
+		return $this->fetchCommon($id, $ref);
 	}
 
 	/**

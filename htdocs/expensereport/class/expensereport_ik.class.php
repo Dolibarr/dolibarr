@@ -121,9 +121,7 @@ class ExpenseReportIk extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-
-		return $result;
+		return $this->fetchCommon($id, $ref);
 	}
 
 
