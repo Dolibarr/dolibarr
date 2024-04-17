@@ -361,7 +361,8 @@ if (empty($reshook) && $action == 'add') {
 		$object->label = GETPOST('label', 'alphanohtml');
 
 		if (GETPOST("elementtype", 'alpha')) {
-			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
+			$modulecodetouseforpermissioncheck = $elProp['module'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -822,7 +823,8 @@ if (empty($reshook) && $action == 'update') {
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
-			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
+			$modulecodetouseforpermissioncheck = $elProp['module'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -1606,7 +1608,9 @@ if ($action == 'create') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$hasPermissionOnLinkedObject = 0;
-		if ($user->hasRight($origin, 'read')) {
+
+		$elProp = getElementProperties($origin);
+		if ($user->hasRight($elProp['module'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
