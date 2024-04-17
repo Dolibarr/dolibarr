@@ -101,12 +101,12 @@ pipeline {
                                 break
                             case 'APIS':
                                 sh """
-                                    zap-api-scan.py -t ${target} -f openapi -x /zap/wrk/report.xml -I
+                                    zap-api-scan.py -t ${target} -f openapi -x report.xml -I
                                 """
                                 break
                             case 'Full':
                                 sh """
-                                    zap-full-scan.py -t ${target} -x /zap/wrk/report.xml -I
+                                    zap-full-scan.py -t ${target} -x report.xml -I
                                 """
                                 break
                             default:
@@ -122,7 +122,7 @@ pipeline {
                 container('zap') {
                     script {
                         sh '''
-                            cp /wrk/report.xml \${WORKSPACE}/report.xml
+                            cp report.xml ${WORKSPACE}/report.xml
                         '''
                     }
                 }
