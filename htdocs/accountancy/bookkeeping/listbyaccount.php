@@ -967,20 +967,15 @@ $displayed_account_number = null; // Start with undefined to be able to distingu
 $i = 0;
 
 $totalarray = array();
-$totalarray['val'] = array();
 $totalarray['nbfield'] = 0;
-$total_debit = 0;
-$total_credit = 0;
 $sous_total_debit = 0;
 $sous_total_credit = 0;
+$totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
-
-	$total_debit += $line->debit;
-	$total_credit += $line->credit;
 
 	if ($type == 'sub') {
 		$accountg = length_accounta($line->subledger_account);
@@ -1366,13 +1361,13 @@ if ($num > 0 && $colspan > 0) {
 
 // Clean total values to round them
 if (!empty($totalarray['val']['totaldebit'])) {
-	$totalarray['val']['totaldebit'] = price2num($totalarray['val']['totaldebit'], 'MT');
+	$totalarray['val']['totaldebit'] = (float) price2num($totalarray['val']['totaldebit'], 'MT');
 }
 if (!empty($totalarray['val']['totalcredit'])) {
-	$totalarray['val']['totalcredit'] = price2num($totalarray['val']['totalcredit'], 'MT');
+	$totalarray['val']['totalcredit'] = (float) price2num($totalarray['val']['totalcredit'], 'MT');
 }
 if (!empty($totalarray['val']['totalbalance'])) {
-	$totalarray['val']['totalbalance'] = price2num($totalarray['val']['totaldebit'] - $totalarray['val']['totalcredit'], 'MT');
+	$totalarray['val']['totalbalance'] = (float) price2num($totalarray['val']['totaldebit'] - $totalarray['val']['totalcredit'], 'MT');
 }
 
 // Show total line

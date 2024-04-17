@@ -95,6 +95,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		// Some features may be unstable with this option, like permissions rules, import contact, ...
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
