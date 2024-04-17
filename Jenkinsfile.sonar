@@ -18,7 +18,7 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy image iyedbnaissa/dolibarr_build:30 --output ${ITEM_ROOTDIR}/workspace/scan/trivy_report.json --scanners vuln"
+            sh "trivy image iyedbnaissa/dolibarr_build:30 --output ${WORKSPACE}/trivy_report.json --scanners vuln"
           }
       }
    }
