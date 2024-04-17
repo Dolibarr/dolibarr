@@ -13338,8 +13338,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body classfortooltip" title="'.dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($histo[$key]['message']), 1, 1, 1)), 1, 1).'">';
-				$out .= dolGetFirstLineOfText($histo[$key]['message'], 3);
+				$out .= '<div class="timeline-body" >';
+				$out .= $histo[$key]['message'];
 				$out .= '</div>';
 			}
 
