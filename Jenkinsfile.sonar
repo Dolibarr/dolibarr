@@ -34,7 +34,7 @@ pipeline {
           // Execute SonarQube analysis
           withSonarQubeEnv('SonarQube_Server') {
            
-            sh "${scannerHome}/bin/sonar-scanner -X -Dproject.settings=sonar-project.properties"
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
           }
         }
       }
