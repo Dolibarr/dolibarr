@@ -18,9 +18,7 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy plugin install github.com/umax/trivy-plugin-sonarqube"
-            sh "trivy image iyedbnaissa/dolibarr_build:30 -f json -o trivy.json --scanners vuln"
-            sh "trivy sonarqube trivy.json > trivy_report.json.json"
+            sh "trivy image iyedbnaissa/dolibarr_build:30 --format template --template "@sonarqube.tpl" -o trivy_report.json --scanners vuln"
           }
       }
    }
