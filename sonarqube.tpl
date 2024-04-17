@@ -28,7 +28,7 @@
                   {{- end }},
       "type": "VULNERABILITY",
       "primaryLocation": {
-        "message": "{{ .PkgName }} - {{ .VulnerabilityID }} - {{ .Title }}",
+        "message": "{{ .PkgName }} - {{ .VulnerabilityID }} - {{ .Title | replace "\"" "'" }}",
         "filePath": "{{ $result.Target }}"
       }
     }
