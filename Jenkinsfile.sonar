@@ -29,7 +29,6 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            //sh "mkdir test-reports"
             sh "trivy image app --output trivy_report.json"
           }
       }
