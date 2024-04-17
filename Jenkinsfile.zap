@@ -9,7 +9,7 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-weekly
+                    image: owasp/zap2docker-bare
                     command:
                     - cat
                     tty: true
@@ -48,9 +48,9 @@ pipeline {
                     echo "<--Parameter Initialization-->"
                     echo """
                     The current parameters are:
-                        Scan Type: \${params.SCAN_TYPE}
-                        Target: \${params.TARGET}
-                        Generate report: \${params.GENERATE_REPORT}
+                        Scan Type: ${params.SCAN_TYPE}
+                        Target: ${params.TARGET}
+                        Generate report: ${params.GENERATE_REPORT}
                     """
                 }
             }
