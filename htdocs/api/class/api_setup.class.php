@@ -1343,7 +1343,10 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
-		$entity = getEntity('extrafields');
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
 
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
@@ -1426,7 +1429,10 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
-		$entity = getEntity('extrafields');
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
 
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
