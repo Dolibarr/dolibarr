@@ -25,7 +25,7 @@ pipeline {
    }
     stage('SonarQube Analysis') {
       environment {
-             SONAR_SCANNER_OPTS = " -Xmx512m"
+             SONAR_SCANNER_OPTS = " -Xmx1024m"
       }
       steps {
         script {
