@@ -11,6 +11,11 @@ pipeline {
             command:
             - cat
             tty: true
+          - name: app 
+            image: iyedbnaissa/dolibarr_build:30
+            command:
+            - cat
+            tty: true
         '''
     }
   }
@@ -25,7 +30,7 @@ pipeline {
       steps{
           container('trivy'){
             //sh "mkdir test-reports"
-            sh "trivy image iyedbnaissa/dolibarr_build --output trivy_report.json"
+            sh "trivy image app --output trivy_report.json"
           }
       }
    }
