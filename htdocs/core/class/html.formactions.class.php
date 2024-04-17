@@ -221,19 +221,19 @@ class FormActions
 				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
-            $parameters = array('title' => &$title, 'morehtmlright' => &$morehtmlright, 'morehtmlcenter' => &$morehtmlcenter);
+			$parameters = array('title' => &$title, 'morehtmlright' => &$morehtmlright, 'morehtmlcenter' => &$morehtmlcenter);
 
-            $reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
+			$reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
 
-            if ($reshook < 0) {
-                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-            }
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 
-            $error = 0;
-            if (empty($reshook)) {
-                print '<!-- formactions->showactions -->' . "\n";
-                print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
-            }
+			$error = 0;
+			if (empty($reshook)) {
+				print '<!-- formactions->showactions -->' . "\n";
+				print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
+			}
 
 			$page = 0;
 			$param = '';
