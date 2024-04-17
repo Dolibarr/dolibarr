@@ -962,7 +962,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 
 	// Show fields of bank account
 	$bankaccount = $account;
-	var_dump($bankaccount);
+
 	// Code here is similar as in paymentmodes.php for third-parties
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
