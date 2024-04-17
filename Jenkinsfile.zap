@@ -66,7 +66,7 @@ pipeline {
                 container('zap') {
                     script {
                         sh """
-                            mkdir -p /zap/wrk
+                            python --version
                         """
                     }
                 }
@@ -79,7 +79,7 @@ pipeline {
                     script {
                         def scan_type = "${params.SCAN_TYPE}"
                         def target = "${params.TARGET}"
-                        echo "----> Scan Type: \${scan_type}, Target: \${target}"
+                        echo "----> Scan Type: ${scan_type}, Target: ${target}"
 
                         // Validate target URL protocol
                         if (!(target.startsWith("http://") || target.startsWith("https://"))) {
