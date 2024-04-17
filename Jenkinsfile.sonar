@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers: 
           - name: trivy
-            image: bitnami/trivy
+            image: aquasec/trivy:canary
             command:
             - cat
             tty: true
