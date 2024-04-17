@@ -68,7 +68,7 @@
       "effortMinutes": 40,
       "primaryLocation": {
         "message": "{{ .PkgName }} - {{ .VulnerabilityID }} - {{ .Title | replace "\"" "'" }}",
-        "filePath": "{{ $result.Target }}"
+        "filePath": "Dockerfile"
       }
     }
 
