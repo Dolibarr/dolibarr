@@ -80,7 +80,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $type
 	 */
-	public $courant;
+	private $courant;
 
 	/**
 	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
@@ -101,7 +101,7 @@ class Account extends CommonObject
 	 * @deprecated 	Duplicate field. We already have the field $this->status
 	 * @see $status
 	 */
-	public $clos = self::STATUS_OPEN;
+	private $clos = self::STATUS_OPEN;
 
 	/**
 	 * Does it need to be conciliated?
@@ -171,7 +171,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $owner_name
 	 */
-	public $proprio;
+	private $proprio;
 
 	/**
 	 * Name of account holder
@@ -202,9 +202,10 @@ class Account extends CommonObject
 	/**
 	 * Address of the bank account
 	 * @var string
-	 * @deprecated see $address
+	 * @deprecated
+	 * @see $address
 	 */
-	public $domiciliation;
+	private $domiciliation;
 
 	/**
 	 * Address of the bank account
@@ -283,7 +284,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $balance
 	 */
-	public $solde;
+	private $solde;
 
 	/**
 	 * Balance. Used in Account::create
@@ -393,6 +394,22 @@ class Account extends CommonObject
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>  Old property to new property mapping
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'proprio' => 'owner_name',
+			'domiciliation' => 'owner_address',
+			'courant' => 'type',
+			'clos' => 'status',
+			'solde' => 'balance',
+		) + parent::deprecatedProperties();
+	}
 
 	/**
 	 *  Constructor
