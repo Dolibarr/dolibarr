@@ -96,7 +96,7 @@ pipeline {
                         switch (scan_type) {
                             case 'Baseline':
                                 sh """
-                                    zap-baseline.py -t ${target} -x /zap/wrk/report.xml -I
+                                    zap-baseline.py -t ${target} -x report.xml -I
                                 """
                                 break
                             case 'APIS':
@@ -122,7 +122,7 @@ pipeline {
                 container('zap') {
                     script {
                         sh '''
-                            cp /zap/wrk/report.xml \${WORKSPACE}/report.xml
+                            cp /wrk/report.xml \${WORKSPACE}/report.xml
                         '''
                     }
                 }
