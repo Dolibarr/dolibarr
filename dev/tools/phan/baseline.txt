@@ -517,7 +517,7 @@ return [
         'htdocs/core/class/commonhookactions.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayPropertyType'],
         'htdocs/core/class/commonincoterm.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commoninvoice.class.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeArraySuspiciousNullable', 'PhanTypePossiblyInvalidDimOffset'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanTypeArraySuspiciousNullable', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchDimFetchNullable', 'PhanTypeMismatchProperty', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredProperty'],
+        'htdocs/core/class/commonobject.class.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commonobjectline.class.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/class/commonorder.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],

@@ -7228,7 +7228,8 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array|null	$val	       Array of properties for field to show (used only if ->fields not defined)
+	 * @param ?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined)
+	 *                                                                                                                                                                                                                                                                                                                                          Array of properties of field to show
 	 * @param  string  		$key           Key of attribute
 	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
@@ -7267,7 +7268,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		// @phan-suppress-next-line: PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7938,7 +7939,7 @@ abstract class CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   	$val		       	Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param  string  	$key            	Key of attribute
 	 * @param  string  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  	$moreparam      	To add more parameters on html tag
@@ -7960,6 +7961,7 @@ abstract class CommonObject
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
+		$value = '';  // Default return value
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -8096,7 +8098,7 @@ abstract class CommonObject
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
+			$value = isset($param['options'][(string) $value]) ? $param['options'][(string) $value] : '';
 			if (strpos($value, "|") !== false) {
 				$value = $langs->trans(explode('|', $value)[0]);
 			} elseif (! is_numeric($value)) {
@@ -8195,7 +8197,7 @@ abstract class CommonObject
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = $param['options'][(string) $value];
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', (string) $value);
 			$value = '';
@@ -8433,7 +8435,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool return false if fail true on success, see $this->error for error message
@@ -8448,12 +8450,10 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey])) {
+		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
-
-		$val = $fields[$fieldKey];
 
 		$param = array();
 		$param['options'] = array();
@@ -9353,7 +9353,7 @@ abstract class CommonObject
 							$cache = $val['label'];
 						}
 						if ($usesharelink) {
-							if ($val['share']) {
+							if (array_key_exists('share', $val) && $val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
 									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ? ' height="'.$maxHeight.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
@@ -9572,7 +9572,7 @@ abstract class CommonObject
 	protected function canBeNull($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['notnull']) && $info['notnull'] != '1') {
+			if (array_key_exists('notnull', $info) && $info['notnull'] != '1') {
 				return true;
 			} else {
 				return false;
@@ -9590,7 +9590,7 @@ abstract class CommonObject
 	protected function isForcedToNullIfZero($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['notnull']) && $info['notnull'] == '-1') {
+			if (array_key_exists('notnull', $info) && $info['notnull'] == '-1') {
 				return true;
 			} else {
 				return false;
@@ -9608,7 +9608,7 @@ abstract class CommonObject
 	protected function isIndex($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['index']) && $info['index'] == true) {
+			if (array_key_exists('index', $info) && $info['index'] == true) {
 				return true;
 			} else {
 				return false;
@@ -9677,7 +9677,7 @@ abstract class CommonObject
 				$queryarray[$field] = $this->{$field};
 			}
 
-			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) {
+			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
 				unset($queryarray[$field]);
 			}
 			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) {
@@ -9716,7 +9716,7 @@ abstract class CommonObject
 							$this->$field = (float) $obj->$field;
 						}
 					} else {
-						if (isset($obj->$field) && (!is_null($obj->$field) || (!empty($info['notnull']) && $info['notnull'] == 1))) {
+						if (isset($obj->$field) && (!is_null($obj->$field) || (array_key_exists('notnull', $info) && $info['notnull'] == 1))) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9731,7 +9731,7 @@ abstract class CommonObject
 						$this->$field = (float) $obj->$field;
 					}
 				} else {
-					if (isset($obj->$field) && (!is_null($obj->$field) || (!empty($info['notnull']) && $info['notnull'] == 1))) {
+					if (isset($obj->$field) && (!is_null($obj->$field) || (array_key_exists('notnull', $info) && $info['notnull'] == 1))) {
 						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;
