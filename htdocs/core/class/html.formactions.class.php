@@ -221,7 +221,18 @@ class FormActions
 				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
-			$parameters = array('title' => &$title, 'morehtmlright' => &$morehtmlright, 'morehtmlcenter' => &$morehtmlcenter);
+			$parameters = array(
+				'title' => &$title,
+				'morehtmlright' => &$morehtmlright,
+				'morehtmlcenter' => &$morehtmlcenter,
+				'usercanaddaction' => $usercanaddaction,
+				'url' => &$url,
+				'typeelement' => $typeelement,
+				'projectid' => $projectid,
+				'assignedtouser' => $assignedtouser,
+				'taskid' => $taskid,
+				'urlbacktopage' => $urlbacktopage
+			);
 
 			$reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
 
