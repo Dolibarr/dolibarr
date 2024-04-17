@@ -6842,7 +6842,7 @@ function get_localtax_by_third($local)
  *  @param	Societe		$buyer         		Company object
  *  @param	Societe		$seller        		Company object
  *  @param  int<0,1>	$firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountacy_code_buy:string} array('rowid'=> , 'code'=> ...)
+ *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
 function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
