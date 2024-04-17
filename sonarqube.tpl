@@ -3,8 +3,8 @@
   "rules": [
     {
       "id": "TRIVY_LOW",
-      "name": "just_some_rule_name",
-      "description": "just_some_description",
+      "name": "TRIVY_LOW",
+      "description": "TRIVY_LOW",
       "engineId": "TRIVY",
       "cleanCodeAttribute": "IDENTIFIABLE",
       "impacts": [
