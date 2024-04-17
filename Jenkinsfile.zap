@@ -9,7 +9,7 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-bare
+                    image: softwaresecurityproject/zap-stable
                     command:
                     - cat
                     tty: true
@@ -90,7 +90,7 @@ pipeline {
                         switch (scan_type) {
                             case 'Baseline':
                                 sh """
-                                    python3 zap-baseline.py -t ${target} -x /zap/wrk/report.xml -I
+                                    zap-baseline.py -t ${target} -x /zap/wrk/report.xml -I
                                 """
                                 break
                             case 'APIS':
