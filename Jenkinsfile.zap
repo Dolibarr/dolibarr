@@ -9,7 +9,7 @@ pipeline {
                 spec:
                   containers:
                   - name: zap
-                    image: owasp/zap2docker-stable
+                    image: owasp/zap2docker-stable:latest
                     command:
                     - cat
                     tty: true
