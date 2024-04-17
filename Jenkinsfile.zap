@@ -95,7 +95,7 @@ pipeline {
                                 break
                             case 'APIS':
                                 sh """
-                                    zap-api-scan.py -t ${target} -x /zap/wrk/report.xml -I
+                                    zap-api-scan.py -t ${target} -f openapi -x /zap/wrk/report.xml -I
                                 """
                                 break
                             case 'Full':
