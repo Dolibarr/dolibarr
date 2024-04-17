@@ -777,6 +777,11 @@ print '</form>';
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
+// Remove deprecated variables
+unset($substitutionarray['__AMOUNT_FORMATED__']);
+unset($substitutionarray['__AMOUNT_REMAIN_FORMATED__']);
+unset($substitutionarray['__AMOUNT_VAT_FORMATED__']);
+unset($substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__']);
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {
 	$htmltext .= $key.'<br>';
