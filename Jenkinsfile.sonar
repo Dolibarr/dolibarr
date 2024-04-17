@@ -11,11 +11,6 @@ pipeline {
             command:
             - cat
             tty: true
-          - name: app 
-            image: iyedbnaissa/dolibarr_build:30
-            command:
-            - cat
-            tty: true
         '''
     }
   }
@@ -23,7 +18,7 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy image app --output trivy_report.json"
+            sh "trivy image iyedbnaissa/dolibarr_build:30 --output trivy_report.json --scanners vuln"
           }
       }
    }
