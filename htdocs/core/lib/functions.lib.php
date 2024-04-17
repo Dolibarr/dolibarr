@@ -8966,6 +8966,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_TEXT__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, $conf->currency, true) : '';
 
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
