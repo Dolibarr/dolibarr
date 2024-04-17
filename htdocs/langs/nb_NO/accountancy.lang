@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Allerede overført til regnskapsjournal og reskontro
 NotYetInGeneralLedger=Foreløpig ikke overført til regnskapsjournal og reskontro
 GroupIsEmptyCheckSetup=Gruppen er tom, sjekk oppsettet for den personlige regnskapsgruppen
 DetailByAccount=Vis detaljer etter konto
+DetailBy=Detalj av
 AccountWithNonZeroValues=Kontoer med ikke-nullverdier
 ListOfAccounts=Liste over kontoer
 CountriesInEEC=Land i EEC
@@ -51,14 +52,19 @@ AccountantFiles=Eksporter kildedokumenter
 ExportAccountingSourceDocHelp=Med dette verktøyet kan du søke og eksportere kildehendelsene som brukes til å generere regnskapet ditt. <br> Den eksporterte ZIP-filen vil inneholde listene over forespurte elementer i CSV, samt vedlagte filer i deres originale format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=For å eksportere journalene dine, bruk menyoppføringen %s - %s.
 ExportAccountingProjectHelp=Spesifiser et prosjekt hvis du trenger en regnskapsrapport kun for et spesifikt prosjekt. Utgiftsrapporter og lånebetalinger er ikke inkludert i prosjektrapporter.
+ExportAccountancy=Eksporter regnskap
+WarningDataDisappearsWhenDataIsExported=Advarsel, denne listen inneholder kun regnskapsposter som ikke allerede er eksportert (eksportdato er tom). Hvis du vil inkludere regnskapspostene som allerede er eksportert for å eksportere dem på nytt, klikk på knappen ovenfor.
 VueByAccountAccounting=Vis etter regnskapskonto
 VueBySubAccountAccounting=Vis etter regnskaps-subkonto
 
-MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
-MainAccountForSuppliersNotDefined=Hovedregnskapskonto for leverandører som ikke er definert i oppsettet
-MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
-MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
-MainAccountForSubscriptionPaymentNotDefined=Hovedregnskapskonto for abonnementsbetaling ikke definert i oppsettet
+MainAccountForCustomersNotDefined=Hovedkonto (fra Kontoplan) for kunder som ikke er definert i oppsett
+MainAccountForSuppliersNotDefined=Hovedkonto (fra kontoplanen) for leverandører som ikke er definert i oppsett
+MainAccountForUsersNotDefined=Hovedkonto (fra kontoplanen) for brukere som ikke er definert i oppsett
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Regnskapskonto for bruker ikke definert i oppsett
 
 AccountancyArea=Regnskapsområde
@@ -112,6 +118,7 @@ MenuLoanAccounts=Lånekontoer
 MenuProductsAccounts=Varekontoer
 MenuClosureAccounts=Lukkingskontoer
 MenuAccountancyClosure=Nedleggelse
+MenuExportAccountancy=Eksporter regnskap
 MenuAccountancyValidationMovements=Valider bevegelser
 ProductsBinding=Varekontoer
 TransferInAccounting=Overføring i regnskap
@@ -295,7 +302,7 @@ DescClosure=Her ser du antall bevegelser per måned som ennå ikke er validert o
 OverviewOfMovementsNotValidated=Oversikt over bevegelser som ikke er validert og låst
 AllMovementsWereRecordedAsValidated=Alle bevegelser ble registrert som validerte og låste
 NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevegelser kunne registreres som validerte og låste
-ValidateMovements=Valider og lås bevegelser...
+ValidateMovements=Validere og låse bevegelser
 DescValidateMovements=Enhver modifisering eller fjerning av skriving, bokstaver og sletting vil være forbudt. Alle påmeldinger for en oppgave må valideres, ellers er det ikke mulig å lukke
 
 ValidateHistory=Bind automatisk
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktiver binding og overføring til regnska
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overføring til regnskap ved kjøp (leverandørfakturaer blir ikke tatt med i regnskapet)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overføring til regnskap på utgiftsrapporter (utgiftsrapporter blir ikke tatt med i regnskapet)
 ACCOUNTING_ENABLE_LETTERING=Aktiver bokstavfunksjonen i regnskapet
+ACCOUNTING_ENABLE_LETTERING_DESC=Når dette alternativet er aktivert, kan du definere, på hver regnskapspost, en kode slik at du kan gruppere ulike regnskapsbevegelser sammen. Tidligere, når forskjellige journaler ble administrert uavhengig, var denne funksjonen nødvendig for å gruppere bevegelseslinjer for forskjellige tidsskrifter sammen. Men med Dolibarr-regnskap, er en slik sporingskode, kalt " <b> %s </b> " allerede lagret automatisk, så en automatisk registrering er allerede utført, uten risiko for feil, så denne funksjonen har blitt ubrukelig for vanlig bruk. Manuell registreringsfunksjon er gitt for sluttbrukere som virkelig ikke stoler på datamotoren som overfører data i regnskap.
+EnablingThisFeatureIsNotNecessary=Å aktivere denne funksjonen er ikke lenger nødvendig for en streng regnskapsstyring.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktiver automatisk skriving ved overføring til regnskap
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Koden for bokstaven genereres automatisk og økes og velges ikke av sluttbrukeren
+OptionsAdvanced=Avanserte alternativer
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktiver styring av omvendt avgiftsplikt på leverandørkjøp
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Når dette alternativet er aktivert, kan du definere at en leverandør eller en gitt leverandørfaktura må overføres til regnskapet annerledes: En ekstra debet og en kredittgrense vil genereres inn i regnskapet på 2 gitte kontoer fra kontoplanen som er definert i "%s " oppsettside.
 
 ## Export
 NotExportLettering=Ikke eksporter bokstaver når du genererer filen
-NotifiedExportDate=Flagg eksporterte linjer som eksportert <span class="warning"> (for å endre en linje, må du slette hele transaksjonen og overføre den til regnskapet på nytt) </span>
-NotifiedValidationDate=Valider og lås de eksporterte oppføringene <span class="warning"> (samme effekt som "%s"-funksjonen, modifikasjon og sletting av linjene vil DEFINITIVT ikke være mulig) </span>
+NotifiedExportDate=Flagg ennå ikke eksporterte linjer som eksportert <span class="warning"> (for å endre en linje flagget som eksportert, må du slette hele transaksjonen og overføre den til regnskapet på nytt) </span>
+NotifiedValidationDate=Valider og lås de eksporterte oppføringene som ennå ikke allerede er låst <span class="warning"> (samme effekt som funksjonen "%s", modifikasjon og sletting av linjene vil DEFINITIVT ikke være mulig) </span>
 NotifiedExportFull=Eksportere dokumenter?
 DateValidationAndLock=Datovalidering og lås
 ConfirmExportFile=Bekreftelse på generering av regnskapseksportfilen ?
@@ -381,7 +394,7 @@ ChartofaccountsId=Kontoplan ID
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
 InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har en regnskapskonto definert for salg og kjøp.
-DefaultBindingDesc=Denne siden kan brukes til å sette en standardkonto til bruk for å for å koble transaksjonsposter om lønnsutbetaling, donasjon, skatter og MVA når ingen bestemt regnskapskonto er satt.
+DefaultBindingDesc=Denne siden kan brukes til å angi standardkontoer (fra kontoplanen) som skal brukes til å knytte forretningsobjekter til en konto, som betaling av lønn, donasjon, skatter og MVA, når ingen spesifikk konto allerede var satt.
 DefaultClosureDesc=Denne siden kan brukes til å angi parametere som brukes for regnskapsavslutninger.
 Options=Innstillinger
 OptionModeProductSell=Salgsmodus
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Bekreftelse på bulk tilbakestilling av automatisk av
 ConfirmMassUnletteringManual=Bekreftelse på bulk tilbakestilling av manuell avstemming
 ConfirmMassUnletteringQuestion=Er du sikker på at du vil tilbakestille avstemming av %s valgte post(er)?
 ConfirmMassDeleteBookkeepingWriting=Bekreft massesletting
-ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaksjonen fra regnskapet (alle linjer knyttet til samme transaksjon vil bli slettet) Er du sikker på at du vil slette %s valgte post(er)?
+ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaksjonen fra regnskapet (alle linjeposter knyttet til samme transaksjon vil bli slettet). Er du sikker på at du vil slette de %s valgte oppføringene?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Noen obligatoriske trinn for oppsett ble ikke gjort, vennligst fullfør disse
@@ -446,7 +459,7 @@ NoJournalDefined=Ingen journal definert
 Binded=Bundne linjer
 ToBind=Linjer som skal bindes
 UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Beklager, denne modulen er ikke kompatibel med den eksperimentelle funksjonen til situasjonsfakturaer
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Merk: denne modulen eller siden er ikke helt kompatibel med den eksperimentelle funksjonen til delfakturaer. Noen data kan være feil.
 AccountancyErrorMismatchLetterCode=Uoverensstemmelse i avstemmingskode
 AccountancyErrorMismatchBalanceAmount=Saldoen (%s) er ikke lik 0
 AccountancyErrorLetteringBookkeeping=Det har oppstått feil angående transaksjonene: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Flervalutabeløp (Montantdevise)
 FECFormatMulticurrencyCode=Flervalutakode (Idevise)
 
 DateExport=Dato eksport
-WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
+WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner som er endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
-DocsAlreadyExportedAreExcluded=Dokumenter som allerede er eksportert, er ekskludert
-ClickToHideAlreadyExportedLines=Klikk for å skjule allerede eksporterte linjer
+DocsAlreadyExportedAreIncluded=Dokumenter som allerede er eksportert er inkludert
+ClickToShowAlreadyExportedLines=Klikk for å vise allerede eksporterte linjer
 
 NAccounts=%s kontoer

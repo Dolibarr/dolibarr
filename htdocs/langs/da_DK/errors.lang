@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP-klient mislykkedes med fejlen '%s'
 ErrorGlobalVariableUpdater5=Ingen global variabel valgt
 ErrorFieldMustBeANumeric=Feltet <b> %s </b> skal være en numerisk værdi
 ErrorMandatoryParametersNotProvided=Obligatoriske parametre er ikke angivet
+ErrorOppStatusRequiredIfUsage=Du angiver, at du vil bruge dette projekt til at følge en mulighed, så du skal også udfylde den indledende status for mulighed.
 ErrorOppStatusRequiredIfAmount=Du angiver et estimeret beløb for denne kundeemne. Så du skal også indtaste dets status.
 ErrorFailedToLoadModuleDescriptorForXXX=Kunne ikke indlæse modulbeskrivelsesklassen for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Dårlig definition af menuarray i modulbeskrivelse (dårlig værdi for nøglen fk_menu)
@@ -304,12 +305,22 @@ ErrorValueForTooLow=Værdien for <b> %s </b> er for lav
 ErrorValueCantBeNull=Værdien for <b> %s </b> kan ikke være 0
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaktionen må ikke være lavere end datoen for filoverførslen
 ErrorTooMuchFileInForm=For mange filer i form, det maksimale antal er %s fil(er)
-ErrorSessionInvalidatedAfterPasswordChange=Sessionen blev ugyldiggjort efter en ændring af adgangskode, status eller gyldighedsdatoer. Log venligst på igen.
+ErrorSessionInvalidatedAfterPasswordChange=Sessionen blev ugyldiggjort efter en ændring af adgangskode, e-mail, status eller gyldighedsdatoer. Log venligst på igen.
 ErrorExistingPermission = Tilladelse <b> %s </b> for objekt <b> %s </b> findes allerede
 ErrorFieldExist=Værdien for <b> %s </b> findes allerede
 ErrorEqualModule=Modul ugyldigt i <b> %s </b>
 ErrorFieldValue=Værdien for <b> %s </b> er forkert
 ErrorCoherenceMenu= <b> %s </b> er påkrævet, når <b> %s a09a4b739f17left'0 er '
+ErrorUploadFileDragDrop=Der opstod en fejl under upload af fil(er).
+ErrorUploadFileDragDropPermissionDenied=Der opstod en fejl under upload af fil(er): Tilladelse nægtet
+ErrorFixThisHere= <a href="%s"> Løs dette her </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fejl: URL'en på din aktuelle forekomst (%s) matcher ikke den URL, der er defineret i din OAuth2-loginopsætning (%s). Det er ikke tilladt at udføre OAuth2-login i en sådan konfiguration.
+ErrorMenuExistValue=Der findes allerede en menu med denne titel eller URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG-filer er ikke tilladt som eksterne links uden muligheden %s
+ErrorTypeMenu=Umuligt at tilføje en anden menu for det samme modul på navbaren, ikke håndtere endnu
+ErrorTableExist=Tabel <b> %s </b> findes allerede
+ErrorDictionaryNotFound=Ordbog <b> %s </b> ikke fundet
+ErrorFailedToCreateSymLinkToMedias=Kunne ikke oprette symbollinkene %s for at pege på %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
@@ -349,6 +360,16 @@ WarningThemeForcedTo=Advarsel, temaet er blevet tvunget til <b> %s </b> af skjul
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/containere på hjemmesiden. Du bør eksportere dit websted før, så du har en sikkerhedskopi til at genimportere det senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktiveret, når muligheden for at reducere lager er indstillet på "Fakturavalidering".
 WarningModuleNeedRefrech = Modul <b> %s </b> er blevet deaktiveret. Glem ikke at aktivere det
+WarningPermissionAlreadyExist=Eksisterende tilladelser for dette objekt
+WarningGoOnAccountancySetupToAddAccounts=Hvis denne liste er tom, skal du gå ind i menuen %s - %s - %s for at indlæse eller oprette konti til din kontoplan.
+WarningCorrectedInvoiceNotFound=Rettet faktura blev ikke fundet
+
+SwissQrOnlyVIR = SwissQR-faktura kan kun tilføjes på fakturaer, der skal betales med kreditoverførselsbetalinger.
+SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og by angivet? (%s)
+SwissQrCreditorInformationInvalid = Kreditoroplysninger er ugyldige for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN er ikke implementeret endnu
+SwissQrPaymentInformationInvalid = Betalingsoplysningerne var ugyldige for total %s: %s
+SwissQrDebitorAddressInvalid = Debitoroplysninger var ugyldige (%s)
 
 # Validate
 RequireValidValue = Værdien er ikke gyldig
@@ -370,3 +391,4 @@ BadSetupOfField = Fejl ved dårlig opsætning af feltet
 BadSetupOfFieldClassNotFoundForValidation = Fejl ved dårlig opsætning af feltet: Klassen blev ikke fundet til validering
 BadSetupOfFieldFileNotFound = Fejl ved dårlig opsætning af feltet: Filen blev ikke fundet til inkludering
 BadSetupOfFieldFetchNotCallable = Fejl dårlig opsætning af felt: Hentning kan ikke kaldes på klassen
+ErrorTooManyAttempts= For mange forsøg, prøv venligst igen senere

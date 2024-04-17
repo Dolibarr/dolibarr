@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=PayPal module setup
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
-PaypalDoPayment=Pay with PayPal
-PAYPAL_API_SANDBOX=Mode test/sandbox
-PAYPAL_API_USER=API username
-PAYPAL_API_PASSWORD=API password
-PAYPAL_API_SIGNATURE=API signature
+PaypalSetup=貝寶模塊設置
+PaypalDesc=此模塊允許客戶通過 <span class='notranslate'><a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"></span> 付款\n 貝寶 </a> 。這可用於臨時付款或與 Dolibarr 對象（發票、訂單等）相關的付款
+PaypalOrCBDoPayment=使用 PayPal 付款（銀行卡或 PayPal）
+PaypalDoPayment=使用貝寶支付
+PAYPAL_API_SANDBOX=模式測試/沙箱
+PAYPAL_API_USER=接口用戶名
+PAYPAL_API_PASSWORD=接口密碼
+PAYPAL_API_SIGNATURE=API簽名
 PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
-PaypalModeIntegral=Integral
-PaypalModeOnlyPaypal=PayPal only
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=提供“積分”付款（信用卡+PayPal）或僅“PayPal”
+PaypalModeIntegral=不可缺少的
+PaypalModeOnlyPaypal=僅限貝寶
 ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
-ThisIsTransactionId=This is id of transaction: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+ThisIsTransactionId=這是交易 ID：<b> %s </b> 
+PAYPAL_ADD_PAYMENT_URL=通過電子郵件發送文檔時包含 PayPal 付款網址
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
 ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
-ReturnURLAfterPayment=Return URL after payment
+ReturnURLAfterPayment=支付後返回網址
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions.
 ValidationOfPaymentFailed=Validation of payment has failed
 CardOwner=Card holder
 PayPalBalance=Paypal credit
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

@@ -3,8 +3,8 @@
 # Count number of commits per user and per versions (using date for version detection)
 #
 
-Releases=("16.0" "develop")
-Dates=("2022-01-01" "2022-08-31" "2050-01-01")
+Releases=("17.0" "18.0" "develop")
+Dates=("2023-02-01" "2023-08-31" "2050-01-01")
 let "counter = 1"
 
 for i in "${Releases[@]}"

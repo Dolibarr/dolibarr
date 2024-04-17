@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = U obrascu za stvaranje/dodavanje sudion
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferencija ili štand
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Upravljajte organizacijom događaja
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Veza na treću stranu (kupac, dobavljač ili p
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Prijava za štand
-NewSuggestionOfConference=Prijava za konferenciju
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has be
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=Za ovaj događaj nisu otvorene javne akcije
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date

@@ -145,6 +145,11 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
+	// but in some situations that is required (update legal informations for example)
+	if (!empty($conf->global->INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION)) {
+		$situationinvoicelinewithparent = 0;
+	}
+
 	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -230,7 +235,7 @@ $coldisplay++;
 			$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
 		}
 		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
-		if ($line->fk_prev_id != null) {
+		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
 		print '></td>';
@@ -448,11 +453,12 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		}
 
 		var price = 0;
-		remisejs=price2numjs(remise.val());
+		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100)	// If a discount not 100 or no discount
-		{
-			if (remisejs == '') remisejs=0;
+		if (remisejs != 100) {	// If a discount not 100 or no discount
+			if (remisejs == '') {
+				remisejs = 0;
+			}
 
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());

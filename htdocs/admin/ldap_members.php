@@ -95,9 +95,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
 	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -311,13 +308,6 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_MEMBER_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td class="right">&nbsp;</td>';
-print '</tr>';
-
-// Skype
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
-print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_MEMBER_FIELD_SKYPE.'">';
-print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 

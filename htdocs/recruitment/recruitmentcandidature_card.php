@@ -73,11 +73,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->recruitment->recruitmentjobposition->read;
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('recruitment', 'recruitmentjobposition', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->recruitment->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -201,39 +201,47 @@ if (empty($reshook)) {
 	}
 
 	// Create user from a member
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
-		if ($result > 0) {
-			$jobposition = new RecruitmentJobPosition($db);
-			$jobposition->fetch($object->fk_recruitmentjobposition);
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
+		$jobposition = new RecruitmentJobPosition($db);
+		$jobposition->fetch($object->fk_recruitmentjobposition);
 
-			// Creation user
-			$nuser = new User($db);
-			$nuser->login = GETPOST('login', 'alphanohtml');
-			$nuser->fk_soc = 0;
-			$nuser->employee = 1;
-			$nuser->firstname = $object->firstname;
-			$nuser->lastname = $object->lastname;
-			$nuser->email = '';
-			$nuser->personal_email = $object->email;
-			$nuser->personal_mobile = $object->phone;
-			$nuser->birth = $object->date_birth;
-			$nuser->salary = $object->remuneration_proposed;
-			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
-			$nuser->email = $object->email;
+		$db->begin();
 
-			$result = $nuser->create($user);
+		// Creation user
+		$nuser = new User($db);
+		$nuser->login = GETPOST('login', 'alphanohtml');
+		$nuser->fk_soc = 0;
+		$nuser->employee = 1;
+		$nuser->firstname = $object->firstname;
+		$nuser->lastname = $object->lastname;
+		$nuser->email = '';
+		$nuser->personal_email = $object->email;
+		$nuser->personal_mobile = $object->phone;
+		$nuser->birth = $object->date_birth;
+		$nuser->salary = $object->remuneration_proposed;
+		$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
+		$nuser->email = $object->email;
 
-			if ($result < 0) {
-				$langs->load("errors");
-				setEventMessages($langs->trans($nuser->error), null, 'errors');
-				$action = 'create_user';
-			} else {
-				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
-				$action = '';
-			}
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+		$result = $nuser->create($user);
+
+		if ($result < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans($nuser->error), null, 'errors');
 			$action = 'create_user';
+		} else {
+			$object->fk_user = $result;
+
+			$object->update($user);
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+			$action = '';
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -426,6 +434,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref.= $object->getFullName('', 1);
 	/*
 	 // Ref customer
 	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -433,7 +442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (!empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
@@ -570,9 +579,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Button to convert into a user
 			if ($object->status == $object::STATUS_CONTRACT_SIGNED) {
-				if ($user->rights->user->user->creer) {
-					// TODO Check if a user already exists
-					$useralreadyexists = 0;
+				if ($user->hasRight('user', 'user', 'creer')) {
+					$useralreadyexists = $object->fk_user;
 					if (empty($useralreadyexists)) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					} else {
@@ -616,8 +624,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->recruitment->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->recruitment->recruitmentjobposition->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->recruitment->recruitmentjobposition->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('recruitment:RecruitmentCandidature', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

@@ -48,7 +48,7 @@ DateDeliveryPlanned=Planlagt leveringsdato
 RefDeliveryReceipt=Ref leveringskvittering
 StatusReceipt=Status leveringskvittering
 DateReceived=Dato levering modtaget
-ClassifyReception=Klassificer modtagelse
+ClassifyReception=Klassificer modtaget
 SendShippingByEMail=Send forsendelse via e-mail
 SendShippingRef=Indsendelse af forsendelse %s
 ActionsOnShipping=Begivenheder for forsendelse
@@ -74,3 +74,8 @@ SumOfProductWeights=Summen af ​​produktvægt
 # warehouse details
 DetailWarehouseNumber= Lager detaljer
 DetailWarehouseFormat= W: %s(Antal:%d)
+
+ShipmentDistribution=Forsendelsesfordeling
+
+ErrorTooManyCombinationBatchcode=Ingen afsendelse for linje %s, da der blev fundet for mange kombinationslager, produkt, batchkode (%s).
+ErrorNoCombinationBatchcode=Ingen afsendelse for linje %s, da der ikke blev fundet noget kombinationslager, produkt, batchkode.

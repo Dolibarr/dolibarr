@@ -143,8 +143,6 @@ if ($action == "view" || $action == "presend" || $action == "dosubmit") {
 		}
 	}
 }
-//var_dump($action);
-//$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
@@ -350,7 +348,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

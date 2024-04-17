@@ -5,6 +5,7 @@
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 -- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+-- Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -89,7 +90,8 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
   transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
+  tva_assuj                tinyint        DEFAULT 1,	        		-- assujetti ou non a la TVA
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2

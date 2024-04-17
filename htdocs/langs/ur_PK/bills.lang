@@ -13,10 +13,12 @@ BillsStatistics=صارفین کی رسیدوں کے اعدادوشمار
 BillsStatisticsSuppliers=وینڈرز انوائس کے اعدادوشمار
 DisabledBecauseDispatchedInBookkeeping=غیر فعال کیونکہ انوائس بک کیپنگ میں بھیجی گئی تھی۔
 DisabledBecauseNotLastInvoice=انوائس کو مٹانے کے قابل نہ ہونے کی وجہ سے غیر فعال ہے۔ اس کے بعد کچھ رسیدیں ریکارڈ کی گئیں اور اس سے کاؤنٹر میں سوراخ ہو جائیں گے۔
+DisabledBecauseNotLastSituationInvoice=Disabled because invoice is not erasable. This invoice is not the last one in situation invoice cycle.
 DisabledBecauseNotErasable=غیر فعال کیونکہ مٹایا نہیں جا سکتا
 InvoiceStandard=معیاری رسید
 InvoiceStandardAsk=معیاری رسید
 InvoiceStandardDesc=اس قسم کی رسید عام رسید ہے۔
+InvoiceStandardShort=Standard
 InvoiceDeposit=ڈاون پیمنٹ انوائس
 InvoiceDepositAsk=ڈاون پیمنٹ انوائس
 InvoiceDepositDesc=اس قسم کی رسید اس وقت کی جاتی ہے جب ڈاؤن پیمنٹ موصول ہو جاتی ہے۔
@@ -24,6 +26,7 @@ InvoiceProForma=پروفارما رسید
 InvoiceProFormaAsk=پروفارما رسید
 InvoiceProFormaDesc= <b> پروفارما انوائس </b> ایک حقیقی انوائس کی تصویر ہے لیکن اس کی کوئی اکاؤنٹنسی ویلیو نہیں ہے۔
 InvoiceReplacement=متبادل رسید
+InvoiceReplacementShort=Replacement
 InvoiceReplacementAsk=انوائس کے بدلے انوائس
 InvoiceReplacementDesc= <b> تبدیلی کی رسید </b> کو مکمل طور پر انوائس کو تبدیل کرنے کے لیے استعمال کیا جاتا ہے جس میں پہلے سے کوئی ادائیگی موصول نہیں ہوئی ہے۔ <br> <br> نوٹ: صرف ان انوائسز کو تبدیل کیا جا سکتا ہے جن پر کوئی ادائیگی نہ ہو۔ اگر آپ جو انوائس تبدیل کرتے ہیں وہ ابھی تک بند نہیں ہوا ہے، تو یہ خود بخود 'متروک' پر بند ہو جائے گا۔
 InvoiceAvoir=کریڈٹ نوٹ
@@ -159,7 +162,9 @@ ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=یہ حصہ یا
 ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=سے
 BillTo=کو
+ShippingTo=Shipping to
 ActionsOnBill=انوائس پر کارروائیاں
+ActionsOnBillRec=Actions on recurring invoice
 RecurringInvoiceTemplate=ٹیمپلیٹ / بار بار چلنے والی رسید
 NoQualifiedRecurringInvoiceTemplateFound=کوئی اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل نہیں ہے۔
 FoundXQualifiedRecurringInvoiceTemplate=%s اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل ملا۔
@@ -192,7 +197,9 @@ ConfirmClassifyPaidPartiallyReasonDiscount=بقیہ بلا معاوضہ <b> (%s 
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=بقیہ بلا معاوضہ <b> (%s %s) </b> دی گئی رعایت ہے کیونکہ ادائیگی مدت سے پہلے کی گئی تھی۔ میں اس رعایت پر VAT کھونا قبول کرتا ہوں۔
 ConfirmClassifyPaidPartiallyReasonDiscountVat=بقیہ بلا معاوضہ <b> (%s %s) </b> دی گئی رعایت ہے کیونکہ ادائیگی مدت سے پہلے کی گئی تھی۔ میں بغیر کریڈٹ نوٹ کے اس رعایت پر VAT وصول کرتا ہوں۔
 ConfirmClassifyPaidPartiallyReasonBadCustomer=برا گاہک
-ConfirmClassifyPaidPartiallyReasonBankCharge=بینک کی طرف سے کٹوتی (درمیانی بینک کی فیس)
+ConfirmClassifyPaidPartiallyReasonBadSupplier=Bad vendor
+ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fee)
+ConfirmClassifyPaidPartiallyReasonWithholdingTax=Withholding tax
 ConfirmClassifyPaidPartiallyReasonProductReturned=مصنوعات جزوی طور پر واپس آ گئیں۔
 ConfirmClassifyPaidPartiallyReasonOther=دوسری وجہ سے چھوڑ دی گئی رقم
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=یہ انتخاب ممکن ہے اگر آپ کی رسید مناسب تبصروں کے ساتھ فراہم کی گئی ہو۔ (مثال کے طور پر "صرف اس قیمت کے مطابق ٹیکس جو اصل میں ادا کیا گیا ہے، کٹوتی کے حقوق دیتا ہے")
@@ -201,7 +208,9 @@ ConfirmClassifyPaidPartiallyReasonAvoirDesc=اس انتخاب کا استعما�
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b> برا گاہک </b> وہ صارف ہے جو اپنا قرض ادا کرنے سے انکار کرتا ہے۔
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=یہ انتخاب اس وقت استعمال کیا جاتا ہے جب ادائیگی مکمل نہیں ہوتی ہے کیونکہ کچھ مصنوعات واپس کردی گئی تھیں۔
 ConfirmClassifyPaidPartiallyReasonBankChargeDesc=غیر ادا شدہ رقم <b> انٹرمیڈیری بینک فیس ہے
+ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=The unpaid amount will never be paid as it is a withholding tax
 ConfirmClassifyPaidPartiallyReasonOtherDesc=اس انتخاب کو استعمال کریں اگر باقی سب موزوں نہیں ہیں، مثال کے طور پر درج ذیل صورت حال میں: <br> - ادائیگی مکمل نہیں ہوئی کیونکہ کچھ پروڈکٹس واپس بھیجے گئے تھے ایک کریڈٹ نوٹ بنا کر اکاؤنٹنسی سسٹم میں۔
+ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=دیگر
 ConfirmClassifyAbandonReasonOtherDesc=یہ انتخاب دیگر تمام معاملات میں استعمال کیا جائے گا۔ مثال کے طور پر کیونکہ آپ ایک بدلی انوائس بنانے کا ارادہ رکھتے ہیں۔
 ConfirmCustomerPayment=کیا آپ <b> %s </b> %s کے لیے اس ادائیگی کے ان پٹ کی تصدیق کرتے ہیں؟
@@ -281,6 +290,7 @@ SetRevenuStamp=ریونیو سٹیمپ سیٹ کریں۔
 Billed=بل کیا گیا۔
 RecurringInvoices=بار بار چلنے والی رسیدیں
 RecurringInvoice=بار بار چلنے والی رسید
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoice=ٹیمپلیٹ رسید
 RepeatableInvoices=ٹیمپلیٹ رسیدیں
 RecurringInvoicesJob=Generation of recurring invoices (sales invoices)
@@ -323,6 +333,8 @@ DiscountFromExcessPaid=انوائس %s سے زیادہ ادائیگی
 AbsoluteDiscountUse=اس قسم کا کریڈٹ انوائس پر اس کی توثیق سے پہلے استعمال کیا جا سکتا ہے۔
 CreditNoteDepositUse=اس قسم کے کریڈٹ استعمال کرنے کے لیے انوائس کی توثیق ہونی چاہیے۔
 NewGlobalDiscount=نیا مطلق رعایت
+NewSupplierGlobalDiscount=New absolute supplier discount
+NewClientGlobalDiscount=New absolute client discount
 NewRelativeDiscount=نیا رشتہ دار رعایت
 DiscountType=ڈسکاؤنٹ کی قسم
 NoteReason=نوٹ/ وجہ
@@ -392,7 +404,7 @@ DateLastGenerationShort=تازہ ترین جنرل کی تاریخ۔
 MaxPeriodNumber=زیادہ سے زیادہ انوائس نسل کی تعداد
 NbOfGenerationDone=انوائس جنریشن کی تعداد پہلے ہی ہو چکی ہے۔
 NbOfGenerationOfRecordDone=ریکارڈ جنریشن کی تعداد پہلے ہی ہو چکی ہے۔
-NbOfGenerationDoneShort=مکمل ہونے والی نسل کی تعداد
+NbOfGenerationDoneShort=Number of generations done
 MaxGenerationReached=نسلوں کی زیادہ سے زیادہ تعداد تک پہنچ گئی۔
 InvoiceAutoValidate=انوائسز کی خود بخود توثیق کریں۔
 GeneratedFromRecurringInvoice=ٹیمپلیٹ ریکرنگ انوائس %s سے تیار کردہ
@@ -429,14 +441,24 @@ PaymentConditionShort14D=14 دن
 PaymentCondition14D=14 دن
 PaymentConditionShort14DENDMONTH=مہینے کے اختتام کے 14 دن
 PaymentCondition14DENDMONTH=مہینے کے اختتام کے بعد 14 دنوں کے اندر
+PaymentConditionShortDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit
+PaymentConditionDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit, remainder on delivery
 FixAmount=مقررہ رقم - '%s' لیبل کے ساتھ 1 لائن
 VarAmount=متغیر رقم (%% tot.)
 VarAmountOneLine=متغیر رقم (%% tot.) - '%s' لیبل کے ساتھ 1 لائن
 VarAmountAllLines=متغیر رقم (%% tot.) - اصل سے تمام لائنیں
+DepositPercent=Deposit %%
+DepositGenerationPermittedByThePaymentTermsSelected=This is permitted by the payment terms selected
+GenerateDeposit=Generate a %s%% deposit invoice
+ValidateGeneratedDeposit=Validate the generated deposit
+DepositGenerated=Deposit generated
+ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=You can only automatically generate a deposit from a proposal or an order
+ErrorPaymentConditionsNotEligibleToDepositCreation=The chose payment conditions are not eligible for automatic deposit generation
 # PaymentType
 PaymentTypeVIR=بینک ٹرانسفر
 PaymentTypeShortVIR=بینک ٹرانسفر
 PaymentTypePRE=براہ راست ڈیبٹ ادائیگی کا آرڈر
+PaymentTypePREdetails=(on account %s...)
 PaymentTypeShortPRE=ڈیبٹ ادائیگی کا آرڈر
 PaymentTypeLIQ=نقد
 PaymentTypeShortLIQ=نقد
@@ -495,13 +517,14 @@ UseLine=درخواست دیں
 UseDiscount=ڈسکاؤنٹ استعمال کریں۔
 UseCredit=کریڈٹ استعمال کریں۔
 UseCreditNoteInInvoicePayment=اس کریڈٹ کے ساتھ ادائیگی کے لیے رقم کم کریں۔
-MenuChequeDeposits=چیک ڈپازٹس
+MenuChequeDeposits=Deposits slips
 MenuCheques=چیک کرتا ہے۔
-MenuChequesReceipts=رسیدیں چیک کریں۔
-NewChequeDeposit=نیا ڈپازٹ
-ChequesReceipts=رسیدیں چیک کریں۔
-ChequesArea=ڈپازٹ ایریا چیک کریں۔
-ChequeDeposits=چیک ڈپازٹس
+MenuChequesReceipts=Deposit slips
+NewChequeDeposit=New deposit slip
+ChequesReceipts=Cheque deposit slips
+DocumentsDepositArea=Deposit slip area
+ChequesArea=Deposit slips area
+ChequeDeposits=Deposit slips
 Cheques=چیک کرتا ہے۔
 DepositId=آئی ڈی ڈپازٹ
 NbCheque=چیکوں کی تعداد
@@ -607,8 +630,14 @@ SituationTotalRayToRest=ٹیکس کے بغیر ادا کرنے کے لیے با�
 PDFSituationTitle=صورتحال n° %d
 SituationTotalProgress=کل پیش رفت %d %%
 SearchUnpaidInvoicesWithDueDate=مقررہ تاریخ = %s کے ساتھ بلا معاوضہ رسیدیں تلاش کریں۔
+SearchValidatedInvoicesWithDate=Search unpaid invoices with a validation date = %s
 NoPaymentAvailable=%s کے لیے کوئی ادائیگی دستیاب نہیں ہے۔
 PaymentRegisteredAndInvoiceSetToPaid=ادائیگی رجسٹرڈ اور انوائس %s ادا کرنے پر سیٹ ہے۔
-SendEmailsRemindersOnInvoiceDueDate=بلا معاوضہ رسیدوں کے لیے ای میل کے ذریعے یاد دہانی بھیجیں۔
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for validated and unpaid invoices
 MakePaymentAndClassifyPayed=Record payment
 BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
+MentionVATDebitOptionIsOn=Option to pay tax based on debits
+MentionCategoryOfOperations=Category of operations
+MentionCategoryOfOperations0=Delivery of goods
+MentionCategoryOfOperations1=Provision of services
+MentionCategoryOfOperations2=Mixed - Delivery of goods & provision of services

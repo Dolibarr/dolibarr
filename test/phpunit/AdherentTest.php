@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2023      Alexandre Janniaux    <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +58,12 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return AdherentTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -150,7 +152,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new AdherentType($this->savdb);
+		$localobject=new AdherentType($db);
 		$localobject->statut=1;
 		$localobject->label='Adherent type test';
 		$localobject->subscription=1;
@@ -181,7 +183,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new Adherent($db);
 		$localobject->initAsSpecimen();
 		$localobject->typeid=$fk_adherent_type;
 		$result=$localobject->create($user);
@@ -211,7 +213,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
+		$localobject=new Adherent($db);
 		$result=$localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -235,7 +237,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$newobject = new Adherent($this->savdb);
+		$newobject = new Adherent($db);
 		$result = $newobject->fetch_login($localobject->login);
 
 		$this->assertEquals($newobject, $localobject);
@@ -291,7 +293,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		$newobject=new Adherent($this->savdb);
+		$newobject=new Adherent($db);
 		$result=$newobject->fetch($localobject->id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -579,7 +581,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobjectat=new AdherentType($this->savdb);
+		$localobjectat=new AdherentType($db);
 		$result=$localobjectat->fetch($localobject->typeid);
 		$result=$localobjectat->delete();
 		print __METHOD__." result=".$result."\n";

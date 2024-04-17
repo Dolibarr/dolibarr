@@ -29,6 +29,26 @@
  */
 class Import
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string DB Error number
+	 */
+	public $errno;
+
 	public $array_import_module;
 	public $array_import_perms;
 	public $array_import_icon;
@@ -41,21 +61,13 @@ class Import
 	public $array_import_entities;
 	public $array_import_regex;
 	public $array_import_updatekeys;
+	public $array_import_preselected_updatekeys;
 	public $array_import_examplevalues;
 	public $array_import_convertvalue;
 	public $array_import_run_sql_after;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	// To store import templates
+	public $id;
 	public $hexa; // List of fields in the export profile
 	public $datatoimport;
 	public $model_name; // Name of export profile
@@ -162,9 +174,9 @@ class Import
 						$this->array_import_perms[$i] = $user->rights->import->run;
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
-						// Code du dataset export
+						// Code of dataset export
 						$this->array_import_code[$i] = $module->import_code[$r];
-						// Libelle du dataset export
+						// Label of dataset export
 						$this->array_import_label[$i] = $module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i] = $module->import_tables_array[$r];
@@ -180,6 +192,8 @@ class Import
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
+						// Array of columns preselected as UPDATE options
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
@@ -338,7 +352,6 @@ class Import
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";

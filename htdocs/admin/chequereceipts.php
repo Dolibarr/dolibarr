@@ -164,7 +164,7 @@ foreach ($dirmodels as $reldir) {
 							print (empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 

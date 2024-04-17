@@ -79,11 +79,13 @@ create table llx_user
   note_public		      text,
   note_private            text          DEFAULT NULL,
   model_pdf               varchar(255)  DEFAULT NULL,
+  last_main_doc			      varchar(255),					              -- relative filepath+filename of last main generated document
   datelastlogin           datetime,
   datepreviouslogin       datetime,
   datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all
   datestartvalidity       datetime,
   dateendvalidity         datetime,
+  flagdelsessionsbefore   datetime DEFAULT NULL,					-- set this to a date if we need to launch an external process to invalidate all sessions for the same login created before this date 
   iplastlogin             varchar(250),
   ippreviouslogin         varchar(250),
   egroupware_id           integer,

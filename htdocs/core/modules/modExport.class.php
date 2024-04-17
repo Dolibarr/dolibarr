@@ -17,11 +17,12 @@
  */
 
 /**
- *  \defgroup   export      Module export
- *  \brief      Module generique pour realiser des exports de donnees en base
- *	\file       htdocs/core/modules/modExport.class.php
- *	\ingroup    export
- *	\brief      Description and activation file for the module export
+ *  \defgroup   export      Module Export
+ *  \brief      Module to manage data exports from Dolibarr database
+ *
+ *  \file       htdocs/core/modules/modExport.class.php
+ *  \ingroup    export
+ *  \brief      Description and activation file for the module export
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -64,6 +65,7 @@ class modExport extends DolibarrModules
 		$this->requiredby = array();
 		$this->phpmin = array(7, 0);
 		$this->phpmax = array();
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Constants
 		$this->const = array();

@@ -49,6 +49,18 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
+$error = 0;
+$errors = array();
+
+// List of status
+static $tmpstatut2label = array(
+		'0' => 'OpenFiscalYear',
+		'1' => 'CloseFiscalYear'
+);
+
+$object = new Fiscalyear($db);
+
+
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
@@ -56,24 +68,6 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
-
-$error = 0;
-
-// List of status
-static $tmpstatut2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
-);
-$statut2label = array(
-		''
-);
-foreach ($tmpstatut2label as $key => $val) {
-	$statut2label[$key] = $langs->trans($val);
-}
-
-$errors = array();
-
-$object = new Fiscalyear($db);
 
 
 /*
@@ -104,7 +98,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -137,7 +131,7 @@ if ($result) {
 	print '<td>'.$langs->trans("DateEnd").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyEntries").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyMovements").'</td>';
-	print '<td class="right">'.$langs->trans("Statut").'</td>';
+	print '<td class="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
 	if ($num) {
@@ -146,6 +140,8 @@ if ($result) {
 
 			$fiscalyearstatic->ref = $obj->rowid;
 			$fiscalyearstatic->id = $obj->rowid;
+			$fiscalyearstatic->date_start = $obj->date_start;
+			$fiscalyearstatic->date_end = $obj->date_end;
 			$fiscalyearstatic->statut = $obj->status;
 			$fiscalyearstatic->status = $obj->status;
 
@@ -158,12 +154,12 @@ if ($result) {
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_end), 'day').'</td>';
 			print '<td class="center">'.$object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end).'</td>';
 			print '<td class="center">'.$object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end).'</td>';
-			print '<td class="right">'.$fiscalyearstatic->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="right">'.$fiscalyearstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

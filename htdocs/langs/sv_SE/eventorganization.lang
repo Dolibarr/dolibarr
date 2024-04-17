@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = I formuläret för att skapa/lägga til
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferens eller monter
 EventOrganizationConfOrBoothes=Konferens eller monter
 ManageOrganizeEvent = Hantera organisationen av ett evenemang
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Länk till tredjepart (kund, leverantör eller
 OrganizationEvenLabelName=Offentligt namn på konferensen eller montern
 
 NewSuggestionOfBooth=Ansökan om monter
-NewSuggestionOfConference=Ansökan om konferens
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page

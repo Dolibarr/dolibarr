@@ -56,7 +56,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 
-$permission = $user->rights->knowledgemanagement->knowledgerecord->write;
+$permission = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
 
 
 /*

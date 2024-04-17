@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2023 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ class box_produits extends ModeleBoxes
 
 		$this->db = $db;
 
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
+		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'module'=>'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -84,7 +84,7 @@ class box_produits extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire) {
+		if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql .= ", p.accountancy_code_sell";
 			$sql .= ", p.accountancy_code_sell_intra";
@@ -95,10 +95,10 @@ class box_produits extends ModeleBoxes
 			$sql .= ', p.barcode';
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			if (empty($user->rights->produit->lire)) {
+			if (!$user->hasRight('produit', 'lire')) {
 				$sql .= ' AND p.fk_product_type != 0';
 			}
-			if (empty($user->rights->service->lire)) {
+			if (!$user->hasRight('service', 'lire')) {
 				$sql .= ' AND p.fk_product_type != 1';
 			}
 			// Add where from hooks

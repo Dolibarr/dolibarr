@@ -157,20 +157,11 @@ class Asset extends CommonObject
 	public $status;
 	public $user_cloture_id;
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('asset_assetdet');
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
+
 
 	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
@@ -1322,7 +1313,7 @@ class Asset extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1372,7 +1363,7 @@ class Asset extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1442,7 +1433,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1525,7 +1516,7 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
 		if (empty($conf->global->ASSET_ASSET_ADDON)) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
@@ -1590,7 +1581,7 @@ class Asset extends CommonObject
 	//      $result = 0;
 	//      $includedocgeneration = 1;
 	//
-	//      $langs->load("asset@asset");
+	//      $langs->load("assets");
 	//
 	//      if (!dol_strlen($modele)) {
 	//          $modele = 'standard_asset';

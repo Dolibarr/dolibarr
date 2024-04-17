@@ -176,12 +176,10 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	dol_syslog("PBX_HASH: $PBX_HASH", LOG_DEBUG);
 	dol_syslog("PBX_TIME: $PBX_TIME", LOG_DEBUG);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	header("X-Content-Type-Options: nosniff");
+	top_httphead();
 
 	print '<html>'."\n";
 	print '<head>'."\n";
-	print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
 	print '</head>'."\n";
 	print '<body>'."\n";
 	print "\n";
@@ -225,5 +223,5 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	print '</body></html>'."\n";
 	print "\n";
 
-	return;
+	return 1;
 }

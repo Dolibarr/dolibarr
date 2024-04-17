@@ -52,3 +52,6 @@ ReceptionExist=Reģistratūra pastāv
 ReceptionBackToDraftInDolibarr=Saņemšana %s atpakaļ uz melnrakstu
 ReceptionClassifyClosedInDolibarr=Reģistratūra %s klasificēta Slēgta
 ReceptionUnClassifyCloseddInDolibarr=Reģistratūra %s atkal tiek atvērta
+RestoreWithCurrentQtySaved=Aizpildiet daudzumus ar jaunākajām saglabātajām vērtībām
+ReceptionUpdated=Reģistratūra ir veiksmīgi atjaunināta
+ReceptionDistribution=Reception distribution

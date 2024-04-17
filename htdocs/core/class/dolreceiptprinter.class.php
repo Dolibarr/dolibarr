@@ -73,7 +73,6 @@
  * <dol_value_customer_mail>                        Replaced by customer mail
  * <dol_value_customer_phone>                       Replaced by customer phone
  * <dol_value_customer_mobile>                      Replaced by customer mobile
- * <dol_value_customer_skype>                       Replaced by customer skype
  * <dol_value_customer_tax_number>                  Replaced by customer VAT number
  * <dol_value_customer_account_balance>             Replaced by customer account balance
  * <dol_value_mysoc_name>                           Replaced by mysoc name
@@ -143,6 +142,18 @@ class dolReceiptPrinter extends Printer
 	 * @var int
 	 */
 	public $orderprinter;
+
+	/**
+	 * Array with list of printers
+	 * @var array	List of printers
+	 */
+	public $listprinters;
+
+	/**
+	 * Array with list of printer templates
+	 * @var array	List of printer templates
+	 */
+	public $listprinterstemplates;
 
 	/**
 	 * @var string Error code (or message)
@@ -220,7 +231,6 @@ class dolReceiptPrinter extends Printer
 			'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
 			'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
 			'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
-			'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
 			'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
 			//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
 			//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
@@ -246,20 +256,24 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 * list printers
+	 * List printers into the array ->listprinters
 	 *
 	 * @return  int                     0 if OK; >0 if KO
 	 */
 	public function listPrinters()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -308,7 +322,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinters = $obj;
+
 		return $error;
 	}
 
@@ -321,13 +337,17 @@ class dolReceiptPrinter extends Printer
 	public function listPrintersTemplates()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " WHERE entity = ".$conf->entity;
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -338,7 +358,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinterstemplates = $obj;
+
 		return $error;
 	}
 
@@ -935,7 +957,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function Init Printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @return  void|int                        0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{

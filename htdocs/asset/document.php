@@ -142,9 +142,9 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'asset';
-	$permissiontoadd = $user->rights->asset->write;
+	$permissiontoadd = $user->hasRight('asset', 'write');
 	//  $permissiontoadd = 1;
-	$permtoedit = $user->rights->asset->write;
+	$permtoedit = $user->hasRight('asset', 'write');
 	//  $permtoedit = 1;
 	$param = '&id=' . $object->id;
 

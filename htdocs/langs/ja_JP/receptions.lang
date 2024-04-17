@@ -52,3 +52,6 @@ ReceptionExist=領収がある
 ReceptionBackToDraftInDolibarr=領収%sは下書きに戻す
 ReceptionClassifyClosedInDolibarr=領収%sは閉鎖済指定
 ReceptionUnClassifyCloseddInDolibarr=領収%sは再開
+RestoreWithCurrentQtySaved=数量を最新の保存値で埋める
+ReceptionUpdated=受付が正常に更新された
+ReceptionDistribution=受領配信

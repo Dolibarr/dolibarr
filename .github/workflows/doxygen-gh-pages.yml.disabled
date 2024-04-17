@@ -1,0 +1,38 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: Doxygen
+on:
+  schedule:
+  - cron: "0 15 * * *"
+  workflow_dispatch:
+    branches:
+      - develop
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        uses: DenverCoder1/doxygen-github-pages-action@v1.2.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: build/html
+          config_file: build/doxygen/dolibarr-doxygen.doxyfile
+
+#      - name: Deploy
+#        uses: JamesIves/github-pages-deploy-action@v4
+#        with:
+#          branch: gh-pages
+#          folder: build/html # The folder the action should deploy.
+#          target-folder: docs/html2
+          
+#jobs:
+#  doxygen:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: 'Doxygen'
+#        uses: mattnotmitt/doxygen-action@1.9.5
+#        with:
+#          doxyfile-path: build/doxygen

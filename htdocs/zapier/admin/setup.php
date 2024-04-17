@@ -46,7 +46,7 @@ $arrayofparameters = array(
 //	'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
 );
 
-if (empty($conf->zapier->enabled)) accessforbidden();
+if (!isModEnabled('zapier')) accessforbidden();
 if (empty($user->admin)) accessforbidden();
 
 
@@ -54,10 +54,7 @@ if (empty($user->admin)) accessforbidden();
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
-
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 /*
  * View

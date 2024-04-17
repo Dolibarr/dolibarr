@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=衣索比亞
+Language_af_ZA=Afrikaans (South Africa)
 Language_ar_AR=阿拉伯語
 Language_ar_DZ=阿拉伯語（阿爾及利亞）
 Language_ar_EG=阿拉伯語（埃及）
@@ -31,6 +32,7 @@ Language_en_AU=英語（Australie）
 Language_en_CA=英語(加拿大)
 Language_en_GB=英語（英國）
 Language_en_IN=英國（印度）
+Language_en_MY=English (Myanmar)
 Language_en_NZ=英語（紐西蘭）
 Language_en_SA=英語 (沙烏地阿拉伯)
 Language_en_SG=英語（新加坡）
@@ -121,6 +123,6 @@ Language_ur_PK=烏爾都語
 Language_uz_UZ=烏茲別克語
 Language_vi_VN=越南語
 Language_zh_CN=簡體中文
-Language_zh_TW=繁體中文
+Language_zh_TW=Chinese (Taiwan)
 Language_zh_HK=中文（香港）
 Language_bh_MY=馬來語

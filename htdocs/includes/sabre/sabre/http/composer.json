@@ -5,15 +5,15 @@
     "homepage" : "https://github.com/fruux/sabre-http",
     "license" : "BSD-3-Clause",
     "require" : {
-        "php"          : ">=5.4",
+        "php"          : "^7.0",
         "ext-mbstring" : "*",
         "ext-ctype"    : "*",
-        "sabre/event"  : ">=1.0.0,<4.0.0",
-        "sabre/uri"    : "~1.0"
+        "ext-curl"     : "*",
+        "sabre/event"  : ">=4.0 <6.0",
+        "sabre/uri"    : "^2.0"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "~4.3",
-        "sabre/cs" : "~0.0.1"
+        "phpunit/phpunit" : "^6.0 || ^7.0"
     },
     "suggest" : {
         "ext-curl" : " to make http requests with the Client class"

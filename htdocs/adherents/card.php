@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,6 +118,12 @@ if ($id) {
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
+
+if (!$user->hasRight('adherent', 'creer') && $action == 'edit') {
+	accessforbidden('Not enough permission');
+}
+
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
 
 
 /*
@@ -291,7 +297,9 @@ if (empty($reshook)) {
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
-			$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			if (GETPOSTISSET('pass')) {
+				$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			}
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
 			$object->company     = trim(GETPOST("societe", 'alphanohtml'));
@@ -305,23 +313,19 @@ if (empty($reshook)) {
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
-			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url 		 = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype       = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
-			$object->birth		= $birthdate;
+			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
-			$object->typeid      = GETPOST("typeid", 'int');
-			//$object->note        = trim(GETPOST("comment","alpha"));
-			$object->morphy      = GETPOST("morphy", 'alpha');
+			$object->typeid = GETPOST("typeid", 'int');
+			//$object->note = trim(GETPOST("comment", "restricthtml"));
+			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
 				$object->photo = '';
@@ -330,8 +334,9 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut      = GETPOST("statut", 'alpha');
-			$object->public      = GETPOST("public", 'alpha');
+			$object->statut = GETPOST("statut", 'alpha');
+			$object->status = GETPOST("statut", 'alpha');
+			$object->public = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -342,16 +347,25 @@ if (empty($reshook)) {
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
 			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->creer)) {
+				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'creer')) {
 					$nosyncuser = 1; // Disable synchronizing
 				}
 			}
 
 			// Check if we need to also synchronize password information
-			$nosyncuserpass = 0;
-			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) {
-					$nosyncuserpass = 1; // Disable synchronizing
+			$nosyncuserpass = 1;	// no by default
+			if (GETPOSTISSET('pass')) {
+				if ($object->user_id) {	// If member is linked to a user
+					$nosyncuserpass = 0;	// We may try to sync password
+					if ($user->id == $object->user_id) {
+						if (!$user->hasRight('user', 'self', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					} else {
+						if (!$user->hasRight('user', 'user', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					}
 				}
 			}
 
@@ -449,12 +463,8 @@ if (empty($reshook)) {
 		$phone = GETPOST("phone", 'alpha');
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
-		// $skype=GETPOST("member_skype", 'alpha');
-		// $twitter=GETPOST("member_twitter", 'alpha');
-		// $facebook=GETPOST("member_facebook", 'alpha');
-		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-		$url   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'none');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
@@ -487,11 +497,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-
-		// $object->skype       = $skype;
-		// $object->twitter     = $twitter;
-		// $object->facebook    = $facebook;
-		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->url       	 = $url;
@@ -575,7 +580,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			// Email about right and login does not exist
+			// Create the member
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Foundation categories
@@ -583,13 +588,15 @@ if (empty($reshook)) {
 				$object->setCategories($memcats);
 
 				$db->commit();
+
 				$rowid = $object->id;
 				$id = $object->id;
 
 				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
 			} else {
-				$error++;
 				$db->rollback();
+
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
@@ -659,7 +666,7 @@ if (empty($reshook)) {
 				$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 				// Get email content from template
 				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
+				$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION');
 
 				if (!empty($labeltouse)) {
 					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -683,7 +690,7 @@ if (empty($reshook)) {
 
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -731,7 +738,7 @@ if (empty($reshook)) {
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_CANCELATION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -754,7 +761,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -802,7 +809,7 @@ if (empty($reshook)) {
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_EXCLUSION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -825,7 +832,7 @@ if (empty($reshook)) {
 
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -1003,6 +1010,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype = $adht->liste_array(1);
+		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
@@ -1114,7 +1122,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", $object->public, 1);
 		print "</td></tr>\n";
 
@@ -1221,7 +1229,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : $object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
 		}
 
 		// Type
@@ -1363,7 +1371,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public profil
-		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+		print "<tr><td>".$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist)."</td><td>\n";
 		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
 		print "</td></tr>\n";
 
@@ -1412,7 +1420,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</table>';
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Save", '');
+		print $form->buttonsSaveCancel("Save", 'Cancel');
 
 		print '</form>';
 	}
@@ -1524,7 +1532,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$msg = $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1533,10 +1541,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= '<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1596,10 +1604,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1639,7 +1647,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+			$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_EXCLUSION');
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -1656,10 +1664,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1818,7 +1826,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -1882,7 +1890,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</table>\n";
 
 		print "</div></div>\n";
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -2050,7 +2058,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($useonlinepayment) {
 				print '<br>';
 				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
-					$amount = price(max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount));
+					$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
 				}
 				if (empty($amount)) {
 					$amount = 0;

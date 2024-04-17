@@ -234,7 +234,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		//global $dolibarr_main_url_root;
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-		$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+		$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE entity IN (".getEntity('takepos').")";
 		$resql = $db->query($sql);
 		$rows = array();
 		while ($row = $db->fetch_array($resql)) {

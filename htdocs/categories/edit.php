@@ -166,7 +166,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
+$doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), ROWS_6, '90%');
 $doleditor->Create();
 print '</td></tr>';
 

@@ -104,7 +104,7 @@ oConnector.CurrentFolder	= '/' ;
 var sConnUrl = GetUrlParam( 'Connector' );
 
 // Gecko has some problems when using relative URLs (not starting with slash).
-if ( sConnUrl.substr(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 )
+if ( sConnUrl.substring(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 )
 	sConnUrl = window.location.href.replace( /browser.php.*$/, '' ) + sConnUrl ;
 
 oConnector.ConnectorUrl = sConnUrl + ( sConnUrl.indexOf('?') != -1 ? '&' : '?' );

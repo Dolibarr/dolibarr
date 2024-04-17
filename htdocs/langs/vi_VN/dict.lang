@@ -21,7 +21,7 @@ CountryNL=Hà Lan
 CountryHU=Hungary
 CountryRU=Nga
 CountrySE=Thụy Điển
-CountryCI=Ivory Coast
+CountryCI=Bờ Biển Ngà
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Cameroon
@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Bà

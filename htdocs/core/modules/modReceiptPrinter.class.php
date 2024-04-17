@@ -102,7 +102,7 @@ class modReceiptPrinter extends DolibarrModules
 		$this->rights[$r][4] = 'read';
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// This is to declare the Top Menu entry:

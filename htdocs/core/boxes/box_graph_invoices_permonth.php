@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show invoices per month graph
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-	public $boxcode = "invoicespermonth";
-	public $boximg = "object_bill";
+	public $boxcode  = "invoicespermonth";
+	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerMonth";
-	public $depends = array("facture");
+	public $depends  = array("facture");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -56,7 +56,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->facture->lire);
+		$this->hidden = !$user->hasRight('facture', 'lire');
 	}
 
 	/**
@@ -103,7 +103,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -227,7 +227,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

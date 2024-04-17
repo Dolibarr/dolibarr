@@ -89,7 +89,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "crabe";
+		$this->const[$r][2] = "sponge";
 		$this->const[$r][3] = 'Name of PDF model of invoice';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -135,8 +135,8 @@ class modFacture extends DolibarrModules
 				'class'=>'compta/facture/class/facture.class.php',
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
-				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when we reach the due date - n days of an invoice. First param is n, the number of days before due date to send the remind, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice).',
+				'parameters'=>"10,all,EmailTemplateCode,duedate",
+				'comment'=>'Send an email when we reach the invoice due date (or invoice date) - n days. First param is n, the number of days before due date (or invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the invoice to use.',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,
@@ -319,7 +319,7 @@ class modFacture extends DolibarrModules
 			'f.date_lim_reglement' => '2021-12-24',
 			'f.note_public' => '',
 			'f.note_private' => '',
-			'f.model_pdf' => 'crabe',
+			'f.model_pdf' => 'sponge',
 			'f.multicurrency_code' => 'EUR',
 			'f.multicurrency_tx' => '1',
 			'f.multicurrency_total_ht' => '100',

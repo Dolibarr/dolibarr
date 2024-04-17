@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,13 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
 
-$permissiontoadd = $user->rights->cron->create;
-
-if (!$user->rights->cron->create) {
+if (!$user->hasRight('cron', 'create')) {
 	accessforbidden();
 }
+
+$permissiontoadd = $user->hasRight('cron', 'create');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
+$permissiontodelete = $user->hasRight('cron', 'delete');
 
 
 /*
@@ -80,7 +82,7 @@ if (!empty($cancel)) {
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete) {
+if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 	$result = $object->delete($user);
 
 	if ($result < 0) {
@@ -93,7 +95,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute) {
+if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 	if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 		$action = '';
@@ -123,7 +125,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 }
 
 
-if ($action == 'add') {
+if ($action == 'add' && $permissiontoadd) {
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
 	$object->command = GETPOST('command');
@@ -157,7 +159,7 @@ if ($action == 'add') {
 }
 
 // Save parameters
-if ($action == 'update') {
+if ($action == 'update' && $permissiontoadd) {
 	$object->id = $id;
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
@@ -191,7 +193,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'activate') {
+if ($action == 'activate' && $permissiontoadd) {
 	$object->status = 1;
 
 	// Add cron task
@@ -207,7 +209,7 @@ if ($action == 'activate') {
 	}
 }
 
-if ($action == 'inactive') {
+if ($action == 'inactive' && $permissiontoadd) {
 	$object->status = 0;
 	$object->processing = 0;
 
@@ -225,7 +227,7 @@ if ($action == 'inactive') {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
@@ -715,6 +717,7 @@ if (($action == "create") || ($action == "edit")) {
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!$object->status) {
+		print img_picto('', 'object_calendarday').' <span class="opacitymedium strikefordisabled">'.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")).'</span> ';
 		print $langs->trans("Disabled");
 	} elseif (!empty($object->datenextrun)) {
 		print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
@@ -799,7 +802,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (empty($object->status)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.urlencode($conf->global->CRON_KEY)).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
 	if (!$user->rights->cron->create) {

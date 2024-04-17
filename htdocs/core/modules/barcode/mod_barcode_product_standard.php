@@ -100,7 +100,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
 		$tooltip .= $langs->trans("GenericMaskCodes3EAN");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip .= '020{000000000}? (for internal use)<br>';
+		$tooltip .= '04{0000000000}? (for internal use)<br>';
 		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
 		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
@@ -109,7 +109,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition small" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

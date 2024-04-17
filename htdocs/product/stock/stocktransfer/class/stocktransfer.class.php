@@ -57,11 +57,19 @@ class StockTransfer extends CommonObject
 	 */
 	public $isextrafieldmanaged = 1;
 
+
 	/**
-	* @var string Customer ref
-	* @deprecated
-	* @see $ref_customer
-	*/
+	 * @var array    List of child tables. To know object to delete on cascade.
+	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
+	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
+
+	/**
+	 * @var string Customer ref
+	 * @deprecated
+	 * @see $ref_customer
+	 */
 	public $ref_client;
 
 	/**
@@ -79,6 +87,7 @@ class StockTransfer extends CommonObject
 	public $date_prevue_arrivee;
 	public $date_reelle_depart;
 	public $date_reelle_arrivee;
+	public $origin_type;
 
 
 	const STATUS_DRAFT      = 0;
@@ -160,42 +169,6 @@ class StockTransfer extends CommonObject
 	public $model_pdf;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	public $table_element_line = 'stocktransfer_stocktransferline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
-	 */
-	public $fk_element = 'fk_stocktransfer';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'StockTransferline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables = array();
-
-	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	 */
-	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
-
-	/**
-	 * @var StockTransferLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -753,8 +726,12 @@ class StockTransfer extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -787,7 +764,7 @@ class StockTransfer extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -998,8 +975,8 @@ class StockTransfer extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'eagle';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}

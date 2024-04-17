@@ -60,7 +60,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->accounting->mouvements->lire);
+		$this->hidden = !$user->hasRight('accounting', 'mouvements', 'lire');
 	}
 
 	/**
@@ -78,7 +78,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-		if ($user->rights->accounting->mouvements->lire) {
+		if ($user->hasRight('accounting', 'mouvements', 'lire')) {
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
 			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";

@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dalībnieka izveides/pievienošanas vei
 #
 # Object
 #
+OrganizedEvent=Organizēts pasākums
 EventOrganizationConfOrBooth= Konference vai stends
 EventOrganizationConfOrBoothes=Konferences vai stendi
 ManageOrganizeEvent = Pārvaldiet pasākuma organizēšanu
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Saite ar trešo pusi (klientu, piegādātāju 
 OrganizationEvenLabelName=Konferences vai stenda publiskais nosaukums
 
 NewSuggestionOfBooth=Pieteikums stendam
-NewSuggestionOfConference=Pieteikšanās konferencei
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page

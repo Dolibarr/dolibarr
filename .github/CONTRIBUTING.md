@@ -67,9 +67,12 @@ where
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be ommitted if your commit does not fit in any of the following categories:
+
 - Fix/FIX: for a bug fix
 - New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Close/CLOSE: for closing a referenced feature request
+- Perf/PERF: for performance enhancement
+- Qual/QUAL: for quality code enhancement or re-engeneering
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
@@ -96,9 +99,9 @@ Try to keep lines under 120 characters.
 <pre>
 FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
 or
-NEW|New Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
-or
 CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
+or
+NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
 or
 Short description (when the commit is not introducing feature nor closing a bug)
 
@@ -119,7 +122,7 @@ Also, some code changes need a prior approbation:
 
 * if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
 
-* if you add a new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
+* if you add new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 

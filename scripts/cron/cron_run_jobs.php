@@ -92,16 +92,10 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
 
 // Check module cron is activated
-if (empty($conf->cron->enabled)) {
-	print "Error: module Scheduled jobs (cron) not activated\n";
-	exit(-1);
-}
-
-// Check module cron is activated
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	print "Error: module Scheduled jobs (cron) not activated\n";
 	exit(-1);
 }
@@ -141,7 +135,7 @@ if ($result < 0) {
 	exit(-1);
 } else {
 	if (empty($user->id)) {
-		echo "User login: ".$userlogin." does not exists";
+		echo "User login: ".$userlogin." does not exists\n";
 		dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
 		exit(-1);
 	}
@@ -175,7 +169,7 @@ $object = new Cronjob($db);
 $filter = array();
 if (!empty($id)) {
 	if (!is_numeric($id)) {
-		echo "Error: Bad value for parameter job id";
+		echo "Error: Bad value for parameter job id\n";
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
 		exit();
 	}
@@ -205,7 +199,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 		// Force reload of setup for the current entity
 		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity) {
-			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
+			dol_syslog("cron_run_jobs.php: we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
@@ -217,12 +211,12 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$result = $user->fetch('', $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
-					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+					dol_syslog("cron_run_jobs.php: User Error:".$user->error, LOG_ERR);
 					exit(-1);
 				} else {
 					if ($result == 0) {
-						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
-						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
+						echo "\nUser login: ".$userlogin." does not exist for entity ".$conf->entity."\n";
+						dol_syslog("cron_run_jobs.php: User login: ".$userlogin." does not exist", LOG_ERR);
 						exit(-1);
 					}
 				}
@@ -254,7 +248,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			$cronjob = new Cronjob($db);
 			$result = $cronjob->fetch($line->id);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 				echo "Failed to fetch job ".$line->id."\n";
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
@@ -262,7 +256,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			// Execute job
 			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
 				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
@@ -278,7 +272,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);

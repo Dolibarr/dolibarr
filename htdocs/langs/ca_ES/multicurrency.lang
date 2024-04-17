@@ -36,3 +36,7 @@ Codemulticurrency=codi de moneda
 UpdateRate=modifica el canvi
 CancelUpdate=cancel·la
 NoEmptyRate=El camp de canvi no pot estar buit
+CurrencyCodeId=ID de la moneda
+CurrencyCode=Codi de moneda
+CurrencyUnitPrice=Preu unitari en moneda estrangera
+CurrencyPrice=Preu en moneda estrangera

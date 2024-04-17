@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("specialchar","id",{euro:"Tanda Euro",lsquo:"Tanda kutip tunggal kiri",rsquo:"Tanda kutip tunggal kanan",ldquo:"Tanda kutip ganda kiri",rdquo:"Tanda kutip ganda kanan",ndash:"Tanda hubung",mdash:"Sisipan",iexcl:"Tanda seru terbalik",cent:"Tanda cent",pound:"Tanda pound",curren:"Tanda mata uang",yen:"Tanda Yen",brvbar:"Broken bar",sect:"Penanda bagian",uml:"Diaeresis",copy:"Tanda Hak Cipta",ordf:"Indikator ordinal feminin",laquo:"Tanda kutip sudut ganda mengarah ke kiri",not:"Bukan tanda",

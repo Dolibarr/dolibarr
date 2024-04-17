@@ -497,7 +497,7 @@ if ($action == 'create') {
 
 		// Ref document
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
@@ -612,7 +612,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print '<br>';
 

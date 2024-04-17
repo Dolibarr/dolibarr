@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -21,9 +19,9 @@ use Stripe\BankAccount;
  */
 
 /**
- *  \file       htdocs/loan/card.php
- *  \ingroup    loan
- *  \brief      Loan card
+ *   \file       htdocs/loan/card.php
+ *   \ingroup    loan
+ *   \brief      Loan card
  */
 
 // Load Dolibarr environment
@@ -31,15 +29,18 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-}
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));
@@ -69,13 +70,14 @@ $error = 0;
  * Actions
  */
 
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write) {
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 		if ($result > 0) {
@@ -86,7 +88,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->write) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -99,12 +101,12 @@ if (empty($reshook)) {
 	}
 
 	// Add loan
-	if ($action == 'add' && $user->rights->loan->write) {
+	if ($action == 'add' && $user->hasRight('loan', 'write')) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital = price2num(GETPOST('capital'));
-			$rate	   = price2num(GETPOST('rate'));
+			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
 				$error++; $action = 'create';
@@ -167,23 +169,23 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit();
 		}
-	} elseif ($action == 'update' && $user->rights->loan->write) {
+	} elseif ($action == 'update' && $user->hasRight('loan', 'write')) {
 		// Update record
 		if (!$cancel) {
 			$result = $object->fetch($id);
 
 			$datestart = dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
-			$capital	= price2num(GETPOST('capital'));
+			$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+			$capital = price2num(GETPOST('capital'));
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 				$action = 'edit';
 			} else {
 				$object->datestart = $datestart;
-				$object->dateend	        = $dateend;
-				$object->capital	        = $capital;
-				$object->nbterm		        = GETPOST("nbterm", 'int');
+				$object->dateend = $dateend;
+				$object->capital = $capital;
+				$object->nbterm = GETPOST("nbterm", 'int');
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
 				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
@@ -224,7 +226,7 @@ if (empty($reshook)) {
 	}
 
 	// Link to a project
-	if ($action == 'classin' && $user->rights->loan->write) {
+	if ($action == 'classin' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setProject($projectid);
 		if ($result < 0) {
@@ -232,7 +234,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setlabel' && $user->rights->loan->write) {
+	if ($action == 'setlabel' && $user->hasRight('loan', 'write')) {
 		$object->fetch($id);
 		$result = $object->setValueFrom('label', GETPOST('label'), '', '', 'text', '', $user, 'LOAN_MODIFY');
 		if ($result < 0) {
@@ -248,6 +250,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
+$morehtmlright = '';
+$outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -294,13 +298,13 @@ if ($action == 'create') {
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate($datestart ? $datestart : -1, 'start', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($datestart) ? $datestart : -1, 'start', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate($dateend ? $dateend : -1, 'end', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($dateend) ? $dateend : -1, 'end', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -349,22 +353,22 @@ if ($action == 'create') {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ?GETPOST('accountancy_account_capital') : $conf->global->LOAN_ACCOUNTING_ACCOUNT_CAPITAL, 'accountancy_account_capital', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ?GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ?GETPOST('accountancy_account_insurance') : $conf->global->LOAN_ACCOUNTING_ACCOUNT_INSURANCE, 'accountancy_account_insurance', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ?GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : $conf->global->LOAN_ACCOUNTING_ACCOUNT_INTEREST, 'accountancy_account_interest', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
-	} else // For external software
-	{
+	} else {
+		// For external software
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
@@ -425,13 +429,13 @@ if ($id > 0) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref loan
-		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('loan', 'write'), 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->hasRight('loan', 'write'), 'string', '', null, null, '', 1);
 		// Project
 		if (isModEnabled('project')) {
 			$langs->loadLangs(array("projects"));
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->loan->write) {
+			if ($user->hasRight('loan', 'write')) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
@@ -440,11 +444,11 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -739,17 +743,17 @@ if ($id > 0) {
 				print '<div class="tabsAction">';
 
 				// Edit
-				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 				}
 
 				// Emit payment
-				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 				}
 
 				// Classify 'paid'
-				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->rights->loan->write) {
+				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 

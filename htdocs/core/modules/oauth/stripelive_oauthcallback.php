@@ -117,6 +117,10 @@ if ($action == 'delete') {
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
+
 	header('Location: '.$backtourl);
 	exit();
 }
@@ -160,6 +164,10 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
 		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
+	}
+
+	if (empty($url)) {
+		$url = DOL_URL_ROOT.'/';
 	}
 
 	// we go on oauth provider authorization page

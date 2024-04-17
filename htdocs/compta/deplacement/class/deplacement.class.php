@@ -58,6 +58,11 @@ class Deplacement extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 
+
+	public $fk_soc;
+	public $date;
+	public $type;
+
 	/**
 	 * Date creation record (datec)
 	 *
@@ -98,10 +103,6 @@ class Deplacement extends CommonObject
 	public $statut;
 	public $extraparams = array();
 
-	public $statuts = array();
-	public $statuts_short = array();
-	public $statuts_logo = array();
-
 
 	/**
 	 * Draft status
@@ -126,10 +127,6 @@ class Deplacement extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-		$this->statuts_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
 	}
 
 	/**
@@ -217,8 +214,6 @@ class Deplacement extends CommonObject
 	 */
 	public function update($user)
 	{
-		global $langs;
-
 		// Clean parameters
 		$this->km = price2num($this->km);
 
@@ -338,10 +333,10 @@ class Deplacement extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -350,23 +345,32 @@ class Deplacement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
+		}
 
-		$statusType = $this->statuts_logo[$status];
+		$status_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		$statusType = $status_logo[$status];
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

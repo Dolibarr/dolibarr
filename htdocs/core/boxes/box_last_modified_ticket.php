@@ -26,13 +26,13 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show last modified tickets
  */
 class box_last_modified_ticket extends ModeleBoxes
 {
 
 	public $boxcode = "box_last_modified_ticket";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 

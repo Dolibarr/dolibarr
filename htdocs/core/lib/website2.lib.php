@@ -45,9 +45,7 @@ function dolSaveMasterFile($filemaster)
 	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filemaster);
 
 	return $result;
 }
@@ -79,9 +77,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	if ($result === false) {
 		dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
 	}
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filealias);
 
 	// Save also alias into language subdirectory if it is not a main language
 	if ($objectpage->lang && in_array($objectpage->lang, explode(',', $object->otherlang))) {
@@ -99,9 +95,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		if ($result === false) {
 			dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 		}
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filealiassub);
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
 		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
@@ -122,9 +116,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 				if ($result === false) {
 					dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 				}
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($filealiassub);
 			}
 		}
 	}
@@ -219,7 +211,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 					$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 				}
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -236,7 +228,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 						$tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 					}
 					if ($tmpshortlangcode != $shortlangcode) {
-						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 					}
 				}
 			}
@@ -246,7 +238,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		// Add myself
 		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="<?php echo $website->virtualhost; ?>'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
 
 		$tplcontent .= '<?php } ?>'."\n";
 	}
@@ -256,7 +248,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	// Add js
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include link to JS file -->'."\n";
-	$tplcontent .= '<script async src="/javascript.js.php"></script>'."\n";
+	$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 	// Add headers
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";
@@ -271,14 +263,13 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= '</html>'."\n";
 
 	$tplcontent .= '<?php // BEGIN PHP'."\n";
-	$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.');'."\n";
+	$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
 	$tplcontent .= "// END PHP ?>\n";
 
 	//var_dump($filetpl);exit;
 	$result = file_put_contents($filetpl, $tplcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-	}
+
+	dolChmod($filetpl);
 
 	return $result;
 }
@@ -318,9 +309,8 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		$indexcontent .= '// END PHP ?>'."\n";
 
 		$result1 = file_put_contents($fileindex, $indexcontent);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
-		}
+
+		dolChmod($fileindex);
 
 		if (is_object($object) && $object->fk_default_home > 0) {
 			$objectpage = new WebsitePage($db);
@@ -352,9 +342,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 						if ($result === false) {
 							dol_syslog("Failed to write file ".$fileindexsub, LOG_WARNING);
 						}
-						if (!empty($conf->global->MAIN_UMASK)) {
-							@chmod($fileindexsub, octdec($conf->global->MAIN_UMASK));
-						}
+						dolChmod($fileindexsub);
 					}
 				}
 			}
@@ -368,9 +356,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
 		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filewrapper);
 	} else {
 		$result2 = true;
 	}
@@ -394,9 +380,7 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtmlheader, $htmlheadercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filehtmlheader);
 
 	return $result;
 }
@@ -416,9 +400,7 @@ function dolSaveCssFile($filecss, $csscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filecss, $csscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filecss);
 
 	return $result;
 }
@@ -438,9 +420,7 @@ function dolSaveJsFile($filejs, $jscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filejs, $jscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filejs);
 
 	return $result;
 }
@@ -460,9 +440,7 @@ function dolSaveRobotFile($filerobot, $robotcontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filerobot, $robotcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filerobot);
 
 	return $result;
 }
@@ -482,9 +460,7 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtaccess, $htaccess);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($filehtaccess);
 
 	return $result;
 }
@@ -504,9 +480,7 @@ function dolSaveManifestJson($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }
@@ -526,9 +500,7 @@ function dolSaveReadme($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }
@@ -548,9 +520,7 @@ function dolSaveLicense($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
+	dolChmod($file);
 
 	return $result;
 }
@@ -611,10 +581,10 @@ function showWebsiteTemplates(Website $website)
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
-							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 								continue;
 							}
-							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
 								continue;
 							}
 
@@ -673,10 +643,12 @@ function showWebsiteTemplates(Website $website)
 
 
 /**
- * checkPHPCode
+ * Check a new string containing only php code (including <php tag)
+ * - Block if bad code in the new string.
+ * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string
- * @param	string		$phpfullcodestring			PHP new string
+ * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */
@@ -717,7 +689,12 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 			break;
 		}
 	}
-	// Check dynamic functions $xxx(
+	// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+	if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+		$error++;
+		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
+	}
+	// Deny dynamic functions $xxx(
 	if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
 		$error++;
 		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');

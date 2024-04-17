@@ -13,10 +13,9 @@ use Sabre\HTTP\Request;
 
 // Find the autoloader
 $paths = [
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../../../autoload.php',
-    __DIR__ . '/vendor/autoload.php',
-
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
+    __DIR__.'/vendor/autoload.php',
 ];
 
 foreach ($paths as $path) {
@@ -35,4 +34,4 @@ $response = $client->send($request);
 
 echo "Response:\n";
 
-echo (string)$response;
+echo (string) $response;

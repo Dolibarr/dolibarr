@@ -1,5 +1,6 @@
 -- SQL definition for module ticket
 -- Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+-- Copyright (C) 2023  Charlene Benke <charlene@patas-monkey.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@ CREATE TABLE llx_ticket
 	track_id    varchar(128) NOT NULL,
 	fk_soc		integer DEFAULT 0,
 	fk_project	integer DEFAULT 0,
+	fk_contract	integer DEFAULT 0,
 	origin_email   varchar(128),
 	fk_user_create	integer,
 	fk_user_assign	integer,

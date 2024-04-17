@@ -36,7 +36,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-if (!$user->rights->facture->lire) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 

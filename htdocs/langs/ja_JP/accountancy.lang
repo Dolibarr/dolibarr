@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=既に会計仕訳日記帳と元帳に転記済
 NotYetInGeneralLedger=まだ会計仕訳日記帳と元帳に未転記
 GroupIsEmptyCheckSetup=グループが空。パーソナライズされた会計グループの設定を確認すること
 DetailByAccount=科目ごとに詳細を表示
+DetailBy=詳細はこちら
 AccountWithNonZeroValues=ゼロ以外の値の科目
 ListOfAccounts=勘定科目一覧
 CountriesInEEC=EECの国
@@ -51,14 +52,19 @@ AccountantFiles=ソースドキュメントのエクスポート
 ExportAccountingSourceDocHelp=このツールを使用すると、アカウンティを生成するために使用されるソースイベントを検索およびエクスポートできる。 <br>エクスポートされたZIPファイルには、CSVで要求されたアイテムのリストと、元の形式（PDF、ODT、DOCX ...）の添付ファイルが含まれる。
 ExportAccountingSourceDocHelp2=仕訳日記帳をエクスポートするには、メニューエントリ%s --%sを使用。
 ExportAccountingProjectHelp=特定のプロジェクトについてのみアカウンティングレポートが必要な場合は、プロジェクトを指定する。経費報告書とローン支払いはプロジェクト報告書に含まれていない。
+ExportAccountancy=輸出会計
+WarningDataDisappearsWhenDataIsExported=警告、このリストにはまだエクスポートされていない会計エントリのみが含まれている (エクスポート日が空である)。すでにエクスポートされている会計エントリを含めて再エクスポートする場合は、上のボタンをクリックすること。
 VueByAccountAccounting=勘定科目順に表示
 VueBySubAccountAccounting=会計補助勘定科目で表示
 
-MainAccountForCustomersNotDefined=設定で定義されていない顧客のメイン勘定科目
-MainAccountForSuppliersNotDefined=設定で定義されていないベンダーのメイン勘定科目
-MainAccountForUsersNotDefined=設定で定義されていないユーザのメイン勘定科目
-MainAccountForVatPaymentNotDefined=設定で定義されていないVAT支払のメイン勘定科目
-MainAccountForSubscriptionPaymentNotDefined=設定で定義されていないサブスクリプション支払のメイン勘定科目
+MainAccountForCustomersNotDefined=設定で定義されていない顧客の主口座 (勘定科目表から)
+MainAccountForSuppliersNotDefined=設定で定義されていない仕入先の主勘定 (勘定科目表から)
+MainAccountForUsersNotDefined=セットアップで定義されていないユーザーの主勘定 (勘定科目表から)
+MainAccountForRevenueStampSaleNotDefined=設定で定義されていない収入印紙 (売上) の勘定科目 (勘定科目表から)
+MainAccountForRevenueStampPurchaseNotDefined=セットアップで定義されていない収入印紙 (購入) の勘定科目 (勘定科目表から)
+MainAccountForVatPaymentNotDefined=VAT 支払い用の勘定 (勘定科目表から) が設定で定義されていない
+MainAccountForSubscriptionPaymentNotDefined=メンバーシップ支払い用の勘定 (勘定科目表から) が設定で定義されていない
+MainAccountForRetainedWarrantyNotDefined=設定で定義されていない保持保証の勘定科目 (勘定科目表から)
 UserAccountNotDefined=設定で定義されていないユーザの会計勘定科目
 
 AccountancyArea=経理エリア
@@ -112,6 +118,7 @@ MenuLoanAccounts=借入金科目
 MenuProductsAccounts=製品科目
 MenuClosureAccounts=閉鎖口座
 MenuAccountancyClosure=閉鎖
+MenuExportAccountancy=輸出会計
 MenuAccountancyValidationMovements=動きを検証
 ProductsBinding=製品科目
 TransferInAccounting=会計での移動
@@ -295,7 +302,7 @@ DescClosure=まだ検証されておらずロックされていない月ごと�
 OverviewOfMovementsNotValidated=検証およびロックされていない動きの概要
 AllMovementsWereRecordedAsValidated=全動きは検証され、ロックされたものとして記録された
 NotAllMovementsCouldBeRecordedAsValidated=全動きを検証済みおよびロック済みとして記録できるわけではない
-ValidateMovements=動きを検証してロックする...
+ValidateMovements=動きを検証してロックする
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習の全エントリが要検証済。検証済でないと、閉じることができない。
 
 ValidateHistory=自動的に結合
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=販売の会計における結合と転記�
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=購入時の会計における結合と転記を無効にする(ベンダーの請求書は会計で考慮されない)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書sの会計における結合と転記を無効にする(経費報告書sは会計で考慮されない)
 ACCOUNTING_ENABLE_LETTERING=会計でレタリング機能を有効化
+ACCOUNTING_ENABLE_LETTERING_DESC=このオプションを有効にすると、各会計エントリにコードを定義できるため、さまざまな会計移動をグループ化できる。以前は、異なるジャーナルが独立して管理されていた場合、この機能は、異なるジャーナルの動線をグループ化するために必要でした。ただし、Dolibarr 会計では、「 <b> %s </b> 」と呼ばれるトラッキング コードがすでに自動的に保存されており、自動レタリングがすでに行われており、エラーのリスクがないため、この機能は一般的な使用には役に立ちない。手動レタリング機能は、会計におけるデータ転送を行うコンピューター エンジンをあまり信頼していないエンド ユーザーのために提供されている。
+EnablingThisFeatureIsNotNecessary=厳格な会計管理のためにこの機能を有効にする必要はなくなった。
 ACCOUNTING_ENABLE_AUTOLETTERING=会計への転送時に自動レタリングを有効化
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=レタリングのコードは自動的に生成および増加され、エンド ユーザーが選択することはない。
+OptionsAdvanced=高度なオプション
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=サプライヤーの購入に対する VAT リバースチャージの管理を有効にする
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=このオプションを有効にすると、サプライヤーまたは特定の仕入先請求書を別の方法で会計に転送する必要があることを定義できる。追加の借方および貸方行が、 "%s" 設定ページにある勘定科目表から 2 つの特定の口座の会計に生成される。
 
 ## Export
 NotExportLettering=ファイルの生成時にレタリングをエクスポートしない
-NotifiedExportDate=エクスポートされた行にエクスポート済みのフラグを付ける<span class="warning">（行を変更するには、トランザクション全体を削除して、会計に再転送する必要がある）</span>
-NotifiedValidationDate=エクスポートされたエントリ<span class="warning">を検証してロックする（「%s」機能と同じ効果、行の変更と削除は絶対に不可）</span>
+NotifiedExportDate=まだエクスポートされていない明細にエクスポート済としてフラグを設定する <span class="warning"> (エクスポート済としてフラグが設定された明細を変更するには、トランザクション全体を削除して会計に再転送する必要がある) </span>
+NotifiedValidationDate=まだロックされていないエクスポートされたエントリを検証してロックする <span class="warning"> (「%s」機能と同じ効果で、行の変更と削除は確実に不可能になる) </span>
 NotifiedExportFull=ドキュメントをエクスポートするか?
 DateValidationAndLock=日付の検証とロック
 ConfirmExportFile=会計エクスポートファイルの生成を確定するか？
@@ -381,7 +394,7 @@ ChartofaccountsId=勘定科目表ID
 ## Tools - Init accounting account on product / service
 InitAccountancy=初期会計
 InitAccountancyDesc=このページを使用して、販売および購入用に定義された勘定科目がない製品およびサービスの勘定科目を初期化できる。
-DefaultBindingDesc=このページを使用して、特定の勘定科目がまだ設定されていない場合に、支払給与、寄付、税金、および付加価値税に関するトランザクションレコードをリンクするために使用するデフォルトの科目を設定できる。
+DefaultBindingDesc=このページを使用すると、特定のアカウントがまだ設定されていない場合に、支払給与、寄付、税金、VAT などのビジネス オブジェクトをアカウントにリンクするために使用するデフォルトのアカウントを (勘定科目表から) 設定できる。
 DefaultClosureDesc=このページは、会計上の閉鎖に使用されるパラメーターを設定するために使用できる。
 Options=オプション
 OptionModeProductSell=モード販売
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=一括自動照合解除確認
 ConfirmMassUnletteringManual=一括手動照合解除確認
 ConfirmMassUnletteringQuestion=選択した %s レコード(s)を照合解除するか?
 ConfirmMassDeleteBookkeepingWriting=一括削除確定
-ConfirmMassDeleteBookkeepingWritingQuestion=これにより、トランザクションが会計から削除される（同じトランザクションに関連する全行が削除される）。選択した%sレコード(s)を削除してもよいか？
+ConfirmMassDeleteBookkeepingWritingQuestion=これにより、会計からトランザクションが削除される (同じトランザクションに関連するすべての行エントリが削除される)。 %s 選択したエントリを削除してもよいか?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=設定のいくつかの必須の手順が実行されない。それらを完了すること
@@ -446,7 +459,7 @@ NoJournalDefined=仕訳帳が定義されていない
 Binded=境界線
 ToBind=結合する行
 UseMenuToSetBindindManualy=まだ結合されていない行。メニュー<a href="%s">%s </a>を使用して、手動で結合する。
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=御免、このモジュールはシチュエーションインボイスの実験的機能と互換性がない
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=注: このモジュールまたはページは、シチュエーション請求書の実験的機能と完全には互換性がない。一部のデータが間違っている可能性がある。
 AccountancyErrorMismatchLetterCode=調整コードの不一致
 AccountancyErrorMismatchBalanceAmount=残高（%s）が0に等しくない
 AccountancyErrorLetteringBookkeeping=トランザクションに関してエラーが発生しました：%s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
 FECFormatMulticurrencyCode=他通貨 コード (Idevise)
 
 DateExport=日付のエクスポート
-WarningReportNotReliable=警告、この報告書は元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれていない。仕訳帳化が最新の場合、簿記ビューはより正確。
+WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれない。仕訳が最新の場合、簿記ビューはより正確になる。
 ExpenseReportJournal=経費報告仕訳帳
-DocsAlreadyExportedAreExcluded=すでにエクスポートされたドキュメントは除外される
-ClickToHideAlreadyExportedLines=クリックして、すでにエクスポートされた行を非表示にする
+DocsAlreadyExportedAreIncluded=すでにエクスポートされたドキュメントが含まれる
+ClickToShowAlreadyExportedLines=クリックすると、すでにエクスポートされた行が表示される
 
 NAccounts=%sアカウント

@@ -137,7 +137,7 @@ CountryLV=لتونی
 CountryLB=لبنان
 CountryLS=لسوتو
 CountryLR=کشور لیبریا
-CountryLY=اهل لیبی
+CountryLY=Libya
 CountryLI=لیختن اشتاین
 CountryLT=لیتوانی
 CountryLU=لوکزامبورگ
@@ -247,6 +247,7 @@ CountryJE=پارچه کشباف
 CountryME=مونته نگرو
 CountryBL=سنت بارتلیمی
 CountryMF=سنت مارتین
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=خانم

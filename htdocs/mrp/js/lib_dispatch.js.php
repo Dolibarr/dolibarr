@@ -69,7 +69,7 @@ function addDispatchLine(index, type, mode)
 {
 	mode = mode || 'qtymissing'
 
-	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
+	console.log("mrp/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
 	if(mode == 'qtymissingconsume' || mode == 'allmissingconsume') {
 		var inputId = 'qtytoconsume';
 		var warehouseId = 'idwarehouse';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
+// TODO Only the last method emailElementlist is a hook method. Other must be moved into standard ticket.class.php
 
 
 /**
  *  Class Actions of the module ticket
  */
-class ActionsTicket
+class ActionsTicket extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -83,6 +87,7 @@ class ActionsTicket
 	 */
 	public $fk_soc;
 
+
 	/**
 	 *    Constructor
 	 *
@@ -111,7 +116,7 @@ class ActionsTicket
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return 	void
+	 * @return int              		<0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -141,7 +146,7 @@ class ActionsTicket
 	public function getInfo($id)
 	{
 		$this->getInstanceDao();
-		$this->dao->fetch($id, '', $track_id);
+		$this->dao->fetch($id);
 
 		$this->label = $this->dao->label;
 		$this->description = $this->dao->description;
@@ -306,6 +311,14 @@ class ActionsTicket
 							if ($res) {
 								print $userstat->getNomUrl(0);
 							}
+						} elseif (isset($arraymsgs['fk_contact_author'])) {
+							$contactstat = new Contact($this->db);
+							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
+							if ($res) {
+								print $contactstat->getNomUrl(0, 'nolink');
+							} else {
+								print $arraymsgs['fk_contact_author'];
+							}
 						} else {
 							print $langs->trans('Customer');
 						}
@@ -409,9 +422,9 @@ class ActionsTicket
 				print '<div class="inline-block center marginbottomonly">';
 
 				if ($status == 1) {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.((int) $status);
 				}
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';

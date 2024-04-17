@@ -29,8 +29,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'companies'));
+$langs->loadLangs(array('mrp', 'companies'));
 
 // Get parameters
 $id         = GETPOST('id', 'int');
@@ -65,8 +67,8 @@ restrictedArea($user, $object->element, $object->id, $object->table_element, 'wo
 /*
  * Actions
  */
-
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action);     // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);     // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -104,7 +106,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

@@ -1,26 +1,36 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=Usanidi wa moduli ya mtiririko wa kazi
+WorkflowDesc=Moduli hii hutoa baadhi ya vitendo otomatiki. Kwa chaguo-msingi, mtiririko wa kazi umefunguliwa (unaweza kufanya mambo kwa mpangilio unaotaka) lakini hapa unaweza kuamilisha baadhi ya vitendo otomatiki.
+ThereIsNoWorkflowToModify=Hakuna marekebisho ya mtiririko wa kazi yanayopatikana na moduli zilizoamilishwa.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Unda agizo la mauzo kiotomatiki baada ya pendekezo la kibiashara kusainiwa (agizo jipya litakuwa na kiasi sawa na pendekezo)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Unda ankara ya mteja kiotomatiki baada ya pendekezo la kibiashara kusainiwa (ankara mpya itakuwa na kiasi sawa na pendekezo)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Unda ankara ya mteja kiotomatiki baada ya mkataba kuthibitishwa
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Unda ankara ya mteja kiotomatiki baada ya agizo la mauzo kufungwa (ankara mpya itakuwa na kiasi sawa na agizo)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Kwenye uundaji wa tikiti, unda moja kwa moja kuingilia kati.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Panga pendekezo la chanzo kilichounganishwa kama kinachotozwa wakati agizo la mauzo limewekwa kuwa bili (na ikiwa kiasi cha agizo ni sawa na jumla ya kiasi cha pendekezo lililounganishwa lililotiwa saini)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Bainisha pendekezo la chanzo kilichounganishwa kama kinachotozwa wakati ankara ya mteja imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha pendekezo lililounganishwa lililotiwa saini)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Panga agizo la mauzo la chanzo kilichounganishwa kama kinachotozwa wakati ankara ya mteja imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha agizo lililounganishwa)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Panga agizo la mauzo la chanzo kilichounganishwa kama kinachotozwa wakati ankara ya mteja imewekwa kulipwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha agizo lililounganishwa)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bainisha agizo la mauzo la chanzo kilichounganishwa kama linavyosafirishwa wakati usafirishaji umeidhinishwa (na ikiwa kiasi kinachosafirishwa na usafirishaji wote ni sawa na katika mpangilio wa kusasishwa)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Bainisha agizo la mauzo la chanzo kilichounganishwa kama linavyosafirishwa wakati usafirishaji umefungwa (na ikiwa kiasi kinachosafirishwa na usafirishaji wote ni sawa na katika mpangilio wa kusasisha)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Bainisha pendekezo la chanzo kilichounganishwa kama kinachotozwa wakati ankara ya muuzaji imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha pendekezo lililounganishwa)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Panga agizo la ununuzi la chanzo kilichounganishwa kama kinachotozwa wakati ankara ya muuzaji imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha agizo lililounganishwa)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Bainisha agizo la ununuzi la chanzo kilichounganishwa kama lilivyopokelewa wakati mapokezi yamethibitishwa (na ikiwa kiasi kilichopokelewa na mapokezi yote ni sawa na katika agizo la ununuzi la kusasisha)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Panga agizo la ununuzi la chanzo kilichounganishwa kama lilivyopokelewa wakati upokezi umefungwa (na ikiwa kiasi kilichopokelewa na mapokezi yote ni sawa na katika agizo la ununuzi la kusasishwa)
+# Autoclassify purchase invoice
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Panga mapokezi kuwa "yanayotozwa" wakati ankara ya ununuzi iliyounganishwa imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha mapokezi yaliyounganishwa)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Wakati wa kuunda tikiti, unganisha mikataba inayopatikana ya watu wengine wanaolingana
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Wakati wa kuunganisha mikataba, tafuta kati ya wale wa makampuni ya wazazi
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Funga hatua zote zilizounganishwa na tikiti wakati tikiti imefungwa
+AutomaticCreation=Uundaji otomatiki
+AutomaticClassification=Uainishaji otomatiki
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Bainisha usafirishaji wa chanzo kilichounganishwa kuwa umefungwa wakati ankara ya mteja imethibitishwa (na ikiwa kiasi cha ankara ni sawa na jumla ya kiasi cha usafirishaji uliounganishwa)
+AutomaticClosing=Kufunga kiotomatiki
+AutomaticLinking=Kuunganisha otomatiki

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return CommandeTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -83,7 +85,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->commande->enabled)) {
+		if (!isModEnabled('commande')) {
 			print __METHOD__." module customer order must be enabled.\n"; die(1);
 		}
 
@@ -143,7 +145,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -169,7 +171,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -296,7 +298,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
+		$localobject=new Commande($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

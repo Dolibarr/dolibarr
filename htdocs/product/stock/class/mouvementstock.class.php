@@ -48,8 +48,16 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * @var int ID warehouse
+	 * @deprecated
+	 * @see $warehouse_id
+	 */
+	public $entrepot_id;
+
+	/**
+	 * @var int ID warehouse
 	 */
 	public $warehouse_id;
+
 	public $qty;
 
 	/**
@@ -103,6 +111,9 @@ class MouvementStock extends CommonObject
 
 	public $inventorycode;
 	public $batch;
+
+	public $line_id_object_src;
+	public $line_id_object_origin;
 
 
 	public $fields = array(
@@ -290,7 +301,9 @@ class MouvementStock extends CommonObject
 			// If not found, we add record
 			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".$this->db->prefix()."product_lot as pb";
 			$sql .= " WHERE pb.fk_product = ".((int) $fk_product)." AND pb.batch = '".$this->db->escape($batch)."'";
+
 			dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -360,6 +373,8 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
+					$productlot->origin = !empty($this->origin) ? (empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type) : '';
+					$productlot->origin_id = !empty($this->origin) ? $this->origin->id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
 					$productlot->batch = $batch;
@@ -383,7 +398,7 @@ class MouvementStock extends CommonObject
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
@@ -525,7 +540,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = reel + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = COALESCE(reel, 0) + ".((float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
@@ -547,6 +562,10 @@ class MouvementStock extends CommonObject
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
+					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
+						$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+						$result = $this->createBatch($param_batch, $qty);
+					}
 				} else {
 					$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
 					$result = $this->createBatch($param_batch, $qty);
@@ -834,7 +853,7 @@ class MouvementStock extends CommonObject
 		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
-		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
+		dol_syslog(get_class($this).__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -850,10 +869,10 @@ class MouvementStock extends CommonObject
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
 	 * @param	array|int	$dluo	      Could be either
-	 *                                    - int if row id of product_batch table
+	 *                                    - int if row id of product_batch table (for update)
 	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				      <0 if KO, else return productbatch id
+	 * @return 	int   				      <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -1004,13 +1023,17 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param	string	$origin_element		Type of element
 	 * @param	int		$origin_id			Id of element
+	 * @param	int		$line_id_object_src	Id line of element Source
+	 * @param	int		$line_id_object_origin	Id line of element Origin
 	 *
 	 * @return	void
 	 */
-	public function setOrigin($origin_element, $origin_id)
+	public function setOrigin($origin_element, $origin_id, $line_id_object_src = 0, $line_id_object_origin = 0)
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
+		$this->line_id_oject_src = $line_id_object_src;
+		$this->line_id_oject_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;
@@ -1139,10 +1162,10 @@ class MouvementStock extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function LibStatut($mode = 0)
 	{
@@ -1160,6 +1183,8 @@ class MouvementStock extends CommonObject
 		} elseif ($mode == 5) {
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
+
+		return 'Bad value for mode';
 	}
 
 	/**

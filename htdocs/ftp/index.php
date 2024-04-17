@@ -154,6 +154,7 @@ if ($action == 'addfolder') {
 
 // Action ajout d'un rep
 if ($action == 'add' && $user->rights->ftp->setup) {
+	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");
@@ -282,13 +283,11 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
+		$result = dol_ftp_get($conn_id, $localfile, $file, $newsection);
 
 
 		if ($result) {
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($localfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($localfile);
 
 			// Define mime type
 			$type = 'application/octet-stream';
@@ -306,9 +305,9 @@ if ($action == 'download') {
 				header('Content-Type: '.$type);
 			}
 			if ($attachment) {
-				header('Content-Disposition: attachment; filename="'.$filename.'"');
+				header('Content-Disposition: attachment; filename="'.$file.'"');
 			} else {
-				header('Content-Disposition: inline; filename="'.$filename.'"');
+				header('Content-Disposition: inline; filename="'.$file.'"');
 			}
 
 			// Ajout directives pour resoudre bug IE
@@ -319,7 +318,7 @@ if ($action == 'download') {
 
 			exit;
 		} else {
-			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $remotefile), null, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $file), null, 'errors');
 		}
 	} else {
 		dol_print_error('', $mesg);

@@ -102,7 +102,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->fournisseur->facture->lire) {
+		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
@@ -223,7 +223,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

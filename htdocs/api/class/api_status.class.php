@@ -24,8 +24,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Status
+class Status extends DolibarrApi
 {
+	/**
+	 * Constructor of the class
+	 */
+	public function __construct()
+	{
+		global $db;
+		$this->db = $db;
+	}
+
 	/**
 	 * Get status (Dolibarr version)
 	 *

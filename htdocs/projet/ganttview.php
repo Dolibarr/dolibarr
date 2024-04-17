@@ -110,7 +110,13 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 
 	// Project card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+		$tmpurl = $_SESSION['pageforbacktolist']['project'];
+		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	} else {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
@@ -124,7 +130,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -259,7 +265,7 @@ print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'proje
 // can have a parent that is not affected to him).
 $tasksarray = $task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
 // We load also tasks limited to a particular user
-//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
+//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(null, $user, $object->id, 0) : '');
 //var_dump($tasksarray);
 //var_dump($tasksrole);
 

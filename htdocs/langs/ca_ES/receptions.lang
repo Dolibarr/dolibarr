@@ -52,3 +52,6 @@ ReceptionExist=Hi ha una recepció
 ReceptionBackToDraftInDolibarr=Recepció %s torna a esborrany
 ReceptionClassifyClosedInDolibarr=Recepció %s classificada Tancada
 ReceptionUnClassifyCloseddInDolibarr=La recepció %s torna a obrir
+RestoreWithCurrentQtySaved=Ompliu les quantitats amb els últims valors desats
+ReceptionUpdated=Recepció actualitzada amb èxit
+ReceptionDistribution=Distribució de la recepció

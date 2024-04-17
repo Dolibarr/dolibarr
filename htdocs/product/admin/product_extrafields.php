@@ -66,10 +66,10 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $title = $langs->trans('ProductServiceSetup');
 $textobject = $langs->trans("ProductsAndServices");
-if (empty($conf->product->enabled)) {
+if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$textobject = $langs->trans('Services');
-} elseif (empty($conf->service->enabled)) {
+} elseif (!isModEnabled("service")) {
 	$title = $langs->trans('ProductSetup');
 	$textobject = $langs->trans('Products');
 }

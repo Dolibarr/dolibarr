@@ -48,7 +48,7 @@ DateDeliveryPlanned=預計交貨日期
 RefDeliveryReceipt=參考交貨收據
 StatusReceipt=送貨單狀態
 DateReceived=收貨日期
-ClassifyReception=收貨分類
+ClassifyReception=Classify Received
 SendShippingByEMail=通過電子郵件寄送出貨
 SendShippingRef=提交出貨%s 
 ActionsOnShipping=出貨事件
@@ -74,3 +74,8 @@ SumOfProductWeights=產品重量總和
 # warehouse details
 DetailWarehouseNumber= 倉庫詳細訊息
 DetailWarehouseFormat= 重量：%s（數量：%d）
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

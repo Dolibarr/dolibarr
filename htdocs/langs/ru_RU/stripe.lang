@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Живой ключ Webhook
 ONLINE_PAYMENT_WAREHOUSE=Запасы, используемые для уменьшения запасов при онлайн-оплате <br> (TODO Когда опция уменьшения запасов выполняется для действия со счетом-фактурой, и онлайн-платеж генерирует счет-фактуру самостоятельно?)
 StripeLiveEnabled=Полоса в реальном времени включена (в противном случае тестовый режим / режим песочницы)
 StripeImportPayment=Платежи Import Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Пример кредитной карты для тестового платежа: %s => действителен, %s => ошибка CVC, %s => срок действия истек, %s => списание не выполнено
 ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe-шлюзы
 OAUTH_STRIPE_TEST_ID=Идентификатор клиента Stripe Connect (ca _...)

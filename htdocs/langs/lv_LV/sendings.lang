@@ -48,7 +48,7 @@ DateDeliveryPlanned=Plānotais piegādes datums
 RefDeliveryReceipt=Ref piegādes kvīts
 StatusReceipt=Piegādes kvīts statuss
 DateReceived=Piegādes saņemšanas datums
-ClassifyReception=Klasificējiet uzņemšanu
+ClassifyReception=Klasificēt Saņemts
 SendShippingByEMail=Sūtīt sūtījumu pa e-pastu
 SendShippingRef=Sūtījuma iesniegšana %s
 ActionsOnShipping=Notikumi sūtījumu
@@ -74,3 +74,8 @@ SumOfProductWeights=Summēt produkta svaru
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
 DetailWarehouseFormat= W: %s (Daudzums: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

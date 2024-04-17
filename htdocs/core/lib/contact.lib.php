@@ -93,7 +93,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -134,7 +134,7 @@ function contact_prepare_head(Contact $object)
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");
 	}
@@ -187,7 +187,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print "\n".'<table class="noborder" width=100%>';
 
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-		$sql .= ', cls.code as opp_status_code, ctc.libelle';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
@@ -236,8 +236,8 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
-						print '<td>'.$obj->libelle.'</td>';
+						print '<td>'.dol_escape_htmltag($obj->title).'</td>';
+						print '<td>'.dol_escape_htmltag($obj->type_label).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end

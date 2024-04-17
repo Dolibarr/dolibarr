@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  *	\file			htdocs/core/lib/parsemd.lib.php
- *	\brief			This file contains functions dedicated to MD parsind.
+ *	\brief			This file contains functions dedicated to MD parsing.
  */
 
 /**
@@ -31,6 +31,14 @@
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
+	// Replace a HTML string with a Markdown syntax
+	$content = preg_replace('/<a href="([^"]+)">([^<]+)<\/a>/', '[\2](\1)', $content);
+	//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
+	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
+
+	// Replace HTML coments
+	$content = preg_replace('/<!--.*-->/ms', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+
 	if (is_array($replaceimagepath)) {
 		foreach ($replaceimagepath as $key => $val) {
 			$keytoreplace = ']('.$key;
@@ -40,8 +48,9 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 	}
 	if ($parser == 'parsedown') {
 		include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
-		$Parsedown = new Parsedown();
-		$content = $Parsedown->text($content);
+		$parsedown = new Parsedown();
+		$parsedown->setSafeMode(true);		// This will escape HTML link <a href=""> into html entities but markdown links are ok
+		$content = $parsedown->text($content);
 	} else {
 		$content = nl2br($content);
 	}

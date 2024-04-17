@@ -5,6 +5,8 @@
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -109,6 +112,8 @@ $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
+$upload_dir = $conf->salaries->multidir_output[$conf->entity];
+
 
 /*
  * Actions
@@ -148,6 +153,17 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+
+	// Actions to send emails
+	$triggersendname = 'COMPANY_SENTBYMAIL';
+	$paramname = 'id';
+	$mode = 'emailfromthirdparty';
+	$trackid = 'sal'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	//var_dump($upload_dir);var_dump($permissiontoadd);var_dump($action);exit;
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 // Link to a project
@@ -308,7 +324,7 @@ if ($action == 'add' && empty($cancel)) {
 			$db->commit();
 
 			if (GETPOST('saveandnew', 'alpha')) {
-				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
 				exit;
 			} else {
@@ -368,7 +384,9 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write)
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+if ($action == 'confirm_clone' && $confirm != 'yes') {
+	$action = '';
+}
 
 if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
@@ -380,6 +398,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 	if ($object->id > 0) {
 		$object->paye = 0;
 		$object->id = $object->ref = null;
+
+		if (GETPOST('amount', 'alphanohtml')) {
+			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -447,7 +469,6 @@ if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$object->ref;
 $help_url = "";
-
 llxHeader('', $title, $help_url);
 
 
@@ -661,6 +682,7 @@ if ($action == 'create' && $permissiontoadd) {
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
 					console.log("We click on link to autofill salary amount url="+url);
+
 					if (fk_user != -1) {
 						$.get(
 							url,
@@ -700,7 +722,6 @@ if ($action == 'create' && $permissiontoadd) {
 	print '</script>';
 }
 
-
 // View mode
 if ($id > 0) {
 	$head = salaries_prepare_head($object);
@@ -714,8 +735,9 @@ if ($id > 0) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	if ($action == 'paid') {
@@ -746,7 +768,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -809,7 +831,7 @@ if ($id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, null, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -966,7 +988,7 @@ if ($id > 0) {
 
 				print '<tr class="oddeven"><td>';
 				print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 				if (isModEnabled("banque")) {
@@ -1000,8 +1022,8 @@ if ($id > 0) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right nowrap amountcard\">".price($totalpaid)."</td></tr>\n";
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right nowrap amountcard\">".price($object->amount)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
 		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -1038,6 +1060,17 @@ if ($id > 0) {
 
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
+		// Dynamic send mail button
+		$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			if (empty($user->socid)) {
+				$canSendMail = true;
+
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail);
+			}
+		}
+
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
@@ -1129,6 +1162,10 @@ if ($id > 0) {
 	$trackid = 'salary'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+	// Hook to add more things on page
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('salaryCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // End of page

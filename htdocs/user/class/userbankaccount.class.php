@@ -78,16 +78,16 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
 	/**
 	 * Create bank information record
 	 *
-	 * @param	User	$user		User
-	 * @param	int		$notrigger	1=Disable triggers
-	 * @return	int					<0 if KO, >= 0 if OK
+	 * @param	User|null	$user		User
+	 * @param	int			$notrigger	1=Disable triggers
+	 * @return	int						<0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -101,19 +101,21 @@ class UserBankAccount extends Account
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
 				return $this->update($user);
+			} else {
+				return 0;
 			}
 		} else {
 			print $this->db->error();
-			return 0;
+			return -1;
 		}
 	}
 
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User	$user		Object user
-	 *	@param	int		$notrigger	1=Disable triggers
-	 *	@return	int					<=0 if KO, >0 if OK
+	 *	@param	User|null	$user		Object user
+	 *	@param	int			$notrigger	1=Disable triggers
+	 *	@return	int						<=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -227,8 +229,8 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *	@param	User	$user	User deleting
-	 *  @return int             <0 if KO, >0 if OK
+	 *  @param	User|null	$user	User deleting
+	 *  @return int             	<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{

@@ -90,7 +90,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -272,9 +272,10 @@ $object_label = $langs->trans("ObjectsRef");
 if ($object->nature == 2 || $object->nature == 3) $object_label = $langs->trans("InvoiceRef");
 if ($object->nature == 5) $object_label = $langs->trans("ExpenseReportRef");
 
-/*
- * Show result array
- */
+
+// Show result array
+$i = 0;
+
 print '<br>';
 
 print '<div class="div-table-responsive">';
@@ -304,9 +305,19 @@ if (is_array($journal_data) && !empty($journal_data)) {
 				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
 				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
 				print '</tr>';
+
+				$i++;
 			}
 		}
 	}
+}
+
+if (!$i) {
+	$colspan = 7;
+	if ($object->nature == 4) {
+		$colspan++;
+	}
+	print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 print '</table>';

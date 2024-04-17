@@ -36,3 +36,7 @@ Codemulticurrency=código de moneda
 UpdateRate=cambiar la tarifa
 CancelUpdate=cancelar
 NoEmptyRate=El campo de tarifa no debe estar vacío
+CurrencyCodeId=ID de moneda
+CurrencyCode=Código de moneda
+CurrencyUnitPrice=Precio unitario en moneda extranjera
+CurrencyPrice=Precio en moneda extranjera

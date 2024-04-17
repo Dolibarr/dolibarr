@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Asociación: compruebe el vínculo de retroceso de refe
 # Menu
 #
 NewPartnership=Nueva Asociación
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Su solicitud de asociación se ha agregado con éxito. Es posible que nos comuniquemos con usted pronto...
 ListOfPartnerships=Listado de Asociaciones
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Razón de rechazo
 
 NewPartnershipRequest=Nueva solicitud de asociación
 NewPartnershipRequestDesc=Este formulario le permite solicitar ser parte de uno de nuestros programas de asociación. Si necesita ayuda para completar este formulario, comuníquese por correo electrónico <b> %s </b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta página debe contener al menos un enlace a uno de los siguientes dominios: %s
 

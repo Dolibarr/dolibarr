@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -121,6 +121,7 @@ if ($object->id) {
 	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref.= $object->getFullName('', 1);
 	/*
 	 // Ref customer
 	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -129,7 +130,7 @@ if ($object->id) {
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	/*if (!empty($conf->project->enabled))
+	/*if (isModEnabled('project'))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';
@@ -181,8 +182,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'recruitment';
-	$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
-	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
+	$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+	$permtoedit = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
 	$param = '&id='.$object->id;
 
 	$relativepathwithnofile = 'recruitmentcandidature/'.dol_sanitizeFileName($object->ref).'/';

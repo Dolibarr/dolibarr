@@ -6,5 +6,6 @@
 
 // Load the main.inc.php file to have functions env defined
 if (! defined("NOLOGIN")) define("NOLOGIN", '1');
+if (! defined("NOHTTPSREDIRECT")) define("NOHTTPSREDIRECT", '1');
 global $conf, $langs, $user, $db;
 include_once __DIR__ . '/../../htdocs/main.inc.php';

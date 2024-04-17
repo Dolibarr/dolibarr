@@ -79,3 +79,4 @@ DateOfBirth=Geburtstdatum
 ClientTZ=Client-Zeitzone (Benutzer)
 InternalUser=interner Nutzer
 ExternalUser=externer Nutzer
+UserExpired=abgelaufen

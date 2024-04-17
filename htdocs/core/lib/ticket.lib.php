@@ -82,7 +82,7 @@ function ticketAdminPrepareHead()
  */
 function ticket_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -133,7 +133,7 @@ function ticket_prepare_head($object)
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	}
 	$head[$h][1] = $langs->trans('Events');
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -203,7 +203,7 @@ function generate_random_id($car = 16)
 }
 
 /**
- * Show header for public pages
+ * Show http header, open body tag and show HTML header banner for public pages for tickets
  *
  * @param  string $title       Title
  * @param  string $head        Head array
@@ -216,11 +216,14 @@ function generate_random_id($car = 16)
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
 	global $user, $conf, $langs, $mysoc;
+
 	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
-	print '<div class="center">';
+	print '<div class="publicnewticketform2 flexcontainer centpercent" style="min-height: 100%;">';
+
+	print '<header class="center centpercent">';
 
 	// Define urllogo
 	if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') || getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
@@ -264,7 +267,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '</div>';
+	print '</header>';
 
-	print '<div class="ticketlargemargin">';
+	//print '<div class="ticketlargemargin">';
 }

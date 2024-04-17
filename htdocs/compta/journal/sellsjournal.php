@@ -57,6 +57,7 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
+$hookmanager->initHooks(['selljournallist']);
 
 /*
  * Actions
@@ -237,7 +238,7 @@ if ($result) {
  */
 
 
-print '<table class="noborder centpercent">';
+print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
 print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';

@@ -1,5 +1,5 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=استخدام حصة / الرقم التسلسلي
+ManageLotSerial=استخدم رقم الدُفعة/السيريال
 ProductStatusOnBatch=نعم (الحصة مطلوبة)
 ProductStatusOnSerial=نعم (رقم تسلسلي فريد من نوعه مطلوب)
 ProductStatusNotOnBatch=رقم (حصة / الرقم التسلسلي لم يستخدم)
@@ -19,7 +19,7 @@ printSellby=بيع عن طريق:٪ الصورة
 printQty=الكمية:٪ د
 printPlannedWarehouse=المخازن
 AddDispatchBatchLine=إضافة سطر لالصلاحية إيفاد
-WhenProductBatchModuleOnOptionAreForced=عندما تكون دفعة الوحدة / المسلسل قيد التشغيل ، يتم إجبار خفض المخزون التلقائي على "تقليل المخزونات الحقيقية عند التحقق من صحة الشحن" ويتم فرض وضع الزيادة التلقائية على "زيادة المخزونات الحقيقية في الإرسال اليدوي إلى المستودعات" ولا يمكن تحريرها. يمكن تحديد الخيارات الأخرى كما تريد.
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to '%s' and automatic increase mode is forced to '%s'. Some choices may be not available. Other options can be defined as you want.
 ProductDoesNotUseBatchSerial=هذا المنتج لا يستخدم الكثير / الرقم التسلسلي
 ProductLotSetup=إعدادات الحصة / الرقم التسلسلي 
 ShowCurrentStockOfLot=عرض المخزون الحالي للمنتجات/الحصص.

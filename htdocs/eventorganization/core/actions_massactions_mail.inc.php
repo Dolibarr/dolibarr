@@ -191,7 +191,6 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 			$substitutionarray['__EVENTORGANIZATION_ICS_LINK__'] = $html_link;
 			$substitutionarray['__EVENTORGANIZATION_URL_LINK__'] = $url_link;
-			$substitutionarray['__CHECK_READ__'] = '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . urlencode($attendees->thirdparty->tag) . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 			$parameters = array('mode' => 'formemail');
 

@@ -86,7 +86,7 @@ if (!$sortorder) {
  */
 
 $tva_static = new Tva($db);
-$ptva_static = new PaymentVat($db);
+$ptva_static = new PaymentVAT($db);
 $socialcontrib = new ChargeSociales($db);
 $payment_sc_static = new PaymentSocialContribution($db);
 $sal_static = new Salary($db);

@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
 # Menu
 #
 NewPartnership=Nouveau partenariat
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Votre demande de partenariat a été ajoutée avec succès. Nous pourrions vous contacter bientôt...
 ListOfPartnerships=Listes des partenariats
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Raison du refus
 
 NewPartnershipRequest=Nouvelle demande de partenariat
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
 

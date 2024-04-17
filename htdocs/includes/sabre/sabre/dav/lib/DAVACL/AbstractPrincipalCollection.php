@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 use Sabre\DAV;
-use Sabre\HTTP\URLUtil;
+use Sabre\Uri;
 
 /**
- * Principals Collection
+ * Principals Collection.
  *
  * This is a helper class that easily allows you to create a collection that
  * has a childnode for every principal.
@@ -17,10 +19,10 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractPrincipalCollection extends DAV\Collection implements IPrincipalCollection {
-
+abstract class AbstractPrincipalCollection extends DAV\Collection implements IPrincipalCollection
+{
     /**
-     * Principal backend
+     * Principal backend.
      *
      * @var PrincipalBackend\BackendInterface
      */
@@ -42,22 +44,19 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
     public $disableListing = false;
 
     /**
-     * Creates the object
+     * Creates the object.
      *
      * This object must be passed the principal backend. This object will
      * filter all principals from a specified prefix ($principalPrefix). The
      * default is 'principals', if your principals are stored in a different
      * collection, override $principalPrefix
      *
-     *
-     * @param PrincipalBackend\BackendInterface $principalBackend
      * @param string $principalPrefix
      */
-    function __construct(PrincipalBackend\BackendInterface $principalBackend, $principalPrefix = 'principals') {
-
+    public function __construct(PrincipalBackend\BackendInterface $principalBackend, $principalPrefix = 'principals')
+    {
         $this->principalPrefix = $principalPrefix;
         $this->principalBackend = $principalBackend;
-
     }
 
     /**
@@ -67,57 +66,57 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
      *
-     * @param array $principalInfo
-     * @return IPrincipal
+     * @return DAV\INode
      */
-    abstract function getChildForPrincipal(array $principalInfo);
+    abstract public function getChildForPrincipal(array $principalInfo);
 
     /**
      * Returns the name of this collection.
      *
      * @return string
      */
-    function getName() {
+    public function getName()
+    {
+        list(, $name) = Uri\split($this->principalPrefix);
 
-        list(, $name) = URLUtil::splitPath($this->principalPrefix);
         return $name;
-
     }
 
     /**
-     * Return the list of users
+     * Return the list of users.
      *
      * @return array
      */
-    function getChildren() {
-
-        if ($this->disableListing)
+    public function getChildren()
+    {
+        if ($this->disableListing) {
             throw new DAV\Exception\MethodNotAllowed('Listing members of this collection is disabled');
-
+        }
         $children = [];
         foreach ($this->principalBackend->getPrincipalsByPrefix($this->principalPrefix) as $principalInfo) {
-
             $children[] = $this->getChildForPrincipal($principalInfo);
-
-
         }
-        return $children;
 
+        return $children;
     }
 
     /**
      * Returns a child object, by its name.
      *
      * @param string $name
+     *
      * @throws DAV\Exception\NotFound
+     *
      * @return DAV\INode
      */
-    function getChild($name) {
+    public function getChild($name)
+    {
+        $principalInfo = $this->principalBackend->getPrincipalByPath($this->principalPrefix.'/'.$name);
+        if (!$principalInfo) {
+            throw new DAV\Exception\NotFound('Principal with name '.$name.' not found');
+        }
 
-        $principalInfo = $this->principalBackend->getPrincipalByPath($this->principalPrefix . '/' . $name);
-        if (!$principalInfo) throw new DAV\Exception\NotFound('Principal with name ' . $name . ' not found');
         return $this->getChildForPrincipal($principalInfo);
-
     }
 
     /**
@@ -139,21 +138,20 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * This method should simply return a list of 'child names', which may be
      * used to call $this->getChild in the future.
      *
-     * @param array $searchProperties
      * @param string $test
+     *
      * @return array
      */
-    function searchPrincipals(array $searchProperties, $test = 'allof') {
-
+    public function searchPrincipals(array $searchProperties, $test = 'allof')
+    {
         $result = $this->principalBackend->searchPrincipals($this->principalPrefix, $searchProperties, $test);
         $r = [];
 
         foreach ($result as $row) {
-            list(, $r[]) = URLUtil::splitPath($row);
+            list(, $r[]) = Uri\split($row);
         }
 
         return $r;
-
     }
 
     /**
@@ -170,12 +168,11 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * principal was not found or you refuse to find it.
      *
      * @param string $uri
+     *
      * @return string
      */
-    function findByUri($uri) {
-
+    public function findByUri($uri)
+    {
         return $this->principalBackend->findByUri($uri, $this->principalPrefix);
-
     }
-
 }

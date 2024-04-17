@@ -74,7 +74,7 @@ $catid = GETPOST('catid', 'intcomma');
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 
-if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) {
 	accessforbidden();
 }
 
@@ -141,7 +141,7 @@ $arrayofmassactions = array(
 	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) {
+if ($user->hasRight('mymodule', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
@@ -199,7 +199,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);

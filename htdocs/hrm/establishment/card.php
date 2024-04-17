@@ -54,6 +54,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->admin;
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user

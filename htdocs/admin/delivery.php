@@ -165,7 +165,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->DELIVERY_ADDON_PDF == "$value") {
+		if (getDolGlobalString('DELIVERY_ADDON_PDF') == $value) {
 			dolibarr_del_const($db, 'DELIVERY_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -266,7 +266,7 @@ if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 							}
 
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module
@@ -420,7 +420,7 @@ if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 
 								// Default
 								print "<td align=\"center\">";
-								if ($conf->global->DELIVERY_ADDON_PDF == "$name") {
+								if (getDolGlobalString('DELIVERY_ADDON_PDF') == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

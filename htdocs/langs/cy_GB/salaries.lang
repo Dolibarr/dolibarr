@@ -24,4 +24,4 @@ SalariesStatistics=Ystadegau cyflog
 SalariesAndPayments=Cyflogau a thaliadau
 ConfirmDeleteSalaryPayment=Ydych chi am ddileu'r taliad cyflog hwn ?
 FillFieldFirst=Llenwch y maes gweithiwr yn gyntaf
-UpdateAmountWithLastSalary=Swm gosod gyda chyflog diwethaf
+UpdateAmountWithLastSalary=Set amount of last salary

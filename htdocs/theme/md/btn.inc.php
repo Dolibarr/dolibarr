@@ -297,8 +297,8 @@ div.pagination li:first-child a.btnTitle {
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 6px 12px;
-	font-size: 14px
+	padding: 4px 12px;
+	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.4;
 	text-align: center;

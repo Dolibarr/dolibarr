@@ -15,10 +15,9 @@ use Sabre\HTTP\Request;
 
 // Find the autoloader
 $paths = [
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../../../autoload.php',
-    __DIR__ . '/vendor/autoload.php',
-
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
+    __DIR__.'/vendor/autoload.php',
 ];
 
 foreach ($paths as $path) {
@@ -32,29 +31,27 @@ foreach ($paths as $path) {
 $request = new Request('GET', 'http://localhost/');
 $client = new Client();
 
-for ($i = 0; $i < 1000; $i++) {
-
+for ($i = 0; $i < 1000; ++$i) {
     echo "$i sending\n";
     $client->sendAsync(
         $request,
 
         // This is the 'success' callback
-        function($response) use ($i) {
-            echo "$i -> " . $response->getStatus() . "\n";
+        function ($response) use ($i) {
+            echo "$i -> ".$response->getStatus()."\n";
         },
 
         // This is the 'error' callback. It is called for general connection
         // problems (such as not being able to connect to a host, dns errors,
         // etc.) and also cases where a response was returned, but it had a
         // status code of 400 or higher.
-        function($error) use ($i) {
-
-            if ($error['status'] === Client::STATUS_CURLERROR) {
+        function ($error) use ($i) {
+            if (Client::STATUS_CURLERROR === $error['status']) {
                 // Curl errors
-                echo "$i -> curl error: " . $error['curl_errmsg'] . "\n";
+                echo "$i -> curl error: ".$error['curl_errmsg']."\n";
             } else {
                 // HTTP errors
-                echo "$i -> " . $error['response']->getStatus() . "\n";
+                echo "$i -> ".$error['response']->getStatus()."\n";
             }
         }
     );

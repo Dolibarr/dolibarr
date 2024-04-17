@@ -249,11 +249,12 @@ if ($resql) {
 
 print '</div></div>';
 
+$object = new stdClass();
 $parameters = array(
 	//'type' => $type,
 	'user' => $user,
 );
-$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters);
+$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, $object);
 
 // End of page
 llxFooter();

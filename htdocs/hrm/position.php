@@ -49,8 +49,16 @@ $cancel 	 = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect 	 = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'jobpositionlist'; // To manage different context of search
 $optioncss 	 = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$id 		 = GETPOST('id', 'int');
-$fk_job 	 = GETPOST('fk_job', 'int');
+$backtopage  = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id		 = GETPOST('id', 'int');
+$ref 	 = GETPOST('ref', 'alpha');
+$fk_job  = GETPOST('fk_job', 'int');
+$fk_user = GETPOST('fk_user', 'int');
+//$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
+$start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+
 
 // Load variable for pagination
 $limit 	     = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -65,28 +73,13 @@ $offset     = $limit * $page;
 $pageprev   = $page - 1;
 $pagenext   = $page + 1;
 
-// Get parameters
-$id 	 = GETPOST('fk_job', 'int');
-$ref 	= GETPOST('ref', 'alpha');
-$fk_job  = GETPOST('fk_job', 'int');
-$fk_user = GETPOST('fk_user', 'int');
-//$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
-$start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-
-$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$fk_job 	= GETPOST('fk_job', 'int');
 
 // Initialize technical objects
 $object = new Job($db);
 $objectposition = new Position($db);
-
 $extrafields = new ExtraFields($db);
-
 $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
-
-$hookmanager->initHooks(array('jobpositionlist', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('jobpositioncard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 
 // Fetch optionals attributes and labels
@@ -163,8 +156,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -176,16 +173,15 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (empty($reshook)) {
 	$error = 0;
 
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
 	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
 
-	if (empty($backtopage) || ($cancel && $fk_job <= 0)) {
+	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if ($fk_job == -1 && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				if ($fk_job > 0) {
@@ -230,6 +226,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
+
 	$object = $job;
 }
 
@@ -275,12 +272,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-
-	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
-	print '&nbsp; ';
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -363,7 +355,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	// Add fields from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-	$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+	$sql .= $hookmanager->resPrint;
 	$sql = preg_replace('/,\s*$/', '', $sql);
 	$sql .= " FROM " . MAIN_DB_PREFIX . $object->table_element . " as t";
 	if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -424,7 +416,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);
 		if (($page * $limit) > $nbtotalofrecords) {    // if total of record found is smaller than page * limit, goto and load page 0
@@ -464,7 +456,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 		$param .= '&contextpage=' . urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
@@ -637,7 +629,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	$needToFetchEachLine = 0;
 	if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 		foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-			if (preg_match('/\$object/', $val)) {
+			if (!is_null($val) && preg_match('/\$object/', $val)) {
 				$needToFetchEachLine++; // There is at least one compute field that use $object
 			}
 		}
@@ -742,7 +734,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 
@@ -906,7 +898,7 @@ function DisplayPositionList()
 	// Add fields from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-	$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+	$sql .= $hookmanager->resPrint;
 	$sql = preg_replace('/,\s*$/', '', $sql);
 	$sql .= " FROM " . MAIN_DB_PREFIX . $object->table_element . " as t";
 	if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -985,7 +977,7 @@ function DisplayPositionList()
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);
 		if (($page * $limit) > $nbtotalofrecords) {    // if total of record found is smaller than page * limit, goto and load page 0
@@ -1020,24 +1012,24 @@ function DisplayPositionList()
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	$param = 'fk_job=' . $fk_job;
+	$param = 'fk_job='.$fk_job;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage=' . urlencode($contextpage);
+		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit=' . urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key]) && count($search[$key])) {
 			foreach ($search[$key] as $skey) {
-				$param .= '&search_' . $key . '[]=' . urlencode($skey);
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
 			}
 		} else {
-			$param .= '&search_' . $key . '=' . urlencode($search[$key]);
+			$param .= '&search_'.$key.'='.urlencode($search[$key]);
 		}
 	}
 	if ($optioncss != '') {
-		$param .= '&optioncss=' . urlencode($optioncss);
+		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1199,7 +1191,7 @@ function DisplayPositionList()
 	$needToFetchEachLine = 0;
 	if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 		foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-			if (preg_match('/\$object/', $val)) {
+			if (!is_null($val) && preg_match('/\$object/', $val)) {
 				$needToFetchEachLine++; // There is at least one compute field that use $object
 			}
 		}
@@ -1304,7 +1296,7 @@ function DisplayPositionList()
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 

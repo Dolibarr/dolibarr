@@ -42,5 +42,5 @@ AgentContactTypeDetails=Definieren Sie, welcher Kontakttyp (auf Rechnungen verli
 rateMustBeNumeric=Die Rate muss ein numerischer Wert sein
 markRateShouldBeLesserThan100=Die markierte Rate sollte kleiner sein als 100
 ShowMarginInfos=Zeige Rand-Informationen
-CheckMargins=Detail zu Gewinnspanne
+CheckMargins=Details zu Gewinnspannen
 MarginPerSaleRepresentativeWarning=Der Margenbericht pro Benutzer verwendet den Link zwischen Partnern und Verkäufern um die Margen pro Verkäufer zu berechnen. Weil manche Partner keinen Verkäufer zugewiesen haben, werden machen Beträge in diesem Bericht fehlen (Wenn kein Verkäufer definiert ist) und andere kommen auf verschiedenen Zeilen (Für alle Verkäufer).

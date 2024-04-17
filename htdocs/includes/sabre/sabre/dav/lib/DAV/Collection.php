@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
- * Collection class
+ * Collection class.
  *
  * This is a helper class, that should aid in getting collections classes setup.
  * Most of its methods are implemented, and throw permission denied exceptions
@@ -12,8 +14,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Collection extends Node implements ICollection {
-
+abstract class Collection extends Node implements ICollection
+{
     /**
      * Returns a child object, by its name.
      *
@@ -25,18 +27,19 @@ abstract class Collection extends Node implements ICollection {
      * exist.
      *
      * @param string $name
+     *
      * @throws Exception\NotFound
+     *
      * @return INode
      */
-    function getChild($name) {
-
+    public function getChild($name)
+    {
         foreach ($this->getChildren() as $child) {
-
-            if ($child->getName() === $name) return $child;
-
+            if ($child->getName() === $name) {
+                return $child;
+            }
         }
-        throw new Exception\NotFound('File not found: ' . $name);
-
+        throw new Exception\NotFound('File not found: '.$name);
     }
 
     /**
@@ -45,25 +48,22 @@ abstract class Collection extends Node implements ICollection {
      * It is generally a good idea to try and override this. Usually it can be optimized.
      *
      * @param string $name
+     *
      * @return bool
      */
-    function childExists($name) {
-
+    public function childExists($name)
+    {
         try {
-
             $this->getChild($name);
+
             return true;
-
         } catch (Exception\NotFound $e) {
-
             return false;
-
         }
-
     }
 
     /**
-     * Creates a new file in the directory
+     * Creates a new file in the directory.
      *
      * Data will either be supplied as a stream resource, or in certain cases
      * as a string. Keep in mind that you may have to support either.
@@ -82,28 +82,25 @@ abstract class Collection extends Node implements ICollection {
      * return the same contents of what was submitted here, you are strongly
      * recommended to omit the ETag.
      *
-     * @param string $name Name of the file
+     * @param string          $name Name of the file
      * @param resource|string $data Initial payload
-     * @return null|string
+     *
+     * @return string|null
      */
-    function createFile($name, $data = null) {
-
-        throw new Exception\Forbidden('Permission denied to create file (filename ' . $name . ')');
-
+    public function createFile($name, $data = null)
+    {
+        throw new Exception\Forbidden('Permission denied to create file (filename '.$name.')');
     }
 
     /**
-     * Creates a new subdirectory
+     * Creates a new subdirectory.
      *
      * @param string $name
+     *
      * @throws Exception\Forbidden
-     * @return void
      */
-    function createDirectory($name) {
-
+    public function createDirectory($name)
+    {
         throw new Exception\Forbidden('Permission denied to create directory');
-
     }
-
-
 }

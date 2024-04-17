@@ -42,7 +42,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-if (empty($conf->zapier->enabled)) accessforbidden();
+if (!isModEnabled('zapier')) accessforbidden();
 if (empty($user->admin)) accessforbidden();
 
 

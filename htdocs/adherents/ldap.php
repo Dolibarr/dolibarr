@@ -51,14 +51,14 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+	$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && !empty($user->rights->user->self->creer))
-			|| (($user->id != $object->user_id) && !empty($user->rights->user->user->creer)));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && !empty($user->rights->user->user->password)));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
@@ -104,7 +104,7 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder');
 
 $head = member_prepare_head($object);
 

@@ -62,7 +62,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $securekeyreceived = GETPOST("securekey", 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -201,8 +201,10 @@ $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
+llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-llxHeaderVierge($langs->trans("SuggestForm"));
+//llxHeaderVierge($langs->trans("SuggestForm"));
+
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -324,7 +326,8 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

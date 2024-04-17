@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       availabilities_document.php
- *  \ingroup    bookcal
- *  \brief      Tab for documents linked to Availabilities
+ *   \file       htdocs/bookcal/availabilities_document.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for documents linked to Availabilities
  */
 
 // Load Dolibarr environment
@@ -28,11 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/bookcal/class/availabilities.class.php');
-dol_include_once('/bookcal/lib/bookcal_availabilities.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "companies", "other", "mails"));
+$langs->loadLangs(array("agenda", "companies", "other", "mails"));
 
 
 $action = GETPOST('action', 'aZ09');
@@ -78,8 +78,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->availabilities->read;
-	$permissiontoadd = $user->rights->bookcal->availabilities->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -90,7 +90,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden();
+if (!isModEnabled('bookcal')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 
@@ -140,7 +140,7 @@ if ($object->id) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -192,9 +192,9 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'bookcal';
-	//$permissiontoadd = $user->rights->bookcal->availabilities->write;
+	//$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
 	$permissiontoadd = 1;
-	//$permtoedit = $user->rights->bookcal->availabilities->write;
+	//$permtoedit = $user->hasRight('bookcal', 'availabilities', 'write');
 	$permtoedit = 1;
 	$param = '&id='.$object->id;
 

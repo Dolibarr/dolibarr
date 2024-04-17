@@ -36,3 +36,7 @@ Codemulticurrency=currency code
 UpdateRate=change the rate
 CancelUpdate=cancel
 NoEmptyRate=The rate field must not be empty
+CurrencyCodeId=Currency ID
+CurrencyCode=Currency code
+CurrencyUnitPrice=Unit price in foreign currency
+CurrencyPrice=Price in foreign currency

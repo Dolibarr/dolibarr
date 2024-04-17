@@ -124,12 +124,11 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if ((!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (!isModEnabled('supplier_invoice') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
 }
-if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (empty($user->rights->supplier_invoice->lire) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!$user->hasRight("fournisseur", "facture", "lire") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (!$user->hasRight("supplier_invoice", "lire") && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
 
@@ -181,7 +180,7 @@ $sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
 $sql .= ', s.rowid as socid, s.nom as name, s.email';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 $sql .= ', SUM(pf.amount)';
@@ -193,12 +192,12 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 
 $sql .= ' WHERE f.entity = '.$conf->entity;
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($socid > 0) {
@@ -238,14 +237,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {		// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -272,7 +271,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -476,7 +475,7 @@ while ($i < min($num, $limit)) {
 
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
-	$paymentfournstatic->datepaye = $objp->datep;
+	$paymentfournstatic->datepaye = $db->jdate($objp->datep);
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;

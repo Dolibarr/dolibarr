@@ -27,7 +27,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 // DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
+$size = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
 if ($size > 10000) {
 	$langs->loadLangs(array("errors", "install"));
 	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
@@ -36,7 +36,6 @@ if ($size > 10000) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 if (GETPOST('dol_hide_topmenu')) {
 	$conf->dol_hide_topmenu = 1;
@@ -286,8 +285,8 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Add a hook here
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
@@ -308,7 +307,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

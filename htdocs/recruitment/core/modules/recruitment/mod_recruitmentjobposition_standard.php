@@ -52,11 +52,11 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 *  Return description of numbering module
 	 *
+	 *	@param		Translate	$langs		Language
 	 *  @return     string      Text with description
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 

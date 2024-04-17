@@ -126,7 +126,7 @@ if (($line->info_bits & 2) != 2) {
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';
@@ -155,6 +155,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation right">';
+	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 
 	$coldisplay++;
@@ -165,8 +166,8 @@ if ($filtertype != 1) {
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
 $coldisplay += $colspan;
-print '<input type="submit" class="button buttongen margintoponly marginbottomonly button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
-print '<input type="submit" class="button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';
 print '</tr>';
 

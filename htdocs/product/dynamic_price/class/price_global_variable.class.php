@@ -311,7 +311,7 @@ class PriceGlobalVariable
 	/**
 	 *    List all price global variables
 	 *
-	 *    @return	array				Array of price global variables
+	 *    @return	array|int				Array of price global variables, <0 if ko
 	 */
 	public function listGlobalVariables()
 	{

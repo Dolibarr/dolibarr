@@ -65,7 +65,7 @@ $object = new Ticket($db);
 
 // Security check
 //$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
-if (empty($user->rights->ticket->read) && empty($user->rights->knowledgemanagement->knowledgerecord->read)) {
+if (empty($user->rights->ticket->read) && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enought permissions');
 }
 
@@ -446,7 +446,7 @@ print '</div>';
 print '</div>';
 
 
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook

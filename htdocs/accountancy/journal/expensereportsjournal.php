@@ -3,11 +3,11 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018		Eric Seigne	    <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@ if ($in_bookkeeping == '') {
 
 $now = dol_now();
 
+$hookmanager->initHooks(array('expensereportsjournal'));
+$parameters = array();
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -64,11 +67,10 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
-$error = 0;
 
 /*
  * Actions
@@ -103,11 +105,17 @@ $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE er.fk_statut > 0";
 $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -125,6 +133,9 @@ if ($in_bookkeeping == 'already') {
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY er.date_debut";
 
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
@@ -202,27 +213,8 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// Load all unbound lines
-$sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
-$sql .= " WHERE erd.fk_code_ventilation <= 0";
-$sql .= " AND erd.total_ttc <> 0";
-$sql .= " AND fk_expensereport IN (".$db->sanitize(join(",", array_keys($taber))).")";
-$sql .= " GROUP BY fk_expensereport";
-$resql = $db->query($sql);
-
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_expensereport] = 'somelinesarenotbound';
-	}
-	$i++;
-}
-
 // Bookkeeping Write
-if ($action == 'writebookkeeping' && !$error) {
+if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
@@ -236,13 +228,6 @@ if ($action == 'writebookkeeping' && !$error) {
 		$totaldebit = 0;
 
 		$db->begin();
-
-		// Error if some lines are not binded/ready to be journalized
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
-			$error++;
-			$errorforline++;
-			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
-		}
 
 		// Thirdparty
 		if (!$errorforline) {
@@ -280,12 +265,10 @@ if ($action == 'writebookkeeping' && !$error) {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						} else {
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key] = 'other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -331,12 +314,10 @@ if ($action == 'writebookkeeping' && !$error) {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -395,12 +376,10 @@ if ($action == 'writebookkeeping' && !$error) {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -409,12 +388,11 @@ if ($action == 'writebookkeeping' && !$error) {
 			}
 		}
 
-		// Protection against a bug on lines before
-		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))) {
+		// Protection against a bug on line before
+		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
-			$errorforinvoice[$key] = 'amountsnotbalanced';
-			setEventMessages('Try to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('We tried to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (!$errorforline) {
@@ -467,7 +445,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
+if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
@@ -503,6 +481,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print "\n";
 			}
 		}
+
 		// VAT
 		foreach ($tabtva[$key] as $k => $mt) {
 			if ($mt) {
@@ -607,7 +586,7 @@ if (empty($action) || $action == 'view') {
 	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	$i = 0;
+	$r = '';
 
 	$expensereportstatic = new ExpenseReport($db);
 	$expensereportlinestatic = new ExpenseReportLine($db);
@@ -618,27 +597,6 @@ if (empty($action) || $action == 'view') {
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
 
 		$date = dol_print_date($val["date"], 'day');
-
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
-			print '<tr class="oddeven">';
-			print "<!-- Some lines are not bound -->";
-			print "<td>".$date."</td>";
-			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			print '</td>';
-			print "<td>";
-			print "</td>";
-			print '<td class="right"></td>';
-			print '<td class="right"></td>';
-			print "</tr>";
-
-			$i++;
-		}
 
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
@@ -752,7 +710,8 @@ if (empty($action) || $action == 'view') {
 	}
 
 	if (!$i) {
-		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 7;
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

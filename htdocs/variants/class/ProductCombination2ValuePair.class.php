@@ -53,6 +53,16 @@ class ProductCombination2ValuePair
 	public $fk_prod_attr_val;
 
 	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB $db     Database handler

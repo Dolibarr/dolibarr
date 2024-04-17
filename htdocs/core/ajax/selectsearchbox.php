@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 /**
  *      \file       htdocs/core/ajax/selectsearchbox.php
  *      \ingroup    core
- *      \brief      This script returns content of possible search
+ *      \brief      This script returns json array of possible searches or just set the array if called by an include
  */
 
 // This script is called with a POST method or as an include.
@@ -42,6 +42,9 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	}
 
 	$res = @include '../../main.inc.php';
+
+	// Security check
+	// None. Beeing connected is enough.
 
 	top_httphead('application/json');
 
@@ -70,7 +73,7 @@ if (isModEnabled('adherent') && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DI
 	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (((isModEnabled('societe') && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->hasRight('societe', 'lire')) {
+if (((isModEnabled('societe') && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice') || isModEnabled('supplier_proposal')) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->hasRight('societe', 'lire')) {
 	$arrayresult['searchintothirdparty'] = array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('', 'object_company', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 

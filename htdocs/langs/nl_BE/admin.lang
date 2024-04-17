@@ -152,10 +152,7 @@ InfDirAlt=Sinds versie 3 is het mogelijk om een alternatieve rootmap te definië
 InfDirExample=<br> <strong>Verklaar</strong> het dan in het bestand <strong>conf.php</strong> <br> $ Dolibarr_main_url_root_alt='/custom' <br> $ Dolibarr_main_document_root_alt='/pad/of/Dolibarr/htdocs/custom' <br> Als deze regels worden becommentarieerd met "#", schakelt u ze gewoon uit door het teken "#" te verwijderen.
 LastStableVersion=Nieuwste stabiele versie
 LastActivationIP=Laatste activerings-IP
-GenericMaskCodes4a=<u>Voorbeeld op de 99e %s van de derde partij TheCompany, met datum 31-01-2007:</u> <br>
-GenericMaskCodes5=<b>ABC {jj} {mm} - {000000}</b> geeft <b>ABC0701-000099</b> <br> <b>{0000 + 100 @ 1} -ZZZ / {dd} / XXX</b> geeft <b>0199-ZZZ / 31 / XXX</b> <br> <b>IN {jj} {mm} - {0000} - {t}</b> geeft <b>IN0701-0099-A</b> als het type bedrijf 'Responsable Inscripto' is met code voor het type dat 'A_RI' is
 UMask=Umask parameter voor nieuwe bestanden op een Unix- / Linux- / BSD-bestandssysteem.
-UMaskExplanation=Deze parameter laat u de rechten bepalen welke standaard zijn ingesteld voor de bestanden aangemaakt door Dolibarr op de server (tijdens het uploaden, bijvoorbeeld).<br>Het moet de octale waarde zijn (bijvoorbeeld, 0666 betekent lezen en schrijven voor iedereen).<br>Deze parameter wordt NIET op een windows-server gebruikt
 SeeWikiForAllTeam=Kijk op de Wiki-pagina voor een lijst met bijdragers en hun organisatie
 UseACacheDelay=Ingestelde vertraging voor de cacheexport in secondes (0 of leeg voor geen cache)
 AddCRIfTooLong=Er is geen automatische tekst terugloop, tekst die te lang is, wordt niet weergegeven op documenten. Voeg indien nodig regeleinden in het tekstgebied toe.

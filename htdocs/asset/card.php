@@ -69,11 +69,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = $user->rights->asset->read;
-$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->asset->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->asset->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->asset->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('asset', 'read');
+$permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('asset', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('asset', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('asset', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check (enable the most restrictive one)
@@ -395,8 +395,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->asset->dir_output.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->asset->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->asset->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('asset', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('asset', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('asset:Asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

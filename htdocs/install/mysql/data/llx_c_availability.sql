@@ -33,6 +33,11 @@
 --
 
 INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_NOW', 'Immediate', null, 0, 1,  10);
+INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_1D',   '1 day',    'd',  1, 1,  11);
+INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_2D',   '2 days',   'd',  2, 1,  12);
+INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_3D',   '3 days',   'd',  3, 1,  13);
+INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_4D',   '4 days',   'd',  4, 1,  14);
+INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_5D',   '5 days',   'd',  5, 1,  15);
 INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_1W',   '1 week',   'w',  1, 1,  20);
 INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_2W',   '2 weeks',  'w',  2, 1,  30);
 INSERT INTO llx_c_availability (code, label, type_duration, qty, active, position) VALUES ('AV_3W',   '3 weeks',  'w',  3, 1,  40);

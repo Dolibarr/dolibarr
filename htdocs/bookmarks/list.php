@@ -29,18 +29,19 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->loadLangs(array('bookmarks', 'admin'));
 
 // Get Parameters
-$action = GETPOST('action', 'aZ09');
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect = GETPOST('toselect', 'array');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss = GETPOST('optioncss', 'alpha');
-$mode = GETPOST('mode', 'aZ');
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
+$mode 		= GETPOST('mode', 'aZ');
 
 $id = GETPOST("id", 'int');
+$search_title = GETPOST('search_title', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -158,13 +159,16 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql .= " WHERE 1=1";
+if ($search_title) {
+	$sql .= natural_search('title', $search_title);
+}
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
 	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
@@ -172,7 +176,7 @@ if (!$user->admin) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -221,7 +225,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -313,20 +317,24 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "b.target", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "b.dateb", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, '', $sortfield, $sortorder, 'right ');
+$totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
-
-$totalarray = array();
-$totalarray['nbfield'] = 0;
 
 // Loop on record
 // --------------------------------------------------------------------
@@ -350,7 +358,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -408,7 +416,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Target
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->target == 0) {
 			print $langs->trans("BookmarkTargetReplaceWindowShort");
 		}
@@ -418,7 +426,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Author
-		print '<td class="center">';
+		print '<td class="tdoverflowmax100 center">';
 		if ($obj->fk_user > 0) {
 			if (empty($conf->cache['users'][$obj->fk_user])) {
 				$tmpuser = new User($db);
@@ -475,7 +483,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);

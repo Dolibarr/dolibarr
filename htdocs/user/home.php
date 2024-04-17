@@ -168,9 +168,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';

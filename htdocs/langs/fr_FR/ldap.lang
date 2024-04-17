@@ -29,3 +29,5 @@ LDAPPasswordHashType=Type de hachage du mot de passe
 LDAPPasswordHashTypeExample=Type de hachage de mot de passe utilisé sur le serveur
 SupportedForLDAPExportScriptOnly=Uniquement pris en charge par un script d'exportation LDAP
 SupportedForLDAPImportScriptOnly=Uniquement pris en charge par un script d'importation LDAP
+LDAPUserAccountControl = userAccountControl à la création (répertoire actif)
+LDAPUserAccountControlExample = 512 Compte normal / 546 Compte normal + Pas de mot de passe + Désactivé (voir : https://fr.wikipedia.org/wiki/Active_Directory)

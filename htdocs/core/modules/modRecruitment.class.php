@@ -117,7 +117,7 @@ class modRecruitment extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -265,7 +265,7 @@ class modRecruitment extends DolibarrModules
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -293,7 +293,7 @@ class modRecruitment extends DolibarrModules
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -321,7 +321,7 @@ class modRecruitment extends DolibarrModules
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->read', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

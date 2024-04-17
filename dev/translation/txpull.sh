@@ -62,5 +62,5 @@ fi
 
 echo Think to launch also: 
 echo "> dev/tools/fixaltlanguages.sh fix all"
-echo "For v11: Replace also regex \(.*(sponge|cornas|eratosthene|cyan).*\) with '' on *.lang files"
+#echo "For v11: Replace also regex \(.*(sponge|cornas|eratosthene|cyan).*\) with '' on *.lang files"
 

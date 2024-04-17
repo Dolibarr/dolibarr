@@ -342,7 +342,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -635,7 +635,7 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 
 	foreach ($listtype as $type => $trans) {
 		$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-		$current = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+		$current = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
 		print '<tr >';
 		print '<td>'.$trans.'</td>';
 		print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current, 0, 0, 0).'</td>';
@@ -745,7 +745,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";

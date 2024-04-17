@@ -523,6 +523,8 @@ if (!$ret) {
 		$fichinter->fetch($element_id, $element_ref);
 		$fichinter->fetch_thirdparty();
 
+		$usercancreate = $user->hasRight('fichinter', 'creer');
+
 		if (is_object($fichinter)) {
 			$head = fichinter_prepare_head($fichinter);
 			print dol_get_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
@@ -533,40 +535,30 @@ if (!$ret) {
 
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer
-			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
+			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
+			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : '.$fichinter->thirdparty->getNomUrl(1);
+			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
 			if (isModEnabled('project')) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->commande->creer) {
+				$morehtmlref .= '<br>';
+				if ($usercancreate && 0) {
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-						$morehtmlref .= ' : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$fichinter->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$fichinter->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($fichinter->socid, $fichinter->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref .= '</form>';
-					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($fichinter->fk_project);
-						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
-							$morehtmlref .= ' - '.$proj->title;
+							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 						}
-					} else {
-						$morehtmlref .= '';
 					}
 				}
 			}

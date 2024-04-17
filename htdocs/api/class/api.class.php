@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class DolibarrApi
 {
-
 	/**
 	 * @var DoliDb        $db Database object
 	 */
@@ -80,7 +79,7 @@ class DolibarrApi
 	 *
 	 * @param	string		$field		Field name
 	 * @param	string		$value		Value to check/clean
-	 * @param	stdClass	$object		Object
+	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
@@ -96,10 +95,33 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
+	 * Filter properties that will be returned on object
+	 *
+	 * @param   Object  $object			Object to clean
+	 * @param   String  $properties		Comma separated list of properties names
+	 * @return	Object					Object with cleaned properties
+	 */
+	protected function _filterObjectProperties($object, $properties)
+	{
+		// If properties is empty, we return all properties
+		if (empty($properties)) {
+			return $object;
+		}
+		// Else we filter properties
+		foreach (get_object_vars($object) as $key => $value) {
+			if (!in_array($key, explode(',', $properties))) {
+				unset($object->$key);
+			}
+		}
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object	Object to clean
-	 * @return	Object			Object with cleaned properties
+	 * @param   Object  $object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -278,7 +300,6 @@ class DolibarrApi
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
 	 * @return bool
-	 * @throws RestException
 	 */
 	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{

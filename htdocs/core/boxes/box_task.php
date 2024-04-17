@@ -126,7 +126,7 @@ class box_task extends ModeleBoxes
 			$boxcontent .= '</form>'."\n";
 			$boxcontent .= '</div>'."\n";
 			if (!empty($conf->use_javascript_ajax)) {
-				$boxcontent .= '<script type="text/javascript">
+				$boxcontent .= '<script nonce="'.getNonce().'" type="text/javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 								jQuery(".showiffilter'.$this->boxcode.'").toggle();
@@ -134,7 +134,7 @@ class box_task extends ModeleBoxes
 						});
 						</script>';
 				// set cookie by js
-				$boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
 			}
 			$this->info_box_contents[0][] = array(
 				'tr' => 'class="nohover showiffilter'.$this->boxcode.' hideobject"',

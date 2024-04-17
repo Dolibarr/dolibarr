@@ -168,7 +168,7 @@ AssetDepreciationReversal=Reversal
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
 AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
 AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
 AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'

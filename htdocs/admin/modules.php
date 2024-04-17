@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ $search_version = GETPOST('search_version', 'alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = ((GETPOST('categorie', 'int') ?GETPOST('categorie', 'int') : 0) + 0);
-$options['start']     = ((GETPOST('start', 'int') ?GETPOST('start', 'int') : 0) + 0);
-$options['end']       = ((GETPOST('end', 'int') ?GETPOST('end', 'int') : 0) + 0);
+$options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
+$options['start']     = ((int) (GETPOST('start', 'int') ?GETPOST('start', 'int') : 0));
+$options['end']       = ((int) (GETPOST('end', 'int') ?GETPOST('end', 'int') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -112,6 +112,14 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
+
+// Execution Time
+$max_execution_time_for_deploy = (empty($conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME) ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_time = @ini_get("max_execution_time");
+if ($max_time && $max_time < $max_execution_time_for_deploy) {
+	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
+	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
+}
 
 
 /*
@@ -257,7 +265,15 @@ if ($action == 'install') {
 }
 
 if ($action == 'set' && $user->admin) {
+	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
+	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
 	$resarray = activateModule($value);
+	if ($checkOldValue != getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedLastVersionCheckParameter', $value), 'warnings');
+	}
+	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
+		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
+	}
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -288,7 +304,36 @@ if ($action == 'set' && $user->admin) {
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
+} elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
+	$result = unActivateModule($value, 0);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		setEventMessages($result, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	}
+	$resarray = activateModule($value, 0, 1);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if (!empty($resarray['errors'])) {
+		setEventMessages('', $resarray['errors'], 'errors');
+	} else {
+		if ($resarray['nbperms'] > 0) {
+			$tmpsql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
+			$resqltmp = $db->query($tmpsql);
+			if ($resqltmp) {
+				$obj = $db->fetch_object($resqltmp);
+				if ($obj && $obj->nb > 1) {
+					$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+					setEventMessages($msg, null, 'warnings');
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
+	}
+	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	exit;
 }
+
 
 
 
@@ -348,99 +393,95 @@ foreach ($modulesdir as $dir) {
 					try {
 						$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName)) {
-							try {
-								$objMod = new $modName($db);
-								$modNameLoaded[$modName] = $dir;
-								if (!$objMod->numero > 0 && $modName != 'modUser') {
-									dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
-								}
-								$j = $objMod->numero;
+							$objMod = new $modName($db);
+							$modNameLoaded[$modName] = $dir;
+							if (!$objMod->numero > 0 && $modName != 'modUser') {
+								dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
+							}
+							$j = $objMod->numero;
 
-								$modulequalified = 1;
+							$modulequalified = 1;
 
-								// We discard modules according to features level (PS: if module is activated we always show it)
-								$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) {
-									$modulequalified = 0;
-								}
-								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) {
-									$modulequalified = 0;
-								}
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
-									$modulequalified = 0;
-								}
+							// We discard modules according to features level (PS: if module is activated we always show it)
+							$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+							if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
+								$modulequalified = 0;
+							}
+							if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
+								$modulequalified = 0;
+							}
+							if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
+								$modulequalified = 0;
+							}
 
-								// We discard modules according to property ->hidden
-								if (!empty($objMod->hidden)) {
-									$modulequalified = 0;
-								}
+							// We discard modules according to property ->hidden
+							if (!empty($objMod->hidden)) {
+								$modulequalified = 0;
+							}
 
-								if ($modulequalified > 0) {
-									$publisher = dol_escape_htmltag($objMod->getPublisher());
-									$external = ($objMod->isCoreOrExternalModule() == 'external');
-									if ($external) {
-										if ($publisher) {
-											$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
-										} else {
-											$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
-										}
-									}
-									ksort($arrayofnatures);
-
-									// Define array $categ with categ with at least one qualified module
-									$filename[$i] = $modName;
-									$modules[$modName] = $objMod;
-
-									// Gives the possibility to the module, to provide his own family info and position of this family
-									if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
-										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
-										$familykey = key($objMod->familyinfo);
+							if ($modulequalified > 0) {
+								$publisher = dol_escape_htmltag($objMod->getPublisher());
+								$external = ($objMod->isCoreOrExternalModule() == 'external');
+								if ($external) {
+									if ($publisher) {
+										$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
 									} else {
-										$familykey = $objMod->family;
+										$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
 									}
+								}
+								ksort($arrayofnatures);
 
-									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
-									if ($objMod->isCoreOrExternalModule() == 'external' && $moduleposition < 100000) {
-										// an external module should never return a value lower than '80'.
-										$moduleposition = '80'; // External modules at end by default
-									}
+								// Define array $categ with categ with at least one qualified module
+								$filename[$i] = $modName;
+								$modules[$modName] = $objMod;
 
-									// Add list of warnings to show into arrayofwarnings and arrayofwarningsext
-									if (!empty($objMod->warnings_activation)) {
-										$arrayofwarnings[$modName] = $objMod->warnings_activation;
-									}
-									if (!empty($objMod->warnings_activation_ext)) {
-										$arrayofwarningsext[$modName] = $objMod->warnings_activation_ext;
-									}
-
-									$familyposition = (empty($familyinfo[$familykey]['position']) ? 0 : $familyinfo[$familykey]['position']);
-									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
-									if ($external && !in_array($familykey, $listOfOfficialModuleGroups)) {
-										// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
-										if (is_numeric($familyposition)) {
-											$familyposition = sprintf("%03d", (int) $familyposition + 100);
-										}
-									}
-
-									$orders[$i] = $familyposition."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
-
-									// Set categ[$i]
-									$specialstring = 'unknown';
-									if ($objMod->version == 'development' || $objMod->version == 'experimental') {
-										$specialstring = 'expdev';
-									}
-									if (isset($categ[$specialstring])) {
-										$categ[$specialstring]++; // Array of all different modules categories
-									} else {
-										$categ[$specialstring] = 1;
-									}
-									$j++;
-									$i++;
+								// Gives the possibility to the module, to provide his own family info and position of this family
+								if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
+									$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
+									$familykey = key($objMod->familyinfo);
 								} else {
-									dol_syslog("Module ".get_class($objMod)." not qualified");
+									$familykey = $objMod->family;
 								}
-							} catch (Exception $e) {
-								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+
+								$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
+								if ($objMod->isCoreOrExternalModule() == 'external' && $moduleposition < 100000) {
+									// an external module should never return a value lower than '80'.
+									$moduleposition = '80'; // External modules at end by default
+								}
+
+								// Add list of warnings to show into arrayofwarnings and arrayofwarningsext
+								if (!empty($objMod->warnings_activation)) {
+									$arrayofwarnings[$modName] = $objMod->warnings_activation;
+								}
+								if (!empty($objMod->warnings_activation_ext)) {
+									$arrayofwarningsext[$modName] = $objMod->warnings_activation_ext;
+								}
+
+								$familyposition = (empty($familyinfo[$familykey]['position']) ? 0 : $familyinfo[$familykey]['position']);
+								$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
+								if ($external && !in_array($familykey, $listOfOfficialModuleGroups)) {
+									// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
+									if (is_numeric($familyposition)) {
+										$familyposition = sprintf("%03d", (int) $familyposition + 100);
+									}
+								}
+
+								$orders[$i] = $familyposition."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
+
+								// Set categ[$i]
+								$specialstring = 'unknown';
+								if ($objMod->version == 'development' || $objMod->version == 'experimental') {
+									$specialstring = 'expdev';
+								}
+								if (isset($categ[$specialstring])) {
+									$categ[$specialstring]++; // Array of all different modules categories
+								} else {
+									$categ[$specialstring] = 1;
+								}
+								$j++;
+								$i++;
+							} else {
+								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
 							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
@@ -470,6 +511,19 @@ if ($action == 'reset_confirm' && $user->admin) {
 	}
 }
 
+if ($action == 'reload_confirm' && $user->admin) {
+	if (!empty($modules[$value])) {
+		$objMod = $modules[$value];
+
+		if (!empty($objMod->langfiles)) {
+			$langs->loadLangs($objMod->langfiles);
+		}
+
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmReload'), $langs->trans(GETPOST('confirm_message_code')), 'reload', '', 'no', 1);
+	}
+}
+
 print $formconfirm;
 
 asort($orders);
@@ -479,12 +533,10 @@ asort($orders);
 
 $nbofactivatedmodules = count($conf->modules);
 
-//$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING = 1000;
-/*$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
-$moreinfo2 = '<b class="largenumber">'.($nbofactivatedmodules - 1).'</b> / <b class="largenumber">'.count($modules).'</b>';
-if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {
-	$moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-}*/
+$nbmodulesnotautoenabled = count($conf->modules);
+if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -495,7 +547,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc .= ' '.$langs->trans("ModulesDesc2", '{picto2}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
-	if (count($conf->modules) <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
 	if (!empty($conf->global->MAIN_SETUP_MODULES_INFO)) {	// Show a custom message
@@ -515,7 +567,7 @@ if ($mode == 'develop') {
 	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></div><br>\n";
 }
 
-$head = modules_prepare_head($nbofactivatedmodules, count($modules));
+$head = modules_prepare_head($nbofactivatedmodules, count($modules), $nbmodulesnotautoenabled);
 
 
 if ($mode == 'common' || $mode == 'commonkanban') {
@@ -550,8 +602,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
-	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
-
 	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
@@ -559,9 +609,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
 	$moreforfilter .= '</div>';
+
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
-		if ($conf->global->MAIN_FEATURES_LEVEL < 0) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 0) {
 			$array_version['deprecated'] = $langs->trans("Deprecated");
 		}
 		if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
@@ -571,11 +622,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->trans('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->transnoentitiesnoconv('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
+	$array_status = array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled"));
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-	$moreforfilter .= $form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, $langs->trans('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+	$moreforfilter .= $form->selectarray('search_status', $array_status, $search_status, $langs->transnoentitiesnoconv('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
@@ -727,7 +779,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print load_fiche_titre($familytext, '', '', 0, '', 'modulefamilygroup');
 
 			if ($mode == 'commonkanban') {
-				print '<div class="box-flex-container">';
+				print '<div class="box-flex-container kanban">';
 			} else {
 				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste" summary="list_of_modules">'."\n";
@@ -746,15 +798,17 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// Version (with picto warning or not)
 		$version = $objMod->getVersion(0);
 		$versiontrans = '';
+		$warningstring = '';
 		if (preg_match('/development/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Development"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Development");
 		}
 		if (preg_match('/experimental/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Experimental"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Experimental");
 		}
 		if (preg_match('/deprecated/i', $version)) {
-			$versiontrans .= img_warning($langs->trans("Deprecated"), '', 'floatleft paddingright');
+			$warningstring = $langs->trans("Deprecated");
 		}
+
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
 		}
@@ -762,9 +816,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		if ($objMod->isCoreOrExternalModule() == 'external'
 			&& (
 				$action == 'checklastversion'
-				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
-				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
+				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();
@@ -812,12 +866,24 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
-					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
+					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload_confirm&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
+						$codeenabledisable .= '</a>';
+					}
 				} else {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
-					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
+					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
+						$codeenabledisable .= '</a>';
+					}
 				}
 			}
 
@@ -919,13 +985,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			// Output Kanban
 			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
-			print '<tr class="oddeven">'."\n";
+			print '<tr class="oddeven'.($warningstring ? ' info-box-content-warning' : '').'">'."\n";
 			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
 				print '<td class="width50">'.$linenum.'</td>';
 			}
 
 			// Picto + Name of module
-			print '  <td class="tdoverflowmax300" title="'.dol_escape_htmltag($objMod->getName()).'">';
+			print '  <td class="tdoverflowmax200 minwidth200imp" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -942,7 +1008,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Desc
-			print '<td class="valignmiddle tdoverflowmax300">';
+			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp">';
 			print nl2br($objMod->getDesc());
 			print "</td>\n";
 
@@ -953,7 +1019,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			// Version
-			print '<td class="center nowrap" width="120px">';
+			print '<td class="center nowrap width150" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
@@ -963,7 +1029,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Link enable/disable
-			print '<td class="center valignmiddle" width="60px">';
+			print '<td class="center valignmiddle left nowraponall" width="60px">';
 			print $codeenabledisable;
 			print "</td>\n";
 
@@ -1232,10 +1298,10 @@ if ($mode == 'deploy') {
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
-						if(this.files[0].size > '.($maxmin * 1024).'){
+						if(this.files[0].size > '.($maxmin * 1024).') {
 							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
 							this.value = "";
-						};
+						}
 					});
 				});
 				</script>'."\n";

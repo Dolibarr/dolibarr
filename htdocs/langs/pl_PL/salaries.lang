@@ -24,4 +24,4 @@ SalariesStatistics=Statystyki wynagrodzeń
 SalariesAndPayments=Wynagrodzenia i płatności
 ConfirmDeleteSalaryPayment=Czy chcesz usunąć tę wypłatę wynagrodzenia?
 FillFieldFirst=Fill employee field first
-UpdateAmountWithLastSalary=Ustaw kwotę z ostatniego wynagrodzenia
+UpdateAmountWithLastSalary=Set amount of last salary

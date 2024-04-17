@@ -86,6 +86,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $qty_asked;
 
 	public $libelle;
+	public $label;
 	public $desc;
 	public $tva_tx;
 	public $vat_src_code;
@@ -218,7 +219,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
 		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'").",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'")."";
+		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -396,7 +397,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
+		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -513,7 +514,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	{
 		$error = 0;
 
-		$object = new Commandefournisseurdispatch($this->db);
+		$object = new CommandeFournisseurDispatch($this->db);
 
 		$this->db->begin();
 
@@ -608,6 +609,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
 			}
 		}
+		return "";
 	}
 
 

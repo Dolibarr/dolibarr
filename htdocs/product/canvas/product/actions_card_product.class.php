@@ -28,10 +28,22 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $dirmodule;
 	public $targetmodule;
 	public $canvas;
 	public $card;
 
+	public $name;
+	public $definition;
+	public $fieldListName;
+	public $next_prev_filter;
+
+	//! Object container
 	public $object;
 
 	//! Template container
@@ -39,6 +51,16 @@ class ActionsCardProduct
 
 	// List of fiels for action=list
 	public $field_list = array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -59,7 +81,7 @@ class ActionsCardProduct
 		$this->card             = $card;
 
 		$this->name = "product";
-		$this->definition = "Product canvas (défaut)";
+		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
 		$this->next_prev_filter = "canvas='product'";
 	}
@@ -77,7 +99,6 @@ class ActionsCardProduct
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -112,7 +133,7 @@ class ActionsCardProduct
 		$this->tpl['status'] = $this->object->getLibStatut(2);
 
 		// Note
-		$this->tpl['note'] = nl2br($this->object->note_private);
+		$this->tpl['note'] = $this->object->note_private;
 
 		if ($action == 'create') {
 			// Price
@@ -169,7 +190,7 @@ class ActionsCardProduct
 			$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
 			$this->tpl['description'] = $this->object->description;
-			$this->tpl['note'] = $this->object->note;
+			$this->tpl['note'] = $this->object->note_private;
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));

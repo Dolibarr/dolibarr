@@ -18,10 +18,9 @@
 /**
  *	\file       htdocs/public/notice.php
  *	\brief      Dolibarr public page to show a notice.
- *              Default notice is a message to say network connection is off. Some parameters can be used to show another message.
- *              You can call this page with URL:
- *                /public/notice.php?lang=xx_XX&transkey=translation_key  		(key must be inside file main.lang, error.lang or other.lang)
- *                /public/notice.php?transphrase=url_encoded_sentence_to_show
+ *              Default notice is a message to say network connection is off. Some parameters can be used to show another message:
+ *              /public/notice.php?lang=xx_XX&transkey=translation_key  		(key must be inside file main.lang, error.lang or other.lang)
+ *              /public/notice.php?transphrase=sentence_to_show
  */
 
 if (!defined('NOLOGIN')) {

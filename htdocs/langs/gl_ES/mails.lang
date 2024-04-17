@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Mails enviados por usuario
 MailingModuleDescDolibarrUsers=Usuarios con mails
 MailingModuleDescThirdPartiesByCategories=Terceiros
 SendingFromWebInterfaceIsNotAllowed=O envío dende a interfaz web non está permitido.
-EmailCollectorFilterDesc=Todos os filtros deben coincidir para recibir un correo electrónico
+EmailCollectorFilterDesc=Todos os filtros deben coincidir para que se recolecte un correo electrónico. <br> Pode usar o carácter "!" antes do valor da cadea de busca se precisa unha proba negativa
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Liña %s en ficheiro
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Valor predeterminado para o campo '%s' ao crear un
 DefaultStatusEmptyMandatory=Baleiro pero obrigatorio
 WarningLimitSendByDay=ADVERTENCIA: a configuración ou o contrato da súa instancia limita o seu número de correos electrónicos ao día a <b> %s </b> . Se tenta enviar máis, pode que a súa instancia se ralentice ou se suspenda. Poñase en contacto co seu servizo de asistencia se precisa unha cota máis alta.
 NoMoreRecipientToSendTo=Non hai máis destinatarios aos que enviar o correo electrónico
+EmailOptedOut=O propietario do correo electrónico solicitou que non se poña en contacto con el neste correo electrónico nunca mais
+EvenUnsubscribe=Incluír correos electrónicos excluidos
+EvenUnsubscribeDesc=Incluír correos electrónicos excluidos cando seleccione correos electrónicos como obxectivos. Útil para correos electrónicos de servizo obrigatorio, por exemplo.
+XEmailsDoneYActionsDone=Correos electrónicos %s precalificados, correos electrónicos %s procesados correctamente (para %s rexistro/accións realizadas)

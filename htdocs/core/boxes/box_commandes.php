@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last customer orders
  */
 class box_commandes extends ModeleBoxes
 {
-	public $boxcode = "lastcustomerorders";
-	public $boximg = "object_order";
+	public $boxcode  = "lastcustomerorders";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLastCustomerOrders";
-	public $depends = array("commande");
+	public $depends  = array("commande");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -85,7 +85,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerOrders", $max));
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";

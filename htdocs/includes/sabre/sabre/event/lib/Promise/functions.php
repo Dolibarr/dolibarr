@@ -1,14 +1,15 @@
-<?php
+<?php declare (strict_types=1);
 
 namespace Sabre\Event\Promise;
 
 use Sabre\Event\Promise;
+use Throwable;
 
 /**
  * This file contains a set of functions that are useful for dealing with the
  * Promise object.
  *
- * @copyright Copyright (C) 2013-2015 fruux GmbH (https://fruux.com/).
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
@@ -27,9 +28,8 @@ use Sabre\Event\Promise;
  * fail with the first Promise that fails, and its reason.
  *
  * @param Promise[] $promises
- * @return Promise
  */
-function all(array $promises) {
+function all(array $promises) : Promise {
 
     return new Promise(function($success, $fail) use ($promises) {
 
@@ -47,7 +47,7 @@ function all(array $promises) {
                     }
                     return $result;
                 }
-            )->error(
+            )->otherwise(
                 function($reason) use ($fail) {
                     $fail($reason);
                 }
@@ -66,9 +66,8 @@ function all(array $promises) {
  * that first promise.
  *
  * @param Promise[] $promises
- * @return Promise
  */
-function race(array $promises) {
+function race(array $promises) : Promise {
 
     return new Promise(function($success, $fail) use ($promises) {
 
@@ -106,9 +105,8 @@ function race(array $promises) {
  * promise and eventually get the same state as the followed promise.
  *
  * @param mixed $value
- * @return Promise
  */
-function resolve($value) {
+function resolve($value) : Promise {
 
     if ($value instanceof Promise) {
         return $value->then();
@@ -122,11 +120,8 @@ function resolve($value) {
 
 /**
  * Returns a Promise that will reject with the given reason.
- *
- * @param mixed $reason
- * @return Promise
  */
-function reject($reason) {
+function reject(Throwable $reason) : Promise {
 
     $promise = new Promise();
     $promise->reject($reason);

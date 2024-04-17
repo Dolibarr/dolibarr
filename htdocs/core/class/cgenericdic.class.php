@@ -23,12 +23,13 @@
  * \ingroup resource
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 /**
  * Class CGenericDic
- *
- * @see CommonObject
  */
-class CGenericDic
+class CGenericDic extends CommonDict
 {
 	/**
 	 * @var string Id to identify managed objects

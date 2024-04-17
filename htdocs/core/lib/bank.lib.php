@@ -273,12 +273,17 @@ function various_payment_prepare_head($object)
 /**
  *      Check SWIFT informations for a bank account
  *
- *      @param  Account     $account    A bank account
+ *      @param  Account     $account    A bank account (used to get BIC/SWIFT)
+ *      @param	string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkSwiftForAccount($account)
+function checkSwiftForAccount(Account $account = null, $swift = null)
 {
-	$swift = $account->bic;
+	if ($account == null && $swift == null) {
+		return false;
+	} elseif ($swift == null) {
+		$swift = $account->bic;
+	}
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
 		return true;
 	} else {
@@ -289,14 +294,18 @@ function checkSwiftForAccount($account)
 /**
  *      Check IBAN number informations for a bank account.
  *
- *      @param  Account     $account    A bank account
- *      @return boolean                 True if informations are valid, false otherwise
+ *      @param  Account     $account    	A bank account
+ *      @param	string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
+ *      @return boolean                 	True if informations are valid, false otherwise
  */
-function checkIbanForAccount(Account $account)
+function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
+	if ($account == null && $ibantocheck == null) {
+		return false;
+	} elseif ($ibantocheck == null) {
+		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-
-	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
@@ -360,7 +369,7 @@ function checkBanForAccount($account)
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
-			$s += (0 + (int) $code) * $coef[$i];
+			$s += ((int) $code) * $coef[$i];
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97);

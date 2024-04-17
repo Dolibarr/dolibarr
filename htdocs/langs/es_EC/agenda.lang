@@ -36,7 +36,6 @@ MemberSubscriptionAddedInDolibarr=Suscripción %s para miembro %s agregado
 MemberSubscriptionModifiedInDolibarr=Suscripción %s para miembro %s modificado
 MemberSubscriptionDeletedInDolibarr=Suscripción %s para miembro %s eliminado
 ShipmentValidatedInDolibarr=Se ha validado el envío%s
-ShipmentClassifyClosedInDolibarr=Envío%s clasificados facturados
 ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabrir
 ShipmentBackToDraftInDolibarr=Envío %s volver al estado de borrador
 ShipmentDeletedInDolibarr=Se ha eliminado el envío%s

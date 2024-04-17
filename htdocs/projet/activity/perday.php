@@ -197,11 +197,11 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 			$error++;
 		}
 	} else {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
 		$error++;
 	}
 	if (!GETPOST('type')) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		$error++;
 	}
 	if (!$error) {
@@ -398,8 +398,8 @@ $tasksarray = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0)
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(0, 0, ($project->id ? $project->id : 0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
-$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
-$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
+$tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 //var_dump($usertoprocess);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -495,8 +495,7 @@ print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 $moreforfilter = '';
 
 // Filter on categories
-/*if (!empty($conf->categorie->enabled))
-{
+/*if (isModEnabled("categorie")) {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
@@ -719,7 +718,7 @@ if (count($tasksarray) > 0) {
 	$totalforeachday = array();
 	foreach ($listofdistinctprojectid as $tmpprojectid) {
 		$projectstatic->id = $tmpprojectid;
-		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++) {
 			$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
 			$totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday];

@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= மாநாடு அல்லது சாவடி
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = ஒரு நிகழ்வின் அமைப்பை நிர்வகிக்கவும்
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=மூன்றாம் தரப்பின
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=ஒரு சாவடிக்கான விண்ணப்பம்
-NewSuggestionOfConference=ஒரு மாநாட்டிற்கான விண்ணப்பம்
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=இந்த மின்னஞ்சல
 ErrorSeveralCompaniesWithNameContactUs=இந்தப் பெயரைக் கொண்ட பல நிறுவனங்கள் கண்டறியப்பட்டதால், உங்கள் பதிவைத் தானாகச் சரிபார்க்க முடியாது. கைமுறை சரிபார்ப்புக்கு எங்களை %s இல் தொடர்பு கொள்ளவும்
 NoPublicActionsAllowedForThisEvent=இந்த நிகழ்விற்கான பொது நடவடிக்கைகள் எதுவும் பொது மக்களுக்குத் திறக்கப்படவில்லை
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date

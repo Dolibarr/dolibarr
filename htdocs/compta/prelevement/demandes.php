@@ -175,7 +175,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -274,7 +274,9 @@ while ($i < min($num, $limit)) {
 	print '</td>';
 
 	print '<td class="right">';
+	print '<span class="amount">';
 	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</span>';
 	print '</td>';
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';

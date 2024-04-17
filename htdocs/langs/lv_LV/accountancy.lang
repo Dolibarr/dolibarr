@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Jau pārsūtīts uz grāmatvedības žurnāliem un virsgr
 NotYetInGeneralLedger=Vēl nav pārsūtīts uz grāmatvedības žurnāliem un virsgrāmatu
 GroupIsEmptyCheckSetup=Grupa ir tukša, pārbaudiet personalizētās grāmatvedības grupas iestatījumus
 DetailByAccount=Parādīt detalizētu informāciju par kontu
+DetailBy=Detaļas autors
 AccountWithNonZeroValues=Konti, kuriem nav nulles vērtības
 ListOfAccounts=Kontu saraksts
 CountriesInEEC=Valstis EEK
@@ -51,14 +52,19 @@ AccountantFiles=Eksportēt pirmdokumentus
 ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat meklēt un eksportēt avota notikumus, kas tiek izmantoti jūsu grāmatvedības uzskaitei. <br> Eksportētajā ZIP failā būs pieprasīto vienumu saraksti CSV formātā, kā arī tiem pievienotie faili to sākotnējā formātā (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
 ExportAccountingProjectHelp=Norādiet projektu, ja jums ir nepieciešams grāmatvedības pārskats tikai par konkrētu projektu. Izdevumu atskaites un kredīta maksājumi nav iekļauti projektu pārskatos.
+ExportAccountancy=Eksporta grāmatvedība
+WarningDataDisappearsWhenDataIsExported=Brīdinājums, šajā sarakstā ir tikai tie grāmatvedības ieraksti, kas vēl nav eksportēti (eksportēšanas datums ir tukšs). Ja vēlaties iekļaut jau eksportētos grāmatvedības ierakstus, lai tos atkārtoti eksportētu, noklikšķiniet uz pogas augstāk.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
-MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
-MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
-MainAccountForUsersNotDefined=Galvenais grāmatvedības konts lietotājiem, kas nav definēti iestatījumos
-MainAccountForVatPaymentNotDefined=Galvenais grāmatvedības konts par PVN maksājumu, kas nav definēts iestatījumos
-MainAccountForSubscriptionPaymentNotDefined=Galvenais grāmatvedības konts abonēšanas maksā, kas nav definēts iestatījumā
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Uzskaites konts lietotājam, kas nav definēts iestatījumos
 
 AccountancyArea=Grāmatvedības zona
@@ -112,6 +118,7 @@ MenuLoanAccounts=Aizdevumu konti
 MenuProductsAccounts=Produktu konti
 MenuClosureAccounts=Slēgšanas konti
 MenuAccountancyClosure=Slēgšana
+MenuExportAccountancy=Eksporta grāmatvedība
 MenuAccountancyValidationMovements=Apstipriniet kustības
 ProductsBinding=Produktu konti
 TransferInAccounting=Pārskaitījums grāmatvedībā
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu meitas kontam (tas var b
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Kāds ir grāmatvedības pārskaitījuma periods, kas atlasīts pēc noklusējuma
 
-ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
-ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
+ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls - pārdošana un atgriešana
+ACCOUNTING_PURCHASE_JOURNAL=Pirkumu žurnāls - pirkšana un atgriešana
+ACCOUNTING_BANK_JOURNAL=Kases žurnāls - kvītis un izmaksas
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Izdevumu atskaites žurnāls
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Vispārējais žurnāls
 ACCOUNTING_HAS_NEW_JOURNAL=Vai jauns Vēstnesis?
@@ -238,7 +245,7 @@ ConfirmDeleteMvt=Tādējādi tiks dzēstas visas gada/mēneša un/vai konkrēta 
 ConfirmDeleteMvtPartial=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēstas visas ar to pašu darījumu saistītās rindas)
 FinanceJournal=Finanšu žurnāls
 ExpenseReportsJournal=Izdevumu pārskatu žurnāls
-InventoryJournal=Inventory journal
+InventoryJournal=Inventāra žurnāls
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 DescJournalOnlyBindedVisible=Šis ir ieraksta skats, kas ir saistīts ar grāmatvedības kontu un kuru var ierakstīt žurnālos un virsgrāmatā.
 VATAccountNotDefined=PVN konts nav definēts
@@ -295,7 +302,7 @@ DescClosure=Šeit skatiet kustību skaitu pa mēnešiem, kas vēl nav apstiprin�
 OverviewOfMovementsNotValidated=Pārskats par kustībām, kas nav apstiprinātas un bloķētas
 AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas un bloķētas
 NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas un bloķētas
-ValidateMovements=Validēt un bloķēt kustības...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
 
 ValidateHistory=Piesaistiet automātiski
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Atspējot saistīšanu un pārskaitīšanu p
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Atspējot saistīšanu un pārsūtīšanu pirkumu grāmatvedībā (pārdevēja rēķini netiks ņemti vērā grāmatvedībā)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesiešanu un pārskaitīšanu izdevumu pārskatos (grāmatvedībā netiks ņemti vērā izdevumu pārskati)
 ACCOUNTING_ENABLE_LETTERING=Grāmatvedībā iespējot burtu funkciju
+ACCOUNTING_ENABLE_LETTERING_DESC=Kad šī opcija ir iespējota, katram grāmatvedības ierakstam varat definēt kodu, lai varētu grupēt dažādas grāmatvedības kustības. Agrāk, kad dažādi žurnāli tika pārvaldīti neatkarīgi, šī funkcija bija nepieciešama, lai grupētu dažādu žurnālu kustības līnijas. Tomēr, izmantojot Dolibarr grāmatvedību, šāds izsekošanas kods ar nosaukumu " <b> %s </b> " jau tiek saglabāts automātiski, tāpēc automātiskais burts jau ir izveidots bez kļūdas riska, tāpēc šī funkcija ir kļuvusi nederīga parastai lietošanai. Manuāla burtu rakstīšanas funkcija ir paredzēta galalietotājiem, kuri patiešām neuzticas datorprogrammai, kas veic datu pārsūtīšanu grāmatvedībā.
+EnablingThisFeatureIsNotNecessary=Stingrai grāmatvedības pārvaldībai šīs funkcijas iespējošana vairs nav nepieciešama.
 ACCOUNTING_ENABLE_AUTOLETTERING=Iespējot automātisko burtu rakstīšanu, pārejot uz grāmatvedību
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Burtu kods tiek automātiski ģenerēts un palielināts, un to neizvēlas gala lietotājs
+OptionsAdvanced=Pielāgota opcija
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivizēt PVN apgrieztās iekasēšanas pārvaldību piegādātāju pirkumiem
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Ja šī opcija ir iespējota, varat definēt, ka piegādātājs vai konkrēts piegādātāja rēķins ir jāpārskaita uz grāmatvedību atšķirīgi: 2 kontu grāmatvedībā tiks ģenerēts papildu debets un kredītlīnija no kontu plāna, kas definēts kā "%s " iestatīšanas lapa.
 
 ## Export
 NotExportLettering=Veidojot failu, neeksportējiet burtus
-NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
-NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "%s", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+NotifiedExportDate=Atzīmējiet vēl neeksportētas rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, kas atzīmēta kā eksportēta, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
+NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus, kas vēl nav bloķēti <span class="warning"> (tāds pats efekts kā funkcijai "%s", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
 NotifiedExportFull=Eksportēt dokumentus?
 DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
@@ -381,7 +394,7 @@ ChartofaccountsId=Kontu konts. Id
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init grāmatvedība
 InitAccountancyDesc=Šo lapu var izmantot, lai inicializētu grāmatvedības kontu par produktiem un pakalpojumiem, kuriem nav noteikts grāmatvedības konts pārdošanai un pirkumiem.
-DefaultBindingDesc=Šo lapu var izmantot, lai iestatītu noklusēto kontu, ko izmantot, lai saistītu darījumu protokolu par algas, ziedojumiem, nodokļiem un PVN, ja neviens konkrēts grāmatvedības konts jau nav iestatīts.
+DefaultBindingDesc=Šo lapu var izmantot, lai iestatītu noklusējuma kontus (no kontu plāna), lai saistītu biznesa objektus ar kontu, piemēram, algas, ziedojumus, nodokļus un PVN, ja konkrēts konts jau nav iestatīts.
 DefaultClosureDesc=Šo lapu var izmantot, lai iestatītu parametrus, ko izmanto grāmatvedības slēgšanai.
 Options=Iespējas
 OptionModeProductSell=Mode pārdošana
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Lielapjoma automātiskās nesaskaņošanas apstiprin�
 ConfirmMassUnletteringManual=Lielapjoma manuālas nesaskaņošanas apstiprinājums
 ConfirmMassUnletteringQuestion=Vai tiešām vēlaties nesaskaņot %s atlasītos ierakstus?
 ConfirmMassDeleteBookkeepingWriting=Lielapjoma dzēšanas apstiprinājums
-ConfirmMassDeleteBookkeepingWritingQuestion=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēstas visas ar to pašu darījumu saistītās rindas) Vai tiešām vēlaties dzēst %s atlasītos ierakstus?
+ConfirmMassDeleteBookkeepingWritingQuestion=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēsti visi ar to pašu darījumu saistītie rindu ieraksti). Vai tiešām vēlaties dzēst %s atlasītos ierakstus?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Daži obligāti uzstādīšanas soļi nav pabeigti, lūdzu, aizpildiet tos
@@ -446,7 +459,7 @@ NoJournalDefined=Nav definēts žurnāls
 Binded=Līnijas saistītas
 ToBind=Rindiņas saistīt
 UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diemžēl šis modulis nav saderīgs ar situāciju rēķinu eksperimentālo līdzekli
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Piezīme: šis modulis vai lapa nav pilnībā saderīga ar situāciju rēķinu eksperimentālo funkciju. Daži dati var būt nepareizi.
 AccountancyErrorMismatchLetterCode=Saskaņošanas koda neatbilstība
 AccountancyErrorMismatchBalanceAmount=Atlikums (%s) nav vienāds ar 0
 AccountancyErrorLetteringBookkeeping=Ir radušās kļūdas saistībā ar darījumiem: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Daudzvalūtu summa (Montantdevise)
 FECFormatMulticurrencyCode=Daudzvalūtu kods (Idevise)
 
 DateExport=Eksporta datums
-WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
-DocsAlreadyExportedAreExcluded=Jau eksportētie dokumenti tiek izslēgti
-ClickToHideAlreadyExportedLines=Noklikšķiniet, lai paslēptu jau eksportētās līnijas
+DocsAlreadyExportedAreIncluded=Ir iekļauti jau eksportētie dokumenti
+ClickToShowAlreadyExportedLines=Noklikšķiniet, lai parādītu jau eksportētās līnijas
 
 NAccounts=%s konti

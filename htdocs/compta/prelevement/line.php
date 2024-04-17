@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
+$langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
@@ -69,12 +69,20 @@ if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
+if ($type == 'bank-transfer') {
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'create');
+} else {
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'creer');
+}
+
+$error = 0;
+
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_rejet') {
+if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
 		if (GETPOST('remonth', 'int')) {
 			$daterej = mktime(2, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -119,6 +127,8 @@ if ($action == 'confirm_rejet') {
  * View
  */
 
+$form = new Form($db);
+
 if ($type == 'bank-transfer') {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$invoicestatic = new FactureFournisseur($db);
@@ -137,7 +147,7 @@ llxHeader('', $title);
 $head = array();
 
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id.'&type='.$type;
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
 $hselected = $h;
 $h++;
@@ -149,7 +159,7 @@ if ($id) {
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		print dol_get_fiche_head($head, $hselected, $title);
+		print dol_get_fiche_head($head, $hselected, $title, -1, 'payment');
 
 		print '<table class="border centpercent tableforfield">';
 
@@ -193,8 +203,6 @@ if ($id) {
 	}
 
 	if ($action == 'rejet' && $user->rights->prelevement->bons->credit) {
-		$form = new Form($db);
-
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
@@ -230,7 +238,7 @@ if ($id) {
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->facturer, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
+		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
 		print '</td></tr>';
 		print '</table><br>';
 
@@ -304,7 +312,9 @@ if ($id) {
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
+		print '<td>'.$langs->trans("Invoice").'</td>';
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
+		print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$total = 0;

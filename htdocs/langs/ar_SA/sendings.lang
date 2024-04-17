@@ -48,7 +48,7 @@ DateDeliveryPlanned=التاريخ المحدد للتسليم
 RefDeliveryReceipt=إيصال تسليم المرجع
 StatusReceipt=إيصال تسليم الحالة
 DateReceived=تلقى تاريخ التسليم
-ClassifyReception=صنف الاستقبال
+ClassifyReception=Classify Received
 SendShippingByEMail=إرسال الشحنة عبر البريد الإلكتروني
 SendShippingRef=تقديم شحنة٪ الصورة
 ActionsOnShipping=الأحداث على شحنة
@@ -74,3 +74,8 @@ SumOfProductWeights=مجموع الأوزان المنتج
 # warehouse details
 DetailWarehouseNumber= تفاصيل مستودع
 DetailWarehouseFormat= W: %s (الكمية: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

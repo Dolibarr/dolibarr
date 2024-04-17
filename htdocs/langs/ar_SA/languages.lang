@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=إثيوبي
+Language_af_ZA=Afrikaans (South Africa)
 Language_ar_AR=العربية
 Language_ar_DZ=العربية (الجزائر)
 Language_ar_EG=العربية (مصر)
@@ -31,6 +32,7 @@ Language_en_AU=الإنكليزية (أستراليا)
 Language_en_CA=الإنكليزية (كندا)
 Language_en_GB=الانجليزية (المملكة المتحدة)
 Language_en_IN=الإنكليزية (الهند)
+Language_en_MY=English (Myanmar)
 Language_en_NZ=الإنجليزية (نيوزيلندا)
 Language_en_SA=الإنجليزية (المملكة العربية السعودية)
 Language_en_SG=الإنجليزية (سنغافورة)
@@ -121,6 +123,6 @@ Language_ur_PK=الأردية
 Language_uz_UZ=الأوزبكي
 Language_vi_VN=الفيتنامية
 Language_zh_CN=الصينية
-Language_zh_TW=الصينية (التقليدية)
+Language_zh_TW=Chinese (Taiwan)
 Language_zh_HK=الصينية (هونج كونج)
 Language_bh_MY=لغة الملايو

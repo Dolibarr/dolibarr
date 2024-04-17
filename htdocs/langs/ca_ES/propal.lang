@@ -55,6 +55,7 @@ CopyPropalFrom=Crea un pressupost per còpia d'un d'existent
 CreateEmptyPropal=Creeu una proposta comercial buida o des de la llista de productes / serveis
 DefaultProposalDurationValidity=Termini de validesa per defecte (en dies)
 DefaultPuttingPricesUpToDate=Per defecte, actualitzeu els preus amb els preus actuals coneguts en clonar una proposta
+DefaultPuttingDescUpToDate=Per defecte, actualitzeu les descripcions amb les descripcions conegudes actuals en clonar un pressupost
 UseCustomerContactAsPropalRecipientIfExist=Utilitzeu el contacte / adreça amb el tipus "proposta de seguiment de contacte" si es defineix en comptes de l'adreça de tercers com a adreça de destinatari de la proposta
 ConfirmClonePropal=Estàs segur que vols clonar la proposta comercial <b>%s</b>?
 ConfirmReOpenProp=Esteu segur que voleu tornar a obrir el pressupost <b>%s</b>?

@@ -14,79 +14,79 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = Gegevensprivacybeleid
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
+Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
 
 #
 # Administration page
 #
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
+datapolicySetup = Module Gegevensprivacybeleid instellen
+Deletion = Verwijderen van gegevens
+datapolicySetupPage = Afhankelijk van de wetten van uw land (voorbeeld <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> artikel 5 </a> van de AVG), moeten persoonlijke gegevens worden bewaard voor een periode die niet langer is dan nodig is voor de doeleinden waarvoor ze zijn verzameld, behalve voor archiveringsdoeleinden. <br> De verwijdering wordt automatisch uitgevoerd na een bepaalde duur zonder gebeurtenis (de duur die u hieronder hebt aangegeven).
+NB_MONTHS = %s maanden
+ONE_YEAR = 1 jaar
+NB_YEARS = %s jaar
 DATAPOLICY_TIERS_CLIENT = Afnemer
 DATAPOLICY_TIERS_PROSPECT = Prospect
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Klant
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Noch prospect/noch klant
 DATAPOLICY_TIERS_FOURNISSEUR = Leverancier
 DATAPOLICY_CONTACT_CLIENT = Afnemer
 DATAPOLICY_CONTACT_PROSPECT = Prospect
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Klant
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Noch prospect/noch klant
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverancier
 DATAPOLICY_ADHERENT = Lid
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
+DATAPOLICY_Tooltip_SETUP = Type contact - Geef uw keuzes aan voor elk type.
+DATAPOLICYMail = E-mail instellen
+DATAPOLICYSUBJECTMAIL = Onderwerp van e-mail
+DATAPOLICYCONTENTMAIL = Inhoud van de e-mail
+DATAPOLICYSUBSITUTION = U kunt de volgende variabelen in uw e-mail gebruiken (LINKACCEPT maakt het mogelijk om een link te maken die de instemming van de persoon vastlegt, LINKREFUSED maakt het mogelijk om de weigering van de persoon vast te leggen):
+DATAPOLICYACCEPT = Bericht na akkoord
+DATAPOLICYREFUSE = Bericht na overeenkomst
+SendAgreementText = U kunt een AVG-e-mail sturen naar al uw relevante contacten (die nog geen e-mail hebben ontvangen en waarvoor u niets hebt geregistreerd over hun AVG-overeenkomst). Gebruik hiervoor de volgende knop.
+SendAgreement = Stuur emails
+AllAgreementSend = Alle e-mails zijn verzonden
+TXTLINKDATAPOLICYACCEPT = Tekst voor de link "overeenkomst"
+TXTLINKDATAPOLICYREFUSE = Tekst voor de link "onenigheid"
 
 
 #
 # Extrafields
 #
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = AVG: Verwerking van persoonsgegevens
+DATAPOLICY_consentement = Toestemming verkregen voor de verwerking van persoonsgegevens
+DATAPOLICY_opposition_traitement = Verzet zich tegen de verwerking van zijn persoonsgegevens
+DATAPOLICY_opposition_prospection = Verzet zich tegen de verwerking van zijn persoonsgegevens met het oog op prospectie
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonimiseer een derde partij
+DATAPOLICY_POPUP_ANONYME_TEXTE = U kunt dit contact niet verwijderen uit Dolibarr omdat er gerelateerde items zijn. In overeenstemming met de AVG maakt u al deze gegevens anoniem om uw verplichtingen na te komen. Wil je verder gaan ?
 
 #
 # Button for portability
 #
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
+DATAPOLICY_PORTABILITE = Overdraagbaarheid AVG
+DATAPOLICY_PORTABILITE_TITLE = Exporteren van persoonsgegevens
+DATAPOLICY_PORTABILITE_CONFIRMATION = U wilt de persoonsgegevens van dit contact exporteren. Weet je het zeker ?
 
 #
 # Notes added during an anonymization
 #
-ANONYMISER_AT = Anonymised the %s
+ANONYMISER_AT = De %s geanonimiseerd
 
 # V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
+DATAPOLICYReturn = AVG-validatie
+DATAPOLICY_date = Datum overeenkomst/ontbinding AVG
+DATAPOLICY_send = Datum verzending overeenkomst e-mail
+DATAPOLICYReturn = AVG-validatie
+DATAPOLICY_SEND = Stuur AVG-e-mail
+MailSent = De email is verzonden
 
 # ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+ErrorSubjectIsRequired = Fout: het onderwerp van e-mail is vereist. Geef het aan in de module-instellingen
+=Door een technisch probleem konden we uw keuze niet registreren. Onze excuses daarvoor. Neem contact met ons op om uw keuze door te geven.
+NUMBER_MONTH_BEFORE_DELETION = Aantal maanden vóór verwijdering

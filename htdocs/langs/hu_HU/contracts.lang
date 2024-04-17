@@ -2,7 +2,7 @@
 ContractsArea=Szerzősdések terólet
 ListOfContracts=Szerződések listája
 AllContracts=Minden szerződés
-ContractCard=Szerződés kártya
+ContractCard=Szerződés
 ContractStatusNotRunning=Nem fut
 ContractStatusDraft=Piszkozat
 ContractStatusValidated=Hitelesítve

@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +89,14 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
-$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
+$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 
 
 /*
@@ -166,7 +171,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_SKILL_SENTBYMAIL';
+	$triggersendname = 'HRM_SKILL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SKILL_TO';
 	$trackid = 'skill' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
@@ -181,7 +186,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("skill");
+$title = $langs->trans("Skill");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
@@ -224,7 +229,7 @@ if ($action == 'create') {
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
 
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -255,15 +260,14 @@ if (($id || $ref) && $action == 'edit') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
-	print '</table>';
-
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+	print '</table>';
+
+	print '<hr>';
+
 	// SKILLDET
-
-	print dol_get_fiche_head(array(), '');
-
 	$SkilldetRecords = $object->fetchLines();
 
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
@@ -468,9 +472,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 }
 
-//*----------------------------------------------------------------------------
-//*----------------------------------------------------------------------------
-
 
 //*---------------------------------------------------------------------------
 
@@ -589,27 +590,11 @@ if ($action != "create" && $action != "edit") {
 	} else {
 		$sql .= " WHERE 1 = 1 ";
 	}
+	$sql .= " AND fk_skill = ".((int) $id);
 
-	if (!empty($id)) {
-		$sql .= " AND fk_skill = " . ((int) $id) . " ";
-	}
-
-	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
-		$num = $nbtotalofrecords;
-	} else {
-		if ($limit) {
-			$sql .= $db->plimit($limit + 1, $offset);
-		}
-
-		$resql = $db->query($sql);
-		if (!$resql) {
-			dol_print_error($db);
-			exit;
-		}
-
-		$num = $db->num_rows($resql);
-	}
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
 	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 	if ($optioncss != '') {
@@ -774,16 +759,16 @@ if ($action != "create" && $action != "edit") {
 		// LINE EDITION | SUPPRESSION
 
 		print '<td>';
-
 		print '</td>';
-		print '<td>';
+
+		// print '<td>';
 		// add pencil
 		//@todo change to proper call dol_
 		//print '<a class="timeline-btn" href="' . dol_buildpath("custom/hrm/skilldet_card.php?action=edit&id=" . $objectline->id, 1) . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 		// add trash
 		//@todo change to proper call dol_
 		//print '<a class="timeline-btn" href="'.dol_buildpath("custom/hrm/skilldet_card.php?action=delete&id=".$objectline->id,1)  .'"><i class="fa fa-trash" title="'.$langs->trans("Delete").'" ></i></a>';
-		//print '</td>';
+		// print '</td>';
 
 
 		// Fields from hook
@@ -807,13 +792,13 @@ if ($action != "create" && $action != "edit") {
 	// If no record found
 
 	if ($num == 0) {
-		$colspan = 1;
+		$colspan = 2;
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
 	if (!empty($resql)) $db->free($resql);

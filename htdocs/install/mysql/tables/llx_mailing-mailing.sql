@@ -18,10 +18,10 @@
 -- ========================================================================
 
 
--- redaction : 0
--- valide    : 1
--- approuve  : 2
--- envoye    : 3
+-- draft     : 0
+-- valid     : 1
+-- approved  : 2
+-- sent      : 3
 
 create table llx_mailing
 (
@@ -33,9 +33,11 @@ create table llx_mailing
   body				mediumtext,
   bgcolor			varchar(8),                          -- Backgroud color of mailing
   bgimage			varchar(255),                        -- Backgroud image of mailing
+  evenunsubscribe   smallint       DEFAULT 0, 			 -- If 1, email will be send event if recipient has opt-out to emailings 
   cible				varchar(60),
   nbemail			integer,
   email_from		varchar(160),                        -- Email address of sender
+  name_from         varchar(128),                        -- Name to show of sender
   email_replyto		varchar(160),                        -- Email address for reply
   email_errorsto	varchar(160),                        -- Email addresse for errors
   tag				varchar(128) NULL,
@@ -45,6 +47,7 @@ create table llx_mailing
   date_envoi		datetime,                            -- date d'envoi
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
   fk_user_creat		integer,                             -- user creator
+  fk_user_modif		integer,                             -- user of last modification
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used
   extraparams		varchar(255),						 -- for stock other parameters with json format

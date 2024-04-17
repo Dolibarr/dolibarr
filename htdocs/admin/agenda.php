@@ -115,7 +115,7 @@ if ($action == "save" && empty($cancel)) {
 
 // $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $langs->trans("AgendaSetup"), $help_url);
 
@@ -161,7 +161,7 @@ if (!empty($triggers)) {
 			$module = 'fournisseur';
 		}
 		if ($module == 'shipping') {
-			$module = 'expedition_bon';
+			$module = 'expedition';
 		}
 		if ($module == 'member') {
 			$module = 'adherent';

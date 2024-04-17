@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα για τη δημι�
 #
 # Object
 #
+OrganizedEvent=Οργανωμένη εκδήλωση
 EventOrganizationConfOrBooth= Συνέδριο ή Περίπτερο
 EventOrganizationConfOrBoothes=Συνέδρια ή Περίπτερα
 ManageOrganizeEvent = Διαχειριστείτε την οργάνωση μιας εκδήλωσης
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Σύνδεσμος με τρίτο μέρος 
 OrganizationEvenLabelName=Δημόσια ονομασία του συνεδρίου ή του περιπτέρου
 
 NewSuggestionOfBooth=Αίτηση για περίπτερο
-NewSuggestionOfConference=Αίτηση για συνέδριο
+NewSuggestionOfConference=Αίτηση για τη διεξαγωγή συνεδρίου
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Καμία δημόσια δράση δεν �
 MaxNbOfAttendees=Μέγιστος αριθμός συμμετεχόντων
 DateStartEvent=Ημερομηνία έναρξης εκδήλωσης
 DateEndEvent=Ημερομηνία λήξης εκδήλωσης
+ModifyStatus=Τροποποίηση κατάστασης
+ConfirmModifyStatus=Επιβεβαιώστε την τροποποίηση κατάστασης
+ConfirmModifyStatusQuestion=Είστε σίγουροι ότι θέλετε να τροποποιήσετε τις %s επιλεγμένες εγγραφές;
+RecordsUpdated = Ενημερώθηκαν %s εγγραφές
+RecordUpdated = Η εγγραφή ενημερώθηκε
+NoRecordUpdated = Δεν ενημερώθηκε η εγγραφή

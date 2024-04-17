@@ -22,27 +22,15 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary of nature of product (used by imports)
  */
-class CProductNature // extends CommonObject
+class CProductNature extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var array record
 	 */
@@ -57,26 +45,6 @@ class CProductNature // extends CommonObject
 	 * @var string table element
 	 */
 	public $table_element = 'c_product_nature';
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var int code
-	 */
-	public $code;
-
-	/**
-	 * @var string label
-	 */
-	public $label;
-
-	/**
-	 * @var int active
-	 */
-	public $active;
 
 
 	/**

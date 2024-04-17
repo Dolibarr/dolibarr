@@ -52,11 +52,11 @@ class mod_recruitmentcandidature_standard extends ModeleNumRefRecruitmentCandida
 	/**
 	 *  Return description of numbering module
 	 *
+	 *	@param		Translate	$langs		Language
 	 *  @return     string      Text with description
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 

@@ -199,12 +199,12 @@ function printDropdownBookmarksList()
 			<!-- Menu bookmark tools-->
 			<div class="bookmark-footer">
 					'.$newbtn.$listbtn.'
-				<div style="clear:both;"></div>
+				<div class="clearboth"></div>
 			</div>
 		';
 
 		$html .= '
-				<!-- Menu Body -->
+				<!-- Menu Body bookmarks -->
 				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
 				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
 				</div>

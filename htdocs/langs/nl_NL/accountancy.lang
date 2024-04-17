@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Reeds overgezet naar boekhoudkundige dagboeken en grootbo
 NotYetInGeneralLedger=Nog niet overgezet naar boekhoudkundige dagboeken en grootboek
 GroupIsEmptyCheckSetup=Groep is leeg. Controleer instellingen bij gepersonaliseerde rekeninggroep
 DetailByAccount=Details grootboekrekening
+DetailBy=Gedetailleerd door
 AccountWithNonZeroValues=Grootboekrekeningen met niet-nulwaarden
 ListOfAccounts=Overzicht grootboekrekeningen
 CountriesInEEC=Landen binnen de EU
@@ -51,14 +52,19 @@ AccountantFiles=Bron-documenten exporteren
 ExportAccountingSourceDocHelp=Met deze tool kunt u de brongebeurtenissen zoeken en exporteren die worden gebruikt om uw boekhouding te genereren. <br>Het geëxporteerde ZIP-bestand bevat de lijsten met gevraagde items in CSV, evenals de bijgevoegde bestanden in hun oorspronkelijke formaat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 ExportAccountingProjectHelp=Specificeer een project als u alleen een boekhoudkundig rapport nodig heeft voor een specifiek project. Onkostendeclaraties en afbetalingen van leningen zijn niet opgenomen in projectrapporten.
+ExportAccountancy=Boekhouding exporteren
+WarningDataDisappearsWhenDataIsExported=Let op, deze lijst bevat alleen de boekingen die nog niet zijn geëxporteerd (exportdatum is leeg). Als u de reeds geëxporteerde boekingen wilt opnemen om ze opnieuw te exporteren, klikt u op de bovenstaande knop.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
-MainAccountForCustomersNotDefined=De standaard grootboekrekening voor klanten is niet vastgelegd bij de instellingen
-MainAccountForSuppliersNotDefined=Hoofdrekening voor leveranciers die niet zijn gedefinieerd in de configuratie
-MainAccountForUsersNotDefined=De standaard grootboekrekening voor gebruikers is niet vastgelegd bij de instellingen
-MainAccountForVatPaymentNotDefined=Standaard grootboekrekening voor betaalde BTW is niet vastgelegd bij instellingen
-MainAccountForSubscriptionPaymentNotDefined=Hoofdrekening voor abonnementsbetaling is niet gedefinieerd in de configuratie
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Grootboekrekening voor gebruiker niet gedefinieerd in setup
 
 AccountancyArea=Boekhouding
@@ -112,6 +118,7 @@ MenuLoanAccounts=Grootboekrekeningen lonen
 MenuProductsAccounts=Grootboekrekeningen producten
 MenuClosureAccounts=Sluitingsaccounts
 MenuAccountancyClosure=Sluiting
+MenuExportAccountancy=Boekhouding exporteren
 MenuAccountancyValidationMovements=Valideer wijzigingen
 ProductsBinding=Grootboekrekeningen producten
 TransferInAccounting=Boeken in de boekhouding
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Schakel combolijst in voor dochteronderneming-account 
 ACCOUNTING_DATE_START_BINDING=Definieer een startdatum voor het koppelen en doorboeken naar de boekhouding. Transacties voor deze datum worden niet doorgeboekt naar de boekhouding.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Wat is de standaard geselecteerde periode bij overdracht van boekhouding?
 
-ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
-ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
+ACCOUNTING_SELL_JOURNAL=Verkoopjournaal - verkoop en retouren
+ACCOUNTING_PURCHASE_JOURNAL=Aankoopjournaal - aankoop en retouren
+ACCOUNTING_BANK_JOURNAL=Kasjournaal - ontvangsten en uitbetalingen
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Algemeen journaal
 ACCOUNTING_HAS_NEW_JOURNAL=Heeft nieuw Journaal
@@ -295,7 +302,7 @@ DescClosure=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd 
 OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd
-ValidateMovements=Valideer en vergrendel bewegingen...
+ValidateMovements=Valideer en vergrendel wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
 ValidateHistory=Automatisch afstemmen
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Schakel het koppelen en doorboeken naar de b
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar de  boekhouding van inkopen uit (facturen van leveranciers worden niet doorgeboekt in de boekhouding)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 ACCOUNTING_ENABLE_LETTERING=Schakel de afletteren functie in de boekhouding in
+ACCOUNTING_ENABLE_LETTERING_DESC=Als deze optie is ingeschakeld, kunt u op elke boeking een code definiëren, zodat u verschillende boekingen kunt groeperen. In het verleden, toen verschillende dagboeken onafhankelijk van elkaar werden beheerd, was deze functie nodig om bewegingslijnen van verschillende dagboeken samen te groeperen. Met Dolibarr accountancy wordt een dergelijke trackingcode, genaamd " <b> %s </b> " echter al automatisch opgeslagen, dus een automatische belettering is al gedaan, zonder risico op fouten, dus deze functie is nutteloos geworden voor algemeen gebruik. Handmatige letterfunctie is beschikbaar voor eindgebruikers die de computermotor die de gegevensoverdracht in de boekhouding uitvoert echt niet vertrouwen.
+EnablingThisFeatureIsNotNecessary=Het inschakelen van deze functie is niet meer nodig voor een rigoureus boekhoudkundig beheer.
 ACCOUNTING_ENABLE_AUTOLETTERING=Schakel de automatische belettering in bij het overstappen naar de boekhouding
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=De code voor de belettering wordt automatisch gegenereerd en opgehoogd en niet gekozen door de eindgebruiker
+OptionsAdvanced=Geavanceerde mogelijkheden
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activeer het beheer van btw-verlegging op leveranciersaankopen
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wanneer deze optie is ingeschakeld, kunt u definiëren dat een leveranciersfactuur of een bepaalde leveranciersfactuur op een andere manier naar de boekhouding moet worden overgeboekt: Er wordt een extra debet- en een kredietlijn gegenereerd in de boekhouding op 2 bepaalde rekeningen vanuit het rekeningschema dat is gedefinieerd in de "%s " instellingenpagina.
 
 ## Export
 NotExportLettering=Exporteer het afletteren niet bij het genereren van het bestand
-NotifiedExportDate=Geëxporteerde regels markeren als geëxporteerd <span class="warning">(om een regel te wijzigen, moet u de hele transactie verwijderen en opnieuw in de boekhouding opnemen)</span>
-NotifiedValidationDate=Valideer en vergrendel de geëxporteerde items <span class="warning"> (hetzelfde effect als de functie "%s", wijziging en verwijdering van de regels is ZEKER niet mogelijk) </span>
+NotifiedExportDate=Markeer nog niet geëxporteerde regels als geëxporteerd <span class="warning"> (om een regel te wijzigen die is gemarkeerd als geëxporteerd, moet u de hele transactie verwijderen en opnieuw overboeken naar de boekhouding) </span>
+NotifiedValidationDate=Valideer en vergrendel de geëxporteerde ingangen die nog niet vergrendeld zijn <span class="warning"> (hetzelfde effect als de functie "%s", wijziging en verwijdering van de regels zal ZEKER niet mogelijk zijn) </span>
 NotifiedExportFull=Documenten exporteren?
 DateValidationAndLock=Datum validatie en vergrendelen
 ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
@@ -381,7 +394,7 @@ ChartofaccountsId=Rekeningschema Id
 ## Tools - Init accounting account on product / service
 InitAccountancy=Instellen boekhouding
 InitAccountancyDesc=Deze pagina kan worden gebruikt om een ​​grootboekrekening toe te wijzen aan producten en services waarvoor geen grootboekrekening is gedefinieerd voor verkopen en aankopen.
-DefaultBindingDesc=Hier kunt u een standaard grootboekrekening koppelen aan salaris betalingen, donaties, belastingen en BTW, wanneer deze nog niet apart zijn ingesteld.
+DefaultBindingDesc=Deze pagina kan worden gebruikt om de standaardrekeningen (uit het rekeningschema) in te stellen om bedrijfsobjecten aan een rekening te koppelen, zoals betaling salarissen, donaties, belastingen en btw, wanneer er nog geen specifieke rekening was ingesteld.
 DefaultClosureDesc=Deze pagina kan worden gebruikt voor instellingen die worden gebruikt voor boekhoudkundige sluitingen.
 Options=Opties
 OptionModeProductSell=Instellingen verkopen
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk automatische afstemming ongedaan maken bevestigi
 ConfirmMassUnletteringManual=Bulk handmatige afstemming ongedaan maken bevestiging
 ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) wilt ontkoppelen?
 ConfirmMassDeleteBookkeepingWriting=Bevestiging bulk verwijdering
-ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regels die betrekking hebben op dezelfde transactie worden verwijderd) Weet u zeker dat u de geselecteerde record(en) van %s wilt verwijderen?
+ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regelitems die betrekking hebben op dezelfde transactie worden verwijderd). Weet u zeker dat u de %s geselecteerde vermeldingen wilt verwijderen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
@@ -446,7 +459,7 @@ NoJournalDefined=Geen dagboek ingesteld
 Binded=Gekoppelde regels
 ToBind=Te koppelen regels
 UseMenuToSetBindindManualy=Regels die nog niet zijn gekoppeld, gebruik het menu <a href="%s"> %s </a> om de koppeling handmatig te maken
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry, deze module is niet compatibel met de experimentele functie van situatiefacturen
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Let op: deze module of pagina is niet volledig compatibel met de experimentele functie van situatiefacturen. Sommige gegevens kunnen onjuist zijn.
 AccountancyErrorMismatchLetterCode=Mismatch in afstemmingscode
 AccountancyErrorMismatchBalanceAmount=Het saldo (%s) is niet gelijk aan 0
 AccountancyErrorLetteringBookkeeping=Er zijn fouten opgetreden met betrekking tot de transacties: %s
@@ -478,7 +491,7 @@ FECFormatMulticurrencyCode=Multivalutacode (Idevise)
 DateExport=Exportdatum
 WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
-DocsAlreadyExportedAreExcluded=Reeds geëxporteerde documenten worden uitgesloten
-ClickToHideAlreadyExportedLines=Klik om reeds geëxporteerde regels te verbergen
+DocsAlreadyExportedAreIncluded=Reeds geëxporteerde documenten zijn inbegrepen
+ClickToShowAlreadyExportedLines=Klik om reeds geëxporteerde regels weer te geven
 
 NAccounts=%s accounts

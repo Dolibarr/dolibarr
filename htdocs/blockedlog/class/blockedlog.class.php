@@ -26,6 +26,11 @@
 class BlockedLog
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+	/**
 	 * Id of the log
 	 * @var int
 	 */
@@ -718,6 +723,10 @@ class BlockedLog
 			}
 		}
 
+		// A trick to be sure all the object_data is an associative array
+		// json_encode and json_decode are not able to manage mixed object (with array/object, only full arrays or full objects)
+		$this->object_data = json_decode(json_encode($this->object_data, JSON_FORCE_OBJECT), false);
+
 		return 1;
 	}
 
@@ -747,15 +756,14 @@ class BlockedLog
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$this->id = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->ref				= $obj->rowid;
+				$this->id 				= $obj->rowid;
+				$this->entity 			= $obj->entity;
 
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->tms				= $this->db->jdate($obj->tms);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->tms);
 
 				$this->amounts			= (double) $obj->amounts;
-				$this->action = $obj->action;
+				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
@@ -769,7 +777,7 @@ class BlockedLog
 				$this->object_version = $obj->object_version;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line = $obj->signature_line;
+				$this->signature_line 	= $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
@@ -786,20 +794,41 @@ class BlockedLog
 
 
 	/**
+	 * Encode data
+	 *
+	 * @param	string	$data	Data to serialize
+	 * @param	string	$mode	0=serialize, 1=json_encode
+	 * @return 	string			Value serialized, an object (stdClass)
+	 */
+	public function dolEncodeBlockedData($data, $mode = 0)
+	{
+		try {
+			$aaa = json_encode($data);
+		} catch (Exception $e) {
+			//print $e->getErrs);
+		}
+		//var_dump($aaa);
+
+		return $aaa;
+	}
+
+
+	/**
 	 * Decode data
 	 *
 	 * @param	string	$data	Data to unserialize
 	 * @param	string	$mode	0=unserialize, 1=json_decode
-	 * @return 	string			Value unserialized
+	 * @return 	object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
 		try {
-			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$aaa = unserialize($data);
+			$aaa = (object) jsonOrUnserialize($data);
 		} catch (Exception $e) {
 			//print $e->getErrs);
 		}
+		//var_dump($aaa);
+
 		return $aaa;
 	}
 
@@ -864,6 +893,9 @@ class BlockedLog
 
 		$this->date_creation = dol_now();
 
+		$this->object_version = ((float) DOL_VERSION);
+
+
 		$this->db->begin();
 
 		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done
@@ -905,13 +937,21 @@ class BlockedLog
 		$sql .= $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
-		$sql .= "'".$this->db->escape(serialize($this->object_data))."',";
+		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "0,";
 		$sql .= $this->fk_user.",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
 		$sql .= ($this->entity ? $this->entity : $conf->entity);
 		$sql .= ")";
+
+		/*
+		$a = serialize($this->object_data); $a2 = unserialize($a); $a4 = print_r($a2, true);
+		$b = json_encode($this->object_data); $b2 = json_decode($b); $b4 = print_r($b2, true);
+		var_dump($a4 == print_r($this->object_data, true) ? 'a=a' : 'a not = a');
+		var_dump($b4 == print_r($this->object_data, true) ? 'b=b' : 'b not = b');
+		exit;
+		*/
 
 		$res = $this->db->query($sql);
 		if ($res) {
@@ -952,7 +992,7 @@ class BlockedLog
 		$keyforsignature = $this->buildKeyForSignature();
 
 		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
-		$signature = dol_hash($previoushash.$keyforsignature, '5');
+		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
 		$res = ($signature === $this->signature);
@@ -984,8 +1024,8 @@ class BlockedLog
 	private function buildKeyForSignature()
 	{
 		//print_r($this->object_data);
-		if (((int) $this->object_version) > 12) {
-			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		if (((int) $this->object_version) >= 18) {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
 		}
@@ -1006,7 +1046,7 @@ class BlockedLog
 		$previoussignature = '';
 
 		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if ($beforeid) {
 			$sql .= " AND rowid < ".(int) $beforeid;
 		}
@@ -1067,7 +1107,7 @@ class BlockedLog
 			 WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
+			 WHERE entity=".$conf->entity." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {

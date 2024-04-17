@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,18 +40,19 @@ class modBookCal extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 2430;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'bookcal';
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "other";
+		$this->family = "projects";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '50';
@@ -68,8 +69,6 @@ class modBookCal extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';
-		// Url to the file with your last numberversion of this module
-		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
 		// Key used in llx_const table to save module status enabled/disabled (where BOOKCAL is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -78,7 +77,7 @@ class modBookCal extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-generic';
+		$this->picto = 'fa-calendar-check';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -130,17 +129,16 @@ class modBookCal extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("bookcal@bookcal");
+		$this->langfiles = array("bookcal");
 
 		// Prerequisites
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(17, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
@@ -261,21 +259,37 @@ class modBookCal extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 1);
+		$this->rights[$r][1] = 'Read objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->read)
+		$this->rights[$r][5] = 'read';
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 2);
+		$this->rights[$r][1] = 'Create/Update objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->write)
+		$this->rights[$r][5] = 'write';
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of BookCal'; // Permission label
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (0 * 10) + 3);
+		$this->rights[$r][1] = 'Delete objects of BookCal';
 		$this->rights[$r][4] = 'availabilities';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->bookcal->availabilities->delete)
+		$this->rights[$r][5] = 'delete';
 		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 1);
+		$this->rights[$r][1] = 'Read Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'read';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 2);
+		$this->rights[$r][1] = 'Create/Update Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'write';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (1 * 10) + 3);
+		$this->rights[$r][1] = 'Delete Calendar object of BookCal';
+		$this->rights[$r][4] = 'calendar';
+		$this->rights[$r][5] = 'delete';
+		$r++;
+
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -283,7 +297,7 @@ class modBookCal extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
-		$this->menu[$r++] = array(
+		/*$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleBookCalName',
@@ -291,14 +305,73 @@ class modBookCal extends DolibarrModules
 			'mainmenu'=>'bookcal',
 			'leftmenu'=>'',
 			'url'=>'/bookcal/bookcalindex.php',
-			'langs'=>'bookcal@bookcal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'bookcal', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->bookcal->enabled', // Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->bookcal->availabilities->read' if you want your menu with a permission rules
+			'perms'=>'$user->rights->bookcal->availabilities->read', // Use 'perms'=>'$user->rights->bookcal->availabilities->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-		);
+		);*/
 		/* END MODULEBUILDER TOPMENU */
+
+		/* BEGIN MODULEBUILDER LEFTMENU CALENDAR */
+		$this->menu[$r++] = array(
+			'fk_menu'=>'fk_mainmenu=agenda',
+			'type'=>'left',
+			'titre'=> 'MenuBookcalIndex',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
+			'mainmenu'=>'agenda',
+			'leftmenu'=> 'bookcal',
+			'url'=> '/bookcal/bookcalindex.php',
+			'langs'=> 'bookcal',
+			'position'=> 1100+$r,
+			'enabled'=> '1',
+			'perms'=> '$user->rights->bookcal->calendar->read',
+			'user'=> 0
+		);
+
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'Calendar',
+			'mainmenu'=>'agenda',
+			'leftmenu'=>'bookcal_calendar_list',
+			'url'=>'/bookcal/calendar_list.php',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'bookcal',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->bookcal->enabled',
+			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->bookcal->calendar->read',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2,
+		);
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal_calendar_list',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'NewCalendar',
+			'mainmenu'=>'agenda',
+			'leftmenu'=>'bookcal_new',
+			'url'=>'/bookcal/calendar_card.php?action=create',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'bookcal',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->bookcal->enabled',
+			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->bookcal->calendar->read',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2
+		);
+		/* END MODULEBUILDER LEFTMENU CALENDAR */
+
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=bookcal',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -347,40 +420,40 @@ class modBookCal extends DolibarrModules
 
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Availabilities',
-			'mainmenu'=>'bookcal',
+			'titre'=>'Availabilities',
+			'mainmenu'=>'agenda',
 			'leftmenu'=>'bookcal_availabilities',
 			'url'=>'/bookcal/availabilities_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'bookcal@bookcal',
-			'position'=>1100+$r,
+			'langs'=>'bookcal',
+			'position'=>1200+$r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->bookcal->enabled',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->bookcal->availabilities->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal,fk_leftmenu=bookcal_availabilities',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal_availabilities',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Availabilities',
-			'mainmenu'=>'bookcal',
+			'titre'=>'NewAvailabilities',
+			'mainmenu'=>'agenda',
 			'leftmenu'=>'bookcal_availabilities',
 			'url'=>'/bookcal/availabilities_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'bookcal@bookcal',
-			'position'=>1100+$r,
+			'langs'=>'bookcal',
+			'position'=>1200+$r,
 			// Define condition to show or hide menu entry. Use '$conf->bookcal->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->bookcal->enabled',
 			// Use 'perms'=>'$user->rights->bookcal->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->bookcal->availabilities->read',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
@@ -466,8 +539,7 @@ class modBookCal extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		//$result = $this->_load_tables('/install/mysql/', 'bookcal');
-		$result = $this->_load_tables('/bookcal/sql/');
+		$result = $this->_load_tables('/install/mysql/', 'bookcal');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = A résztvevő létrehozására/hozzáad
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferencia vagy stand
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Egy esemény szervezésének kezelése
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Harmadik félhez (ügyfélhez, szállítóhoz 
 OrganizationEvenLabelName=A konferencia vagy stand nyilvános neve
 
 NewSuggestionOfBooth=Jelentkezés egy standra
-NewSuggestionOfConference=Jelentkezés egy konferenciára
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Több ilyen e-mail-címmel rendelkező c
 ErrorSeveralCompaniesWithNameContactUs=Több ilyen nevű céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
 NoPublicActionsAllowedForThisEvent=Ennél az eseménynél nincs nyilvános művelet
 MaxNbOfAttendees=A résztvevők maximális száma
+DateStartEvent=Event start date
+DateEndEvent=Event end date

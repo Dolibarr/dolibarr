@@ -87,7 +87,7 @@ if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
 }
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

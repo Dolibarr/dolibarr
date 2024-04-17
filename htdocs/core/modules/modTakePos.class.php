@@ -98,7 +98,8 @@ class modTakePos extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('always1'=>"modBanque", 'always2'=>"modFacture", 'always3'=>"modProduct", 'always4'=>'modCategorie', 'FR1'=>'modBlockedLog'); // List of module class names as string that must be enabled if this module is enabled
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
+		$this->depends = array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("cashdesk");
@@ -269,10 +270,15 @@ class modTakePos extends DolibarrModules
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 
-		$sql = array();
+		$result = $this->_load_tables('/install/mysql/', 'takepos');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
-		// Remove permissions and default values
+		// Clean before activation
 		$this->remove($options);
+
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

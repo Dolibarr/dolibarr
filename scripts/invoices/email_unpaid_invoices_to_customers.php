@@ -239,7 +239,7 @@ if ($resql) {
  * @param string $total				Total amount of unpayed invoices
  * @param string $userlang			Code lang to use for email output.
  * @param string $oldtarget			Target name
- * @return int 						<0 if KO, >0 if OK
+ * @return int 						Int <0 if KO, >0 if OK
  */
 function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {

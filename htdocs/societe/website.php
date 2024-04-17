@@ -190,7 +190,7 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	$param .= '&search_'.$key.'='.urlencode($search[$key]);
@@ -249,7 +249,7 @@ print '</div>';
 print dol_get_fiche_end();
 
 $newcardbutton = '';
-if (isModEnabled('website')) {
+if (isModEnabled('website') || isModEnabled('webportal')) {
 	if ($user->hasRight('societe', 'lire')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
 	} else {
@@ -263,6 +263,13 @@ print '<br>';
 
 // Build and execute select
 // --------------------------------------------------------------------
+$site_filter_list = array();
+if (isModEnabled('website')) {
+	$site_filter_list[] = 'dolibarr_website';
+}
+if (isModEnabled('webportal')) {
+	$site_filter_list[] = 'dolibarr_portal';
+}
 $sql = 'SELECT ';
 foreach ($objectwebsiteaccount->fields as $key => $val) {
 	$sql .= "t.".$key.", ";
@@ -283,11 +290,14 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($objectwebsiteaccount->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity('societeaccount').")";
+	$sql .= " WHERE t.entity IN (".getEntity('thirdpartyaccount').")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }
 $sql .= " AND fk_soc = ".((int) $object->id);
+if (!empty($site_filter_list)) {
+	$sql .= " AND t.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
+}
 foreach ($search as $key => $val) {
 	$mode_search = (($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') {
@@ -323,7 +333,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -349,7 +359,7 @@ $arrayofmassactions = array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) {
+if ($user->hasRight('mymodule', 'delete')) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
@@ -476,7 +486,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}

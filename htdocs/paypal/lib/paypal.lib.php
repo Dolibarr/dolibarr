@@ -145,7 +145,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
 		if ($ErrorCode == 10729) {
-			$mesg .= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
+			$mesg = "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
 		} else {
 			$mesg = $langs->trans('SetExpressCheckoutAPICallFailed')."<br>\n";
 			$mesg .= $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";

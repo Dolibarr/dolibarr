@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Ja s'ha transferit als diaris comptables i al llibre majo
 NotYetInGeneralLedger=Encara no s'ha transferit a les revistes comptables i al llibre major
 GroupIsEmptyCheckSetup=El grup està buit, comproveu la configuració del grup de comptabilitat personalitzat
 DetailByAccount=Mostra detalls per compte
+DetailBy=Detall per
 AccountWithNonZeroValues=Compte amb valors no nuls
 ListOfAccounts=Llista de comptes
 CountriesInEEC=Països a la CEE
@@ -51,14 +52,19 @@ AccountantFiles=Exporta documents d'origen
 ExportAccountingSourceDocHelp=Amb aquesta eina, podeu cercar i exportar els esdeveniments d'origen que s'utilitzen per a generar la vostra comptabilitat. <br> El fitxer ZIP exportat contindrà les llistes dels elements sol·licitats en CSV, així com els seus fitxers adjunts en el seu format original (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Per a exportar els vostres diaris, utilitzeu l'entrada de menú %s - %s.
 ExportAccountingProjectHelp=Especifiqueu un projecte si només necessiteu un informe comptable per a un projecte concret. Els informes de despeses i els pagaments del préstec no s'inclouen als informes del projecte.
+ExportAccountancy=Exportació de comptabilitat
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Visualització per compte comptable
 VueBySubAccountAccounting=Visualització per subcompte comptable
 
-MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
-MainAccountForSuppliersNotDefined=Compte comptable principal per a proveïdors no definit a la configuració
-MainAccountForUsersNotDefined=Compte comptable per a usuaris no de definit en la configuració
-MainAccountForVatPaymentNotDefined=Compte comptable per a IVA no definida en la configuració
-MainAccountForSubscriptionPaymentNotDefined=Compte comptable per a IVA no definida en la configuració del mòdul
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Compte comptable per a l'usuari no definit a la configuració
 
 AccountancyArea=Àrea de comptabilitat
@@ -67,7 +73,7 @@ AccountancyAreaDescActionOnce=Les accions següents s'executen normalment una so
 AccountancyAreaDescActionOnceBis=Cal fer els passos següents per a estalviar-vos temps en el futur suggerint-vos automàticament el compte comptable predeterminat correcte quan transferiu dades a la comptabilitat
 AccountancyAreaDescActionFreq=Les accions següents s'executen normalment cada mes, setmana o dia per empreses molt grans...
 
-AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diari des del menú %s
+AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diaris des del menú %s
 AccountancyAreaDescChartModel=PAS %s: Comproveu que existeix un model de pla comptable o creeu-ne un des del menú %s
 AccountancyAreaDescChart=PAS %s: Seleccioneu o completeu el vostre pla comptable al menú %s
 
@@ -112,6 +118,7 @@ MenuLoanAccounts=Comptes de préstecs
 MenuProductsAccounts=Comptes comptables de producte
 MenuClosureAccounts=Comptes de tancament
 MenuAccountancyClosure=Tancament
+MenuExportAccountancy=Exportació de comptabilitat
 MenuAccountancyValidationMovements=Valida moviments
 ProductsBinding=Comptes de producte
 TransferInAccounting=Transferència en comptabilitat
@@ -183,11 +190,11 @@ ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Revista de tancament
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte (del pla comptable) que s'utilitzarà com a compte per a transferències bancàries transitòries
 TransitionalAccount=Compte de transferència bancària transitòria
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Compte (del pla comptable) que s'utilitzarà com a compte per als fons no assignats, ja siguin rebuts o pagats, és a dir, fons en "espera"
+ACCOUNTING_ACCOUNT_SUSPENSE=Compte (del pla comptable) que s'utilitzarà com a compte per als fons no assignats, o rebuts o pagats, és a dir, fons en "espera"
 DONATION_ACCOUNTINGACCOUNT=Compte (del pla comptable) que s'utilitzarà per a registrar donacions (mòdul de donacions)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte (del pla comptable) que s'utilitzarà per a registrar les subscripcions de socis (mòdul d'afiliació - si l'afiliació es registra sense factura)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per registrar el dipòsit del client
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a registrar el dipòsit del client
 UseAuxiliaryAccountOnCustomerDeposit=Emmagatzema el compte del client com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual per a les línies de pagament inicial romandrà buit)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte (del pla comptable) que s'utilitzarà com a predeterminat
 UseAuxiliaryAccountOnSupplierDeposit=Emmagatzema el compte del proveïdor com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual de les línies de pagament inicial romandrà buit)
@@ -291,11 +298,11 @@ DescVentilExpenseReportMore=Si poseu el compte comptable sobre les línies de l'
 DescVentilDoneExpenseReport=Consulteu aquí la llista de les línies d'informes de despeses i el seu compte comptable de comissions
 
 Closure=Tancament anual
-DescClosure=Consulta aquí el nombre de moviments per mes encara no validats i bloquejats
+DescClosure=Consulta aquí el nombre de moviments per mesos encara no validats i bloquejats
 OverviewOfMovementsNotValidated=Visió general dels moviments no validats i bloquejats
 AllMovementsWereRecordedAsValidated=Tots els moviments es van registrar com a validats i bloquejats
 NotAllMovementsCouldBeRecordedAsValidated=No tots els moviments es van poder registrar com a validats i bloquejats
-ValidateMovements=Valida i bloqueja moviments...
+ValidateMovements=Valida i bloqueja els moviments
 DescValidateMovements=Queda prohibida qualsevol modificació o supressió de registres. Totes les entrades d’un exercici s’han de validar, en cas contrari, el tancament no serà possible
 
 ValidateHistory=Comptabilitza automàticament
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Desactiva la vinculació i transferència de
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactiva la vinculació i transferència a la comptabilitat de les compres (les factures de proveïdors no es tindran en compte a la comptabilitat)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transferència de comptes en els informes de despeses (els informes de despeses no es tindran en compte a la comptabilitat)
 ACCOUNTING_ENABLE_LETTERING=Habiliteu la funció de lletres a la comptabilitat
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=L'habilitació d'aquesta funció ja no és necessària per a una gestió comptable rigorosa.
 ACCOUNTING_ENABLE_AUTOLETTERING=Habiliteu la lletra automàtica en traspassar a la comptabilitat
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=El codi de la lletra es genera i s'incrementa automàticament i no l'escollia l'usuari final
+OptionsAdvanced=Opcions avançades
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestió de la recàrrega de l'IVA a les compres a proveïdors
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=No exporteu la lletra en generar el fitxer
-NotifiedExportDate=Marca les línies exportades com a Exportades <span class="warning">(per a modificar una línia, hauràs de suprimir tota la transacció i tornar-la a transferir a la comptabilitat)</span>
-NotifiedValidationDate=Validar i bloquejar les entrades exportades <span class="warning">(mateix efecte que la característica "%s", la modificació i la supressió de les línies DEFINITIVAMENT no seran possibles)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Exportar documents?
 DateValidationAndLock=Validació de data i bloqueig
 ConfirmExportFile=Confirmació de la generació del fitxer d'exportació comptable?
@@ -357,7 +370,7 @@ ExportDraftJournal=Exporta els esborranys del llibre
 Modelcsv=Model d'exportació
 Selectmodelcsv=Selecciona un model d'exportació
 Modelcsv_normal=Exportació clàssica
-Modelcsv_CEGID=Exporta a CEGID Expert Comptabilité
+Modelcsv_CEGID=Exportació per CEGID Expert Comptabilité
 Modelcsv_COALA=Exporta a Sage Coala
 Modelcsv_bob50=Exporta a Sage BOB 50
 Modelcsv_ciel=Exportació per a Sage50, Ciel Compta o Compta Evo. (Format XIMPORT)
@@ -381,7 +394,7 @@ ChartofaccountsId=Id pla comptable
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat
 InitAccountancyDesc=Aquesta pàgina es pot utilitzar per a inicialitzar un compte comptable de productes i serveis que no tenen un compte comptable definit per a vendes i compres.
-DefaultBindingDesc=Aquesta pàgina es pot utilitzar per a establir un compte predeterminat que s'utilitzarà per a enllaçar el registre de transaccions sobre el pagament de salaris, donacions, impostos i IVA quan encara no s'hagi establert cap compte comptable específic.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Aquesta pàgina es pot utilitzar per a definir els paràmetres utilitzats per als tancaments de comptabilitat.
 Options=Opcions
 OptionModeProductSell=Modalitat de vendes
@@ -407,7 +420,7 @@ SaleLocal=Venda local
 SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
 SaleEECWithVAT=Venda a la CEE amb un IVA que no és nul, per la qual cosa suposem que NO es tracta d’una venda intracomunitària i el compte suggerit és el compte estàndard del producte.
-SaleEECWithoutVATNumber=Venda a la CEE sense IVA, però l'identificador d'IVA del tercer no està definit. Tornem al compte de vendes estàndard. Podeu corregir l'identificador d'IVA del tercer o canviar el compte del producte suggerit per vincular-lo si cal.
+SaleEECWithoutVATNumber=Venda a la CEE sense IVA, però l'identificador d'IVA del tercer no està definit. Tornem al compte de vendes estàndard. Podeu corregir l'identificador d'IVA del tercer o canviar el compte del producte suggerit per a vincular-lo si cal.
 ForbiddenTransactionAlreadyExported=Prohibit: la transacció ha estat validada i/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibit: la transacció s'ha validat.
 ## Dictionary
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Confirmació de desconciliació automàtica massiva
 ConfirmMassUnletteringManual=Confirmació de desconciliació manual massiva
 ConfirmMassUnletteringQuestion=Esteu segur que voleu anul·lar la conciliació dels registres seleccionats %s?
 ConfirmMassDeleteBookkeepingWriting=Confirmació d'esborrament massiu
-ConfirmMassDeleteBookkeepingWritingQuestion=Això suprimirà la transacció de la comptabilitat (se suprimiran totes les línies relacionades amb la mateixa transacció) Esteu segur que voleu suprimir els registres seleccionats %s?
+ConfirmMassDeleteBookkeepingWritingQuestion=Això suprimirà la transacció de la comptabilitat (s'eliminaran totes les entrades de línia relacionades amb la mateixa transacció). Esteu segur que voleu suprimir les %s entrades seleccionades?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los
@@ -446,7 +459,7 @@ NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
 UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s">%s</a> per a fer l'enllaç manualment
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Ho sentim, aquest mòdul no és compatible amb la funció experimental de les factures de situació
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Nota: aquest mòdul o pàgina no és completament compatible amb la funció experimental de les factures de situació. Algunes dades poden ser incorrectes.
 AccountancyErrorMismatchLetterCode=No coincideix en el codi de conciliació
 AccountancyErrorMismatchBalanceAmount=El saldo (%s) no és igual a 0
 AccountancyErrorLetteringBookkeeping=S'han produït errors relacionats amb les transaccions: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Import de múltiples divises (Montantdevise)
 FECFormatMulticurrencyCode=Codi multidivisa (Idevise)
 
 DateExport=Data d'exportació
-WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Diari d'informe de despeses
-DocsAlreadyExportedAreExcluded=S'exclouen els documents ja exportats
-ClickToHideAlreadyExportedLines=Feu clic per a amagar les línies ja exportades
+DocsAlreadyExportedAreIncluded=S'inclouen els documents ja exportats
+ClickToShowAlreadyExportedLines=Feu clic per a mostrar les línies ja exportades
 
 NAccounts=comptes %s

@@ -163,6 +163,9 @@ $textoshow = str_replace('{s1}', '<a href="'.$url2.'" target="_blank" rel="noope
 print $textoshow;
 
 if ($geoip) {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	print '<br><br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("TestGeoIPResult", $ip).':</span>';
 
@@ -213,6 +216,20 @@ if ($geoip) {
 			print $langs->trans("NotAPublicIp");
 		}
 	}
+
+	$ip = GETPOST("iptotest");
+	print '<br><input type="text class="width100" name="iptotest" id="iptotest" placeholder="'.dol_escape_htmltag($langs->trans("EnterAnIP")).'" value="'.$ip.'">';
+	print '<input type="submit" class="width40 button small smallpaddingimp" value=" -> ">';
+	if ($ip) {
+		$result = dol_print_ip($ip, 1);
+		if ($result) {
+			print $result;
+		} else {
+			print $langs->trans("Error");
+		}
+	}
+
+	print '</form>';
 
 	$geoip->close();
 }

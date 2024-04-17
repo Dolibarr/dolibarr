@@ -156,6 +156,30 @@ class modMultiCurrency extends DolibarrModules
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
 
+		$this->rights[$r][0] = 40001;
+		$this->rights[$r][1] = 'Read currencies and their rates';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'read';
+		$r++;
+
+		$this->rights[$r][0] = 40002;
+		$this->rights[$r][1] = 'Create/Update currencies and their rates';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'write';
+		$r++;
+
+		$this->rights[$r][0] = 40003;
+		$this->rights[$r][1] = 'Delete currencies and their rates';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'delete';
+		$r++;
+
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
@@ -295,7 +319,10 @@ class modMultiCurrency extends DolibarrModules
 
 			if ($r > 0) {
 				$multicurrency->addRate(1);
+			} else {
+				return 0;
 			}
 		}
+		return 1;
 	}
 }

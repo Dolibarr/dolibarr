@@ -131,7 +131,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -201,12 +201,14 @@ class modKnowledgeManagement extends DolibarrModules
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in knowledgemanagement/core/boxes that contains a class to show a widget.
 		$this->boxes = array(
-			//  0 => array(
-			//      'file' => 'knowledgemanagementwidget1.php@knowledgemanagement',
-			//      'note' => 'Widget provided by KnowledgeManagement',
-			//      'enabledbydefaulton' => 'Home',
-			//  ),
-			//  ...
+			0 => array(
+				'file' => 'box_last_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
+			1 => array(
+				'file' => 'box_last_modified_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
 		);
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -271,7 +273,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'langs'=>'knowledgemanagement', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->knowledgemanagement->enabled', // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -334,7 +336,7 @@ class modKnowledgeManagement extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->write',
+			'perms'=>'$user->hasRight("knowledgemanagement", "knowledgerecord", "write")',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2

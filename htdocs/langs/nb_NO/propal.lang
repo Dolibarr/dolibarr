@@ -55,6 +55,7 @@ CopyPropalFrom=Opprett nytt tilbud ved å kopiere et eksisterende
 CreateEmptyPropal=Opprett et tomt tilbud eller fra listen over varer/tjenester
 DefaultProposalDurationValidity=Standard gyldighetstid for tilbud (dager)
 DefaultPuttingPricesUpToDate=Som standard oppdater prisene med gjeldende kjente priser ved kloning av et tilbud
+DefaultPuttingDescUpToDate=Oppdater som standard beskrivelser med gjeldende kjente beskrivelser ved kloning av et tilbud
 UseCustomerContactAsPropalRecipientIfExist=Bruk kontakt/adresse med typen 'Kontakt tilbudsoppfølging' hvis det er definert, i stedet for tredjepartsadresse som mottakeradresse av tilbud
 ConfirmClonePropal=Er du sikker på at du vil klone tilbudet <b>%s</b>?
 ConfirmReOpenProp=Er du sikker på at du vil gjenåpne tilbudet <b>%s</b>?

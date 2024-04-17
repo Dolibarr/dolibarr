@@ -90,6 +90,12 @@ class Events // extends CommonObject
 	 */
 	public $prefix_session;
 
+	/**
+	 * @var string	Authentication method used for USER_LOGIN with success
+	 */
+	public $authentication_method;
+
+
 	// List of all Audit/Security events supported by triggers
 	public $eventstolog = array(
 		array('id'=>'USER_LOGIN', 'test'=>1),

@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
 # Menu
 #
 NewPartnership=Jauna partnerība
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Jūsu partnerības pieprasījums ir veiksmīgi pievienots. Drīzumā varam ar jums sazināties...
 ListOfPartnerships=Partnerības saraksts
 
 #
@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Noraidīt iemeslu
 
 NewPartnershipRequest=Jauns partnerības pieprasījums
 NewPartnershipRequestDesc=Šī veidlapa ļauj jums pieprasīt dalību kādā no mūsu partnerības programmām. Ja jums nepieciešama palīdzība, lai aizpildītu šo veidlapu, lūdzu, sazinieties pa e-pastu <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Šajā lapā ir jābūt vismaz vienai saitei uz vienu no šiem domēniem: %s
 

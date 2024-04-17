@@ -119,6 +119,7 @@ if (isModEnabled('accounting')) {
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
+		print '<br>';
 		print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 		print '<hr>';
 		print "<br>\n";
@@ -261,11 +262,14 @@ if (isModEnabled('accounting')) {
 	print $boxlist;
 
 	print '</div>';
-} else {
+} elseif (isModEnabled('compta')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
 	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
 	print "<br>";
+} else {
+	// This case can happen mode no accounting module is on but module "intracommreport" is on
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
 
 // End of page

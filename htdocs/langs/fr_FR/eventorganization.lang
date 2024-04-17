@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dans le formulaire pour créer/ajouter 
 #
 # Object
 #
+OrganizedEvent=Événement organisé
 EventOrganizationConfOrBooth= Conférence ou stand
 EventOrganizationConfOrBoothes=Conférences ou Stands
 ManageOrganizeEvent = Gestion d'organisation d'événements
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Lier à un tiers (client, fournisseur ou parte
 OrganizationEvenLabelName=Nom public de la conférence ou du stand
 
 NewSuggestionOfBooth=Proposition de stand
-NewSuggestionOfConference=Candidature à une conférence
+NewSuggestionOfConference=Postuler pour réaliser une conférence
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Aucune action publique n'est ouverte au publi
 MaxNbOfAttendees=Nombre maximum de participants
 DateStartEvent=Date de début de l'événement
 DateEndEvent=Date de fin de l'événement
+ModifyStatus=Modifier le statut
+ConfirmModifyStatus=Confirmer la modification du statut
+ConfirmModifyStatusQuestion=Êtes-vous sûr de vouloir modifier le %s enregistrement(s) sélectionné(s) ?
+RecordsUpdated = %s enregistrement(s) mis à jour
+RecordUpdated = Enregistrement mis à jour
+NoRecordUpdated = Aucun enregistrement mis à jour

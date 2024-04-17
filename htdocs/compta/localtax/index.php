@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/compta/localtax/index.php
  *      \ingroup    tax
- *      \brief      Index page of IRPF reports
+ *      \brief      Index page of localtax reports
  */
 
 require '../../main.inc.php';
@@ -80,7 +80,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -223,14 +223,14 @@ if ($localTaxType == 1) {
 	$LTPaid = 'LT1Paid';
 	$LTCustomer = 'LT1Customer';
 	$LTSupplier = 'LT1Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1');
 } else {
 	$LT = 'LT2';
 	$LTSummary = 'LT2Summary';
 	$LTPaid = 'LT2Paid';
 	$LTCustomer = 'LT2Customer';
 	$LTSupplier = 'LT2Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2');
 }
 
 $fsearch = '<!-- hidden fields for form -->';
@@ -259,6 +259,9 @@ llxHeader('', $name);
 //$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 //print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'bill');
 
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
 
@@ -271,7 +274,7 @@ print load_fiche_titre($langs->transcountry($LTSummary, $mysoc->country_code), '
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="30%">'.$langs->trans("Year")." ".$y."</td>";
+print '<td>'.$langs->trans("Year")."</td>";
 if ($CalcLT == 0) {
 	print '<td class="right">'.$langs->transcountry($LTCustomer, $mysoc->country_code).'</td>';
 	print '<td class="right">'.$langs->transcountry($LTSupplier, $mysoc->country_code).'</td>';
@@ -468,8 +471,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -508,8 +511,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

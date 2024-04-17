@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
+ * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,6 +271,7 @@ if (empty($reshook)) {
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 		$multicurrency_code = array();
+		$multicurrency_tx = array();
 
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
@@ -280,6 +282,7 @@ if (empty($reshook)) {
 				$amounts[$key] = - abs($newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -290,6 +293,7 @@ if (empty($reshook)) {
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		//var_dump($amounts);
@@ -310,6 +314,7 @@ if (empty($reshook)) {
 			$paiement->amounts      = $amounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 			$paiement->paiementid   = GETPOST('paiementid', 'int');
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
@@ -385,16 +390,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.((int) $facid);
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$resql = $db->query($sql);
@@ -499,8 +504,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$supplierstatic->name = $obj->name;
 			print $supplierstatic->getNomUrl(1, 'supplier');
 			print '</td></tr>';
+
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
+			// $object is default vendor invoice
+			$adddateof = array(array('adddateof'=>$object->date));
+			$adddateof[] = array('adddateof'=>$object->date_echeance, 'labeladddateof'=>$langs->transnoentities('DateDue'));
+			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
@@ -714,7 +723,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							print '<td class="right">';
 							print price($sign * $remaintopay);
-							if (!empty($conf->paymentbybanktransfer->enabled)) {
+							if (isModEnabled('paymentbybanktransfer')) {
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;
 								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";

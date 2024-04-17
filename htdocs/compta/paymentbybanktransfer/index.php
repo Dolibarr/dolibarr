@@ -92,7 +92,7 @@ print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToTransfer").'</td>';
-print '<td class="right"><span class="amount">';
+print '<td class="right"><span class="amount nowraponall">';
 print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 

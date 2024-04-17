@@ -208,6 +208,7 @@ class FormMargin
 	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		global $action;
 
 		if (!empty($user->socid)) {
 			return;
@@ -230,13 +231,13 @@ class FormMargin
 				print '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
 				print '<span id="hideMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
 
-				print '<script>$(document).ready(function() {
-        	    	$("span#showMarginInfos").click(function() { console.log("click on showMargininfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=0; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject"); });
-        	    	$("span#hideMarginInfos").click(function() { console.log("click on hideMarginInfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=1; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject"); });
-      	        });</script>';
+				print '<script nonce="'.getNonce().'">$(document).ready(function() {';
+				print '$("span#showMarginInfos").click(function() { console.log("click on showMargininfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=0; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject"); });';
+				print '$("span#hideMarginInfos").click(function() { console.log("click on hideMarginInfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=1; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject"); });';
 				if (!empty($hidemargininfos)) {
-					print '<script>$(document).ready(function() { console.log("hide the margin info"); $("#margintable").hide(); });</script>';
+					print 'console.log("hide the margin info"); $("#margintable").hide();';
 				}
+				print '});</script>';
 			}
 
 			print '<!-- displayMarginInfos() - Show margin table -->' . "\n";

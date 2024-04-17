@@ -65,6 +65,9 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_TYPE', GETPOST("type", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
+		if (!dolibarr_set_const($db, 'LDAP_USERACCOUNTCONTROL', GETPOST("userAccountControl", 'int'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION', GETPOST("LDAP_SERVER_PROTOCOLVERSION", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
@@ -194,6 +197,11 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("Type").'</td><td>';
 print $formldap->selectLdapServerType(getDolGlobalString('LDAP_SERVER_TYPE'), 'type');
 print '</td><td>&nbsp;</td></tr>';
+
+// userAccountControl
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPUserAccountControl").'</td><td>';
+print '<input class="width75" type="text" name="userAccountControl" value="'.getDolGlobalString('LDAP_USERACCOUNTCONTROL', '512').'">';
+print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPUserAccountControlExample").'</span></td></tr>';
 
 // Version
 print '<tr class="oddeven"><td>'.$langs->trans("Version").'</td><td>';

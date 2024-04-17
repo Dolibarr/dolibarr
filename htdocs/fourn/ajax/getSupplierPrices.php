@@ -67,6 +67,10 @@ if ($idprod > 0) {
 	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if (is_array($productSupplierArray)) {
 		foreach ($productSupplierArray as $productSupplier) {
+			if (getDolGlobalInt("DISABLE_BAD_REPUTATION_PRODUCT_PRICE") && $productSupplier->supplier_reputation == "DONOTORDER") {
+				continue;
+			}
+
 			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
 			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
 

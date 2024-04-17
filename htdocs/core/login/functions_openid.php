@@ -20,6 +20,9 @@
  *      \file       htdocs/core/login/functions_openid.php
  *      \ingroup    core
  *      \brief      Authentication functions for OpenId mode
+ *
+ *     This authentication method is based on "OpenID v2" and is deprecated.
+ *     Use instead the method "OpenID Connect".
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
@@ -70,14 +73,15 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			$sql = "SELECT login, entity, datestartvalidity, dateendvalidity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user";
 			$sql .= " WHERE openid = '".$db->escape(GETPOST('openid_identity'))."'";
-			$sql .= " AND entity IN (0,".($_SESSION["dol_entity"] ? ((int) $_SESSION["dol_entity"]) : 1).")";
+			$sql .= " AND entity IN (0,".(!empty($_SESSION["dol_entity"]) ? ((int) $_SESSION["dol_entity"]) : 1).")";
 
 			dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$now = dol_now();
+					// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+					/* $now = dol_now();
 					if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 						// Load translation files required by the page
 						$langs->loadLangs(array('main', 'errors'));
@@ -89,8 +93,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 						$langs->loadLangs(array('main', 'errors'));
 						$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 						return '--bad-login-validity--';
-					}
-
+					} */
 					$login = $obj->login;
 				}
 			}

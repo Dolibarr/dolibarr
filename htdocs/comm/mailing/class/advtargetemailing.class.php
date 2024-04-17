@@ -516,6 +516,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$this->create($user);
 			}
 		}
+		return -1;
 	}
 
 
@@ -574,7 +575,7 @@ class AdvanceTargetingMailing extends CommonObject
 			if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
 				$sqlwhere[] = " (t.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 			}
-			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']) > 0) {
 				$sqlwhere[] = " (t.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 			}
 			if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
@@ -815,7 +816,7 @@ class AdvanceTargetingMailing extends CommonObject
 					if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
 						$sqlwhere[] = " (ts.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 					}
-					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']) > 0) {
 						$sqlwhere[] = " (ts.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 					}
 					if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {

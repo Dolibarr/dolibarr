@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
- *
+ * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,17 @@ class Fiscalyear extends CommonObject
 	 */
 	public $datec;
 
-	public $statut; // 0=open, 1=closed
+	/**
+	 * @var int status 0=open, 1=closed
+	 * @deprecated
+	 * @see $status
+	 */
+	public $statut;
+
+	/**
+	 * @var int status 0=open, 1=closed
+	 */
+	public $status;
 
 	/**
 	 * @var int Entity
@@ -101,6 +111,9 @@ class Fiscalyear extends CommonObject
 
 	public $statuts = array();
 	public $statuts_short = array();
+
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
 
 
 	/**
@@ -220,7 +233,7 @@ class Fiscalyear extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		$sql = "SELECT rowid, label, date_start, date_end, statut";
+		$sql = "SELECT rowid, label, date_start, date_end, statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " WHERE rowid = ".((int) $id);
 
@@ -234,7 +247,8 @@ class Fiscalyear extends CommonObject
 			$this->date_start	= $this->db->jdate($obj->date_start);
 			$this->date_end = $this->db->jdate($obj->date_end);
 			$this->label = $obj->label;
-			$this->statut	    = $obj->statut;
+			$this->statut = $obj->status;
+			$this->status = $obj->status;
 
 			return 1;
 		} else {
@@ -268,6 +282,35 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('compta');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <b><u>'.$langs->trans("FiscalPeriod").'</u></b>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->date_start)) {
+			$datas['date_start'] .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->date_start, 'day');
+		}
+		if (isset($this->date_start)) {
+			$datas['date_end'] .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->date_end, 'day');
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
@@ -286,19 +329,32 @@ class Fiscalyear extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
 		}
-
-		$result = '';
-
-		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
-
-		if (empty($user->rights->accounting->fiscalyear->write)) {
+		$option = '';
+		if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$option = 'nolink';
 		}
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option', $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = 'ToComplete';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
+		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -306,28 +362,14 @@ class Fiscalyear extends CommonObject
 			}
 		}
 
-		if ($short) {
-			return $url;
-		}
-
-		$label = '';
-
-		if ($user->rights->accounting->fiscalyear->write) {
-			$label = '<u>'.$langs->trans("FiscalPeriod").'</u>';
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
-			if (isset($this->statut)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-			}
-		}
-
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->accounting->fiscalyear->write) {
+		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("FiscalYear");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -341,7 +383,7 @@ class Fiscalyear extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -359,7 +401,7 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -404,6 +446,7 @@ class Fiscalyear extends CommonObject
 				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 			}
 		}
+		return "";
 	}
 
 	/**

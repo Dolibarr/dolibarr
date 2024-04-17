@@ -68,9 +68,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function __construct()
 	{
-		$this->nom = "Monkey";
-		$this->name = "Monkey";
-		$this->version = "dolibarr";
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;

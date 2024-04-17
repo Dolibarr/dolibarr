@@ -87,7 +87,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 91;
-		$this->rights[$r][1] = 'Lire les charges';
+		$this->rights[$r][1] = 'Read social contibutions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -95,7 +95,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 92;
-		$this->rights[$r][1] = 'Creer/modifier les charges';
+		$this->rights[$r][1] = 'Create/modify social contributions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -103,7 +103,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 93;
-		$this->rights[$r][1] = 'Supprimer les charges';
+		$this->rights[$r][1] = 'Delete social contributions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -111,7 +111,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 94;
-		$this->rights[$r][1] = 'Exporter les charges';
+		$this->rights[$r][1] = 'Export social contributions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';

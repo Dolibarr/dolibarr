@@ -26,13 +26,14 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class for documents models
  */
 abstract class ModelePDFTicket extends CommonDocGenerator
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -44,8 +45,6 @@ abstract class ModelePDFTicket extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'ticket';
 		$list = array();
 
@@ -60,97 +59,7 @@ abstract class ModelePDFTicket extends CommonDocGenerator
 /**
  *  Classe mere des modeles de numerotation des references de projets
  */
-abstract class ModeleNumRefTicket
+abstract class ModeleNumRefTicket extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *  Return if a module can be used or not
-	 *
-	 *  @return boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi la description par defaut du modele de numerotation
-	 *
-	 *  @return string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("ticket");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *  Return an example of numbering
-	 *
-	 *  @return string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("ticket");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *  @return boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *    @param  Societe 	$objsoc  	Object third party
-	 *    @param  Ticket 	$ticket		Object ticket
-	 *    @return string                Valeur
-	 */
-	public function getNextValue($objsoc, $ticket)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Renvoi version du module numerotation
-	 *
-	 *  @return string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-
-		if ($this->version) {
-			return $this->version;
-		}
-
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

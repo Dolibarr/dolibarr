@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FactureTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -86,7 +88,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		if (!isModEnabled('facture')) {
 			print __METHOD__." module customer invoice must be enabled.\n"; die(1);
 		}
-		if (!empty($conf->ecotaxdeee->enabled)) {
+		if (isModEnabled('ecotaxdeee')) {
 			print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(1);
 		}
 
@@ -147,7 +149,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 		$this->assertLessThan($result, 0);
@@ -172,7 +174,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -228,7 +230,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 
@@ -308,11 +310,11 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
 		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$result=$localobject->fetch($id);
 
 		// Create another invoice and validate it after $localobject
-		$localobject2=new Facture($this->savdb);
+		$localobject2=new Facture($db);
 		$result=$localobject2->initAsSpecimen();
 		$result=$localobject2->create($user);
 		$result=$localobject2->validate($user);

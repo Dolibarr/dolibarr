@@ -69,7 +69,6 @@ WithNoSlashAtTheEnd=Sin la barra "/" al final
 DirectoryRecommendation=<span class="warning"> IMPORTANTE </span>: Debe usar un directorio que esté fuera de las páginas web (por lo tanto, no use un subdirectorio del parámetro anterior).
 AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr '<b> %s </b>' ya existe. Vuelve si quieres crear otro.
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 ChoosedMigrateScript=Elegir script de migración
 DataMigration=Migración de base de datos (datos)
 DatabaseMigration=Migración de base de datos (estructura + algunos datos)

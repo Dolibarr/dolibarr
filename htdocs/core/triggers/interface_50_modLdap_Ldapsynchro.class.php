@@ -89,6 +89,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
+					//For compatibility with Samba 4 AD
+					if ($ldap->serverType == "activedirectory") {
+						$info['userAccountControl'] = $conf->global->LDAP_USERACCOUNTCONTROL;
+					}
+
 					$result = $ldap->add($dn, $info, $user);
 				}
 
@@ -127,7 +132,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
 
 					if ($result > 0 && !empty($object->context['newgroupid'])) {      // We are in context of adding a new group to user
-						$usergroup = new Usergroup($this->db);
+						$usergroup = new UserGroup($this->db);
 
 						$usergroup->fetch($object->context['newgroupid']);
 
@@ -149,7 +154,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 
 					if ($result > 0 && !empty($object->context['oldgroupid'])) {      // We are in context of removing a group from user
-						$usergroup = new Usergroup($this->db);
+						$usergroup = new UserGroup($this->db);
 
 						$usergroup->fetch($object->context['oldgroupid']);
 
@@ -210,6 +215,33 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (intval($conf->global->LDAP_SYNCHRO_ACTIVE) === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && $conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+				$ldap = new Ldap();
+				$result = $ldap->connect_bind();
+				if ($result > 0) {
+					$info = $object->_load_ldap_info();
+					$dn = $object->_load_ldap_dn($info);
+					$search = "(" . $object->_load_ldap_dn($info, 2) . ")";
+					$uAC = $ldap->getAttributeValues($search, "userAccountControl");
+					if ($uAC["count"] == 1) {
+						$userAccountControl = intval($uAC[0]);
+						$enabledBitMask = 0x2;
+						$isEnabled = ($userAccountControl & $enabledBitMask) === 0;
+						if ($isEnabled && intval($object->statut) === 1) {
+							$userAccountControl += 2;
+						} elseif (!$isEnabled && intval($object->statut) === 0) {
+							$userAccountControl -= 2;
+						}
+						$info['userAccountControl'] = $userAccountControl;
+						$resUpdate = $ldap->update($dn, $info, $user, $dn);
+						if ($resUpdate < 0) {
+							$this->error = "ErrorLDAP " . $ldap->error;
+						}
+					}
+				} else {
+					$this->error = "ErrorLDAP " . $ldap->error;
+				}
+			}
 		} elseif ($action == 'USER_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
@@ -227,74 +259,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->error = "ErrorLDAP ".$ldap->error;
 				}
 			}
-			/*} elseif ($action == 'USER_SETINGROUP') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-				$ldap = new Ldap();
-				$result = $ldap->connect_bind();
-
-				if ($result > 0) {
-					// Must edit $object->newgroupid
-					$usergroup = new UserGroup($this->db);
-					if ($object->newgroupid > 0) {
-						$usergroup->fetch($object->newgroupid);
-
-						$oldinfo = $usergroup->_load_ldap_info();
-						$olddn = $usergroup->_load_ldap_dn($oldinfo);
-
-						// Verify if entry exist
-						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
-						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
-						$records = $ldap->search($container, $search);
-						if (count($records) && $records['count'] == 0) {
-							$olddn = '';
-						}
-
-						$info = $usergroup->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-						$dn = $usergroup->_load_ldap_dn($info);
-
-						$result = $ldap->update($dn, $info, $user, $olddn);
-					}
-				}
-
-				if ($result < 0) {
-					$this->error = "ErrorLDAP ".$ldap->error;
-				}
-			}
-			} elseif ($action == 'USER_REMOVEFROMGROUP') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-				$ldap = new Ldap();
-				$result = $ldap->connect_bind();
-
-				if ($result > 0) {
-					// Must edit $object->newgroupid
-					$usergroup = new UserGroup($this->db);
-					if ($object->oldgroupid > 0) {
-						$usergroup->fetch($object->oldgroupid);
-
-						$oldinfo = $usergroup->_load_ldap_info();
-						$olddn = $usergroup->_load_ldap_dn($oldinfo);
-
-						// Verify if entry exist
-						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
-						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
-						$records = $ldap->search($container, $search);
-						if (count($records) && $records['count'] == 0) {
-							$olddn = '';
-						}
-
-						$info = $usergroup->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-						$dn = $usergroup->_load_ldap_dn($info);
-
-						$result = $ldap->update($dn, $info, $user, $olddn);
-					}
-				}
-
-				if ($result < 0) {
-					$this->error = "ErrorLDAP ".$ldap->error;
-				}
-			} */
 		} elseif ($action == 'USERGROUP_CREATE') {
 			// Groupes
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -311,7 +275,16 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
+					// Avoid Ldap error due to empty member
+					if (isset($info['member']) && empty($info['member'])) {
+						unset($info['member']);
+					}
+
 					$result = $ldap->add($dn, $info, $user);
+				}
+
+				if ($ldap->serverType == "activedirectory") {
+					$info['sAMAccountName'] = $object->name;
 				}
 
 				if ($result < 0) {

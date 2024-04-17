@@ -367,7 +367,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all price global variables
 	 *
-	 *  @return	array				Array of price global variable updaters
+	 *  @return	array|int				Array of price global variable updaters
 	 */
 	public function listUpdaters()
 	{
@@ -404,7 +404,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  List all updaters which need to be processed
 	 *
-	 *  @return	array				Array of price global variable updaters
+	 *  @return	array|int				Array of price global variable updaters
 	 */
 	public function listPendingUpdaters()
 	{

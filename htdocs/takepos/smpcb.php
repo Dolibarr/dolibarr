@@ -71,7 +71,7 @@ if (GETPOST('smp-status')) {
 	print '<script type="application/javascript">
                 window.onload = function() {
                     window.close();
-                };
+                }
             </script>';
 
 	print "Transaction status registered, you can close this";

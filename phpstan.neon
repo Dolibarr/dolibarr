@@ -14,6 +14,7 @@ parameters:
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
+		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		- htdocs/test/*
 		analyse:
@@ -48,6 +49,21 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#Result of function fieldList#'
+		- '#Caught class Stripe#'
+		- '#Function llxHeader invoked with#'
+		- '#Function llxHeaderVierge invoked with#'
+		- '#If condition is always true#'
+		- '#always exists and is not falsy#'
+		- '#has no return type specified#'
+		- '#is always true#'
+		- '#is always fal#'
+		- '#always exists and is not nullable#'
+		- '#PHPDoc tag @return has invalid value#'
+		- '#type has no value type specified in iterable type array#'
+		- '#with no value type specified in iterable type array#'
+		- '#Empty array passed to foreach#'
+		- '#in isset\(\) is not nullable#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

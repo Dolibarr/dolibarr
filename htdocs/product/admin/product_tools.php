@@ -161,7 +161,7 @@ if ($action == 'convert') {
 						}
 						$newvat = str_replace('*', '', $newvatrate);
 						$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-						$newnpr = $objectstatic->recuperableonly;
+						$newnpr = $objectstatic->tva_npr;
 						$newdefaultvatcode = $vat_src_code_new;
 						$newlevel = 0;
 						if (!empty($price_base_type) && !$updatelevel1) {
@@ -226,7 +226,7 @@ if ($action == 'convert') {
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat = str_replace('*', '', $newvatrate);
 					$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-					//$newnpr=$objectstatic2->recuperableonly;
+					//$newnpr=$objectstatic2->tva_npr;
 					$newnpr = 0;
 					$newdefaultvatcode = $vat_src_code_new;
 

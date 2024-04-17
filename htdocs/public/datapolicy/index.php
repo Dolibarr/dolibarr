@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/datapolicy/admin/setup.php
+ * \file    htdocs/public/datapolicy/index.php
  * \ingroup datapolicy
  * \brief   Page to show the result of updating it Data policiy preferences after an email campaign using sendMailDataPolicyContact()
  */

@@ -48,7 +48,7 @@ DateDeliveryPlanned=Санаи ба нақша гирифташуда
 RefDeliveryReceipt=Қабули расонидани интиқол
 StatusReceipt=Қабули расонидани мақом
 DateReceived=Санаи расонидани қабул
-ClassifyReception=Қабулро тасниф кунед
+ClassifyReception=Classify Received
 SendShippingByEMail=Интиқолро тавассути почтаи электронӣ фиристед
 SendShippingRef=Пешниҳоди интиқол %s
 ActionsOnShipping=Ҳодисаҳо оид ба интиқол
@@ -74,3 +74,8 @@ SumOfProductWeights=Миқдори вазнҳои маҳсулот
 # warehouse details
 DetailWarehouseNumber= Тафсилоти анбор
 DetailWarehouseFormat= W: %s (Миқдор: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

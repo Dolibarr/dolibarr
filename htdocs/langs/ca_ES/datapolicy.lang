@@ -45,7 +45,7 @@ DATAPOLICYCONTENTMAIL = Contingut del correu electrònic
 DATAPOLICYSUBSITUTION = Pots utilitzar les variables següents al teu correu electrònic (LINKACCEPT permet crear un enllaç registrant l'acord de la persona, LINKREFUSED permet registrar la negativa de la persona):
 DATAPOLICYACCEPT = Missatge després de l'acord
 DATAPOLICYREFUSE = Missatge després del desacord
-SendAgreementText = Podeu enviar un correu electrònic de GDPR a tots els vostres contactes rellevants (que encara no han rebut cap correu electrònic i per als quals no heu registrat res sobre el seu acord de GDPR). Per fer-ho, utilitzeu el botó següent.
+SendAgreementText = Podeu enviar un correu electrònic de GDPR a tots els vostres contactes rellevants (que encara no han rebut cap correu electrònic i per als quals no heu registrat res sobre el seu acord de GDPR). Per a fer-ho, utilitzeu el botó següent.
 SendAgreement = Envieu correus electrònics
 AllAgreementSend = S'han enviat tots els correus electrònics
 TXTLINKDATAPOLICYACCEPT = Text per a l'enllaç "acord"
@@ -71,7 +71,7 @@ DATAPOLICY_POPUP_ANONYME_TEXTE = No podeu eliminar aquest contacte de Dolibarr p
 #
 DATAPOLICY_PORTABILITE = Portabilitat GDPR
 DATAPOLICY_PORTABILITE_TITLE = Exportació de dades personals
-DATAPOLICY_PORTABILITE_CONFIRMATION = Voleu exportar les dades personals d'aquest contacte. Estàs segur ?
+DATAPOLICY_PORTABILITE_CONFIRMATION = Voleu exportar les dades personals d'aquest contacte?
 
 #
 # Notes added during an anonymization
@@ -88,5 +88,5 @@ MailSent = Email ha estat enviat
 
 # ERROR
 ErrorSubjectIsRequired = Error: l'assumpte del correu electrònic és obligatori. Indiqueu-ho a la configuració del mòdul
-=A causa d'un problema tècnic, no hem pogut registrar la vostra elecció. Demanem disculpes per això. Contacta amb nosaltres per enviar-nos la teva elecció.
+=A causa d'un problema tècnic, no hem pogut registrar la vostra elecció. Demanem disculpes per això. Contacta amb nosaltres per a enviar-nos la teva elecció.
 NUMBER_MONTH_BEFORE_DELETION = Nombre de mes abans de la supressió

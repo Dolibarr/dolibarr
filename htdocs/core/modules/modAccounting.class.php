@@ -57,7 +57,7 @@ class modAccounting extends DolibarrModules
 		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/accounting/temp');
+		$this->dirs = array('/accounting/temp', '/accounting/export');
 
 		// Config pages
 		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');
@@ -124,22 +124,10 @@ class modAccounting extends DolibarrModules
 				"",
 				"", 0, 'current', 0
 		);
-		$this->const[9] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
-		$this->const[10] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
 		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
-				"%d%m%Y",
+				"%Y-%m-%d",
 				"", 0, 'current', 0
 		);
 		$this->const[12] = array(
@@ -338,7 +326,7 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
-		// General ledger - Fichier FEC
+		// General ledger - File FEC
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportAccountingEntriesFECFormat';

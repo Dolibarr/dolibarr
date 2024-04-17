@@ -137,7 +137,7 @@ CountryLV=ລັດເວຍ
 CountryLB=ເລບານອນ
 CountryLS=ເລໂຊໂທ
 CountryLR=ໄລບີເລຍ
-CountryLY=ລີເບຍ
+CountryLY=Libya
 CountryLI=ລິກເຕນສະຕາຍ
 CountryLT=ລິທົວເນຍ
 CountryLU=ລັກເຊມເບີກ
@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=ມອນເຕເນໂກຣ
 CountryBL=ເຊນ Barthelemy
 CountryMF=ເຊນມາຕິນ
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=ນາງ.
+CivilityMMEShort=Mrs.
 CivilityMR=ທ້າວ.
+CivilityMRShort=Mr.
 CivilityMLE=ນາງ​ສາວ.
 CivilityMTRE=ອາຈານ
 CivilityDR=ທ່ານໍ

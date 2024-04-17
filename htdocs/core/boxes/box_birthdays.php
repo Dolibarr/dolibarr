@@ -71,18 +71,22 @@ class box_birthdays extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs;
-		$langs->load("boxes");
-
-		$this->max = $max;
+		global $conf, $user, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$userstatic = new User($this->db);
 
+
+		$langs->load("boxes");
+
+		$this->max = $max;
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire) {
+		if ($user->hasRight('user', 'user', 'lire')) {
+			$data = array();
+
 			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, date_format(u.birth, '%d') as daya, 'birth' as typea, u.email, u.statut as status";
@@ -102,67 +106,65 @@ class box_birthdays extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
 
 				$line = 0;
 				while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
+					$data[$line] = $this->db->fetch_object($resql);
 
-					$userstatic->id = $objp->rowid;
-					$userstatic->firstname = $objp->firstname;
-					$userstatic->lastname = $objp->lastname;
-					$userstatic->email = $objp->email;
-					$userstatic->statut = $objp->status;
+					$line++;
+				}
 
-					$dateb = $this->db->jdate($objp->datea);
+				$this->db->free($resql);
+			}
+
+			if (!empty($data)) {
+				$j = 0;
+				while ($j < count($data)) {
+					$userstatic->id = $data[$j]->rowid;
+					$userstatic->firstname = $data[$j]->firstname;
+					$userstatic->lastname = $data[$j]->lastname;
+					$userstatic->email = $data[$j]->email;
+					$userstatic->statut = $data[$j]->status;
+
+					$dateb = $this->db->jdate($data[$j]->datea);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
 					$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';
-					$typea = ($objp->typea == 'birth') ? $picb : $pice;
+					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][0] = array(
 						'td' => '',
 						'text' => $userstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][1] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($dateb, "day", 'tzserver')
 					);
 
-					$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$j][2] = array(
 						'td' => 'class="right nowraponall"',
 						'text' => $age.' '.$langs->trans('DurationYears')
 					);
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+					$this->info_box_contents[$j][3] = array(
+						'td' => 'class="right nowraponall"',
 						'text' => $typea,
 						'asis' => 1
 					);
 
-					/*$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $userstatic->LibStatut($objp->status, 3)
-					);*/
-
-					$line++;
+					$j++;
 				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
-				}
-
-				$this->db->free($result);
-			} else {
+			}
+			if (is_array($data) && count($data) == 0) {
 				$this->info_box_contents[0][0] = array(
-					'td' => '',
-					'maxlength'=>500,
-					'text' => ($this->db->error().' sql='.$sql)
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>',
 				);
 			}
 		} else {

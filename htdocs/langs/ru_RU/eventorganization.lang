@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = В форме создания/доба
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Конференция или выставка
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Управляйте организацией мероприятия
@@ -115,7 +116,7 @@ EvntOrgRegistrationHelpMessage = Здесь вы можете проголосо
 EvntOrgRegistrationConfHelpMessage = Здесь вы можете предложить новую конференцию для анимации во время мероприятия.
 EvntOrgRegistrationBoothHelpMessage = Здесь вы можете подать заявку на получение ваыставки во время мероприятия.
 ListOfSuggestedConferences = Список предлагаемых конференций
-ListOfSuggestedBooths=Suggested booths
+ListOfSuggestedBooths=Предлагаемые стенды
 ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Предложить новую конференцию
 SuggestBooth = Предложить выставку
@@ -123,7 +124,7 @@ ViewAndVote = Просмотр и голосование за предложен
 PublicAttendeeSubscriptionGlobalPage = Публичная ссылка для регистрации на мероприятие
 PublicAttendeeSubscriptionPage = Публичная ссылка только для регистрации на это мероприятие
 MissingOrBadSecureKey = Электронный ключ недействителен или отсутствует
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Эта форма позволяет вам зарегистрироваться в качестве нового участника мероприятия
 EvntOrgDuration = Конференция начинается %s и заканчивается %s.
 ConferenceAttendeeFee = Плата за участие в конференции: '%s', происходящая от %s до %s.
 BoothLocationFee = Место расположения выставки для события : '%s' происходящего с %s до %s
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Ссылка на третью сторону 
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Заявка на выставку
-NewSuggestionOfConference=Заявка на конференцию
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -158,7 +159,7 @@ VoteOk = Ваш голос был принят.
 AlreadyVoted = Вы уже проголосовали за это событие.
 VoteError = Произошла ошибка во время голосования, попробуйте еще раз.
 
-SubscriptionOk=Your registration has been recorded
+SubscriptionOk=Ваша регистрация зарегистрирована
 ConfAttendeeSubscriptionConfirmation = Подтверждение подписки на мероприятие
 Attendee = Участник
 PaymentConferenceAttendee = Оплата участникам конференции
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Было найдено нескольк
 ErrorSeveralCompaniesWithNameContactUs=Было найдено несколько компаний с таким названием, поэтому мы не можем автоматически подтвердить вашу регистрацию. Свяжитесь с нами по адресу %s для ручной проверки
 NoPublicActionsAllowedForThisEvent=В связи с этим мероприятием не проводятся публичные акции.
 MaxNbOfAttendees=Максимальное количество участников
+DateStartEvent=Event start date
+DateEndEvent=Event end date

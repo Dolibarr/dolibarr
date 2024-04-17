@@ -185,7 +185,7 @@ if ($id > 0 || !empty($ref)) {
 			$head = project_prepare_head($projectstatic);
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-			$param = ($mode == 'mine' ? '&mode=mine' : '');
+			$param = (!empty($mode) && $mode == 'mine' ? '&mode=mine' : '');
 
 			// Project card
 
@@ -195,7 +195,7 @@ if ($id > 0 || !empty($ref)) {
 			// Title
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
-			if ($projectstatic->thirdparty->id > 0) {
+			if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
@@ -203,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 			// Define a complementary filter for search of next/prev ref.
 			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -326,9 +326,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -381,7 +381,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="noborder centpercent">';
 
-		if ($action != 'editline' && $user->rights->projet->creer) {
+		if ($action != 'editline' && $user->hasRight('projet', 'creer')) {
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("NatureOfContact").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -532,7 +532,7 @@ if ($id > 0 || !empty($ref)) {
 
 				// Icon update et delete
 				print '<td class="center nowrap">';
-				if ($user->rights->projet->creer) {
+				if ($user->hasRight('projet', 'creer')) {
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');

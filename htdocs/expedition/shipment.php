@@ -104,7 +104,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes') {
 		$object->fetch($id);
 		$result = $object->cloture($user);
-	} elseif ($action == 'setref_client' && $user->rights->commande->creer) {
+	} elseif ($action == 'setref_client' && $user->hasRight('commande', 'creer')) {
 		// Positionne ref commande client
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
 		if ($result < 0) {
@@ -112,7 +112,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdatedelivery' && $user->rights->commande->creer) {
+	if ($action == 'setdatedelivery' && $user->hasRight('commande', 'creer')) {
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		}
 	}
 	/*
-	if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
+	if ($action == 'setdeliveryaddress' && $user->hasRight('commande', 'creer'))
 	{
 		$object = new Commande($db);
 		$object->fetch($id);
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
 	*/
-	if ($action == 'setmode' && $user->rights->commande->creer) {
+	if ($action == 'setmode' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0) {
@@ -139,7 +139,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setavailability' && $user->rights->commande->creer) {
+	if ($action == 'setavailability' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0) {
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdemandreason' && $user->rights->commande->creer) {
+	if ($action == 'setdemandreason' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0) {
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setconditions' && $user->rights->commande->creer) {
+	if ($action == 'setconditions' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 	}
 
 	// shipping method
-	if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+	if ($action == 'setshippingmethod' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 		if ($result < 0) {
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->commande->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 		if ($result < 0) {
@@ -210,7 +210,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_thirdparty' && $user->rights->commande->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
 
@@ -378,10 +378,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 		print '</td>';
-		// Note on several rows
-		//print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-		//print nl2br($object->note_public);
-		//print '</td>';
 		print '</tr>';
 
 		// Delivery delay
@@ -427,7 +423,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('Warehouse');
 			print '</td>';
-			if ($action != 'editwarehouse' && $user->rights->commande->creer) {
+			if ($action != 'editwarehouse' && $user->hasRight('commande', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -517,7 +513,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
-			if ($user->rights->commande->creer) {
+			if ($user->hasRight('commande', 'creer')) {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
@@ -773,7 +769,7 @@ if ($id > 0 || !empty($ref)) {
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
 					} else {
-						print '0 ('.$langs->trans("Service").')';
+						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
 					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
