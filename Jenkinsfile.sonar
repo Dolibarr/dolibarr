@@ -19,6 +19,7 @@ pipeline {
       steps{
           container('trivy'){
             sh "trivy image iyedbnaissa/dolibarr_build:30 --format template --template '@sonarqube.tpl' -o trivy_report.json --scanners vuln"
+            sh "cat trivy_report.json"
           }
       }
    }
