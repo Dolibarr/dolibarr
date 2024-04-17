@@ -18,15 +18,15 @@ pipeline {
    stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy image iyedbnaissa/dolibarr_build:30 -f json -o ${WORKSPACE}/trivy_report.json --scanners vuln"
-            sh "pwd"
-            sh "cat ${WORKSPACE}/trivy_report.json"
+            sh "trivy plugin install github.com/umax/trivy-plugin-sonarqube"
+            sh "trivy image iyedbnaissa/dolibarr_build:30 -f json -o trivy.json --scanners vuln"
+            sh "trivy sonarqube trivy.json > trivy_report.json.json"
           }
       }
    }
     stage('SonarQube Analysis') {
       environment {
-             SONAR_SCANNER_OPTS = "-Xmx4096m -Xmx512m"
+             SONAR_SCANNER_OPTS = " -Xmx512m"
       }
       steps {
         script {
