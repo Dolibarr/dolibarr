@@ -1361,13 +1361,13 @@ if ($num > 0 && $colspan > 0) {
 
 // Clean total values to round them
 if (!empty($totalarray['val']['totaldebit'])) {
-	$totalarray['val']['totaldebit'] = price2num($totalarray['val']['totaldebit'], 'MT');
+	$totalarray['val']['totaldebit'] = (float) price2num($totalarray['val']['totaldebit'], 'MT');
 }
 if (!empty($totalarray['val']['totalcredit'])) {
-	$totalarray['val']['totalcredit'] = price2num($totalarray['val']['totalcredit'], 'MT');
+	$totalarray['val']['totalcredit'] = (float) price2num($totalarray['val']['totalcredit'], 'MT');
 }
 if (!empty($totalarray['val']['totalbalance'])) {
-	$totalarray['val']['totalbalance'] = price2num($totalarray['val']['totaldebit'] - $totalarray['val']['totalcredit'], 'MT');
+	$totalarray['val']['totalbalance'] = (float) price2num($totalarray['val']['totaldebit'] - $totalarray['val']['totalcredit'], 'MT');
 }
 
 // Show total line

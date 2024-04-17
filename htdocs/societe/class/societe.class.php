@@ -1797,11 +1797,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
-	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
-	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
+	 * 	  @param	int		$is_client		Only client third party
+	 *    @param	int		$is_supplier	Only supplier third party
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
 		global $langs;
 		global $conf;
@@ -5113,10 +5113,8 @@ class Societe extends CommonObject
 			return false;
 		}
 
-		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
-		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
-		 */
+		// Sales representationves cannot be twice in the same thirdparties so we look for them and remove the one that are common some to avoid duplicate.
+		// Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
 		$sql .= ' SELECT fk_user ';
@@ -5128,10 +5126,8 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
-		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
-		 * Do not include llx_societe because it will be replaced later.
-		 */
+		// llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
 			'societe_account',
 			'societe_commerciaux',
@@ -5331,11 +5327,14 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    Merge a company with another one, deleting the given company.
+	 *    Merge a company with current one, deleting the given company $soc_origin_id.
 	 *    The company given in parameter will be removed.
+	 *    This is called for example by the societe/card.php file.
+	 *    It calls the method replaceThirdparty() of each object with relation with thirdparties,
+	 *    including hook 'replaceThirdparty' for external modules.
 	 *
 	 *    @param	int     $soc_origin_id		Company to merge the data from
-	 *    @return	int							-1 if error
+	 *    @return	int							-1 if error, >=0 if OK
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
@@ -5433,7 +5432,6 @@ class Societe extends CommonObject
 			if (!$error) {
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
-					'Societe' => '/societe/class/societe.class.php',
 					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
@@ -5441,7 +5439,6 @@ class Societe extends CommonObject
 					'Facture' => '/compta/facture/class/facture.class.php',
 					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-					'Mo' => '/mrp/class/mo.class.php',
 					'Contact' => '/contact/class/contact.class.php',
 					'Contrat' => '/contrat/class/contrat.class.php',
 					'Expedition' => '/expedition/class/expedition.class.php',
@@ -5451,13 +5448,21 @@ class Societe extends CommonObject
 					'Reception' => '/reception/class/reception.class.php',
 					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-					'Delivery' => '/delivery/class/delivery.class.php',
 					'Product' => '/product/class/product.class.php',
+					//'ProductThirparty' => '...', 	// for llx_product_thirdparty
 					'Project' => '/projet/class/project.class.php',
 					'User' => '/user/class/user.class.php',
 					'Account' => '/compta/bank/class/account.class.php',
-					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
+					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php',
+					'Societe' => '/societe/class/societe.class.php',
+					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirparty of Societe.
 				);
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'delivery')) {
+					$objects['Delivery'] = '/delivery/class/delivery.class.php';
+				}
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'mrp_mo')) {
+					$objects['Mo'] = '/mrp/class/mo.class.php';
+				}
 				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'don')) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
