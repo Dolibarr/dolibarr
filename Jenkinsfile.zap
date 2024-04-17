@@ -13,12 +13,7 @@ pipeline {
                     command:
                     - cat
                     tty: true
-                    volumeMounts:
-                    - name: zap-workdir
-                      mountPath: /zap/wrk
-                  volumes:
-                  - name: zap-workdir
-                    emptyDir: {}
+
             '''
         }
     }
