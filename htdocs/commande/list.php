@@ -13,7 +13,7 @@
  * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Noé Cendrier			<infra@altairis.fr>
+ * Copyright (C) 2024		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
