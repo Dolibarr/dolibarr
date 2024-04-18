@@ -49,7 +49,7 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
-$search_categories = GETPOST('search_categories','array');
+$search_categories = GETPOST('search_categories', 'array');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
-        $search_categories = "";
+		$search_categories = "";
 		$search_array_options = array();
 	}
 	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
@@ -313,8 +313,8 @@ if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
 }
 
-if(is_array($search_categories) && count($search_categories) > 0) {
-    $sql .= ' AND ac.rowid in ('.implode(',', $search_categories).')';
+if (is_array($search_categories) && count($search_categories) > 0) {
+	$sql .= ' AND ac.rowid in ('.implode(',', $search_categories).')';
 }
 
 // Add where from hooks
@@ -371,9 +371,9 @@ if ($resql) {
 	if ($search_import_key) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
-    if($search_categories) {
-        $param .= '&search_categories='.urlencode(implode(',',$search_categories));
-    }
+	if ($search_categories) {
+		$param .= '&search_categories='.urlencode(implode(',', $search_categories));
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -515,13 +515,13 @@ if ($resql) {
 	}
 	// Custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-        // sql for custom groups
-        $sql2  = 'SELECT ac.code AS ac_code, ac.rowid AS ac_rowid ';
-        $sql2 .= 'FROM '.$db->prefix().'c_accounting_category AS ac ';
-        $sql2 .= 'WHERE ac.active = 1 AND ac.entity = '.((int) $conf->entity);
-        $resql2=$db->query($sql2);
-        if($resql2 !== false) {
-            print '<td class="liste_titre">';
+		// sql for custom groups
+		$sql2  = 'SELECT ac.code AS ac_code, ac.rowid AS ac_rowid ';
+		$sql2 .= 'FROM '.$db->prefix().'c_accounting_category AS ac ';
+		$sql2 .= 'WHERE ac.active = 1 AND ac.entity = '.((int) $conf->entity);
+		$resql2=$db->query($sql2);
+		print '<td class="liste_titre">';
+		if($resql2 !== false) {
             print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
             while($obj2 = $db->fetch_object($resql2)) {
                 $id     = $obj2->ac_rowid;
@@ -530,7 +530,7 @@ if ($resql) {
                 print '<option '. (($selected2) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
             }
             print '</select>';
-            print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span></td>';
+            print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span>';
             print <<<'EOD'
 <script>
     function formatResult(record, container) {
@@ -557,6 +557,7 @@ if ($resql) {
 </script>
 EOD;
         }
+		print '</td>';
 	}
 
 	// Fields from hook
