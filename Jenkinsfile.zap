@@ -121,9 +121,9 @@ pipeline {
             steps {
                 container('zap') {
                     script {
-                        sh '''
+                        sh """
                             cp /zap/wrk/report.html ${env.WORKSPACE}
-                        '''
+                        """
                     }
                 }
             }
