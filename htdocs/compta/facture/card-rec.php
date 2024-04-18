@@ -1190,6 +1190,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
+		$flag_price_may_change = getDolGlobalString('INVOICE_REC_PRICE_MAY_CHANGE');
 		if (!empty($flag_price_may_change)) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
