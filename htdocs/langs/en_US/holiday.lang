@@ -154,3 +154,4 @@ ConfirmMassIncreaseHoliday=Bulk leave balance increase
 NumberDayAddMass=Number of day to add to the selection
 ConfirmMassIncreaseHolidayQuestion=Are you sure you want to increase holiday of the %s selected record(s)?
 HolidayQtyNotModified=Balance of remaining days for %s has not been changed
+DecreasingHolidayAtTheEndOfMonth=Decreasing holiday at the end of the month concerned

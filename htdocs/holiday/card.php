@@ -611,6 +611,8 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
 
+			$decrease = $conf->global->HOLIDAY_DECREASE_AT_END_Of_MONTH == 0;
+
 			$db->begin();
 
 			$verif = $object->approve($user);
@@ -620,7 +622,7 @@ if (empty($reshook)) {
 			}
 
 			// If no SQL error, we redirect to the request form
-			if (!$error) {
+			if (!$error && $decrease) {
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
@@ -840,6 +842,8 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
 
+			$decrease = $conf->global->HOLIDAY_DECREASE_AT_END_Of_MONTH == 1;
+
 			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
@@ -849,8 +853,21 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				$endDate = $object->date_fin_gmt;
+				$startDate = $object->date_debut_gmt;
+
+				if ($decrease){
+					$date = strtotime('-1 month', dol_now());
+					$endOfPreviousMonth = dol_mktime(0, 0, 0, date('m', $date), date('t', $date), date('Y', $date), 1);
+					if ($object->date_debut_gmt < $endOfPreviousMonth && $object->date_fin_gmt > $endOfPreviousMonth) {
+						$endDate = $endOfPreviousMonth;
+					} elseif ($object->date_debut_gmt > $endOfPreviousMonth) {
+						$endDate = $startDate;
+					}
+				}
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
