@@ -12321,7 +12321,8 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
-	} elseif ($elementType == 'stock') {
+	} elseif ($element_type == 'stock' || $element_type == 'entrepot') {
+		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
@@ -12429,6 +12430,14 @@ function getElementProperties($elementType)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
+	} elseif ($elementType == 'commande_fournisseurdet') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.commande';
+		$element = 'commande_fournisseurdet';
+		$subelement = '';
+		$classname = 'CommandeFournisseurLigne';
+		$table_element = 'commande_fournisseurdet';
 	} elseif ($elementType == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -13941,8 +13950,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body classfortooltip" title="'.dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($histo[$key]['message']), 1, 1, 1)), 1, 1).'">';
-				$out .= dolGetFirstLineOfText($histo[$key]['message'], 3);
+				$out .= '<div class="timeline-body" >';
+				$out .= $histo[$key]['message'];
 				$out .= '</div>';
 			}
 

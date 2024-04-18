@@ -390,6 +390,7 @@ abstract class CommonDocGenerator
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
 			'company_capital' => $object->capital,
+			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
 			'company_idprof1' => $object->idprof1,
 			'company_idprof2' => $object->idprof2,
 			'company_idprof3' => $object->idprof3,
