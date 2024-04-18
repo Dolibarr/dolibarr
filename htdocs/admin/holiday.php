@@ -214,7 +214,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -523,6 +523,22 @@ if ($conf->use_javascript_ajax) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
+
+// Set holiday decrease at the end of month
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("DecreasingHolidayAtTheEndOfMonth")."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_Of_MONTH', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	if (getDolGlobalString('HOLIDAY_DECREASE_AT_END_Of_MONTH')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_Of_MONTH=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_Of_MONTH=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";
