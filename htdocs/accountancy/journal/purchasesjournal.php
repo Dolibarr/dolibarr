@@ -46,12 +46,12 @@ $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy",
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
+$date_startmonth = GETPOSTSESSIONINT('date_startmonth');
+$date_startday = GETPOSTSESSIONINT('date_startday');
+$date_startyear = GETPOSTSESSIONINT('date_startyear');
+$date_endmonth = GETPOSTSESSIONINT('date_endmonth');
+$date_endday = GETPOSTSESSIONINT('date_endday');
+$date_endyear = GETPOSTSESSIONINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
