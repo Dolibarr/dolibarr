@@ -523,8 +523,10 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 		margin-left: 5px;
 		margin-right: 5px;
 	}
+	.boxallwidth picture img {
+	    width: 100%;
+	}
 }
-
 
 </style>'."\n";
 
