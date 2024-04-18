@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2016      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2016      	Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 			}
 
 			// Valuepair
-			$sanit_features[$explode[0]] = $explode[1];
+			$sanit_features[(int) $explode[0]] = (int) $explode[1];
 
 			$tmp = new ProductCombination2ValuePair($db);
 			$tmp->fk_prod_attr = (int) $explode[0];
@@ -185,7 +185,6 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 		// sanit_feature is an array with 1 (and only 1) value per attribute.
 		// For example:  Color->blue, Size->Small, Option->2
-		//var_dump($sanit_features);
 		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
 			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
 			if ($result > 0) {
