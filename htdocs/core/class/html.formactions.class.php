@@ -211,6 +211,7 @@ class FormActions
 				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
 			}
 
+			$url = '';
 			$morehtmlright = '';
 			if (isModEnabled('agenda') && $usercanaddaction) {
 				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
