@@ -1690,7 +1690,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 
