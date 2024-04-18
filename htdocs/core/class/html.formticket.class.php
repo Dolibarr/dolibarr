@@ -160,12 +160,30 @@ class FormTicket
 	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '')
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '', Ticket $object = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
+
+		if($mode == 'create'){
+			$type_code = GETPOSTISSET('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : '';
+			$category_code = GETPOSTISSET('category_code') ? GETPOST('category_code') : '';
+			$severity_code = GETPOSTISSET('severity_code') ? GETPOST('severity_code') : '';
+			$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
+			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
+			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : '';
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : '';
+		}else {
+			$type_code = GETPOSTISSET('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $object->type_code;
+			$category_code = GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code;
+			$severity_code = GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code;
+			$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email_from;
+			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
+			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : $object->fk_project;
+		}
 
 		$form = new Form($this->db);
 		$formcompany = new FormCompany($this->db);
@@ -190,6 +208,7 @@ class FormTicket
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
+		if(!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -201,13 +220,17 @@ class FormTicket
 		if ($this->withref) {
 			// Ref
 			$defaultref = $ticketstat->getDefaultRef();
+
+			if($mode == 'edit'){
+				$defaultref = $object->ref;
+			}
+
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
-			print '<input type="text" name="ref" value="'.dol_escape_htmltag(GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref).'">';
+			print '<input type="text" name="ref" value="'.dol_escape_htmltag($defaultref).'">';
 			print '</td></tr>';
 		}
 
 		// TITLE
-		$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
 		if ($this->withemail) {
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
 			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
@@ -334,7 +357,7 @@ class FormTicket
 
 		// Type of Ticket
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 1, 0, 0, 'minwidth200');
+		$this->selectTypesTickets($type_code, 'type_code', '', 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Group => Category
@@ -343,13 +366,12 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$selected = (GETPOST('category_code') ? GETPOST('category_code') : $this->category_code);
-		$this->selectGroupTickets($selected, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
+		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity => Priority
 		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
+		$this->selectSeveritiesTickets($severity_code, 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		if (!empty($conf->knowledgemanagement->enabled)) {
@@ -424,7 +446,11 @@ class FormTicket
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				} else {
-					$subject = GETPOST('subject', 'alpha');
+					if($mode == 'create'){
+						$subject = GETPOST('subject', 'alpha');
+					}else {
+						$subject = $object->subject;
+					}
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
 			}
@@ -432,7 +458,6 @@ class FormTicket
 		}
 
 		// MESSAGE
-		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
 
 		// If public form, display more information
@@ -629,7 +654,7 @@ class FormTicket
 			}
 
 			// Notify thirdparty at creation
-			if (empty($this->ispublic)) {
+			if (empty($this->ispublic) && !empty($withnotifytiersatcreate) && $action == 'create') {
 				print '<tr><td><label for="notify_tiers_at_create">'.$langs->trans("TicketNotifyTiersAtCreation").'</label></td><td>';
 				print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
 				print '</td></tr>';
@@ -649,7 +674,7 @@ class FormTicket
 			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-				print img_picto('', 'project').$formproject->select_projects(-1, GETPOSTINT('projectid'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print img_picto('', 'project').$formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				print '</td></tr>';
 			}
 		}
@@ -679,7 +704,13 @@ class FormTicket
 
 		print '<br><br>';
 
-		print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+		if($mode == 'create'){
+			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+		}else{
+			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "EditTicket"), ($this->withcancel ? "Cancel" : ""));
+
+		}
+
 
 		/*
 		print '<div class="center">';

@@ -222,7 +222,8 @@ if (empty($reshook)) {
 
 			$getRef = GETPOST("ref", 'alphanohtml');
 			$test = new Ticket($db);
-			if ($test->fetch('', $getRef) > 0) {
+
+			if ($test->fetch('', $getRef) > 0 && (($action == 'update' && $object->ref != $ref) || $action == 'create')) {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
@@ -258,7 +259,11 @@ if (empty($reshook)) {
 
 			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
-			$id = $object->create($user);
+			if($action == 'add'){
+				$id = $object->create($user);
+			}else{
+				$id = $object->update($user);
+			}
 			if ($id <= 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -358,6 +363,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
+			$object->ref = GETPOST('ref', 'alpha');
 			$object->subject = GETPOST('subject', 'alpha');
 			$object->type_code = GETPOST('type_code', 'alpha');
 			$object->category_code = GETPOST('category_code', 'alpha');
@@ -766,57 +772,32 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
 
-	print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
+	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 1, 'ticket');
 
-	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
-	print '<div class="fichecenter2">';
-	print '<table class="border" width="100%">';
+	$formticket->trackid = $object->track_id;		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+	$formticket->withfromsocid = $object->socid;
+	$formticket->withfromcontactid = $object->contact_id;
+	$formticket->withtitletopic = 1;
+//	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
+	$formticket->withnotifytiersatcreate = 0;
+	$formticket->withusercreate = 0;
+	$formticket->withref = 1;
+	$formticket->fk_user_create = $user->id;
+	$formticket->withfile = 0;
+	$formticket->action = 'update';
+	$formticket->withextrafields = 1;
+	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
 
-	// Type
-	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-	$formticket->selectTypesTickets((GETPOSTISSET('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
-	print '</td></tr>';
+	$formticket->withcancel = 1;
 
-	// Severity
-	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-	$formticket->selectSeveritiesTickets((GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
-	print '</td></tr>';
+	$formticket->showForm(1, 'edit', 0, null, $action, $object);
 
-	// Group
-	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
-	$formticket->selectGroupTickets((GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
-	print '</td></tr>';
-
-	// Subject
-	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-	print '<input class="text minwidth200" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
-	print '</td></tr>';
-
-	// Other attributes
-	$parameters = array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook)) {
-	print $object->showOptionals($extrafields, 'edit');
-	}
-
-	print '</table>';
-	print '</div>';
-
-	print dol_get_fiche_end();
-
-	print $form->buttonsSaveCancel();
-
-	print '</form>'; */
 } elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
 	if ($res > 0) {
 		// or for unauthorized internals users
@@ -1492,6 +1473,11 @@ if ($action == 'create' || $action == 'presend') {
 				// Re-open ticket
 				if (!$user->socid && (isset($object->status) && ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED)) && !$user->socid) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&track_id='.$object->track_id, '');
+				}
+
+				// Edit ticket
+				if($permissiontoedit){
+					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoedit);
 				}
 
 				// Delete ticket
