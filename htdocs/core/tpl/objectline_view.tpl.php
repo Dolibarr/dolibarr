@@ -137,7 +137,11 @@ if (($line->info_bits & 2) == 2) {
 	$format = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+		} else {
+			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
