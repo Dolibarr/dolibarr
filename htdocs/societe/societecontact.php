@@ -21,9 +21,10 @@
  */
 
 /**
- *     \file       htdocs/societe/societecontact.php
- *     \ingroup    societe
- *     \brief      Tab to manage differently contact. Used when unstable feature MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
+ *     \file       	htdocs/societe/societecontact.php
+ *     \ingroup    	societe
+ *     \brief      	Tab to manage differently contact.
+ *     				Used when the unstable option MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
  */
 
 
@@ -139,7 +140,7 @@ $userstatic = new User($db);
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$head = societe_prepare_head($object);
-		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'contactext', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
