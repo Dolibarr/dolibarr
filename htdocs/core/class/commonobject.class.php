@@ -8985,7 +8985,7 @@ abstract class CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
-	 * Column name fk_soc MUST be used to identify thirdparties
+	 * Column name fk_soc MUST exist.
 	 *
 	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
@@ -9001,7 +9001,7 @@ abstract class CommonObject
 
 			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
-					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
+					return true; // FIXME Not enough. If there is A-B on the kept thirdparty and B-C on the old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;
