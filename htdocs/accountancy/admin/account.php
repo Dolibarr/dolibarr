@@ -97,7 +97,6 @@ $arrayfields = array(
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	unset($arrayfields['categories']);
 	unset($arrayfields['aa.reconcilable']);
 }
 
