@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +198,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }
@@ -335,7 +336,17 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('Tickets');
+
+$moretitle = '';
+if ($socid > 0) {
+	$socstatic->fetch($socid);
+	$moretitle = $langs->trans("ThirdParty") . ' - ';
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
+		$moretitle = $socstatic->name . ' - ';
+	}
+}
+
+$title = $moretitle . $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 

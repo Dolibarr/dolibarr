@@ -1765,7 +1765,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('expensereport');
+		$langs->load('trips');
 
 		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';

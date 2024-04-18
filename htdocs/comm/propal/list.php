@@ -73,6 +73,7 @@ $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'proposallist';
+$optioncss  = GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'alpha');
 
 // Search Fields
@@ -102,8 +103,8 @@ $search_product_category = GETPOSTINT('search_product_category');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -128,12 +129,12 @@ $search_date_delivery_endmonth = GETPOSTINT('search_date_delivery_endmonth');
 $search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
-$search_availability = GETPOSTINT('search_availability');
-$search_categ_cus = GETPOSTINT("search_categ_cus");
-$search_fk_cond_reglement = GETPOSTINT("search_fk_cond_reglement");
-$search_fk_shipping_method = GETPOSTINT("search_fk_shipping_method");
-$search_fk_input_reason = GETPOSTINT("search_fk_input_reason");
-$search_fk_mode_reglement = GETPOSTINT("search_fk_mode_reglement");
+$search_availability = GETPOST('search_availability', 'intcomma');
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'intcomma');
+$search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'intcomma');
+$search_fk_input_reason = GETPOST("search_fk_input_reason", 'intcomma');
+$search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'intcomma');
 $search_date_signature_startday = GETPOSTINT('search_date_signature_startday');
 $search_date_signature_startmonth = GETPOSTINT('search_date_signature_startmonth');
 $search_date_signature_startyear = GETPOSTINT('search_date_signature_startyear');
@@ -143,8 +144,6 @@ $search_date_signature_endyear = GETPOSTINT('search_date_signature_endyear');
 $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startmonth, $search_date_signature_startday, $search_date_signature_startyear);
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
 $search_status = GETPOST('search_status', 'alpha');
-
-$optioncss = GETPOST('optioncss', 'alpha');
 
 // Pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

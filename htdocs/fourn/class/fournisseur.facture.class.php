@@ -78,8 +78,8 @@ class FactureFournisseur extends CommonInvoice
 	public $picto = 'supplier_invoice';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -200,15 +200,15 @@ class FactureFournisseur extends CommonInvoice
 	public $localtax1;
 	/** @var ?string */
 	public $localtax2;
-	/** @var float|int */
+	/** @var float */
 	public $total_ht;
-	/** @var float|int */
+	/** @var float */
 	public $total_tva;
-	/** @var float|int */
+	/** @var float */
 	public $total_localtax1;
-	/** @var float|int */
+	/** @var float */
 	public $total_localtax2;
-	/** @var float|int */
+	/** @var float */
 	public $total_ttc;
 
 	/**
@@ -1201,7 +1201,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->statut = $this->status;
 		}
 		if (isset($this->author)) {  // TODO: user_creation_id?
-			$this->author = trim((string) $this->author);
+			$this->author = (int) $this->author;
 		}
 		if (isset($this->fk_user_valid)) {
 			$this->fk_user_valid = trim($this->fk_user_valid);
@@ -2247,8 +2247,8 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->tva_tx = $txtva;
 			$supplierinvoiceline->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$supplierinvoiceline->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$supplierinvoiceline->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
-			$supplierinvoiceline->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+			$supplierinvoiceline->localtax1_type = empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
+			$supplierinvoiceline->localtax2_type = empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$supplierinvoiceline->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$supplierinvoiceline->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
@@ -2455,8 +2455,8 @@ class FactureFournisseur extends CommonInvoice
 		$line->tva_tx = $vatrate;
 		$line->localtax1_tx = $txlocaltax1;
 		$line->localtax2_tx = $txlocaltax2;
-		$line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
-		$line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+		$line->localtax1_type = empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
+		$line->localtax2_type = empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 		$line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht);
 		$line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva);

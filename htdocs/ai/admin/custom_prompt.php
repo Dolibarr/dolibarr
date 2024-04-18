@@ -18,7 +18,7 @@
  */
 
 /**
- * \file    ai/admin/custom_prompt.php
+ * \file    htdocs/ai/admin/custom_prompt.php
  * \ingroup ai
  * \brief   Ai other custom page.
  */

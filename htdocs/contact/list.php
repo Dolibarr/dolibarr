@@ -13,6 +13,7 @@
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,20 +102,20 @@ if (isModEnabled('socialnetworks')) {
 	}
 }
 $search_priv = GETPOST("search_priv", 'alpha');
-$search_sale = GETPOSTINT('search_sale');
-$search_categ = GETPOSTINT("search_categ");
-$search_categ_thirdparty = GETPOSTINT("search_categ_thirdparty");
-$search_categ_supplier = GETPOSTINT("search_categ_supplier");
+$search_sale = GETPOST('search_sale', 'intcomma');
+$search_categ = GETPOST("search_categ", 'intcomma');
+$search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'intcomma');
+$search_categ_supplier = GETPOST("search_categ_supplier", 'intcomma');
 $search_status = GETPOST("search_status", "intcomma");
 $search_type = GETPOST('search_type', 'alpha');
 $search_address = GETPOST('search_address', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_import_key = GETPOST("search_import_key", 'alpha');
-$search_country = GETPOST("search_country", 'intcomma');
+$search_country = GETPOST("search_country", 'aZ09');
 $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", 'array');
-$search_stcomm = GETPOSTINT('search_stcomm');
+$search_stcomm = GETPOST('search_stcomm', 'intcomma');
 $search_birthday_start = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_startmonth'), GETPOSTINT('search_birthday_startday'), GETPOSTINT('search_birthday_startyear'));
 $search_birthday_end = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_endmonth'), GETPOSTINT('search_birthday_endday'), GETPOSTINT('search_birthday_endyear'));
 
@@ -347,7 +348,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -943,6 +944,8 @@ if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
+
+$massactionbutton = '';
 if ($contextpage != 'poslist') {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 }

@@ -710,7 +710,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
  * Last modified proposals
  */
 
-if (isModEnabled('proposal')) {
+if (isModEnabled('propal')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
@@ -923,7 +923,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		startSimpleTable($langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)), "societe/list.php", "type=f", 1);
+		startSimpleTable($langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)), "societe/list.php", "type=f", 1, -1, 'company');
 
 		if ($num) {
 			$i = 0;

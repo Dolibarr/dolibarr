@@ -443,7 +443,7 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
-	$renderer = $debugbar->getRenderer();
+	$renderer = $debugbar->getJavascriptRenderer();
 	if (!getDolGlobalString('MAIN_HTML_HEADER')) {
 		$conf->global->MAIN_HTML_HEADER = '';
 	}
@@ -876,9 +876,13 @@ if (!defined('NOLOGIN')) {
 			// $authmode is an array for example: array('0'=>'dolibarr', '1'=>'googleoauth');
 			$oauthmodetotestarray = array('google');
 			foreach ($oauthmodetotestarray as $oauthmodetotest) {
-				if (in_array($oauthmodetotest.'oauth', $authmode) && GETPOST('beforeoauthloginredirect') != $oauthmodetotest) {
-					// If we did not click on the link to use OAuth authentication, we do not try it.
-					dol_syslog("User did not click on link for OAuth so we disable check using googleoauth");
+				if (in_array($oauthmodetotest.'oauth', $authmode)) {	// This is an authmode that is currently qualified. Do we have to remove it ?
+					// If we click on the link to use OAuth authentication or if we goes after callback return, we do nothing
+					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn')) {
+						// TODO Use: if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
+						continue;
+					}
+					dol_syslog("User did not click on link for OAuth or is not on the OAuth return, so we disable check using ".$oauthmodetotest);
 					foreach ($authmode as $tmpkey => $tmpval) {
 						if ($tmpval == $oauthmodetotest.'oauth') {
 							unset($authmode[$tmpkey]);
@@ -888,6 +892,7 @@ if (!defined('NOLOGIN')) {
 				}
 			}
 
+			// Check login for all qualified modes in array $authmode.
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
 				$login = '';
@@ -2576,8 +2581,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
-	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a valignmiddle" data-toggle="dropdown">
+	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2623,10 +2628,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	} else {
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
-	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" alt="'.$langs->trans("MyUserCard").'">
-	    	'.$userImage.'
-	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-	    		</a>
+	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="valignmiddle" alt="'.$langs->trans("MyUserCard").'">
+	    	'.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	    	</a>
 		</div>';
 	}
 
@@ -2649,8 +2653,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		';
 
 
-		if ($conf->theme != 'md') {
-			$btnUser .= '
+		//if ($conf->theme != 'md') {
+		$btnUser .= '
 	            jQuery("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-login-dropdown .dropdown-toggle");
 					event.preventDefault();
@@ -2666,7 +2670,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					console.log("Click on #topmenuloginmoreinfo-btn");
 	                jQuery("#topmenuloginmoreinfo").slideToggle();
 	            });';
-		}
+		//}
 
 		$btnUser .= '
         });
@@ -2731,7 +2735,7 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-				var ostype = "'.$conf->browser->os.'";
+				var ostype = \''.dol_escape_js($conf->browser->os).'\';
 				if (ostype === "macintosh") {
 					if ( event.which === 65 && event.ctrlKey ) {
 						console.log(\'control + a : trigger open quick add dropdown\');
@@ -3003,7 +3007,7 @@ function top_menu_bookmark()
 
 	            // Key map shortcut
 	            jQuery(document).keydown(function(event) {
-					var ostype = "'.$conf->browser->os.'";
+					var ostype = \''.dol_escape_js($conf->browser->os).'\';
 					if (ostype === "macintosh") {
 						if ( event.which === 66 && event.ctrlKey ) {
 							console.log("Click on control + b : trigger open bookmark dropdown");

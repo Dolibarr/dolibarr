@@ -60,6 +60,9 @@ $config['plugins'] = [
 // Add any issue types (such as 'PhanUndeclaredMethod')
 // here to inhibit them from being reported
 $config['suppress_issue_types'] = [
+		// Dolibarr uses a lot of internal deprecated stuff, not reporting
+		'PhanDeprecatedProperty',
+
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs

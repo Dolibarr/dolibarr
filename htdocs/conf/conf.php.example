@@ -304,6 +304,15 @@ $dolibarr_main_prod='1';
 //
 $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump';
 
+// dolibarr_main_disabled_modules
+// ==================================
+// To restrict the activation and use of certain potentially security-sensitive modules.
+// Default value: array('dav')
+// Examples:
+// $dolibarr_main_disabled_modules = array('dav');
+//
+// $dolibarr_main_disabled_modules = array('dav');
+
 // dolibarr_main_restrict_ip
 // =========================
 // To restrict access to backoffice to some ip addresses only. Use a comma to separate values.

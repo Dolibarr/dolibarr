@@ -368,7 +368,12 @@ class Products extends DolibarrApi
 				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->product->array_options[$index] = $this->_checkValForAPI($field, $val, $this->product);
+				}
+				continue;
+			}
 			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 
@@ -668,7 +673,7 @@ class Products extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0 && $socid != $thirdparty_id) {
-			throw new RestException(401, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->fetch($id);
@@ -780,7 +785,7 @@ class Products extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0 && $socid != $fourn_id) {
-			throw new RestException(401, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
@@ -872,7 +877,7 @@ class Products extends DolibarrApi
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0) {
 			if ($supplier != $socid || empty($supplier)) {
-				throw new RestException(401, 'As an external user, you can request only for your supplier id = '.$socid);
+				throw new RestException(403, 'As an external user, you can request only for your supplier id = '.$socid);
 			}
 		}
 

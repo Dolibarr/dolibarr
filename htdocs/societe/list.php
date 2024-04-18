@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,8 +104,8 @@ $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
 $searchCategorySupplierOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
-	$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
+	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
@@ -117,10 +118,10 @@ $searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
 if (!empty($search_categ_sup) && empty($searchCategorySupplierList)) {
 	$searchCategorySupplierList = array($search_categ_sup);
 }
-$search_country = GETPOST("search_country", 'intcomma');
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
-$search_price_level = GETPOSTINT('search_price_level');
-$search_staff = GETPOSTINT("search_staff");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_price_level = GETPOST('search_price_level', 'int');
+$search_staff = GETPOST("search_staff", 'int');
 $search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
@@ -145,7 +146,6 @@ $search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
 $search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
 $search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
-
 
 $type = GETPOST('type', 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
@@ -377,7 +377,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -2126,7 +2126,7 @@ while ($i < $imaxinloop) {
 		}
 		// Import key
 		if (!empty($arrayfields['s.import_key']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->import_key).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->import_key).'">';
 			print dol_escape_htmltag($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
