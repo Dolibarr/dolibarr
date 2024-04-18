@@ -1020,7 +1020,7 @@ if ($search_user > 0) {
 	$sql .= " FROM llx_element_contact as ec";
 	$sql .= " INNER JOIN  llx_c_type_contact as tc";
 	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal'";
-	$sql .= " WHERE ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user.")";
+	$sql .= " WHERE ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user.")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
