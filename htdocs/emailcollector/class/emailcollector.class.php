@@ -2063,7 +2063,7 @@ class EmailCollector extends CommonObject
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
 							if (!is_object($objectemail)) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."'";
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($reg[1])."%'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
@@ -2135,6 +2135,25 @@ class EmailCollector extends CommonObject
 									$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
 								} else {
 									$projectid = $objectemail->id;
+								}
+
+								if (get_class($objectemail) == 'Ticket') {
+									$changeonticket_references = false;
+									$trackid = $objectemail->track_id;
+									if (empty($objectemail->origin_references)) {
+										$objectemail->origin_references = $headers['References'];
+										$changeonticket_references = true;
+									} else {
+										foreach ($arrayofreferences as $key => $referencetmp) {
+											if (!str_contains($objectemail->origin_references, $referencetmp)) {
+												$objectemail->origin_references.= " ".$referencetmp;
+												$changeonticket_references = true;
+											}
+										}
+									}
+									if ($changeonticket_references) {
+										$objectemail->update($user);
+									}
 								}
 							}
 						}
@@ -2274,7 +2293,6 @@ class EmailCollector extends CommonObject
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
-						//TODO: Reply-to
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
@@ -3043,7 +3061,7 @@ class EmailCollector extends CommonObject
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
 
-							$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $tickettocreate->fetch(0, '', $trackid, $msgid);
 							if ($alreadycreated == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
