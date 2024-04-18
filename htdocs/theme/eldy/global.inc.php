@@ -26,7 +26,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
-$leftmenuwidth = 210;
+$leftmenuwidth = 240;
 
 '
 @phan-var-force string $badgeDanger
@@ -5236,6 +5236,7 @@ div#card-errors {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */

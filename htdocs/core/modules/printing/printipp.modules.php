@@ -82,6 +82,11 @@ class printing_printipp extends PrintingDriver
 	public $password;
 
 	/**
+	 * @var int Does CUPS connection use SSL ?
+	 */
+	public $ssl;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -95,8 +100,6 @@ class printing_printipp extends PrintingDriver
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
-
-	const LANGFILE = 'printipp';
 
 
 	/**
@@ -113,10 +116,12 @@ class printing_printipp extends PrintingDriver
 		$this->port = getDolGlobalString('PRINTIPP_PORT');
 		$this->user = getDolGlobalString('PRINTIPP_USER');
 		$this->password = getDolGlobalString('PRINTIPP_PASSWORD');
+		$this->ssl = getDolGlobalInt('PRINTIPP_SSL');
 		$this->conf[] = array('varname' => 'PRINTIPP_HOST', 'required' => 1, 'example' => 'localhost', 'type' => 'text');
 		$this->conf[] = array('varname' => 'PRINTIPP_PORT', 'required' => 1, 'example' => '631', 'type' => 'text');
 		$this->conf[] = array('varname' => 'PRINTIPP_USER', 'required' => 0, 'example' => '', 'type' => 'text', 'moreattributes' => 'autocomplete="off"');
 		$this->conf[] = array('varname' => 'PRINTIPP_PASSWORD', 'required' => 0, 'example' => '', 'type' => 'password', 'moreattributes' => 'autocomplete="off"');
+		$this->conf[] = array('varname' => 'PRINTIPP_SSL', 'required' => 0, 'example' => '', 'type' => 'checkbox', 'moreattributes' => 'autocomplete="off"');
 		$this->conf[] = array('enabled' => 1, 'type' => 'submit');
 	}
 
@@ -140,6 +145,7 @@ class printing_printipp extends PrintingDriver
 		$ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
 		$ipp->setHost($this->host);
 		$ipp->setPort($this->port);
+		$ipp->ssl = $this->ssl;
 		$ipp->setJobName($file, true);
 		$ipp->setUserName($this->userid);
 		// Set default number of copy

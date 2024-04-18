@@ -314,6 +314,8 @@ print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
+$leftmenuwidth = 242;
+
 ?>
 /* <style type="text/css" > */
 
@@ -2279,7 +2281,7 @@ td.showDragHandle {
 	width: 100%;
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
-	padding-<?php print $left; ?>: 229px;
+	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
 	padding-top: 16px;
 <?php } ?>
 }
@@ -2374,7 +2376,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 
 
 .side-nav-vert {
-	margin-<?php echo $left; ?>: 228px;
+	margin-<?php echo $left; ?>: <?php echo $leftmenuwidth + 6; ?>px;
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
@@ -3255,7 +3257,7 @@ div.login_block {
 	text-align: center;
 	vertical-align: middle;
 	background: var(--colorbackvmenu1);
-	width: 228px;
+	width: <?php echo $leftmenuwidth + 6; ?>px;
 	height: 68px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
@@ -3423,7 +3425,7 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 0px;
-	width: 222px;
+	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
@@ -3434,7 +3436,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenusearchselectcombo {
-	width: 202px;
+	width: <?php echo $leftmenuwidth - 20; ?>px;
 }
 
 .menu_contenu {

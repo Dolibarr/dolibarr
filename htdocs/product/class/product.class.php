@@ -1329,6 +1329,7 @@ class Product extends CommonObject
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
 						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+						$this->db->rollback();
 						return -2;
 					}
 				}
