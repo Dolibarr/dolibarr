@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 // Load translation files required by the page
 $langs->load("admin");
 
+$lastexternalrss = 0;
+$action = GETPOST('action', 'aZ09');
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$lastexternalrss = 0;
-$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -94,7 +94,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		} else {
 			// Ajoute boite box_external_rss dans definition des boites
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOSTINT("norss").' ('.GETPOSTINT($external_rss_title)).")')";
+			$sql .= " VALUES ('box_external_rss.php', '".$db->escape(GETPOSTINT("norss")." (".GETPOST($external_rss_title)).")')";
 			if (!$db->query($sql)) {
 				dol_print_error($db);
 				$error++;
@@ -102,7 +102,7 @@ if ($action == 'add' || GETPOST("modify")) {
 			//print $sql;exit;
 		}
 
-		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOSTINT($external_rss_title), 'chaine', 0, '', $conf->entity);
+		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
 		if ($result1) {
 			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss");
 			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
