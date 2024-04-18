@@ -117,7 +117,7 @@ pipeline {
                 container('zap') {
                     script {
                         sh '''
-                            cp /zap/wrk/report.xml ${WORKSPACE}/report.html
+                            cp /zap/wrk/report.html ${WORKSPACE}/report.html
                         '''
                     }
                 }
