@@ -12321,7 +12321,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
-	} elseif ($element_type == 'stock' || $element_type == 'entrepot') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
 		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
