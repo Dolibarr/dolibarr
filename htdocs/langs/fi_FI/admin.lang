@@ -268,7 +268,7 @@ OtherResources=Muut resurssit
 ExternalResources=Ulkoiset resurssit
 SocialNetworks=Sosiaaliset verkostot
 SocialNetworkId=Sosiaalisen verkoston tunnus
-ForDocumentationSeeWiki=Katso käyttäjien tai kehittäjien dokumentaatio (asiakirja, UKK...)<br>Dolibarr Wikissä:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%sb0e40dccz65878 <span class='notranslate'></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 ForAnswersSeeForum=Jos sinulla on muita kysymyksiä tai apua, voit käyttää Dolibarrin keskusteluryhmää:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Tässä on joitain resursseja, joilla saat apua ja tukea Dolibarrin kanssa.
 HelpCenterDesc2=Osa näistä resursseista on saatavana vain  <b> englanniksi </b>.
@@ -361,14 +361,14 @@ LastActivationIP=Viimeinen aktiivinen IP
 LastActivationVersion=Uusin aktivointiversio
 UpdateServerOffline=Palvelimen offline-päivitys
 WithCounter=Laskurin hallinta
-GenericMaskCodes=Voit syöttää minkä tahansa numeromaskin. Tässä maskissa voidaan käyttää seuraavia tunnisteita:<br><b>{000000}b09a4b739f17f8 /span> vastaa numeroa, joka kasvaa jokaisen <span class='notranslate'>%s kohdalla. Syötä niin monta nollaa kuin laskurin haluttu pituus. Laskuria täydennetään nollalla vasemmalta, jotta siinä olisi yhtä monta nollaa kuin maskissa. <br><b>{000000+000}</b>, mutta sama kuin edellinen +-merkin oikealla puolella olevaa numeroa vastaava siirtymä otetaan käyttöön ensimmäisestä <span class='notranslate'>%s alkaen. <br><b>{000000@x}</b> mutta sama kuin edellinen laskuri nollataan, kun kuukausi x saavutetaan (x välillä 1 ja 12 tai 0, jos haluat käyttää määrityksessäsi määritettyjä tilivuoden alkukuukausia, tai 99 nollataksesi nolla joka kuukausi). Jos tätä vaihtoehtoa käytetään ja x on 2 tai suurempi, myös järjestys {yy}{mm} tai {yyyy}{mm} vaaditaan. <br><b>{dd}</b> päivä (01–31). span class='notranslate'><br></span><b>{mm}</b> kuukausi (01–12).<br><b>{yy}</b>, 3f658383fz08 {yyyy}</b> tai <b>{y}</b> vuosi yli 2, 4 tai 1 numeroa. <br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
 GenericMaskCodes2=<b>{cccc}</b> asiakaskoodi n merkillä<br><b>{cccc000}b09a4b739f17> asiakaskoodi n merkkiä seuraa asiakkaalle omistettu laskuri. Tämä asiakkaalle tarkoitettu laskuri nollataan samaan aikaan kuin yleinen laskuri.<br><b>{tttt} </b> Kolmannen osapuolen tyypin koodi n merkillä (katso valikko Etusivu - Asennus - Sanakirja - Kolmannen tyypin tyypit juhlat). Jos lisäät tämän tunnisteen, laskuri on erilainen kullekin kolmannen osapuolen tyypille.<br>
 GenericMaskCodes3=Kaikki muut merkit ja maski pysyy ennallaan. <br> Välilyönnit eivät ole sallittuja. <br>
 GenericMaskCodes3EAN=Kaikki muut maskin merkit pysyvät ennallaan (paitsi * tai ? EAN13:n 13. kohdassa).<br>Välilyönnit eivät ole sallittuja.<br> span>EAN13:ssa viimeisen }:n jälkeen 13. sijainnissa tulee olla * tai ? . Se korvataan lasketulla avaimella.<br>
-GenericMaskCodes4a=<u>Esimerkki kolmannen osapuolen TheCompanyn 99. %s:sta päiväys 31.1.2023:<span class='notranslate'></u><br>
-GenericMaskCodes4b=<u>Esimerkki kolmannesta osapuolesta luotu 31.1.2023:</u><span class='notranslate'><br> >
+GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2023-01-31:</u><br>
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Esimerkki tuotteesta luotu 31.1.2023:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> antaa b0aee833650</837f span>ABC2301-000099<span class='notranslate'></b><br>b0aee83365837+0{0@1</0> }-ZZZ/{dd}/XXX<span class='notranslate'></b> antaa <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> antaa <b>IN2301-0099-A</b>, jos <span> class='notranslate'>Yritys</span> on "Responsable Inscripto", jonka tyypin koodi on "A_RI"
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Paluu mukautettavan numeron mukaan määritelty mask.
 ServerAvailableOnIPOrPort=Server on saatavilla <b>osoitteessa %s satama %s</b>
 ServerNotAvailableOnIPOrPort=Palvelin ei ole käytettävissä <b>osoitteessa %s satama %s</b>
@@ -457,19 +457,19 @@ ExtrafieldCheckBox=Valintaruudut
 ExtrafieldCheckBoxFromList=Valintaruudut taulusta
 ExtrafieldLink=Linkki objektiin
 ComputedFormula=Laskettu kenttä
-ComputedFormulaDesc=Voit syöttää tähän kaavan käyttämällä objektin muita ominaisuuksia tai mitä tahansa PHP-koodausta saadaksesi dynaamisen lasketun arvon. Voit käyttää mitä tahansa PHP-yhteensopivia kaavoja, mukaan lukien "?" ehtooperaattori, ja seuraava globaali objekti: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield </strong>.<br><strong>VAROITUS<span class='notranslate'5c070 </span>: Jos tarvitset lataamattoman objektin ominaisuuksia, hae itse objekti kaavaan kuten toisessa esimerkissä.<br>Käyttämällä laskettua Kenttä tarkoittaa, että et voi syöttää itsellesi arvoa käyttöliittymästä. Jos myös syntaksivirhe, kaava ei välttämättä palauta mitään.<br><br>Esimerkki kaavasta:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * ( int) substr($mysoc->zip, 1, 2)<br><br>Esimerkki objektin lataamisesta uudelleen<br>(($reloadedobj = uusi Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey']*- $reloadedobj >kapitali / 5: '-1')<br><br>Muu esimerkki kaavasta, jolla pakotetaan objektin <span class=' kuormitus notranslate'>ja</span> sen pääobjekti:<br>(($reloadedobj = uusi tehtävä($db)) && ($reloadedobj->fetchNoCompute($idobjectoffield-> ) > 0) && ($secondloadedobj = uusi projekti($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'emoprojektia ei löydy'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Tallenna laskettu kenttä
 ComputedpersistentDesc=Lasketut ylimääräiset kentät tallennetaan tietokantaan, mutta arvo lasketaan uudelleen vasta, kun tämän kentän kohdetta muutetaan. Jos laskettu kenttä riippuu muista kohteista tai globaaleista tiedoista, tämä arvo saattaa olla väärä!!
-ExtrafieldParamHelpPassword=Tämän Kenttä jättäminen tyhjäksi tarkoittaa, että tämä arvo tallennetaan ILMAN salausta (Kenttä on vain piilotettu tähdillä näytöllä).<br><br>Syötä arvo dolcrypt koodataksesi arvon palautuvalla salausalgoritmilla. Tyhjät tiedot voidaan edelleen tuntea ja muokattuna, mutta ne on salattu muotoon tietokanta.<br> ><span class='notranslate'><br>Syötä "auto" (tai "md5", "sha256", "password_hash", ...) käyttääksesi oletus span> salasanan salausalgoritmi (tai md5, sha256, password_hash...) tallentaaksesi ei-palauttavan hajautetun salasanan kohteeseen tietokanta (alkuperäistä arvoa ei voi palauttaa)
-ExtrafieldParamHelpselect=Arvoluettelon on oltava rivejä, joissa on muotoavain, arvo (jossa avain ei voi olla '0')<br><br> esimerkiksi : <br>1,value1<br>2,value2b0342fccfda19bzvalue0code3, span class='notranslate'><br></span>...<br><br>Jotta luettelo riippuu muista täydentävä attribuuttiluettelo:<br>1,value1|options_<i>parent_list_codeb0ae64758bac3:3 parent_key<span class='notranslate'><br>2,value2|options_<i>parent_list_codeb0ae64758avain_parent_</span>z33 class='notranslate'><br></span><br>Jotta luettelo riippuu toisesta luettelosta:<br>1, value1|<i>parent_list_code</i>:parent_key<br>2,value</2| class='notranslate'><i></span>parent_list_code</i>:parent_key
+ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored WITHOUT encryption (field is just hidden with stars on screen).<br><br>Enter value 'dolcrypt' to encode value with a reversible encryption algorithm. Clear data can still be known and edited but is encrypted into database.<br><br>Enter 'auto' (or 'md5', 'sha256', 'password_hash', ...) to use the default password encryption algorithm (or md5, sha256, password_hash...) to save the non reversible hashed password into database (no way to retrieve original value)
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Arvoluettelon on oltava rivejä, joissa on muoto: avain,arvo (missä avain ei voi olla 0) <br> <br> esimerkiksi: <br> 1,arvo1 <br> 2,arvo2 <br> 3,arvo3 <br> ...
 ExtrafieldParamHelpradio=Arvoluettelon on oltava rivejä, joissa on muoto: avain,arvo (missä avain ei voi olla 0) <br> <br> esimerkiksi: <br> 1,arvo1 <br> 2,arvo2 <br> 3,arvo3 <br> ...
-ExtrafieldParamHelpsellist=Arvoluettelo tulee taulukosta<br>Syntaksi: table_name:label_field:id_field::filtersql<br>Esimerkki: c_idtypent:libelle ::filtersql<br><br> – id_field on välttämättä ensisijainen int-avain<br> - filtersql on SQL-ehto. Vain aktiivisen arvon näyttäminen voi olla yksinkertainen testi (esim. active=1).<span class='notranslate'><br>Voit myös käyttää $ID$ suodattimessa, joka on nykyisen objektin nykyinen tunnus<br>Jos haluat käyttää SELECT-toimintoa suodattimessa, käytä avainsanaa $SEL$ ohittaaksesi injektioestosuojauksen.<br>jos haluat suodattaa lisäkenttiä käytä syntaksia extra.fieldcode=... (jossa Kenttä koodi on lisäkentän koodi)<br><br>Jotta luettelo riippuu toisesta täydentävästä attribuuttiluettelosta:<br>c_typent:libelle:id:options_b049271e8181fcz /span>parent_list_code<span class='notranslate'></i>|parent_column:filter <br>b0342fccfda19bz järjestyksessä 0 sisältää luettelon toisesta luettelosta riippuen:<span class='notranslate'><br>c_typent:libelle:id:<i>parent_list_codeb0ae64708 |parent_column:filter
-ExtrafieldParamHelpchkbxlst=Arvoluettelo tulee taulukosta<br>Syntaksi: table_name:label_field:id_field::filtersql<br>Esimerkki: c_idtypent:libelle ::filtersql<br><br>-suodatin voi olla yksinkertainen testi (esim. active=1), joka näyttää vain aktiivisen arvon<br>Voit myös käyttää suodattimessa arvoa $ID$, joka on nykyisen objektin nykyinen tunnus<br>Voit tehdä SELECT-toiminnon suodattimessa käyttämällä $SEL$<. span class='notranslate'><br></span>, jos haluat suodattaa lisäkenttiä, käytä syntaksia extra.fieldcode=... (jossa Kenttä koodi on lisäkentän koodi) <br><br>Jotta luettelo riippuu toisesta täydentävästä attribuuttiluettelosta:<br> span>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <span class='notranslate2bccf03datranslate2bccf09 /span><br>Jotta luettelo riippuu toisesta luettelosta:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametrien on oltava ObjectName:Classpath<br>Syntaksi: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Pidä tyhjänä yksinkertainen erotin<br>Aseta tämän arvoksi 1, jos haluat tiivistävän erottimen (avaa oletus uutta istuntoa varten, tila on säilytetään jokaista käyttäjäistuntoa varten)<br>Aseta tämän arvoksi 2 tiivistyvälle erottimelle (kutistaa oletus uutta istuntoa varten, tila on säilytetään jokaista käyttäjäistuntoa varten)
 LibraryToBuildPDF=Käytettävä kirjasto PDF:n luomiseen
-LocalTaxDesc=Joissakin maissa voi olla kaksi tai kolme Verot jokaiselle laskuriville. Jos näin on, valitse tyyppi toiselle ja kolmannelle vero ja span> sen kurssi. Mahdolliset tyypit ovat:<span class='notranslate'><br>1: paikallinen vero sovelletaan tuotteet <span> class='notranslate'>ja</span> palvelut ilman alv:ta (localtax lasketaan summasta ilman vero)<br> paikalliset vero koskevat tuotteet ja palvelut, mukaan lukien alv (localtax) määrä + pääasiallinen vero)<br>3: paikallinen vero voimassa tuotteet ilman alv:a (localtax lasketaan summasta ilman vero)<br>4: local vero sovelletaan tuotteet mukaan lukien alv (localtax lasketaan summasta + pääalv)b0342fccfda19 /span>5: paikallinen <span class='notranslate'>vero koskee palveluita ilman ALV:tä (localtax lasketaan summasta ilman vero)<br>6: paikallinen vero koskee palveluja, mukaan lukien alv (localtax lasketaan summasta + <span class='notranslate'>vero)
+LocalTaxDesc=Some countries may apply two or three taxes on each invoice line. If this is the case, choose the type for the second and third tax and its rate. Possible type are:<br>1: local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2: local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3: local tax apply on products without vat (localtax is calculated on amount without tax)<br>4: local tax apply on products including vat (localtax is calculated on amount + main vat)<br>5: local tax apply on services without vat (localtax is calculated on amount without tax)<br>6: local tax apply on services including vat (localtax is calculated on amount + tax)
 SMS=Tekstiviesti
 LinkToTestClickToDial=Anna puhelinnumero, johon haluat soittaa, jotta saat linkin testata käyttäjän ClickToDial-URL-osoitetta <strong> %s </strong>
 RefreshPhoneLink=Päivitä linkki
@@ -483,7 +483,7 @@ ExternalModule=Ulkoinen moduuli
 InstalledInto=Asennettu hakemistoon %s
 BarcodeInitForThirdparties=viivakoodi-init kolmansille osapuolille
 BarcodeInitForProductsOrServices=Massa viivakoodi init tai reset tuotteet tai palveluille
-CurrentlyNWithoutBarCode=Tällä hetkellä sinulla on <strong>%s</strong> tietue sivustolla <strong>%s</strong> b0ecb2fz87f class='notranslate'>viivakoodi määritetty.
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=Alkuarvo %s tyhjälle viivakoodille
 EraseAllCurrentBarCode=Poista kaikki nykyiset viivakoodi arvot
 ConfirmEraseAllCurrentBarCode=Haluatko varmasti poistaa kaikki nykyiset viivakoodiarvot?
@@ -502,7 +502,7 @@ ModuleCompanyCodePanicum=Palauta tyhjä kirjanpitokoodi.
 ModuleCompanyCodeDigitaria=Palauttaa yhdistelmäkoodin Kirjanpito kolmannen osapuolen nimen mukaan. Koodi koostuu etuliitteestä, joka voidaan määrittää ensimmäiseen kohtaan, jota seuraa kolmannen osapuolen koodissa määritetty merkkien määrä.
 ModuleCompanyCodeCustomerDigitaria=%s, jota seuraa lyhennetty asiakkaan nimi merkkien määrällä: %s asiakkaalle b0d4305fc47d9ez  koodi.
 ModuleCompanyCodeSupplierDigitaria=%s ja sen jälkeen katkaistu nimi toimittaja merkkien lukumäärän mukaan: %s koodille toimittaja Kirjanpito.
-Use3StepsApproval=Tekijä: oletus, Hankinta Tilaukset on luotava ja hyväksynyt 2 erilaista käyttäjät (yksi vaihe/käyttäjä luo ja yksi vaihe/käyttäjä hyväksyä >. Huomaa, että jos käyttäjällä on molemmat käyttöoikeudet luo ja hyväksyä, yksi askel/käyttäjä riittää). Voit pyytää tällä vaihtoehdolla ottamaan käyttöön kolmannen vaiheen/käyttäjän hyväksynnän, jos summa on suurempi kuin varattu arvo (joten tarvitaan kolme vaihetta: 1=vahvistus, 2=ensimmäinen hyväksyntä ja</) span> 3=sekunti hyväksyntä, jos määrä riittää).<span class='notranslate'><br>Aseta tämä tyhjäksi, jos yksi hyväksyntä (2 askelta) riittää, aseta arvo erittäin pieneksi (0,1), jos toinen hyväksyntä (3 vaihetta) vaaditaan aina.
+Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Käytä kolmivaiheista hyväksyntää, kun summa (ilman vero) on suurempi kuin...
 WarningPHPMail=VAROITUS: Asetukset sähköpostien lähettämiseen sovelluksesta käyttävät oletus yleistä asetusta. Usein on parempi määrittää lähtevät sähköpostit käyttämään sähköpostipalveluntarjoajasi sähköpostipalvelinta oletus-asetuksen sijaan useista syistä:
 WarningPHPMailA=- Sähköpostipalveluntarjoajan palvelimen käyttö lisää sähköpostisi luotettavuutta, joten se lisää toimitettavuutta ilman, että se merkitään roskapostiksi
@@ -518,8 +518,8 @@ DependsOn=Tämä moduuli tarvitsee moduulit
 RequiredBy=Moduuli (t) vaativat tämän moduulin
 TheKeyIsTheNameOfHtmlField=Tämä on HTML-koodin Kenttä nimi. Tekninen tietämys vaaditaan HTML-sivun sisällön lukemiseen saadakseen Kenttä avaimenimen.
 PageUrlForDefaultValues=Sinun on syötettävä sivun URL-osoitteen suhteellinen polku. Jos lisäät parametreja URL-osoitteeseen, se on tehokas, jos kaikilla selattavan URL-osoitteen parametreilla on tässä määritetty arvo.
-PageUrlForDefaultValuesCreate=<br>Esimerkki:<br>Lomake luo uudelle kolmannelle osapuolelle, se on <strong>%s</strong>. <br>Muokattuun hakemistoon asennettujen ulkoisten moduulien URL-osoitteisiin älä sisällytä "custom/", joten käytä polkua kuten <strong>mymodule/mypage.php</strong> ja not custom/mymodule/mypage.php.<br>, jonka haluat <span>classIf ='notranslate'>oletus arvo vain, jos URL-osoitteessa on jokin parametri, voit käyttää <strong>%s</strong>
-PageUrlForDefaultValuesList=<br>Esimerkki:<br>Sivulla, jolla on luettelo kolmansista osapuolista, se on <strong> >%s</strong>.<br>Muokattuun hakemistoon asennettujen ulkoisten moduulien URL-osoitteet , älä sisällytä "custom/", joten käytä polkua kuten <strong>mymodule/mypagelist.php</strong> ja not custom/mymodule/mypagelist.php.<br>Jos haluat oletus</url>-arvon vain jos sisältää jonkin parametrin, voit käyttää <span class='notranslate'><strong>%s</strong>
+PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third party, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/", so use path like <strong>mymodule/mypage.php</strong> and not custom/mymodule/mypage.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
+PageUrlForDefaultValuesList=<br>Example:<br>For the page that lists third parties, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/" so use a path like <strong>mymodule/mypagelist.php</strong> and not custom/mymodule/mypagelist.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Huomaa myös, että oletus-arvojen korvaaminen lomakkeiden luonnissa toimii vain sivuilla, jotka on suunniteltu oikein (siis parametrilla action=luo tai presend ...)
 EnableDefaultValues=Ota käyttöön oletusarvojen mukauttaminen
 EnableOverwriteTranslation=Salli käännösten mukauttaminen
@@ -531,7 +531,7 @@ ProductBatchDocumentTemplates=Asiakirjamallit tuoteerien asiakirjan luomiseksi
 FreeLegalTextOnExpenseReports=Ilmainen lakiteksti kuluraporteissa
 WatermarkOnDraftExpenseReports=Vesileima kuluraporttiluonnoksissa
 ProjectIsRequiredOnExpenseReports=Projekti on pakollinen kuluraportti
-PrefillExpenseReportDatesWithCurrentMonth=Esitäytä uusi kuluraportti alku ja loppu päivämäärät. class='notranslate'>ja</span> kuluvan kuukauden päivämäärät
+PrefillExpenseReportDatesWithCurrentMonth=Pre-fill start and end dates of new expense report with start and end dates of the current month
 ForceExpenseReportsLineAmountsIncludingTaxesOnly=Pakota kuluraportti summien syöttäminen aina summana Verot
 AttachMainDocByDefault=Aseta arvoksi <b>Kyllä</b>, jos haluat liittää oletus pääasiakirja sähköpostiin (jos mahdollista)
 FilesAttachedToEmail=Liitä tiedosto
@@ -742,8 +742,8 @@ Permission34=Poista tuotteita / palveluita
 Permission36=Vienti tuotteet / palvelut
 Permission38=Vie tuotteita
 Permission39=Ohita vähimmäishinta
-Permission41=Lue Projektit ja tehtäviä (jaettu Projektit <span' class='notranslate >ja</span> Projektit jonka yhteyshenkilö olen).
-Permission42=luo/modify Projektit (jaettu Projektit <span' class='notranslate' class=' >ja</span> Projektit jonka yhteyshenkilö olen). Voi myös määrittää käyttäjiä Projektit ja tehtäviin
+Permission41=Read projects and tasks (shared projects and projects of which I am a contact).
+Permission42=Create/modify projects (shared projects and projects of which I am a contact). Can also assign users to projects and tasks
 Permission44=Poista Projektit (jaettu Projektit ja <span' class=' Projektit</span> jonka yhteyshenkilö olen)
 Permission45=Vie Projektit
 Permission61=Lue interventioiden
@@ -792,7 +792,7 @@ Permission125=Poista kolmansien osapuolten liittyy käyttäjän
 Permission126=Vienti kolmansiin osapuoliin
 Permission130=luo/muokkaa kolmansien osapuolten maksu tietoja
 Permission141=Lue kaikki Projektit ja tehtävät (sekä yksityiset Projektit en ole yhteyshenkilö)
-Permission142=luo/muokkaa kaikkia Projektit ja < (sekä yksityisiä tehtäviä span class='notranslate'>Projektit</span>, jonka yhteyshenkilö en ole)
+Permission142=Create/modify all projects and tasks (as well as the private projects for which I am not a contact)
 Permission144=Poista kaikki Projektit ja tehtävät (sekä yksityiset Projektit ei yhteystieto)
 Permission145=Voi syöttää minulle tai hierarkialleni kulutetun ajan määrättyihin tehtäviin (aikataulukko)
 Permission146=Lue tarjoajien
@@ -854,7 +854,7 @@ Permission254=Poista tai poistaa muiden käyttäjien
 Permission255=Muokkaa käyttäjien salasanoja
 Permission256=Poista käyttäjiä
 Permission262=Laajenna pääsy kaikille kolmansille osapuolille ja heidän objekteihinsa (ei vain kolmansille osapuolille, joiden myyntiedustaja on).<br>Ei voimassa ulkopuolisille käyttäjille (rajoitettu aina itseensä ehdotuksiin, tilauksiin, laskuihin, sopimuksiin jne.).<br>Ei voimassa: Projektit (vain projektin käyttöoikeuksia koskevat säännöt, näkyvyyden ja tehtävällä on merkitystä).
-Permission263=Laajenna pääsy kaikille kolmansille osapuolille ILMAN heidän objektejaan (ei vain kolmansille osapuolille, joiden myyntiedustaja on käyttäjä).<br>Ei tehokas ulkoisille käyttäjille (rajoitettu aina itseensä ehdotuksiin, tilaukset, laskut, sopimukset jne.).<br>Ei voimassa Projektit (vain projektin käyttöoikeuksia, näkyvyyttä koskevat säännöt <span class) ='notranslate'>ja</span> tehtävällä on merkitystä).
+Permission263=Extend access to all third parties WITHOUT their objects (not only third parties for which the user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).<br>Not effective for projects (only rules on project permissions, visibility and assignment matters).
 Permission271=Lue CA
 Permission272=Lue laskut
 Permission273=Laskutuksen
@@ -1118,10 +1118,10 @@ BackToModuleList=Takaisin moduuliluetteloon
 BackToDictionaryList=Takaisin sanakirjaluetteloon
 TypeOfRevenueStamp=Veroleiman tyyppi
 VATManagement=Myyntiverojen hallinta
-VATIsUsedDesc=Tekijä oletus luodessaan potentiaalisia asiakkaita, laskuja, tilauksia jne. Myyntiprosentti vero noudattaa aktiivista vakiosääntöä:<br>Jos myyjä ei ole Myynnin vero alainen, Myynti vero päättyy oletuksena. säännön.<br>Jos (myyjän maa = ostajan maa), <span class='notranslate' Myynti vero >oletus</span> vastaa tuotteen vero myyntiä myyjän maassa. Säännön loppu.<br>Jos myyjän ja ostaja ovat molemmat Euroopan yhteisön alueella, b0ae6e9e5925a0z /span> tavarat liittyvät kuljetuksiin <span class='notranslate'>tuotteet (kuljetus, merenkulku, lentoyhtiö), oletus ALV on 0. Tämä sääntö on riippuu myyjän maasta – ota yhteyttä kirjanpitäjään. Ostajan tulee maksaa arvonlisävero maansa tullitoimipaikalle ja, ei myyjälle. Säännön loppu.<br>Jos myyjän ja ostaja ovat molemmat Euroopan yhteisön alueella, b0ae6e9e5925a0z /span> ostaja ei ole <span class='notranslate'>Yritys (jolla on rekisteröity yhteisön sisäinen ALV-numero), jolloin ALV:n oletusarvo on myyjän maan ALV-kanta. Säännön loppu.<br>Jos myyjän ja ostaja ovat molemmat Euroopan yhteisön alueella, b0ae6e9e5925a0z /span> ostaja on <span class='notranslate'>Yritys (jolla on rekisteröity yhteisön sisäinen ALV-numero), silloin ALV on 0 oletus . Säännön loppu.<br>Muissa tapauksissa ehdotettu oletus on Myynti vero >=0. Säännön loppu.
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
 VATIsNotUsedDesc=Oletusarvoisesti ehdotettu myyntivero on 0, jota voidaan käyttää esimerkiksi yhdistyksiin, yksityishenkilöihin tai pieniin yrityksiin.
 VATIsUsedExampleFR=Ranskassa se tarkoittaa yrityksiä tai organisaatioita, joilla on todellinen verojärjestelmä (yksinkertaistettu todellinen tai normaali real). Järjestelmä, jossa arvonlisävero ilmoitetaan.
-VATIsNotUsedExampleFR=Ranskassa se tarkoittaa yhdistyksiä, jotka eivät ole myynti- vero ilmoitettuja, tai yrityksiä, organisaatioita tai vapaita ammatteja, jotka ovat valinneet mikroyritysten verotusjärjestelmän (Sales vero  franchising-sopimuksessa) ja maksoi franchising-sopimuksen Myynti vero ilman myyntiä b0e7a3c6c047b2c6c0 /span> -ilmoitus. Tämä vaihtoehto näyttää laskuissa viittauksen "Ei sovellettavissa myynti <span class='notranslate'>vero - art-293B of CGI".
+VATIsNotUsedExampleFR=In France, it means associations that are non Sales tax declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (Sales tax in franchise) and paid a franchise Sales tax without any Sales tax declaration.  This choice will display the reference "Non applicable Sales tax - art-293B of CGI" on invoices.
 VATType=ALV-tyyppi
 ##### Local Taxes #####
 TypeOfSaleTaxes=Myyntiveron tyyppi
@@ -1146,7 +1146,7 @@ LocalTax2IsUsedExampleES=Espanjassa, freelancer ja itsenäisten ammatinharjoitta
 LocalTax2IsNotUsedExampleES=Espanjassa ne ovat yrityksiä, joihin ei sovelleta vero moduulijärjestelmää.
 RevenueStampDesc="vero leima" tai "tuloleima" on kiinteä vero, joka on sinulle laskua kohden (se ei riipu laskun määrästä ). Se voi olla myös prosenttiosuus vero, mutta toisen tai kolmannen tyypin vero käyttäminen on parempi prosenttiosuudelle Verot vero -leimoina ei anna mitään raportteja. Vain harvat maat käyttävät tämän tyyppistä vero-tyyppiä.
 UseRevenueStamp=Käytä veroleimaa
-UseRevenueStampExample=Merkin vero leiman arvon määrittää oletus sanakirjojen asetuksiin (b0ecb2ec87f49fez span> - <span class='notranslate'>%s - %s)
+UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Raportit paikallisista veroista
 CalcLocaltax1=Myynnit - Ostot
 CalcLocaltax1Desc=Paikallisten verojen raportit on laskettu paikallisverojen myyntien ja ostojen erotuksena
@@ -1154,7 +1154,7 @@ CalcLocaltax2=Ostot
 CalcLocaltax2Desc=Veroraportit on laskettu hankintojen veroista
 CalcLocaltax3=Myynti
 CalcLocaltax3Desc=Veroraportit on laskettu myyntien veroista
-NoLocalTaxXForThisCountry=Asetuksen Verot mukaan (katso %s - %s - <span> class='notranslate'>%s</span>), maasi ei tarvitse käyttää tällaista vero
+NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), your country does not need to use such type of tax
 LabelUsedByDefault=Label käyttää oletusarvoisesti, jos ei ole käännös löytyy koodi
 LabelOnDocuments=Label asiakirjoihin
 LabelOrTranslationKey=Tunniste tai käännösavain
@@ -1197,6 +1197,7 @@ Skin=Ihon teema
 DefaultSkin=Oletus ihon teema
 MaxSizeList=Max pituus luettelo
 DefaultMaxSizeList=Oletus luettelon maksimipituuteen
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=oletus lyhyiden luetteloiden enimmäispituus (eli asiakaskortissa)
 MessageOfDay=Message of the day
 MessageLogin=Kirjoita viesti
@@ -1249,7 +1250,7 @@ SetupDescription2=Seuraavat kaksi osiota ovat pakollisia (kaksi ensimmäistä me
 SetupDescription3=<a href="%s">%s -> %sb0cz0e47d <br><br>Perusparametrit, joita käytetään oletus-käyttäytymisen mukauttamiseen sovelluksestasi (esim. maakohtaiset ominaisuudet).
 SetupDescription4=<a href="%s">%s -> %sb0cz0e47d <br><br>Tämä ohjelmisto sisältää useita moduuleja/sovelluksia. Tarpeisiisi liittyvät moduulit on otettava käyttöön ja määritettynä. valikko merkintä tulee näkyviin, kun nämä moduulit aktivoidaan.
 SetupDescription5=Muut asetukset valikko hallitsevat valinnaisia parametreja.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'>b0e40d8c6587 /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Perusparametrit, joilla muokataan sovelluksesi oletus toimintaa (esim. maakohtaisia ominaisuuksia varten).
 SetupDescription4b=Tämä ohjelmisto on sarja monia moduuleja/sovelluksia. Sinun tarpeisiisi liittyvät moduulit on aktivoitava. valikko merkintä tulee näkyviin, kun nämä moduulit aktivoidaan.
 AuditedSecurityEvents=Turvatapahtumat, jotka auditoidaan
@@ -1281,7 +1282,7 @@ AvailableModules=Saatavilla olevat sovellukset/moduulit
 ToActivateModule=Moduulien aktivointi asetuksista (Koti-Asetukset-Moduulit)
 SessionTimeOut=Istunnon aikakatkaisu
 SessionExplanation=Tämä numero takaa, että istunto ei koskaan vanhene ennen tätä viivettä, jos istunnon puhdistuksen suorittaa sisäinen PHP-istunnonpuhdistaja (ja ei muuta). Sisäinen PHP-istunnonpuhdistaja ei takaa, että istunto vanhenee tämän viiveen jälkeen. Se vanhenee tämän viiveen jälkeen ja, kun istunnonpuhdistaja suoritetaan, joten jokainen <b>%s/%s</b> pääsy, mutta vain muiden istuntojen aikana (jos arvo on 0, se tarkoittaa, että istunnon tyhjentää vain ulkoinen prosessi).<br>Huomaa: joissakin palvelimissa, joissa on ulkoinen istunnon puhdistusmekanismi (cron under debian, ubuntu...), istunnot voidaan tuhota ulkoisen asennuksen määrittämän ajanjakson jälkeen riippumatta tähän syötetystä arvosta.
-SessionsPurgedByExternalSystem=Tämän palvelimen istunnot näyttävät puhdistettavan ulkoisella mekanismilla (cron alle debian, ubuntu...), luultavasti joka <b>%s</b> sekuntia (= parametrin arvo <b>session.gc_maxlifetime<span class='notranslate'>b09a4b739f) , joten arvon muuttamisella ei ole vaikutusta. Sinun on pyydettävä palvelimen järjestelmänvalvojaa muuttamaan istunnon viivettä.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Saatavilla laukaisimet
 TriggersDesc=Triggerit ovat tiedostoja, jotka muokkaavat Dolibarrin työnkulkua, kun ne on kopioitu hakemistoon <b>htdocs/core/triggers</b>. He toteuttavat uusia toimintoja, jotka aktivoituvat Dolibarr-tapahtumissa (uuden Yritys luominen, laskun vahvistus, ...).
 TriggerDisabledByName=Käynnistäjät tässä tiedosto on poistettu, <b>joita-NORUN</b> suffix heidän nimissään.
@@ -1307,20 +1308,20 @@ NoEventFoundWithCriteria=Tälle hakukriteerille ei löytynyt suojaustapahtumaa.
 SeeLocalSendMailSetup=Katso paikallisen sendmail setup
 BackupDesc=Dolibarr-asennuksen <b>täydellinen</b> varmuuskopiointi vaatii kaksi vaihetta.
 BackupDesc2=Varmuuskopioi "documents" -hakemiston sisältö (<b>%s</b>) sisältää kaikki ladatut ja luodut tiedostot. Tämä sisältää myös kaikki vaiheessa 1 luodut vedostiedostot. Tämä toiminto voi kestää useita minuutteja.
-BackupDesc3=Varmuuskopioi tietokanta (<b><span class=) rakenne ja 'notranslate'>%s</span></b>) vedokseen tiedosto. Tätä varten voit käyttää seuraavaa avustajaa.
+BackupDesc3=Backup the structure and contents of your database (<b>%s</b>) into a dump file. For this, you can use the following assistant.
 BackupDescX=Arkistoitu hakemisto tulisi tallentaa turvalliseen paikkaan.
 BackupDescY=Luotu dump tiedosto on säilytettävä turvallisessa paikassa.
 BackupPHPWarning=Varmuuskopiointia ei voida taata tällä menetelmällä. Edellinen suositeltava.
 RestoreDesc=Dolibarr-varmuuskopion palauttaminen edellyttää kahta vaihetta.
 RestoreDesc2=Palauta "documents" -hakemiston varmuuskopio tiedosto (esimerkiksi zip tiedosto) uuteen Dolibarr-asennukseen tai näihin nykyisiin asiakirjoihin hakemisto (<b>%s</b>).
-RestoreDesc3=Palauta tietokanta-rakenteen ja tiedot varmuuskopiovedosta tiedosto < span class='notranslate'>tietokanta</span> uudesta Dolibarr-asennuksesta tai tämän nykyisen asennuksen tietokanta (<b> >%s</b>). Varoitus, kun palautus on valmis, sinun on käytettävä kirjautumistunnusta/salasanaa, joka oli olemassa varmuuskopioinnin tai asennuksen aikana, jotta voit muodostaa yhteyden uudelleen.<br>Varmuuskopion palauttaminen tietokanta tähän nykyiseen asennukseen, voit seurata tätä avustajaa.
+RestoreDesc3=Restore the database structure and data from a backup dump file into the database of the new Dolibarr installation or into the database of this current installation (<b>%s</b>). Warning, once the restore is complete, you must use a login/password, that existed from the backup time/installation to connect again.<br>To restore a backup database into this current installation, you can follow this assistant.
 RestoreMySQL=MySQL vienti
 ForcedToByAModule=Tämä sääntö on <b>pakko %s</b> on aktivoitu moduuli
 ValueIsForcedBySystem=Järjestelmä pakottaa tämän arvon. Et voi muuttaa sitä.
 PreviousDumpFiles=Olemassa olevat varmuuskopiot
 PreviousArchiveFiles=Olemassa olevat arkistotiedostot
 WeekStartOnDay=Ensimmäinen viikonpäivä
-RunningUpdateProcessMayBeRequired=Päivitysprosessi näyttää vaadittavan (Ohjelman versio %s eroaa tietokanta versiosta <span class='notranslate'>%s /span>)
+RunningUpdateProcessMayBeRequired=Running the upgrade process seems to be required (Program version %s differs from Database version %s)
 YouMustRunCommandFromCommandLineAfterLoginToUser=Sinun on suoritettava tämä komento komentoriviltä jälkeen kirjautua kuori käyttäjän <b>%s.</b>
 YourPHPDoesNotHaveSSLSupport=SSL toimintoja ei saatavilla PHP
 DownloadMoreSkins=Lisää nahat ladata
@@ -1371,8 +1372,8 @@ SendmailOptionMayHurtBuggedMTA=Ominaisuus lähettää sähköpostit "PHP mail di
 TranslationSetup=Käännöksen asetukset
 TranslationKeySearch=Etsi käännöstä
 TranslationOverwriteKey=Ylikirjoita käännösteksti
-TranslationDesc=Näytön asettaminen Kieli:<br>* oletus/Systemwide: span class='notranslate'>valikko</span> <strong>Etusivu -> Asennus -> Näyttö</strong><br>* Käyttäjää kohden: klikkaa käyttäjänimeä näytön yläreunassa ja muokkaa <strong> Käyttäjän näytön asetukset</strong> -välilehti käyttäjäkortissa.
-TranslationOverwriteDesc=Voit myös ohittaa seuraavan taulukon täyttävät merkkijonot. Valitse Kieli avattavasta %s-valikosta, lisää käännösavainmerkkijono kohtaan %s /span>" <span class='notranslate'>ja uusi käännös kielelle "%s"
+TranslationDesc=How to set the display language:<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* Per user: Click on the username at the top of the screen and modify the <strong>User Display Setup</strong> tab on the user card.
+TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=Voit käyttää toista välilehteä saadaksesi selville, mitä käännösavainta käytetään
 TranslationString=Käännösteksti
 CurrentTranslationString=Nykyinen käännösteksti
@@ -1404,7 +1405,7 @@ PHPModuleLoaded=PHP:n laajennus %sladattu
 PreloadOPCode=Esiladattua OPCode-koodia käytetään
 AddRefInList=Näytä asiakas/Toimittaja viite. yhdistelmäluetteloihin.<br>Kolmannet osapuolet näkyvät nimimuodolla "CC12345 - SC45678 - Suuri Yritys corp." "The Big Yritys corp" sijaan.
 AddVatInList=Näytä asiakkaan/Toimittaja ALV-numero yhdistelmäluetteloissa.
-AddAdressInList=Näytä asiakkaan/Toimittaja osoite yhdistelmäluetteloissa.<br>Kolmannet osapuolet tulevat näkyviin nimimuodolla "The Big <span class=" 'notranslate'>Yritys</span> corp. - 21 jump street 123456 Big Town - USA" "The Big Yritys corp" sijaan.
+AddAdressInList=Display Customer/Vendor address into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Näytä yhteyshenkilön sähköpostiosoite (tai puhelinnumerot, jos niitä ei ole määritetty) ja kaupungin tietoluettelo (valitse luettelo tai yhdistelmälaatikko)<br>Yhteystiedot näkyvät nimimuoto "Dupond Durand - dupond.durand@example.com - Paris" tai "Dupond Durand - 06 07 59 65 66 - Paris" "Dupond Durand" sijaan.
 AskForPreferredShippingMethod=Kysy ensisijaista lähetystapaa kolmansille osapuolille.
 FieldEdition=Alalla painos %s
@@ -1434,7 +1435,7 @@ HRMSetup=Henkilöstöhallinta moduulin asetukset
 CompanySetup=Yritykset moduulin asetukset
 CompanyCodeChecker=Vaihtoehdot asiakas- / toimittajakoodien automaattiseen luomiseen
 AccountCodeManager=Vaihtoehdot asiakkaan / toimittajan kirjanpitokoodien automaattiseen luomiseen
-NotificationsDesc=Sähköposti Ilmoitukset voidaan lähettää automaattisesti joidenkin Dolibarr-tapahtumien yhteydessä.<br>Sähköpostin <span class='notranslate'>b0cb8c8f02af vastaanottajat > voidaan määritellä:
+NotificationsDesc=Email notifications can be sent automatically for some Dolibarr events.<br>Recipients of notifications can be defined:
 NotificationsDescUser=* käyttäjää kohden, yksi käyttäjä kerrallaan.
 NotificationsDescContact=* kolmansien osapuolten yhteystietoja (asiakkaita tai toimittajia) kohti, yksi yhteyshenkilö kerrallaan.
 NotificationsDescGlobal=* tai asettamalla yleiset sähköpostiosoitteet moduulin asetussivulla.
@@ -1595,8 +1596,8 @@ LDAPSynchroKO=Epäonnistui synkronointi testi
 LDAPSynchroKOMayBePermissions=Synkronointitesti epäonnistui. Tarkista, että yhteys palvelimeen on määritetty oikein ja sallii LDAP-päivitykset
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP yhteyden LDAP-palvelin onnistunut (Server= %s, Port= %s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP yhteyden LDAP-palvelimeen ei onnistunut (Server= %s, Port= %s)
-LDAPBindOK=Yhdistäminen/todennus LDAP-palvelimeen onnistui (Server=%s, Port=%s, b0b4652430823334308 /span>=<span class='notranslate'>%s, Salasana=%s)
-LDAPBindKO=Yhteyden muodostaminen/todennus LDAP-palvelimeen epäonnistui (palvelin=%s, portti=%s, b0b46534308 /span>=<span class='notranslate'>%s, Salasana=%s)
+LDAPBindOK=Connect/Authenticate to LDAP server successful (Server=%s, Port=%s, Admin=%s, Password=%s)
+LDAPBindKO=Connect/Authenticate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPSetupForVersion3=LDAP-palvelin määritetty versio 3
 LDAPSetupForVersion2=LDAP-palvelin määritetty versio 2
 LDAPDolibarrMapping=Dolibarr Mapping
@@ -1671,7 +1672,7 @@ NotInstalled=Ei asennettu.
 NotSlowedDownByThis=Ei hidasta tätä.
 NotRiskOfLeakWithThis=Ei vuotoriskiä tällä.
 ApplicativeCache=Sovellettava välimuisti
-MemcachedNotAvailable=Sovellusvälimuistia ei löytynyt. Voit parantaa suorituskykyä asentamalla välimuistipalvelimen, johon on tallennettu ja moduuli, joka pystyy käyttämään tätä välimuistipalvelinta.<br>Lisätietoja täältä <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<span class='notranslate<94bz'>b3142fz0 /span>Huomaa, että monet verkkopalveluntarjoajat eivät tarjoa tällaista välimuistipalvelinta.
+MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
 MemcachedModuleAvailableButNotSetup=Moduuli on tallennettu sovelluksen välimuistiin, mutta moduulin asennus ei ole valmis.
 MemcachedAvailableAndSetup=Memcached-moduuli, joka on omistettu memcached-palvelimen käyttöön, on käytössä.
 OPCodeCache=OPCode-välimuisti
@@ -1704,7 +1705,7 @@ AutoFillFormFieldBeforeSubmit=Täytä kuvauksen syöttökenttä automaattisesti 
 DoNotAutofillButAutoConcat=Älä täytä syötettä Kenttä automaattisesti tuotteen kuvauksella. Tuotteen kuvaus liitetään annettuun kuvaukseen automaattisesti.
 DoNotUseDescriptionOfProdut=Tuotteen kuvausta ei koskaan sisällytetä asiakirjarivien kuvaukseen
 MergePropalProductCard=Aktivoi tuotteen/palvelun liitetiedostot -välilehdellä vaihtoehto tuotteen PDF-dokumentin yhdistämiseksi tarjous PDF-azuriin, jos tuote/palvelu on kohdassa tarjous
-ViewProductDescInThirdpartyLanguageAbility=Näytä tuotteet kuvaukset kolmannen osapuolen Kieli lomakkeissa (muussa muodossa <span class='notranslate'>b0df2e8a8z0<c0 /span> käyttäjästä)
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Jos sinulla on myös suuri määrä tuotteet (> 100 000), voit lisätä nopeutta asettamalla vakion PRODUCT_DONOTSEARCH_ANYWHERE arvoksi 1 kohdassa Setup->Other. Haku rajoittuu sitten merkkijonon alkuun.
 UseSearchToSelectProduct=Odota, kunnes painat näppäintä, ennen kuin lataat tuoteyhdistelmäluettelon sisällön (Tämä voi parantaa suorituskykyä, jos sinulla on paljon tuotteet, mutta se ei ole niin kätevää)
 SetDefaultBarcodeTypeProducts=Tuotteissa käytetty viivakoodin tyyppi
@@ -1789,7 +1790,7 @@ FCKeditorForMail=WYSIWYG-luonti/painos kaikille viesteille (paitsi Työkalut->s�
 FCKeditorForTicket=WYSIWYG-luonti/painos lipuille
 ##### Stock #####
 StockSetup='Varasto' - moduulin asetukset
-IfYouUsePointOfSaleCheckModule=Jos käytät oletus:n tarjoamaa myyntipistemoduulia (POS) tai ulkoista moduulia, POS-moduulisi saattaa jättää tämän asennuksen huomioimatta. Useimmat myyntipistemoduulit on suunnitellut oletus ja luo laskuttaa välittömästi ja span class='notranslate'>vähentää</span> -osakkeesta riippumatta tässä olevista vaihtoehdoista. Joten jos sinulla on tai ei ole varastossa vähentää, kun rekisteröit myyntiä myyntipisteestäsi, tarkista myös POS-moduulisi asetukset.
+IfYouUsePointOfSaleCheckModule=If you use the Point of Sale module (POS) provided by default or an external module, this setup may be ignored by your POS module. Most POS modules are designed by default to create an invoice immediately and decrease stock irrespective of the options here. So if you need or not to have a stock decrease when registering a sale from your POS, check also your POS module setup.
 ##### Menu #####
 MenuDeleted=Valikko poistettu
 Menu=Valikko
@@ -1848,7 +1849,7 @@ AGENDA_DEFAULT_VIEW = Minkä näkymän haluat avata: oletus, kun valitset valikk
 AGENDA_EVENT_PAST_COLOR = Menneen tapahtuman väri
 AGENDA_EVENT_CURRENT_COLOR = Tämänhetkinen tapahtuman väri
 AGENDA_EVENT_FUTURE_COLOR = Tulevaisuuden tapahtuman väri
-AGENDA_REMINDER_BROWSER = Ota tapahtumamuistutus <b> käyttöön käyttäjän selaimessa</b> (kun muistutus päiväys saavutetaan , selain näyttää ponnahdusikkunan. Jokainen käyttäjä voi poistaa tällaisen <span class='notranslate'>Ilmoitukset selaimen ilmoitusasetuksista).
+AGENDA_REMINDER_BROWSER = Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND = Ota käyttöön ilmoitusäänet
 AGENDA_REMINDER_EMAIL = Ota käyttöön sähköpostimuistutus <b></b> (muistutusvaihtoehto/viive voidaan määrittää kullekin tapahtumalle).
 AGENDA_REMINDER_EMAIL_NOTE = Huomaa: ajoitetun työn %s tiheyden on oltava riittävä, jotta varmistetaan, että muistutus lähetetään oikealla hetkellä.
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Älä viedä tapauksessa vanhempia kuin
 SecurityKey = Turva-avain
 ##### ClickToDial #####
 ClickToDialSetup='Click To Dial'-moduulin asetukset
-ClickToDialUrlDesc=URL-osoite kutsutaan, kun puhelinkuvaa napsautetaan. URL-osoitteessa voit käyttää tunnisteita<br><b>__PHONETO__</b> korvattu soittajan puhelinnumerolla<br><b>__PHONEFROM__</b> korvataan soittavan henkilön puhelinnumerolla (sinun)<span class='notranslate'><br><b>__LOGIN__b09a4b739f1 span>, joka korvataan clicktodial-kirjautumisella (määritetty käyttäjäkortissa)<span class='notranslate'><br><b>__PASS__ </b>, joka korvataan clicktodial-salasanalla (määritetty käyttäjäkortissa).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Tämä moduuli muuttaa puhelinnumerot pöytätietokonetta käytettäessä napsautettaviksi linkeiksi. Numeroon soitetaan klikkaus. Tätä voidaan käyttää puhelun aloittamiseen, kun käytät pehmeää puhelinta työpöydälläsi tai kun käytät esimerkiksi SIP-protokollaan perustuvaa CTI-järjestelmää. Huomautus: Kun käytät älypuhelinta, puhelinnumerot ovat aina napsautettavissa.
 ClickToDialUseTelLink=Käytä vain linkkiä "tel:" puhelinnumeroihin
 ClickToDialUseTelLinkDesc=Käytä tätä menetelmää, jos käyttäjilläsi on ohjelmistopuhelin tai ohjelmistoliitäntä, joka on asennettu samaan tietokoneeseen kuin selain. ja kutsutaan, kun napsautat "tel:"-alkuista linkkiä selaimesi. Jos tarvitset linkin, joka alkaa sanalla "sip:" tai täyden palvelinratkaisun (ei tarvitse paikallista ohjelmiston asennusta), sinun on asetettava asetukseksi "Ei". ja täytä seuraava Kenttä.
@@ -1971,7 +1972,7 @@ SomethingMakeInstallFromWebNotPossible=Ulkoisen moduulin asennus ei ole mahdolli
 SomethingMakeInstallFromWebNotPossible2=Tästä syystä tässä kuvattu päivitysprosessi on manuaalinen prosessi, jonka vain etuoikeutettu käyttäjä voi suorittaa.
 InstallModuleFromWebHasBeenDisabledContactUs=Ulkoisten moduulien tai dynaamisten verkkosivustojen asentaminen tai kehittäminen sovelluksesta on tällä hetkellä lukittu turvallisuussyistä. Ota yhteyttä, jos haluat ottaa tämän ominaisuuden käyttöön.
 InstallModuleFromWebHasBeenDisabledByFile=Järjestelmänvalvoja on poistanut ulkoisen moduulin asennuksen sovelluksesta. Sinun on pyydettävä häntä poistamaan tiedosto <strong> %s </strong> tämän ominaisuuden sallimiseksi.
-ConfFileMustContainCustom=Ulkoisen moduulin asentaminen tai rakentaminen sovelluksesta täytyy tallentaa moduulitiedostot hakemistoon <strong>%s </strong>. Jotta Dolibarr käsittelee tämän hakemiston, sinun on määritettävä <strong>conf/conf.php</strong>, jotta voit lisätä kaksi ohjeriviä: <br><strong>$dolibarr_main_url_root_alt='/custom';b0a65fc9 classz0<span9 classz0 ='notranslate'><br></span><strong>$dolibarr_main_document_root_alt='b0ecb2ec87f49fztom' '></strong></span>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Korosta taulukon rivit hiiren liikkuessa niiden päällä
 HighlightLinesColor=Korosta viivan väri, kun hiiri kulkee sen yli (käytä "ffffff", jos et halua korostaa)
 HighlightLinesChecked=Korosta viivan väri, kun se on valittuna (käytä "ffffff", jos et halua korostaa)
@@ -1998,7 +1999,7 @@ EnterAnyCode=Tämä kenttä sisältää viitteen linjan tunnistamiseksi. Syötä
 Enter0or1=Syötä 0 tai 1
 UnicodeCurrency=Kirjoita tähän aaltosulkeiden väliin, luettelo tavunumerosta, joka edustaa valuuttasymbolia. Esimerkiksi: kirjoita $: lle [36] - Brasilian real:lle R $ [82,36] - €: lle, kirjoita [8364]
 ColorFormat=RGB-väri on HEX-muodossa, esim .: FF0000
-PictoHelp=Kuvakkeen nimi muodossa:<br>- image.png kuvalle tiedosto nykyiseen teemahakemistoon<br>- image.png@module, jos tiedosto on moduulin hakemistossa /img/<br>- fa-xxx FontAwesome fa-xxx -kuvalle<br> - fontawesome_xxx_fa_color_size FontAwesome fa-xxx -kuvalle (etuliitteellä, väri <span class='notranslate6e90505atranslate65a9> koko setti)
+PictoHelp=Icon name in format:<br>- image.png for an image file into the current theme directory<br>- image.png@module if file is into the directory /img/ of a module<br>- fa-xxx for a FontAwesome fa-xxx picto<br>- fontawesome_xxx_fa_color_size for a FontAwesome fa-xxx picto (with prefix, color and size set)
 PositionIntoComboList=Viivan sijainti yhdistelmäluetteloissa
 SellTaxRate=Myyntiprosentti vero
 RecuperableOnly=Kyllä, jos arvonlisävero "Ei havaittu, mutta palautettavissa" on omistettu jollekin Ranskan osavaltiolle. Pidä arvo "Ei" kaikissa muissa tapauksissa.
@@ -2114,7 +2115,7 @@ YouCanDeleteFileOnServerWith=Voit poistaa tämän tiedoston palvelimelta komento
 ChartLoaded=Tilikartta ladattu
 SocialNetworkSetup=Sosiaalisten verkostojen moduulin asetukset
 EnableFeatureFor=Ota ominaisuudet käyttöön kohteelle <strong>%s</strong>
-VATIsUsedIsOff=Huomautus: Myynti-vero tai ALV-vaihtoehto on asetettu arvoon <strong>Poisb0a65d071f6fc /span> <span class='notranslate'>valikko %s - %s, joten myynti <span> class='notranslate'>vero</span> tai käytetty ALV on aina 0 myynnin yhteydessä.
+VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>Off</strong> in the menu %s - %s, so Sales tax or Vat used will always be 0 for sales.
 SwapSenderAndRecipientOnPDF=Vaihda lähettäjän ja vastaanottajan osoitteen sijainti PDF-dokumenteissa
 FeatureSupportedOnTextFieldsOnly=Varoitus, ominaisuutta tuetaan vain tekstikentissä ja yhdistelmäluetteloissa. Myös URL-parametri action=luo tai action=edit on asetettava TAI sivun nimen lopussa on oltava "new.php", jotta tämä ominaisuus käynnistyy.
 EmailCollector=Sähköpostin kerääjä
@@ -2176,7 +2177,7 @@ CreateCandidature=Luo työhakemus
 FormatZip=Postinumero
 MainMenuCode=Valikkokoodi (päävalikko)
 ECMAutoTree=Näytä automaattinen ECM-puu
-OperationParamDesc=Määritä säännöt, joita käytetään joidenkin tietojen purkamiseen tai määritä arvoja toimintaa varten.<br><br>Esimerkki <span-luokan purkamisesta ='notranslate'>Yritys</span> nimi sähköpostin aiheesta väliaikaiseksi muuttujaksi:<br>tmp_var=EXTRACT:SUBJECT:Viesti lähettäjältä <span class='notranslate'>b0a06ee7cda03 /span> ([^\n]*)<br><br>Esimerkkejä objektin ominaisuuksien asettamisesta luo >:<br>objproperty1=SET:koodattu arvo<br>objproperty2=SET:__tmp_var__<span class='notranslate2fz'> </span>objproperty3=SETIFEMPTY:a arvo (arvo asetetaan vain, jos ominaisuutta ei ole jo määritetty)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([ ^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>objekti .objproperty5=EXTRACT:BODY:Minun Yritys nimeni on\\s([^\\s]*)<br><br>Käytä uutta riviä useiden ominaisuuksien poimimiseen tai määrittämiseen.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Aukioloajat
 OpeningHoursDesc=Yrityksen tavalliset aukioloajat
 ResourceSetup=Resurssimoduulin määritys
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

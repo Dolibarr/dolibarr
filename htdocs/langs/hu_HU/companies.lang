@@ -493,7 +493,7 @@ CurrentOutstandingBill=Jelenlegi kintlévőség
 OutstandingBill=Maximális kintlévőség
 OutstandingBillReached=Max. a kintlévőség elért
 OrderMinAmount=Minimális rendelési összeg
-MonkeyNumRefModelDesc=Adjon vissza egy számot a következő formátumban: %syymm-nnnn a vevő kódhoz és a <span class='notranslate'>b0ecb2ec87f49ffz span>yymm-nnnn a szállítói kódhoz, ahol az yy az év, a mm a hónap és az nnnn egy szekvenciális automatikusan növekvő szám, törés és 0-hoz való visszatérés nélkül.
+MonkeyNumRefModelDesc=Return a number in the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0.
 LeopardNumRefModelDesc=A kód szabad. Ez a kód bármikor módosítható.
 ManagingDirectors=Vezető(k) neve (ügyvezető, elnök, igazgató)
 MergeOriginThirdparty=Duplikált partner (a partnert törlésre kerül)

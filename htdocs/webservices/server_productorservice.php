@@ -499,7 +499,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
  * Create an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function createProductOrService($authentication, $product)
@@ -665,7 +665,7 @@ function createProductOrService($authentication, $product)
  * Update a product or service
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function updateProductOrService($authentication, $product)
@@ -908,7 +908,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
 	} elseif (count($listofiddeleted) == 0) {
 		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',', $listofid).' found'), 'nbdeleted'=>0);
+		$objectresp = array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.implode(',', $listofid).' found'), 'nbdeleted'=>0);
 	}
 
 	return $objectresp;

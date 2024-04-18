@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +34,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	public $boxlabel = "BoxSuppliersInvoicesPerMonth";
 	public $depends = array("fournisseur");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor
@@ -56,7 +48,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->facture->lire);
+		$this->hidden = !$user->hasRight('fournisseur', 'facture', 'lire');
 	}
 
 	/**
@@ -75,7 +67,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
@@ -98,7 +90,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
@@ -111,7 +103,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-				$endyear = GETPOST($param_year, 'int');
+				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {

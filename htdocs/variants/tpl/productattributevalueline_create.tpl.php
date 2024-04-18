@@ -30,6 +30,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $this';
+
 global $forcetoshowtitlelines;
 
 // Define colspan for the button 'Add'

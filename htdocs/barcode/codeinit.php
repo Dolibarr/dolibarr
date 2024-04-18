@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 					}
 
 					$modBarCodeThirdparty = new $file();
+					'@phan-var-force ModeleNumRefBarCode $module';
 					break;
 				}
 			}
@@ -190,6 +192,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						}
 
 						$modBarCodeProduct = new $file();
+						'@phan-var-force ModeleNumRefBarCode $module';
 						break;
 					}
 				}

@@ -74,7 +74,7 @@ if (function_exists('exec')) {
 	exec('id', $arrayout, $varout);
 	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print join(',', $arrayout);
+		print implode(',', $arrayout);
 	} else {
 		$langs->load("errors");
 		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';

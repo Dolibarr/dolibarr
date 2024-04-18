@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=בוצעה החזרה לאחור על כל פ
 ValidationOfPaymentFailed=אימות התשלום נכשל
 CardOwner=בעל כרטיס
 PayPalBalance=אשראי Paypal
-OnlineSubscriptionPaymentLine=מנוי מקוון נרשם ב-%s<br>בתשלום באמצעות %s<br>כתובת ה-IP המקורית: %s<br>מזהה עסקה: <span class='notranslate2ecz870fccfda19bz0'> </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

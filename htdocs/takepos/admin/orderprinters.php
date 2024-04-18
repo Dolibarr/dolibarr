@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');

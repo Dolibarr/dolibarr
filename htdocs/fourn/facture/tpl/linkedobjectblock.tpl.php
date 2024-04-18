@@ -21,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -36,7 +36,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -56,7 +57,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 				$sign = -1;
 			}
 			if ($objectlink->statut != 3) {
-				// If not abandonned
+				// If not abandoned
 				$total = $total + $sign * $objectlink->total_ht;
 				echo price($objectlink->total_ht);
 			} else {
@@ -69,7 +70,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} else {
 			echo $objectlink->getLibStatut(3);
 		} ?></td>
-		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode($object->id).'&action=dellink&token='.newToken().'&dellinkid='.urlencode($key); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode((string) ($object->id)).'&action=dellink&token='.newToken().'&dellinkid='.urlencode((string) ($key)); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 	</tr>
 	<?php
 }

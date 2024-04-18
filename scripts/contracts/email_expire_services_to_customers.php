@@ -37,7 +37,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm')) || !in_array($argv[2], array('thirdparties', 'contacts'))) {
@@ -47,7 +47,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add param delay (nb of days), only services with expired date < today + delay are included.\n";
 	print "If you add param after (nb of days), only services with expired date >= today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 $targettype = $argv[2];
@@ -60,6 +60,9 @@ $langs->loadLangs(array('main', 'contracts'));
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -224,7 +227,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_expire_services_to_customers.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**

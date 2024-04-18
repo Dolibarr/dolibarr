@@ -249,7 +249,7 @@ LatestProjects=Dự án %s mới nhất
 LatestModifiedProjects=Dự án sửa đổi %s mới nhất
 OtherFilteredTasks=Các nhiệm vụ được lọc khác
 NoAssignedTasks=Không tìm thấy nhiệm vụ được giao (chỉ định dự án / nhiệm vụ cho người dùng hiện tại từ hộp chọn trên cùng để nhập thời gian vào nó)
-ThirdPartyRequiredToGenerateInvoice=Một bên thứ ba phải được xác định trong dự án để có thể lập hóa đơn.
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=Một bên thứ ba phải được xác định trong dự án để có thể lập hóa đơn.
 ChooseANotYetAssignedTask=Chọn một cônng việc chưa gán cho bạn
 # Comments trans

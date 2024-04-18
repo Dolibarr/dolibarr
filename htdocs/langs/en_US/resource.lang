@@ -9,6 +9,7 @@ ActionsOnResource=Events about this resource
 ResourcePageIndex=Resources list
 ResourceSingular=Resource
 ResourceCard=Resource card
+NewResource=New resource
 AddResource=Create a resource
 ResourceFormLabel_ref=Resource name
 ResourceType=Resource type
@@ -37,3 +38,6 @@ ImportDataset_resource_1=Resources
 
 ErrorResourcesAlreadyInUse=Some resources are in use
 ErrorResourceUseInEvent=%s used in %s event
+
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

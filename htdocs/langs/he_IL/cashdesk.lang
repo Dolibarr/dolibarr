@@ -97,7 +97,7 @@ ReceiptPrinterMethodDescription=שיטה עוצמתית עם הרבה פרמטר
 ByTerminal=לפי טרמינל
 TakeposNumpadUsePaymentIcon=השתמש בסמל במקום בטקסט על כפתורי התשלום של ה-numpad
 CashDeskRefNumberingModules=מודול מספור למכירות קופה
-CashDeskGenericMaskCodes6 = <br><b>{TN}<span class='notranslate'>b399a</047f78 span> תג משמש להוספת מספר הטרמינל
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=מיזוג שורות של אותם מוצרים
 StartAParallelSale=התחל מכירה מקבילה חדשה
 SaleStartedAt=המכירה החלה ב-%s

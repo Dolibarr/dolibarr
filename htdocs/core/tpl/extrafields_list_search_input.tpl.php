@@ -5,7 +5,7 @@ print '<!-- extrafields_list_search_input.tpl.php -->'."\n";
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {
@@ -24,6 +24,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
 

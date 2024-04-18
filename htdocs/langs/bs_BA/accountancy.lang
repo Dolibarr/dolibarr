@@ -85,7 +85,7 @@ AccountancyAreaDescDonation=KORAK %s: Definirajte zadane računovodstvene račun
 AccountancyAreaDescSubscription=KORAK %s: Definirajte zadane računovodstvene račune za pretplatu članova. Za ovo koristite unos menija %s.
 AccountancyAreaDescMisc=KORAK %s: Definirajte obavezne zadane račune i zadane računovodstvene račune za razne transakcije. Za ovo koristite unos menija %s.
 AccountancyAreaDescLoan=KORAK %s: Definirajte zadane računovodstvene račune za kredite. Za ovo koristite unos menija %s.
-AccountancyAreaDescBank=KORAK %s: Definirajte računovodstvene račune i šifru dnevnika za svaku banku b01f882f7e6484z račune. Za ovo koristite unos menija <span class='notranslate'>%s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=KORAK %s: Definirajte računovodstvene račune na vašim proizvodima/uslugama. Za ovo koristite unos menija %s.
 
 AccountancyAreaDescBind=KORAK %s: Provjerite vezu između postojećih %s redova i račun je račun gotovo, tako da će aplikacija moći da evidentira transakcije u Ledgeru jednim klikom. Kompletne veze koje nedostaju. Za ovo koristite unos menija %s.
@@ -335,7 +335,6 @@ CategoryDeleted=Kategorija za računovodstveni račun je uklonjena
 AccountingJournals=Računovodstveni časopisi
 AccountingJournal=Računovodstveni časopis
 NewAccountingJournal=Novi računovodstveni dnevnik
-ShowAccountingJournal=Prikaži računovodstveni dnevnik
 NatureOfJournal=Priroda časopisa
 AccountingJournalType1=Razne operacije
 AccountingJournalType2=Prodaja
@@ -353,7 +352,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Onemogućite uvezivanje i prijenos u računo
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Onemogućite uvezivanje i prijenos u računovodstvu na kupovini (fakture dobavljača neće se uzeti u obzir u računovodstvu)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Onemogućite uvezivanje i prijenos u računovodstvu na izvještajima o troškovima (izvještaji o troškovima neće se uzeti u obzir u računovodstvu)
 ACCOUNTING_ENABLE_LETTERING=Omogućite funkciju slova u računovodstvu
-ACCOUNTING_ENABLE_LETTERING_DESC=Kada je ova opcija omogućena, možete definirati, na svakom knjigovodstvenom unosu, šifru tako da možete zajedno grupirati različita računovodstvena kretanja. U prošlosti, kada se različitim časopisima upravljalo nezavisno, ova karakteristika je bila neophodna za grupisanje linija kretanja različitih časopisa zajedno. Međutim, kod Dolibarr računovodstva, takav kod za praćenje, nazvan "<b>%s<span class='notranslate'>b09a4b739f17f8z span>" je već automatski sačuvan, tako da je automatsko ispisivanje već urađeno, bez rizika od greške, tako da je ova funkcija postala beskorisna za uobičajenu upotrebu. Funkcija ručnog pisanja slova je predviđena za krajnje korisnike koji zaista nemaju povjerenja u kompjuterski mehanizam koji vrši prijenos podataka u računovodstvu.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Omogućavanje ove funkcije više nije potrebno za rigorozno računovodstveno upravljanje.
 ACCOUNTING_ENABLE_AUTOLETTERING=Omogućite automatsko pisanje slova prilikom prelaska na računovodstvo
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Kôd za natpis se automatski generira i inkrementirano i nije izabrao krajnji korisnik

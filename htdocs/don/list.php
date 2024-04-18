@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +40,10 @@ $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; //
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $type = GETPOST('type', 'aZ');
 $mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {
@@ -84,10 +85,10 @@ $hookmanager->initHooks(array('donationlist'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.rowid'=>'Id',
-	'd.ref'=>'Ref',
-	'd.lastname'=>'Lastname',
-	'd.firstname'=>'Firstname',
+	'd.rowid' => 'Id',
+	'd.ref' => 'Ref',
+	'd.lastname' => 'Lastname',
+	'd.firstname' => 'Firstname',
 );
 
 // Security check
@@ -208,7 +209,7 @@ if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sea
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -266,7 +267,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -288,13 +289,14 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 if ($user->hasRight('don', 'creer')) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 }
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($search_all) {
@@ -304,11 +306,11 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if DONATION_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -350,11 +352,12 @@ if (isModEnabled('project')) {
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
 print '<td class="liste_titre center parentonrightofpage">';
 $liststatus = array(
-	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
-	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
-	Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
-	Don::STATUS_CANCELED=>$langs->trans("Canceled")
+	Don::STATUS_DRAFT => $langs->trans("DonationStatusPromiseNotValidated"),
+	Don::STATUS_VALIDATED => $langs->trans("DonationStatusPromiseValidated"),
+	Don::STATUS_PAID => $langs->trans("DonationStatusPaid"),
+	Don::STATUS_CANCELED => $langs->trans("Canceled")
 );
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth100 onrightofpage');
 print '</td>';
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -463,10 +466,10 @@ while ($i < $imaxinloop) {
 			if (!empty($obj->socid) && $company->id > 0) {
 				print "<td>".$company->getNomUrl(1)."</td>";
 			} else {
-				print "<td>".$obj->societe."</td>";
+				print "<td>".((string) $obj->societe)."</td>";
 			}
 		} else {
-			print "<td>".$obj->societe."</td>";
+			print "<td>".((string) $obj->societe)."</td>";
 		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datedon), 'day').'</td>';

@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "companies"));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 

@@ -71,7 +71,7 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT '".$this->db->escape($langs->trans("DolibarrUsers"))."' as label,";
 		$sql .= " count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 
 		$statssql[0] = $sql;
@@ -94,7 +94,7 @@ class mailing_pomme extends MailingTargets
 
 		$sql = "SELECT count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
@@ -167,7 +167,7 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
 		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
@@ -176,7 +176,7 @@ class mailing_pomme extends MailingTargets
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') {
 			$sql .= " AND u.statut=0";
 		}
-		if (GETPOSTISSET("filteremployee") && GETPOSt("filteremployee") == '1') {
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '1') {
 			$sql .= " AND u.employee=1";
 		}
 		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {

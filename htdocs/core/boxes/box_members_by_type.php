@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2023 Frederic France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021-2023 Waël Almoman         <info@almoman.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2023  Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,17 +38,7 @@ class box_members_by_type extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersByType";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -68,7 +58,7 @@ class box_members_by_type extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -92,7 +82,7 @@ class box_members_by_type extends ModeleBoxes
 		$year = date('Y');
 		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : ''));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
 		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -148,13 +138,13 @@ class box_members_by_type extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentType = array();
 				foreach ($sumMembers as $key => $data) {
-					$adhtype = new AdherentType($this->db);
-					$adhtype->id = $key;
-
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
+					$adhtype = new AdherentType($this->db);
+					$adhtype->id = (int) $key;
 					$adhtype->label = $data['label'];
 					$AdherentType[$key] = $adhtype;
 

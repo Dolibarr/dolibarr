@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +39,16 @@
  *
  * $text, $description, $line
  */
-
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object
+ @phan-var-force 0|1 $forceall
+';
 
 global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
@@ -76,6 +81,7 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
 	$sign = -1;
 }
@@ -137,7 +143,11 @@ if (($line->info_bits & 2) == 2) {
 	$format = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+		} else {
+			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -329,7 +339,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
 	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
-		$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 	}
 	print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
 	?></td>
@@ -338,11 +348,11 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
-		// I comment this because it shows info even when not required
+	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 } else {
 	print '&nbsp;';
 }
@@ -391,9 +401,15 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($line->special_code == 3) { ?>
-	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
-<?php } else {
+if ($line->special_code == 3) {
+	$coldisplay++;
+	$colspanOptions	= '';
+	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		$colspanOptions	= ' colspan="2"';
+	}
+	print '<td class="linecoloption nowrap right"'.$colspanOptions.'>'.$langs->trans('Option').'</td>';
+} else {
 	print '<td class="linecolht nowrap right">';
 	$coldisplay++;
 	print $tooltiponprice;
@@ -415,6 +431,7 @@ if ($outputalsopricetotalwithtax) {
 if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
@@ -429,7 +446,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 			!empty($product_static->accountancy_code_buy_intra) ||
 			!empty($product_static->accountancy_code_buy_export)
 		) {
-			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();
 			if (!empty($product_static->accountancy_code_buy)) {
 				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";

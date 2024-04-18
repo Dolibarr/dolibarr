@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=Add the different currencies and rates you need to us
 rate=rate
 MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Remaining amount, original currency
-MulticurrencyPaymentAmount=Payment amount, original currency
 AmountToOthercurrency=Amount To (in currency of receiving account)
 CurrencyRateSyncSucceed=Currency rate synchronization done successfully
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments

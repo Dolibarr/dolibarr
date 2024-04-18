@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    lib/webhook_target.lib.php
+ * \file    htdocs/webhook/lib/webhook_target.lib.php
  * \ingroup webhook
  * \brief   Library files with common functions for Target
  */
@@ -24,7 +25,7 @@
  * Prepare array of tabs for Target
  *
  * @param	Target	$object		Target
- * @return 	array					Array of tabs
+ * @return 	array				Returns an array of tabs
  */
 function targetPrepareHead($object)
 {
@@ -33,7 +34,7 @@ function targetPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/webhook/target_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/webhook/target_card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

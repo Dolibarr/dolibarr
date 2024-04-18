@@ -68,9 +68,9 @@ ExpenseReportRuleErrorOnSave=שגיאה: %s
 ExpenseReportRuleSave=כלל דוח ההוצאות נשמר
 ExpenseReportRulesDesc=ניתן להגדיר כללי סכום מקסימלי עבור דוחות הוצאות. כללים אלה יחולו כאשר הוצאה חדשה תתווסף לדוח הוצאות
 ExpenseReportWaitingForApproval=דו"ח הוצאות חדש הוגש לאישור
-ExpenseReportWaitingForApprovalMessage=דוח הוצאות חדש הוגש והוא ממתין לאישור.<br> - משתמש: %s <br> - תקופה: %s<br>לחץ כאן כדי לאמת: <span class='notranslate'>b0ecfda19bz8 span>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=דו"ח הוצאות הוגש לאישור מחדש
-ExpenseReportWaitingForReApprovalMessage=דוח הוצאות הוגש והוא ממתין לאישור מחדש.<br>את %s, סירבת לאשר את דוח ההוצאות עבור סיבה זו: %s.<br>גרסה חדשה הוצעה ומחכה לאישורך. <br> - משתמש: %s<br> - תקופה: b0ecb2ec87f49 <span class='notranslate'><br>לחץ כאן כדי לאמת: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportsIk=הגדרת דמי קילומטראז'
 ExpenseReportsRules=כללי דוח הוצאות
 ExpenseReportsToApprove=דוחות הוצאות לאישור

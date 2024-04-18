@@ -137,7 +137,7 @@ DateActionEnd=የመጨረሻ ቀን
 AgendaUrlOptions1=ውጤቱን ለማጣራት የሚከተሉትን መለኪያዎች ማከል ይችላሉ-
 AgendaUrlOptions3=<b>logina=%s</b> አንድን ውፅዓት በተጠቃሚ ወደ ድርጊቶች እንዲገድብ <b>%s</b>።
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ውፅዓት በድርጊት ያልተገደበ ተጠቃሚ <b>%s</b>።
-AgendaUrlOptions4=<b>logint=%s</b>ተጠቃሚን ውፅዓት ለድርጊት ለመገደብ ተመድቧል። span class='notranslate'><b></span>%s</b>(ባለቤት እና ሌሎች)።
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> ከፕሮጀክት ጋር የተገናኙትን እርምጃዎች ለመገደብ 365ee 365ee __PROJECT_ID__</b>።
 AgendaUrlOptionsNotAutoEvent=አውቶማቲክ ክስተቶችን ለማስቀረት <b>notactiontype=systemauto</b>።
 AgendaUrlOptionsIncludeHolidays=የበዓላት ክስተቶችን ለማካተት <b>includeholidays=1</b>።
@@ -161,7 +161,7 @@ AddEvent=ክስተት ፍጠር
 MyAvailability=የእኔ ተገኝነት
 ActionType=የክስተት አይነት
 DateActionBegin=የክስተት መጀመሪያ ቀን
-ConfirmCloneEvent=እርግጠኛ ነህ ክስተቱን መዝጋት ትፈልጋለህ <b>%s<span class='notranslate'></b>?
+ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=ክስተቱን ድገም።
 OnceOnly=አንዴ ብቻ
 EveryDay=በየቀኑ
