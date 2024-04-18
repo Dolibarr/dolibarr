@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Eric Gautheron			<epixfr@opensolus.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,9 +347,11 @@ class modFournisseur extends DolibarrModules
 			'f.total_ht' => "TotalHT", 'f.total_ttc' => "TotalTTC", 'f.total_tva' => "TotalVAT", 'f.paye' => "InvoicePaid", 'f.fk_statut' => 'InvoiceStatus', 'f.note_public' => "InvoiceNote",
 			'fd.rowid' => 'LineId', 'fd.description' => "LineDescription", 'fd.tva_tx' => "LineVATRate", 'fd.qty' => "LineQty", 'fd.remise_percent' => "Discount", 'fd.total_ht' => "LineTotalHT",
 			'fd.total_ttc' => "LineTotalTTC", 'fd.tva' => "LineTotalVAT", 'fd.date_start' => "DateStart", 'fd.date_end' => "DateEnd", 'fd.special_code' => 'SpecialCode',
-			'fd.product_type' => 'TypeOfLineServiceOrProduct', 'fd.fk_product' => 'ProductId',
-			'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel', $alias_product_perentity.'.accountancy_code_buy' => 'ProductAccountancyBuyCode', 'project.rowid' => 'ProjectId',
-			'project.ref' => 'ProjectRef', 'project.title' => 'ProjectLabel'
+			'fd.product_type' => 'TypeOfLineServiceOrProduct',
+			'aa.account_number' => 'AccountingAffectation', 
+			'fd.fk_product' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel',
+			//$alias_product_perentity.'.accountancy_code_buy' => 'ProductAccountancyBuyCode',
+			'project.rowid' => 'ProjectId', 'project.ref' => 'ProjectRef', 'project.title' => 'ProjectLabel'
 		);
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -369,7 +372,9 @@ class modFournisseur extends DolibarrModules
 			'f.fk_cond_reglement' => 'Numeric', 'f.fk_mode_reglement' => 'Numeric',
 			'f.total_ht' => "Numeric", 'f.total_ttc' => "Numeric", 'f.total_tva' => "Numeric", 'f.paye' => "Boolean", 'f.fk_statut' => 'Status', 'f.note_public' => "Text", 'fd.description' => "Text", 'fd.tva_tx' => "Text",
 			'fd.qty' => "Numeric", 'fd.total_ht' => "Numeric", 'fd.total_ttc' => "Numeric", 'fd.tva' => "Numeric", 'fd.date_start' => "Date", 'fd.date_end' => "Date", 'fd.special_code' => "Numeric",
-			'fd.product_type' => 'Numeric', 'fd.fk_product' => 'List:product:label', $alias_product_perentity . '.accountancy_code_buy' => 'Text',
+			'fd.product_type' => 'Numeric', 'fd.fk_product' => 'List:product:label',
+			'aa.account_number' => 'Text',
+			 //$alias_product_perentity . '.accountancy_code_buy' => 'Text',
 			'p.ref' => 'Text', 'p.label' => 'Text', 'project.ref' => 'Text', 'project.title' => 'Text'
 		);
 		$this->export_entities_array[$r] = array(
@@ -380,8 +385,10 @@ class modFournisseur extends DolibarrModules
 			'f.total_ht' => "invoice", 'f.total_ttc' => "invoice", 'f.total_tva' => "invoice",
 			'f.paye' => "invoice", 'f.fk_statut' => 'invoice', 'f.note_public' => "invoice", 'fd.rowid' => 'invoice_line', 'fd.description' => "invoice_line", 'fd.tva_tx' => "invoice_line", 'fd.qty' => "invoice_line",
 			'fd.remise_percent' => "invoice_line", 'fd.total_ht' => "invoice_line", 'fd.total_ttc' => "invoice_line", 'fd.tva' => "invoice_line", 'fd.date_start' => "invoice_line", 'fd.date_end' => "invoice_line", 'fd.special_code' => "invoice_line",
-			'fd.product_type' => 'invoice_line', 'fd.fk_product' => 'product',
-			'p.ref' => 'product', 'p.label' => 'product', $alias_product_perentity.'.accountancy_code_buy' => 'product', 'project.rowid' => 'project', 'project.ref' => 'project', 'project.title' => 'project'
+			'fd.product_type' => 'invoice_line', 'aa.account_number' => "invoice_line",
+			'fd.fk_product' => 'product', 'p.ref' => 'product', 'p.label' => 'product', 
+			//$alias_product_perentity.'.accountancy_code_buy' => 'product',
+			'project.rowid' => 'project', 'project.ref' => 'project', 'project.title' => 'project'
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line' => 'fd.rowid', 'product' => 'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
@@ -409,6 +416,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det_extrafields as extraline ON fd.rowid = extraline.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa on fd.fk_code_ventilation = aa.rowid'; 		
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
 		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
