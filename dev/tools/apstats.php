@@ -245,7 +245,7 @@ $resexecglpu = 0;
 
 
 // Get git information for security alerts
-$nbofmonth = 2;
+$nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
