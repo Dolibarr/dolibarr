@@ -13339,9 +13339,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
 				$out .= '<div class="timeline-body" >';
-
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
-
 				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
@@ -13357,6 +13355,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				} else {
 					$out .= $histo[$key]['message'];
 				}
+        
 				$out .= '</div>';
 			}
 
