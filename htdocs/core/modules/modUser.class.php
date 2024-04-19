@@ -276,7 +276,7 @@ class modUser extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'List of security events';
-		$this->export_permission[$r] = array(array("userxxxxxx"));	// Only admin
+		$this->export_permission[$r] = array(array("user"));	// Only admin
 		$this->export_fields_array[$r] = array(
 			'e.rowid'=>"Id", 'e.type'=>"Type",
 			'e.dateevent'=>"Date",
