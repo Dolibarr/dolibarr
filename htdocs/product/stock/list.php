@@ -614,6 +614,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
+$totalarray = array();
 $totalarray['nbfield'] = 0;
 
 // Fields title label
