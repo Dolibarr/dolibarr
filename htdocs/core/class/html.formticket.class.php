@@ -194,6 +194,7 @@ class FormTicket
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : '';
+			$user_assign = GETPOSTISSET('fk_user_assigned') ? GETPOSTINT('fk_user_assign') : '';
 		}else {
 			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
 			$type_code = GETPOSTISSET('type_code') ? GETPOST('type_code', 'alpha') : $object->type_code;
@@ -203,6 +204,7 @@ class FormTicket
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
 			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : $object->fk_project;
+			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $object->fk_user_assign;
 		}
 
 		$form = new Form($this->db);
@@ -681,7 +683,7 @@ class FormTicket
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
 			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers(GETPOSTINT('fk_user_assign'), 'fk_user_assign', 1);
+			print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
 			print '</td>';
 			print '</tr>';
 		}
