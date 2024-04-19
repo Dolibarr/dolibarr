@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'receptions', 'products', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -50,10 +50,10 @@ if (!empty($user->socid)) {
 $hookmanager->initHooks(array('productstatsreception'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,8 +66,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "r.date_creation";
 }
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -93,7 +93,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -146,8 +146,8 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.fk_soc = s.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd ON cfd.fk_reception = r.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfdet ON cfdet.rowid = cfd.fk_commandefourndet";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."receptiondet_batch as cfd ON cfd.fk_reception = r.rowid AND element_type = 'supplier_order'";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfdet ON cfdet.rowid = cfd.fk_elementdet";
 			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
@@ -187,10 +187,10 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
+					$option .= '&search_month='.urlencode((string) ($search_month));
 				}
 				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode($search_year);
+					$option .= '&search_year='.urlencode((string) ($search_year));
 				}
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
@@ -202,10 +202,11 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("Receptions"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 				if (!empty($page)) {
-					$option .= '&page='.urlencode($page);
+					$option .= '&page='.urlencode((string) ($page));
 				}
 
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';

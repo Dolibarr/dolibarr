@@ -573,7 +573,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Shipments
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('shipping', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_sending($socid);
 		if ($ret < 0) {
