@@ -76,6 +76,8 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
+$only_rappro = GETPOSTINT('only_rappro') ?? 0;
+
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
@@ -164,6 +166,9 @@ if ($in_bookkeeping == 'already') {
 }
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
+if ($only_rappro) {
+	$sql .= " AND (b.rappro = '1')";
 }
 $sql .= " ORDER BY b.datev";
 //print $sql;
@@ -307,6 +312,8 @@ if ($result) {
 
 		// Load of url links to the line into llx_bank (so load llx_bank_url)
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
+		// print '<p>' . json_encode($object) . "</p>";//exit;
+		// print '<p>' . json_encode($links) . "</p>";//exit;
 
 		// By default
 		$tabpay[$obj->rowid]['type'] = 'unknown'; // Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
@@ -1095,7 +1102,10 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 
-	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	$checked = ($only_rappro == 1) ? " checked" : "";
+	$moreoptions = [ "BankLineConciliated" => "<label><input type='checkbox' name='only_rappro' value='1'". $checked ."/> " . $langs->trans("OnlyImportBankLineConciliated") . "</label>"];
+
+	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink, $moreoptions);
 
 	$desc = '';
 
