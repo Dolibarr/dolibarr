@@ -1265,7 +1265,7 @@ if ($action == 'create') {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
-						$description .= empty($product->stockable_product) ? $langs->trans('StockDisabled') : $langs->trans('StockEnabled') ;
+						$description .= empty($product->stockable_product) ? $langs->trans('StockDisabled') : $langs->trans('StockEnabled');
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 						// Show range
@@ -1375,10 +1375,10 @@ if ($action == 'create') {
 										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
-										if ($product->stockable_product == Product::ENABLED_STOCK){
+										if ($product->stockable_product == Product::ENABLED_STOCK) {
 											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
 										} else {
-											print img_warning().' '.$langs->trans('StockDisabled') ;
+											print img_warning().' '.$langs->trans('StockDisabled');
 										}
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
 											//print $stock.' '.$quantityToBeDelivered;
@@ -1610,12 +1610,12 @@ if ($action == 'create') {
 									if (isModEnabled('stock')) {
 										print '<td class="left">';
 										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-											if ($product->stockable_product == Product::ENABLED_STOCK){
+											if ($product->stockable_product == Product::ENABLED_STOCK) {
 												print $tmpwarehouseObject->getNomUrl(0).' ';
 												print '<!-- Show details of stock -->';
 												print '('.$stock.')';
 											} else {
-												print img_warning().' '.$langs->trans('StockDisabled') ;
+												print img_warning().' '.$langs->trans('StockDisabled');
 											}
 										} else {
 											print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
@@ -1777,7 +1777,7 @@ if ($action == 'create') {
 									$disabled = 'disabled="disabled"';
 								}
 								// finally we overwrite the input with the product status stockable_product if it's disabled
-								if ($product->stockable_product == Product::DISABLED_STOCK){
+								if ($product->stockable_product == Product::DISABLED_STOCK) {
 									$disabled = '';
 								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
@@ -1813,7 +1813,8 @@ if ($action == 'create') {
 											print img_warning().' '.$langs->trans('StockTooLow');
 										} else {
 											print img_warning().' '.$langs->trans('StockDisabled');
-										}									} else {
+										}
+									} else {
 										print '';
 									}
 								}

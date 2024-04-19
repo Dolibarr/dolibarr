@@ -815,7 +815,7 @@ if (empty($reshook)) {
 				} else {
 					$object->fk_default_bom = 0;
 				}
-				
+			
 				// managed_in_stock
 				$object->stockable_product   = GETPOSTISSET('stockable_product');
 
@@ -2251,7 +2251,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</label>';
 
 					print '</td></tr>';
-	
+
 					if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
 						$checked = $object->stockable_product == 1 ? "checked" : "";
@@ -2738,7 +2738,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 					print(!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 					print '</td>';
-				} 
+				}
 
 				// View stockable_product
 				if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
