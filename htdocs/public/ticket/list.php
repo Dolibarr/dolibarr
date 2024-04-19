@@ -205,8 +205,8 @@ if ($action == "view_ticketlist") {
 		$search_type = GETPOST("search_type", 'alpha');
 		$search_category = GETPOST("search_category", 'alpha');
 		$search_severity = GETPOST("search_severity", 'alpha');
-		$search_fk_user_create = GETPOSTINT("search_fk_user_create");
-		$search_fk_user_assign = GETPOSTINT("search_fk_user_assign");
+		$search_fk_user_create = GETPOST("search_fk_user_create", "intcomma");
+		$search_fk_user_assign = GETPOST("search_fk_user_assign", "intcomma");
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);

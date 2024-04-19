@@ -94,9 +94,9 @@ $search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GE
 $search_dateep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateep_startmonth'), GETPOSTINT('search_dateep_startday'), GETPOSTINT('search_dateep_startyear'));
 $search_dateep_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateep_endmonth'), GETPOSTINT('search_dateep_endday'), GETPOSTINT('search_dateep_endyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_account = GETPOSTINT('search_account');
-$search_fk_bank = GETPOSTINT('search_fk_bank');
-$search_chq_number = GETPOSTINT('search_chq_number');
+$search_account = GETPOST('search_account', 'alpha');
+$search_fk_bank = GETPOST('search_fk_bank', 'alpha');
+$search_chq_number = GETPOST('search_chq_number', 'alpha');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
@@ -371,13 +371,13 @@ if ($search_account) {
 	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_date_start) {
-	$param .= '&search_date_startday='.urlencode((string) (GETPOSTINT('search_date_startday'))).'&search_date_startmonth='.urlencode((string) (GETPOSTINT('search_date_startmonth'))).'&search_date_startyear='.urlencode((string) (GETPOSTINT('search_date_startyear')));
+	$param .= '&search_date_startday='.GETPOSTINT('search_date_startday').'&search_date_startmonth='.GETPOSTINT('search_date_startmonth').'&search_date_startyear='.GETPOSTINT('search_date_startyear');
 }
 if ($search_dateep_start) {
-	$param .= '&search_dateep_startday='.urlencode((string) (GETPOSTINT('search_dateep_startday'))).'&search_dateep_startmonth='.urlencode((string) (GETPOSTINT('search_dateep_startmonth'))).'&search_dateep_startyear='.urlencode((string) (GETPOSTINT('search_dateep_startyear')));
+	$param .= '&search_dateep_startday='.GETPOSTINT('search_dateep_startday').'&search_dateep_startmonth='.GETPOSTINT('search_dateep_startmonth').'&search_dateep_startyear='.GETPOSTINT('search_dateep_startyear');
 }
 if ($search_date_end) {
-	$param .= '&search_date_endday='.urlencode((string) (GETPOSTINT('search_date_endday'))).'&search_date_endmonth='.urlencode((string) (GETPOSTINT('search_date_endmonth'))).'&search_date_endyear='.urlencode((string) (GETPOSTINT('search_date_endyear')));
+	$param .= '&search_date_endday='.GETPOSTINT('search_date_endday').'&search_date_endmonth='.GETPOSTINT('search_date_endmonth').'&search_date_endyear='.GETPOSTINT('search_date_endyear');
 }
 if ($search_dateep_end) {
 	$param .= '&search_dateep_endday='.urlencode((string) (GETPOSTINT('search_dateep_endday'))).'&search_dateep_endmonth='.urlencode((string) (GETPOSTINT('search_dateep_endmonth'))).'&search_dateep_endyear='.urlencode((string) (GETPOSTINT('search_dateep_endyear')));

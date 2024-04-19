@@ -41,9 +41,11 @@ $toselect = GETPOST('toselect', 'array');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
-$search_type = GETPOSTINT("search_type");
+$search_type = GETPOST("search_type", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOSTINT("type");
+$mode = GETPOST('mode', 'aZ');
+
+$type = GETPOST("type", 'int');
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -104,13 +106,6 @@ if (!empty($canvas)) {
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
-
-// Security check
-/*
-if ($search_type=='0') $result=restrictedArea($user, 'produit', '', '', '', '', '', $objcanvas);
-elseif ($search_type=='1') $result=restrictedArea($user, 'service', '', '', '', '', '', $objcanvas);
-else $result=restrictedArea($user, 'produit|service', '', '', '', '', '', $objcanvas);
-*/
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
