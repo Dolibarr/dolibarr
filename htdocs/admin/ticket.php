@@ -3,6 +3,7 @@
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scandir', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type = 'ticket';
 
 $error = 0;
@@ -86,7 +87,7 @@ if ($action == 'updateMask') {
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
+	$value = GETPOSTISSET($code) ? GETPOSTINT($code) : 1;
 	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
@@ -152,20 +153,20 @@ if ($action == 'updateMask') {
 	}
 
 	if (GETPOSTISSET('product_category_id')) {
-		$param_ticket_product_category = GETPOST('product_category_id', 'int');
+		$param_ticket_product_category = GETPOSTINT('product_category_id');
 		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
 	}
 
-	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
 
-	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$param_delay_between_responses = GETPOSTINT('delay_between_responses');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -289,6 +290,7 @@ foreach ($dirmodels as $reldir) {
 					include_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefTicket $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -408,6 +410,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -422,6 +425,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force CommonDocGenerator $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

@@ -16,7 +16,7 @@ ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Sisällytä PayPalin maksu URL-osoite, kun lähetät asiakirjan sähköpostitse
 NewOnlinePaymentReceived=Uusi verkossa maksu vastaanotettu
 NewOnlinePaymentFailed=Uusi verkossa maksu yritti, mutta epäonnistui
-ONLINE_PAYMENT_SENDEMAIL=Sähköpostiosoite käyttäjälle Ilmoitukset jokaisen maksu yrityksen jälkeen (menestys <span class='notranslate'>ja)
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=Palauta URL-osoite maksu jälkeen
 ValidationOfOnlinePaymentFailed=Verkkotunnuksen maksu vahvistus epäonnistui
 PaymentSystemConfirmPaymentPageWasCalledButFailed=maksu vahvistussivun kutsui maksu järjestelmä palautti virheen
@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=Kaikille Post-toiminnoille suoritettiin peruu
 ValidationOfPaymentFailed=Kohteen maksu vahvistus epäonnistui
 CardOwner=Kortin haltija
 PayPalBalance=Paypal luotto
-OnlineSubscriptionPaymentLine=Verkkotilaus tallennettu %s<br>Maksettu %s<br>Alkuperäinen IP-osoite: %s<br>Tapahtuman tunnus: <span class='notranslate2f87> </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

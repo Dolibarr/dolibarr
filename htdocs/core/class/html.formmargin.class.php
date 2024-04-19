@@ -1,5 +1,6 @@
 <?php
 /* Copyright (c) 2015-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,12 @@
 /**
  *	\file       htdocs/core/class/html.formmargin.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormMargin
@@ -98,10 +99,13 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			// We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			// We chose to have line->pa_ht always positive in database, so we guess the correct sign
+			// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
+				// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
+					// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
 					// We need a compensation relative to $line->situation_percent
 					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
@@ -220,7 +224,7 @@ class FormMargin
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
-		$parameters=array('marginInfo' => &$marginInfo);
+		$parameters = array('marginInfo' => &$marginInfo);
 		$reshook = $hookmanager->executeHooks('displayMarginInfos', $parameters, $object, $action);
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -269,10 +273,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_products']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_products']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}
@@ -284,10 +288,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_services']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_services']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}
@@ -299,10 +303,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_total']) . '</td>';
 				print '<td class="right">' . price($marginInfo['total_margin']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}

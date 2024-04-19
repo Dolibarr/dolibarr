@@ -114,7 +114,7 @@ ErrorMaxNumberReachForThisMask=Dosegnut je najveći broj za ovu masku
 ErrorCounterMustHaveMoreThan3Digits=Brojač mora imati više od 3 znamenke
 ErrorSelectAtLeastOne=Pogreška, odaberite barem jedan unos.
 ErrorDeleteNotPossibleLineIsConsolidated=Brisanje nije moguće jer je zapis povezan s bankovnom transakcijom koja je usklađena
-ErrorProdIdAlreadyExist=%s je dodjeljen to drugom 
+ErrorProdIdAlreadyExist=%s je dodjeljen to drugom
 ErrorFailedToSendPassword=Slanje lozinke nije uspjelo
 ErrorFailedToLoadRSSFile=Ne uspijeva dobiti RSS feed. Pokušajte dodati konstantu MAIN_SIMPLEXMLLOAD_DEBUG ako poruke o grešci ne pružaju dovoljno informacija.
 ErrorForbidden=Pristup odbijen.<br>Pokušavate pristupiti stranici, području ili značajki onemogućenog modula ili bez da ste u autentificiranoj sesiji ili to nije dopušteno vašem korisniku.
@@ -349,7 +349,7 @@ WarningCloseAlways=Upozorenje, zatvaranje se vrši čak i ako se iznos razlikuje
 WarningUsingThisBoxSlowDown=Upozorenje, korištenje ovog okvira ozbiljno usporava sve stranice koje prikazuju okvir.
 WarningClickToDialUserSetupNotComplete=Postavljanje ClickToDial informacija za vašeg korisnika nije dovršeno (pogledajte karticu ClickToDial na vašoj korisničkoj kartici).
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Značajka je onemogućena kada je postavka zaslona optimizirana za slijepe osobe ili tekstualne preglednike.
-WarningPaymentDateLowerThanInvoiceDate=Datum plaćanja (%s) je raniji od datuma fakture (%s) za fakturu <span class='notranslate'>%s</ raspon>.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Previše podataka (više od %s redaka). Upotrijebite više filtara ili postavite konstantu %s na višu granicu.
 WarningSomeLinesWithNullHourlyRate=Neki su korisnici zabilježili neka vremena, a njihova satnica nije bila definirana. Korištena je vrijednost od 0 %s po satu, ali to može dovesti do pogrešnog vrednovanja utrošenog vremena.
 WarningYourLoginWasModifiedPleaseLogin=Vaša prijava je promijenjena. Iz sigurnosnih razloga morat ćete se prijaviti sa svojom novom prijavom prije sljedeće radnje.

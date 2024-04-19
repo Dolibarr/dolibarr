@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\brief      Ensemble de functions de base pour les contacts
  */
 
 /**
@@ -93,7 +93,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -186,7 +186,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print '<div class="div-table-responsive">';
 		print "\n".'<table class="noborder" width=100%>';
 
-		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
+		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
 		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';

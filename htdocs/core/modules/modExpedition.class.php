@@ -167,8 +167,8 @@ class modExpedition extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les expeditions aux clients'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'shipping_advance';
 		$this->rights[$r][5] = 'send';
 
@@ -233,7 +233,7 @@ class modExpedition extends DolibarrModules
 		$shipment = new Commande($this->db);
 		$contact_arrays = $shipment->liste_type_contact('external', '', 0, 0, '');
 		if (is_array($contact_arrays) && count($contact_arrays) > 0) {
-			$idcontacts = join(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
+			$idcontacts = implode(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
 		} else {
 			$idcontacts = 0;
 		}
@@ -318,7 +318,7 @@ class modExpedition extends DolibarrModules
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
-		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
+		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_elementdet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('expedition').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);

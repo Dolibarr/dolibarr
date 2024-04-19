@@ -36,7 +36,7 @@ EventOrganizationSetup=የክስተት ድርጅት ማዋቀር
 EventOrganization=የክስተት ድርጅት
 EventOrganizationSetupPage = የክስተት ድርጅት ማዋቀር ገጽ
 EVENTORGANIZATION_TASK_LABEL = ፕሮጀክቱ ሲረጋገጥ በራስ ሰር የሚፈጠሩ የተግባር መለያዎች
-EVENTORGANIZATION_TASK_LABELTooltip = አንድን ክስተት ለማደራጀት ሲያረጋግጡ አንዳንድ ተግባራት በፕሮጀክቱ ውስጥ በራስ ሰር ሊፈጠሩ ይችላሉ<br><br>ለምሳሌ፡ <br>የኮንፈረንስ ጥሪ ይላኩ<br>ጥሪ ለቡዝ ላክ<br>Valid Conference classes ='notranslate'><br></span>የቡትስ ማመልከቻን አረጋግጥ<br>ለክስተቱ የደንበኝነት ምዝገባዎችን ለተሳታፊዎች ክፈትb0342fccfda19b>b0342fccfda19b> የዝግጅቱ ድምጽ ለተናጋሪዎች<span class='notranslate'><br>የዝግጅቱን አስታዋሽ ለቡዝ አስተናጋጆች ይላኩ<br>ክስተቱን ለተሰብሳቢዎች አስታዋሽ ላክ
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=ስራዎችን በራስ-ሰር መፍጠር ካላስፈለገዎት ባዶ ያስቀምጡ።
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = የሆነ ሰው ጉባኤን ሲጠቁም ወደ ሶስተኛ ወገኖች የሚታከል ምድብ
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ዳስ ሲጠቁሙ ወደ ሶስተኛ ወገኖች የሚታከሉ ምድብ
@@ -88,6 +88,7 @@ PriceOfRegistration=የምዝገባ ዋጋ
 PriceOfRegistrationHelp=በክስተቱ ላይ ለመመዝገብ ወይም ለመሳተፍ የሚከፈል ዋጋ
 PriceOfBooth=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
 PriceOfBoothHelp=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=ለኮንፈረንስ ICS አገናኝ
 ConferenceOrBoothInformation=የኮንፈረንስ ወይም የቡዝ መረጃ
 Attendees=ተሳታፊዎች
@@ -127,7 +128,7 @@ PublicAttendeeSubscriptionPage = ለዚህ ክስተት ብቻ የህዝብ ግ�
 MissingOrBadSecureKey = የደህንነት ቁልፉ ልክ ያልሆነ ወይም ጠፍቷል
 EvntOrgWelcomeMessage = ይህ ቅጽ ለዝግጅቱ እንደ አዲስ ተሳታፊ እንዲመዘገቡ ያስችልዎታል
 EvntOrgDuration = ይህ ኮንፈረንስ በ%s ይጀምር እና በ%s ላይ ያበቃል።
-ConferenceAttendeeFee = የስብሰባው ተሳታፊዎች ክፍያ ለዝግጅቱ፡ '%sከ%s እስከ <span class='notranslate'>b0ecb2ec87fe49fez0 >.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = የዝግጅቱ ቦታ፡ '%s ከ%s እስከ b0ecb2ec87fe49fez0 የሚከሰት
 EventType = የክስተት አይነት
 LabelOfBooth=የዳስ መለያ

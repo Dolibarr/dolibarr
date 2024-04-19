@@ -6,7 +6,7 @@ EnterNameOfObjectDesc=أدخل اسم الكائن المراد إنشاؤه ب�
 EnterNameOfDictionaryDesc=أدخل اسم القاموس لإنشائه بدون مسافات. استخدم الأحرف الكبيرة لفصل الكلمات (على سبيل المثال: MyDico ...). سيتم إنشاء ملف الفصل ، وكذلك ملف SQL.
 ModuleBuilderDesc2=المسار الذي يتم فيه إنشاء / تحرير الوحدات (الدليل الأول للوحدات الخارجية المحددة في %s): <strong> %s </strong>
 ModuleBuilderDesc3=تم العثور على الوحدات النمطية / القابلة للتحرير: <strong> %s </strong>
-ModuleBuilderDesc4=تم اكتشاف نموذج باعتباره 'نموذج لـ نموذج مُنشئ' عندما الملف <strong>%s</strong> موجود في جذر <span class= دليل 'notranslate'>نموذج</span>
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=وحدة جديدة
 NewObjectInModulebuilder=كائن جديد
 NewDictionary=قاموس جديد

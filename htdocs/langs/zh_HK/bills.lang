@@ -5,9 +5,9 @@ BillsCustomers=客戶發票
 BillsCustomer=客戶發票
 BillsSuppliers=供應商發票
 BillsCustomersUnpaid=未付客戶發票
-BillsCustomersUnpaidForCompany=<span class='notranslate'>%s</span> 的未付客戶發票\n
+BillsCustomersUnpaidForCompany=Unpaid customer invoices for %s
 BillsSuppliersUnpaid=未支付的供應商發票
-BillsSuppliersUnpaidForCompany=<span class='notranslate'>%s</span> 的未付款供應商發票\n
+BillsSuppliersUnpaidForCompany=Unpaid vendors invoices for %s
 BillsLate=逾期付款
 BillsStatistics=客戶發票統計
 BillsStatisticsSuppliers=供應商發票統計
@@ -79,7 +79,7 @@ ReceivedPayments=已收到付款
 ReceivedCustomersPayments=從客戶處收到的付款
 PayedSuppliersPayments=支付給供應商的款項
 ReceivedCustomersPaymentsToValid=收到客戶付款進行驗證
-PaymentsReportsForYear=<span class='notranslate'>%s</span> 的付款報告\n
+PaymentsReportsForYear=Payments reports for %s
 PaymentsReports=付款報告
 PaymentsAlreadyDone=付款已經完成
 PaymentsBackAlreadyDone=退款已經完成
@@ -93,6 +93,9 @@ CodePaymentMode=Payment method (code)
 LabelPaymentMode=Payment method (label)
 PaymentModeShort=Payment method
 PaymentTerm=Payment Term
+IdPaymentTerm=Payment term (id)
+CodePaymentTerm=Payment term (code)
+LabelPaymentTerm=Payment term (label)
 PaymentConditions=付款條件
 PaymentConditionsShort=付款條件
 PaymentAmount=支付金額
@@ -213,8 +216,8 @@ ConfirmClassifyPaidPartiallyReasonOtherDesc=如果所有其他選項都不適合
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=其他
 ConfirmClassifyAbandonReasonOtherDesc=此選擇將用於所有其他情況。例如，因為您計劃創建替換發票。
-ConfirmCustomerPayment=您是否確認<span class='notranslate'><b></span>的付款輸入\n %s </b>  %s？
-ConfirmSupplierPayment=您是否確認<span class='notranslate'><b></span>的付款輸入\n %s </b>  %s？
+ConfirmCustomerPayment=Do you confirm this payment input for <b>%s</b> %s?
+ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s?
 ConfirmValidatePayment=您確定要驗證此付款嗎？付款一經驗證，將無法進行任何更改。
 ValidateBill=驗證發票
 UnvalidateBill=Invalidate invoice
@@ -268,6 +271,8 @@ NoDraftBills=沒有草稿發票
 NoOtherDraftBills=沒有其他草稿發票
 NoDraftInvoices=沒有草稿發票
 RefBill=發票參考號
+RefSupplierBill=Supplier invoice ref
+SupplierOrderCreateBill=Create invoice
 ToBill=開單
 RemainderToBill=剩餘的賬單
 SendBillByMail=通過電子郵件發送發票
@@ -352,6 +357,7 @@ HelpAbandonOther=該金額已被放棄，因為它是一個錯誤（例如錯誤
 IdSocialContribution=社會/財政稅繳稅號
 PaymentId=付款編號
 PaymentRef=Payment ref.
+SourceInvoiceId=Source invoice id
 InvoiceId=發票編號
 InvoiceRef=發票參考號
 InvoiceDateCreation=發票創建日期
@@ -371,7 +377,7 @@ DisabledBecauseReplacedInvoice=由於發票已被替換，操作被禁用
 DescTaxAndDividendsArea=此區域顯示所有特殊費用付款的摘要。此處僅包含固定年份內的付款記錄。
 NbOfPayments=付款次數
 SplitDiscount=折扣一分為二
-ConfirmSplitDiscount=您確定要分割 <span class='notranslate'><b></span> 的折扣嗎\n %s </b>  %s 分成兩個較小的折扣？
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
 TypeAmountOfEachNewDiscount=兩部分各輸入金額：
 TotalOfTwoDiscountMustEqualsOriginal=兩次新折扣的總和必須等於原來的折扣金額。
 ConfirmRemoveDiscount=您確定要刪除此折扣嗎？
@@ -444,7 +450,7 @@ PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
 PaymentConditionShortDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit
 PaymentConditionDEP30PCTDEL=__DEPOSIT_PERCENT__%% deposit, remainder on delivery
-FixAmount=固定金額 - 1 行，帶有標籤“<span class='notranslate'>%s</span>”\n'
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=可變金額 (%% 總。）
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 VarAmountAllLines=Variable amount (%% tot.) - all lines from origin

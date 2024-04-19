@@ -72,7 +72,7 @@ FieldsTarget=Fushat e synuara
 FieldTarget=Fusha e synuar
 FieldSource=Fusha e burimit
 NbOfSourceLines=Numri i rreshtave në skedarin burimor
-NowClickToTestTheImport=Kontrolloni që formati i skedarit (ndarësit e fushave dhe vargjeve) të skedarit tuaj përputhet me opsionet e treguara dhe se e keni hequr rreshtin e titullit, ose këto do të shënohen si gabime në simulimin e mëposhtëm.<br>Kliko në butonin "<b>%s</b>" për të</span a> kontrolloni strukturën/përmbajtjen e skedarit dhe simuloni procesin e importimit.<span class='notranslate'><br><b>Asnjë të dhënë nuk do të ndryshohet në bazën tuaj të të dhënave</b>.
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=Ekzekutoni simulimin e importit
 FieldNeedSource=Kjo fushë kërkon të dhëna nga skedari burimor
 SomeMandatoryFieldHaveNoSource=Disa fusha të detyrueshme nuk kanë burim nga skedari i të dhënave
@@ -83,15 +83,15 @@ SelectFormat=Zgjidhni këtë format skedari të importit
 RunImportFile=Të dhënat e importit
 NowClickToRunTheImport=Kontrolloni rezultatet e simulimit të importit. Korrigjoni çdo gabim dhe riprovoni.<br>Kur simulimi nuk raporton asnjë gabim, mund të vazhdoni të importoni të dhënat në bazën e të dhënave.
 DataLoadedWithId=Të dhënat e importuara do të kenë një fushë shtesë në secilën tabelë të bazës së të dhënave me këtë ID të importit: <b>%s</b>, për të lejuar që ai të jetë i kërkueshëm në rastin e hetimit të një problemi që lidhet me këtë import.
-ErrorMissingMandatoryValue=Të dhënat e detyrueshme janë bosh në skedarin burimor në kolonën <b>%s<span class='notranslate'>b09a4b739f17f8z.
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=Ka ende <b>%s</b> linja të tjera burimore por ka nxjerrë linja të tjera ka qenë e kufizuar.
 TooMuchWarnings=Ende ka <b>%s</b> që ka linja të tjera burimore me luftë ishte i kufizuar.
 EmptyLine=Linja e zbrazët (do të hidhet poshtë)
-CorrectErrorBeforeRunningImport=Ju <b>duhet</b> të korrigjoni të gjitha gabimet b0aee83365837fz>b0aee83365837fz notranslate'></b> duke ekzekutuar importin përfundimtar.
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=Skedari u importua me numër <b>%s</b>.
 YouCanUseImportIdToFindRecord=Ju mund t'i gjeni të gjitha regjistrimet e importuara në bazën tuaj të të dhënave duke filtruar në fushën <b>import_key='%s'</b>.
-NbOfLinesOK=Numri i rreshtave pa gabime dhe pa paralajmërime: <b>%s<span class='notranslate'>b09a4b78z000f1>f.
-NbOfLinesImported=Numri i rreshtave të importuar me sukses: <b>%s<span class='notranslate'></b></s.
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
+NbOfLinesImported=Number of lines successfully imported: <b>%s</b>.
 DataComeFromNoWhere=Vlera për të futur vjen nga askund në skedarin burimor.
 DataComeFromFileFieldNb=Vlera për të futur vjen nga kolona <b>%s</b> në skedarin burimor.
 DataComeFromIdFoundFromRef=Vlera që vjen nga skedari burimor do të përdoret për të gjetur ID-në e objektit prind për t'u përdorur (kështu që objekti <b>%s</b> që ka ref. nga skedari burim duhet të ekzistojë në bazën e të dhënave).
@@ -102,19 +102,19 @@ DataCodeIDSourceIsInsertedInto=ID-ja e linjës mëmë, e gjetur nga kodi, do të
 SourceRequired=Vlera e të dhënave është e detyrueshme
 SourceExample=Shembull i vlerës së mundshme të të dhënave
 ExampleAnyRefFoundIntoElement=Çdo referencë e gjetur për elementin <b>%s</b>
-ExampleAnyCodeOrIdFoundIntoDictionary=Çdo kod (ose id) i gjetur në fjalor <b>%s<span class='notranslate'>b09a4b739f17f8z</s0
-CSVFormatDesc=<b>Vlera e ndarë me presje</b> formati i skedarit (.csv).b0149fccf>b0149fccf është një format skedari teksti ku fushat janë të ndara nga një ndarës [ <span class='notranslate'>%s ]. Nëse gjendet ndarësi brenda përmbajtjes së fushës, fusha rrumbullakohet me karakter të rrumbullakët [ %s ]. Karakteri i arratisjes për t'i shpëtuar karakterit të rrumbullakët është [ %s ].
-Excel95FormatDesc=<b>Excel</b> formati i skedarit (.xls)<span class='notranslate'>b0342fccfda19>b0 Formati Excel 95 (BIFF5).
-Excel2007FormatDesc=<b>Excel</b> formati i skedarit (.xlsx)<span class='notranslate'>b0342fccfda19>z Formati Excel 2007 (SpreadsheetML).
-TsvFormatDesc=<b>Vlera e veçuar me skedë</b> formati i skedarit (.tsv)<span class='notranslate'>b0342fccfda. një format skedari teksti ku fushat janë të ndara nga një tabelator [tab].
+ExampleAnyCodeOrIdFoundIntoDictionary=Any code (or id) found into dictionary <b>%s</b>
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is the native Excel 95 format (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is the native Excel 2007 format (SpreadsheetML).
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=Fusha <b>%s</b> u shtua automatikisht. Kjo do t'ju shmangë që të keni linja të ngjashme që do të trajtohen si rekord dublikatë (me këtë fushë të shtuar, të gjitha linjat do të kenë ID-në e tyre dhe do të ndryshojnë).
 CsvOptions=Opsionet e formatit CSV
 Separator=Ndarës i fushës
 Enclosure=Kufizues i vargut
 SpecialCode=Kodi special
 ExportStringFilter=%% lejon zëvendësimin e një ose më shumë karaktereve në tekst
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filtron sipas një viti/muaj/ditë<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD+VVVYYMNë diapazonin e viteve/VVVMMMDD: span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: filtra në të gjitha vitet/muajt/ditët në vijim<br> <YYYYMM YYYYMMDD: filtra në të gjitha vitet/muajt/ditët e mëparshme
-ExportNumericFilter=NNNNN filtron sipas një vlere<br>NNNNN+NNNNN filtro mbi një sërë vlerash<br><span class='notranslate'>b27ede2ez<0892ez /span>> NNNNN filtron sipas vlerave më të larta
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Importoni duke filluar nga numri i linjës
 EndAtLineNb=Përfundoni në numrin e linjës
 ImportFromToLine=Gama e kufirit (Nga - Deri). P.sh. për të hequr rreshtat e titullit.

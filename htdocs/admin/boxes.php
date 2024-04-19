@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -50,7 +51,7 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOST("MAIN_BOXES_MAXLINES", 'int'), '', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -165,10 +166,10 @@ if ($action == 'switch') {
 	$db->begin();
 
 	$objfrom = new ModeleBoxes($db);
-	$objfrom->fetch(GETPOST("switchfrom", 'int'));
+	$objfrom->fetch(GETPOSTINT("switchfrom"));
 
 	$objto = new ModeleBoxes($db);
-	$objto->fetch(GETPOST('switchto', 'int'));
+	$objto->fetch(GETPOSTINT('switchto'));
 
 	$resultupdatefrom = 0;
 	$resultupdateto = 0;
@@ -177,7 +178,7 @@ if ($action == 'switch') {
 		$newsecond = $objfrom->box_order;
 		if ($newfirst == $newsecond) {
 			$newsecondchar = preg_replace('/[0-9]+/', '', $newsecond);
-			$newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
+			$newsecondnum = (int) preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			$newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
 

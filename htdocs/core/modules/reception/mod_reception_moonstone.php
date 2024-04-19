@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018		Quentin Vial-Gouteyron	<quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2019		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,8 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe			$objsoc     Third party object
-	 *	@param	Object|null		$reception	Reception object
-	 *	@return string      				Value if OK, 0 if KO
+	 *	@param	Reception|null	$reception	Reception object
+	 *	@return string|0      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
@@ -123,19 +123,5 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Reception object
-	 *	@return string      			Next free value
-	 */
-	public function reception_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

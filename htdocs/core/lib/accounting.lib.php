@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  *
  * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
  * @param	mixed		$var			Value to test
- * @param	int|null	$allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
- * @param	int|null	$allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
+ * @param	boolean     $allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
+ * @param	boolean     $allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
  * @return	boolean				  		True of False
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
@@ -169,7 +169,7 @@ function length_accounta($accounta)
  *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
- *	@param 	string				$variante       Link for alternate report
+ *	@param 	string				$variant        Link for alternate report
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
@@ -180,7 +180,7 @@ function length_accounta($accounta)
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
 	global $langs;
 
@@ -218,14 +218,14 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	if ($calcmode) {
 		print '<tr>';
 		print '<td>'.$langs->trans("CalculationMode").'</td>';
-		if (!$variante) {
+		if (!$variant) {
 			print '<td colspan="3">';
 		} else {
 			print '<td>';
 		}
 		print $calcmode;
-		if ($variante) {
-			print '</td><td colspan="2">'.$variante;
+		if ($variant) {
+			print '</td><td colspan="2">'.$variant;
 		}
 		print '</td>';
 		print '</tr>';

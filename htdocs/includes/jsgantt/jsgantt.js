@@ -1,6 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JSGantt = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSGantt = void 0;
 var jsGantt = require("./src/jsgantt");
 module.exports = jsGantt.JSGantt;
 exports.JSGantt = jsGantt.JSGantt;
@@ -8,6 +9,7 @@ exports.JSGantt = jsGantt.JSGantt;
 },{"./src/jsgantt":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GanttChart = void 0;
 var lang = require("./lang");
 var events_1 = require("./events");
 var general_utils_1 = require("./utils/general_utils");
@@ -60,7 +62,7 @@ exports.GanttChart = function (pDiv, pFormat) {
         3: true,
         4: true,
         5: true,
-        6: true
+        6: true,
     };
     this.vEventClickCollapse = null;
     this.vEventClickRow = null;
@@ -79,7 +81,7 @@ exports.GanttChart = function (pDiv, pFormat) {
         beforeLineDraw: null,
         afterLineDraw: null,
         onLineDraw: null,
-        onLineContainerHover: null
+        onLineContainerHover: null,
     };
     this.vEventsChange = {
         taskname: null,
@@ -91,36 +93,36 @@ exports.GanttChart = function (pDiv, pFormat) {
         planstartdate: null,
         planenddate: null,
         cost: null,
-        line: null
+        line: null,
     };
     this.vResources = null;
     this.vAdditionalHeaders = {};
     this.vColumnOrder = draw_columns_1.COLUMN_ORDER;
     this.vEditable = false;
     this.vDebug = false;
-    this.vShowSelector = new Array('top');
-    this.vDateInputFormat = 'yyyy-mm-dd';
-    this.vDateTaskTableDisplayFormat = date_utils_1.parseDateFormatStr('dd/mm/yyyy');
-    this.vDateTaskDisplayFormat = date_utils_1.parseDateFormatStr('dd month yyyy');
-    this.vHourMajorDateDisplayFormat = date_utils_1.parseDateFormatStr('day dd month yyyy');
-    this.vHourMinorDateDisplayFormat = date_utils_1.parseDateFormatStr('HH');
-    this.vDayMajorDateDisplayFormat = date_utils_1.parseDateFormatStr('dd/mm/yyyy');
-    this.vDayMinorDateDisplayFormat = date_utils_1.parseDateFormatStr('dd');
-    this.vWeekMajorDateDisplayFormat = date_utils_1.parseDateFormatStr('yyyy');
-    this.vWeekMinorDateDisplayFormat = date_utils_1.parseDateFormatStr('dd/mm');
-    this.vMonthMajorDateDisplayFormat = date_utils_1.parseDateFormatStr('yyyy');
-    this.vMonthMinorDateDisplayFormat = date_utils_1.parseDateFormatStr('mon');
-    this.vQuarterMajorDateDisplayFormat = date_utils_1.parseDateFormatStr('yyyy');
-    this.vQuarterMinorDateDisplayFormat = date_utils_1.parseDateFormatStr('qq');
-    this.vUseFullYear = date_utils_1.parseDateFormatStr('dd/mm/yyyy');
+    this.vShowSelector = new Array("top");
+    this.vDateInputFormat = "yyyy-mm-dd";
+    this.vDateTaskTableDisplayFormat = date_utils_1.parseDateFormatStr("dd/mm/yyyy");
+    this.vDateTaskDisplayFormat = date_utils_1.parseDateFormatStr("dd month yyyy");
+    this.vHourMajorDateDisplayFormat = date_utils_1.parseDateFormatStr("day dd month yyyy");
+    this.vHourMinorDateDisplayFormat = date_utils_1.parseDateFormatStr("HH");
+    this.vDayMajorDateDisplayFormat = date_utils_1.parseDateFormatStr("dd/mm/yyyy");
+    this.vDayMinorDateDisplayFormat = date_utils_1.parseDateFormatStr("dd");
+    this.vWeekMajorDateDisplayFormat = date_utils_1.parseDateFormatStr("yyyy");
+    this.vWeekMinorDateDisplayFormat = date_utils_1.parseDateFormatStr("dd/mm");
+    this.vMonthMajorDateDisplayFormat = date_utils_1.parseDateFormatStr("yyyy");
+    this.vMonthMinorDateDisplayFormat = date_utils_1.parseDateFormatStr("mon");
+    this.vQuarterMajorDateDisplayFormat = date_utils_1.parseDateFormatStr("yyyy");
+    this.vQuarterMinorDateDisplayFormat = date_utils_1.parseDateFormatStr("qq");
+    this.vUseFullYear = date_utils_1.parseDateFormatStr("dd/mm/yyyy");
     this.vCaptionType;
     this.vDepId = 1;
     this.vTaskList = new Array();
-    this.vFormatArr = new Array('hour', 'day', 'week', 'month', 'quarter');
+    this.vFormatArr = new Array("hour", "day", "week", "month", "quarter");
     this.vMonthDaysArr = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     this.vProcessNeeded = true;
     this.vMinGpLen = 8;
-    this.vScrollTo = '';
+    this.vScrollTo = "";
     this.vHourColWidth = 18;
     this.vDayColWidth = 18;
     this.vWeekColWidth = 36;
@@ -129,7 +131,7 @@ exports.GanttChart = function (pDiv, pFormat) {
     this.vRowHeight = 20;
     this.vTodayPx = -1;
     this.vLangs = lang;
-    this.vLang = navigator.language && navigator.language in lang ? navigator.language : 'en';
+    this.vLang = navigator.language && navigator.language in lang ? navigator.language : "en";
     this.vChartBody = null;
     this.vChartHead = null;
     this.vListBody = null;
@@ -160,12 +162,12 @@ exports.GanttChart = function (pDiv, pFormat) {
     this.DrawDependencies = draw_dependencies_1.DrawDependencies.bind(this);
     this.getArrayLocationByID = draw_utils_1.getArrayLocationByID.bind(this);
     this.drawSelector = draw_utils_1.drawSelector.bind(this);
+    this.printChart = general_utils_1.printChart.bind(this);
     this.clearDependencies = function () {
         var parent = this.getLines();
-        if (this.vEventsChange.line &&
-            typeof this.vEventsChange.line === 'function') {
-            this.removeListener('click', this.vEventsChange.line, parent);
-            this.addListener('click', this.vEventsChange.line, parent);
+        if (this.vEventsChange.line && typeof this.vEventsChange.line === "function") {
+            this.removeListener("click", this.vEventsChange.line, parent);
+            this.addListener("click", this.vEventsChange.line, parent);
         }
         while (parent.hasChildNodes())
             parent.removeChild(parent.firstChild);
@@ -173,20 +175,20 @@ exports.GanttChart = function (pDiv, pFormat) {
     };
     this.drawListHead = function (vLeftHeader) {
         var _this = this;
-        var vTmpDiv = draw_utils_1.newNode(vLeftHeader, 'div', this.vDivId + 'glisthead', 'glistlbl gcontainercol');
+        var vTmpDiv = draw_utils_1.newNode(vLeftHeader, "div", this.vDivId + "glisthead", "glistlbl gcontainercol");
         var gListLbl = vTmpDiv;
         this.setListBody(vTmpDiv);
-        var vTmpTab = draw_utils_1.newNode(vTmpDiv, 'table', null, 'gtasktableh');
-        var vTmpTBody = draw_utils_1.newNode(vTmpTab, 'tbody');
-        var vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr');
-        draw_utils_1.newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-        var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, 'gspanning gtaskname', null, null, null, null, this.getColumnOrder().length + 1);
-        vTmpCell.appendChild(this.drawSelector('top'));
-        vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr');
-        draw_utils_1.newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-        draw_utils_1.newNode(vTmpRow, 'td', null, 'gtaskname', '\u00A0');
+        var vTmpTab = draw_utils_1.newNode(vTmpDiv, "table", null, "gtasktableh");
+        var vTmpTBody = draw_utils_1.newNode(vTmpTab, "tbody");
+        var vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr");
+        draw_utils_1.newNode(vTmpRow, "td", null, "gtasklist", "\u00A0");
+        var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, "gspanning gtaskname", null, null, null, null, this.getColumnOrder().length + 1);
+        vTmpCell.appendChild(this.drawSelector("top"));
+        vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr");
+        draw_utils_1.newNode(vTmpRow, "td", null, "gtasklist", "\u00A0");
+        draw_utils_1.newNode(vTmpRow, "td", null, "gtaskname", "\u00A0");
         this.getColumnOrder().forEach(function (column) {
-            if (_this[column] == 1 || column === 'vAdditionalHeaders') {
+            if (_this[column] == 1 || column === "vAdditionalHeaders") {
                 draw_columns_1.draw_task_headings(column, vTmpRow, _this.vLangs, _this.vLang, _this.vAdditionalHeaders, _this.vEvents);
             }
         });
@@ -194,38 +196,38 @@ exports.GanttChart = function (pDiv, pFormat) {
     };
     this.drawListBody = function (vLeftHeader) {
         var _this = this;
-        var vTmpContentTabOuterWrapper = draw_utils_1.newNode(vLeftHeader, 'div', null, 'gtasktableouterwrapper');
-        var vTmpContentTabWrapper = draw_utils_1.newNode(vTmpContentTabOuterWrapper, 'div', null, 'gtasktablewrapper');
+        var vTmpContentTabOuterWrapper = draw_utils_1.newNode(vLeftHeader, "div", null, "gtasktableouterwrapper");
+        var vTmpContentTabWrapper = draw_utils_1.newNode(vTmpContentTabOuterWrapper, "div", null, "gtasktablewrapper");
         vTmpContentTabWrapper.style.width = "calc(100% + " + general_utils_1.getScrollbarWidth() + "px)";
-        var vTmpContentTab = draw_utils_1.newNode(vTmpContentTabWrapper, 'table', null, 'gtasktable');
-        var vTmpContentTBody = draw_utils_1.newNode(vTmpContentTab, 'tbody');
+        var vTmpContentTab = draw_utils_1.newNode(vTmpContentTabWrapper, "table", null, "gtasktable");
+        var vTmpContentTBody = draw_utils_1.newNode(vTmpContentTab, "tbody");
         var vNumRows = 0;
         var _loop_1 = function (i) {
             var vBGColor = void 0;
             if (this_1.vTaskList[i].getGroup() == 1)
-                vBGColor = 'ggroupitem';
+                vBGColor = "ggroupitem";
             else
-                vBGColor = 'glineitem';
+                vBGColor = "glineitem a";
             var vID = this_1.vTaskList[i].getID();
             var vTmpRow_1, vTmpCell_1 = void 0;
-            if ((!(this_1.vTaskList[i].getParItem() && this_1.vTaskList[i].getParItem().getGroup() == 2)) || this_1.vTaskList[i].getGroup() == 2) {
+            if (!(this_1.vTaskList[i].getParItem() && this_1.vTaskList[i].getParItem().getGroup() == 2) || this_1.vTaskList[i].getGroup() == 2) {
                 if (this_1.vTaskList[i].getVisible() == 0)
-                    vTmpRow_1 = draw_utils_1.newNode(vTmpContentTBody, 'tr', this_1.vDivId + 'child_' + vID, 'gname ' + vBGColor, null, null, null, 'none');
+                    vTmpRow_1 = draw_utils_1.newNode(vTmpContentTBody, "tr", this_1.vDivId + "child_" + vID, "gname " + vBGColor, null, null, null, "none");
                 else
-                    vTmpRow_1 = draw_utils_1.newNode(vTmpContentTBody, 'tr', this_1.vDivId + 'child_' + vID, 'gname ' + vBGColor);
+                    vTmpRow_1 = draw_utils_1.newNode(vTmpContentTBody, "tr", this_1.vDivId + "child_" + vID, "gname " + vBGColor);
                 this_1.vTaskList[i].setListChildRow(vTmpRow_1);
-                draw_utils_1.newNode(vTmpRow_1, 'td', null, 'gtasklist', '\u00A0');
-                var editableClass = this_1.vEditable ? 'gtaskname gtaskeditable' : 'gtaskname';
-                vTmpCell_1 = draw_utils_1.newNode(vTmpRow_1, 'td', null, editableClass);
-                var vCellContents = '';
+                draw_utils_1.newNode(vTmpRow_1, "td", null, "gtasklist", "\u00A0");
+                var editableClass = this_1.vEditable ? "gtaskname gtaskeditable" : "gtaskname";
+                vTmpCell_1 = draw_utils_1.newNode(vTmpRow_1, "td", null, editableClass);
+                var vCellContents = "";
                 for (var j = 1; j < this_1.vTaskList[i].getLevel(); j++) {
-                    vCellContents += '\u00A0\u00A0\u00A0\u00A0';
+                    vCellContents += "\u00A0\u00A0\u00A0\u00A0";
                 }
                 var task_2 = this_1.vTaskList[i];
                 var vEventClickRow_1 = this_1.vEventClickRow;
                 var vEventClickCollapse_1 = this_1.vEventClickCollapse;
-                events_1.addListener('click', function (e) {
-                    if (e.target.classList.contains('gfoldercollapse') === false) {
+                events_1.addListener("click", function (e) {
+                    if (e.target.classList.contains("gfoldercollapse") === false) {
                         if (vEventClickRow_1 && typeof vEventClickRow_1 === "function") {
                             vEventClickRow_1(task_2);
                         }
@@ -237,29 +239,29 @@ exports.GanttChart = function (pDiv, pFormat) {
                     }
                 }, vTmpRow_1);
                 if (this_1.vTaskList[i].getGroup() == 1) {
-                    var vTmpDiv = draw_utils_1.newNode(vTmpCell_1, 'div', null, null, vCellContents);
-                    var vTmpSpan = draw_utils_1.newNode(vTmpDiv, 'span', this_1.vDivId + 'group_' + vID, 'gfoldercollapse', (this_1.vTaskList[i].getOpen() == 1) ? '-' : '+');
+                    var vTmpDiv = draw_utils_1.newNode(vTmpCell_1, "div", null, null, vCellContents);
+                    var vTmpSpan = draw_utils_1.newNode(vTmpDiv, "span", this_1.vDivId + "group_" + vID, "gfoldercollapse", this_1.vTaskList[i].getOpen() == 1 ? "-" : "+");
                     this_1.vTaskList[i].setGroupSpan(vTmpSpan);
                     events_1.addFolderListeners(this_1, vTmpSpan, vID);
-                    var divTask = document.createElement('span');
-                    divTask.innerHTML = '\u00A0' + this_1.vTaskList[i].getName();
+                    var divTask = document.createElement("span");
+                    divTask.innerHTML = "\u00A0" + this_1.vTaskList[i].getName();
                     vTmpDiv.appendChild(divTask);
                     // const text = makeInput(this.vTaskList[i].getName(), this.vEditable, 'text');
                     // vTmpDiv.appendChild(document.createNode(text));
                     var callback = function (task, e) { return task.setName(e.target.value); };
-                    events_1.addListenerInputCell(vTmpCell_1, this_1.vEventsChange, callback, this_1.vTaskList, i, 'taskname', this_1.Draw.bind(this_1));
-                    events_1.addListenerClickCell(vTmpDiv, this_1.vEvents, this_1.vTaskList[i], 'taskname');
+                    events_1.addListenerInputCell(vTmpCell_1, this_1.vEventsChange, callback, this_1.vTaskList, i, "taskname", this_1.Draw.bind(this_1));
+                    events_1.addListenerClickCell(vTmpDiv, this_1.vEvents, this_1.vTaskList[i], "taskname");
                 }
                 else {
-                    vCellContents += '\u00A0\u00A0\u00A0\u00A0';
-                    var text = draw_utils_1.makeInput(this_1.vTaskList[i].getName(), this_1.vEditable, 'text');
-                    var vTmpDiv = draw_utils_1.newNode(vTmpCell_1, 'div', null, null, vCellContents + text);
+                    vCellContents += "\u00A0\u00A0\u00A0\u00A0";
+                    var text = draw_utils_1.makeInput(this_1.vTaskList[i].getName(), this_1.vEditable, "text");
+                    var vTmpDiv = draw_utils_1.newNode(vTmpCell_1, "div", null, null, vCellContents + text);
                     var callback = function (task, e) { return task.setName(e.target.value); };
-                    events_1.addListenerInputCell(vTmpCell_1, this_1.vEventsChange, callback, this_1.vTaskList, i, 'taskname', this_1.Draw.bind(this_1));
-                    events_1.addListenerClickCell(vTmpCell_1, this_1.vEvents, this_1.vTaskList[i], 'taskname');
+                    events_1.addListenerInputCell(vTmpCell_1, this_1.vEventsChange, callback, this_1.vTaskList, i, "taskname", this_1.Draw.bind(this_1));
+                    events_1.addListenerClickCell(vTmpCell_1, this_1.vEvents, this_1.vTaskList[i], "taskname");
                 }
                 this_1.getColumnOrder().forEach(function (column) {
-                    if (_this[column] == 1 || column === 'vAdditionalHeaders') {
+                    if (_this[column] == 1 || column === "vAdditionalHeaders") {
                         draw_columns_1.draw_header(column, i, vTmpRow_1, _this.vTaskList, _this.vEditable, _this.vEventsChange, _this.vEvents, _this.vDateTaskTableDisplayFormat, _this.vAdditionalHeaders, _this.vFormat, _this.vLangs, _this.vLang, _this.vResources, _this.Draw.bind(_this));
                     }
                 });
@@ -272,23 +274,21 @@ exports.GanttChart = function (pDiv, pFormat) {
         }
         // Render no daa in the chart
         if (this.vTaskList.length == 0) {
-            var totalColumns = this.getColumnOrder()
-                .filter(function (column) { return _this[column] == 1 || column === 'vAdditionalHeaders'; })
-                .length;
-            var vTmpRow_2 = draw_utils_1.newNode(vTmpContentTBody, 'tr', this.vDivId + 'child_', 'gname ');
+            var totalColumns = this.getColumnOrder().filter(function (column) { return _this[column] == 1 || column === "vAdditionalHeaders"; }).length;
+            var vTmpRow_2 = draw_utils_1.newNode(vTmpContentTBody, "tr", this.vDivId + "child_", "gname ");
             // this.vTaskList[i].setListChildRow(vTmpRow);
-            var vTmpCell_2 = draw_utils_1.newNode(vTmpRow_2, 'td', null, 'gtasknolist', '', null, null, null, totalColumns);
+            var vTmpCell_2 = draw_utils_1.newNode(vTmpRow_2, "td", null, "gtasknolist", "", null, null, null, totalColumns);
             var vOutput = document.createDocumentFragment();
-            draw_utils_1.newNode(vOutput, 'div', null, 'gtasknolist-label', this.vLangs[this.vLang]['nodata'] + '.');
+            draw_utils_1.newNode(vOutput, "div", null, "gtasknolist-label", this.vLangs[this.vLang]["nodata"] + ".");
             vTmpCell_2.appendChild(vOutput);
         }
         // DRAW the date format selector at bottom left.
-        var vTmpRow = draw_utils_1.newNode(vTmpContentTBody, 'tr');
-        draw_utils_1.newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
-        var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, 'gspanning gtaskname');
-        vTmpCell.appendChild(this.drawSelector('bottom'));
+        var vTmpRow = draw_utils_1.newNode(vTmpContentTBody, "tr");
+        draw_utils_1.newNode(vTmpRow, "td", null, "gtasklist", "\u00A0");
+        var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, "gspanning gtaskname");
+        vTmpCell.appendChild(this.drawSelector("bottom"));
         this.getColumnOrder().forEach(function (column) {
-            if (_this[column] == 1 || column === 'vAdditionalHeaders') {
+            if (_this[column] == 1 || column === "vAdditionalHeaders") {
                 draw_columns_1.draw_bottom(column, vTmpRow, _this.vAdditionalHeaders);
             }
         });
@@ -298,7 +298,7 @@ exports.GanttChart = function (pDiv, pFormat) {
         // newNode(vTmpDiv2, 'br');
         return {
             vNumRows: vNumRows,
-            vTmpContentTabWrapper: vTmpContentTabWrapper
+            vTmpContentTabWrapper: vTmpContentTabWrapper,
         };
     };
     /**
@@ -308,15 +308,15 @@ exports.GanttChart = function (pDiv, pFormat) {
      */
     this.drawChartHead = function (vMinDate, vMaxDate, vColWidth, vNumRows) {
         var vRightHeader = document.createDocumentFragment();
-        var vTmpDiv = draw_utils_1.newNode(vRightHeader, 'div', this.vDivId + 'gcharthead', 'gchartlbl gcontainercol');
+        var vTmpDiv = draw_utils_1.newNode(vRightHeader, "div", this.vDivId + "gcharthead", "gchartlbl gcontainercol");
         var gChartLbl = vTmpDiv;
         this.setChartHead(vTmpDiv);
-        var vTmpTab = draw_utils_1.newNode(vTmpDiv, 'table', this.vDivId + 'chartTableh', 'gcharttableh');
-        var vTmpTBody = draw_utils_1.newNode(vTmpTab, 'tbody');
-        var vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr');
+        var vTmpTab = draw_utils_1.newNode(vTmpDiv, "table", this.vDivId + "chartTableh", "gcharttableh");
+        var vTmpTBody = draw_utils_1.newNode(vTmpTab, "tbody");
+        var vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr");
         var vTmpDate = new Date();
         vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
-        if (this.vFormat == 'hour')
+        if (this.vFormat == "hour")
             vTmpDate.setHours(vMinDate.getHours());
         else
             vTmpDate.setHours(0);
@@ -326,90 +326,88 @@ exports.GanttChart = function (pDiv, pFormat) {
         var vColSpan = 1;
         // Major Date Header
         while (vTmpDate.getTime() <= vMaxDate.getTime()) {
-            var vHeaderCellClass = 'gmajorheading';
-            var vCellContents = '';
-            if (this.vFormat == 'day') {
+            var vHeaderCellClass = "gmajorheading";
+            var vCellContents = "";
+            if (this.vFormat == "day") {
                 var colspan = 7;
                 if (!this.vShowWeekends) {
-                    vHeaderCellClass += ' headweekends';
+                    vHeaderCellClass += " headweekends";
                     colspan = 5;
                 }
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, colspan);
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vHeaderCellClass, null, null, null, null, colspan);
                 vCellContents += date_utils_1.formatDateStr(vTmpDate, this.vDayMajorDateDisplayFormat, this.vLangs[this.vLang]);
                 vTmpDate.setDate(vTmpDate.getDate() + 6);
                 if (this.vShowEndWeekDate == 1)
-                    vCellContents += ' - ' + date_utils_1.formatDateStr(vTmpDate, this.vDayMajorDateDisplayFormat, this.vLangs[this.vLang]);
-                draw_utils_1.newNode(vTmpCell, 'div', null, null, vCellContents, vColWidth * colspan);
+                    vCellContents += " - " + date_utils_1.formatDateStr(vTmpDate, this.vDayMajorDateDisplayFormat, this.vLangs[this.vLang]);
+                draw_utils_1.newNode(vTmpCell, "div", null, null, vCellContents, vColWidth * colspan);
                 vTmpDate.setDate(vTmpDate.getDate() + 1);
             }
-            else if (this.vFormat == 'week') {
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, vColWidth);
-                draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vWeekMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+            else if (this.vFormat == "week") {
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vHeaderCellClass, null, vColWidth);
+                draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vWeekMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                 vTmpDate.setDate(vTmpDate.getDate() + 7);
             }
-            else if (this.vFormat == 'month') {
-                vColSpan = (12 - vTmpDate.getMonth());
+            else if (this.vFormat == "month") {
+                vColSpan = 12 - vTmpDate.getMonth();
                 if (vTmpDate.getFullYear() == vMaxDate.getFullYear())
-                    vColSpan -= (11 - vMaxDate.getMonth());
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
-                draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vMonthMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
+                    vColSpan -= 11 - vMaxDate.getMonth();
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vHeaderCellClass, null, null, null, null, vColSpan);
+                draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vMonthMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
                 vTmpDate.setFullYear(vTmpDate.getFullYear() + 1, 0, 1);
             }
-            else if (this.vFormat == 'quarter') {
-                vColSpan = (4 - Math.floor(vTmpDate.getMonth() / 3));
+            else if (this.vFormat == "quarter") {
+                vColSpan = 4 - Math.floor(vTmpDate.getMonth() / 3);
                 if (vTmpDate.getFullYear() == vMaxDate.getFullYear())
-                    vColSpan -= (3 - Math.floor(vMaxDate.getMonth() / 3));
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
-                draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vQuarterMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
+                    vColSpan -= 3 - Math.floor(vMaxDate.getMonth() / 3);
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vHeaderCellClass, null, null, null, null, vColSpan);
+                draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vQuarterMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
                 vTmpDate.setFullYear(vTmpDate.getFullYear() + 1, 0, 1);
             }
-            else if (this.vFormat == 'hour') {
-                vColSpan = (24 - vTmpDate.getHours());
-                if (vTmpDate.getFullYear() == vMaxDate.getFullYear() &&
-                    vTmpDate.getMonth() == vMaxDate.getMonth() &&
-                    vTmpDate.getDate() == vMaxDate.getDate())
-                    vColSpan -= (23 - vMaxDate.getHours());
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, vColSpan);
-                draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vHourMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
+            else if (this.vFormat == "hour") {
+                vColSpan = 24 - vTmpDate.getHours();
+                if (vTmpDate.getFullYear() == vMaxDate.getFullYear() && vTmpDate.getMonth() == vMaxDate.getMonth() && vTmpDate.getDate() == vMaxDate.getDate())
+                    vColSpan -= 23 - vMaxDate.getHours();
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vHeaderCellClass, null, null, null, null, vColSpan);
+                draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vHourMajorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth * vColSpan);
                 vTmpDate.setHours(0);
                 vTmpDate.setDate(vTmpDate.getDate() + 1);
             }
         }
-        vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr', null, 'footerdays');
+        vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr", null, "footerdays");
         // Minor Date header and Cell Rows
         vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate()); // , vMinDate.getHours()
-        if (this.vFormat == 'hour')
+        if (this.vFormat == "hour")
             vTmpDate.setHours(vMinDate.getHours());
         var vNumCols = 0;
         while (vTmpDate.getTime() <= vMaxDate.getTime()) {
-            var vMinorHeaderCellClass = 'gminorheading';
-            if (this.vFormat == 'day') {
+            var vMinorHeaderCellClass = "gminorheading";
+            if (this.vFormat == "day") {
                 if (vTmpDate.getDay() % 6 == 0) {
                     if (!this.vShowWeekends) {
                         vTmpDate.setDate(vTmpDate.getDate() + 1);
                         continue;
                     }
-                    vMinorHeaderCellClass += 'wkend';
+                    vMinorHeaderCellClass += "wkend";
                 }
                 if (vTmpDate <= vMaxDate) {
-                    var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-                    draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vDayMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+                    var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vMinorHeaderCellClass);
+                    draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vDayMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                     vNumCols++;
                 }
                 vTmpDate.setDate(vTmpDate.getDate() + 1);
             }
-            else if (this.vFormat == 'week') {
+            else if (this.vFormat == "week") {
                 if (vTmpDate <= vMaxDate) {
-                    var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-                    draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vWeekMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+                    var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vMinorHeaderCellClass);
+                    draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vWeekMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                     vNumCols++;
                 }
                 vTmpDate.setDate(vTmpDate.getDate() + 7);
             }
-            else if (this.vFormat == 'month') {
+            else if (this.vFormat == "month") {
                 if (vTmpDate <= vMaxDate) {
-                    var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-                    draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vMonthMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+                    var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vMinorHeaderCellClass);
+                    draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vMonthMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                     vNumCols++;
                 }
                 vTmpDate.setDate(vTmpDate.getDate() + 1);
@@ -417,22 +415,22 @@ exports.GanttChart = function (pDiv, pFormat) {
                     vTmpDate.setDate(vTmpDate.getDate() + 1);
                 }
             }
-            else if (this.vFormat == 'quarter') {
+            else if (this.vFormat == "quarter") {
                 if (vTmpDate <= vMaxDate) {
-                    var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-                    draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vQuarterMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+                    var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vMinorHeaderCellClass);
+                    draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vQuarterMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                     vNumCols++;
                 }
                 vTmpDate.setDate(vTmpDate.getDate() + 81);
                 while (vTmpDate.getDate() > 1)
                     vTmpDate.setDate(vTmpDate.getDate() + 1);
             }
-            else if (this.vFormat == 'hour') {
+            else if (this.vFormat == "hour") {
                 for (var i = vTmpDate.getHours(); i < 24; i++) {
                     vTmpDate.setHours(i); //works around daylight savings but may look a little odd on days where the clock goes forward
                     if (vTmpDate <= vMaxDate) {
-                        var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, vMinorHeaderCellClass);
-                        draw_utils_1.newNode(vTmpCell, 'div', null, null, date_utils_1.formatDateStr(vTmpDate, this.vHourMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
+                        var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, vMinorHeaderCellClass);
+                        draw_utils_1.newNode(vTmpCell, "div", null, null, date_utils_1.formatDateStr(vTmpDate, this.vHourMinorDateDisplayFormat, this.vLangs[this.vLang]), vColWidth);
                         vNumCols++;
                     }
                 }
@@ -442,18 +440,18 @@ exports.GanttChart = function (pDiv, pFormat) {
         }
         var vDateRow = vTmpRow;
         // Calculate size of grids  : Plus 3 because 1 border left + 2 of paddings
-        var vTaskLeftPx = (vNumCols * (vColWidth + 3)) + 1;
+        var vTaskLeftPx = vNumCols * (vColWidth + 3) + 1;
         // Fix a small space at the end for day
-        if (this.vFormat === 'day') {
+        if (this.vFormat === "day") {
             vTaskLeftPx += 2;
         }
-        vTmpTab.style.width = vTaskLeftPx + 'px'; // Ensure that the headings has exactly the same width as the chart grid
+        vTmpTab.style.width = vTaskLeftPx + "px"; // Ensure that the headings has exactly the same width as the chart grid
         // const vTaskPlanLeftPx = (vNumCols * (vColWidth + 3)) + 1;
         var vSingleCell = false;
-        if (this.vUseSingleCell !== 0 && this.vUseSingleCell < (vNumCols * vNumRows))
+        if (this.vUseSingleCell !== 0 && this.vUseSingleCell < vNumCols * vNumRows)
             vSingleCell = true;
-        draw_utils_1.newNode(vTmpDiv, 'div', null, 'rhscrpad', null, null, vTaskLeftPx + 1);
-        vTmpDiv = draw_utils_1.newNode(vRightHeader, 'div', null, 'glabelfooter');
+        draw_utils_1.newNode(vTmpDiv, "div", null, "rhscrpad", null, null, vTaskLeftPx + 1);
+        vTmpDiv = draw_utils_1.newNode(vRightHeader, "div", null, "glabelfooter");
         return { gChartLbl: gChartLbl, vTaskLeftPx: vTaskLeftPx, vSingleCell: vSingleCell, vDateRow: vDateRow, vRightHeader: vRightHeader, vNumCols: vNumCols };
     };
     /**
@@ -463,23 +461,23 @@ exports.GanttChart = function (pDiv, pFormat) {
      */
     this.drawCharBody = function (vTaskLeftPx, vTmpContentTabWrapper, gChartLbl, gListLbl, vMinDate, vMaxDate, vSingleCell, vNumCols, vColWidth, vDateRow) {
         var vRightTable = document.createDocumentFragment();
-        var vTmpDiv = draw_utils_1.newNode(vRightTable, 'div', this.vDivId + 'gchartbody', 'gchartgrid gcontainercol');
+        var vTmpDiv = draw_utils_1.newNode(vRightTable, "div", this.vDivId + "gchartbody", "gchartgrid gcontainercol");
         this.setChartBody(vTmpDiv);
-        var vTmpTab = draw_utils_1.newNode(vTmpDiv, 'table', this.vDivId + 'chartTable', 'gcharttable', null, vTaskLeftPx);
+        var vTmpTab = draw_utils_1.newNode(vTmpDiv, "table", this.vDivId + "chartTable", "gcharttable", null, vTaskLeftPx);
         this.setChartTable(vTmpTab);
-        draw_utils_1.newNode(vTmpDiv, 'div', null, 'rhscrpad', null, null, vTaskLeftPx + 1);
-        var vTmpTBody = draw_utils_1.newNode(vTmpTab, 'tbody');
-        var vTmpTFoot = draw_utils_1.newNode(vTmpTab, 'tfoot');
-        events_1.syncScroll([vTmpContentTabWrapper, vTmpDiv], 'scrollTop');
-        events_1.syncScroll([gChartLbl, vTmpDiv], 'scrollLeft');
-        events_1.syncScroll([vTmpContentTabWrapper, gListLbl], 'scrollLeft');
+        draw_utils_1.newNode(vTmpDiv, "div", null, "rhscrpad", null, null, vTaskLeftPx + 1);
+        var vTmpTBody = draw_utils_1.newNode(vTmpTab, "tbody");
+        var vTmpTFoot = draw_utils_1.newNode(vTmpTab, "tfoot");
+        events_1.syncScroll([vTmpContentTabWrapper, vTmpDiv], "scrollTop");
+        events_1.syncScroll([gChartLbl, vTmpDiv], "scrollLeft");
+        events_1.syncScroll([vTmpContentTabWrapper, gListLbl], "scrollLeft");
         // Draw each row
         var i = 0;
         var j = 0;
         var bd;
         if (this.vDebug) {
             bd = new Date();
-            console.info('before tasks loop', bd);
+            console.info("before tasks loop", bd);
         }
         for (i = 0; i < this.vTaskList.length; i++) {
             var curTaskStart = this.vTaskList[i].getStart() ? this.vTaskList[i].getStart() : this.vTaskList[i].getPlanStart();
@@ -496,31 +494,31 @@ exports.GanttChart = function (pDiv, pFormat) {
                 vTaskPlanRightPx = general_utils_1.getOffset(curTaskPlanStart, curTaskPlanEnd, vColWidth, this.vFormat, this.vShowWeekends);
             }
             var vID = this.vTaskList[i].getID();
-            var vComb = (this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2);
-            var vCellFormat = '';
+            var vComb = this.vTaskList[i].getParItem() && this.vTaskList[i].getParItem().getGroup() == 2;
+            var vCellFormat = "";
             var vTmpDiv_1 = null;
             var vTmpItem = this.vTaskList[i];
             var vCaptClass = null;
             // set cell width only for first row because of table-layout:fixed
             var taskCellWidth = i === 0 ? vColWidth : null;
             if (this.vTaskList[i].getMile() && !vComb) {
-                var vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr', this.vDivId + 'childrow_' + vID, 'gmileitem gmile' + this.vFormat, null, null, null, ((this.vTaskList[i].getVisible() == 0) ? 'none' : null));
+                var vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr", this.vDivId + "childrow_" + vID, "gmileitem gmile" + this.vFormat, null, null, null, this.vTaskList[i].getVisible() == 0 ? "none" : null);
                 this.vTaskList[i].setChildRow(vTmpRow);
                 events_1.addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
-                var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, 'gtaskcell gtaskcellmile', null, vColWidth, null, null, null);
-                vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, 'div', null, 'gtaskcelldiv', '\u00A0\u00A0');
-                vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, 12, vTaskLeftPx_1 + vTaskRightPx - 6);
+                var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, "gtaskcell gtaskcellmile", null, vColWidth, null, null, null);
+                vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, "div", null, "gtaskcelldiv", "\u00A0\u00A0");
+                vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "bardiv_" + vID, "gtaskbarcontainer", null, 12, vTaskLeftPx_1 + vTaskRightPx - 6);
                 this.vTaskList[i].setBarDiv(vTmpDiv_1);
-                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'taskbar_' + vID, this.vTaskList[i].getClass(), null, 12);
+                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "taskbar_" + vID, this.vTaskList[i].getClass(), null, 12);
                 this.vTaskList[i].setTaskDiv(vTmpDiv2);
                 if (this.vTaskList[i].getCompVal() < 100)
-                    vTmpDiv2.appendChild(document.createTextNode('\u25CA'));
+                    vTmpDiv2.appendChild(document.createTextNode("\u25CA"));
                 else {
-                    vTmpDiv2 = draw_utils_1.newNode(vTmpDiv2, 'div', null, 'gmilediamond');
-                    draw_utils_1.newNode(vTmpDiv2, 'div', null, 'gmdtop');
-                    draw_utils_1.newNode(vTmpDiv2, 'div', null, 'gmdbottom');
+                    vTmpDiv2 = draw_utils_1.newNode(vTmpDiv2, "div", null, "gmilediamond");
+                    draw_utils_1.newNode(vTmpDiv2, "div", null, "gmdtop");
+                    draw_utils_1.newNode(vTmpDiv2, "div", null, "gmdbottom");
                 }
-                vCaptClass = 'gmilecaption';
+                vCaptClass = "gmilecaption";
                 if (!vSingleCell && !vComb) {
                     this.drawColsChart(vNumCols, vTmpRow, taskCellWidth, vMinDate, vMaxDate);
                 }
@@ -530,31 +528,31 @@ exports.GanttChart = function (pDiv, pFormat) {
                 // Draw Group Bar which has outer div with inner group div
                 // and several small divs to left and right to create angled-end indicators
                 if (this.vTaskList[i].getGroup()) {
-                    vTaskWidth = (vTaskWidth > this.vMinGpLen && vTaskWidth < this.vMinGpLen * 2) ? this.vMinGpLen * 2 : vTaskWidth; // Expand to show two end points
-                    vTaskWidth = (vTaskWidth < this.vMinGpLen) ? this.vMinGpLen : vTaskWidth; // expand to show one end point
-                    var vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr', this.vDivId + 'childrow_' + vID, ((this.vTaskList[i].getGroup() == 2) ? 'glineitem gitem' : 'ggroupitem ggroup') + this.vFormat, null, null, null, ((this.vTaskList[i].getVisible() == 0) ? 'none' : null));
+                    vTaskWidth = vTaskWidth > this.vMinGpLen && vTaskWidth < this.vMinGpLen * 2 ? this.vMinGpLen * 2 : vTaskWidth; // Expand to show two end points
+                    vTaskWidth = vTaskWidth < this.vMinGpLen ? this.vMinGpLen : vTaskWidth; // expand to show one end point
+                    var vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr", this.vDivId + "childrow_" + vID, (this.vTaskList[i].getGroup() == 2 ? "glineitem gitem" : "ggroupitem ggroup") + this.vFormat, null, null, null, this.vTaskList[i].getVisible() == 0 ? "none" : null);
                     this.vTaskList[i].setChildRow(vTmpRow);
                     events_1.addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
-                    var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, 'gtaskcell gtaskcellbar', null, vColWidth, null, null);
-                    vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, 'div', null, 'gtaskcelldiv', '\u00A0\u00A0');
+                    var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, "gtaskcell gtaskcellbar", null, vColWidth, null, null);
+                    vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, "div", null, "gtaskcelldiv", "\u00A0\u00A0");
                     this.vTaskList[i].setCellDiv(vTmpDiv_1);
                     if (this.vTaskList[i].getGroup() == 1) {
-                        vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, vTaskWidth, vTaskLeftPx_1);
+                        vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "bardiv_" + vID, "gtaskbarcontainer", null, vTaskWidth, vTaskLeftPx_1);
                         this.vTaskList[i].setBarDiv(vTmpDiv_1);
-                        var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'taskbar_' + vID, this.vTaskList[i].getClass(), null, vTaskWidth);
+                        var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "taskbar_" + vID, this.vTaskList[i].getClass(), null, vTaskWidth);
                         this.vTaskList[i].setTaskDiv(vTmpDiv2);
-                        draw_utils_1.newNode(vTmpDiv2, 'div', this.vDivId + 'complete_' + vID, this.vTaskList[i].getClass() + 'complete', null, this.vTaskList[i].getCompStr());
-                        draw_utils_1.newNode(vTmpDiv_1, 'div', null, this.vTaskList[i].getClass() + 'endpointleft');
+                        draw_utils_1.newNode(vTmpDiv2, "div", this.vDivId + "complete_" + vID, this.vTaskList[i].getClass() + "complete", null, this.vTaskList[i].getCompStr());
+                        draw_utils_1.newNode(vTmpDiv_1, "div", null, this.vTaskList[i].getClass() + "endpointleft");
                         if (vTaskWidth >= this.vMinGpLen * 2)
-                            draw_utils_1.newNode(vTmpDiv_1, 'div', null, this.vTaskList[i].getClass() + 'endpointright');
-                        vCaptClass = 'ggroupcaption';
+                            draw_utils_1.newNode(vTmpDiv_1, "div", null, this.vTaskList[i].getClass() + "endpointright");
+                        vCaptClass = "ggroupcaption";
                     }
                     if (!vSingleCell && !vComb) {
                         this.drawColsChart(vNumCols, vTmpRow, taskCellWidth, vMinDate, vMaxDate);
                     }
                 }
                 else {
-                    vTaskWidth = (vTaskWidth <= 0) ? 1 : vTaskWidth;
+                    vTaskWidth = vTaskWidth <= 0 ? 1 : vTaskWidth;
                     /**
                      * DRAW THE BOXES FOR GANTT
                      */
@@ -564,40 +562,44 @@ exports.GanttChart = function (pDiv, pFormat) {
                     }
                     else {
                         // Draw Task Bar which has colored bar div
-                        vTmpRow = draw_utils_1.newNode(vTmpTBody, 'tr', this.vDivId + 'childrow_' + vID, 'glineitem gitem' + this.vFormat, null, null, null, ((this.vTaskList[i].getVisible() == 0) ? 'none' : null));
+                        var differentDatesHighlight = "";
+                        if (this.vTaskList[i].getEnd() && this.vTaskList[i].getPlanEnd() && this.vTaskList[i].getStart() && this.vTaskList[i].getPlanStart())
+                            if (Date.parse(this.vTaskList[i].getEnd()) !== Date.parse(this.vTaskList[i].getPlanEnd()) || Date.parse(this.vTaskList[i].getStart()) !== Date.parse(this.vTaskList[i].getPlanStart()))
+                                differentDatesHighlight = "gitemdifferent ";
+                        vTmpRow = draw_utils_1.newNode(vTmpTBody, "tr", this.vDivId + "childrow_" + vID, "glineitem " + differentDatesHighlight + "gitem" + this.vFormat, null, null, null, this.vTaskList[i].getVisible() == 0 ? "none" : null);
                         this.vTaskList[i].setChildRow(vTmpRow);
                         events_1.addThisRowListeners(this, this.vTaskList[i].getListChildRow(), vTmpRow);
-                        var vTmpCell = draw_utils_1.newNode(vTmpRow, 'td', null, 'gtaskcell gtaskcellcolorbar', null, taskCellWidth, null, null);
-                        vTmpDivCell = vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, 'div', null, 'gtaskcelldiv', '\u00A0\u00A0');
+                        var vTmpCell = draw_utils_1.newNode(vTmpRow, "td", null, "gtaskcell gtaskcellcolorbar", null, taskCellWidth, null, null);
+                        vTmpDivCell = vTmpDiv_1 = draw_utils_1.newNode(vTmpCell, "div", null, "gtaskcelldiv", "\u00A0\u00A0");
                     }
                     // DRAW TASK BAR
-                    vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer', null, vTaskWidth, vTaskLeftPx_1);
+                    vTmpDiv_1 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "bardiv_" + vID, "gtaskbarcontainer", null, vTaskWidth, vTaskLeftPx_1);
                     this.vTaskList[i].setBarDiv(vTmpDiv_1);
                     var vTmpDiv2 = void 0;
                     if (this.vTaskList[i].getStartVar()) {
                         // textbar
-                        vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'taskbar_' + vID, this.vTaskList[i].getClass(), null, vTaskWidth);
+                        vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "taskbar_" + vID, this.vTaskList[i].getClass(), null, vTaskWidth);
                         if (this.vTaskList[i].getBarText()) {
-                            draw_utils_1.newNode(vTmpDiv2, 'span', this.vDivId + 'tasktextbar_' + vID, 'textbar', this.vTaskList[i].getBarText(), this.vTaskList[i].getCompRestStr());
+                            draw_utils_1.newNode(vTmpDiv2, "span", this.vDivId + "tasktextbar_" + vID, "textbar", this.vTaskList[i].getBarText(), this.vTaskList[i].getCompRestStr());
                         }
                         this.vTaskList[i].setTaskDiv(vTmpDiv2);
                     }
                     // PLANNED
                     // If exist and one of them are different, show plan bar... show if there is no real vStart as well (just plan dates)
-                    if (vTaskPlanLeftPx && ((vTaskPlanLeftPx != vTaskLeftPx_1 || vTaskPlanRightPx != vTaskRightPx) || !this.vTaskList[i].getStartVar())) {
-                        var vTmpPlanDiv = draw_utils_1.newNode(vTmpDivCell, 'div', this.vDivId + 'bardiv_' + vID, 'gtaskbarcontainer gplan', null, vTaskPlanRightPx, vTaskPlanLeftPx);
-                        var vTmpPlanDiv2 = draw_utils_1.newNode(vTmpPlanDiv, 'div', this.vDivId + 'taskbar_' + vID, this.vTaskList[i].getClass() + ' gplan', null, vTaskPlanRightPx);
+                    if (vTaskPlanLeftPx && (vTaskPlanLeftPx != vTaskLeftPx_1 || vTaskPlanRightPx != vTaskRightPx || !this.vTaskList[i].getStartVar())) {
+                        var vTmpPlanDiv = draw_utils_1.newNode(vTmpDivCell, "div", this.vDivId + "bardiv_" + vID, "gtaskbarcontainer gplan", null, vTaskPlanRightPx, vTaskPlanLeftPx);
+                        var vTmpPlanDiv2 = draw_utils_1.newNode(vTmpPlanDiv, "div", this.vDivId + "taskbar_" + vID, this.vTaskList[i].getPlanClass() + " gplan", null, vTaskPlanRightPx);
                         this.vTaskList[i].setPlanTaskDiv(vTmpPlanDiv2);
                     }
                     // and opaque completion div
                     if (vTmpDiv2) {
-                        draw_utils_1.newNode(vTmpDiv2, 'div', this.vDivId + 'complete_' + vID, this.vTaskList[i].getClass() + 'complete', null, this.vTaskList[i].getCompStr());
+                        draw_utils_1.newNode(vTmpDiv2, "div", this.vDivId + "complete_" + vID, this.vTaskList[i].getClass() + "complete", null, this.vTaskList[i].getCompStr());
                     }
                     // caption
                     if (vComb)
                         vTmpItem = this.vTaskList[i].getParItem();
                     if (!vComb || (vComb && this.vTaskList[i].getParItem().getEnd() == this.vTaskList[i].getEnd()))
-                        vCaptClass = 'gcaption';
+                        vCaptClass = "gcaption";
                     // Background cells
                     if (!vSingleCell && !vComb && vTmpRow) {
                         this.drawColsChart(vNumCols, vTmpRow, taskCellWidth, vMinDate, vMaxDate);
@@ -607,31 +609,31 @@ exports.GanttChart = function (pDiv, pFormat) {
             if (this.getCaptionType() && vCaptClass !== null) {
                 var vCaptionStr = void 0;
                 switch (this.getCaptionType()) {
-                    case 'Caption':
+                    case "Caption":
                         vCaptionStr = vTmpItem.getCaption();
                         break;
-                    case 'Resource':
+                    case "Resource":
                         vCaptionStr = vTmpItem.getResource();
                         break;
-                    case 'Duration':
+                    case "Duration":
                         vCaptionStr = vTmpItem.getDuration(this.vFormat, this.vLangs[this.vLang]);
                         break;
-                    case 'Complete':
+                    case "Complete":
                         vCaptionStr = vTmpItem.getCompStr();
                         break;
                 }
-                draw_utils_1.newNode(vTmpDiv_1, 'div', null, vCaptClass, vCaptionStr, 120, (vCaptClass == 'gmilecaption') ? 12 : 0);
+                draw_utils_1.newNode(vTmpDiv_1, "div", null, vCaptClass, vCaptionStr, 120, vCaptClass == "gmilecaption" ? 12 : 0);
             }
             // Add Task Info div for tooltip
             if (this.vTaskList[i].getTaskDiv() && vTmpDiv_1) {
-                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
+                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "tt" + vID, null, null, null, null, "none");
                 var _a = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate), component = _a.component, callback = _a.callback;
                 vTmpDiv2.appendChild(component);
                 events_1.addTooltipListeners(this, this.vTaskList[i].getTaskDiv(), vTmpDiv2, callback);
             }
             // Add Plan Task Info div for tooltip
             if (this.vTaskList[i].getPlanTaskDiv() && vTmpDiv_1) {
-                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, 'div', this.vDivId + 'tt' + vID, null, null, null, null, 'none');
+                var vTmpDiv2 = draw_utils_1.newNode(vTmpDiv_1, "div", this.vDivId + "tt" + vID, null, null, null, null, "none");
                 var _b = this.createTaskInfo(this.vTaskList[i], this.vTooltipTemplate), component = _b.component, callback = _b.callback;
                 vTmpDiv2.appendChild(component);
                 events_1.addTooltipListeners(this, this.vTaskList[i].getPlanTaskDiv(), vTmpDiv2, callback);
@@ -639,10 +641,10 @@ exports.GanttChart = function (pDiv, pFormat) {
         }
         // Include the footer with the days/week/month...
         if (vSingleCell) {
-            var vTmpTFootTRow = draw_utils_1.newNode(vTmpTFoot, 'tr');
-            var vTmpTFootTCell = draw_utils_1.newNode(vTmpTFootTRow, 'td', null, null, null, '100%');
-            var vTmpTFootTCellTable = draw_utils_1.newNode(vTmpTFootTCell, 'table', null, 'gcharttableh', null, '100%');
-            var vTmpTFootTCellTableTBody = draw_utils_1.newNode(vTmpTFootTCellTable, 'tbody');
+            var vTmpTFootTRow = draw_utils_1.newNode(vTmpTFoot, "tr");
+            var vTmpTFootTCell = draw_utils_1.newNode(vTmpTFootTRow, "td", null, null, null, "100%");
+            var vTmpTFootTCellTable = draw_utils_1.newNode(vTmpTFootTCell, "table", null, "gcharttableh", null, "100%");
+            var vTmpTFootTCellTableTBody = draw_utils_1.newNode(vTmpTFootTCellTable, "tbody");
             vTmpTFootTCellTableTBody.appendChild(vDateRow.cloneNode(true));
         }
         else {
@@ -655,28 +657,28 @@ exports.GanttChart = function (pDiv, pFormat) {
         if (pEndDate === void 0) { pEndDate = null; }
         var columnCurrentDay = null;
         // Find the Current day cell to put a different class
-        if (this.vShowWeekends !== false && pStartDate && pEndDate && (this.vFormat == 'day' || this.vFormat == 'week')) {
+        if (this.vShowWeekends !== false && pStartDate && pEndDate && (this.vFormat == "day" || this.vFormat == "week")) {
             var curTaskStart = new Date(pStartDate.getTime());
             var curTaskEnd = new Date();
             var onePeriod = 3600000;
-            if (this.vFormat == 'day') {
+            if (this.vFormat == "day") {
                 onePeriod *= 24;
             }
-            else if (this.vFormat == 'week') {
+            else if (this.vFormat == "week") {
                 onePeriod *= 24 * 7;
             }
             columnCurrentDay = Math.floor(general_utils_1.calculateCurrentDateOffset(curTaskStart, curTaskEnd) / onePeriod) - 1;
         }
         for (var j = 0; j < vNumCols - 1; j++) {
-            var vCellFormat = 'gtaskcell gtaskcellcols';
-            if (this.vShowWeekends !== false && this.vFormat == 'day' && ((j % 7 == 4) || (j % 7 == 5))) {
-                vCellFormat = 'gtaskcellwkend';
+            var vCellFormat = "gtaskcell gtaskcellcols";
+            if (this.vShowWeekends !== false && this.vFormat == "day" && (j % 7 == 4 || j % 7 == 5)) {
+                vCellFormat = "gtaskcellwkend";
             }
             //When is the column is the current day/week,give a different class
-            else if ((this.vFormat == 'week' || this.vFormat == 'day') && j === columnCurrentDay) {
-                vCellFormat = 'gtaskcellcurrent';
+            else if ((this.vFormat == "week" || this.vFormat == "day") && j === columnCurrentDay) {
+                vCellFormat = "gtaskcellcurrent";
             }
-            draw_utils_1.newNode(vTmpRow, 'td', null, vCellFormat, '\u00A0\u00A0', taskCellWidth);
+            draw_utils_1.newNode(vTmpRow, "td", null, vCellFormat, "\u00A0\u00A0", taskCellWidth);
         }
     };
     /**
@@ -696,7 +698,7 @@ exports.GanttChart = function (pDiv, pFormat) {
         }
         if (this.vDebug) {
             bd = new Date();
-            console.info('before draw', bd);
+            console.info("before draw", bd);
         }
         // Process all tasks, reset parent date and completion % if task list has altered
         if (this.vProcessNeeded)
@@ -706,25 +708,25 @@ exports.GanttChart = function (pDiv, pFormat) {
         vMinDate = date_utils_1.getMinDate(this.vTaskList, this.vFormat, this.getMinDate() && date_utils_1.coerceDate(this.getMinDate()));
         vMaxDate = date_utils_1.getMaxDate(this.vTaskList, this.vFormat, this.getMaxDate() && date_utils_1.coerceDate(this.getMaxDate()));
         // Calculate chart width variables.
-        if (this.vFormat == 'day')
+        if (this.vFormat == "day")
             vColWidth = this.vDayColWidth;
-        else if (this.vFormat == 'week')
+        else if (this.vFormat == "week")
             vColWidth = this.vWeekColWidth;
-        else if (this.vFormat == 'month')
+        else if (this.vFormat == "month")
             vColWidth = this.vMonthColWidth;
-        else if (this.vFormat == 'quarter')
+        else if (this.vFormat == "quarter")
             vColWidth = this.vQuarterColWidth;
-        else if (this.vFormat == 'hour')
+        else if (this.vFormat == "hour")
             vColWidth = this.vHourColWidth;
         // DRAW the Left-side of the chart (names, resources, comp%)
         var vLeftHeader = document.createDocumentFragment();
         /**
          * LIST HEAD
-        */
+         */
         var gListLbl = this.drawListHead(vLeftHeader);
         /**
          * LIST BODY
-        */
+         */
         var _a = this.drawListBody(vLeftHeader), vNumRows = _a.vNumRows, vTmpContentTabWrapper = _a.vTmpContentTabWrapper;
         /**
          * CHART HEAD
@@ -736,28 +738,28 @@ exports.GanttChart = function (pDiv, pFormat) {
         var vRightTable = this.drawCharBody(vTaskLeftPx, vTmpContentTabWrapper, gChartLbl, gListLbl, vMinDate, vMaxDate, vSingleCell, vNumCols, vColWidth, vDateRow).vRightTable;
         if (this.vDebug) {
             var ad = new Date();
-            console.info('after tasks loop', ad, (ad.getTime() - bd.getTime()));
+            console.info("after tasks loop", ad, ad.getTime() - bd.getTime());
         }
         // MAIN VIEW: Appending all generated components to main view
         while (this.vDiv.hasChildNodes())
             this.vDiv.removeChild(this.vDiv.firstChild);
-        var vTmpDiv = draw_utils_1.newNode(this.vDiv, 'div', null, 'gchartcontainer');
+        var vTmpDiv = draw_utils_1.newNode(this.vDiv, "div", null, "gchartcontainer");
         vTmpDiv.style.height = this.vTotalHeight;
-        var leftvTmpDiv = draw_utils_1.newNode(vTmpDiv, 'div', null, 'gmain gmainleft');
+        var leftvTmpDiv = draw_utils_1.newNode(vTmpDiv, "div", null, "gmain gmainleft");
         leftvTmpDiv.appendChild(vLeftHeader);
         // leftvTmpDiv.appendChild(vLeftTable);
-        var rightvTmpDiv = draw_utils_1.newNode(vTmpDiv, 'div', null, 'gmain gmainright');
+        var rightvTmpDiv = draw_utils_1.newNode(vTmpDiv, "div", null, "gmain gmainright");
         rightvTmpDiv.appendChild(vRightHeader);
         rightvTmpDiv.appendChild(vRightTable);
         vTmpDiv.appendChild(leftvTmpDiv);
         vTmpDiv.appendChild(rightvTmpDiv);
-        draw_utils_1.newNode(vTmpDiv, 'div', null, 'ggridfooter');
-        var vTmpDiv2 = draw_utils_1.newNode(this.getChartBody(), 'div', this.vDivId + 'Lines', 'glinediv');
-        if (this.vEvents.onLineContainerHover && typeof this.vEvents.onLineContainerHover === 'function') {
-            events_1.addListener('mouseover', this.vEvents.onLineContainerHover, vTmpDiv2);
-            events_1.addListener('mouseout', this.vEvents.onLineContainerHover, vTmpDiv2);
+        draw_utils_1.newNode(vTmpDiv, "div", null, "ggridfooter");
+        var vTmpDiv2 = draw_utils_1.newNode(this.getChartBody(), "div", this.vDivId + "Lines", "glinediv");
+        if (this.vEvents.onLineContainerHover && typeof this.vEvents.onLineContainerHover === "function") {
+            events_1.addListener("mouseover", this.vEvents.onLineContainerHover, vTmpDiv2);
+            events_1.addListener("mouseout", this.vEvents.onLineContainerHover, vTmpDiv2);
         }
-        vTmpDiv2.style.visibility = 'hidden';
+        vTmpDiv2.style.visibility = "hidden";
         this.setLines(vTmpDiv2);
         /* Quick hack to show the generated HTML on older browsers
               let tmpGenSrc=document.createElement('textarea');
@@ -767,14 +769,14 @@ exports.GanttChart = function (pDiv, pFormat) {
         // LISTENERS: Now all the content exists, register scroll listeners
         events_1.addScrollListeners(this);
         // SCROLL: now check if we are actually scrolling the pane
-        if (this.vScrollTo != '') {
+        if (this.vScrollTo != "") {
             var vScrollDate = new Date(vMinDate.getTime());
             var vScrollPx = 0;
-            if (this.vScrollTo.substr && this.vScrollTo.substr(0, 2) == 'px') {
+            if (this.vScrollTo.substr && this.vScrollTo.substr(0, 2) == "px") {
                 vScrollPx = parseInt(this.vScrollTo.substr(2));
             }
             else {
-                if (this.vScrollTo === 'today') {
+                if (this.vScrollTo === "today") {
                     vScrollDate = new Date();
                 }
                 else if (this.vScrollTo instanceof Date) {
@@ -783,7 +785,7 @@ exports.GanttChart = function (pDiv, pFormat) {
                 else {
                     vScrollDate = date_utils_1.parseDateStr(this.vScrollTo, this.getDateInputFormat());
                 }
-                if (this.vFormat == 'hour')
+                if (this.vFormat == "hour")
                     vScrollDate.setMinutes(0, 0, 0);
                 else
                     vScrollDate.setHours(0, 0, 0, 0);
@@ -791,7 +793,7 @@ exports.GanttChart = function (pDiv, pFormat) {
             }
             this.getChartBody().scrollLeft = vScrollPx;
         }
-        if (vMinDate.getTime() <= (new Date()).getTime() && vMaxDate.getTime() >= (new Date()).getTime()) {
+        if (vMinDate.getTime() <= new Date().getTime() && vMaxDate.getTime() >= new Date().getTime()) {
             this.vTodayPx = general_utils_1.getOffset(vMinDate, new Date(), vColWidth, this.vFormat, this.vShowWeekends);
         }
         else
@@ -800,20 +802,20 @@ exports.GanttChart = function (pDiv, pFormat) {
         var bdd;
         if (this.vDebug) {
             bdd = new Date();
-            console.info('before DrawDependencies', bdd);
+            console.info("before DrawDependencies", bdd);
         }
-        if (this.vEvents && typeof this.vEvents.beforeLineDraw === 'function') {
+        if (this.vEvents && typeof this.vEvents.beforeLineDraw === "function") {
             this.vEvents.beforeLineDraw();
         }
         this.DrawDependencies(this.vDebug);
         events_1.addListenerDependencies(this.vLineOptions);
         // EVENTS
-        if (this.vEvents && typeof this.vEvents.afterLineDraw === 'function') {
+        if (this.vEvents && typeof this.vEvents.afterLineDraw === "function") {
             this.vEvents.afterLineDraw();
         }
         if (this.vDebug) {
             var ad = new Date();
-            console.info('after DrawDependencies', ad, (ad.getTime() - bdd.getTime()));
+            console.info("after DrawDependencies", ad, ad.getTime() - bdd.getTime());
         }
         this.drawComplete(vMinDate, vColWidth, bd);
     };
@@ -823,7 +825,7 @@ exports.GanttChart = function (pDiv, pFormat) {
     this.drawComplete = function (vMinDate, vColWidth, bd) {
         if (this.vDebug) {
             var ad = new Date();
-            console.info('after draw', ad, (ad.getTime() - bd.getTime()));
+            console.info("after draw", ad, ad.getTime() - bd.getTime());
         }
         events_1.updateGridHeaderWidth(this);
         this.chartRowDateToX = function (date) {
@@ -833,13 +835,14 @@ exports.GanttChart = function (pDiv, pFormat) {
             this.vEvents.afterDraw();
         }
     };
-    if (this.vDiv && this.vDiv.nodeName && this.vDiv.nodeName.toLowerCase() == 'div')
+    if (this.vDiv && this.vDiv.nodeName && this.vDiv.nodeName.toLowerCase() == "div")
         this.vDivId = this.vDiv.id;
 }; //GanttChart
 
 },{"./draw_columns":3,"./draw_dependencies":4,"./events":5,"./lang":8,"./options":9,"./task":10,"./utils/date_utils":11,"./utils/draw_utils":12,"./utils/general_utils":13,"./xml":14}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.draw_task_headings = exports.draw_bottom = exports.draw_header = exports.COLUMN_ORDER = void 0;
 var date_utils_1 = require("./utils/date_utils");
 var task_1 = require("./task");
 var events_1 = require("./events");
@@ -1009,6 +1012,7 @@ exports.draw_task_headings = function (column, vTmpRow, vLangs, vLang, vAddition
 },{"./events":5,"./task":10,"./utils/date_utils":11,"./utils/draw_utils":12}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DrawDependencies = exports.drawDependency = void 0;
 exports.drawDependency = function (x1, y1, x2, y2, pType, pClass) {
     var vDir = 1;
     var vBend = false;
@@ -1105,6 +1109,7 @@ exports.DrawDependencies = function (vDebug) {
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addListenerDependencies = exports.addListenerInputCell = exports.addListenerClickCell = exports.addScrollListeners = exports.addFormatListeners = exports.addFolderListeners = exports.updateGridHeaderWidth = exports.addThisRowListeners = exports.addTooltipListeners = exports.syncScroll = exports.removeListener = exports.addListener = exports.showToolTip = exports.mouseOut = exports.mouseOver = exports.show = exports.hide = exports.folder = void 0;
 var general_utils_1 = require("./utils/general_utils");
 // Function to open/close and hide/show children of specified task
 exports.folder = function (pID, ganttObj) {
@@ -1505,6 +1510,7 @@ var vColumnsNames = {
     Copyright (c) 2009, Shlomy Gantz BlueBrick Inc.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSGantt = void 0;
 var events_1 = require("./events");
 var general_utils_1 = require("./utils/general_utils");
 var xml_1 = require("./xml");
@@ -1545,7 +1551,7 @@ exports.JSGantt.taskLink = task_1.taskLink;
 exports.JSGantt.parseDateStr = date_utils_1.parseDateStr;
 exports.JSGantt.formatDateStr = date_utils_1.formatDateStr;
 exports.JSGantt.parseDateFormatStr = date_utils_1.parseDateFormatStr;
-// XML 
+// XML
 exports.JSGantt.parseXML = xml_1.parseXML;
 exports.JSGantt.parseXMLString = xml_1.parseXMLString;
 exports.JSGantt.findXMLNode = xml_1.findXMLNode;
@@ -1568,10 +1574,11 @@ exports.JSGantt.criticalPath = general_utils_1.criticalPath;
 },{"./draw":2,"./events":5,"./json":7,"./task":10,"./utils/date_utils":11,"./utils/general_utils":13,"./xml":14}],7:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -1603,6 +1610,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addJSONTask = exports.parseJSONString = exports.parseJSON = void 0;
 var task_1 = require("./task");
 var general_utils_1 = require("./utils/general_utils");
 /**
@@ -1649,6 +1657,7 @@ exports.addJSONTask = function (pGanttVar, pJsonObj) {
         var planstart = void 0;
         var planend = void 0;
         var itemClass = void 0;
+        var planClass = void 0;
         var link = '';
         var milestone = 0;
         var resourceName = '';
@@ -1694,6 +1703,10 @@ exports.addJSONTask = function (pGanttVar, pJsonObj) {
                 case 'pclass':
                 case 'class':
                     itemClass = value;
+                    break;
+                case 'pplanclass':
+                case 'planclass':
+                    planClass = value;
                     break;
                 case 'plink':
                 case 'link':
@@ -1752,7 +1765,7 @@ exports.addJSONTask = function (pGanttVar, pJsonObj) {
             }
         }
         //if (id != undefined && !isNaN(parseInt(id)) && isFinite(id) && name && start && end && itemClass && completion != undefined && !isNaN(parseFloat(completion)) && isFinite(completion) && !isNaN(parseInt(parent)) && isFinite(parent)) {
-        pGanttVar.AddTaskItem(new task_1.TaskItem(id, name_1, start, end, itemClass, link, milestone, resourceName, completion, group, parent_1, open_1, dependsOn, caption, notes, pGanttVar, cost, planstart, planend, duration, bartext, additionalObject));
+        pGanttVar.AddTaskItem(new task_1.TaskItem(id, name_1, start, end, itemClass, link, milestone, resourceName, completion, group, parent_1, open_1, dependsOn, caption, notes, pGanttVar, cost, planstart, planend, duration, bartext, additionalObject, planClass));
         //}
     }
 };
@@ -1760,6 +1773,374 @@ exports.addJSONTask = function (pGanttVar, pJsonObj) {
 },{"./task":10,"./utils/general_utils":13}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ua = exports.tr = exports.sv = exports.ru = exports.pt = exports.pl = exports.nl = exports.ko = exports.ja = exports.id = exports.it = exports.hu = exports.he = exports.fr = exports.fi = exports.de = exports.es = exports.en = exports.cs = exports.cn = exports.scn = exports.ar = void 0;
+var ar = {
+    'format': 'التنسيق',
+    'hour': 'ساعة',
+    'day': 'يوم',
+    'week': 'أسبوع',
+    'month': 'شهر',
+    'quarter': 'ربع',
+    'hours': 'ساعات',
+    'days': 'أيام',
+    'weeks': 'أسابيع',
+    'months': 'أشهر',
+    'quarters': 'أرباع',
+    'hr': 'س',
+    'dy': 'يو',
+    'wk': 'أ',
+    'mth': 'ش',
+    'qtr': 'ر',
+    'hrs': 'س',
+    'dys': 'ي',
+    'wks': 'أ',
+    'mths': 'ش',
+    'qtrs': 'ر',
+    'res': 'الموارد',
+    'dur': 'المدة',
+    'comp': '%',
+    'completion': 'الإنجاز',
+    'startdate': 'تاريخ البدء',
+    'planstartdate': 'تاريخ بدء الخطة',
+    'enddate': 'تاريخ الانتهاء',
+    'planenddate': 'تاريخ نهاية الخطة',
+    'cost': 'التكلفة',
+    'moreinfo': 'مزيد من المعلومات',
+    'nodata': 'لم يتم العثور على مهام',
+    'notes': 'ملاحظات',
+    'january': 'يناير',
+    'february': 'فبراير',
+    'march': 'مارس',
+    'april': 'أبريل',
+    'maylong': 'مايو',
+    'june': 'يونيو',
+    'july': 'يوليو',
+    'august': 'أغسطس',
+    'september': 'سبتمبر',
+    'october': 'أكتوبر',
+    'november': 'نوفمبر',
+    'december': 'ديسمبر',
+    'jan': 'يناير',
+    'feb': 'فبراير',
+    'mar': 'مارس',
+    'apr': 'أبريل',
+    'may': 'مايو',
+    'jun': 'يونيو',
+    'jul': 'يوليو',
+    'aug': 'أغسطس',
+    'sep': 'سبتمبر',
+    'oct': 'أكتوبر',
+    'nov': 'نوفمبر',
+    'dec': 'ديسمبر',
+    'sunday': 'الأحد',
+    'monday': 'الإثنين',
+    'tuesday': 'الثلاثاء',
+    'wednesday': 'الأربعاء',
+    'thursday': 'الخميس',
+    'friday': 'الجمعة',
+    'saturday': 'السبت',
+    'sun': 'الأحد',
+    'mon': 'الإثنين',
+    'tue': 'الثلاثاء',
+    'wed': 'الأربعاء',
+    'thu': 'الخميس',
+    'fri': 'الجمعة',
+    'sat': 'السبت',
+    'tooltipLoading': 'جاري التحميل...'
+};
+exports.ar = ar;
+var scn = {
+    'january': '一月',
+    'february': '二月',
+    'march': '三月',
+    'april': '四月',
+    'maylong': '五月',
+    'june': '六月',
+    'july': '七月',
+    'august': '八月',
+    'september': '九月',
+    'october': '十月',
+    'november': '十一月',
+    'december': '十二月',
+    'jan': '一月',
+    'feb': '二月',
+    'mar': '三月',
+    'apr': '四月',
+    'may': '五月',
+    'jun': '六月',
+    'jul': '七月',
+    'aug': '八月',
+    'sep': '九月',
+    'oct': '十月',
+    'nov': '十一月',
+    'dec': '十二月',
+    'sunday': '星期日',
+    'monday': '星期一',
+    'tuesday': '星期二',
+    'wednesday': '星期三',
+    'thursday': '星期四',
+    'friday': '星期五',
+    'saturday': '星期六',
+    'sun': '星期日',
+    'mon': '星期一',
+    'tue': '星期二',
+    'wed': '星期三',
+    'thu': '星期四',
+    'fri': '星期五',
+    'sat': '星期六',
+    'res': '资源',
+    'dur': '时长',
+    'comp': '完成度',
+    'completion': '完成',
+    'startdate': '起始日期',
+    'planstartdate': '计划起始日期',
+    'enddate': '截止日期',
+    'planenddate': '计划截止日期',
+    'cost': '成本',
+    'moreinfo': "更多信息",
+    'nodata': 'No tasks found',
+    'notes': '备注',
+    'format': '格式',
+    'hour': '时',
+    'day': '日',
+    'week': '星期',
+    'month': '月',
+    'quarter': '季',
+    'hours': '小时',
+    'days': '天',
+    'weeks': '周',
+    'months': '月',
+    'quarters': '季',
+    'hr': '小时',
+    'dy': '天',
+    'wk': '周',
+    'mth': '月',
+    'qtr': '季',
+    'hrs': '小时',
+    'dys': '天',
+    'wks': '周',
+    'mths': '月',
+    'qtrs': '季'
+};
+exports.scn = scn;
+var cn = {
+    'january': '一月',
+    'february': '二月',
+    'march': '三月',
+    'april': '四月',
+    'maylong': '五月',
+    'june': '六月',
+    'july': '七月',
+    'august': '八月',
+    'september': '九月',
+    'october': '十月',
+    'november': '十一月',
+    'december': '十二月',
+    'jan': '一月',
+    'feb': '二月',
+    'mar': '三月',
+    'apr': '四月',
+    'may': '五月',
+    'jun': '六月',
+    'jul': '七月',
+    'aug': '八月',
+    'sep': '九月',
+    'oct': '十月',
+    'nov': '十一月',
+    'dec': '十二月',
+    'sunday': '星期日',
+    'monday': '星期一',
+    'tuesday': '星期二',
+    'wednesday': '星期三',
+    'thursday': '星期四',
+    'friday': '星期五',
+    'saturday': '星期六',
+    'sun': '星期日',
+    'mon': '星期一',
+    'tue': '星期二',
+    'wed': '星期三',
+    'thu': '星期四',
+    'fri': '星期五',
+    'sat': '星期六',
+    'res': '資源',
+    'dur': '時程',
+    'comp': '達成率',
+    'completion': '達成',
+    'startdate': '起始日期',
+    'planstartdate': '計劃起始日期',
+    'enddate': '截止日期',
+    'planenddate': '計劃截止日期',
+    'cost': '成本',
+    'moreinfo': "更多資訊",
+    'nodata': 'No tasks found',
+    'notes': '備註',
+    'format': '格式',
+    'hour': '時',
+    'day': '日',
+    'week': '星期',
+    'month': '月',
+    'quarter': '季',
+    'hours': '小時',
+    'days': '天',
+    'weeks': '週',
+    'months': '月',
+    'quarters': '季',
+    'hr': '小時',
+    'dy': '天',
+    'wk': '週',
+    'mth': '月',
+    'qtr': '季',
+    'hrs': '小時',
+    'dys': '天',
+    'wks': '週',
+    'mths': '月',
+    'qtrs': '季'
+};
+exports.cn = cn;
+var cs = {
+    'format': 'Zobrazení',
+    'hour': 'Hodina',
+    'day': 'Den',
+    'week': 'Týden',
+    'month': 'Měsíc',
+    'quarter': 'Kvartál',
+    'hours': 'Hodiny',
+    'days': 'Dni',
+    'weeks': 'Týdny',
+    'months': 'Měsíce',
+    'quarters': 'Kvartály',
+    'hr': 'Ho',
+    'dy': 'Den',
+    'wk': 'Tyd',
+    'mth': 'Měs',
+    'qtr': 'Kvar',
+    'hrs': 'Ho',
+    'dys': 'Dni',
+    'wks': 'Tyd',
+    'mths': 'Měs',
+    'qtrs': 'Kvar',
+    'res': 'Přiřazeno',
+    'dur': 'Trvání',
+    'comp': '%',
+    'completion': 'Hotovo',
+    'startdate': 'Start',
+    'planstartdate': 'Plánovaný start',
+    'enddate': 'Konec',
+    'planenddate': 'Plánovaný konec',
+    'cost': 'Náklady',
+    'moreinfo': 'Více informací',
+    'nodata': 'No tasks found',
+    'notes': 'Poznámky',
+    'january': 'Leden',
+    'february': 'Únor',
+    'march': 'Březen',
+    'april': 'Duben',
+    'maylong': 'Květen',
+    'june': 'Červen',
+    'july': 'Červenec',
+    'august': 'Srpen',
+    'september': 'Září',
+    'october': 'Říjen',
+    'november': 'Listopad',
+    'december': 'Prosinec',
+    'jan': 'Led',
+    'feb': 'Úno',
+    'mar': 'Bře',
+    'apr': 'Dub',
+    'may': 'Kvě',
+    'jun': 'Čer',
+    'jul': 'Čvc',
+    'aug': 'Srp',
+    'sep': 'Zář',
+    'oct': 'Říj',
+    'nov': 'Lis',
+    'dec': 'Pro',
+    'sunday': 'Neděle',
+    'monday': 'Pondělí',
+    'tuesday': 'Úterý',
+    'wednesday': 'Středa',
+    'thursday': 'Čtvrtek',
+    'friday': 'Pátek',
+    'saturday': 'Sobota',
+    'sun': 'Ne',
+    'mon': 'Po',
+    'tue': 'Út',
+    'wed': 'St',
+    'thu': 'Čt',
+    'fri': 'Pa',
+    'sat': 'So',
+    'tooltipLoading': 'Nahrávám...'
+};
+exports.cs = cs;
+var de = {
+    'format': 'Ansicht',
+    'hour': 'Stunde',
+    'day': 'Tag',
+    'week': 'Woche',
+    'month': 'Monat',
+    'quarter': 'Quartal',
+    'hours': 'Stunden',
+    'days': 'Tage',
+    'weeks': 'Wochen',
+    'months': 'Monate',
+    'quarters': 'Quartale',
+    'hr': 'h',
+    'dy': 'T',
+    'wk': 'W',
+    'mth': 'M',
+    'qtr': 'Q',
+    'hrs': 'Std',
+    'dys': 'Tage',
+    'wks': 'Wochen',
+    'mths': 'Monate',
+    'qtrs': 'Quartal',
+    'res': 'Resource',
+    'dur': 'Dauer',
+    'comp': '%',
+    'completion': 'Fertigstellung',
+    'startdate': 'Erste Buchu',
+    'planstartdate': 'Erste Buchu Plan',
+    'enddate': 'Letzte Buchung',
+    'planenddate': 'Plan Letzte Buchung',
+    'cost': 'Cost',
+    'moreinfo': 'Weitere Infos',
+    'nodata': 'No tasks found',
+    'notes': 'Anmerkung',
+    'january': 'Jänner',
+    'february': 'Februar',
+    'march': 'März',
+    'april': 'April',
+    'maylong': 'Mai',
+    'june': 'Juni',
+    'july': 'Juli',
+    'august': 'August',
+    'september': 'September',
+    'october': 'Oktober',
+    'november': 'November',
+    'december': 'Dezember',
+    'jan': 'Jan',
+    'feb': 'Feb',
+    'mar': 'Mar',
+    'apr': 'Apr',
+    'may': 'Mai',
+    'jun': 'Jun',
+    'jul': 'Jul',
+    'aug': 'Aug',
+    'sep': 'Sep',
+    'oct': 'Okt',
+    'nov': 'Nov',
+    'dec': 'Dez',
+    'sunday': 'Sonntag',
+    'monday': 'Montag',
+    'tuesday': 'Dienstag',
+    'wednesday': 'Mittwoch',
+    'thursday': 'Donnerstag',
+    'friday': 'Freitag',
+    'saturday': 'Samstag',
+    'sun': 'So',
+    'mon': 'Mo', 'tue': 'Di', 'wed': 'Mi', 'thu': 'Do', 'fri': 'Fr', 'sat': 'Sa'
+};
+exports.de = de;
 var es = {
     'january': 'Enero',
     'february': 'Febrero',
@@ -1801,7 +2182,7 @@ var es = {
     'sat': '	Sab',
     'res': 'Recurso',
     'dur': 'Duración',
-    'comp': '% Compl.',
+    'comp': '%',
     'completion': 'Completado',
     'startdate': 'Inicio',
     'planstartdate': 'Inicio Planificado',
@@ -1859,7 +2240,7 @@ var en = {
     'qtrs': 'Qtrs',
     'res': 'Resource',
     'dur': 'Duration',
-    'comp': '% Comp.',
+    'comp': '%',
     'completion': 'Completion',
     'startdate': 'Start Date',
     'planstartdate': 'Plan Start Date',
@@ -1910,75 +2291,757 @@ var en = {
     'tooltipLoading': 'Loading...'
 };
 exports.en = en;
-var de = {
-    'format': 'Ansicht',
-    'hour': 'Stunde',
-    'day': 'Tag',
-    'week': 'Woche',
-    'month': 'Monat',
-    'quarter': 'Quartal',
-    'hours': 'Stunden',
-    'days': 'Tage',
-    'weeks': 'Wochen',
-    'months': 'Monate',
-    'quarters': 'Quartale',
-    'hr': 'h',
-    'dy': 'T',
-    'wk': 'W',
-    'mth': 'M',
+var fi = {
+    'format': 'Näkymä',
+    'hour': 'Tunti',
+    'day': 'Päivä',
+    'week': 'Viikko',
+    'month': 'Kuukausi',
+    'quarter': 'Kvartaali',
+    'hours': 'Tunnit',
+    'days': 'Päivät',
+    'weeks': 'Viikot',
+    'months': 'Kuukaudet',
+    'quarters': 'Kvartaalit',
+    'hr': 't',
+    'dy': 'pv',
+    'wk': 'vk',
+    'mth': 'kk',
     'qtr': 'Q',
-    'hrs': 'Std',
-    'dys': 'Tage',
-    'wks': 'Wochen',
-    'mths': 'Monate',
-    'qtrs': 'Quartal',
-    'res': 'Resource',
-    'dur': 'Dauer',
-    'comp': '%Fertig',
-    'completion': 'Fertigstellung',
-    'startdate': 'Erste Buchu',
-    'planstartdate': 'Erste Buchu Plan',
-    'enddate': 'Letzte Buchung',
-    'planenddate': 'Plan Letzte Buchung',
-    'cost': 'Cost',
-    'moreinfo': 'Weitere Infos',
-    'nodata': 'No tasks found',
-    'notes': 'Anmerkung',
-    'january': 'Jänner',
-    'february': 'Februar',
-    'march': 'März',
-    'april': 'April',
+    'hrs': 't:t',
+    'dys': 'pv:t',
+    'wks': 'vk:t',
+    'mths': 'kk:t',
+    'qtrs': 'Kvartaalit',
+    'res': 'Henkilö',
+    'dur': 'Kesto',
+    'comp': '%',
+    'completion': 'Valmius',
+    'startdate': 'Alkupäivä',
+    'planstartdate': 'Suunniteltu alkupäivä',
+    'enddate': 'Päättymispäivä',
+    'planenddate': 'Suunniteltu päättymispäivä',
+    'cost': 'Kustannus',
+    'moreinfo': 'Lisätieto',
+    'nodata': 'Tehtäviä ei löydy',
+    'notes': 'Muistiinpanot',
+    'january': 'Tammikuu',
+    'february': 'Helmikuu',
+    'march': 'Maaliskuu',
+    'april': 'Huhtikuu',
+    'maylong': 'Toukokuu',
+    'june': 'Kesäkuu',
+    'july': 'Heinäkuu',
+    'august': 'Elokuu',
+    'september': 'Syyskuu',
+    'october': 'Lokakuu',
+    'november': 'Marraskuu',
+    'december': 'Joulukuu',
+    'jan': 'Tammi',
+    'feb': 'Helmi',
+    'mar': 'Maalis',
+    'apr': 'Huhti',
+    'may': 'Touko',
+    'jun': 'Kesä',
+    'jul': 'Heinä',
+    'aug': 'Elo',
+    'sep': 'Syys',
+    'oct': 'Loka',
+    'nov': 'Marras',
+    'dec': 'Joulu',
+    'sunday': 'Sunnuntai',
+    'monday': 'Maanantai',
+    'tuesday': 'Tiista',
+    'wednesday': 'Keskiviikko',
+    'thursday': 'Torstai',
+    'friday': 'Perjantai',
+    'saturday': 'Lauantai',
+    'sun': 'Su',
+    'mon': 'Ma',
+    'tue': 'Ti',
+    'wed': 'Ke',
+    'thu': 'To',
+    'fri': 'Pe',
+    'sat': 'La',
+    'tooltipLoading': 'Ladataan...'
+};
+exports.fi = fi;
+/**
+ * Mois : http://bdl.oqlf.gouv.qc.ca/bdl/gabarit_bdl.asp?id=3619
+   Jours : http://bdl.oqlf.gouv.qc.ca/bdl/gabarit_bdl.asp?id=3617
+ */
+var fr = {
+    'january': 'Janvier',
+    'february': 'Février',
+    'march': 'Mars',
+    'april': 'Avril',
     'maylong': 'Mai',
+    'june': 'Juin',
+    'july': 'Juillet',
+    'august': 'Août',
+    'september': 'Septembre',
+    'october': 'Octobre',
+    'november': 'Novembre',
+    'december': 'Décembre',
+    'jan': 'Janv',
+    'feb': 'Févr',
+    'mar': 'Mars',
+    'apr': 'Avr',
+    'may': 'Mai',
+    'jun': 'Juin',
+    'jul': 'Juil',
+    'aug': 'Août',
+    'sep': 'Sept',
+    'oct': 'Oct',
+    'nov': 'Nov',
+    'dec': 'Déc',
+    'sunday': 'Dimanche',
+    'monday': 'Lundi',
+    'tuesday': 'Mardi',
+    'wednesday': 'Mercredi',
+    'thursday': 'Jeudi',
+    'friday': 'Vendredi',
+    'saturday': 'Samedi',
+    'sun': 'Dim',
+    'mon': 'Lun',
+    'tue': 'Mar',
+    'wed': 'Mer',
+    'thu': 'Jeu',
+    'fri': 'Ven',
+    'sat': 'Sam',
+    'res': 'Ressource',
+    'dur': 'Durée',
+    'comp': '%',
+    'completion': 'Terminé',
+    'startdate': 'Début',
+    'planstartdate': 'Plan Début',
+    'enddate': 'Fin',
+    'planenddate': 'Plan Fin',
+    'cost': 'Cost',
+    'moreinfo': "Plus d'informations",
+    'nodata': 'No tasks found',
+    'notes': 'Notes',
+    'format': 'Format',
+    'hour': 'Heure',
+    'day': 'Jour',
+    'week': 'Semaine',
+    'month': 'Mois',
+    'quarter': 'Trimestre',
+    'hours': 'Heures',
+    'days': 'Jours',
+    'weeks': 'Semaines',
+    'months': 'Mois',
+    'quarters': 'Trimestres',
+    'hr': 'h',
+    'dy': 'j',
+    'wk': 'sem',
+    'mth': 'mois',
+    'qtr': 'tri',
+    'hrs': 'h',
+    'dys': 'j',
+    'wks': 'sem',
+    'mths': 'mois',
+    'qtrs': 'tri'
+};
+exports.fr = fr;
+var he = {
+    'format': 'תבנית',
+    'hour': 'שעה',
+    'day': 'יום',
+    'week': 'שבוע',
+    'month': 'חודש',
+    'quarter': 'רבעון',
+    'hours': 'שעות',
+    'days': 'ימים',
+    'weeks': 'שבועות',
+    'months': 'חודשים',
+    'quarters': 'רבעונים',
+    'hr': 'שעה',
+    'dy': 'יום',
+    'wk': 'שבוע',
+    'mth': 'חודש',
+    'qtr': 'רבעון',
+    'hrs': 'שעות',
+    'dys': 'ימים',
+    'wks': 'שבועות',
+    'mths': 'חודשים',
+    'qtrs': 'רבעונים',
+    'res': 'משאב',
+    'dur': 'משך',
+    'comp': '%',
+    'completion': 'השלמה',
+    'startdate': 'תאריך התחלה',
+    'planstartdate': 'תאריך התחלה מתוכנן',
+    'enddate': 'תאריך סיום',
+    'planenddate': 'תאריך סיום מתוכנן',
+    'cost': 'עלות',
+    'moreinfo': 'מידע נוסף',
+    'nodata': 'לא נמצאו משימות',
+    'notes': 'הערות',
+    'january': 'ינואר',
+    'february': 'פברואר',
+    'march': 'מרץ',
+    'april': 'אפריל',
+    'maylong': 'מאי',
+    'june': 'יוני',
+    'july': 'יולי',
+    'august': 'אוגוסט',
+    'september': 'ספטמבר',
+    'october': 'אוקטובר',
+    'november': 'נובמבר',
+    'december': 'דצמבר',
+    'jan': 'ינו',
+    'feb': 'פבר',
+    'mar': 'מרץ',
+    'apr': 'אפר',
+    'may': 'מאי',
+    'jun': 'יוני',
+    'jul': 'יולי',
+    'aug': 'אוג',
+    'sep': 'ספט',
+    'oct': 'אוק',
+    'nov': 'נוב',
+    'dec': 'דצמ',
+    'sunday': 'יום ראשון',
+    'monday': 'יום שני',
+    'tuesday': 'יום שלישי',
+    'wednesday': 'יום רביעי',
+    'thursday': 'الخميس',
+    'friday': 'الجمعة',
+    'saturday': 'السبت',
+    'sun': 'الأحد',
+    'mon': 'الإثنين',
+    'tue': 'الثلاثاء',
+    'wed': 'الأربعاء',
+    'thu': 'الخميس',
+    'fri': 'الجمعة',
+    'sat': 'السبت',
+    'tooltipLoading': 'جارٍ التحميل...'
+};
+exports.he = he;
+var it = {
+    'format': 'Formato',
+    'hour': 'Ora',
+    'day': 'Giorno',
+    'week': 'Settimana',
+    'month': 'Mese',
+    'quarter': 'Trimestre',
+    'hours': 'Ore',
+    'days': 'Giorni',
+    'weeks': 'Mesi',
+    'months': 'Settimane',
+    'quarters': 'Trimestri',
+    'hr': 'Ora',
+    'dy': 'G',
+    'wk': 'Sett.',
+    'mth': 'Mese',
+    'qtr': 'Trim.',
+    'hrs': 'Ora',
+    'dys': 'GG',
+    'wks': 'Sett.',
+    'mths': 'Mesi',
+    'qtrs': 'Trim.',
+    'res': 'Risorsa',
+    'dur': 'Durata',
+    'comp': '%',
+    'completion': 'Completamento',
+    'startdate': 'Data inizio',
+    'planstartdate': 'Piano data inizio',
+    'enddate': 'Data fine',
+    'planenddate': 'Piano data fine',
+    'cost': 'Costo',
+    'moreinfo': 'Più informazioni',
+    'nodata': 'Nessun task trovato',
+    'notes': 'Note',
+    'january': 'Gennaio',
+    'february': 'Febbraio',
+    'march': 'Marzo',
+    'april': 'Aprile',
+    'maylong': 'Maggio',
+    'june': 'Giugno',
+    'july': 'Luglio',
+    'august': 'Agosto',
+    'september': 'Settembre',
+    'october': 'Ottobre',
+    'november': 'Novembre',
+    'december': 'Dicembre',
+    'jan': 'Gen',
+    'feb': 'Feb',
+    'mar': 'Mar',
+    'apr': 'Apr',
+    'may': 'Mag',
+    'jun': 'Giu',
+    'jul': 'Lug',
+    'aug': 'Ago',
+    'sep': 'Set',
+    'oct': 'Ott',
+    'nov': 'Nov',
+    'dec': 'Dic',
+    'sunday': 'Domenica',
+    'monday': 'Lunedì',
+    'tuesday': 'Martedì',
+    'wednesday': 'Mercoledì',
+    'thursday': 'Giovedì',
+    'friday': 'Venerdì',
+    'saturday': 'Sabato',
+    'sun': 'Dom',
+    'mon': 'Lun',
+    'tue': 'Mar',
+    'wed': 'Mer',
+    'thu': 'Gio',
+    'fri': 'Ven',
+    'sat': 'Sab',
+    'tooltipLoading': 'Caricamento...'
+};
+exports.it = it;
+var hu = {
+    'format': 'Formátum',
+    'hour': 'Óra',
+    'day': 'Nap',
+    'week': 'Hét',
+    'month': 'Hónap',
+    'quarter': 'Negyedév ',
+    'hours': 'Órák',
+    'days': 'Nap',
+    'weeks': 'Hét',
+    'months': 'Hónap',
+    'quarters': 'Negyedév',
+    'hr': 'Ó',
+    'dy': 'Nap',
+    'wk': 'Hét',
+    'mth': 'Hó',
+    'qtr': 'NÉ',
+    'hrs': 'Óra',
+    'dys': 'Nap',
+    'wks': 'Hét',
+    'mths': 'Hó',
+    'qtrs': 'NÉ',
+    'res': 'Erőforrás',
+    'dur': 'Időtartam',
+    'comp': '%',
+    'completion': 'Elkészült',
+    'startdate': 'Kezdés',
+    'planstartdate': 'Tervezett kezdés',
+    'enddate': 'Befejezés',
+    'planenddate': 'Tervezett befejezés',
+    'cost': 'Költség',
+    'moreinfo': 'További információ',
+    'nodata': 'No tasks found',
+    'notes': 'Jegyzetek',
+    'january': 'Január',
+    'february': 'Február',
+    'march': 'Március',
+    'april': 'Április',
+    'maylong': 'Május',
+    'june': 'Június',
+    'july': 'Július',
+    'august': 'Augusztus',
+    'september': 'Szeptember',
+    'october': 'Október',
+    'november': 'November',
+    'december': 'December',
+    'jan': 'Jan',
+    'feb': 'Feb',
+    'mar': 'Már',
+    'apr': 'Ápr',
+    'may': 'Máj',
+    'jun': 'Jún',
+    'jul': 'Júl',
+    'aug': 'Aug',
+    'sep': 'Szep',
+    'oct': 'Okt',
+    'nov': 'Nov',
+    'dec': 'Dec',
+    'sunday': 'Vasárnap',
+    'monday': 'Hétfő',
+    'tuesday': 'Kedd',
+    'wednesday': 'Szerda',
+    'thursday': 'Csütörtök',
+    'friday': 'Péntek',
+    'saturday': 'Szombat',
+    'sun': 'Vas',
+    'mon': 'Hé',
+    'tue': 'Ke',
+    'wed': 'Sze',
+    'thu': 'Csü',
+    'fri': 'Pén',
+    'sat': 'Szo',
+    'tooltipLoading': 'Belöltés...'
+};
+exports.hu = hu;
+var id = {
+    'format': 'Format',
+    'hour': 'Jam',
+    'day': 'Hari',
+    'week': 'Minggu',
+    'month': 'Bulan',
+    'quarter': 'Kuartal',
+    'hours': 'Jam',
+    'days': 'Hari',
+    'weeks': 'Minggu',
+    'months': 'Bulan',
+    'quarters': 'Kuartal',
+    'hr': 'Jam',
+    'dy': 'Hari',
+    'wk': 'Min',
+    'mth': 'Bln',
+    'qtr': 'Krtl',
+    'hrs': 'Jam',
+    'dys': 'Hari',
+    'wks': 'Min',
+    'mths': 'Bln',
+    'qtrs': 'Krtl',
+    'res': 'Sumber Daya',
+    'dur': 'Durasi',
+    'comp': '%',
+    'completion': 'Penyelesaian',
+    'startdate': 'Tanggal Mulai',
+    'planstartdate': 'Perencanaan Tanggal Mulai',
+    'enddate': 'Tanggal Akhir',
+    'planenddate': 'Perencanaan Tanggal Akhir',
+    'cost': 'Biaya',
+    'moreinfo': 'Informasi Lebih Lanjut',
+    'nodata': 'No tasks found',
+    'notes': 'Catatan',
+    'january': 'Januari',
+    'february': 'Februari',
+    'march': 'Maret',
+    'april': 'April',
+    'maylong': 'Mei',
     'june': 'Juni',
     'july': 'Juli',
-    'august': 'August',
+    'august': 'Agustus',
     'september': 'September',
     'october': 'Oktober',
     'november': 'November',
-    'december': 'Dezember',
+    'december': 'Desember',
     'jan': 'Jan',
     'feb': 'Feb',
     'mar': 'Mar',
     'apr': 'Apr',
-    'may': 'Mai',
+    'may': 'Mei',
     'jun': 'Jun',
     'jul': 'Jul',
-    'aug': 'Aug',
+    'aug': 'Agu',
     'sep': 'Sep',
     'oct': 'Okt',
     'nov': 'Nov',
-    'dec': 'Dez',
-    'sunday': 'Sonntag',
-    'monday': 'Montag',
-    'tuesday': 'Dienstag',
-    'wednesday': 'Mittwoch',
-    'thursday': 'Donnerstag',
-    'friday': 'Freitag',
-    'saturday': 'Samstag',
-    'sun': 'So',
-    'mon': 'Mo', 'tue': 'Di', 'wed': 'Mi', 'thu': 'Do', 'fri': 'Fr', 'sat': 'Sa'
+    'dec': 'Des',
+    'sunday': 'Minggu',
+    'monday': 'Senin',
+    'tuesday': 'Selasa',
+    'wednesday': 'Rabu',
+    'thursday': 'Kamis',
+    'friday': 'Jumat',
+    'saturday': 'Sabtu',
+    'sun': 'Min',
+    'mon': 'Sen',
+    'tue': 'Sel',
+    'wed': 'Rab',
+    'thu': 'Kam',
+    'fri': 'Jum',
+    'sat': 'Sab'
 };
-exports.de = de;
+exports.id = id;
+var ja = {
+    'format': 'タイムライン表示',
+    'hour': '時',
+    'day': '日',
+    'week': '週',
+    'month': '月',
+    'quarter': '四半期',
+    'hours': '時間',
+    'days': '日間',
+    'weeks': '週間',
+    'months': '月間',
+    'quarters': '四半期',
+    'hr': '時',
+    'dy': '日',
+    'wk': '週',
+    'mth': '月',
+    'qtr': '四',
+    'hrs': '時間',
+    'dys': '日間',
+    'wks': '週間',
+    'mths': '月間',
+    'qtrs': '四半期',
+    'res': 'リソース',
+    'dur': '期間',
+    'comp': '進捗率',
+    'completion': '進捗率',
+    'startdate': '開始日',
+    'planstartdate': '予定開始日',
+    'enddate': '期日',
+    'planenddate': '予定期日',
+    'cost': 'コスト',
+    'moreinfo': '詳細',
+    'nodata': 'No tasks found',
+    'notes': 'ノート',
+    'january': '1月',
+    'february': '2月',
+    'march': '3月',
+    'april': '4月',
+    'maylong': '5月',
+    'june': '6月',
+    'july': '7月',
+    'august': '8月',
+    'september': '9月',
+    'october': '10月',
+    'november': '11月',
+    'december': '12月',
+    'jan': '1月',
+    'feb': '2月',
+    'mar': '3月',
+    'apr': '4月',
+    'may': '5月',
+    'jun': '6月',
+    'jul': '7月',
+    'aug': '8月',
+    'sep': '9月',
+    'oct': '10月',
+    'nov': '11月',
+    'dec': '12月',
+    'sunday': '日曜日',
+    'monday': '月曜日',
+    'tuesday': '火曜日',
+    'wednesday': '水曜日',
+    'thursday': '木曜日',
+    'friday': '金曜日',
+    'saturday': '土曜日',
+    'sun': '日',
+    'mon': '月',
+    'tue': '火',
+    'wed': '水',
+    'thu': '木',
+    'fri': '金',
+    'sat': '土',
+    'tooltipLoading': 'ローディング中...'
+};
+exports.ja = ja;
+var ko = {
+    'format': '구분',
+    'hour': '시',
+    'day': '일',
+    'week': '주',
+    'month': '월',
+    'quarter': '분기',
+    'hours': '시',
+    'days': '일',
+    'weeks': '주',
+    'months': '월',
+    'quarters': '분기',
+    'hr': '시',
+    'dy': '일',
+    'wk': '주',
+    'mth': '월',
+    'qtr': '분기',
+    'hrs': '시',
+    'dys': '일',
+    'wks': '주',
+    'mths': '월',
+    'qtrs': '분기',
+    'res': '이름',
+    'dur': '기간',
+    'comp': '%',
+    'completion': '완료',
+    'startdate': '시작일자',
+    'planstartdate': '계획 시작일자',
+    'enddate': '종료일자',
+    'planenddate': '계획 종료일자',
+    'cost': '비용',
+    'moreinfo': '더 많은 정보',
+    'nodata': 'No tasks found',
+    'notes': '비고',
+    'january': '1월',
+    'february': '2월',
+    'march': '3월',
+    'april': '4월',
+    'maylong': '5월',
+    'june': '6월',
+    'july': '7월',
+    'august': '8월',
+    'september': '9월',
+    'october': '10월',
+    'november': '11월',
+    'december': '12월',
+    'jan': '1',
+    'feb': '2',
+    'mar': '3',
+    'apr': '4',
+    'may': '5',
+    'jun': '6',
+    'jul': '7',
+    'aug': '8',
+    'sep': '9',
+    'oct': '10',
+    'nov': '11',
+    'dec': '12',
+    'sunday': '일요일',
+    'monday': '월요일',
+    'tuesday': '화요일',
+    'wednesday': '수요일',
+    'thursday': '목요일',
+    'friday': '금요일',
+    'saturday': '토요일',
+    'sun': '일',
+    'mon': '월',
+    'tue': '화',
+    'wed': '수',
+    'thu': '목',
+    'fri': '금',
+    'sat': '토',
+    'tooltipLoading': '로딩중...'
+};
+exports.ko = ko;
+var nl = {
+    'format': 'Format',
+    'hour': 'Uur',
+    'day': 'Dag',
+    'week': 'Week',
+    'month': 'Maand',
+    'quarter': 'Kwartaal',
+    'hours': 'Uren',
+    'days': 'Dagen',
+    'weeks': 'Weken',
+    'months': 'Maanden',
+    'quarters': 'Kwartalen',
+    'hr': 'uur',
+    'dy': 'dag',
+    'wk': 'wk',
+    'mth': 'mnd',
+    'qtr': 'kw',
+    'hrs': 'uren',
+    'dys': 'dagen',
+    'wks': 'weken',
+    'mths': 'maanden',
+    'qtrs': 'kwartalen',
+    'res': 'Resource',
+    'dur': 'Doorlooptijd',
+    'comp': '%',
+    'completion': 'Gereed',
+    'startdate': 'Startdatum',
+    'planstartdate': 'Geplande startdatum',
+    'enddate': 'Einddatum',
+    'planenddate': 'Geplande einddatum',
+    'cost': 'Kosten',
+    'moreinfo': 'Meer informatie',
+    'nodata': 'Geen taken gevonden',
+    'notes': 'Notities',
+    'january': 'januari',
+    'february': 'februari',
+    'march': 'maart',
+    'april': 'april',
+    'maylong': 'mei',
+    'june': 'juni',
+    'july': 'juli',
+    'august': 'augustus',
+    'september': 'september',
+    'october': 'oktober',
+    'november': 'november',
+    'december': 'december',
+    'jan': 'jan',
+    'feb': 'feb',
+    'mar': 'mrt',
+    'apr': 'apr',
+    'may': 'mei',
+    'jun': 'jun',
+    'jul': 'jul',
+    'aug': 'aug',
+    'sep': 'sep',
+    'oct': 'okt',
+    'nov': 'nov',
+    'dec': 'dec',
+    'sunday': 'zondag',
+    'monday': 'maandag',
+    'tuesday': 'dinsdag',
+    'wednesday': 'woensdag',
+    'thursday': 'donderdag',
+    'friday': 'vrijdag',
+    'saturday': 'zaterdag',
+    'sun': 'zo',
+    'mon': 'ma',
+    'tue': 'di',
+    'wed': 'wo',
+    'thu': 'do',
+    'fri': 'vr',
+    'sat': 'za'
+};
+exports.nl = nl;
+var pl = {
+    'format': 'Format',
+    'hour': 'Godzina',
+    'day': 'Dzień',
+    'week': 'Tydzień',
+    'month': 'Miesiąc',
+    'quarter': 'Kwartał',
+    'hours': 'Godziny',
+    'days': 'Dni',
+    'weeks': 'Tygodni',
+    'months': 'Miesięcy',
+    'quarters': 'Kwartały',
+    'hr': 'godz.',
+    'dy': 'd.',
+    'wk': 'tydz.',
+    'mth': 'mies.',
+    'qtr': 'kw.',
+    'hrs': 'godz.',
+    'dys': 'd.',
+    'wks': 'tyg.',
+    'mths': 'mies.',
+    'qtrs': 'kw.',
+    'res': 'Zasób',
+    'dur': 'Czas trwania',
+    'comp': '%',
+    'completion': 'Ukończenie',
+    'startdate': 'Data Startu',
+    'planstartdate': 'Planowana Data Startu',
+    'enddate': 'Data Zakończenia',
+    'planenddate': 'Planowana Data Zakończenia',
+    'cost': 'Koszt',
+    'moreinfo': 'Więcej Inormacji',
+    'nodata': 'Nie znaleziono zadań',
+    'notes': 'Dodatkowe Informacje',
+    'january': 'Styczeń',
+    'february': 'Luty',
+    'march': 'Marzec',
+    'april': 'Kwiecień',
+    'maylong': 'Maj',
+    'june': 'Czerwiec',
+    'july': 'Lipiec',
+    'august': 'Sierpień',
+    'september': 'Wrzesień',
+    'october': 'Październik',
+    'november': 'Listopad',
+    'december': 'Grudzień',
+    'jan': 'St',
+    'feb': 'Lut',
+    'mar': 'Mar',
+    'apr': 'Kw',
+    'may': 'Maj',
+    'jun': 'Cz',
+    'jul': 'Lip',
+    'aug': 'Sier',
+    'sep': 'Wrz',
+    'oct': 'Paź',
+    'nov': 'Lis',
+    'dec': 'Gr',
+    'sunday': 'Niedziela',
+    'monday': 'Poniedziałek',
+    'tuesday': 'Wtorek',
+    'wednesday': 'Środa',
+    'thursday': 'Czwartek',
+    'friday': 'Piątek',
+    'saturday': 'Sobota',
+    'sun': 'Nd',
+    'mon': 'Pon',
+    'tue': 'Wt',
+    'wed': 'Śr',
+    'thu': 'Czw',
+    'fri': 'Pt',
+    'sat': 'So',
+    'tooltipLoading': 'Ładowanie...'
+};
+exports.pl = pl;
 var pt = {
     'hours': 'Horas',
     'days': 'Dias',
@@ -2002,7 +3065,7 @@ var pt = {
     'mths': 'meses',
     'qtrs': 'qtrs',
     'completion': 'Terminado',
-    'comp': '% Completado',
+    'comp': '%',
     'moreinfo': 'Mais informações',
     'nodata': 'Sem atividades',
     'notes': 'Notas',
@@ -2086,7 +3149,7 @@ var ru = {
     'sat': '	Сб',
     'res': 'Ресурс',
     'dur': 'Длительность',
-    'comp': '% выполнения',
+    'comp': '%',
     'completion': 'Выполнено',
     'startdate': 'Нач. дата',
     'planstartdate': 'Plan Нач. дата',
@@ -2120,158 +3183,6 @@ var ru = {
     'tooltipLoading': 'Загрузка...'
 };
 exports.ru = ru;
-/**
- * Mois : http://bdl.oqlf.gouv.qc.ca/bdl/gabarit_bdl.asp?id=3619
-   Jours : http://bdl.oqlf.gouv.qc.ca/bdl/gabarit_bdl.asp?id=3617
- */
-var fr = {
-    'january': 'Janvier',
-    'february': 'Février',
-    'march': 'Mars',
-    'april': 'Avril',
-    'maylong': 'Mai',
-    'june': 'Juin',
-    'july': 'Juillet',
-    'august': 'Août',
-    'september': 'Septembre',
-    'october': 'Octobre',
-    'november': 'Novembre',
-    'december': 'Décembre',
-    'jan': 'Janv',
-    'feb': 'Févr',
-    'mar': 'Mars',
-    'apr': 'Avr',
-    'may': 'Mai',
-    'jun': 'Juin',
-    'jul': 'Juil',
-    'aug': 'Août',
-    'sep': 'Sept',
-    'oct': 'Oct',
-    'nov': 'Nov',
-    'dec': 'Déc',
-    'sunday': 'Dimanche',
-    'monday': 'Lundi',
-    'tuesday': 'Mardi',
-    'wednesday': 'Mercredi',
-    'thursday': 'Jeudi',
-    'friday': 'Vendredi',
-    'saturday': 'Samedi',
-    'sun': 'Dim',
-    'mon': 'Lun',
-    'tue': 'Mar',
-    'wed': 'Mer',
-    'thu': 'Jeu',
-    'fri': 'Ven',
-    'sat': 'Sam',
-    'res': 'Ressource',
-    'dur': 'Durée',
-    'comp': '% Term.',
-    'completion': 'Terminé',
-    'startdate': 'Début',
-    'planstartdate': 'Plan Début',
-    'enddate': 'Fin',
-    'planenddate': 'Plan Fin',
-    'cost': 'Cost',
-    'moreinfo': "Plus d'informations",
-    'nodata': 'No tasks found',
-    'notes': 'Notes',
-    'format': 'Format',
-    'hour': 'Heure',
-    'day': 'Jour',
-    'week': 'Semaine',
-    'month': 'Mois',
-    'quarter': 'Trimestre',
-    'hours': 'Heures',
-    'days': 'Jours',
-    'weeks': 'Semaines',
-    'months': 'Mois',
-    'quarters': 'Trimestres',
-    'hr': 'h',
-    'dy': 'j',
-    'wk': 'sem',
-    'mth': 'mois',
-    'qtr': 'tri',
-    'hrs': 'h',
-    'dys': 'j',
-    'wks': 'sem',
-    'mths': 'mois',
-    'qtrs': 'tri'
-};
-exports.fr = fr;
-var cn = {
-    'january': '一月',
-    'february': '二月',
-    'march': '三月',
-    'april': '四月',
-    'maylong': '五月',
-    'june': '六月',
-    'july': '七月',
-    'august': '八月',
-    'september': '九月',
-    'october': '十月',
-    'november': '十一月',
-    'december': '十二月',
-    'jan': '一月',
-    'feb': '二月',
-    'mar': '三月',
-    'apr': '四月',
-    'may': '五月',
-    'jun': '六月',
-    'jul': '七月',
-    'aug': '八月',
-    'sep': '九月',
-    'oct': '十月',
-    'nov': '十一月',
-    'dec': '十二月',
-    'sunday': '星期日',
-    'monday': '星期一',
-    'tuesday': '星期二',
-    'wednesday': '星期三',
-    'thursday': '星期四',
-    'friday': '星期五',
-    'saturday': '星期六',
-    'sun': '星期日',
-    'mon': '星期一',
-    'tue': '星期二',
-    'wed': '星期三',
-    'thu': '星期四',
-    'fri': '星期五',
-    'sat': '星期六',
-    'res': '資源',
-    'dur': '時程',
-    'comp': '達成率',
-    'completion': '達成',
-    'startdate': '起始日期',
-    'planstartdate': '計劃起始日期',
-    'enddate': '截止日期',
-    'planenddate': '計劃截止日期',
-    'cost': '成本',
-    'moreinfo': "更多資訊",
-    'nodata': 'No tasks found',
-    'notes': '備註',
-    'format': '格式',
-    'hour': '時',
-    'day': '日',
-    'week': '星期',
-    'month': '月',
-    'quarter': '季',
-    'hours': '小時',
-    'days': '天',
-    'weeks': '週',
-    'months': '月',
-    'quarters': '季',
-    'hr': '小時',
-    'dy': '天',
-    'wk': '週',
-    'mth': '月',
-    'qtr': '季',
-    'hrs': '小時',
-    'dys': '天',
-    'wks': '週',
-    'mths': '月',
-    'qtrs': '季'
-};
-exports.cn = cn;
 var sv = {
     'format': 'Filter',
     'hour': 'Timme',
@@ -2296,7 +3207,7 @@ var sv = {
     'qtrs': 'Q',
     'res': 'Resurs',
     'dur': 'Tidsåtgång',
-    'comp': '% klart',
+    'comp': '%',
     'completion': 'Klart',
     'startdate': 'Startdatum',
     'planstartdate': 'Planerad startdatum',
@@ -2346,154 +3257,6 @@ var sv = {
     'sat': 'lör'
 };
 exports.sv = sv;
-var nl = {
-    'format': 'Format',
-    'hour': 'Uur',
-    'day': 'Dag',
-    'week': 'Week',
-    'month': 'Maand',
-    'quarter': 'Kwartaal',
-    'hours': 'Uren',
-    'days': 'Dagen',
-    'weeks': 'Weken',
-    'months': 'Maanden',
-    'quarters': 'Kwartalen',
-    'hr': 'uur',
-    'dy': 'dag',
-    'wk': 'wk',
-    'mth': 'mnd',
-    'qtr': 'kw',
-    'hrs': 'uren',
-    'dys': 'dagen',
-    'wks': 'weken',
-    'mths': 'maanden',
-    'qtrs': 'kwartalen',
-    'res': 'Resource',
-    'dur': 'Doorlooptijd',
-    'comp': '% gereed',
-    'completion': 'Gereed',
-    'startdate': 'Startdatum',
-    'planstartdate': 'Geplande startdatum',
-    'enddate': 'Einddatum',
-    'planenddate': 'Geplande einddatum',
-    'cost': 'Kosten',
-    'moreinfo': 'Meer informatie',
-    'nodata': 'No tasks found',
-    'notes': 'Notities',
-    'january': 'januari',
-    'february': 'februari',
-    'march': 'maart',
-    'april': 'april',
-    'maylong': 'mei',
-    'june': 'juni',
-    'july': 'juli',
-    'august': 'augustus',
-    'september': 'september',
-    'october': 'oktober',
-    'november': 'november',
-    'december': 'december',
-    'jan': 'jan',
-    'feb': 'feb',
-    'mar': 'mrt',
-    'apr': 'apr',
-    'may': 'mei',
-    'jun': 'jun',
-    'jul': 'jul',
-    'aug': 'aug',
-    'sep': 'sep',
-    'oct': 'okt',
-    'nov': 'nov',
-    'dec': 'dec',
-    'sunday': 'zondag',
-    'monday': 'maandag',
-    'tuesday': 'dinsdag',
-    'wednesday': 'woensdag',
-    'thursday': 'donderdag',
-    'friday': 'vrijdag',
-    'saturday': 'zaterdag',
-    'sun': 'zo',
-    'mon': 'ma',
-    'tue': 'di',
-    'wed': 'wo',
-    'thu': 'do',
-    'fri': 'vr',
-    'sat': 'za'
-};
-exports.nl = nl;
-var id = {
-    'format': 'Format',
-    'hour': 'Jam',
-    'day': 'Hari',
-    'week': 'Minggu',
-    'month': 'Bulan',
-    'quarter': 'Kuartal',
-    'hours': 'Jam',
-    'days': 'Hari',
-    'weeks': 'Minggu',
-    'months': 'Bulan',
-    'quarters': 'Kuartal',
-    'hr': 'Jam',
-    'dy': 'Hari',
-    'wk': 'Min',
-    'mth': 'Bln',
-    'qtr': 'Krtl',
-    'hrs': 'Jam',
-    'dys': 'Hari',
-    'wks': 'Min',
-    'mths': 'Bln',
-    'qtrs': 'Krtl',
-    'res': 'Sumber Daya',
-    'dur': 'Durasi',
-    'comp': '% Penyelesaian',
-    'completion': 'Penyelesaian',
-    'startdate': 'Tanggal Mulai',
-    'planstartdate': 'Perencanaan Tanggal Mulai',
-    'enddate': 'Tanggal Akhir',
-    'planenddate': 'Perencanaan Tanggal Akhir',
-    'cost': 'Biaya',
-    'moreinfo': 'Informasi Lebih Lanjut',
-    'nodata': 'No tasks found',
-    'notes': 'Catatan',
-    'january': 'Januari',
-    'february': 'Februari',
-    'march': 'Maret',
-    'april': 'April',
-    'maylong': 'Mei',
-    'june': 'Juni',
-    'july': 'Juli',
-    'august': 'Agustus',
-    'september': 'September',
-    'october': 'Oktober',
-    'november': 'November',
-    'december': 'Desember',
-    'jan': 'Jan',
-    'feb': 'Feb',
-    'mar': 'Mar',
-    'apr': 'Apr',
-    'may': 'Mei',
-    'jun': 'Jun',
-    'jul': 'Jul',
-    'aug': 'Agu',
-    'sep': 'Sep',
-    'oct': 'Okt',
-    'nov': 'Nov',
-    'dec': 'Des',
-    'sunday': 'Minggu',
-    'monday': 'Senin',
-    'tuesday': 'Selasa',
-    'wednesday': 'Rabu',
-    'thursday': 'Kamis',
-    'friday': 'Jumat',
-    'saturday': 'Sabtu',
-    'sun': 'Min',
-    'mon': 'Sen',
-    'tue': 'Sel',
-    'wed': 'Rab',
-    'thu': 'Kam',
-    'fri': 'Jum',
-    'sat': 'Sab'
-};
-exports.id = id;
 var tr = {
     'format': 'Biçim',
     'hour': 'Saat',
@@ -2518,7 +3281,7 @@ var tr = {
     'qtrs': 'Çyrk',
     'res': 'Kaynak',
     'dur': 'Süre',
-    'comp': '% Tamamlanma.',
+    'comp': '%.',
     'completion': 'Tamamlanma',
     'startdate': 'Başlangıç Tarihi',
     'planstartdate': 'Plan Başlama Tarihi',
@@ -2568,310 +3331,86 @@ var tr = {
     'sat': 'Cmt'
 };
 exports.tr = tr;
-var ja = {
-    'format': 'タイムライン表示',
-    'hour': '時',
-    'day': '日',
-    'week': '週',
-    'month': '月',
-    'quarter': '四半期',
-    'hours': '時間',
-    'days': '日間',
-    'weeks': '週間',
-    'months': '月間',
-    'quarters': '四半期',
-    'hr': '時',
-    'dy': '日',
-    'wk': '週',
-    'mth': '月',
-    'qtr': '四',
-    'hrs': '時間',
-    'dys': '日間',
-    'wks': '週間',
-    'mths': '月間',
-    'qtrs': '四半期',
-    'res': 'リソース',
-    'dur': '期間',
-    'comp': '進捗率',
-    'completion': '進捗率',
-    'startdate': '開始日',
-    'planstartdate': '予定開始日',
-    'enddate': '期日',
-    'planenddate': '予定期日',
-    'cost': 'コスト',
-    'moreinfo': '詳細',
-    'nodata': 'No tasks found',
-    'notes': 'ノート',
-    'january': '1月',
-    'february': '2月',
-    'march': '3月',
-    'april': '4月',
-    'maylong': '5月',
-    'june': '6月',
-    'july': '7月',
-    'august': '8月',
-    'september': '9月',
-    'october': '10月',
-    'november': '11月',
-    'december': '12月',
-    'jan': '1月',
-    'feb': '2月',
-    'mar': '3月',
-    'apr': '4月',
-    'may': '5月',
-    'jun': '6月',
-    'jul': '7月',
-    'aug': '8月',
-    'sep': '9月',
-    'oct': '10月',
-    'nov': '11月',
-    'dec': '12月',
-    'sunday': '日曜日',
-    'monday': '月曜日',
-    'tuesday': '火曜日',
-    'wednesday': '水曜日',
-    'thursday': '木曜日',
-    'friday': '金曜日',
-    'saturday': '土曜日',
-    'sun': '日',
-    'mon': '月',
-    'tue': '火',
-    'wed': '水',
-    'thu': '木',
-    'fri': '金',
-    'sat': '土',
-    'tooltipLoading': 'ローディング中...'
+var ua = {
+    'january': 'Січень',
+    'february': 'Лютий',
+    'march': 'Березень',
+    'april': 'Квітень',
+    'maylong': 'Травень',
+    'june': 'Червень',
+    'july': 'Липень',
+    'august': 'Серпень',
+    'september': 'Вересень',
+    'october': 'Жовтень',
+    'november': 'Листопад',
+    'december': 'Грудень',
+    'jan': 'Січ',
+    'feb': 'Лют',
+    'mar': 'Бер',
+    'apr': 'Кві',
+    'may': 'Тра',
+    'jun': 'Чер',
+    'jul': 'Лип',
+    'aug': 'Сер',
+    'sep': 'Вер',
+    'oct': 'Жов',
+    'nov': 'Лис',
+    'dec': 'Гру',
+    'sunday': 'Неділя',
+    'monday': 'Понеділок',
+    'tuesday': 'Вівторок',
+    'wednesday': 'Середа',
+    'thursday': 'Четвер',
+    'friday': 'П\'ятниця',
+    'saturday': 'Субота',
+    'sun': ' Нд',
+    'mon': 'Пн',
+    'tue': ' Вт',
+    'wed': 'Ср',
+    'thu': ' Чт',
+    'fri': ' Пт',
+    'sat': ' Сб',
+    'res': 'Ресурс',
+    'dur': 'Тривалість',
+    'comp': '%',
+    'completion': 'Виконано',
+    'startdate': 'Поч. дата',
+    'planstartdate': 'План Поч. дата',
+    'enddate': 'Кін. дата',
+    'planenddate': 'План Кін. дата',
+    'cost': 'Вартість',
+    'moreinfo': 'Деталі',
+    'nodata': 'Нічого не знайдено',
+    'notes': 'Нотатки',
+    'format': 'Формат',
+    'hour': 'Година',
+    'day': 'День',
+    'week': 'Тиждень',
+    'month': 'Місяць',
+    'quarter': 'Кварт',
+    'hours': 'Годин',
+    'days': 'Днів',
+    'weeks': 'Тижнів',
+    'months': 'Місяців',
+    'quarters': 'Кварталів',
+    'hr': 'г.',
+    'dy': 'дн.',
+    'wk': 'тиж.',
+    'mth': 'міс.',
+    'qtr': 'кв.',
+    'hrs': 'г.',
+    'dys': 'дн.',
+    'wks': 'тиж.',
+    'mths': 'міс.',
+    'qtrs': 'кв.',
+    'tooltipLoading': 'Загрузка...'
 };
-exports.ja = ja;
-var cs = {
-    'format': 'Zobrazení',
-    'hour': 'Hodina',
-    'day': 'Den',
-    'week': 'Týden',
-    'month': 'Měsíc',
-    'quarter': 'Kvartál',
-    'hours': 'Hodiny',
-    'days': 'Dni',
-    'weeks': 'Týdny',
-    'months': 'Měsíce',
-    'quarters': 'Kvartály',
-    'hr': 'Ho',
-    'dy': 'Den',
-    'wk': 'Tyd',
-    'mth': 'Měs',
-    'qtr': 'Kvar',
-    'hrs': 'Ho',
-    'dys': 'Dni',
-    'wks': 'Tyd',
-    'mths': 'Měs',
-    'qtrs': 'Kvar',
-    'res': 'Přiřazeno',
-    'dur': 'Trvání',
-    'comp': '% Hotovo',
-    'completion': 'Hotovo',
-    'startdate': 'Start',
-    'planstartdate': 'Plánovaný start',
-    'enddate': 'Konec',
-    'planenddate': 'Plánovaný konec',
-    'cost': 'Náklady',
-    'moreinfo': 'Více informací',
-    'nodata': 'No tasks found',
-    'notes': 'Poznámky',
-    'january': 'Leden',
-    'february': 'Únor',
-    'march': 'Březen',
-    'april': 'Duben',
-    'maylong': 'Květen',
-    'june': 'Červen',
-    'july': 'Červenec',
-    'august': 'Srpen',
-    'september': 'Září',
-    'october': 'Říjen',
-    'november': 'Listopad',
-    'december': 'Prosinec',
-    'jan': 'Led',
-    'feb': 'Úno',
-    'mar': 'Bře',
-    'apr': 'Dub',
-    'may': 'Kvě',
-    'jun': 'Čer',
-    'jul': 'Čvc',
-    'aug': 'Srp',
-    'sep': 'Zář',
-    'oct': 'Říj',
-    'nov': 'Lis',
-    'dec': 'Pro',
-    'sunday': 'Neděle',
-    'monday': 'Pondělí',
-    'tuesday': 'Úterý',
-    'wednesday': 'Středa',
-    'thursday': 'Čtvrtek',
-    'friday': 'Pátek',
-    'saturday': 'Sobota',
-    'sun': 'Ne',
-    'mon': 'Po',
-    'tue': 'Út',
-    'wed': 'St',
-    'thu': 'Čt',
-    'fri': 'Pa',
-    'sat': 'So',
-    'tooltipLoading': 'Nahrávám...'
-};
-exports.cs = cs;
-var hu = {
-    'format': 'Formátum',
-    'hour': 'Óra',
-    'day': 'Nap',
-    'week': 'Hét',
-    'month': 'Hónap',
-    'quarter': 'Negyedév ',
-    'hours': 'Órák',
-    'days': 'Nap',
-    'weeks': 'Hét',
-    'months': 'Hónap',
-    'quarters': 'Negyedév',
-    'hr': 'Ó',
-    'dy': 'Nap',
-    'wk': 'Hét',
-    'mth': 'Hó',
-    'qtr': 'NÉ',
-    'hrs': 'Óra',
-    'dys': 'Nap',
-    'wks': 'Hét',
-    'mths': 'Hó',
-    'qtrs': 'NÉ',
-    'res': 'Erőforrás',
-    'dur': 'Időtartam',
-    'comp': '% Kész',
-    'completion': 'Elkészült',
-    'startdate': 'Kezdés',
-    'planstartdate': 'Tervezett kezdés',
-    'enddate': 'Befejezés',
-    'planenddate': 'Tervezett befejezés',
-    'cost': 'Költség',
-    'moreinfo': 'További információ',
-    'nodata': 'No tasks found',
-    'notes': 'Jegyzetek',
-    'january': 'Január',
-    'february': 'Február',
-    'march': 'Március',
-    'april': 'Április',
-    'maylong': 'Május',
-    'june': 'Június',
-    'july': 'Július',
-    'august': 'Augusztus',
-    'september': 'Szeptember',
-    'october': 'Október',
-    'november': 'November',
-    'december': 'December',
-    'jan': 'Jan',
-    'feb': 'Feb',
-    'mar': 'Már',
-    'apr': 'Ápr',
-    'may': 'Máj',
-    'jun': 'Jún',
-    'jul': 'Júl',
-    'aug': 'Aug',
-    'sep': 'Szep',
-    'oct': 'Okt',
-    'nov': 'Nov',
-    'dec': 'Dec',
-    'sunday': 'Vasárnap',
-    'monday': 'Hétfő',
-    'tuesday': 'Kedd',
-    'wednesday': 'Szerda',
-    'thursday': 'Csütörtök',
-    'friday': 'Péntek',
-    'saturday': 'Szombat',
-    'sun': 'Vas',
-    'mon': 'Hé',
-    'tue': 'Ke',
-    'wed': 'Sze',
-    'thu': 'Csü',
-    'fri': 'Pén',
-    'sat': 'Szo',
-    'tooltipLoading': 'Belöltés...'
-};
-exports.hu = hu;
-var ko = {
-    'format': '구분',
-    'hour': '시',
-    'day': '일',
-    'week': '주',
-    'month': '월',
-    'quarter': '분기',
-    'hours': '시',
-    'days': '일',
-    'weeks': '주',
-    'months': '월',
-    'quarters': '분기',
-    'hr': '시',
-    'dy': '일',
-    'wk': '주',
-    'mth': '월',
-    'qtr': '분기',
-    'hrs': '시',
-    'dys': '일',
-    'wks': '주',
-    'mths': '월',
-    'qtrs': '분기',
-    'res': '이름',
-    'dur': '기간',
-    'comp': '% ',
-    'completion': '완료',
-    'startdate': '시작일자',
-    'planstartdate': '계획 시작일자',
-    'enddate': '종료일자',
-    'planenddate': '계획 종료일자',
-    'cost': '비용',
-    'moreinfo': '더 많은 정보',
-    'nodata': 'No tasks found',
-    'notes': '비고',
-    'january': '1월',
-    'february': '2월',
-    'march': '3월',
-    'april': '4월',
-    'maylong': '5월',
-    'june': '6월',
-    'july': '7월',
-    'august': '8월',
-    'september': '9월',
-    'october': '10월',
-    'november': '11월',
-    'december': '12월',
-    'jan': '1',
-    'feb': '2',
-    'mar': '3',
-    'apr': '4',
-    'may': '5',
-    'jun': '6',
-    'jul': '7',
-    'aug': '8',
-    'sep': '9',
-    'oct': '10',
-    'nov': '11',
-    'dec': '12',
-    'sunday': '일요일',
-    'monday': '월요일',
-    'tuesday': '화요일',
-    'wednesday': '수요일',
-    'thursday': '목요일',
-    'friday': '금요일',
-    'saturday': '토요일',
-    'sun': '일',
-    'mon': '월',
-    'tue': '화',
-    'wed': '수',
-    'thu': '목',
-    'fri': '금',
-    'sat': '토',
-    'tooltipLoading': '로딩중...'
-};
-exports.ko = ko;
+exports.ua = ua;
 
 },{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.includeGetSet = void 0;
 var date_utils_1 = require("./utils/date_utils");
 var draw_columns_1 = require("./draw_columns");
 exports.includeGetSet = function () {
@@ -2996,6 +3535,12 @@ exports.includeGetSet = function () {
                 this.vLangs[pLang][vKey] = (pVals[vKey]) ? document.createTextNode(pVals[vKey]).data : this.vLangs['en'][vKey];
         }
     };
+    this.setCustomLang = function (pVals) {
+        this.vLangs[this.vLang] = new Object();
+        for (var vKey in this.vLangs['en']) {
+            this.vLangs[this.vLang][vKey] = (pVals[vKey]) ? document.createTextNode(pVals[vKey]).data : this.vLangs['en'][vKey];
+        }
+    };
     this.setTotalHeight = function (pVal) { this.vTotalHeight = pVal; };
     // EVENTS
     this.setEvents = function (pEvents) { this.vEvents = pEvents; };
@@ -3094,6 +3639,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.processRows = exports.ClearTasks = exports.RemoveTaskItem = exports.AddTaskItemObject = exports.AddTaskItem = exports.createTaskInfo = exports.TaskItem = exports.TaskItemObject = exports.sortTasks = exports.taskLink = void 0;
 var general_utils_1 = require("./utils/general_utils");
 var draw_utils_1 = require("./utils/draw_utils");
 var date_utils_1 = require("./utils/date_utils");
@@ -3108,7 +3654,9 @@ exports.taskLink = function (pRef, pWidth, pHeight) {
         vHeight = pHeight;
     else
         vHeight = 400;
-    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth); // let OpenWindow = 
+    // @CHANGE LDR To open in same window
+    //window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth); // let OpenWindow =
+    window.location.href=pRef
 };
 exports.sortTasks = function (pList, pID, pIdx) {
     if (pList.length < 2) {
@@ -3146,15 +3694,16 @@ exports.TaskItemObject = function (object) {
     general_utils_1.internalProperties.forEach(function (property) {
         delete pDataObject[property];
     });
-    return new exports.TaskItem(object.pID, object.pName, object.pStart, object.pEnd, object.pClass, object.pLink, object.pMile, object.pRes, object.pComp, object.pGroup, object.pParent, object.pOpen, object.pDepend, object.pCaption, object.pNotes, object.pGantt, object.pCost, object.pPlanStart, object.pPlanEnd, object.pDuration, object.pBarText, object);
+    return new exports.TaskItem(object.pID, object.pName, object.pStart, object.pEnd, object.pClass, object.pLink, object.pMile, object.pRes, object.pComp, object.pGroup, object.pParent, object.pOpen, object.pDepend, object.pCaption, object.pNotes, object.pGantt, object.pCost, object.pPlanStart, object.pPlanEnd, object.pDuration, object.pBarText, object, object.pPlanClass);
 };
-exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt, pCost, pPlanStart, pPlanEnd, pDuration, pBarText, pDataObject) {
+exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt, pCost, pPlanStart, pPlanEnd, pDuration, pBarText, pDataObject, pPlanClass) {
     if (pCost === void 0) { pCost = null; }
     if (pPlanStart === void 0) { pPlanStart = null; }
     if (pPlanEnd === void 0) { pPlanEnd = null; }
     if (pDuration === void 0) { pDuration = null; }
     if (pBarText === void 0) { pBarText = null; }
     if (pDataObject === void 0) { pDataObject = null; }
+    if (pPlanClass === void 0) { pPlanClass = null; }
     var vGantt = pGantt ? pGantt : this;
     var _id = document.createTextNode(pID).data;
     var vID = general_utils_1.hashKey(document.createTextNode(pID).data);
@@ -3168,6 +3717,7 @@ exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRe
     var vGroupMinPlanStart = null;
     var vGroupMinPlanEnd = null;
     var vClass = document.createTextNode(pClass).data;
+    var vPlanClass = document.createTextNode(pPlanClass).data;
     var vLink = document.createTextNode(pLink).data;
     var vMile = parseInt(document.createTextNode(pMile).data);
     var vRes = document.createTextNode(pRes).data;
@@ -3305,6 +3855,7 @@ exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRe
         return vEnd;
     };
     this.getPlanStart = function () { return vPlanStart ? vPlanStart : vStart; };
+    this.getPlanClass = function () { return vPlanClass && vPlanClass !== "null" ? vPlanClass : vClass; };
     this.getPlanEnd = function () { return vPlanEnd ? vPlanEnd : vEnd; };
     this.getCost = function () { return vCost; };
     this.getGroupMinStart = function () { return vGroupMinStart; };
@@ -3407,11 +3958,11 @@ exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRe
                 vDuration = tmpPer + ' ' + ((tmpPer != 1) ? pLang['wks'] : pLang['wk']);
                 break;
             case 'month':
-                tmpPer = Math.round(hours / 24 / 7 / 30);
+                tmpPer = Math.round(hours / 24 / 7 / 4.35);
                 vDuration = tmpPer + ' ' + ((tmpPer != 1) ? pLang['mths'] : pLang['mth']);
                 break;
             case 'quarter':
-                tmpPer = Math.round(hours / 24 / 7 / 30 / 3);
+                tmpPer = Math.round(hours / 24 / 7 / 13);
                 vDuration = tmpPer + ' ' + ((tmpPer != 1) ? pLang['qtrs'] : pLang['qtr']);
                 break;
         }
@@ -3440,6 +3991,7 @@ exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRe
     this.setName = function (pName) { vName = pName; };
     this.setNotes = function (pNotes) { vNotes = pNotes; };
     this.setClass = function (pClass) { vClass = pClass; };
+    this.setPlanClass = function (pPlanClass) { vPlanClass = pPlanClass; };
     this.setCost = function (pCost) { vCost = pCost; };
     this.setResource = function (pRes) { vRes = pRes; };
     this.setDuration = function (pDuration) { vDuration = pDuration; };
@@ -3546,7 +4098,8 @@ exports.TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRe
             pComp: vComp,
             pCost: vCost,
             pGroup: vGroup,
-            pDataObjec: vDataObject
+            pDataObject: vDataObject,
+            pPlanClass: vPlanClass
         };
     };
 };
@@ -3601,7 +4154,7 @@ exports.createTaskInfo = function (pTask, templateStrOrFn) {
             }
             if (_this.vShowTaskInfoDur == 1 && !pTask.getMile()) {
                 vTmpDiv = draw_utils_1.newNode(vTaskInfo, 'div', null, 'gTILine gTId');
-                draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskLabel', _this.vLangs[_this.vLang]['duration'] + ': ');
+                draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskLabel', _this.vLangs[_this.vLang]['dur'] + ': ');
                 draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskText', pTask.getDuration(_this.vFormat, _this.vLangs[_this.vLang]));
             }
             if (_this.vShowTaskInfoComp == 1) {
@@ -3611,7 +4164,7 @@ exports.createTaskInfo = function (pTask, templateStrOrFn) {
             }
             if (_this.vShowTaskInfoRes == 1) {
                 vTmpDiv = draw_utils_1.newNode(vTaskInfo, 'div', null, 'gTILine gTIr');
-                draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskLabel', _this.vLangs[_this.vLang]['resource'] + ': ');
+                draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskLabel', _this.vLangs[_this.vLang]['res'] + ': ');
                 draw_utils_1.newNode(vTmpDiv, 'span', null, 'gTaskText', pTask.getResource());
             }
             if (_this.vShowTaskInfoLink == 1 && pTask.getLink() != '') {
@@ -3815,6 +4368,7 @@ exports.processRows = function (pList, pID, pRow, pLevel, pOpen, pUseSort, vDebu
 },{"./utils/date_utils":11,"./utils/draw_utils":12,"./utils/general_utils":13}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getIsoWeek = exports.parseDateFormatStr = exports.formatDateStr = exports.parseDateStr = exports.coerceDate = exports.getMaxDate = exports.getMinDate = void 0;
 /**
  * DATES
  */
@@ -4110,6 +4664,7 @@ exports.getIsoWeek = function (pDate) {
 },{}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.drawSelector = exports.sLine = exports.CalcTaskXY = exports.getArrayLocationByID = exports.newNode = exports.makeInput = void 0;
 var events_1 = require("../events");
 exports.makeInput = function (formattedValue, editable, type, value, choices) {
     if (type === void 0) { type = 'text'; }
@@ -4274,8 +4829,9 @@ exports.drawSelector = function (pPos) {
 },{"../events":5}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.printChart = exports.calculateStartEndFromDepend = exports.makeRequestOldBrowsers = exports.makeRequest = exports.moveToolTip = exports.updateFlyingObj = exports.isParentElementOrSelf = exports.criticalPath = exports.hashKey = exports.hashString = exports.fadeToolTip = exports.hideToolTip = exports.isIE = exports.getOffset = exports.calculateCurrentDateOffset = exports.getScrollbarWidth = exports.getScrollPositions = exports.benchMark = exports.getZoomFactor = exports.delayedHide = exports.stripUnwanted = exports.stripIds = exports.changeFormat = exports.findObj = exports.internalPropertiesLang = exports.internalProperties = void 0;
 exports.internalProperties = ['pID', 'pName', 'pStart', 'pEnd', 'pClass', 'pLink', 'pMile', 'pRes', 'pComp', 'pGroup', 'pParent',
-    'pOpen', 'pDepend', 'pCaption', 'pNotes', 'pGantt', 'pCost', 'pPlanStart', 'pPlanEnd'];
+    'pOpen', 'pDepend', 'pCaption', 'pNotes', 'pGantt', 'pCost', 'pPlanStart', 'pPlanEnd', 'pPlanClass'];
 exports.internalPropertiesLang = {
     'pID': 'id',
     'pName': 'name',
@@ -4283,7 +4839,8 @@ exports.internalPropertiesLang = {
     'pEnd': 'enddate',
     'pLink': 'link',
     'pMile': 'mile',
-    'pRes': 'resource',
+    'pRes': 'res',
+    'pDuration': 'dur',
     'pComp': 'comp',
     'pGroup': 'group',
     'pParent': 'parent',
@@ -4293,7 +4850,8 @@ exports.internalPropertiesLang = {
     'pNotes': 'notes',
     'pCost': 'cost',
     'pPlanStart': 'planstartdate',
-    'pPlanEnd': 'planenddate'
+    'pPlanEnd': 'planenddate',
+    'pPlanClass': 'planclass'
 };
 exports.findObj = function (theObj, theDoc) {
     if (theDoc === void 0) { theDoc = null; }
@@ -4567,14 +5125,16 @@ function isParentElementOrSelf(child, parent) {
 }
 exports.isParentElementOrSelf = isParentElementOrSelf;
 exports.updateFlyingObj = function (e, pGanttChartObj, pTimer) {
+    var documentElement = document.documentElement;
+    var bodyElement = document.getElementsByTagName('body')[0];
     var vCurTopBuf = 3;
     var vCurLeftBuf = 5;
     var vCurBotBuf = 3;
     var vCurRightBuf = 15;
     var vMouseX = (e) ? e.clientX : window.event.clientX;
     var vMouseY = (e) ? e.clientY : window.event.clientY;
-    var vViewportX = document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-    var vViewportY = document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+    var vViewportX = (documentElement === null || documentElement === void 0 ? void 0 : documentElement.clientWidth) || (bodyElement === null || bodyElement === void 0 ? void 0 : bodyElement.clientWidth);
+    var vViewportY = (documentElement === null || documentElement === void 0 ? void 0 : documentElement.clientHeight) || (bodyElement === null || bodyElement === void 0 ? void 0 : bodyElement.clientHeight);
     var vNewX = vMouseX;
     var vNewY = vMouseY;
     var screenX = screen.availWidth || window.innerWidth;
@@ -4583,8 +5143,8 @@ exports.updateFlyingObj = function (e, pGanttChartObj, pTimer) {
     var vOldY = parseInt(pGanttChartObj.vTool.style.top);
     if (navigator.appName.toLowerCase() == 'microsoft internet explorer') {
         // the clientX and clientY properties include the left and top borders of the client area
-        vMouseX -= document.documentElement.clientLeft;
-        vMouseY -= document.documentElement.clientTop;
+        vMouseX -= documentElement === null || documentElement === void 0 ? void 0 : documentElement.clientLeft;
+        vMouseY -= documentElement === null || documentElement === void 0 ? void 0 : documentElement.clientTop;
         var vZoomFactor = exports.getZoomFactor();
         if (vZoomFactor != 1) { // IE 7 at non-default zoom level
             vMouseX = Math.round(vMouseX / vZoomFactor);
@@ -4724,10 +5284,26 @@ exports.makeRequestOldBrowsers = function (pFile, vDebug) {
 };
 exports.calculateStartEndFromDepend = function (tasksList) {
 };
+exports.printChart = function (width, height, css) {
+    if (css === void 0) { css = undefined; }
+    if (css === undefined) {
+        css = // Default injected CSS
+            "@media print {\n        @page {\n          size: " + width + "mm " + height + "mm;\n        }\n        /* set gantt container to the same width as the page */\n        .gchartcontainer {\n            width: " + width + "mm;\n        }\n    };";
+    }
+    var $container = document.querySelector('.gchartcontainer');
+    $container.insertAdjacentHTML('afterbegin', "<style>" + css + "</style>");
+    // Remove the print CSS when the print dialog is closed
+    window.addEventListener('afterprint', function () {
+        $container.removeChild($container.children[0]);
+    }, { 'once': true });
+    // Trigger the print
+    window.print();
+};
 
 },{}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getXMLTask = exports.getXMLProject = exports.AddXMLTask = exports.getXMLNodeValue = exports.findXMLNode = exports.parseXMLString = exports.parseXML = void 0;
 var task_1 = require("./task");
 var date_utils_1 = require("./utils/date_utils");
 var draw_utils_1 = require("./utils/draw_utils");
@@ -4955,7 +5531,7 @@ exports.AddXMLTask = function (pGanttVar, pXmlDoc) {
                 if (vSubCreated)
                     pDepend = '';
                 // Finally add the task
-                pGanttVar.AddTaskItem(new task_1.TaskItem(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar, pCost, pPlanStart, pPlanEnd, pDuration));
+                pGanttVar.AddTaskItem(new task_1.TaskItem(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar, pCost, pPlanStart, pPlanEnd, pDuration, undefined, undefined, pClass));
             }
         }
     }
@@ -4985,6 +5561,7 @@ exports.AddXMLTask = function (pGanttVar, pXmlDoc) {
                 var pCaption = exports.getXMLNodeValue(Task[i], 'pCaption', 2, '');
                 var pNotes = exports.getXMLNodeValue(Task[i], 'pNotes', 2, '');
                 var pClass = exports.getXMLNodeValue(Task[i], 'pClass', 2, '');
+                var pPlanClass = exports.getXMLNodeValue(Task[i], 'pPlanClass', 2, '');
                 if (typeof pClass == 'undefined') {
                     if (pGroup > 0)
                         pClass = 'ggroupblack';
@@ -4993,8 +5570,10 @@ exports.AddXMLTask = function (pGanttVar, pXmlDoc) {
                     else
                         pClass = 'gtaskblue';
                 }
+                if (typeof pPlanClass == 'undefined')
+                    pPlanClass = pClass;
                 // Finally add the task
-                pGanttVar.AddTaskItem(new task_1.TaskItem(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar, pCost, pPlanStart, pPlanEnd, pDuration));
+                pGanttVar.AddTaskItem(new task_1.TaskItem(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar, pCost, pPlanStart, pPlanEnd, pDuration, undefined, undefined, pPlanClass));
             }
         }
     }
@@ -5055,6 +5634,7 @@ exports.getXMLTask = function (pID, pIdx) {
         var vTmpFrag = document.createDocumentFragment();
         var vTmpDiv = draw_utils_1.newNode(vTmpFrag, 'div', null, null, this.vTaskList[vIdx].getNotes().innerHTML);
         vTask += '<pNotes>' + vTmpDiv.innerHTML + '</pNotes>';
+        vTask += '<pPlanClass>' + this.vTaskList[vIdx].getPlanClass() + '</pPlanClass>';
         vTask += '</task>';
     }
     return vTask;

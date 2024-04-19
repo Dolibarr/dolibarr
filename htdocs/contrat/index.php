@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +40,15 @@ $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 $statut = GETPOST('statut') ? GETPOST('statut') : 1;
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
 // Security check
 $socid = 0;
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -55,6 +58,7 @@ $staticcompany = new Societe($db);
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
 $productstatic = new Product($db);
+
 
 
 /*
@@ -95,7 +99,7 @@ $vals = array();
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
@@ -104,7 +108,7 @@ $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
 	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
@@ -132,7 +136,7 @@ if ($resql) {
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
@@ -141,7 +145,7 @@ $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
 	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
@@ -154,9 +158,9 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb[$obj->status.true] = $obj->nb;
+			$nb[$obj->status.((string) true)] = $obj->nb;
 			if ($obj->status != 5) {
-				$vals[$obj->status.true] = $obj->nb;
+				$vals[$obj->status.((string) true)] = $obj->nb;
 				$totalinprocess += $obj->nb;
 			}
 			$total += $obj->nb;
@@ -175,26 +179,28 @@ include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$listofstatus = array(0, 4, 4, 5); $bool = false;
+$listofstatus = array(0, 4, 4, 5);
+$bool = false;
 foreach ($listofstatus as $status) {
-	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
+	$bool_str = (string) $bool;
+	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool_str]) ? (int) $nb[$status.$bool_str] : 0));
 	if ($status == ContratLigne::STATUS_INITIAL) {
-		$colorseries[$status.$bool] = '-'.$badgeStatus0;
+		$colorseries[$status.$bool_str] = '-'.$badgeStatus0;
 	}
 	if ($status == ContratLigne::STATUS_OPEN && !$bool) {
-		$colorseries[$status.$bool] = $badgeStatus4;
+		$colorseries[$status.$bool_str] = $badgeStatus4;
 	}
 	if ($status == ContratLigne::STATUS_OPEN && $bool) {
-		$colorseries[$status.$bool] = $badgeStatus1;
+		$colorseries[$status.$bool_str] = $badgeStatus1;
 	}
 	if ($status == ContratLigne::STATUS_CLOSED) {
-		$colorseries[$status.$bool] = $badgeStatus6;
+		$colorseries[$status.$bool_str] = $badgeStatus6;
 	}
 
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		print "</tr>\n";
 	}
 	if ($status == 4 && !$bool) {
@@ -219,12 +225,14 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	print '</td></tr>';
 }
-$listofstatus = array(0, 4, 4, 5); $bool = false;
+$listofstatus = array(0, 4, 4, 5);
+$bool = false;
 foreach ($listofstatus as $status) {
+	$bool_str = (string) $bool;
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		if ($status == 4 && !$bool) {
 			$bool = true;
 		} else {
@@ -239,17 +247,17 @@ print "</table></div><br>";
 
 // Draft contracts
 
-if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = c.fk_soc";
 	$sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 	$sql .= " AND c.statut = 0";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -310,7 +318,6 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Last modified contracts
-$max = 5;
 $sql = 'SELECT ';
 $sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
 $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
@@ -320,7 +327,7 @@ $sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contrat as c";
@@ -328,7 +335,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contra
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND c.statut > 0";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -348,7 +355,7 @@ if ($result) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", $max).'</th>';
 	print '<th class="center">'.$langs->trans("DateModification").'</th>';
 	//print '<th class="left">'.$langs->trans("Status").'</th>';
 	print '<th class="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
@@ -410,7 +417,7 @@ $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fou
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -418,7 +425,7 @@ $sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql .= " WHERE c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -502,7 +509,7 @@ $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fou
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -512,7 +519,7 @@ $sql .= " AND c.statut = 1";
 $sql .= " AND cd.statut = 0";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -595,7 +602,7 @@ $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fou
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -606,7 +613,7 @@ $sql .= " AND cd.statut = 4";
 $sql .= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {

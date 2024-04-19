@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,14 @@
  */
 class FormAdmin
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -55,7 +63,7 @@ class FormAdmin
 	 *  @param      int				$showwarning    Show a warning if language is not complete
 	 *  @param		int				$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
-	 *  @param      int         	$showcode       1=Add language code into label at begining, 2=Add language code into label at end
+	 *  @param      int         	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end
 	 *  @param		int				$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param		int				$multiselect	Make the combo a multiselect
 	 *  @param		array			$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
@@ -177,7 +185,7 @@ class FormAdmin
 	 *    @param    string		$htmlname        Name of html select
 	 *    @param    array		$dirmenuarray    Array of directories to scan
 	 *    @param    string		$moreattrib      More attributes on html select tag
-	 *    @return	integer|null
+	 *    @return	integer|void
 	 */
 	public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
 	{
@@ -217,7 +225,7 @@ class FormAdmin
 
 								$filelib = preg_replace('/\.php$/i', '', $file);
 								$prefix = '';
-								// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
+								// 0=Recommended, 1=Experimental, 2=Development, 3=Other
 								if (preg_match('/^eldy/i', $file)) {
 									$prefix = '0';
 								} elseif (preg_match('/^smartphone/i', $file)) {
@@ -273,6 +281,8 @@ class FormAdmin
 			print $val."\n"; // Show menu entry
 		}
 		print '</select>';
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -370,31 +380,31 @@ class FormAdmin
 		print '<option value="-1">&nbsp;</option>';
 
 		$arraytz = array(
-			"Pacific/Midway"=>"GMT-11:00",
-			"Pacific/Fakaofo"=>"GMT-10:00",
-			"America/Anchorage"=>"GMT-09:00",
-			"America/Los_Angeles"=>"GMT-08:00",
-			"America/Dawson_Creek"=>"GMT-07:00",
-			"America/Chicago"=>"GMT-06:00",
-			"America/Bogota"=>"GMT-05:00",
-			"America/Anguilla"=>"GMT-04:00",
-			"America/Araguaina"=>"GMT-03:00",
-			"America/Noronha"=>"GMT-02:00",
-			"Atlantic/Azores"=>"GMT-01:00",
-			"Africa/Abidjan"=>"GMT+00:00",
-			"Europe/Paris"=>"GMT+01:00",
-			"Europe/Helsinki"=>"GMT+02:00",
-			"Europe/Moscow"=>"GMT+03:00",
-			"Asia/Dubai"=>"GMT+04:00",
-			"Asia/Karachi"=>"GMT+05:00",
-			"Indian/Chagos"=>"GMT+06:00",
-			"Asia/Jakarta"=>"GMT+07:00",
-			"Asia/Hong_Kong"=>"GMT+08:00",
-			"Asia/Tokyo"=>"GMT+09:00",
-			"Australia/Sydney"=>"GMT+10:00",
-			"Pacific/Noumea"=>"GMT+11:00",
-			"Pacific/Auckland"=>"GMT+12:00",
-			"Pacific/Enderbury"=>"GMT+13:00"
+			"Pacific/Midway" => "GMT-11:00",
+			"Pacific/Fakaofo" => "GMT-10:00",
+			"America/Anchorage" => "GMT-09:00",
+			"America/Los_Angeles" => "GMT-08:00",
+			"America/Dawson_Creek" => "GMT-07:00",
+			"America/Chicago" => "GMT-06:00",
+			"America/Bogota" => "GMT-05:00",
+			"America/Anguilla" => "GMT-04:00",
+			"America/Araguaina" => "GMT-03:00",
+			"America/Noronha" => "GMT-02:00",
+			"Atlantic/Azores" => "GMT-01:00",
+			"Africa/Abidjan" => "GMT+00:00",
+			"Europe/Paris" => "GMT+01:00",
+			"Europe/Helsinki" => "GMT+02:00",
+			"Europe/Moscow" => "GMT+03:00",
+			"Asia/Dubai" => "GMT+04:00",
+			"Asia/Karachi" => "GMT+05:00",
+			"Indian/Chagos" => "GMT+06:00",
+			"Asia/Jakarta" => "GMT+07:00",
+			"Asia/Hong_Kong" => "GMT+08:00",
+			"Asia/Tokyo" => "GMT+09:00",
+			"Australia/Sydney" => "GMT+10:00",
+			"Pacific/Noumea" => "GMT+11:00",
+			"Pacific/Auckland" => "GMT+12:00",
+			"Pacific/Enderbury" => "GMT+13:00"
 		);
 		foreach ($arraytz as $lib => $gmt) {
 			print '<option value="'.$lib.'"';
@@ -419,7 +429,7 @@ class FormAdmin
 	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = '', $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -432,6 +442,8 @@ class FormAdmin
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
 		}
+
+		$paperformat = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -478,11 +490,11 @@ class FormAdmin
 
 
 	/**
-	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 * Function to show the combo select to chose a type of field (varchar, int, email, ...)
 	 *
 	 * @param	string	$htmlname				Name of HTML select component
 	 * @param	string	$type					Type preselected
-	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @param	array   $typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
 	 * @return 	string							The combo HTML select component
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())

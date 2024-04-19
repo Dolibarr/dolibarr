@@ -23,7 +23,7 @@
 
 /**
  * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \brief      Ensemble de functions de base pour le module produit et service
  * \ingroup	product
  */
 
@@ -313,7 +313,7 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object informations.
+*  Return array head with list of tabs to view object information.
 *
 *  @return	array   	        head array with tabs
 */
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return	array   	        head array with tabs
  */
@@ -476,7 +476,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Sales orders
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -514,7 +514,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -533,7 +533,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled("invoice") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -572,7 +572,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -679,7 +679,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
@@ -799,7 +799,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
- *	@return	string	   			         	Unit string
+ *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)

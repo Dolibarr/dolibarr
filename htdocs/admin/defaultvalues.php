@@ -40,16 +40,16 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -356,7 +356,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -366,7 +366,7 @@ if (!is_array($result) && $result < 0) {
 
 		// Page
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid', 'int') != $defaultvalue->id) {
+		if ($action != 'edit' || GETPOSTINT('rowid') != $defaultvalue->id) {
 			print $defaultvalue->page;
 		} else {
 			print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($defaultvalue->page).'">';

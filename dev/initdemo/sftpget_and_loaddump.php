@@ -98,7 +98,7 @@ print 'SFTP connect string : '.$sftpconnectstring."\n";
 
 // SFTP connect
 if (!function_exists("ssh2_connect")) {
-	dol_print_error('', 'ssh2_connect function does not exists');
+	dol_print_error(null, 'ssh2_connect function does not exists');
 	exit(1);
 }
 

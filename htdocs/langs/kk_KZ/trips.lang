@@ -47,7 +47,7 @@ ExpenseReportApplyTo=Қолдану
 ExpenseReportApproved=Шығындар есебі бекітілді
 ExpenseReportApprovedMessage=%s шығыс есебі мақұлданды. <br> - Пайдаланушы: %s <br> - Мақұлдаған: %s <br> Шығындар есебін көрсету үшін мына жерді басыңыз: %s
 ExpenseReportCanceled=Шығындар туралы есеп жойылды
-ExpenseReportCanceledMessage=%s шығыс есебінен бас тартылды.<br> - Пайдаланушы: %s<br> - Болдырмады: %s<br> - Бас тарту себебі: <span сынып= 'notranslate'>%s</span><br>Шығындар есебін көрсету үшін осы жерді басыңыз: %s
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
 ExpenseReportConstraintViolationError=Максималды сомадан асып кетті (%s ережесі): %s %s мәнінен жоғары ( Артық тыйым салынған)
 ExpenseReportConstraintViolationWarning=Максималды сомадан асып кетті (%s ережесі): %s %s мәнінен жоғары ( Рұқсат етілгеннен асып кету)
 ExpenseReportDateEnd=Аяқталу күні

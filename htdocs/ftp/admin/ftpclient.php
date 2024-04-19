@@ -187,7 +187,7 @@ if (!function_exists('ftp_connect')) {
 	print '<tr class="oddeven">';
 	print '<td width="100">'.$langs->trans("Port").'</td>';
 	print '<td><input type="text" name="FTP_PORT_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PORT_".($lastftpentry + 1)).'" size="64"></td>';
-	print '<td>21 for pure non crypted FTP or if option FTP_CONNECT_WITH_SSL (See Home-Setup-Other) is on (FTPS)<br>22 if option FTP_CONNECT_WITH_SFTP (See Home-Setup-Other) is on (SFTP)</td>';
+	print '<td>21 for pure non encrypted FTP or if option FTP_CONNECT_WITH_SSL (See Home-Setup-Other) is on (FTPS)<br>22 if option FTP_CONNECT_WITH_SFTP (See Home-Setup-Other) is on (SFTP)</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';

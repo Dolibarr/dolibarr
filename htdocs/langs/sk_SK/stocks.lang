@@ -253,7 +253,7 @@ DisableStockChangeOfSubProduct=Počas tohto pohybu deaktivujte výmenu zásob pr
 ImportFromCSV=Importujte zoznam pohybu vo formáte CSV
 ChooseFileToImport=Nahrajte súbor a potom kliknite na ikonu %s a vyberte súbor ako zdrojový importný súbor...
 SelectAStockMovementFileToImport=vyberte súbor pohybu zásob na import
-InfoTemplateImport=Odovzdaný súbor musí mať tento formát (* sú povinné polia):<br>Source Warehouse* | Cieľový sklad* | Produkt* | Množstvo* | Číslo šarže/sériové číslo<br>Oddeľovač znakov CSV musí byť "<b>b0ecb2ec87f><49fz0 span class='notranslate'></b>"
+InfoTemplateImport=Uploaded file needs to have this format (* are mandatory fields):<br>Source Warehouse* | Target Warehouse* | Product* | Quantity* | Lot/serial number<br>CSV character separator must be "<b>%s</b>"
 LabelOfInventoryMovemement=Inventár %s
 ReOpen=Znovu otvorte
 ConfirmFinish=Potvrdzujete uzávierku inventarizácie? Tým sa vygenerujú všetky skladové pohyby na aktualizáciu vašich zásob na skutočné množstvo, ktoré ste zadali do inventára.
@@ -282,7 +282,7 @@ ModuleStockTransferName=Pokročilý prevod zásob
 ModuleStockTransferDesc=Pokročilá správa prevodu zásob s generovaním prevodného listu
 StockTransferNew=Nový prevod akcií
 StockTransferList=Zoznam prevodov akcií
-ConfirmValidateStockTransfer=Naozaj chcete overiť tento prevod akcií pomocou odkazu <b>%s<span class='notranslate'></b> rozpätie> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Zníženie zásob s prevodom %s
 ConfirmDestockCancel=Zrušiť zníženie zásob prevodom %s
 DestockAllProduct=Zníženie zásob

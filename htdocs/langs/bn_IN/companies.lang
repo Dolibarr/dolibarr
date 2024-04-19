@@ -335,13 +335,13 @@ CompanyHasRelativeDiscount=এই গ্রাহকের ডিফল্ট �
 CompanyHasNoRelativeDiscount=এই গ্রাহকের ডিফল্টরূপে কোন আপেক্ষিক ডিসকাউন্ট নেই
 HasRelativeDiscountFromSupplier=আপনার ডিফল্ট ডিসকাউন্ট <b>%s%%</b> এই বিক্রেতার সাথে
 HasNoRelativeDiscountFromSupplier=এই বিক্রেতার সাথে কোন ডিফল্ট আপেক্ষিক ডিসকাউন্ট
-CompanyHasAbsoluteDiscount=এই গ্রাহকের <b>%sb09a4b739f17fz0এর জন্য ডিসকাউন্ট উপলব্ধ (ক্রেডিট নোট বা ডাউন পেমেন্ট) span> <span class='notranslate'>%s
-CompanyHasDownPaymentOrCommercialDiscount=এই গ্রাহকের <b>%s</b>এর জন্য ডিসকাউন্ট উপলব্ধ (বাণিজ্যিক, ডাউন পেমেন্ট) > <span class='notranslate'>%s
-CompanyHasCreditNote=এই গ্রাহকের কাছে এখনও <b>%s</b> <span class= এর ক্রেডিট নোট রয়েছে 'notranslate'>%s</span>
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b> %s
+CompanyHasCreditNote=This customer still has credit notes for <b>%s</b> %s
 HasNoAbsoluteDiscountFromSupplier=এই বিক্রেতা থেকে কোন ডিসকাউন্ট/ক্রেডিট উপলব্ধ
-HasAbsoluteDiscountFromSupplier=<b>%s</b>এর জন্য আপনার কাছে ছাড় রয়েছে (ক্রেডিট নোট বা ডাউন পেমেন্ট) > <span class='notranslate'>%s এই বিক্রেতার কাছ থেকে
-HasDownPaymentOrCommercialDiscountFromSupplier=<b>%s</b>এর জন্য আপনার কাছে ছাড় রয়েছে (বাণিজ্যিক, ডাউন পেমেন্ট) এই বিক্রেতার কাছ থেকে <span class='notranslate'>%s
-HasCreditNoteFromSupplier=আপনার কাছে <b>%s</b> <span class='notranslate'-এর ক্রেডিট নোট রয়েছে '>%s</span> এই বিক্রেতা থেকে
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this vendor
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this vendor
 CompanyHasNoAbsoluteDiscount=এই গ্রাহকের কোন ডিসকাউন্ট ক্রেডিট উপলব্ধ নেই
 CustomerAbsoluteDiscountAllUsers=নিখুঁত গ্রাহক ছাড় (সমস্ত ব্যবহারকারীদের দ্বারা প্রদত্ত)
 CustomerAbsoluteDiscountMy=সম্পূর্ণ গ্রাহক ছাড় (নিজের দ্বারা প্রদত্ত)

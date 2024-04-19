@@ -95,7 +95,7 @@ if (function_exists('exec')) {
 	$varout = 0;
 	exec('id', $arrayout, $varout);
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".join(',', $arrayout)."<br>\n";
+		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".implode(',', $arrayout)."<br>\n";
 	}
 }
 print '<br>';
@@ -343,15 +343,15 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
 // $arrayofstreamtodisable is defined into filefunc.inc.php
 if (empty($dolibarr_main_stream_to_disable)) {
-	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.join(', ', $arrayofstreamtodisable).'</span>';
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.implode(', ', $arrayofstreamtodisable).'</span>';
 } else {
-	print join(', ', $dolibarr_main_stream_to_disable);
+	print implode(', ', $dolibarr_main_stream_to_disable);
 }
 print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
 }
 
 print '<br>';
@@ -635,7 +635,7 @@ if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br>';
 }
 if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
-	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print '<div class="info">The recommended value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
@@ -748,14 +748,14 @@ print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' https://youtube.com; img-src * data:;";
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
 print $examplecsprule;
 print '")</span><br>';
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
-$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src https://youtube.com; frame-src 'self' https://youtube.com; img-src * data:;";
+$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
 print $examplecsprule;
 print '")</span><br>';
 print '<br>';

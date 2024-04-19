@@ -1,20 +1,11 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configuração do módulo PayBox
 PayBoxDesc=Este módulo oferece uma página de pagamento atravé do fornecedor <a href
-FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponíveis para permitir a um cliente efetuar um pagamento
-PaymentForm=Formulário de Pagamento
-ThisScreenAllowsYouToPay=Esta página lhe permite fazer seu pagamento on-line destinado a %s.
-ThisIsInformationOnPayment=Aqui está a informação sobre o pagamento a realizar
-Creditor=Beneficiário
 PayBoxDoPayment=Pagar com Paybox
 YouWillBeRedirectedOnPayBox=Va a ser redirecionado a a página segura de  Paybox para indicar seu cartão de crédito
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure seu Paybox com url <b> %s </ b> para que o pagamento seja criado automaticamente quando validado pelo Paybox.
 YourPaymentHasBeenRecorded=Esta pagina confirma que o seu pagamento foi registrado com suçesso. Obrigado.
-AccountParameter=Parametros da conta
-UsageParameter=Parametros de uso
-InformationToFindParameters=Ajuda a buscar suas %s informaçoes da conta
 PAYBOX_CGI_URL_V2=URL do Paybox CGI modulo para pagamento
-CSSUrlForPaymentForm=CSS style sheet URL para modelo de pagamento
 NewPayboxPaymentReceived=Novo pagamento recebido Paybox
 NewPayboxPaymentFailed=Novo pagamento Paybox tentou, mas não conseguiu
 PAYBOX_PAYONLINE_SENDEMAIL=Aviso por e-mail depois de uma tentativa de pagamento (sucesso ou falha)

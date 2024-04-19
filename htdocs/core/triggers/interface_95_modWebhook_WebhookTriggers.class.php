@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
+/* Copyright (C) 2022	SuperAdmin		<test@dolibarr.com>
+ * Copyright (C) 2023	William Mead	<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,39 +46,15 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		$this->db = $db;
-
-		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		parent::__construct($db);
 		$this->family = "demo";
 		$this->description = "Webhook triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'webhook';
 	}
 
 	/**
-	 * Trigger name
-	 *
-	 * @return string Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 * Trigger description
-	 *
-	 * @return string Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-
-	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *

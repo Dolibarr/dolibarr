@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 */
 
 /**
- *	\file       htdocs/opensurvey/fonctions.php
+ *	\file       htdocs/opensurvey/lib/opensurvey.lib.php
  *	\ingroup    opensurvey
  *	\brief      Functions for module
  */
@@ -73,12 +74,12 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param	string		$numsondage			Num survey
  * @return	void
  */
-function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $numsondage = '')
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $numsondage = '')
 {
 	global $conf, $langs, $mysoc;
 	global $dolibarr_main_url_root;
 
-	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+	// $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
@@ -95,7 +96,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+	// print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
 	$urllogo = '';
 	$urllogofull = '';
@@ -174,9 +175,9 @@ function get_server_name()
 /**
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
  *
- * @param   string  $name       La clé à tester
- * @param   array   $tableau    Le tableau où rechercher la clé ($_POST par défaut)
- * @return  bool                Vrai si la clé existe et renvoie une valeur non vide
+ * @param   string  $name       Key to test
+ * @param   array   $tableau    Array in which searching key ($_POST by default)
+ * @return  bool                True if key exists and return a non empty value
  */
 function issetAndNoEmpty($name, $tableau = null)
 {
@@ -217,7 +218,7 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((float) microtime() * 1000000);
+	mt_srand((int) ((float) microtime() * 1000000));
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
