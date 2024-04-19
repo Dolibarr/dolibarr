@@ -5833,7 +5833,7 @@ class Product extends CommonObject
 		if (! preg_match('/novirtual/', $option)) {
 			// initialize $this->stock_warehouse for all warehouses, even those with no current physical stock because
 			// they may still have a non-zero virtual stock
-			$sql = 'SELECT rowid FROM ' . $this->db->prefix() . 'entrepot WHERE entity IN (' . getEntity('stock') . ')';
+			$sql = "SELECT rowid FROM " . $this->db->prefix() . "entrepot WHERE entity IN (" . getEntity('stock') . ")";
 			$result = $this->db->query($sql);
 			if ($result) {
 				while ($obj = $this->db->fetch_object($result)) {
