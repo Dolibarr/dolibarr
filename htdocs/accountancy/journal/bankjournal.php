@@ -78,7 +78,7 @@ $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 
 $only_rappro = GETPOSTINT('only_rappro');
-if($only_rappro == 0) {
+if ($only_rappro == 0) {
 	//GET page for the first time, use default settings
 	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
