@@ -190,7 +190,7 @@ if (empty($reshook)) {
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
-		if($action ==  'add') $object->track_id = null;
+		if ($action ==  'add') $object->track_id = null;
 		$error = 0;
 
 		$fieldsToCheck = [
@@ -230,7 +230,7 @@ if (empty($reshook)) {
 			}
 			setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref), $style);
 		}
-		if(!$error){
+		if (!$error) {
 
 			$db->begin();
 
@@ -261,8 +261,7 @@ if (empty($reshook)) {
 				$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 				$object->context['contact_id'] = GETPOSTINT('contact_id');
 				$id = $object->create($user);
-
-			}else {
+			} else {
 				$id = $object->update($user);
 			}
 
@@ -272,13 +271,12 @@ if (empty($reshook)) {
 				$action = $ifErrorAction;
 			}
 
-			if(!$error){
-				// Category association
+			if (!$error) {// Category association
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 			}
 
-			if($action == 'add'){
+			if ($action == 'add') {
 				if (!$error) {
 					// Add contact
 					$contactid = GETPOSTINT('contactid');
