@@ -309,4 +309,4 @@ ConfirmMergeTasks=Are you sure you want to merge the chosen task with the curren
 MergeTasks=Merge tasks
 TaskMergeSuccess=Tasks have been merged
 ErrorTaskIdIsMandatory=Error: Task id is mandatory
-ErrorsTaskMerge=Error: An error occurrErrorRecordNotFounded while merging tasks
+ErrorsTaskMerge=Error: An error occurred while merging tasks
