@@ -257,7 +257,7 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 
 
 	// more options
-	foreach($moreoptions as $key => $value) {
+	foreach ($moreoptions as $key => $value) {
 		print '<tr>';
 		print '<td>'.$langs->trans($key).'</td>';
 		print '<td colspan="3">'.$value.'</td>';
