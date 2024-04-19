@@ -286,7 +286,7 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
-ALTER TABLE llx_expedition ADD COLUMN date_shipping DATETIME DEFAULT NULL AFTER fk_user_valid;
+ALTER TABLE llx_expedition ADD COLUMN date_warehouse_extract DATETIME DEFAULT NULL AFTER fk_user_valid;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;

@@ -37,7 +37,7 @@ create table llx_expedition
   fk_user_modif         integer,						-- author of last change
   date_valid            datetime,						-- date of validation
   fk_user_valid         integer,						-- user that validate
-  date_shipping         datetime	DEFAULT NULL,		-- date planned of shipping from warehouse
+  date_warehouse_extract datetime	DEFAULT NULL,		-- date planned of departure from warehouse
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
   date_expedition       datetime,						-- not used (deprecated)
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
