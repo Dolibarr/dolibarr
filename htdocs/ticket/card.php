@@ -7,6 +7,7 @@
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,137 +188,142 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	// Action to add an action (not a message)
-	if (GETPOST('save', 'alpha') && $permissiontoadd) {
+	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
+		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
+		if($action ==  'add') $object->track_id = null;
 		$error = 0;
 
-		if (!GETPOST("type_code", 'alpha')) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTypeRequest")), null, 'errors');
-			$action = 'create';
-		} elseif (!GETPOST("category_code", 'alpha')) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketCategory")), null, 'errors');
-			$action = 'create';
-		} elseif (!GETPOST("severity_code", 'alpha')) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketSeverity")), null, 'errors');
-			$action = 'create';
-		} elseif (!GETPOST("subject", 'alphanohtml')) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
-			$action = 'create';
-		} elseif (!GETPOST("message", 'restricthtml')) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
-			$action = 'create';
+		$fieldsToCheck = [
+			'ref' => ['check' => 'alpha', 'langs' => 'Ref'],
+			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
+			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
+			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
+			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
+			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
+		];
+
+		FormTicket::checkRequiredFields($fieldsToCheck, $error);
+
+		if (! empty($error)) {
+			$action = $ifErrorAction;
 		}
+
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
 			$error++;
 		}
+		$getRef = GETPOST('ref', 'alpha');
 
-		if (!$error) {
-			$db->begin();
+		$isExistingRef = $object->checkExistingRef($action, $getRef);
 
-			$getRef = GETPOST("ref", 'alphanohtml');
-			$test = new Ticket($db);
+		$style = '';
 
-			if ($test->fetch('', $getRef) > 0 && (($action == 'update' && $object->ref != $ref) || $action == 'create')) {
+		if ($isExistingRef) {
+			if ($action == 'update') {
+				$error++;
+				$action = 'edit';
+				$style = 'errors';
+			} else {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
-				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
-			} else {
-				$object->ref = $getRef;
+				$style = 'warnings';
 			}
+			setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref), $style);
+		}
+		if(!$error){
 
-			$object->fk_soc 					= $object->socid = GETPOSTINT("socid") > 0 ? GETPOSTINT("socid") : 0;
-			$object->subject 					= GETPOST("subject", 'alphanohtml');
-			$object->message 					= GETPOST("message", 'restricthtml');
+			$db->begin();
 
-			$object->type_code 					= GETPOST("type_code", 'alpha');
-			$object->type_label 				= $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
-			$object->category_code 				= GETPOST("category_code", 'alpha');
-			$object->category_label 			= $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
-			$object->severity_code 				= GETPOST("severity_code", 'alpha');
-			$object->severity_label 			= $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
-			$object->fk_user_create 			= $user->id;
-			$object->email_from 				= $user->email;
-			$object->origin_email 				= null;
+			$object->type_code = GETPOST('type_code', 'alpha');
+			$object->category_code = GETPOST('category_code', 'alpha');
+			$object->severity_code = GETPOST('severity_code', 'alpha');
+			$object->subject = GETPOST('subject', 'alpha');
+			$object->message = GETPOST('message', 'restricthtml');
+			$object->fk_soc = GETPOSTINT('socid');
+			$fk_user_assign = GETPOSTINT('fk_user_assign');
+			$object->fk_project = GETPOSTINT('projectid');
+			$object->fk_contract = GETPOSTINT('fk_contract');
 
-			$notifyTiers 						= GETPOST("notify_tiers_at_create", 'alpha');
-			$object->notify_tiers_at_create 	= empty($notifyTiers) ? 0 : 1;
-
-			$fk_user_assign 				= GETPOSTINT("fk_user_assign");
 			if ($fk_user_assign > 0) {
-				$object->fk_user_assign 	= $fk_user_assign;
-				$object->status 			= $object::STATUS_ASSIGNED;
+				$object->fk_user_assign = $fk_user_assign;
+				$object->status = $object::STATUS_ASSIGNED;
 			}
 
-			$object->fk_project 				= $projectid;
-			$object->fk_contract 				= GETPOSTINT('fk_contract');
-
-			$object->context['contact_id'] = GETPOSTINT('contact_id');
-
-			if($action == 'add'){
+			if ($action == 'add') {
+				$object->type_code = GETPOST("type_code", 'alpha');
+				$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
+				$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
+				$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+				$object->fk_user_create = $user->id;
+				$object->email_from = $user->email;
+				$object->origin_email = null;
+				$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+				$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+				$object->context['contact_id'] = GETPOSTINT('contact_id');
 				$id = $object->create($user);
-			}else{
+
+			}else {
 				$id = $object->update($user);
 			}
+
 			if ($id <= 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'create';
+				$action = $ifErrorAction;
 			}
 
-			if (!$error) {
-				// Add contact
-				$contactid = GETPOSTINT('contactid');
-				$type_contact = GETPOST("type", 'alpha');
-
+			if(!$error){
 				// Category association
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
+			}
 
-				if ($contactid > 0 && $type_contact) {
-					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-					$result = $object->add_contact($contactid, $typeid, 'external');
-				}
+			if($action == 'add'){
+				if (!$error) {
+					// Add contact
+					$contactid = GETPOSTINT('contactid');
+					$type_contact = GETPOST("type", 'alpha');
 
-				// Link ticket to project
-				if (GETPOST('origin', 'alpha') == 'projet') {
-					$projectid = GETPOSTINT('originid');
-				} else {
-					$projectid = GETPOSTINT('projectid');
-				}
+					if ($contactid > 0 && $type_contact) {
+						$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+						$result = $object->add_contact($contactid, $typeid, 'external');
+					}
 
-				if ($projectid > 0) {
-					$object->setProject($projectid);
-				}
+					// Link ticket to project
+					if (GETPOST('origin', 'alpha') == 'projet') {
+						$projectid = GETPOSTINT('originid');
+					} else {
+						$projectid = GETPOSTINT('projectid');
+					}
 
-				// Auto mark as read if created from backend
-				if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $user->hasRight('ticket', 'write')) {
-					if (! $object->markAsRead($user) > 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if ($projectid > 0) {
+						$object->setProject($projectid);
+					}
+
+					// Auto mark as read if created from backend
+					if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $user->hasRight('ticket', 'write')) {
+						if (! $object->markAsRead($user) > 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+
+					// Auto assign user
+					if (getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE')) {
+						$result = $object->assignUser($user, $user->id, 1);
+						$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 					}
 				}
 
-				// Auto assign user
-				if (getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE')) {
-					$result = $object->assignUser($user, $user->id, 1);
-					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
+				if (!$error) {
+					// File transfer
+					$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 				}
 			}
-
-			if (!$error) {
-				// File transfer
-				$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
-			}
-
 			if (!$error) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
+
 					if (empty($id)) {
 						$url = $backtopage;
 					} else {
@@ -333,75 +339,8 @@ if (empty($reshook)) {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'create';
-		}
-	}
+		} else $action = $ifErrorAction;
 
-	if ($action == 'update' && $permissiontoadd && $object->status < Ticket::STATUS_CLOSED) {
-		$error = 0;
-
-		$ret = $object->fetch(GETPOSTINT('id'), GETPOSTINT('ref'), GETPOST('track_id', 'alpha'));
-		if ($ret < 0) {
-			$error++;
-			array_push($object->errors, $langs->trans('ErrorTicketIsNotValid'));
-		}
-
-		// check fields
-		if (!$error) {
-			if (!GETPOST('subject', 'alpha')) {
-				$error++;
-				array_push($object->errors, $langs->trans('ErrorFieldRequired', $langs->transnoentities('Subject')));
-			}
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			$db->begin();
-
-			$object->ref = GETPOST('ref', 'alpha');
-			$object->subject = GETPOST('subject', 'alpha');
-			$object->type_code = GETPOST('type_code', 'alpha');
-			$object->category_code = GETPOST('category_code', 'alpha');
-			$object->severity_code = GETPOST('severity_code', 'alpha');
-
-			$ret = $object->update($user);
-			if ($ret > 0) {
-				// Category association
-				$categories = GETPOST('categories', 'array');
-				$object->setCategories($categories);
-			} else {
-				$error++;
-			}
-
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
-		}
-
-		if ($error) {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit';
-		} else {
-			if (!empty($backtopage)) {
-				if (empty($id)) {
-					$url = $backtopage;
-				} else {
-					$url = 'card.php?track_id='.urlencode($object->track_id);
-				}
-			} else {
-				$url = 'card.php?track_id='.urlencode($object->track_id);
-			}
-
-			header('Location: '.$url);
-			exit();
-		}
 	}
 
 	// Mark as Read
@@ -753,6 +692,11 @@ $title = $actionobject->getTitle($action);
 llxHeader('', $title, $help_url);
 
 if ($action == 'create' || $action == 'presend') {
+
+	if (empty($permissiontoadd)) {
+		accessforbidden('NotEnoughPermissions', 0, 1);
+	}
+
 	$formticket = new FormTicket($db);
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
@@ -771,18 +715,24 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
-	$formticket->showForm(1, 'create', 0, null, $action);
-} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
+	$formticket->showForm(1, 'create', 0, null, $action, $object);
+
+	print dol_get_fiche_end();
+
+} elseif ($action == 'edit' && $object->status < Ticket::STATUS_CLOSED) {
+
+	if (empty($permissiontoadd)) {
+		accessforbidden('NotEnoughPermissions', 0, 1);
+	}
+
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 1, 'ticket');
-
+	print dol_get_fiche_head($head, 'tabTicket', $langs->trans('Ticket'), -1, 'ticket');
 
 	$formticket->trackid = $object->track_id;		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $object->socid;
-	$formticket->withfromcontactid = $object->contact_id;
 	$formticket->withtitletopic = 1;
 //	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
 	$formticket->withnotifytiersatcreate = 0;
@@ -796,10 +746,12 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
-	$formticket->showForm(1, 'edit', 0, null, $action, $object);
+	$formticket->showForm(0, 'edit', 0, null, $action, $object);
+
+	print dol_get_fiche_end();
 
 } elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
-	if ($res > 0) {
+	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 			accessforbidden('', 0, 1);

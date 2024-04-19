@@ -394,6 +394,22 @@ class Ticket extends CommonObject
 		}
 	}
 
+
+	public function checkExistingRef($action, $getRef) {
+
+		$test = new self($this->db);
+
+		if ($test->fetch('', $getRef) > 0) {
+			if (($action == 'add') || ($action == 'update' && $this->ref != $getRef)) {
+				return true;
+			}
+		}
+
+		$this->ref = $getRef;
+		return false;
+	}
+
+
 	/**
 	 *    Check properties of ticket are ok (like ref, track_id, ...).
 	 *    All properties must be already loaded on object (this->ref, this->track_id, ...).

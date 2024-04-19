@@ -151,6 +151,23 @@ class FormTicket
 	}
 
 	/**
+	 * @param array $fields
+	 * @param int &$errors
+	 * @return void
+	 */
+	public static function checkRequiredFields($fields, &$errors) {
+		global $langs;
+
+		foreach ($fields as $field => $type) {
+			if (!GETPOST($field, $type['check'])) {
+				$errors++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities($type['langs'])), null, 'errors');
+			}
+		}
+	}
+
+
+	/**
 	 * Show the form to input ticket
 	 *
 	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
@@ -168,20 +185,22 @@ class FormTicket
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
 
 		if($mode == 'create'){
+			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : '';
 			$type_code = GETPOSTISSET('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : '';
 			$category_code = GETPOSTISSET('category_code') ? GETPOST('category_code') : '';
 			$severity_code = GETPOSTISSET('severity_code') ? GETPOST('severity_code') : '';
+			$subject = GETPOSTISSET('subject') ? GETPOST('subject') : '';
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
-			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : '';
 			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : '';
 		}else {
+			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
 			$type_code = GETPOSTISSET('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $object->type_code;
 			$category_code = GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code;
 			$severity_code = GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code;
+			$subject = GETPOSTISSET('subject') ? GETPOST('subject') : $object->subject;
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
-			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
 			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : $object->fk_project;
 		}
 
@@ -233,7 +252,7 @@ class FormTicket
 		// TITLE
 		if ($this->withemail) {
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
-			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
+			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'">';
 			print '</td></tr>';
 
 			if ($with_contact) {
@@ -445,14 +464,8 @@ class FormTicket
 			} else {
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
-				} else {
-					if($mode == 'create'){
-						$subject = GETPOST('subject', 'alpha');
-					}else {
-						$subject = $object->subject;
-					}
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail) ? '' : '').' />';
 			}
 			print '</td></tr>';
 		}
@@ -637,16 +650,18 @@ class FormTicket
                     </script>';
 				}
 
-				// Contact and type
-				print '<tr><td>'.$langs->trans("Contact").'</td><td>';
-				// If no socid, set to -1 to avoid full contacts list
-				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
-				print img_picto('', 'contact', 'class="paddingright"');
-				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
-				print ' ';
-				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
-				print '</td></tr>';
+				if($mode == 'create'){
+					// Contact and type
+					print '<tr><td>'.$langs->trans("Contact").'</td><td>';
+					// If no socid, set to -1 to avoid full contacts list
+					$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+					print img_picto('', 'contact', 'class="paddingright"');
+					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+					print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+					print ' ';
+					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
+					print '</td></tr>';
+				}
 			} else {
 				print '<tr><td class="titlefield"><input type="hidden" name="socid" value="'.$user->socid.'"/></td>';
 				print '<td><input type="hidden" name="contactid" value="'.$user->contact_id.'"/></td>';
@@ -654,7 +669,7 @@ class FormTicket
 			}
 
 			// Notify thirdparty at creation
-			if (empty($this->ispublic) && !empty($withnotifytiersatcreate) && $action == 'create') {
+			if (empty($this->ispublic) && $action == 'create') {
 				print '<tr><td><label for="notify_tiers_at_create">'.$langs->trans("TicketNotifyTiersAtCreation").'</label></td><td>';
 				print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
 				print '</td></tr>';
@@ -693,7 +708,11 @@ class FormTicket
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
-			print $ticketstat->showOptionals($extrafields, 'create');
+			if($mode == 'create'){
+				print $object->showOptionals($extrafields, 'create');
+			}else{
+				print $object->showOptionals($extrafields, 'edit');
+			}
 		}
 
 		print '</table>';
@@ -708,7 +727,6 @@ class FormTicket
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 		}else{
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "EditTicket"), ($this->withcancel ? "Cancel" : ""));
-
 		}
 
 
