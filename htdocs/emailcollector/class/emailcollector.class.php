@@ -2063,7 +2063,7 @@ class EmailCollector extends CommonObject
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
 							if (!is_object($objectemail)) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($reg[1])."%'";
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
@@ -2139,7 +2139,9 @@ class EmailCollector extends CommonObject
 
 								if (get_class($objectemail) == 'Ticket') {
 									$changeonticket_references = false;
-									$trackid = $objectemail->track_id;
+									if (empty($trackid)) {
+										$trackid = $objectemail->track_id;
+									}
 									if (empty($objectemail->origin_references)) {
 										$objectemail->origin_references = $headers['References'];
 										$changeonticket_references = true;
