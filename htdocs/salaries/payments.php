@@ -98,20 +98,17 @@ $search_account = GETPOST('search_account', 'alpha');
 $search_fk_bank = GETPOST('search_fk_bank', 'alpha');
 $search_chq_number = GETPOST('search_chq_number', 'alpha');
 
-$filtre = GETPOST("filtre", 'restricthtml');
-
-$search_type_id = '';
-if (!GETPOSTINT('search_type_id')) {
+$search_type_id = GETPOST('search_type_id', 'int');
+if (!$search_type_id) {	// fallback on filtre (deprecated)
+	$filtre = GETPOST("filtre", 'restricthtml');
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
 	foreach ($filterarray as $val) {
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') {
-			$search_type_id = $part[1];
+			$search_type_id = (int) $part[1];
 		}
 	}
-} else {
-	$search_type_id = GETPOSTINT('search_type_id');
 }
 
 $childids = $user->getAllChildIds(1);
