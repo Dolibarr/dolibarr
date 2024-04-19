@@ -190,7 +190,7 @@ if (empty($reshook)) {
 
 	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
-		if($action ==  'add') $object->track_id = null;
+		if ($action == 'add') $object->track_id = null;
 		$error = 0;
 
 		$fieldsToCheck = [
@@ -214,7 +214,7 @@ if (empty($reshook)) {
 		}
 		$getRef = GETPOST('ref', 'alpha');
 
-		if (!empty($getRef)) {
+		if (! empty($getRef)) {
 			$isExistingRef = $object->checkExistingRef($action, $getRef);
 		} else {
 			$isExistingRef = true;
@@ -232,11 +232,11 @@ if (empty($reshook)) {
 				$object->track_id = null;
 				$style = 'warnings';
 			}
-			if (!empty($getRef)) {
+			if (! empty($getRef)) {
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref), $style);
 			}
 		}
-		if(!$error){
+		if (! $error) {
 
 			$db->begin();
 
@@ -267,8 +267,7 @@ if (empty($reshook)) {
 				$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 				$object->context['contact_id'] = GETPOSTINT('contact_id');
 				$id = $object->create($user);
-
-			}else {
+			} else {
 				$id = $object->update($user);
 			}
 
@@ -278,14 +277,14 @@ if (empty($reshook)) {
 				$action = $ifErrorAction;
 			}
 
-			if(!$error){
+			if (! $error) {
 				// Category association
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 			}
 
-			if($action == 'add'){
-				if (!$error) {
+			if ($action == 'add') {
+				if (! $error) {
 					// Add contact
 					$contactid = GETPOSTINT('contactid');
 					$type_contact = GETPOST("type", 'alpha');
@@ -320,33 +319,32 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (!$error) {
+				if (! $error) {
 					// File transfer
-					$object->copyFilesForTicket('');		// trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
+					$object->copyFilesForTicket('');        // trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 				}
 			}
-			if (!$error) {
+			if (! $error) {
 				$db->commit();
 
-				if (!empty($backtopage)) {
+				if (! empty($backtopage)) {
 
 					if (empty($id)) {
 						$url = $backtopage;
 					} else {
-						$url = 'card.php?track_id='.urlencode($object->track_id);
+						$url = 'card.php?track_id=' . urlencode($object->track_id);
 					}
 				} else {
-					$url = 'card.php?track_id='.urlencode($object->track_id);
+					$url = 'card.php?track_id=' . urlencode($object->track_id);
 				}
 
-				header("Location: ".$url);
+				header("Location: " . $url);
 				exit;
 			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else $action = $ifErrorAction;
-
 	}
 
 	// Mark as Read
@@ -707,7 +705,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
-	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+	$formticket->trackid = '';        // TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -724,7 +722,6 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-
 } elseif ($action == 'edit' && $object->status < Ticket::STATUS_CLOSED) {
 
 	if (empty($permissiontoadd)) {
@@ -737,7 +734,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print dol_get_fiche_head($head, 'tabTicket', $langs->trans('Ticket'), -1, 'ticket');
 
-	$formticket->trackid = $object->track_id;		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+	$formticket->trackid = $object->track_id;        // TODO Use a unique key 'tic' to avoid conflict in upload file feature
 	$formticket->withfromsocid = $object->socid;
 	$formticket->withtitletopic = 1;
 //	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
@@ -755,7 +752,6 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(0, 'edit', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-
 } elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
 	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
@@ -1444,8 +1440,6 @@ if ($action == 'create' || $action == 'presend') {
 				}
 			}
 			print '</div>'."\n";
-		} else {
-			//print '<br>';
 		}
 
 		// Select mail models is same action as presend
