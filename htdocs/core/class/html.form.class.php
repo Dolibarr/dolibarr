@@ -834,13 +834,16 @@ class Form
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreMassActions', $parameters); // Note that $action and $object may have been modified by hook
 		// check if there is a mass action
-		if (count($arrayofaction) == 0 && empty($hookmanager->resPrint)) {
+
+		if (is_array($arrayofaction) && count($arrayofaction) == 0 && empty($hookmanager->resPrint)) {
 			return;
 		}
 		if (empty($reshook)) {
 			$ret .= '<option value="0"' . ($disabled ? ' disabled="disabled"' : '') . '>-- ' . $langs->trans("SelectAction") . ' --</option>';
-			foreach ($arrayofaction as $code => $label) {
-				$ret .= '<option value="' . $code . '"' . ($disabled ? ' disabled="disabled"' : '') . ' data-html="' . dol_escape_htmltag($label) . '">' . $label . '</option>';
+			if (is_array($arrayofaction)) {
+				foreach ($arrayofaction as $code => $label) {
+					$ret .= '<option value="' . $code . '"' . ($disabled ? ' disabled="disabled"' : '') . ' data-html="' . dol_escape_htmltag($label) . '">' . $label . '</option>';
+				}
 			}
 		}
 		$ret .= $hookmanager->resPrint;
@@ -6526,7 +6529,7 @@ class Form
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf, $mysoc;
+		global $langs, $mysoc;
 
 		$langs->load('errors');
 
@@ -6664,7 +6667,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth50imp maxwidth100" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+				$return .= '<select class="flat minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
 			}
 
 			$selectedfound = false;
@@ -8171,8 +8174,8 @@ class Form
 		);
 
 		if (!is_object($objecttmp)) {
-			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield, LOG_WARNING);
-			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield;
+			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc, LOG_WARNING);
+			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc;
 		}
 		'@phan-var-force CommonObject $objecttmp';
 

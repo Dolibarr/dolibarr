@@ -5137,7 +5137,7 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define usemargins
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
 		$usemargins = 0;
 		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
@@ -5350,7 +5350,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form, $action;
+		global $langs, $hookmanager, $form, $action;
 
 		print '<tr class="liste_titre">';
 		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
@@ -5393,7 +5393,7 @@ abstract class CommonObject
 	/**
 	 * 	Return HTML with a line of table array of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
-	 *  If lines are into a template, title must also be into a template
+	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 * 	@param	CommonObjectLine	$line				Line
@@ -8985,7 +8985,7 @@ abstract class CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
-	 * Column name fk_soc MUST be used to identify thirdparties
+	 * Column name fk_soc MUST exist.
 	 *
 	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
@@ -9001,7 +9001,7 @@ abstract class CommonObject
 
 			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
-					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
+					return true; // FIXME Not enough. If there is A-B on the kept thirdparty and B-C on the old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;
