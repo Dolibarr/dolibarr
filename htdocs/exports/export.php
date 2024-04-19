@@ -269,7 +269,6 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-
 	// Check permission
 	if (empty($objexport->array_export_perms[0])) {
 		accessforbidden();
