@@ -272,6 +272,41 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
+
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'List of security events';
+		$this->export_permission[$r] = array(array("userxxxxxx"));	// Only admin
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>"Id", 'e.type'=>"Type",
+			'e.dateevent'=>"Date",
+			'e.fk_user'=>"UserId", 'u.login'=>"Login",
+			'e.description'=>'Description',
+			'e.ip'=>'IPAddress', 'e.user_agent'=>'UserAgent',
+			'e.authentication_method' => 'AuthenticationMode'
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.rowid'=>'Numeric', 'e.type'=>"Text",
+			'e.dateevent'=>"Date",
+			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
+			'e.description'=>'Text',
+			'e.ip'=>'Text', 'e.user_agent'=>'Text',
+			'e.authentication_method' => 'Text'
+		);
+		$this->export_entities_array[$r] = array(
+			'e.rowid'=>'generic', 'e.type'=>"generic",
+			'e.dateevent'=>"generic",
+			'e.fk_user'=>"user", 'u.login'=>"user",
+			'e.description'=>'generic',
+			'e.ip'=>'generic', 'e.user_agent'=>'generic',
+			'e.authentication_method' => 'generic'
+		);
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'events as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('event').')';
+
+
 		// Imports
 		$r = 0;
 
