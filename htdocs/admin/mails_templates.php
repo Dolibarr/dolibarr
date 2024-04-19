@@ -192,7 +192,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
-if (isModEnabled("societe") && $user->hasRight('societe', 'contact','lire')) {
+if (isModEnabled("societe") && $user->hasRight('societe', 'contact', 'lire')) {
 	$elementList['contact'] = img_picto('', 'contact', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToContact'));
 }
 if (isModEnabled('project')) {
