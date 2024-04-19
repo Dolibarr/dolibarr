@@ -2035,6 +2035,7 @@ MailToSendContract=Contracts
 MailToSendReception=Receptions
 MailToExpenseReport=Expense reports
 MailToThirdparty=Third parties
+MailToContact=Contact
 MailToMember=Members
 MailToUser=Users
 MailToProject=Projects
