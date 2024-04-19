@@ -261,7 +261,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->date_delivery), 'dayhour');
 						print '</td>';
 						print  '<td class="center">'.$objp->qty."</td>\n";
-						print '<td align="right">'.price($objp->total_ht, 'MT')."</td>\n";
+						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$receptionstatic->LibStatut($objp->statut, 4).'</td>';
 						print "</tr>\n";
 						$i++;
