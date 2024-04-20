@@ -124,11 +124,16 @@ pipeline {
                         sh """
                             cp /zap/wrk/report.html  -v ${WORKSPACE}/report.html
                         """
-                        archiveArtifacts artifacts: '*.html'
                     }
                 }
             }
         }
+        post {
+        always {
+            archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+        }
+    }
+        
     }
 }
 
