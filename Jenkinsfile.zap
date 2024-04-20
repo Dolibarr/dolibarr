@@ -119,21 +119,16 @@ pipeline {
 
         stage('Copy Report to Workspace') {
             steps {
-                container('zap') {
-                    script {
+                    container('zap') {
+                        script {
                         sh """
                             cp /zap/wrk/report.html  -v ${WORKSPACE}/report.html
                         """
+                        archiveArtifacts artifacts: '*.html'
                     }
                 }
             }
-        }
-        post {
-        always {
-            archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
-        }
-    }
-        
+        }      
     }
 }
 
