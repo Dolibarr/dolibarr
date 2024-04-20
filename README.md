@@ -37,11 +37,10 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Advanced setup
+### Recommended setup
 
-You can use a web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
+You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 #### Generic install steps
 
