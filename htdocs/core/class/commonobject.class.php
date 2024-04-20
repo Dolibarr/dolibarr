@@ -549,13 +549,6 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $model_pdf instead.
-	 * @see $model_pdf
-	 */
-	private $modelpdf;
-
-	/**
-	 * @var string
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;
@@ -5137,7 +5130,7 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define usemargins
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
 		$usemargins = 0;
 		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
@@ -5350,7 +5343,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form, $action;
+		global $langs, $hookmanager, $form, $action;
 
 		print '<tr class="liste_titre">';
 		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
@@ -5393,7 +5386,7 @@ abstract class CommonObject
 	/**
 	 * 	Return HTML with a line of table array of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
-	 *  If lines are into a template, title must also be into a template
+	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 * 	@param	CommonObjectLine	$line				Line
@@ -8036,6 +8029,8 @@ abstract class CommonObject
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
 				$value = $langs->trans(explode('|', $value)[0]);
+			} elseif (! is_numeric($value)) {
+				$value = $langs->trans($value);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);

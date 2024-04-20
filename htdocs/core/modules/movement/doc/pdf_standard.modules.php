@@ -176,7 +176,7 @@ class pdf_standard extends ModelePDFMovement
 		$search_user = trim(GETPOST("search_user"));
 		$search_batch = trim(GETPOST("search_batch"));
 		$search_qty = trim(GETPOST("search_qty"));
-		$search_type_mouvement = GETPOSTINT('search_type_mouvement');
+		$search_type_mouvement = GETPOST('search_type_mouvement', "intcomma");
 
 		$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 		$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");

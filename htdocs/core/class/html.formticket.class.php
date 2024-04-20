@@ -352,7 +352,7 @@ class FormTicket
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
-		if (!empty($conf->knowledgemanagement->enabled)) {
+		if (isModEnabled('knowledgemanagement')) {
 			// KM Articles
 			print '<tr id="KWwithajax" class="hidden"><td></td></tr>';
 			print '<!-- Script to manage change of ticket group -->
@@ -513,7 +513,7 @@ class FormTicket
 					$out .= '<br></div>';
 				}
 			} else {
-				$out .= $langs->trans("NoAttachedFiles").'<br>';
+				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			if ($this->withfile == 2) { // Can add other files
 				$maxfilesizearray = getMaxFileSizeArray();

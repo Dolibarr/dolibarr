@@ -1743,7 +1743,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
- *  @return     string     		 				Escaped string for json content.
+ *  @return     string     		 				Escaped string for JSON content.
  */
 function dol_escape_json($stringtoescape)
 {
@@ -1755,7 +1755,7 @@ function dol_escape_json($stringtoescape)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int<1,2>	$stringforquotes	2=String for doublequotes, 1=String for simple quotes
- *  @return     string     		 				Escaped string for json content.
+ *  @return     string     		 				Escaped string for PHP content.
  */
 function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
@@ -1776,6 +1776,17 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 	}
 
 	return 'Bad parameter for stringforquotes in dol_escape_php';
+}
+
+/**
+ *  Returns text escaped for inclusion into a XML string
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for XML content.
+ */
+function dol_escape_xml($stringtoescape)
+{
+	return $stringtoescape;
 }
 
 /**
@@ -4712,7 +4723,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
-				'stock', 'resize', 'service', 'stats', 'trip',
+				'stock', 'resize', 'service', 'stats',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -4722,7 +4733,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-				'terminal', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
 				'stamp', 'signature',
@@ -4774,8 +4785,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
 				'service' => 'concierge-bell',
 				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch', 'stripe' => 'stripe-s',
-				'supplier' => 'building', 'technic' => 'cogs',
-				'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
+				'supplier' => 'building',
+				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
 				'title_agenda' => 'calendar-alt',
 				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
 				'jabber' => 'comment-o',
@@ -4884,7 +4895,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'other' => '#ddd', 'world' => '#986c6a',
 				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'reception' => '#a69944', 'resize' => '#444', 'rss' => '#cba',
 				//'shipment'=>'#a69944',
-				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999', 'technic' => '#999', 'timespent' => '#555',
+				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
+				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
 				'uncheck' => '#800', 'uparrow' => '#555', 'user-cog' => '#999', 'country' => '#aaa', 'globe-americas' => '#aaa', 'region' => '#aaa', 'state' => '#aaa',
 				'website' => '#304', 'workstation' => '#a69944'
 			);
@@ -6842,7 +6854,7 @@ function get_localtax_by_third($local)
  *  @param	Societe		$buyer         		Company object
  *  @param	Societe		$seller        		Company object
  *  @param  int<0,1>	$firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountacy_code_buy:string} array('rowid'=> , 'code'=> ...)
+ *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
 function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
@@ -8966,6 +8978,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_TEXT__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, $conf->currency, true) : '';
 
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
@@ -8996,15 +9010,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3_FORMATTED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		// Amount keys formatted in a currency (with the typo error for backward compatibility)
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = $substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'];
-		$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
-		$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
-		}
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
+		if ($onlykey != 2) {
+			$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = $substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'];
+			$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
+			$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
+			$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
+			if ($mysoc instanceof Societe && $mysoc->useLocalTax(1)) {
+				$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
+			}
+			if ($mysoc instanceof Societe && $mysoc->useLocalTax(2)) {
+				$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
+			}
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -12317,7 +12333,8 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
-	} elseif ($elementType == 'stock') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
+		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
@@ -12425,6 +12442,14 @@ function getElementProperties($elementType)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
+	} elseif ($elementType == 'commande_fournisseurdet') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.commande';
+		$element = 'commande_fournisseurdet';
+		$subelement = '';
+		$classname = 'CommandeFournisseurLigne';
+		$table_element = 'commande_fournisseurdet';
 	} elseif ($elementType == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -12709,7 +12734,7 @@ function getNonce()
  * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
  * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
- * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown as '...'
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
@@ -12727,11 +12752,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print $langs->trans($header);
 
-	// extra space between the first header and the number
-	if ($number > -1) {
-		print ' ';
-	}
-
 	if (!empty($link)) {
 		if (!empty($arguments)) {
 			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
@@ -12741,7 +12761,9 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 	}
 
 	if ($number > -1) {
-		print '<span class="badge">'.$number.'</span>';
+		print '<span class="badge marginleftonlyshort">'.$number.'</span>';
+	} elseif (!empty($link)) {
+		print '<span class="badge marginleftonlyshort">...</span>';
 	}
 
 	if (!empty($link)) {
@@ -12752,20 +12774,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	if ($number < 0 && !empty($link)) {
 		print '<th class="right">';
-
-		if (!empty($arguments)) {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
-		} else {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
-		}
-
-		if ($pictofulllist) {
-			print img_picto($langs->trans("FullList"), $pictofulllist);
-		} else {
-			print $langs->trans("FullList");
-		}
-
-		print '</a>';
 		print '</th>';
 	}
 
@@ -13937,8 +13945,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body classfortooltip" title="'.dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($histo[$key]['message']), 1, 1, 1)), 1, 1).'">';
-				$out .= dolGetFirstLineOfText($histo[$key]['message'], 3);
+				$out .= '<div class="timeline-body" >';
+				$out .= $histo[$key]['message'];
 				$out .= '</div>';
 			}
 
@@ -14128,7 +14136,7 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
  */
 function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-	global $conf, $db, $user, $langs, $hookmanager;
+	global $conf, $db, $langs, $hookmanager;
 	global $action, $object;
 
 	if (!is_object($langs)) {

@@ -66,7 +66,7 @@ $search_status = GETPOST('search_status', 'intcomma');
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
-$search_processing = GETPOSTINT("search_processing");
+$search_processing = GETPOST("search_processing", 'int');
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -299,7 +299,7 @@ if ($search_lastresult != '') {
 if (GETPOSTISSET('search_processing')) {
 	$sql .= " AND t.processing = ".((int) $search_processing);
 }
-//Manage filter
+// Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
