@@ -280,26 +280,26 @@ class modUser extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			'e.rowid'=>"Id", 'e.type'=>"Type",
 			'e.dateevent'=>"Date",
-			'e.fk_user'=>"UserId", 'u.login'=>"Login",
 			'e.description'=>'Description',
 			'e.ip'=>'IPAddress', 'e.user_agent'=>'UserAgent',
-			'e.authentication_method' => 'AuthenticationMode'
+			'e.authentication_method' => 'AuthenticationMode',
+			'e.fk_user'=>"UserID", 'u.login'=>"Login",
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'e.rowid'=>'Numeric', 'e.type'=>"Text",
 			'e.dateevent'=>"Date",
-			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
 			'e.description'=>'Text',
 			'e.ip'=>'Text', 'e.user_agent'=>'Text',
-			'e.authentication_method' => 'Text'
+			'e.authentication_method' => 'Text',
+			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
 		);
 		$this->export_entities_array[$r] = array(
-			'e.rowid'=>'generic', 'e.type'=>"generic",
-			'e.dateevent'=>"generic",
+			'e.rowid'=>'securityevent', 'e.type'=>"securityevent",
+			'e.dateevent'=>"securityevent",
+			'e.description'=>'securityevent',
+			'e.ip'=>'securityevent', 'e.user_agent'=>'securityevent',
+			'e.authentication_method' => 'securityevent',
 			'e.fk_user'=>"user", 'u.login'=>"user",
-			'e.description'=>'generic',
-			'e.ip'=>'generic', 'e.user_agent'=>'generic',
-			'e.authentication_method' => 'generic'
 		);
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'events as e';
