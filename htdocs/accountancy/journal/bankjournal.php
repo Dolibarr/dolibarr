@@ -10,7 +10,7 @@
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018-2024	Eric Seigne	            <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -76,13 +76,21 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
-if ($in_bookkeeping == '') {
-	$in_bookkeeping = 'notyet';
+
+$only_rappro = GETPOSTINT('only_rappro');
+if ($only_rappro == 0) {
+	//GET page for the first time, use default settings
+	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
 
 $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
+
+if ($in_bookkeeping == '') {
+	$in_bookkeeping = 'notyet';
+}
+
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -164,6 +172,9 @@ if ($in_bookkeeping == 'already') {
 }
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
+if ($only_rappro == 2) {
+	$sql .= " AND (b.rappro = '1')";
 }
 $sql .= " ORDER BY b.datev";
 //print $sql;
@@ -307,6 +318,8 @@ if ($result) {
 
 		// Load of url links to the line into llx_bank (so load llx_bank_url)
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
+		// print '<p>' . json_encode($object) . "</p>";//exit;
+		// print '<p>' . json_encode($links) . "</p>";//exit;
 
 		// By default
 		$tabpay[$obj->rowid]['type'] = 'unknown'; // Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
@@ -1095,7 +1108,13 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 
-	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	$listofchoices = array(
+		1 => $langs->trans("TransfertAllBankLines"),
+		2 => $langs->trans("TransfertOnlyConciliatedBankLine")
+	);
+	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro)];
+
+	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink, $moreoptions);
 
 	$desc = '';
 
