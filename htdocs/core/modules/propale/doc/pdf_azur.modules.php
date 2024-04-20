@@ -7,7 +7,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Pierre Ardoin      	<mapiolca@me.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1006,7 +1006,7 @@ class pdf_azur extends ModelePDFPropales
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->owner_name), 0, 'L', 0);
 						$posy = $pdf->GetY() + 1;
 
 						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
