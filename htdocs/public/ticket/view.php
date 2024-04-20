@@ -463,12 +463,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '<p><label for="track_id" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
 	print img_picto($langs->trans("TicketTrackId"), 'generic', 'class="pictofixedwidth"');
 	print $langs->trans("TicketTrackId").'</span></label>';
+	print '<br class="showonsmartphone hidden">';
 	print '<input class="minwidth100" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
 	print '</p>';
 
 	print '<p><label for="email" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
 	print img_picto($langs->trans("Email"), 'email', 'class="pictofixedwidth"');
 	print $langs->trans('Email').'</span></label>';
+	print '<br class="showonsmartphone hidden">';
 	print '<input class="minwidth100" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
 	print '</p>';
 
