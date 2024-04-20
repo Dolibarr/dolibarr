@@ -2612,8 +2612,8 @@ function pdf_getSizeForImage($realpath)
 {
 	global $conf;
 
-	$maxwidth = (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
-	$maxheight = (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT') ? 32 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT);
+	$maxwidth = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20);
+	$maxheight = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT', 32);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
 	$width = 0;
