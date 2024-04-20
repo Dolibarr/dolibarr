@@ -751,6 +751,9 @@ td.rightborder {
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 }
+span.amount {
+	white-space: nowrap;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -1755,22 +1758,27 @@ select.flat.selectlimit {
 	margin-top: 25px !important;
 }
 .amountalreadypaid {
+	white-space: nowrap;
 }
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
 }
 
 .onlinepaymentbody .amountpaymentcomplete {
