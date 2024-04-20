@@ -322,7 +322,7 @@ if ($search_login) {
 	$param .= "&search_login=".urlencode($search_login);
 }
 if ($search_account) {
-	$param .= "&search_account=".urlencode($search_account));
+	$param .= "&search_account=".urlencode($search_account);
 }
 if ($search_amount) {
 	$param .= "&search_amount=".urlencode($search_amount);
