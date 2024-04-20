@@ -1109,8 +1109,8 @@ if (empty($action) || $action == 'view') {
 	$exportlink = '';
 
 	$listofchoices = array(
-		1 => $langs->trans("ImportAllBankLines"),
-		2 => $langs->trans("OnlyImportBankLineConciliated")
+		1 => $langs->trans("TransfertAllBankLines"),
+		2 => $langs->trans("TransfertOnlyConciliatedBankLine")
 	);
 	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro)];
 
