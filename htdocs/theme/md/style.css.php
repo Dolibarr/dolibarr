@@ -488,8 +488,13 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
+	padding-left: 3px;
+	padding-right: 3px;
+	padding-top: 3px;
 }
-input:focus, textarea:focus, button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus {
+input:focus, textarea:focus,
+button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
+.select2-container--focus span.selection span.select2-selection {
 	border-bottom: 1px solid #666;
 }
 

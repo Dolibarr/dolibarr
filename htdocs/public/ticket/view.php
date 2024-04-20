@@ -406,7 +406,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($action != 'presend') {
 			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
-			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.$baseurl.'list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+			print '<form method="POST" id="form_view_ticket_list" name="form_view_ticket_list" action="'.$baseurl.'list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="view_ticketlist">';
 			print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
@@ -455,19 +455,19 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
+	print '<form method="POST" class="maxwidth1000 center" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 
-	print '<p><label for="track_id" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
+	print '<p><label for="track_id" style="display: inline-block;" class="titlefieldcreate left"><span class="fieldrequired">';
 	print img_picto($langs->trans("TicketTrackId"), 'generic', 'class="pictofixedwidth"');
 	print $langs->trans("TicketTrackId").'</span></label>';
 	print '<br class="showonsmartphone hidden">';
 	print '<input class="minwidth100" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
 	print '</p>';
 
-	print '<p><label for="email" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
+	print '<p><label for="email" style="display: inline-block;" class="titlefieldcreate left"><span class="fieldrequired">';
 	print img_picto($langs->trans("Email"), 'email', 'class="pictofixedwidth"');
 	print $langs->trans('Email').'</span></label>';
 	print '<br class="showonsmartphone hidden">';
