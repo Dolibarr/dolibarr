@@ -122,8 +122,9 @@ pipeline {
                 container('zap') {
                     script {
                         sh """
-                            cp /zap/wrk/report.html  \${WORKSPACE}/report.html
+                            cp /zap/wrk/report.html  -v ${WORKSPACE}/report.html
                         """
+                        archiveArtifacts artifacts: '*.html'
                     }
                 }
             }
