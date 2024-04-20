@@ -1248,7 +1248,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		}
-		$totalarray['val']['totaldebit'] += $line->debit;
+		$totalarray['val']['totaldebit'] += (float) $line->debit;
 	}
 
 	// Amount credit
@@ -1260,7 +1260,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		}
-		$totalarray['val']['totalcredit'] += $line->credit;
+		$totalarray['val']['totalcredit'] += (float) $line->credit;
 	}
 
 	// Amount balance
