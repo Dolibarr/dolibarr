@@ -48,7 +48,7 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 - Uncompress the downloaded .zip archive to copy the `dolibarr/htdocs` directory and all its files inside your web server root or get the files directly from GitHub (recommended if you know git as it makes it easier if you want to upgrade later):
 
-  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 3.6, 9.0, ...)
+  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 9.0, 19.0, ...)
 
 - Set up your web server to use `dolibarr/htdocs` as root if your web server does not already define a directory to point to.
 
