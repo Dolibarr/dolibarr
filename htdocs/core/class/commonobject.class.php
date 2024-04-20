@@ -549,13 +549,6 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $model_pdf instead.
-	 * @see $model_pdf
-	 */
-	private $modelpdf;
-
-	/**
-	 * @var string
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;

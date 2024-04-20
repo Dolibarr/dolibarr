@@ -421,11 +421,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
 				// New message
-				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
 				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
 
@@ -460,12 +460,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 
-	print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans("TicketTrackId").'</span></label>';
-	print '<input size="30" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
+	print '<p><label for="track_id" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
+	print img_picto($langs->trans("TicketTrackId"), 'generic', 'class="pictofixedwidth"');
+	print $langs->trans("TicketTrackId").'</span></label>';
+	print '<input class="minwidth100" id="track_id" name="track_id" value="'.(GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '').'" />';
 	print '</p>';
 
-	print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans('Email').'</span></label>';
-	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
+	print '<p><label for="email" style="display: inline-block;" class="titlefieldcreate"><span class="fieldrequired">';
+	print img_picto($langs->trans("Email"), 'email', 'class="pictofixedwidth"');
+	print $langs->trans('Email').'</span></label>';
+	print '<input class="minwidth100" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
