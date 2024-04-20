@@ -105,6 +105,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
+$form = new Form($db);
+
 if ($type != 'bank-transfer') {
 	if (!$status) {
 		$title = $langs->trans("RequestStandingOrderToTreat");

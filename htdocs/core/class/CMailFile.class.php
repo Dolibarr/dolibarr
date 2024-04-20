@@ -398,7 +398,7 @@ class CMailFile
 			$replacecc = false;
 			$tabcc = explode(',', $addr_cc);
 			foreach ($tabcc as $key => $cc) {
-				if (in_array($cc, $tabcc)) {
+				if (in_array($cc, $listofemailstonotsendto)) {
 					unset($tabcc[$key]);
 					$replacecc = true;
 				}
@@ -412,7 +412,7 @@ class CMailFile
 			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
-				if (in_array($bcc, $tabbcc)) {
+				if (in_array($bcc, $listofemailstonotsendto)) {
 					unset($tabbcc[$key]);
 					$replacebcc = true;
 				}

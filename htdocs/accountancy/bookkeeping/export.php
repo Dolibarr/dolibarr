@@ -661,7 +661,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		} else {
 			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 				if (is_array($object->lines)) {
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file set movements as exported", LOG_DEBUG);
 
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
@@ -678,7 +678,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 
 						if ($setfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$db->sanitize($setfields);
+							$sql .= " SET ".$setfields;		// $setfields is already a sanitized SQL string
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);

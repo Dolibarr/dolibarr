@@ -52,6 +52,9 @@ $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $projectid = GETPOSTINT('projectid');
 
 $id = GETPOSTINT('id');
@@ -68,8 +71,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
-
-$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
@@ -310,7 +311,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input class="width200" name="libelle" value=""></td></tr>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
 
@@ -365,6 +366,11 @@ if ($action == 'create') {
 	print '<td>';
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+
+	// Warehouse usage
+	if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+		// TODO
+	}
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -500,6 +506,13 @@ if ($action == 'create') {
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
+
+			// Warehouse usage
+			if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+				$labelusagestring = $object->fields['warehouse_usage']['arrayofkeyval'][empty($object->warehouse_usage) ? 1 : $object->warehouse_usage];
+				$labelusage = $labelusagestring ? $langs->trans($labelusagestring) : 'Unknown';
+				print '<td class="titlefield tdtop">'.$langs->trans("WarehouseUsage").'</td><td>'.dol_htmlentitiesbr($labelusage).'</td></tr>';
+			}
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();

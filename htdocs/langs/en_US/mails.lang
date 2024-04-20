@@ -19,6 +19,7 @@ MailCC=Copy to
 MailToCCUsers=Copy to users(s)
 MailCCC=Cached copy to
 MailTopic=Email subject
+MailReferences=Message IDs in References
 MailText=Message
 MailFile=Attached files
 MailMessage=Email body
