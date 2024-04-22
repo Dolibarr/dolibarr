@@ -12734,7 +12734,7 @@ function getNonce()
  * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
  * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
- * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown as '...'
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
@@ -12752,11 +12752,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print $langs->trans($header);
 
-	// extra space between the first header and the number
-	if ($number > -1) {
-		print ' ';
-	}
-
 	if (!empty($link)) {
 		if (!empty($arguments)) {
 			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
@@ -12766,7 +12761,9 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 	}
 
 	if ($number > -1) {
-		print '<span class="badge">'.$number.'</span>';
+		print '<span class="badge marginleftonlyshort">'.$number.'</span>';
+	} elseif (!empty($link)) {
+		print '<span class="badge marginleftonlyshort">...</span>';
 	}
 
 	if (!empty($link)) {
@@ -12777,20 +12774,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	if ($number < 0 && !empty($link)) {
 		print '<th class="right">';
-
-		if (!empty($arguments)) {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
-		} else {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
-		}
-
-		if ($pictofulllist) {
-			print img_picto($langs->trans("FullList"), $pictofulllist);
-		} else {
-			print $langs->trans("FullList");
-		}
-
-		print '</a>';
 		print '</th>';
 	}
 
@@ -14153,7 +14136,7 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
  */
 function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-	global $conf, $db, $user, $langs, $hookmanager;
+	global $conf, $db, $langs, $hookmanager;
 	global $action, $object;
 
 	if (!is_object($langs)) {

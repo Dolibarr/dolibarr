@@ -549,13 +549,6 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $model_pdf instead.
-	 * @see $model_pdf
-	 */
-	private $modelpdf;
-
-	/**
-	 * @var string
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;
@@ -8036,6 +8029,8 @@ abstract class CommonObject
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
 				$value = $langs->trans(explode('|', $value)[0]);
+			} elseif (! is_numeric($value)) {
+				$value = $langs->trans($value);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);

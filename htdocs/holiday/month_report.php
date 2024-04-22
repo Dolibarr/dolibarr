@@ -43,8 +43,8 @@ $socid = 0;
 $id = GETPOSTINT('id');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
-$search_employee    = GETPOSTINT('search_employee');
-$search_type        = GETPOSTINT('search_type');
+$search_employee    = GETPOST('search_employee', "intcomma");
+$search_type        = GETPOST('search_type', "intcomma");
 $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -194,7 +194,7 @@ if (!empty($search_ref)) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if (!empty($search_employee)) {
-	$param .= '&search_employee='.urlencode((string) ($search_employee));
+	$param .= '&search_employee='.urlencode($search_employee);
 }
 if (!empty($search_type)) {
 	$param .= '&search_type='.urlencode($search_type);
