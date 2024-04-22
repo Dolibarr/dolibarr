@@ -328,7 +328,7 @@ class ExportExcel2007 extends ModeleExports
 				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 
-			$newvalue = property_exists($objp, $alias) ? $objp->$alias : '';
+			$newvalue = !empty($objp->$alias) ? $objp->$alias : '';
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
