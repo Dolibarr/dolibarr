@@ -3338,7 +3338,7 @@ class Societe extends CommonObject
 
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$bac->fetch(0, $this->id);
+		$bac->fetch(0, '', $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
 			if ($mode == 'label') {
@@ -4983,7 +4983,7 @@ class Societe extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				$result = $bac->fetch(0, $this->id);
+				$result = $bac->fetch(0, '', $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
 				} else {

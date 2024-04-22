@@ -895,7 +895,7 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('fo
 // Load Bank account
 if (!$id) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$companybankaccount->fetch(0, $object->id);
+	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 } else {
