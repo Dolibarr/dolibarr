@@ -2169,7 +2169,7 @@ class BonPrelevement extends CommonObject
 		if($conf->global->SEPA_ROUND_TWO_ZERO){
 			$row_somme=number_format(price2num($row_somme,'MT'),2,".","");
 		}else{
-			$row_somme=round((float) $row_somme, 2);
+			$row_somme=round((float)$row_somme,2);
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -2257,7 +2257,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
-			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round((float)$row_somme,2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
 			/*
 			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
