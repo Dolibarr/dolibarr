@@ -21,7 +21,7 @@
 
 /**
  * \file    dev/tools/apstats.php
- * \brief   Script to report Advanced Statistics on a coding PHP project
+ * \brief   Script to report Advanced Statistics and Status on a PHP project
  */
 
 
@@ -56,7 +56,7 @@ print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool at the root of the project.'."\n";
 	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc|disabled] [--dir-phpstan=pathtophpstan|disabled] [--dir-phan=path/to/phan|disabled]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin --dir-phan=~/vendor/bin/phan';
+	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin --dir-phan=~/vendor/bin/phan --url-site=https://www.dolibarr.org';
 	exit(0);
 }
 
@@ -75,6 +75,8 @@ $dirphpstan = '';
 $dir_phan = '';
 $datatable_script = '';
 $url_root = '';
+$url_site = '';
+$url_flux = '';
 $project = '';
 
 $i = 0;
@@ -88,6 +90,8 @@ while ($i < $argc) {
 		$dir_phan = $reg[1];
 	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
 		$url_root = $reg[1];
+	} elseif (preg_match('/^--url-site=(.*)$/', $argv[$i], $reg)) {
+		$url_site = $reg[1];
 	} elseif (preg_match('/^--project-name=(.*)$/', $argv[$i], $reg)) {
 		$project = $reg[1];
 	}
@@ -536,7 +540,7 @@ $html .= '<body>'."\n";
 // Header
 
 $html .= '<header>'."\n";
-$html .= '<h1>Advanced Project Statistics</h1>'."\n";
+$html .= '<h1>Advanced Project Status</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
 $html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds by <a target="_blank" href="https://github.com/Dolibarr/dolibarr/blob/develop/dev/tools/apstats.php">apstats</a></span>'."\n";
 $html .= '</header>'."\n";
@@ -913,10 +917,10 @@ $html .= '</section>';
 // Generate the RSS file
 $fh = fopen($outputdir.'/'.$outputfilerss, 'w');
 if ($fh) {
-	$url_site = '';
-	$url_flux = '';
-	if ($url_root) {
+	if ($url_root && empty($url_site)) {
 		$url_site = $url_root;
+	}
+	if ($url_root && empty($url_flux)) {
 		$url_flux = $url_root.'/'.$outputfilerss;
 	}
 
@@ -932,6 +936,13 @@ if ($fh) {
 	if ($url_flux) {
 		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
+	// Image
+	fwrite($fh, '<image>'."\n");
+	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	if ($url_site) {
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
+	}
+	fwrite($fh, '</image>'."\n");
 
 	foreach ($arrayofalerts as $alert) {
 		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];

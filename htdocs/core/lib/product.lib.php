@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -424,7 +425,7 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf, $langs, $user, $db, $hookmanager;
+	global $langs, $user, $db, $hookmanager;
 
 	$form = new Form($db);
 
@@ -567,6 +568,46 @@ function show_stats_for_company($product, $socid)
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Shipments
+	if (isModEnabled('shipping') && $user->hasRight('shipping', 'lire')) {
+		$nblines++;
+		$ret = $product->load_stats_sending($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("sendings");
+		print '<tr><td>';
+		print '<a href="expedition.php?id='.$product->id.'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_expedition['customers'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['nb'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Receptions
+	if ((isModEnabled("reception") && $user->hasRight('reception', 'lire'))) {
+		$nblines++;
+		$ret = $product->load_stats_reception($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("receptions");
+		print '<tr><td>';
+		print '<a href="reception.php?id='.$product->id.'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_reception['suppliers'];
+		print '</td><td class="right">';
+		print $product->stats_reception['nb'];
+		print '</td><td class="right">';
+		print $product->stats_reception['qty'];
 		print '</td>';
 		print '</tr>';
 	}

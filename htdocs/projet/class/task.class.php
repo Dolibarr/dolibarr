@@ -273,6 +273,7 @@ class Task extends CommonObjectLine
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
+		$sql .= ", priority";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -287,6 +288,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
+		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -498,6 +500,7 @@ class Task extends CommonObjectLine
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
+		$sql .= " priority=".((!empty($this->priority)) ? $this->priority : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -907,6 +910,8 @@ class Task extends CommonObjectLine
 	 */
 	public function initAsSpecimen()
 	{
+		global $user;
+
 		$this->id = 0;
 
 		$this->fk_project = 0;
@@ -914,10 +919,12 @@ class Task extends CommonObjectLine
 		$this->fk_task_parent = 0;
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
-		$this->fk_user_creat = 1;
+		$this->fk_user_creat = $user->id;
 		$this->progress = '25';
 		$this->status = 0;
-		$this->note = 'This is a specimen task not';
+		$this->priority = 0;
+		$this->note_private = 'This is a specimen private note';
+		$this->note_public = 'This is a specimen public note';
 
 		return 1;
 	}
@@ -960,7 +967,7 @@ class Task extends CommonObjectLine
 		}
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang, t.priority,";
 		$sql .= " t.description, ";
 		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
@@ -1075,7 +1082,7 @@ class Task extends CommonObjectLine
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
-			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
+			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
@@ -1161,6 +1168,7 @@ class Task extends CommonObjectLine
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
 					$tasks[$i]->rang	   		= $obj->rang;
+					$tasks[$i]->priority   		= $obj->priority;
 
 					$tasks[$i]->socid           = $obj->thirdparty_id; // For backward compatibility
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
@@ -2079,6 +2087,7 @@ class Task extends CommonObjectLine
 		$clone_task->date_c = $datec;
 		$clone_task->planned_workload = $origin_task->planned_workload;
 		$clone_task->rang = $origin_task->rang;
+		$clone_task->priority = $origin_task->priority;
 
 		//Manage Task Date
 		if ($clone_change_dt) {
