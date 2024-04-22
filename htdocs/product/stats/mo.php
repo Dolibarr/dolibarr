@@ -73,6 +73,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
+$socid = 0;
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
@@ -124,7 +126,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -211,7 +213,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="liste_titre liste_titre_bydiv centpercent">';
 			print '<div class="divsearchfield">';
 			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
-			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 			print '<div style="vertical-align: middle; display: inline-block">';
 			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

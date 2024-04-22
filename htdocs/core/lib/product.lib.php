@@ -425,7 +425,7 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf, $langs, $user, $db, $hookmanager;
+	global $langs, $user, $db, $hookmanager;
 
 	$form = new Form($db);
 
