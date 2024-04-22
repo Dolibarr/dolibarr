@@ -80,6 +80,12 @@ class UserGroup extends CommonObject
 	public $globalgroup; // Global group
 
 	/**
+	 * @var array		Entity in table llx_user_group
+	 * @deprecated		Seems not used.
+	 */
+	public $usergroup_entity;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
