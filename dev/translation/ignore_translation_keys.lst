@@ -61,7 +61,6 @@ ResourcesLinkedToElement
 SetupDescription5
 ShowSending
 SomethingMakeInstallFromWebNotPossible2
-StatusMotif0
 StatusOrderProcessed
 SuppliersOrdersRunning
 TasksOnOpenedProject
@@ -103,7 +102,6 @@ Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
 Agents
-AllEntities
 AllFilesDidAlreadyExist
 AlreadyInV7
 AmountOfOrders
@@ -312,7 +310,6 @@ Empty
 End
 EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
-EntityNameNotDefined
 Entries
 ErrSCAAuthentication
 Error sql

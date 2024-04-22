@@ -112,6 +112,10 @@ if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 
 // Define image path files and other constants
 $fontlist = 'roboto,arial,tahoma,verdana,helvetica'; //$fontlist='verdana,helvetica,arial,sans-serif';
+if (getDolGlobalString('THEME_FONT_FAMILY')) {
+	$fontlist = getDolGlobalString('THEME_FONT_FAMILY').', '.$fontlist;
+}
+
 $img_head = '';
 $img_button = dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
 $dol_hide_topmenu = $conf->dol_hide_topmenu;
@@ -310,6 +314,8 @@ print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
+$leftmenuwidth = 242;
+
 ?>
 /* <style type="text/css" > */
 
@@ -482,8 +488,13 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
+	padding-left: 3px;
+	padding-right: 3px;
+	padding-top: 3px;
 }
-input:focus, textarea:focus, button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus {
+input:focus, textarea:focus,
+button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
+.select2-container--focus span.selection span.select2-selection {
 	border-bottom: 1px solid #666;
 }
 
@@ -740,6 +751,9 @@ td.rightborder {
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 }
+span.amount {
+	white-space: nowrap;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -952,6 +966,10 @@ div.floatright
 .block
 {
 	display:block;
+}
+.inline
+{
+	display:inline;
 }
 .inline-block
 {
@@ -1740,22 +1758,27 @@ select.flat.selectlimit {
 	margin-top: 25px !important;
 }
 .amountalreadypaid {
+	white-space: nowrap;
 }
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
+	white-space: nowrap;
 }
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
 }
 
 .onlinepaymentbody .amountpaymentcomplete {
@@ -2045,6 +2068,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
+	.showonsmartphone { display: block !important; }
 
 	.margintoponsmartphone { margin-top: 6px; }
 
@@ -2271,7 +2295,7 @@ td.showDragHandle {
 	width: 100%;
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
-	padding-<?php print $left; ?>: 229px;
+	padding-<?php print $left; ?>: <?php echo $leftmenuwidth + 9; ?>px;
 	padding-top: 16px;
 <?php } ?>
 }
@@ -2366,7 +2390,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 
 
 .side-nav-vert {
-	margin-<?php echo $left; ?>: 228px;
+	margin-<?php echo $left; ?>: <?php echo $leftmenuwidth + 6; ?>px;
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
@@ -3247,7 +3271,7 @@ div.login_block {
 	text-align: center;
 	vertical-align: middle;
 	background: var(--colorbackvmenu1);
-	width: 228px;
+	width: <?php echo $leftmenuwidth + 6; ?>px;
 	height: 68px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
@@ -3415,7 +3439,7 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 0px;
-	width: 222px;
+	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
@@ -3426,7 +3450,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenusearchselectcombo {
-	width: 202px;
+	width: <?php echo $leftmenuwidth - 20; ?>px;
 }
 
 .menu_contenu {
@@ -5415,7 +5439,8 @@ div.visible {
 	display: block;
 }
 
-div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
+img.hidden, span.hidden, br.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5478,10 +5503,10 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
-	padding: 5px 5px 5px 5px;
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	padding: 5px 5px 5px 5px;
 	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {

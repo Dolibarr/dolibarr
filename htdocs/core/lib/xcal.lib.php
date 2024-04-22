@@ -347,9 +347,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, "\n");
 
 		fwrite($fichier, "<channel>\n");
-		fwrite($fichier, "<title>".$title."</title>\n");
+		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
 		if ($langcode) {
-			fwrite($fichier, "<language>".$langcode."</language>\n");
+			fwrite($fichier, "<language>".dol_escape_xml($langcode)."</language>\n");
 		}
 
 		// Define $urlwithroot
@@ -365,7 +365,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
-			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo_squarred_small);
+			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
 			if ($urlimage) {
 				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title></image>\n");
 			}

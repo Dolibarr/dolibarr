@@ -1190,6 +1190,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
+		$flag_price_may_change = getDolGlobalString('INVOICE_REC_PRICE_MAY_CHANGE');
 		if (!empty($flag_price_may_change)) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
@@ -1689,7 +1690,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 

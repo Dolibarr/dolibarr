@@ -95,6 +95,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		// Some features may be unstable with this option, like permissions rules, import contact, ...
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
@@ -875,7 +876,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="right">'.$langs->trans("Status").'</td>';
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="center">';
-				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				$selectedfields = (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 				print $selectedfields;
 				print '</td>';
 			}
@@ -1107,7 +1108,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOSTINT("search_rowid");
+	$search_rowid   = GETPOST("search_rowid", "intcomma");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');

@@ -245,7 +245,7 @@ $resexecglpu = 0;
 
 
 // Get git information for security alerts
-$nbofmonth = 2;
+$nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
@@ -523,8 +523,10 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 		margin-left: 5px;
 		margin-right: 5px;
 	}
+	.boxallwidth picture img {
+	    width: 100%;
+	}
 }
-
 
 </style>'."\n";
 

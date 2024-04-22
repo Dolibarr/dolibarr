@@ -1027,6 +1027,7 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
@@ -1070,6 +1071,7 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if ($result < 0) {

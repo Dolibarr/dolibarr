@@ -137,8 +137,8 @@ if (GETPOSTINT("notolderthan")) {
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOSTINT("status")) {
-	$filters['status'] = GETPOSTINT("status");
+if (GETPOST("status", "intcomma")) {
+	$filters['status'] = GETPOST("status", "intcomma");
 }
 
 // Security check
