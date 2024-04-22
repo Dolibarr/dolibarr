@@ -13367,7 +13367,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				} else {
 					$out .= $histo[$key]['message'];
 				}
-        
+
 				$out .= '</div>';
 			}
 
