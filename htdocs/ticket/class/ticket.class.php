@@ -556,7 +556,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
-			$sql .= " ".(!isset($this->fk_statut) ? '0' : ((int) $this->fk_statut)).",";
+			$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
 			$sql .= " ".(!isset($this->resolution) ? 'NULL' : ((int) $this->resolution)).",";
 			$sql .= " ".(!isset($this->progress) ? '0' : ((int) $this->progress)).",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
@@ -995,9 +995,10 @@ class Ticket extends CommonObject
 	{
 		$error = 0;
 
-		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		// $this->oldcopy should have been set by the caller of update
 		//if (empty($this->oldcopy)) {
-		//	$this->oldcopy = dol_clone($this);
+		//	dol_syslog("this->oldcopy should have been set by the caller of update (here properties were already modified)", LOG_WARNING);
+		//	$this->oldcopy = dol_clone($this, 2);
 		//}
 
 		// Clean parameters
@@ -1251,11 +1252,12 @@ class Ticket extends CommonObject
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id = 0;
-		$object->statut = 0;
 
 		// Clear fields
-		// ...
+		$object->id = 0;
+		$object->statut = 0;
+		$object->status = 0;
+
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
@@ -1681,8 +1683,8 @@ class Ticket extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != self::STATUS_CANCELED) { // no closed
-			$this->oldcopy = dol_clone($this);
+		if ($this->status != self::STATUS_CANCELED) { // no closed
+			$this->oldcopy = dol_clone($this, 2);
 
 			$this->db->begin();
 
@@ -1737,7 +1739,7 @@ class Ticket extends CommonObject
 	{
 		$error = 0;
 
-		$this->oldcopy = dol_clone($this);
+		$this->oldcopy = dol_clone($this, 2);
 
 		$this->db->begin();
 
