@@ -67,7 +67,7 @@ pipeline {
     stage('trivy scan'){
       steps{
           container('trivy'){
-            sh "trivy image iyedbnaissa/dolibarr_build:30 --severity HIGH,CRITICAL --format template --template '@sonarqube.tpl' -o trivy_report.json --scanners vuln"
+            sh "trivy image iyedbnaissa/dolibarr_build::${env.BUILD_NUMBER} --severity HIGH,CRITICAL --format template --template '@sonarqube.tpl' -o trivy_report.json --scanners vuln"
             sh "cat trivy_report.json"
           }
       }
