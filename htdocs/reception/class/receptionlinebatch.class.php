@@ -411,14 +411,12 @@ class ReceptionLineBatch extends CommonObjectLine
 		}
 
 		if (!$error) {
-			if (!$error) {
-				if (empty($this->id) && !empty($this->rowid)) {
-					$this->id = $this->rowid;
-				}
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			if (empty($this->id) && !empty($this->rowid)) {
+				$this->id = $this->rowid;
+			}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$notrigger) {
