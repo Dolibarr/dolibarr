@@ -43,7 +43,7 @@ class modExpedition extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $user;
+		global $conf, $user;	// $conf is required by /core/extrafieldsinexport.inc.php
 
 		$this->db = $db;
 		$this->numero = 80;
