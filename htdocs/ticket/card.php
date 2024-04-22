@@ -204,7 +204,7 @@ if (empty($reshook)) {
 
 		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
-		if (! empty($error)) {
+		if (!empty($error)) {
 			$action = $ifErrorAction;
 		}
 
@@ -214,7 +214,7 @@ if (empty($reshook)) {
 		}
 		$getRef = GETPOST('ref', 'alpha');
 
-		if (! empty($getRef)) {
+		if (!empty($getRef)) {
 			$isExistingRef = $object->checkExistingRef($action, $getRef);
 		} else {
 			$isExistingRef = true;
@@ -232,11 +232,11 @@ if (empty($reshook)) {
 				$object->track_id = null;
 				$style = 'warnings';
 			}
-			if (! empty($getRef)) {
+			if (!empty($getRef)) {
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref), $style);
 			}
 		}
-		if (! $error) {
+		if (!$error) {
 
 			$db->begin();
 
@@ -277,14 +277,14 @@ if (empty($reshook)) {
 				$action = $ifErrorAction;
 			}
 
-			if (! $error) {
+			if (!$error) {
 				// Category association
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 			}
 
 			if ($action == 'add') {
-				if (! $error) {
+				if (!$error) {
 					// Add contact
 					$contactid = GETPOSTINT('contactid');
 					$type_contact = GETPOST("type", 'alpha');
@@ -307,7 +307,7 @@ if (empty($reshook)) {
 
 					// Auto mark as read if created from backend
 					if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $user->hasRight('ticket', 'write')) {
-						if (! $object->markAsRead($user) > 0) {
+						if (!$object->markAsRead($user) > 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
@@ -319,15 +319,15 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (! $error) {
+				if (!$error) {
 					// File transfer
 					$object->copyFilesForTicket('');        // trackid is forced to '' because files were uploaded when no id for ticket exists yet and trackid was ''
 				}
 			}
-			if (! $error) {
+			if (!$error) {
 				$db->commit();
 
-				if (! empty($backtopage)) {
+				if (!empty($backtopage)) {
 
 					if (empty($id)) {
 						$url = $backtopage;
