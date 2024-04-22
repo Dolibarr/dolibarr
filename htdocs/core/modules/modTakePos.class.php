@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 SuperAdmin
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +334,8 @@ class modTakePos extends DolibarrModules
 			if ($searchaccountid == 0) {
 				$cashaccount->ref = "CASH-POS";
 				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
-				$cashaccount->courant = 2;
+				$cashaccount->courant = Account::TYPE_CASH; // deprecated
+				$cashaccount->type = Account::TYPE_CASH;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
 				$searchaccountid = $cashaccount->create($user);

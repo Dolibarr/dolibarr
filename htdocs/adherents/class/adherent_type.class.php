@@ -522,9 +522,10 @@ class AdherentType extends CommonObject
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
+				return $this->id;
+			} else {
+				return 0;
 			}
-
-			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;

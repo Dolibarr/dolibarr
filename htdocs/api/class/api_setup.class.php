@@ -1116,7 +1116,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
-	 * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
 	 *
@@ -1125,7 +1125,7 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of extra fields
 	 */
-	public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $type = '', $sqlfilters = '')
+	public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $elementtype = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -1133,11 +1133,11 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Only an admin user can get list of extrafields');
 		}
 
-		if ($type == 'thirdparty') {
-			$type = 'societe';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
 		}
-		if ($type == 'contact') {
-			$type = 'socpeople';
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
 		}
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
@@ -1145,8 +1145,8 @@ class Setup extends DolibarrApi
 		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
-		if (!empty($type)) {
-			$sql .= " AND t.elementtype = '".$this->db->escape($type)."'";
+		if (!empty($elementtype)) {
+			$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -1300,6 +1300,8 @@ class Setup extends DolibarrApi
 					$answer[$tab->elementtype][$tab->name]['datec'] = $tab->datec;
 					$answer[$tab->elementtype][$tab->name]['tms'] = $tab->tms;
 				}
+			} else {
+				throw new RestException(404, 'Extrafield not found from attrname and elementtype');
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
@@ -1341,17 +1343,18 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
+
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
-		if ($request_data['entity']) {
-			$entity = $request_data['entity'];
-		} else {
-			throw new RestException(400, "Entity field absent");
-		}
+
 		if ($request_data['label']) {
 			$label = $request_data['label'];
 		} else {
-			throw new RestException(400, "label field absent");
+			throw new RestException(400, "label field absent in json at root level");
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
@@ -1426,17 +1429,17 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
+		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) {
+			$entity = 1;
+		}
+
 		// built in validation
 		$enabled = 1; // hardcoded because it seems to always be 1 in every row in the database
-		if ($request_data['entity']) {
-			$entity = $request_data['entity'];
-		} else {
-			throw new RestException(400, "Entity field absent");
-		}
 		if ($request_data['label']) {
 			$label = $request_data['label'];
 		} else {
-			throw new RestException(400, "label field absent");
+			throw new RestException(400, "label field absent in json at root level");
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];

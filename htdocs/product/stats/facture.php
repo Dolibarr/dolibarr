@@ -75,6 +75,8 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$option = '';
+
 $search_date_startday = GETPOSTINT('search_date_startday');
 if (!empty($search_date_startday)) {
 	$option .= '&search_date_startday='.$search_date_startday;
@@ -239,6 +241,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			// Add where from extra fields
+			$extrafieldsobjectkey = 'facture';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 			// Add where from hooks
 			$parameters = array();
@@ -273,12 +276,6 @@ if ($id > 0 || !empty($ref)) {
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
-				}
-				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
-				}
-				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode((string) ($search_year));
 				}
 
 				// Add $param from extra fields
@@ -373,10 +370,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';

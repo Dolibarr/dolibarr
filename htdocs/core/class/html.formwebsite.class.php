@@ -341,7 +341,7 @@ class FormWebsite
 
 		$templates = array(
 			'empty' => 'empty',
-			'text' => 'dynamic',
+			//'text' => 'dynamic',
 			'basic' => 'basic',
 			//'news'  => 'news',
 			//'commerce' => 'commerce',

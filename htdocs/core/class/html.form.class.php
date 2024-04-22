@@ -4916,16 +4916,16 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param string 	$selected 		Id account preselected
-	 * @param string 	$htmlname 		Name of select zone
-	 * @param int 		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
-	 * @param string 	$filtre 		To filter the list. This parameter must not come from input of users
-	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @param string 	$moreattrib 	To add more attribute on select
-	 * @param int 		$showcurrency 	Show currency in label
-	 * @param string 	$morecss 		More CSS
-	 * @param int 		$nooutput 		1=Return string, do not send to output
-	 * @return int|string              	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
+	 * @param int|string 	$selected 		Id account preselected
+	 * @param string 		$htmlname 		Name of select zone
+	 * @param int 			$status 		Status of searched accounts (0=open, 1=closed, 2=both)
+	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
+	 * @param int 			$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param string 		$moreattrib 	To add more attribute on select
+	 * @param int 			$showcurrency 	Show currency in label
+	 * @param string 		$morecss 		More CSS
+	 * @param int 			$nooutput 		1=Return string, do not send to output
+	 * @return int|string   	           	If noouput=0: Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...), If nooutput=1: Return a HTML select string.
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
@@ -6529,7 +6529,7 @@ class Form
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf, $mysoc;
+		global $langs, $mysoc;
 
 		$langs->load('errors');
 
@@ -6667,7 +6667,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth50imp maxwidth100" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+				$return .= '<select class="flat minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
 			}
 
 			$selectedfound = false;
