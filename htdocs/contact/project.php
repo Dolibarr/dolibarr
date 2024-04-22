@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $langs->loadLangs(array("contacts", "companies", "projects"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -63,7 +63,7 @@ if ($id) {
 	}
 	$socid = !empty($object->thirdparty->id) ? $object->thirdparty->id : null;
 	$title = $langs->trans("Projects");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);

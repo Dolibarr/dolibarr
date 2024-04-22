@@ -93,19 +93,19 @@ abstract class ActionsCardCommon
 			$this->assign_post($action);
 		}
 
-		if ($_GET["type"] == 'f') {
+		if (GETPOST("type") == 'f') {
 			$this->object->fournisseur = 1;
 		}
-		if ($_GET["type"] == 'c') {
+		if (GETPOST("type") == 'c') {
 			$this->object->client = 1;
 		}
-		if ($_GET["type"] == 'p') {
+		if (GETPOST("type") == 'p') {
 			$this->object->client = 2;
 		}
-		if ($_GET["type"] == 'cp') {
+		if (GETPOST("type") == 'cp') {
 			$this->object->client = 3;
 		}
-		if ($_REQUEST["private"] == 1) {
+		if (GETPOST("private") == 1) {
 			$this->object->particulier = 1;
 		}
 
@@ -345,7 +345,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (isModEnabled('adherent')) {
+			if (isModEnabled('member')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);

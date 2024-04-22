@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +20,16 @@
 
 // Create the autoloader for Luracast
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
-call_user_func(function () {
-	$loader = Luracast\Restler\AutoLoader::instance();
-	spl_autoload_register($loader);
-	return $loader;
-});
+call_user_func(
+	/**
+	 * @return Luracast\Restler\AutoLoader
+	 */
+	static function () {
+		$loader = Luracast\Restler\AutoLoader::instance();
+		spl_autoload_register($loader);
+		return $loader;
+	}
+);
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iAuthenticate.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUseAuthentication.php';
@@ -100,7 +106,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
-		if (isset($_GET['api_key'])) {	// For backward compatibility
+		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
 		}

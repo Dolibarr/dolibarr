@@ -88,6 +88,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 }
 
 $logouttext = '';
+$logouthtmltext = '';
+$toprightmenu = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
@@ -142,11 +144,12 @@ if (isModEnabled('modulebuilder')) {
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';
 	$text .= '</a>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
 // Logout link
-if (GETPOST('withlogout', 'int')) {
+if (GETPOSTINT('withlogout')) {
 	$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 }
 

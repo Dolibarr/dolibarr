@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -87,12 +87,13 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 
 
 $morehtml = '';
-$morehtml .= '<form name="projectform">';
-$morehtml .= '<SELECT name="mode">';
+$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<SELECT name="mode" id="search_project_user">';
 $morehtml .= '<option name="all" value="all"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
-$morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
+$morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");

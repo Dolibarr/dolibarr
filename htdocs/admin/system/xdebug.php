@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,12 @@ if (function_exists('socket_create')) {
 	//$client = socket_accept($sock);
 	$client = socket_connect($socket, $address, $port);
 	if ($client) {
-		print "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
+		if (is_bool($client)) {
+			$client_str = 'true';
+		} else {
+			$client_str = (string) $client;
+		}
+		print "Connection established: ".$client_str." - address=".$address." port=".$port."<br>\n";
 		print "There is a Remote debug server at this address.<br>\n";
 		print "<br>\n";
 		print "To be sure this debugger accepts input from your PHP server and xdebug, be sure to have\n";

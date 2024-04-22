@@ -74,6 +74,7 @@ function llxFooterVierge()
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -101,17 +102,17 @@ if (GETPOST("type", 'alpha')) {
 }
 
 $filters = array();
-if (GETPOST("year", 'int')) {
-	$filters['year'] = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$filters['year'] = GETPOSTINT("year");
 }
-if (GETPOST("id", 'int')) {
-	$filters['id'] = GETPOST("id", 'int');
+if (GETPOSTINT("id")) {
+	$filters['id'] = GETPOSTINT("id");
 }
-if (GETPOST("idfrom", 'int')) {
-	$filters['idfrom'] = GETPOST("idfrom", 'int');
+if (GETPOSTINT("idfrom")) {
+	$filters['idfrom'] = GETPOSTINT("idfrom");
 }
-if (GETPOST("idto", 'int')) {
-	$filters['idto'] = GETPOST("idto", 'int');
+if (GETPOSTINT("idto")) {
+	$filters['idto'] = GETPOSTINT("idto");
 }
 if (GETPOST("project", 'alpha')) {
 	$filters['project'] = GETPOST("project", 'alpha');
@@ -128,16 +129,16 @@ if (GETPOST("notactiontype", 'alpha')) {
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
-if (GETPOST("notolderthan", 'int')) {
-	$filters['notolderthan'] = GETPOST("notolderthan", "int");
+if (GETPOSTINT("notolderthan")) {
+	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOST("status", 'int')) {
-	$filters['status'] = GETPOST("status", 'int');
+if (GETPOST("status", "intcomma")) {
+	$filters['status'] = GETPOST("status", "intcomma");
 }
 
 // Security check
@@ -178,7 +179,7 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (empty($_GET["exportkey"]) || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != $_GET["exportkey"]) {
+	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
 		$user->getrights();
 
 		top_httphead();
@@ -268,7 +269,7 @@ if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
-$exportholidays = GETPOST('includeholidays', 'int');
+$exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
@@ -328,13 +329,13 @@ if ($format == 'rss') {
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

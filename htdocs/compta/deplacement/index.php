@@ -32,16 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'deplacement', '', '');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -54,7 +54,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "d.dated";
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
 
 /*
@@ -83,6 +83,8 @@ $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
 
 $result = $db->query($sql);
+$somme = array();
+$nb = array();
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
@@ -113,6 +115,7 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($nb[$code]) ? (int) $nb[$code] : 0));
 }

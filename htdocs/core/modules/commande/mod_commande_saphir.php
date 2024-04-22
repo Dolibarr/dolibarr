@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Commande	$object		Object we need next value for
 	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -148,20 +148,5 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$numFinal = get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-	 */
-	public function commande_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
  * \brief      File of class with all html predefined components for WebPortal
  */
 
-dol_include_once('/webportal/class/html.formwebportal.class.php');
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php';
 
 /**
  *    Class to manage generation of HTML components
@@ -335,8 +337,8 @@ class FormCardWebPortal
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
 				} elseif ($object->fields[$key]['type'] == 'duration') {
-					if (GETPOST($key . 'hour', 'int') != '' || GETPOST($key . 'min', 'int') != '') {
-						$value = 60 * 60 * GETPOST($key . 'hour', 'int') + 60 * GETPOST($key . 'min', 'int');
+					if (GETPOSTINT($key . 'hour') != '' || GETPOSTINT($key . 'min') != '') {
+						$value = 60 * 60 * GETPOSTINT($key . 'hour') + 60 * GETPOSTINT($key . 'min');
 					} else {
 						$value = '';
 					}
@@ -382,7 +384,7 @@ class FormCardWebPortal
 					}
 				}
 
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					$categories = GETPOST('categories', 'array');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);
@@ -403,7 +405,7 @@ class FormCardWebPortal
 				if ($result >= 0) {
 					$action = 'view';
 					$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 					if ($urltogo && empty($noback)) {
 						header("Location: " . $urltogo);
 						exit;
@@ -655,7 +657,7 @@ class FormCardWebPortal
 
 			$html .= '<div class="valuefieldcreate">';
 			if (in_array($val['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
+				$value = GETPOSTISSET($key) ? GETPOSTINT($key) : $object->$key;
 			} elseif ($val['type'] == 'double') {
 				$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
 			} elseif (preg_match('/^text/', $val['type'])) {

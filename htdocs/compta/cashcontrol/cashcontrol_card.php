@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,21 +36,21 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 $now = dol_now();
-$syear = (GETPOSTISSET('closeyear') ? GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
-$smonth = (GETPOSTISSET('closemonth') ? GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
-$sday = (GETPOSTISSET('closeday') ? GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
+$syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y"));
+$smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m"));
+$sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d"));
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,10 +66,10 @@ if (!$sortorder) {
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 if ($contextpage == 'takepos') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
 
-$arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
+$arrayofpaymentmode = array('cash' => 'Cash', 'cheque' => 'Cheque', 'card' => 'CreditCard');
 
 $arrayofposavailable = array();
 if (isModEnabled('cashdesk')) {
@@ -164,9 +165,9 @@ if ($action == "start") {
 	}
 
 	if (!$error) {
-		$object->day_close = GETPOST('closeday', 'int');
-		$object->month_close = GETPOST('closemonth', 'int');
-		$object->year_close = GETPOST('closeyear', 'int');
+		$object->day_close = GETPOSTINT('closeday');
+		$object->month_close = GETPOSTINT('closemonth');
+		$object->year_close = GETPOSTINT('closeyear');
 
 		$object->opening = price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
@@ -180,7 +181,7 @@ if ($action == "start") {
 			$db->commit();
 			$action = "view";
 		} else {
-			$db->rollback;
+			$db->rollback();
 			$action = "view";
 		}
 	}
@@ -388,7 +389,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		if ($contextpage == 'takepos') {
 			print '<input type="hidden" name="contextpage" value="takepos">';
 		}
-		if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1') {
+		if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
 			print '<input type="hidden" name="action" value="add">';
 		} elseif ($action == 'close') {
 			print '<input type="hidden" name="action" value="valid">';
@@ -426,7 +427,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
-		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
+		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 		print '</td>';
 		// Year
@@ -699,7 +700,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($contextpage == 'takepos') {
 				print '<input type="hidden" name="contextpage" value="takepos">';
 			}
-			if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1') {
+			if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
 				print '<input type="hidden" name="action" value="add">';
 			} elseif ($action == 'close') {
 				print '<input type="hidden" name="action" value="valid">';

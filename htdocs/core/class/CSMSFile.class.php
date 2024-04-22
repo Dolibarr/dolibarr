@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +69,9 @@ class CSMSFile
 	public $priority;
 	public $class;
 	public $message;
+	/**
+	 * @var bool
+	 */
 	public $nostop;
 
 	public $socid;
@@ -207,7 +211,7 @@ class CSMSFile
 				// Send sms method not correctly defined
 				// --------------------------------------
 				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
-				$res = false;
+				$res = false;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
@@ -241,7 +245,7 @@ class CSMSFile
 			fwrite($fp, "Priority: ".$this->priority."\n");
 			fwrite($fp, "Class: ".$this->class."\n");
 			fwrite($fp, "Deferred: ".$this->deferred."\n");
-			fwrite($fp, "DisableStop: ".$this->nostop."\n");
+			fwrite($fp, "DisableStop: ".((string) (int) $this->nostop)."\n");
 			fwrite($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fwrite($fp, "Message:\n".$this->message);
 

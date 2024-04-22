@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$terminal = GETPOST('terminal', 'int');
+$terminal = GETPOSTINT('terminal');
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id'])) {
+if (GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha')) {
 	$_GET['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
@@ -129,7 +129,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	}
 
 	if (GETPOSTISSET('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse)) {
-		$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') > 0 ? GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') : ''), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOSTINT('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse) > 0 ? GETPOSTINT('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse) : ''), 'chaine', 0, '', $conf->entity);
 	}
 
 	if (GETPOSTISSET('TAKEPOS_ADDON'.$terminaltouse)) {
@@ -216,7 +216,7 @@ print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $c
 print '</td></tr>';
 
 $atleastonefound = 0;
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -527,7 +527,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if ($atleastonefound == 0 && isModEnabled("banque")) {
+if ($atleastonefound == 0 && isModEnabled("bank")) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
 

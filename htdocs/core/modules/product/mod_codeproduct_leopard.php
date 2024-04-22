@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +43,6 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	// variables inherited from ModelProductCode class
 	public $name = 'Leopard';
 	public $version = 'dolibarr';
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_modifiable_null;
-	public $code_auto;
-
 
 	/**
 	 *	Constructor
@@ -89,11 +85,11 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return next value
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return next value
 	 */
-	public function getNextValue($objproduct = null, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
 		return '';
 	}
@@ -120,7 +116,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}

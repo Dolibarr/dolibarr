@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 $langs->loadLangs(array("companies","members","partnership", "other"));
 
 // Get parameters
-$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -116,8 +116,8 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('date_partnership_startmonth', 'int'), GETPOST('date_partnership_startday', 'int'), GETPOST('date_partnership_startyear', 'int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GETPOST('date_partnership_endday', 'int'), GETPOST('date_partnership_endyear', 'int'));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_partnership_startmonth'), GETPOSTINT('date_partnership_startday'), GETPOSTINT('date_partnership_startyear'));
+$date_end = dol_mktime(0, 0, 0, GETPOSTINT('date_partnership_endmonth'), GETPOSTINT('date_partnership_endday'), GETPOSTINT('date_partnership_endyear'));
 
 if (empty($reshook)) {
 	$error = 0;

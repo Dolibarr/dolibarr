@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->loadLangs(array("users", "companies", "admin", "website"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');

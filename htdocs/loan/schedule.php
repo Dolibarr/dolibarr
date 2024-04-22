@@ -2,6 +2,7 @@
 /* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
  * Copyright (C) 2018-2023 Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
-$loanid = GETPOST('loanid', 'int');
+$loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = 0;
 if (GETPOSTISSET('socid')) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if ($user->socid) {
 	$socid = $user->socid;
@@ -69,7 +70,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
-		$date = GETPOST('hi_date'.$i, 'int');
+		$date = GETPOSTINT('hi_date'.$i);
 		$mens = price2num(GETPOST('mens'.$i));
 		$int = price2num(GETPOST('hi_interets'.$i));
 		$insurance = price2num(GETPOST('hi_insurance'.$i));
@@ -80,7 +81,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->datec = dol_now();
 		$new_echeance->tms = dol_now();
 		$new_echeance->datep = $date;
-		$new_echeance->amount_capital = $mens - $int;
+		$new_echeance->amount_capital = $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_typepayment = 3;
@@ -114,7 +115,7 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 		$new_echeance = new LoanSchedule($db);
 		$new_echeance->fetch($id);
 		$new_echeance->tms = dol_now();
-		$new_echeance->amount_capital = $mens - $int;
+		$new_echeance->amount_capital = $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_user_modif = $user->id;
@@ -185,9 +186,9 @@ if (isModEnabled('project')) {
 }
 $morehtmlref .= '</div>';
 
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 ?>
 <script type="text/javascript">
@@ -266,19 +267,19 @@ print '</tr>'."\n";
 if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
-	$insurance = $object->insurance_amount / $object->nbterm;
+	$insurance = (float) $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
+	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1), 'MT');
 		$int = ($capital * ($object->rate / 12)) / 100;
 		$int = price2num($int, 'MT');
-		$insu = ($insurance + (($i == 1) ? $regulInsurance : 0));
-		$cap_rest = price2num($capital - ($mens - $int), 'MT');
+		$insu = ((float) $insurance + (($i == 1) ? (float) $regulInsurance : 0));
+		$cap_rest = price2num((float) $capital - ((float) $mens - (float) $int), 'MT');
 		print '<tr>';
 		print '<td class="center" id="n'.$i.'">'.$i.'</td>';
 		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
-		print '<td class="center amount" id="insurance'.$i.'">'.price($insurance + (($i == 1) ? $regulInsurance : 0), 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.($insurance + (($i == 1) ? $regulInsurance : 0)).'">';
+		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
 		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
 		print '<td class="center amount" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
@@ -289,14 +290,14 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 } elseif (count($echeances->lines) > 0) {
 	$i = 1;
 	$capital = $object->capital;
-	$insurance = $object->insurance_amount / $object->nbterm;
+	$insurance = (float) $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
+	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
 	$printed = false;
 	foreach ($echeances->lines as $line) {
 		$mens = $line->amount_capital + $line->amount_interest;
 		$int = $line->amount_interest;
-		$insu = ($insurance + (($i == 1) ? $regulInsurance : 0));
+		$insu = ((float) $insurance + (($i == 1) ? (float) $regulInsurance : 0));
 		$cap_rest = price2num($capital - ($mens - $int), 'MT');
 
 		print '<tr>';

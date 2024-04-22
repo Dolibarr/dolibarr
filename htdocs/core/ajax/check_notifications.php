@@ -95,7 +95,7 @@ $eventfound = array();
 //$eventfound[]=array('type'=>'agenda', 'id'=>1, 'tipo'=>'eee', 'location'=>'aaa');
 
 // TODO Remove use of $_SESSION['auto_check_events_not_before']. Seems not used.
-if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int')) {
+if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOSTINT('forcechecknow')) {
 	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
 	if (!empty($_SESSION['auto_check_events_not_before']))
 	{

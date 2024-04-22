@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +23,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
 /**
  * Parent class for log handlers
  */
-class LogHandler
+abstract class LogHandler implements LogHandlerInterface
 {
+	/**
+	 * @var string Code for the handler
+	 */
+	public $code;
+
 	protected $ident = 0;
+
+	/**
+	 * @var string[] Array of error messages
+	 */
+	public $errors = [];
 
 
 	/**
@@ -80,11 +93,11 @@ class LogHandler
 	 * It will be called after setting the configuration.
 	 * The function returns an array with error messages
 	 *
-	 * @return array
+	 * @return bool
 	 */
 	public function checkConfiguration()
 	{
-		return array();
+		return true;
 	}
 
 	/**

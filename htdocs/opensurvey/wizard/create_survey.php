@@ -151,7 +151,7 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.$langs->trans("ExpireDate").'</td><td>';
 
-print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', '', '', "add", 1, 0);
+print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', 0, 0, 0, "add", 1, 0);
 
 print '</tr>'."\n";
 print '</table>'."\n";

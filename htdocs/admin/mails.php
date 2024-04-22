@@ -86,13 +86,13 @@ if ($action == 'update' && !$cancel) {
 	}
 
 	if (!$error) {
-		dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", GETPOST("MAIN_DISABLE_ALL_MAILS", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", GETPOSTINT("MAIN_DISABLE_ALL_MAILS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOST('MAIN_MAIL_NO_WITH_TO_SELECTED', 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOSTINT("MAIN_MAIL_ENABLED_USER_DEST_SELECT"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOSTINT('MAIN_MAIL_NO_WITH_TO_SELECTED'), 'chaine', 0, '', $conf->entity);
 		// Send mode parameters
 		dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE", 'aZ09'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOST("MAIN_MAIL_SMTP_PORT", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOSTINT("MAIN_MAIL_SMTP_PORT"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", GETPOST("MAIN_MAIL_SMTP_SERVER", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID", GETPOST("MAIN_MAIL_SMTPS_ID", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_PW")) {
@@ -104,11 +104,11 @@ if ($action == 'update' && !$cancel) {
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_OAUTH_SERVICE")) {
 			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		}
-		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", GETPOST("MAIN_MAIL_EMAIL_TLS", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED", GETPOST("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", GETPOSTINT("MAIN_MAIL_EMAIL_TLS"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOSTINT("MAIN_MAIL_EMAIL_STARTTLS"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED", GETPOSTINT("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED"), 'chaine', 0, '', $conf->entity);
 
-		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED", GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED", GETPOSTINT("MAIN_MAIL_EMAIL_DKIM_ENABLED"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN", GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_SELECTOR", GETPOST("MAIN_MAIL_EMAIL_DKIM_SELECTOR", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", GETPOST("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -273,9 +273,9 @@ if ($action == 'edit') {
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
-			                			jQuery("#smtp_port_mess").hide();
+			                jQuery("#smtp_port_mess").hide();
                             jQuery(".smtp_method").show();
-														jQuery(".dkim").hide();
+							jQuery(".dkim").hide();
                             jQuery(".smtp_auth_method").show();
 						}
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
@@ -302,25 +302,25 @@ if ($action == 'edit') {
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();
-														jQuery(".smtp_method").show();
+							jQuery(".smtp_method").show();
                             jQuery(".dkim").show();
-														jQuery(".smtp_auth_method").show();
+							jQuery(".smtp_auth_method").show();
                         }
                     }
 					function change_smtp_auth_method() {
-						console.log(jQuery("#radio_pw").prop("checked"));
+						console.log("Call smtp auth method");
 						if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\' && jQuery("#radio_oauth").prop("checked")) {
-							jQuery(".smtp_oauth_service").show();
 							jQuery(".smtp_pw").hide();
+							jQuery(".smtp_oauth_service").show();
 						} else if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\' && jQuery("#radio_oauth").prop("checked")) {
+							jQuery(".smtp_pw").hide();
 							jQuery(".smtp_oauth_service").show();
-							jQuery(".smtp_pw").hide();
 						} else if(jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\'){
-							jQuery(".smtp_oauth_service").hide();
 							jQuery(".smtp_pw").hide();
-						} else {
 							jQuery(".smtp_oauth_service").hide();
+						} else {
 							jQuery(".smtp_pw").show();
+							jQuery(".smtp_oauth_service").hide();
 						}
 					}
                     initfields();
@@ -329,7 +329,7 @@ if ($action == 'edit') {
                         initfields();
 						change_smtp_auth_method();
                     });
-					jQuery("#radio_pw, #radio_oauth").change(function() {
+					jQuery("#radio_pw, #radio_plain, #radio_oauth").change(function() {
 						change_smtp_auth_method();
 					});
                     jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
@@ -450,7 +450,10 @@ if ($action == 'edit') {
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
 			print '<input type="radio" id="radio_pw" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="LOGIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
-			print '<label for="radio_pw" >'.$langs->trans("UsePassword").'</label>';
+			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
+			print '&nbsp; &nbsp; &nbsp;';
+			print '<input type="radio" id="radio_plain" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="PLAIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
 			print '&nbsp; &nbsp; &nbsp;';
 			print '<input type="radio" id="radio_oauth" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="XOAUTH2"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') == 'XOAUTH2' ? ' checked' : '').'> ';
 			print '<label for="radio_oauth" >'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
@@ -630,13 +633,13 @@ if ($action == 'edit') {
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
-	print '"></td></tr>';
+	print '<td><input class="flat width300" name="MAIN_MAIL_ERRORS_TO" value="'.getDolGlobalString('MAIN_MAIL_ERRORS_TO').'">';
+	print '</td></tr>';
 
 	// Autocopy to
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO') ? $conf->global->MAIN_MAIL_AUTOCOPY_TO : '');
-	print '"></td></tr>';
+	print '<td><input class="flat width300" name="MAIN_MAIL_AUTOCOPY_TO" value="'.getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO').'">';
+	print '</td></tr>';
 
 	// Add user to select destinaries list
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
@@ -698,7 +701,14 @@ if ($action == 'edit') {
 		// AUTH method
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
 			$authtype = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
-			$text = ($authtype === "LOGIN") ? $langs->trans("UsePassword") : ($authtype === "XOAUTH2" ? $langs->trans("UseOauth") : '') ;
+			$text = '';
+			if ($authtype === "LOGIN") {
+				$text = $langs->trans("UseAUTHLOGIN");
+			} elseif ($authtype === "PLAIN") {
+				$text = $langs->trans("UseAUTHPLAIN");
+			} elseif ($authtype === "XOAUTH2") {
+				$text = $langs->trans("UseOauth");
+			}
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>'.$text.'</td></tr>';
 		}
 
@@ -998,23 +1008,23 @@ if ($action == 'edit') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
 			if (getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD')) {
 				// List of string to add in SPF if the setup use the mail method. Example 'include:sendgrid.net include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD'));
 			} else {
 				// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
 				if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {
 					// List of IP show as record to add in SPF if we use the mail method
-					$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+					$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
 				}
 			}
 		} else {
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {
 				// List of IP show as record to add as allowed IP if we use the smtp method. Value is '1.2.3.4, [aaaa:bbbb:cccc:dddd]'
 				// TODO Add a key to allow to show the IP/name of server detected dynamically
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS -->'.$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
 			}
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD')) {	// Should be required only if you have preset the Dolibarr to use your own SMTP and you want to warn users to update their domain name to match your SMTP server.
 				// List of string to add in SPF if we use the smtp method. Example 'include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 		}
 		// Test SPF email company
@@ -1109,7 +1119,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 		$formmail->withlayout = 1;
-		$formmail->withaiprompt = 1;
+		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly = 0;
 		$formmail->withcancel = 1;

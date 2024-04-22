@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  */
 
 $hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
-$parameters = array('resource_id'=>$id);
+$parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -195,7 +196,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
-			$result = $object->delete($id);
+			$result = $object->delete($user);
 
 			if ($result >= 0) {
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);
@@ -224,7 +225,7 @@ $formresource = new FormResource($db);
 if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if ($action == 'create') {
 		print load_fiche_titre($title, '', 'object_resource');
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 	} else {
 		$head = resource_prepare_head($object);
 		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
@@ -256,13 +257,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
 		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
 		if ($conf->browser->layout == 'phone') {
 			print '</tr><tr>';
 		}
-		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
 		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';

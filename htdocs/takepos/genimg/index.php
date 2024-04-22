@@ -41,9 +41,9 @@ if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../../main.inc.php'; // Load $user and permissions
 }
 
-$id = GETPOST('id', 'int');
-$w = GETPOST('w', 'int');
-$h = GETPOST('h', 'int');
+$id = GETPOSTINT('id');
+$w = GETPOSTINT('w');
+$h = GETPOSTINT('h');
 $query = GETPOST('query', 'alpha');
 
 if (!isModEnabled('takepos')) {

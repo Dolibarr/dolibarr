@@ -89,7 +89,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 
-					if (dol_eval($objp->test, 1, 1, '2')) {
+					if ((int) dol_eval($objp->test, 1, 1, '2')) {
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) {
 							$nextrun = $this->db->jdate($objp->datestart);

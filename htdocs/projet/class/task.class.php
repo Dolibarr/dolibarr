@@ -6,6 +6,7 @@
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class Task extends CommonObjectLine
 	public $picto = 'projecttask';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'element_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_element', 'parenttypefield' => 'elementtype', 'parenttypevalue' => 'task')
@@ -272,6 +273,7 @@ class Task extends CommonObjectLine
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
+		$sql .= ", priority";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -286,6 +288,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
+		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -451,7 +454,7 @@ class Task extends CommonObjectLine
 
 		// Clean parameters
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			$this->fk_project = (int) $this->fk_project;
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -472,7 +475,7 @@ class Task extends CommonObjectLine
 			$this->planned_workload = trim($this->planned_workload);
 		}
 		if (isset($this->budget_amount)) {
-			$this->budget_amount = trim($this->budget_amount);
+			$this->budget_amount = (float) $this->budget_amount;
 		}
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
@@ -497,6 +500,7 @@ class Task extends CommonObjectLine
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
+		$sql .= " priority=".((!empty($this->priority)) ? $this->priority : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -524,7 +528,12 @@ class Task extends CommonObjectLine
 					$project->getLinesArray(null); // this method does not return <= 0 if fails
 					$projectCompleted = array_reduce(
 						$project->lines,
-						function ($allTasksCompleted, $task) {
+						/**
+						 * @param bool $allTasksCompleted
+						 * @param Task $task
+						 * @return bool
+						 */
+						static function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
 						1
@@ -881,7 +890,7 @@ class Task extends CommonObjectLine
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 		}
 
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -897,10 +906,12 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
+		global $user;
+
 		$this->id = 0;
 
 		$this->fk_project = 0;
@@ -908,10 +919,14 @@ class Task extends CommonObjectLine
 		$this->fk_task_parent = 0;
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
-		$this->fk_user_creat = 1;
+		$this->fk_user_creat = $user->id;
 		$this->progress = '25';
 		$this->status = 0;
-		$this->note = 'This is a specimen task not';
+		$this->priority = 0;
+		$this->note_private = 'This is a specimen private note';
+		$this->note_public = 'This is a specimen public note';
+
+		return 1;
 	}
 
 	/**
@@ -926,9 +941,9 @@ class Task extends CommonObjectLine
 	 * @param	string	$filteronproj    		Filter on project ref or label
 	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
 	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	string	$filteronprojuser		Filter on user that is a contact of project
-	 * @param	string	$filterontaskuser		Filter on user assigned to task
-	 * @param	Extrafields	$extrafields	    Show additional column from project or task
+	 * @param	int		$filteronprojuser		Filter on user that is a contact of project
+	 * @param	int		$filterontaskuser		Filter on user assigned to task
+	 * @param	?Extrafields	$extrafields	Show additional column from project or task
 	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
 	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
 	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
@@ -937,9 +952,9 @@ class Task extends CommonObjectLine
 	 * @param	string	$sortorder				Sort order
 	 * @return 	array|string					Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = null, $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$tasks = array();
 
@@ -952,7 +967,7 @@ class Task extends CommonObjectLine
 		}
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang, t.priority,";
 		$sql .= " t.description, ";
 		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
@@ -1046,17 +1061,19 @@ class Task extends CommonObjectLine
 		if ($filteronproj) {
 			$sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
 		}
-		if ($filteronprojstatus && $filteronprojstatus != '-1') {
+		if ($filteronprojstatus && (int) $filteronprojstatus != '-1') {
 			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($filteronprojstatus).")";
 		}
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
 		}
+
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
-		global $db; // needed for extrafields_list_search_sql.tpl
+		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -1065,7 +1082,7 @@ class Task extends CommonObjectLine
 			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
-			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
+			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority,";
 			$sql .= " t.description, ";
 			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
@@ -1151,6 +1168,7 @@ class Task extends CommonObjectLine
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
 					$tasks[$i]->rang	   		= $obj->rang;
+					$tasks[$i]->priority   		= $obj->priority;
 
 					$tasks[$i]->socid           = $obj->thirdparty_id; // For backward compatibility
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
@@ -1188,7 +1206,7 @@ class Task extends CommonObjectLine
 	 *
 	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
 	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -1197,7 +1215,7 @@ class Task extends CommonObjectLine
 	{
 		$arrayroles = array();
 
-		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".json_encode(is_object($userp))." usert=".json_encode(is_object($usert))." projectid=".$projectid." taskid=".$taskid);
 
 		// We want role of user for a projet or role of user for a task. Both are not possible.
 		if (empty($userp) && empty($usert)) {
@@ -1319,6 +1337,66 @@ class Task extends CommonObjectLine
 		return $contactAlreadySelected;
 	}
 
+	/**
+	 * Merge contact of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeContactTask($origin_id, $dest_id)
+	{
+		$error = 0;
+		$origintask = new Task($this->db);
+		$result = $origintask->fetch($origin_id);
+		if ($result <= 0) {
+			return false;
+		}
+
+		//Get list of origin contacts
+		$arraycontactorigin = array_merge($origintask->liste_contact(-1, 'internal'), $origintask->liste_contact(-1, 'external'));
+		if (is_array($arraycontactorigin)) {
+			foreach ($arraycontactorigin as $key => $contact) {
+				$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
+				if ($result < 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Merge time spent of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeTimeSpentTask($origin_id, $dest_id)
+	{
+		$ret = true;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."element_time as et";
+		$sql .= " SET et.fk_element = ".((int) $dest_id);
+		$sql .= " WHERE et.elementtype = 'task'";
+		$sql .= " AND et.fk_element = ".((int) $origin_id);
+
+		dol_syslog(get_class($this)."::mergeTimeSpentTask", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$ret = false;
+		}
+
+		if ($ret == true) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+		return $ret;
+	}
 
 	/**
 	 *  Add time spent
@@ -1593,7 +1671,7 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User		$fuser		Filter on a dedicated user
+	 *	@param		User|string	$fuser		Filter on a dedicated user
 	 *  @param		string		$dates		Start date (ex 00:00:00)
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
@@ -2009,6 +2087,7 @@ class Task extends CommonObjectLine
 		$clone_task->date_c = $datec;
 		$clone_task->planned_workload = $origin_task->planned_workload;
 		$clone_task->rang = $origin_task->rang;
+		$clone_task->priority = $origin_task->priority;
 
 		//Manage Task Date
 		if ($clone_change_dt) {
@@ -2041,9 +2120,10 @@ class Task extends CommonObjectLine
 			$this->error = $clone_task->error;
 			$error++;
 		}
-
 		// End
-		if (!$error) {
+		if ($error) {
+			$clone_task_id = 0;  // For static tool check
+		} else {
 			$clone_task_id = $clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
@@ -2271,8 +2351,6 @@ class Task extends CommonObjectLine
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf;
-
 		$outputlangs->load("projects");
 
 		if (!dol_strlen($modele)) {
@@ -2472,11 +2550,137 @@ class Task extends CommonObjectLine
 			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		if (property_exists($this, 'duration_effective')) {
-			$return .= '<br><br><div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
+			$return .= '<br><div class="info-box-label progressinkanban paddingtop">'.getTaskProgressView($this, false, true).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
+	}
+
+	/**
+	 *    Merge a task with another one, deleting the given task.
+	 *    The task given in parameter will be removed.
+	 *
+	 *    @param	int     $task_origin_id		Task to merge the data from
+	 *    @return	int							-1 if error
+	 */
+	public function mergeTask($task_origin_id)
+	{
+		global $conf, $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$task_origin = new Task($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeTask merge task id=".$task_origin_id." (will be deleted) into the task id=".$this->id);
+
+		$langs->load('error');
+
+		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$listofproperties = array(
+				'label', 'description', 'duration_effective', 'planned_workload', 'datec', 'date_start',
+				'date_end', 'fk_user_creat', 'fk_user_valid', 'fk_statut', 'progress', 'budget_amount',
+				'priority', 'rang', 'fk_projet', 'fk_task_parent'
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $task_origin->$property;
+				}
+			}
+
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $task_origin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($task_origin->array_options)) {
+				foreach ($task_origin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// Update
+			$result = $this->update($user);
+
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Merge time spent
+			if (!$error) {
+				$result = $this->mergeTimeSpentTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
+
+			// Merge contacts
+			if (!$error) {
+				$result = $this->mergeContactTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('task_origin' => $task_origin->id, 'task_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge' => 1, 'mergefromid' => $task_origin->id, 'mergefromref' => $task_origin->ref);
+
+				// Call trigger
+				$result = $this->call_trigger('TASK_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// We finally remove the old task
+				if ($task_origin->delete($user) < 1) {
+					$this->error = $task_origin->error;
+					$this->errors = $task_origin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsTaskMerge');
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		return -1;
 	}
 }

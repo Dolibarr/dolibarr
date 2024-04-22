@@ -165,8 +165,10 @@ class Export
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
-											} else {
+											} elseif (!empty($perm[1])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
+											} else {
+												$bool = false;
 											}
 											if ($perm[0] == 'user' && $user->admin) {
 												$bool = true;
@@ -474,11 +476,11 @@ class Export
 			case 'FormSelect':
 				//var_dump($NameField);
 				if ($InfoFieldList[1] == 'select_company') {
-					$szFilterField .= $form->select_company('', $NameField, '', 1);
+					$szFilterField .= $form->select_company('', $NameField, '', 1, 0, 0, [], 0, 'maxwidth200');
 				} elseif ($InfoFieldList[1] == 'selectcontacts') {
-					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
 				} elseif ($InfoFieldList[1] == 'select_dolusers') {
-					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+					$szFilterField .= $form->select_dolusers('', $NameField, 1, null, 0, '', '', '', 0, 0, "", 0, "", "maxwidth200");
 				}
 				break;
 			case 'List':
@@ -764,7 +766,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0, '1');
+								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";

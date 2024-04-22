@@ -75,7 +75,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -92,7 +92,7 @@ if ($action == 'up') {
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -126,7 +126,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -143,7 +143,7 @@ if ($action == 'up') {
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -174,7 +174,7 @@ if ($action == 'up') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE rowid = ".GETPOSTINT('menuId');
 	$resql = $db->query($sql);
 	if ($resql) {
 		$db->commit();
@@ -231,11 +231,11 @@ print "<br>\n";
 if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE m.rowid = ".GETPOSTINT('menuId');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
@@ -274,7 +274,8 @@ i.e.: data[]= array (index, parent index, string )
 
 // First the root item of the tree must be declared:
 
-$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+$data = array();
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
 // Then all child items must be declared
 
@@ -314,17 +315,17 @@ if ($res) {
 		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 		$data[] = array(
-			'rowid'=>$menu['rowid'],
-			'module'=>$menu['module'],
-			'fk_menu'=>$menu['fk_menu'],
-			'title'=>$titre,
-			'mainmenu'=>$menu['mainmenu'],
-			'leftmenu'=>$menu['leftmenu'],
-			'fk_mainmenu'=>$menu['fk_mainmenu'],
-			'fk_leftmenu'=>$menu['fk_leftmenu'],
-			'position'=>$menu['position'],
-			'entry'=>$entry,
-			'buttons'=>$buttons
+			'rowid' => $menu['rowid'],
+			'module' => $menu['module'],
+			'fk_menu' => $menu['fk_menu'],
+			'title' => $titre,
+			'mainmenu' => $menu['mainmenu'],
+			'leftmenu' => $menu['leftmenu'],
+			'fk_mainmenu' => $menu['fk_mainmenu'],
+			'fk_leftmenu' => $menu['fk_leftmenu'],
+			'position' => $menu['position'],
+			'entry' => $entry,
+			'buttons' => $buttons
 		);
 		$i++;
 	}
@@ -378,7 +379,7 @@ if (count($remainingdata)) {
 	print '<tr>';
 	print '<td colspan="2">';
 	foreach ($remainingdata as $datar) {
-		$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+		$father = array('rowid' => $datar['rowid'], 'title' => "???", 'mainmenu' => $datar['fk_mainmenu'], 'leftmenu' => $datar['fk_leftmenu'], 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 		//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
 		tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
 	}

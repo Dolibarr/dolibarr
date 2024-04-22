@@ -1,11 +1,14 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
 /**
  * Class to manage logging to syslog
  */
-class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
+class mod_syslog_syslog extends LogHandler
 {
 	public $code = 'syslog';
 
@@ -77,15 +80,14 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	array		Array of errors. Empty array if ok.
+	 * 	@return	bool		True if ok.
 	 */
 	public function checkConfiguration()
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$errors = array();
+		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 
-		$facility = constant($conf->global->SYSLOG_FACILITY);
 		if ($facility) {
 			// Only LOG_USER supported on Windows
 			if (!empty($_SERVER["WINDIR"])) {
@@ -93,20 +95,21 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 			}
 
 			dol_syslog("admin/syslog: facility ".$facility);
+			return true;
 		} else {
-			$errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			return false;
 		}
-
-		return $errors;
 	}
 
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 	Array containing the info about the message
-	 * @return	void
+	 * @param   array   $content            Array containing the info about the message
+	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
+	 * @return  void
 	 */
-	public function export($content)
+	public function export($content, $suffixinfilename = '')
 	{
 		global $conf;
 

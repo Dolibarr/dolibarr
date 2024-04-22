@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2022 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,21 +84,20 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/expensereport/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModeleExpenseReport $module';
 
 		if ($module->write_file($expensespecimen, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expensereport&file=SPECIMEN.pdf");
@@ -152,16 +152,19 @@ if ($action == 'updateMask') {
 
 	$res3 = 0;
 	if (isModEnabled('project') && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
-		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int'), 'chaine', 0, '', $conf->entity);
+		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOSTINT('EXPENSEREPORT_PROJECT_IS_REQUIRED'), 'chaine', 0, '', $conf->entity);
 	}
 
-	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
+	$dates = GETPOSTINT('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH');
 	$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
 
-	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
+	$amounts = GETPOSTINT('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
 	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
 
-	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 >0) || !($res5 >0)) {
+	$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
+	$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0)) {
 		$error++;
 	}
 
@@ -337,6 +340,7 @@ foreach ($dirmodels as $reldir) {
 	if (is_dir($dir)) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
+			$filelist = array();
 			while (($file = readdir($handle)) !== false) {
 				$filelist[] = $file;
 			}
@@ -478,20 +482,26 @@ if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';
-	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', !getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 0 : 1, 1);
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', !getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', !getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '</table>';

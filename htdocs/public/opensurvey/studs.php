@@ -288,7 +288,7 @@ if ($testmodifier) {
 }
 
 // Delete comment
-$idcomment = GETPOST('deletecomment', 'int');
+$idcomment = GETPOSTINT('deletecomment');
 if ($idcomment) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');

@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,20 +39,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 	public $id;
 
 	public $picto = 'fa-shield-alt';
-
-	/**
-	 * Minimum length (text visible by end user)
-	 *
-	 * @var int
-	 */
-	public $length;
-
-	/**
-	 * Minimum length in number of characters
-	 *
-	 * @var integer
-	 */
-	public $length2;
 
 	public $NbMaj;
 	public $NbNum;

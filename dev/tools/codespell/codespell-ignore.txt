@@ -13,6 +13,11 @@ categorie
 categories
 clos
 crypted
+contaxt
+courant
+datea
+datee
+doubleclick
 errorstring
 exten
 falsy
@@ -27,6 +32,8 @@ thead
 ue
 whitelist
 ws
+# Thirdparty should be Third party or Third-party but ignoring it because it's omnipresent
+thirdparty
 # Code string
 ect
 tempdate
@@ -57,3 +64,4 @@ dur
 fonction
 espace
 methode
+datee

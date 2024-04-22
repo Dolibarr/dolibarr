@@ -2,6 +2,7 @@
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
 
+// Do not use GETPOST, the function does not exists yet.
 if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must not renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
@@ -45,10 +47,10 @@ $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');
 $forbarcode = GETPOST('forbarcode', 'alphanohtml');
-$fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+$fk_barcode_type = GETPOSTINT('fk_barcode_type');
 $mode = GETPOST('mode', 'aZ09');
 $modellabel = GETPOST("modellabel", 'aZ09'); // Doc template to use
-$numberofsticker = GETPOST('numberofsticker', 'int');
+$numberofsticker = GETPOSTINT('numberofsticker');
 
 $mesg = '';
 
@@ -86,8 +88,8 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
 		$action = ''; // We reset because we don't want to build doc
-		if (GETPOST('productid', 'int') > 0) {
-			$result = $producttmp->fetch(GETPOST('productid', 'int'));
+		if (GETPOSTINT('productid') > 0) {
+			$result = $producttmp->fetch(GETPOSTINT('productid'));
 			if ($result < 0) {
 				setEventMessage($producttmp->error, 'errors');
 			}
@@ -105,8 +107,8 @@ if (empty($reshook)) {
 	}
 	if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
 		$action = ''; // We reset because we don't want to build doc
-		if (GETPOST('socid', 'int') > 0) {
-			$thirdpartytmp->fetch(GETPOST('socid', 'int'));
+		if (GETPOSTINT('socid') > 0) {
+			$thirdpartytmp->fetch(GETPOSTINT('socid'));
 			$forbarcode = $thirdpartytmp->barcode;
 			$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
@@ -178,6 +180,7 @@ if (empty($reshook)) {
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
 			$module = new $classname($db);
+			'@phan-var-force ModeleBarCode $module';
 			if ($generator != 'tcpdfbarcode') {
 				// May be phpbarcode
 				$template = 'standardlabel';
@@ -222,6 +225,7 @@ if (empty($reshook)) {
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
+			$arrayofrecords = array();
 			// For labels
 			if ($mode == 'label') {
 				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
@@ -236,14 +240,14 @@ if (empty($reshook)) {
 				if ($numberofsticker <= $MAXSTICKERS) {
 					for ($i = 0; $i < $numberofsticker; $i++) {
 						$arrayofrecords[] = array(
-							'textleft'=>$textleft,
-							'textheader'=>$textheader,
-							'textfooter'=>$textfooter,
-							'textright'=>$textright,
-							'code'=>$code,
-							'encoding'=>$encoding,
-							'is2d'=>$is2d,
-							'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
+							'textleft' => $textleft,
+							'textheader' => $textheader,
+							'textfooter' => $textfooter,
+							'textright' => $textright,
+							'code' => $code,
+							'encoding' => $encoding,
+							'is2d' => $is2d,
+							'photo' => !empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
 						);
 					}
 				} else {
@@ -251,8 +255,6 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
-
-			$i++;
 
 			// Build and output PDF
 			if (!$error && $mode == 'label') {
@@ -334,7 +336,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ? GETPOST('numberofsticker', 'int') : 10).'">';
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ? GETPOSTINT('numberofsticker') : 10).'">';
 print '</div></div>';
 
 print '</div>';
@@ -410,7 +412,7 @@ if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';
-	$form->select_produits(GETPOST('productid', 'int'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
+	$form->select_produits(GETPOSTINT('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
 	print ' &nbsp; <input type="submit" class="button small" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }
@@ -419,7 +421,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';
-	print $form->select_company(GETPOST('socid', 'int'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+	print $form->select_company(GETPOSTINT('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector small" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }

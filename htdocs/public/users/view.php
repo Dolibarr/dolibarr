@@ -49,7 +49,7 @@ $mode     = GETPOST('mode', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $backtopage = '';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekey = GETPOST('securekey', 'alpha');
 $suffix = GETPOST('suffix');
 

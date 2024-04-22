@@ -76,6 +76,7 @@ function checkVATGR($username, $password, $AFMcalledby, $AFMcalledfor)
 	$authHeader->UsernameToken = new stdClass();
 	$authHeader->UsernameToken->Username = "$username";
 	$authHeader->UsernameToken->Password = "$password";
+	$Headers = array();
 	$Headers[] = new SoapHeader('https://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
 	$client->__setSoapHeaders($Headers);
 	$result = $client->rgWsPublicAfmMethod(

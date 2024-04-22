@@ -28,17 +28,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$date_startday = GETPOST('date_startday', 'int');
-$date_startmonth = GETPOST('date_startmonth', 'int');
-$date_startyear = GETPOST('date_startyear', 'int');
-$date_endday = GETPOST('date_endday', 'int');
-$date_endmonth = GETPOST('date_endmonth', 'int');
-$date_endyear = GETPOST('date_endyear', 'int');
+$date_startday = GETPOSTINT('date_startday');
+$date_startmonth = GETPOSTINT('date_startmonth');
+$date_startyear = GETPOSTINT('date_startyear');
+$date_endday = GETPOSTINT('date_endday');
+$date_endmonth = GETPOSTINT('date_endmonth');
+$date_endyear = GETPOSTINT('date_endyear');
 
 $nbofyear = 4;
 
 // Date range
-$year = GETPOST('year', 'int');
+$year = GETPOSTINT('year');
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), "%Y");
 	$month_current = dol_print_date(dol_now(), "%m");
@@ -57,7 +57,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
-		$month_start = GETPOSTISSET("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$month_start = GETPOSTISSET("month") ? GETPOSTINT("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
@@ -91,8 +91,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	}
 }
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 
 $tmps = dol_getdate($date_start);
 $year_start = $tmps['year'];
@@ -251,8 +251,8 @@ $sql .= " ORDER BY dm";
 
 $minyearmonth = $maxyearmonth = 0;
 
-$cum = array();
-$cum_ht = array();
+$cumulative = array();
+$cumulative_ht = array();
 $total_ht = array();
 $total = array();
 
@@ -262,8 +262,8 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$cum_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
-		$cum[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
+		$cumulative_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
+		$cumulative[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
 		if ($obj->amount_ttc) {
 			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -365,9 +365,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Value turnover of month w/o VAT
 				print '<td class="right">';
-				if (!empty($cum_ht[$case])) {
+				if (!empty($cumulative_ht[$case])) {
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
-					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
+					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
 				} else {
 					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
 						print '0';
@@ -380,12 +380,12 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Value turnover of month
 			print '<td class="right">';
-			if (!empty($cum[$case])) {
+			if (!empty($cumulative[$case])) {
 				$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 				if ($modecompta != 'BOOKKEEPING') {
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
 				}
-				print price($cum[$case], 1);
+				print price($cumulative[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') {
 					print '</a>';
 				}
@@ -400,22 +400,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Percentage of month
 			if ($annee_decalage > $minyear && $case <= $casenow) {
-				if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
-					$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
-					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+				if (!empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
+					$percent = (round(($cumulative[$case] - $cumulative[$caseprev]) / $cumulative[$caseprev], 4) * 100);
+					//print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
 					print '<td class="borderrightlight right">'.($percent >= 0 ? "+$percent" : "$percent").'%</td>';
 				}
-				if (!empty($cum[$caseprev]) && empty($cum[$case])) {
+				if (!empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">-100%</td>';
 				}
-				if (empty($cum[$caseprev]) && !empty($cum[$case])) {
+				if (empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
 					//print '<td class="right">+Inf%</td>';
 					print '<td class="borderrightlight right">-</td>';
 				}
-				if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
+				if (isset($cumulative[$caseprev]) && empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">+0%</td>';
 				}
-				if (!isset($cum[$caseprev]) && empty($cum[$case])) {
+				if (!isset($cumulative[$caseprev]) && empty($cumulative[$case])) {
 					print '<td class="borderrightlight right">-</td>';
 				}
 			} else {
@@ -434,14 +434,14 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		}
 
 		if (empty($total_ht[$annee])) {
-			$total_ht[$annee] = ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+			$total_ht[$annee] = ((!empty($cumulative_ht[$case])) ? $cumulative_ht[$case] : 0);
 		} else {
-			$total_ht[$annee] += ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+			$total_ht[$annee] += ((!empty($cumulative_ht[$case])) ? $cumulative_ht[$case] : 0);
 		}
 		if (empty($total[$annee])) {
-			$total[$annee] = (empty($cum[$case]) ? 0 : $cum[$case]);
+			$total[$annee] = (empty($cumulative[$case]) ? 0 : $cumulative[$case]);
 		} else {
-			$total[$annee] += (empty($cum[$case]) ? 0 : $cum[$case]);
+			$total[$annee] += (empty($cumulative[$case]) ? 0 : $cumulative[$case]);
 		}
 	}
 

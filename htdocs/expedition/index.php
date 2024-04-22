@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $hookmanager = new HookManager($db);
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('sendingindex'));

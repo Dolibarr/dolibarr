@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?: 'userldap'; // To manage different context of search
 
 // Security check
 $socid = 0;
@@ -125,6 +126,7 @@ print '</tr>';
 if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connectBind();
+	$userSID = '';
 	if ($result > 0) {
 		$userSID = $ldap->getObjectSid($object->login);
 	}
@@ -204,6 +206,7 @@ if ($result > 0) {
 
 	$ldap->unbind();
 } else {
+	print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

@@ -34,8 +34,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil', 'int');
-$id = GETPOST('id', 'int');
+$codeventil = GETPOSTINT('codeventil');
+$id = GETPOSTINT('id');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -44,7 +44,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 

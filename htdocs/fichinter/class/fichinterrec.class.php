@@ -8,6 +8,8 @@
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +110,10 @@ class FichinterRec extends Fichinter
 	 * int rank
 	 */
 	public $rang;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	public $usenewprice = 0;
@@ -304,7 +310,7 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->title				= $obj->title;
+				$this->title = $obj->title;
 				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
@@ -504,7 +510,7 @@ class FichinterRec extends Fichinter
 			}
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
@@ -658,7 +664,7 @@ class FichinterRec extends Fichinter
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -674,7 +680,7 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -685,6 +691,8 @@ class FichinterRec extends Fichinter
 		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
+
+		return 1;
 	}
 
 	/**
@@ -865,7 +873,7 @@ class FichinterRec extends Fichinter
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
 		// si on et arrivé à la fin des génération
-		if ($this->nb_gen_max == $this->nb_gen_done + 1) {
+		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
 			$sql .= ' , statut = 1';
 		}
 

@@ -83,6 +83,7 @@ foreach ($liste as $key => $val) {
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text = $model->getDriverDescForKey($key);
 	$label = $liste[$key];
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';

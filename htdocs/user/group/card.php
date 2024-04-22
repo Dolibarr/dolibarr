@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,14 +52,14 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$userid = GETPOST('user', 'int');
+$userid = GETPOSTINT('user');
 
 $object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
@@ -222,7 +223,7 @@ if (empty($reshook)) {
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
-				$object->entity = GETPOST("entity", "int");
+				$object->entity = GETPOSTINT("entity");
 			}
 
 			$ret = $object->update();
@@ -274,7 +275,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 

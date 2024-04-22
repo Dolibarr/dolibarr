@@ -2,6 +2,8 @@
 /* Copyright (C) 2019-2020 	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 		Christian Humpel     <christian.humpel@gmail.com>
  * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +46,16 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
 
 // Get parameters
-$id          = GETPOST('id', 'int');
+$id          = GETPOSTINT('id');
 $ref         = GETPOST('ref', 'alpha');
 $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');
-$lineid      = GETPOST('lineid', 'int');
-$fk_movement = GETPOST('fk_movement', 'int');
-$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
+$lineid      = GETPOSTINT('lineid');
+$fk_movement = GETPOSTINT('fk_movement');
+$fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
@@ -96,7 +98,7 @@ $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'row
 $permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('mrp', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 $permissiontoproduce = $permissiontoadd;
 $permissiontoupdatecost = $user->hasRight('bom', 'read'); // User who can define cost must have knowledge of pricing
@@ -170,10 +172,10 @@ if (empty($reshook)) {
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'confirm_reopen' && $permissiontoadd) {
@@ -186,8 +188,8 @@ if (empty($reshook)) {
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOST('qtytoadd', 'int');
-		$moline->fk_product = GETPOST('productidtoadd', 'int');
+		$moline->qty = GETPOSTINT('qtytoadd');
+		$moline->fk_product = GETPOSTINT('productidtoadd');
 		if (GETPOST('addconsumelinebutton')) {
 			$moline->role = 'toconsume';
 		} else {
@@ -390,7 +392,7 @@ if (empty($reshook)) {
 			$consumptioncomplete = true;
 			$productioncomplete = true;
 
-			if (GETPOST('autoclose', 'int')) {
+			if (GETPOSTINT('autoclose')) {
 				foreach ($object->lines as $line) {
 					if ($line->role == 'toconsume') {
 						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
@@ -421,8 +423,7 @@ if (empty($reshook)) {
 			}
 
 			// Update status of MO
-			dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+			dol_syslog("consumptioncomplete = ".json_encode($consumptioncomplete)." productioncomplete = ".json_encode($productioncomplete));
 			if ($consumptioncomplete && $productioncomplete) {
 				$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 			} else {
@@ -476,14 +477,14 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_editline' && $permissiontoadd) {
 		$moline = new MoLine($db);
-		$res = $moline->fetch(GETPOST('lineid', 'int'));
+		$res = $moline->fetch(GETPOSTINT('lineid'));
 		if ($result > 0) {
 			$extrafields->fetch_name_optionals_label($moline->element);
 			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
 				$value = GETPOST('options_'.$key, 'alphanohtml');
 				$moline->array_options["options_".$key] = $value;
 			}
-			$moline->qty = GETPOST('qty_lineProduce', 'int');
+			$moline->qty = GETPOSTINT('qty_lineProduce');
 			$res = $moline->update($user);
 			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
@@ -822,7 +823,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
 		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
-		$parameters = array('morecss'=>'reposition');
+		$parameters = array('morecss' => 'reposition');
 
 		$newcardbutton = '';
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
@@ -1278,7 +1279,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action Edit line
 						if ($object->status == Mo::STATUS_DRAFT) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line2['rowid']);
 							print '<td class="center">';
 							print '<a class="reposition" href="' . $href . '">';
 							print img_picto($langs->trans('TooltipEditAndRevertStockMovement'), 'edit');
@@ -1288,7 +1289,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line2['rowid']).'&fk_movement='.((int) $line2['fk_stock_movement']);
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';
 							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
@@ -1431,7 +1432,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$newcardbutton = '';
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline&token='.newToken();
 		$permissiontoaddaproductline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
-		$parameters = array('morecss'=>'reposition');
+		$parameters = array('morecss' => 'reposition');
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
 			if ($nblinetoproduce == 0 || $object->mrptype == 1) {
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddNewProduceLines'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaproductline, $parameters);

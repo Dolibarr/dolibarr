@@ -42,13 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled("supplier_invoice")) {
@@ -57,10 +57,10 @@ if (isModEnabled("supplier_invoice")) {
 if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled('deplacement')) {
@@ -69,7 +69,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 
@@ -555,8 +555,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -942,19 +942,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListOrdersAssociatedProject",
 						'class' => 'Commande',
 						'table' => 'commande',
-						'test' => isModEnabled('commande') && $user->hasRight('commande', 'lire')
+						'test' => isModEnabled('order') && $user->hasRight('commande', 'lire')
 					),
 					'invoice' => array(
 						'title' => "ListInvoicesAssociatedProject",
 						'class' => 'Facture',
 						'table' => 'facture',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'invoice_predefined' => array(
 						'title' => "ListPredefinedInvoicesAssociatedProject",
 						'class' => 'FactureRec',
 						'table' => 'facture_rec',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'proposal_supplier' => array(
 						'title' => "ListSupplierProposalsAssociatedProject",
@@ -978,21 +978,21 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListContractAssociatedProject",
 						'class' => 'Contrat',
 						'table' => 'contrat',
-						'test' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
+						'test' => isModEnabled('contract') && $user->hasRight('contrat', 'lire')
 					),
 					'intervention' => array(
 						'title' => "ListFichinterAssociatedProject",
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
+						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => isModEnabled('expedition') && $user->hasRight('expedition', 'lire')
+						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",

@@ -35,3 +35,4 @@ DonationPayments=Donation payments
 DonationValidated=Donation %s validated
 DonationUseThirdparties=Use the address of an existing thirdparty as the address of the donor
 DonationsStatistics=Donation's statistics
+NbOfDonations=Number of donations

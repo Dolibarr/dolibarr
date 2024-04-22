@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,10 +43,10 @@ if (!empty($user->socid)) {
 
 $object = new Product($db);
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -269,7 +269,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+					print '<td class="right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';
 				print "</tr>\n";
@@ -288,7 +288,7 @@ if ($id > 0 || !empty($ref)) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, $conf->currency).'");
         $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
         $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
     });

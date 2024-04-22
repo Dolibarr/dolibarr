@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
+
 /**
  *  Description and activation class for module MyModule
  */
@@ -41,6 +42,7 @@ class modMyModule extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -69,7 +71,8 @@ class modMyModule extends DolibarrModules
 
 		// Author
 		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
+		$this->editor_url = 'https://www.example.com';		// Must be an external online web site
+		$this->editor_squarred_logo = '';					// Must be image filename into the module/img directory followed with @modulename. Example: 'myimage.png@mymodule'
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
@@ -148,8 +151,8 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule@mymodule");
 
 		// Prerequisites
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
 
 		// Messages at activation
@@ -179,9 +182,12 @@ class modMyModule extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'read'):/mymodule/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		// To add a new tab identified by code tabname1
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');
+		// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'read'):/mymodule/mynewtab2.php?id=__ID__',
+		// To remove an existing tab identified by code tabname
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');
 		//
 		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -300,7 +306,9 @@ class modMyModule extends DolibarrModules
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
+
 		// Add here entries to declare new menus
+
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -318,8 +326,10 @@ class modMyModule extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
+
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
-		/*$this->menu[$r++]=array(
+		/*
+		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
@@ -333,20 +343,7 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "read")',
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_MyObject',
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'mymodule_myobject_list',
-			'url'=>'/mymodule/myobject_list.php',
-			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
-			'perms'=>'$user->hasRight("mymodule", "myobject", "read")'
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+			'object'=>'MyObject'
 		);
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -361,8 +358,27 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "write")'
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);*/
+			'object'=>'MyObject'
+		);
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',			                // This is a Left menu entry
+			'titre'=>'List_MyObject',
+			'mainmenu'=>'mymodule',
+			'leftmenu'=>'mymodule_myobject_list',
+			'url'=>'/mymodule/myobject_list.php',
+			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>1000+$r,
+			'enabled'=>'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
+			'perms'=>'$user->hasRight("mymodule", "myobject", "read")'
+			'target'=>'',
+			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+			'object'=>'MyObject'
+		);
+		*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
+
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */

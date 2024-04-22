@@ -2,6 +2,9 @@
 /* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
  * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +78,7 @@ class FormProjets extends Form
 	 * @param int 		$nooutput 		No print output. Return it only.
 	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
 	 * @param string 	$morecss 		More css
-	 * @param int 		$htmlid 		Html id to use instead of htmlname
+	 * @param string	$htmlid 		Html id to use instead of htmlname, by example id="htmlid"
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
 	 * @return string                   Return html content
 	 */
@@ -143,12 +146,12 @@ class FormProjets extends Form
 	 * @param string 	$filterkey 		Key to filter on title or ref
 	 * @param int 		$nooutput 		No print output. Return it only.
 	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
-	 * @param int 		$htmlid 		Html id to use instead of htmlname
+	 * @param string	$htmlid 		Html id to use instead of htmlname
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
 	 * @return int|string|array         HTML string or array of option or <0 if KO
 	 */
-	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
+	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -165,6 +168,9 @@ class FormProjets extends Form
 		$hideunselectables = false;
 		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
+		}
+		if (getDolGlobalInt('PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT')) {
+			$discard_closed = 1;
 		}
 
 		$projectsListId = false;
@@ -332,9 +338,11 @@ class FormProjets extends Form
 	 * @param string $projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
 	 * @param string $showmore 'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
 	 * @param User $usertofilter User object to use for filtering
-	 * @return int                    Nbr of tasks if OK, <0 if KO
+	 * @param int 	$nooutput 		1=Return string, do not send to output
+	 *
+	 * @return int|string                   Nbr of tasks if OK, <0 if KO. If nooutput=1: Return a HTML select string.
 	 */
-	public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null)
+	public function selectTasks($socid = -1, $selected = 0, $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null, $nooutput = 0)
 	{
 		global $user, $conf, $langs;
 
@@ -502,10 +510,15 @@ class FormProjets extends Form
 			}
 
 			$this->nboftasks = $num;
-
-			print $out;
-
 			$this->db->free($resql);
+
+			// Output or return
+			if (empty($nooutput)) {
+				print $out;
+			} else {
+				return $out;
+			}
+
 			return $num;
 		} else {
 			dol_print_error($this->db);
@@ -520,7 +533,7 @@ class FormProjets extends Form
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 * @param string $table_element Table of the element to update
-	 * @param string $socid If of thirdparty to use as filter or 'id1,id2,...'
+	 * @param int|string $socid If of thirdparty to use as filter or 'id1,id2,...'
 	 * @param string $morecss More CSS
 	 * @param int $limitonstatus Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 * @param string $projectkey Equivalent key  to fk_projet for actual table_element
@@ -685,7 +698,7 @@ class FormProjets extends Form
 	 * @param string $morecss Add more css
 	 * @param int $noadmininfo 0=Add admin info, 1=Disable admin info
 	 * @param int $addcombojs 1=Add a js combo
-	 * @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
+	 * @return  int<-1,-1>|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
 	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
@@ -700,6 +713,7 @@ class FormProjets extends Form
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$sellist = '';
 			if ($num > 0) {
 				$sellist = '<select class="flat oppstatus' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '">';
 				if ($showempty) {
@@ -802,7 +816,7 @@ class FormProjets extends Form
 	 * @param int $selectedInvoiceId Id invoice preselected
 	 * @param int $selectedLineId Id invoice line preselected
 	 * @param string $htmlNameInvoice Name of HTML select for Invoice
-	 * @param int $htmlNameInvoiceLine Name of HTML select for Invoice Line
+	 * @param string $htmlNameInvoiceLine Name of HTML select for Invoice Line
 	 * @param string $morecss More css added to the select component
 	 * @param array $filters Array of filters
 	 * @param int $lineOnly return only option for line
@@ -840,7 +854,7 @@ class FormProjets extends Form
 				// Use select2 selector
 				if (!empty($conf->use_javascript_ajax)) {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlNameInvoice, array(array('method'=>'getLines', 'url'=>dol_buildpath('/core/ajax/ajaxinvoiceline.php', 1), 'htmlname'=>$htmlNameInvoiceLine)), 0, 0);
+					$comboenhancement = ajax_combobox($htmlNameInvoice, array(array('method' => 'getLines', 'url' => dol_buildpath('/core/ajax/ajaxinvoiceline.php', 1), 'htmlname' => $htmlNameInvoiceLine)), 0, 0);
 					$out .= $comboenhancement;
 					$morecss = 'minwidth200imp maxwidth500';
 				}
@@ -956,9 +970,9 @@ class FormProjets extends Form
 				$out .= $langs->trans("OppStatus".$code);
 
 				// Opportunity percent
-				$out.= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
-				$out.= price($percent_value, 0, $langs, 1, 0).' %';
-				$out.= '</span>';
+				$out .= ' / <span title="'.$langs->trans("OpportunityProbability").'"> ';
+				$out .= price($percent_value, 0, $langs, 1, 0).' %';
+				$out .= '</span>';
 			} else {
 				$out .= "&nbsp;";
 			}

@@ -2,6 +2,8 @@
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2022 	Ferran Marcet <fmarcet@2byte.es>
  * Copyright (C) 2022 	Nicolas Silobre <nsilobre@ns-info90.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +104,7 @@ class pdf_standard extends ModelePDFStock
 		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->posxtva = $this->posxup;
 		}
-		$this->posxpicture = $this->posxtva - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxtva - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;
@@ -176,7 +178,7 @@ class pdf_standard extends ModelePDFStock
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -216,6 +218,7 @@ class pdf_standard extends ModelePDFStock
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
@@ -256,7 +259,6 @@ class pdf_standard extends ModelePDFStock
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
-					$i = 0;
 					$nblines = $num;
 
 					$nexY = $tab_top + $this->tabTitleHeight;
@@ -397,10 +399,10 @@ class pdf_standard extends ModelePDFStock
 						// Add line
 						if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 							$pdf->setPage($pageposafter);
-							$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+							$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 							//$pdf->SetDrawColor(190,190,200);
 							$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-							$pdf->SetLineStyle(array('dash'=>0));
+							$pdf->SetLineStyle(array('dash' => 0));
 						}
 
 						$nexY += 2; // Add space between lines
@@ -453,9 +455,9 @@ class pdf_standard extends ModelePDFStock
 					$curY = $nexY;
 
 					if ($nblines > 0) {
-						$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
+						$pdf->SetLineStyle(array('dash' => '0', 'color' => array(200, 200, 200)));
 						$pdf->line($this->marge_gauche, $curY - 1, $this->page_largeur - $this->marge_droite, $curY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 
 						$pdf->SetFont('', 'B', $default_font_size - 1);
 						$pdf->SetTextColor(0, 0, 0);
@@ -547,7 +549,7 @@ class pdf_standard extends ModelePDFStock
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -557,7 +559,7 @@ class pdf_standard extends ModelePDFStock
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -575,8 +577,8 @@ class pdf_standard extends ModelePDFStock
 	 *   Show table for lines
 	 *
 	 *   @param     TCPDF		$pdf     		Object PDF
-	 *   @param     string		$tab_top		Top position of table
-	 *   @param     string		$tab_height		Height of table (rectangle)
+	 *   @param     float|int	$tab_top		Top position of table
+	 *   @param     float|int	$tab_height		Height of table (rectangle)
 	 *   @param     int			$nexY			Y (not used)
 	 *   @param     Translate	$outputlangs	Langs object
 	 *   @param     int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -617,35 +619,35 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
-		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
+		$pdf->SetLineStyle(array('dash' => '0', 'color' => array(200, 200, 200)));
 		$pdf->SetDrawColor(200, 200, 200);
 		$pdf->line($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite, $tab_top);
-		$pdf->SetLineStyle(array('dash'=>0));
+		$pdf->SetLineStyle(array('dash' => 0));
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetTextColor(0, 0, 0);
 
 
 		if (empty($hidetop)) {
-			$pdf->line($this->marge_gauche, $tab_top+11, $this->page_largeur-$this->marge_droite, $tab_top+11);	// line takes a position y in 2nd parameter and 4th parameter
+			$pdf->line($this->marge_gauche, $tab_top + 11, $this->page_largeur - $this->marge_droite, $tab_top + 11);	// line takes a position y in 2nd parameter and 4th parameter
 			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);
 			$pdf->MultiCell($this->wref, 3, $outputlangs->transnoentities("Ref"), '', 'L');
 		}
 
-		$pdf->line($this->posxlabel-1, $tab_top, $this->posxlabel-1, $tab_top + $tab_height);
+		$pdf->line($this->posxlabel - 1, $tab_top, $this->posxlabel - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxlabel - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxqty - $this->posxlabel - 1, 2, $outputlangs->transnoentities("Label"), '', 'C');
 		}
 
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxup - $this->posxqty - 1, 2, $outputlangs->transnoentities("Units"), '', 'C');
 		}
 
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+		$pdf->line($this->posxup - 1, $tab_top, $this->posxup - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxunit - $this->posxup - 1, 2, $outputlangs->transnoentities("AverageUnitPricePMPShort"), '', 'C');
@@ -657,7 +659,7 @@ class pdf_standard extends ModelePDFStock
 			$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '', 'C');
 		}
 
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+		$pdf->line($this->posxdiscount - 1, $tab_top, $this->posxdiscount - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxdiscount - 1, $tab_top + 1);
 			$pdf->MultiCell($this->postotalht - $this->posxdiscount + 1, 2, $outputlangs->transnoentities("SellPriceMin"), '', 'C');

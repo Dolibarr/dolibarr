@@ -36,7 +36,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }

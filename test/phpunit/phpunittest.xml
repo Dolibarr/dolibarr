@@ -8,7 +8,7 @@
   convertWarningsToExceptions="true"
   colors="true"
   processIsolation="false"
-  stopOnFailure="false">
+  stopOnFailure="true">
   <php>
     <ini name="max_execution_time" value="1800"/>
     <!-- Also don't forget to change suhosin.memory_limit=4G -->

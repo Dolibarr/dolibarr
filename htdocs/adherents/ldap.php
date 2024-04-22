@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 
@@ -120,12 +120,13 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Login
-print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'&nbsp;</td></tr>';
 
 // If there is a link to the unencrypted password, we show the value in database here so we can compare because it is shown nowhere else
+// This is for very old situation. Password are now encrypted and $object->pass is empty.
 if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td class="valeur">'.$object->pass.'</td>';
+	print '<td class="valeur">'.dol_escape_htmltag($object->pass).'</td>';
 	print "</tr>\n";
 }
 

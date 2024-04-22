@@ -35,7 +35,7 @@ global $conf, $db, $hookmanager, $langs, $user;
 $langs->loadLangs(array('mrp', 'companies'));
 
 // Get parameters
-$id         = GETPOST('id', 'int');
+$id         = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');

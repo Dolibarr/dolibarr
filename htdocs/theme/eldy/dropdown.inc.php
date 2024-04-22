@@ -156,8 +156,9 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	display: none;
 }
@@ -181,7 +182,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 .side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
-	padding: 1px 0 0 0;
+	padding: 0 0 0 0;
+	margin-top: 2px !important;
 	border-top-width: 0;
 	width: 360px;
 }
@@ -207,7 +209,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (!getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')) { ?>
+	<?php if (!$disableimages) { ?>
 		line-height: 46px;
 	<?php } ?>
 }

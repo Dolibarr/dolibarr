@@ -33,7 +33,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -50,7 +50,7 @@ if (empty($argv[2]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 	print "Usage: $script_file (test|confirm) website [nbmaxrecord]\n";
 	print "\n";
 	print "Regenerate all pages of a web site.\n";
-	exit(-1);
+	exit(1);
 }
 
 require $path."../../htdocs/master.inc.php";
@@ -69,14 +69,14 @@ $langs->load('main');
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $website = new Website($db);
 $result = $website->fetch(0, $websiteref);
 if ($result <= 0) {
 	print 'Error, web site '.$websiteref.' not found'."\n";
-	exit(-1);
+	exit(1);
 }
 
 $websitepagestatic = new WebsitePage($db);

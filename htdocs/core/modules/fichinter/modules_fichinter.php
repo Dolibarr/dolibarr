@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +109,6 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -120,18 +120,17 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 			// Get the location of the module and verify it exists
 			$file = dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$modele;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 	// Charge le modele
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);

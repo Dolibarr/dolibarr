@@ -9,7 +9,9 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2023 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024      Rafael San José      <rsanjose@alxarafe.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +52,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 }
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$bid = GETPOST('bid', 'int');
+$bid = GETPOSTINT('bid');
 
 // Security check
 $socid = '';
@@ -65,9 +67,8 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-
 // Maximum elements of the tables
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 $maxLatestEditCount = 5;
 $maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
@@ -103,7 +104,7 @@ print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getNumberInvoicesPieChart('customers');
 	print '<br>';
 }
@@ -113,7 +114,7 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getCustomerInvoiceDraftTable($max, $socid);
 	print '<br>';
 }
@@ -127,7 +128,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -137,7 +138,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta, s.email";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
-	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
+	$sql .= ", (SELECT SUM(pf.amount) FROM ".$db->prefix()."paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
@@ -283,7 +284,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
-	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
+	$sql .= ", (SELECT SUM(pf.amount) FROM ".$db->prefix()."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity IN (".getEntity('facture_fourn').")";
@@ -338,7 +339,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
 				$facstatic->statut = $obj->status;
+				$facstatic->status = $obj->status;
 				$facstatic->paye = $obj->paye;
+				$facstatic->paid = $obj->paye;
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
 
@@ -580,7 +583,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
+if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
@@ -627,7 +630,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">';
 			print $langs->trans("OrdersDeliveredToBill").' ';
-			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&amp;billed=0">';
+			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&search_billed=0">';
 			print '<span class="badge">'.$num.'</span>';
 			print '</a>';
 			print '</th>';

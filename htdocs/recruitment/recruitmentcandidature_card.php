@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidat
 $langs->loadLangs(array("recruitment", "other", "users"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,7 +43,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 
 // Initialize technical objects
 $object = new RecruitmentCandidature($db);
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
@@ -141,7 +141,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_makeofferordecline' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
-		if (!(GETPOST('status', 'int') > 0)) {
+		if (!(GETPOSTINT('status') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'makeofferordecline';
 		} else {
@@ -149,7 +149,7 @@ if (empty($reshook)) {
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$db->begin();
 
-				if (GETPOST('status', 'int') == $object::STATUS_REFUSED) {
+				if (GETPOSTINT('status') == $object::STATUS_REFUSED) {
 					$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_closeas' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
-		if (!(GETPOST('status', 'int') > 0)) {
+		if (!(GETPOSTINT('status') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'makeofferordecline';
 		} else {
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 			if ($object->status == $object::STATUS_CONTRACT_PROPOSED) {
 				$db->begin();
 
-				if (GETPOST('status', 'int') == $object::STATUS_CONTRACT_REFUSED) {
+				if (GETPOSTINT('status') == $object::STATUS_CONTRACT_REFUSED) {
 					$result = $object->setStatut($object::STATUS_CONTRACT_REFUSED, null, '', $triggermodname);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');

@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,7 +17,7 @@
 
 /**
  *    \file       /htdocs/core/ajax/onlineSign.php
- *    \brief      File to make Ajax action on Knowledge Management
+ *    \brief      File to make Ajax action to add the signature of a document
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -46,7 +47,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));	// Keep $_GET and $_POST here. GETPOST not yet defined.
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
@@ -59,7 +60,7 @@ $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
-$online_sign_name = GETPOST("onlinesignname") ? GETPOST("onlinesignname") : '';
+$online_sign_name = GETPOST("onlinesignname");
 
 $error = 0;
 $response = "";
@@ -170,7 +171,7 @@ if ($action == "importSignature") {
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
 
-								if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES")) {
+								if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE") == $i) {
 									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 									// TODO Get position of box from PDF template
 
@@ -187,7 +188,7 @@ if ($action == "importSignature") {
 							}
 						}
 
-						if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES")) {
+						if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
 							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 							// TODO Get position of box from PDF template
 
@@ -580,18 +581,15 @@ if ($action == "importSignature") {
 									$classname = 'pdf_' . $last_modelpdf;
 									break;
 								}
-								if ($filefound) {
-									break;
-								}
 							}
 
-							if (!$filefound) {
+							if ($filefound === '') {
 								$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
 								dol_syslog($response, LOG_ERR);
 								$error++;
 							}
 
-							if (!$error) {
+							if (!$error && $classname !== '') {
 								// If PDF template class  was found
 								require_once $file;
 
@@ -637,7 +635,7 @@ if ($action == "importSignature") {
 				}
 			} else {
 				$error++;
-				$response = "cannot find Rib";
+				$response = "cannot find BAN/RIB";
 			}
 
 			if (!$error) {
@@ -694,7 +692,7 @@ echo $response;
 
 
 /**
- * Output the signature file
+ * Output the signature file into the PDF object.
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language

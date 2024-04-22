@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,18 @@
 class DolGeoIP
 {
 	/**
-	 * @var GeoIp2\Database\Reader
+	 * @var GeoIp2\Database\Reader|string
 	 */
 	public $gi;
 
+	/**
+	 * @var string
+	 */
 	public $error;
+
+	/**
+	 * @var string
+	 */
 	public $errorlabel;
 
 	/**

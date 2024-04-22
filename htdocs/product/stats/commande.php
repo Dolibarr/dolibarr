@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'products', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -50,10 +50,10 @@ if (!empty($user->socid)) {
 $hookmanager->initHooks(array('productstatsorder'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,8 +66,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "c.date_commande";
 }
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 if (GETPOSTISARRAY('search_status')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
@@ -204,10 +204,10 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
+					$option .= '&search_month='.urlencode((string) ($search_month));
 				}
 				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode($search_year);
+					$option .= '&search_year='.urlencode((string) ($search_year));
 				}
 
 				if ($search_status != '') {
@@ -223,16 +223,17 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 				if (!empty($page)) {
-					$option .= '&page='.urlencode($page);
+					$option .= '&page='.urlencode((string) ($page));
 				}
 
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectOrderStatus($search_status, 1, 'search_status');
@@ -289,10 +290,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				// delivery planned date

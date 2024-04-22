@@ -137,7 +137,7 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
-		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOSTINT("MAIN_DOCUMENTS_LOGO_HEIGHT"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) {
 		dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);

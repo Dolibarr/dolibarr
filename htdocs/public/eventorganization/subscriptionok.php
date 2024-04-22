@@ -42,7 +42,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -67,7 +67,7 @@ $object = new stdClass(); // For triggers
 $error = 0;
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 

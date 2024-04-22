@@ -39,3 +39,4 @@ ErrorResourcesAlreadyInUse=Certaines ressources sont utilisées
 ErrorResourceUseInEvent=%s utilisé dans l'événement %s
 
 MaxUsers=Utilisateurs maximum (places, sièges, etc.)
+MaxUsersLabel=Utilisateurs maximum

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2005-2024	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $langs->load("users");
 
 $canreadperms = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
+	$canreadperms = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 }
 
 // Security check (for external users)
@@ -63,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "1");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);

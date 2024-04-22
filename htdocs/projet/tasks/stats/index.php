@@ -37,8 +37,8 @@ if (!$user->hasRight('projet', 'lire')) {
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -142,7 +142,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'project_tasks_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
+print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

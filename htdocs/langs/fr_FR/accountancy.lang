@@ -68,14 +68,14 @@ UserAccountNotDefined=Compte comptable pour l'utilisateur non défini dans la co
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
 AccountancyAreaDescActionOnce=Les actions suivantes sont habituellement exécutées une seule fois, ou une fois par an ...
-AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant automatiquement le bon compte comptable par défaut lors de la ventilation (écrire des enregistrements dans les journaux et grand livre)
+AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant automatiquement le bon compte comptable par défaut lors du transfert en comptabilité
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
 
 AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la liste des journaux depuis le menu %s
 AccountancyAreaDescChartModel=Étape %s : Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
 AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan de compte dans le menu %s
 
-AccountancyAreaDescFiscalPeriod=Étape %s: Définissez un exercice par défaut sur lequel intégrer vos entrées en comptabilité. Pour cela, utilisez l'entrée de menu %s.
+AccountancyAreaDescFiscalPeriod=Étape %s : Définissez un exercice par défaut sur lequel intégrer vos entrées en comptabilité. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDefault=Étape %s : Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu %s.
@@ -90,8 +90,8 @@ AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos p
 
 AccountancyAreaDescBind=Étape %s : Vérifier que la liaison entre les %s lignes existantes et le compte comptable est faite, ainsi l'application sera capable d'inscrire les transaction dans le grand livre en un seul clic. Compléter les liaisons manquantes. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescWriteRecords=Étape %s: Ecrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STEP %s : lire les rapports ou générer des fichiers d'exportation pour d'autres comptables.
-AccountancyAreaDescClosePeriod=ÉTAPE %s : Fermer la période afin que nous ne puissions plus transférer de données au cours de la même période dans le futur.
+AccountancyAreaDescAnalyze=Étape %s : Lire les rapports ou générer des fichiers d'exportation pour d'autres comptables.
+AccountancyAreaDescClosePeriod=Étape %s : Fermer la période afin que nous ne puissions plus transférer de données au cours de la même période dans le futur.
 
 TheFiscalPeriodIsNotDefined=Une étape obligatoire de configuration n'a pas été complétée (l'exercice fiscal n'est pas défini)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'a pas été terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
@@ -178,6 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Ventes
 ACCOUNTING_PURCHASE_JOURNAL=Achats
 ACCOUNTING_BANK_JOURNAL=Banque
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Notes de frais
+
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Opérations diverses
 ACCOUNTING_HAS_NEW_JOURNAL=A-nouveaux
 ACCOUNTING_INVENTORY_JOURNAL=Inventaire
@@ -328,7 +329,7 @@ WarningRecordWithoutSubledgerAreExcluded=Attention, toutes les lignes sans compt
 AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
 ## Admin
-BindingOptions=Options de liaisons avec les codes comptables
+BindingOptions=Options de l'outil permettant de lier des lignes avec des produits
 ApplyMassCategories=Application en masse des catégories
 AddAccountFromBookKeepingWithNoCategories=Comptes disponibles pas encore dans le groupe personnalisé
 CategoryDeleted=Le groupe de comptes comptables a été supprimé
@@ -467,7 +468,7 @@ AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir enregistr
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
-ErrorNoAccountingCategoryForThisCountry=Pas de catégories de regroupement comptable disponibles pour le pays %s (Voir %s - %s - %s)
+ErrorNoAccountingCategoryForThisCountry=Pas de groupes de comptes personnalisés disponibles pour le pays %s (Voir %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Vous essayez de journaliser certaines lignes de la facture <strong> %s </strong>, mais certaines autres lignes ne sont pas encore liées au compte de comptabilité. La journalisation de toutes les lignes de facture pour cette facture est refusée.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Certaines lignes sur la facture ne sont pas liées au compte comptable.
 ExportNotSupported=Le format de l'export n'est pas supporté par cette page

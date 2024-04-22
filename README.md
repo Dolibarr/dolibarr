@@ -5,13 +5,13 @@
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
-Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
+Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
+It's an Open-Source Software suite (written in PHP with JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
 You can freely use, study, modify or distribute it according to its license.
 
-You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
+You can use it as a standalone application or as a web application to access it from the Internet or from a LAN.
 
 Dolibarr has a large community ready to help you, free forums and [preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
@@ -19,7 +19,7 @@ Dolibarr has a large community ready to help you, free forums and [preferred par
 
 ## LICENSE
 
-Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version (GPL-3+).
+Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either Version 3 of the License, or (at your option) any later version (GPL-3+).
 
 See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
 
@@ -29,7 +29,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ### Simple setup
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions:
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
@@ -37,11 +37,10 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Advanced setup
+### Recommended setup
 
-You can use a web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
+You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 #### Generic install steps
 
@@ -49,7 +48,7 @@ On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 - Uncompress the downloaded .zip archive to copy the `dolibarr/htdocs` directory and all its files inside your web server root or get the files directly from GitHub (recommended if you know git as it makes it easier if you want to upgrade later):
 
-  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 3.6, 9.0, ...)
+  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 9.0, 19.0, ...)
 
 - Set up your web server to use `dolibarr/htdocs` as root if your web server does not already define a directory to point to.
 
@@ -187,7 +186,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country-specific features:
-  - Spanish Tax RE and ISPF
+  - Spanish Tax RE and IRPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp

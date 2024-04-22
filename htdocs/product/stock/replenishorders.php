@@ -45,15 +45,15 @@ $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$search_product = GETPOST('search_product', 'int');
-$search_dateyear = GETPOST('search_dateyear', 'int');
-$search_datemonth = GETPOST('search_datemonth', 'int');
-$search_dateday = GETPOST('search_dateday', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$search_product = GETPOSTINT('search_product');
+$search_dateyear = GETPOSTINT('search_dateyear');
+$search_datemonth = GETPOSTINT('search_datemonth');
+$search_dateday = GETPOSTINT('search_dateday');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortorder) {
@@ -62,7 +62,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = 'cf.date_creation';
 }
-$page = GETPOST('page', 'int') ? GETPOST('page', 'int') : 0;
+$page = GETPOSTINT('page') ? GETPOSTINT('page') : 0;
 if ($page < 0) {
 	$page = 0;
 }
@@ -160,8 +160,8 @@ if ($sall) {
 if (!empty($socid)) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (GETPOST('statut', 'int')) {
-	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');
+if (GETPOSTINT('statut')) {
+	$sql .= ' AND fk_statut = '.GETPOSTINT('statut');
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
@@ -202,13 +202,13 @@ if ($resql) {
 		$param .= '&search_ttc='.urlencode($sttc);
 	}
 	if ($search_dateyear) {
-		$param .= '&search_dateyear='.urlencode($search_dateyear);
+		$param .= '&search_dateyear='.urlencode((string) ($search_dateyear));
 	}
 	if ($search_datemonth) {
-		$param .= '&search_datemonth='.urlencode($search_datemonth);
+		$param .= '&search_datemonth='.urlencode((string) ($search_datemonth));
 	}
 	if ($search_dateday) {
-		$param .= '&search_dateday='.urlencode($search_dateday);
+		$param .= '&search_dateday='.urlencode((string) ($search_dateday));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

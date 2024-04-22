@@ -34,12 +34,12 @@ $langs->loadLangs(array('bookmarks', 'other'));
 
 
 // Get Parameters
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOST("target", "int");
+$target = GETPOSTINT("target");
 $userid = GETPOSTINT("userid");
 $position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -82,7 +82,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	}
 
 	if ($action == 'update') {
-		$object->fetch(GETPOST("id", 'int'));
+		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
 	if (!empty($userid)) {
@@ -183,18 +183,18 @@ if ($action == 'create') {
 	if ($url && !preg_match('/^http/i', $url)) {
 		$defaulttarget = 0;
 	}
-	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	print '</table>';
@@ -228,6 +228,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Title
 	print '<tr><td class="titlefield">';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -247,6 +248,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
+	// URL
 	print '<tr><td>';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -255,7 +257,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '</span>';
 	}
-	print '</td><td>';
+	print '</td><td class="tdoverflowmax500">';
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {
@@ -284,7 +286,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
+		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
 	} else {
 		if ($object->fk_user > 0) {
 			$fuser = new User($db);
@@ -299,7 +301,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	if ($action == 'edit') {
-		print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+		print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
 	} else {
 		print $object->position;
 	}

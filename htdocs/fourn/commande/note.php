@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 // Get Parameters
-$id = GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id');
 $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
 

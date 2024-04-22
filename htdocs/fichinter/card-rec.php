@@ -10,6 +10,7 @@
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
@@ -52,13 +53,13 @@ if (isModEnabled('contrat')) {
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
-$id = (GETPOST('fichinterid', 'int') ? GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('fichinterid') ? GETPOSTINT('fichinterid') : GETPOSTINT('id'));
 $ref = GETPOST('ref', 'alpha');
 $date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -69,10 +70,10 @@ if ($action == "create" || $action == "add") {
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -97,17 +98,17 @@ $extrafields = new ExtraFields($db);
 
 
 $arrayfields = array(
-	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'f.fk_contrat'=>array('label'=>"Contract", 'checked'=>1),
-	'f.duree'=>array('label'=>"Duration", 'checked'=>1),
-	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
-	'f.frequency'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>"DateLastGeneration", 'checked'=>1),
-	'f.date_when'=>array('label'=>"NextDateToExecution", 'checked'=>1),
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.titre' => array('label' => "Ref", 'checked' => 1),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	'f.fk_contrat' => array('label' => "Contract", 'checked' => 1),
+	'f.duree' => array('label' => "Duration", 'checked' => 1),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1),
+	'f.frequency' => array('label' => "RecurringInvoiceTemplate", 'checked' => 1),
+	'f.nb_gen_done' => array('label' => "NbOfGenerationDoneShort", 'checked' => 1),
+	'f.date_last_gen' => array('label' => "DateLastGeneration", 'checked' => 1),
+	'f.date_when' => array('label' => "NextDateToExecution", 'checked' => 1),
+	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 );
 
 
@@ -148,7 +149,7 @@ if ($action == 'add') {
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ? GETPOST('nb_gen_max', 'int') : 0);
+	$nb_gen_max = (GETPOSTINT('nb_gen_max') ? GETPOSTINT('nb_gen_max') : 0);
 	if (GETPOST('frequency')) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
@@ -242,7 +243,7 @@ if ($action == 'add') {
 } elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
-	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+	$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
 } elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
 	// Set next date of execution
 	$object->fetch($id);
@@ -253,7 +254,7 @@ if ($action == 'add') {
 } elseif ($action == 'setnb_gen_max' && $user->hasRight('ficheinter', 'creer')) {
 	// Set max period
 	$object->fetch($id);
-	$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
+	$object->setMaxPeriod(GETPOSTINT('nb_gen_max'));
 }
 
 
@@ -267,7 +268,7 @@ llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
 }
 if (isModEnabled('project')) {
@@ -302,7 +303,7 @@ if ($action == 'create') {
 		if (isModEnabled('project') && $object->fk_project > 0) {
 			$rowspan++;
 		}
-		if (isModEnabled('contrat') && $object->fk_contrat > 0) {
+		if (isModEnabled('contract') && $object->fk_contrat > 0) {
 			$rowspan++;
 		}
 
@@ -355,7 +356,7 @@ if ($action == 'create') {
 		}
 
 		// Contrat
-		if (isModEnabled('contrat')) {
+		if (isModEnabled('contract')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
 			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
@@ -377,8 +378,8 @@ if ($action == 'create') {
 		print '<tr><td class="titlefieldcreate">';
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
-		print '<input type="text" name="frequency" value="'.GETPOST('frequency', 'int').'" size="4">&nbsp;';
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
+		print '<input type="text" name="frequency" value="'.GETPOSTINT('frequency').'" size="4">&nbsp;';
+		print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// First date of execution for cron
@@ -386,12 +387,12 @@ if ($action == 'create') {
 		if (empty($date_next_execution)) {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		}
-		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
-		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max', 'int').'" size="5">';
+		print '<input type="text" name="nb_gen_max" value="'.GETPOSTINT('nb_gen_max').'" size="5">';
 		print "</td></tr>";
 
 		print "</table>";
@@ -566,7 +567,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -625,7 +626,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding">';
 				print '<tr><td>';
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
-				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
+				print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
@@ -730,9 +731,7 @@ if ($action == 'create') {
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
-				} else {
-					$object->lines[$i]->fk_product_type;
-				}
+				} // else { $object->lines[$i]->fk_product_type; }
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
 				if (!empty($objp->date_start)) {
@@ -827,7 +826,7 @@ if ($action == 'create') {
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
 			if (isModEnabled('project')) {
@@ -861,7 +860,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (isModEnabled('contrat')) {
+					if (isModEnabled('contract')) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);

@@ -186,7 +186,7 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public function viewTicketOriginalMessage($user, $action, $object)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		print '<!-- initial message of ticket -->'."\n";
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
@@ -199,7 +199,7 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="noborder centpercent margintable margintable">';
+		print '<table class="border centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -216,6 +216,9 @@ class ActionsTicket extends CommonHookActions
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			if (!$ckeditorenabledforticket) {
+				$msg = dol_string_nohtmltag($msg, 2);
+			}
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
@@ -231,8 +234,8 @@ class ActionsTicket extends CommonHookActions
 		}
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
 		print '</td>';

@@ -27,7 +27,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($preselectedtypeofcontact)) {
@@ -163,7 +163,7 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ? 0 : $object->socid);
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
