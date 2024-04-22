@@ -482,26 +482,26 @@ if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';
-	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', !getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 0 : 1, 1);
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', !getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', !getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', !getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '</table>';
