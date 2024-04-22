@@ -465,7 +465,7 @@ class Task extends CommonObjectLine
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
-		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
+		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0").",";
 		$sql .= " priority=".((!empty($this->priority)) ? $this->priority : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
