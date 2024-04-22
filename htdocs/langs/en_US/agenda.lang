@@ -202,3 +202,5 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less
