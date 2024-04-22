@@ -72,15 +72,15 @@ pipeline {
           }
       }
     }
-  stage{
-    steps{
-      container('docker'){
-         // Push the Docker image to your Docker registry
-            docker.withRegistry('', '30') {
-              appImage.push()
-            }
+    stage('push'){
+      steps{
+        container('docker'){
+           // Push the Docker image to your Docker registry
+              docker.withRegistry('', '30') {
+                appImage.push()
+              }
+        }
       }
     }
-  }
   }
 }
