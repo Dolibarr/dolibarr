@@ -5389,7 +5389,7 @@ class Form
 
 			// BEGIN EASYA ONLY CHANGE
 			// $postconfirmas = 'GET'; // Added by Eldy with message "Fix regression using confirm as POST (pb with cursor and download file)". I do not encounter any problem but I need long formconfirms.
-			$postconfirmas = 'POST';
+			$postconfirmas = (getDolGlobalInt('EASYA_SEND_FORMCONFIRM_AS_POST') ? 'POST' : 'GET');
 			// END EASYA ONLY CHANGE
 
 			$formconfirm .= '
