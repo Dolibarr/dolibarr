@@ -535,6 +535,7 @@ WatermarkOnDraftExpenseReports=Watermark on draft expense reports
 ProjectIsRequiredOnExpenseReports=The project is mandatory for entering an expense report
 PrefillExpenseReportDatesWithCurrentMonth=Pre-fill start and end dates of new expense report with start and end dates of the current month
 ForceExpenseReportsLineAmountsIncludingTaxesOnly=Force the entry of expense report amounts always in amount with taxes
+BlockExpenseReportLineCreationIfNotBetweenDates=Block line creation if date of line added is not in expense report range
 AttachMainDocByDefault=Set this to <b>Yes</b> if you want to attach by default the main document to the email (if applicable)
 FilesAttachedToEmail=Attach file
 SendEmailsReminders=Send agenda reminders by emails
