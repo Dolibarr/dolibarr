@@ -719,7 +719,7 @@ if (empty($reshook)) {
 			}
 			$objectline->fetch_optionals();
 
-			$objectline->oldcopy = dol_clone($objectline);
+			$objectline->oldcopy = dol_clone($objectline, 2);
 		}
 
 		$db->begin();
