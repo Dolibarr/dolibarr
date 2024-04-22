@@ -75,10 +75,12 @@ pipeline {
     stage('push'){
       steps{
         container('docker'){
+          script{
            // Push the Docker image to your Docker registry
               docker.withRegistry('', '30') {
                 appImage.push()
               }
+          }
         }
       }
     }
