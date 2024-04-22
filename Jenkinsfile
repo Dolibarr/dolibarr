@@ -16,6 +16,11 @@ pipeline {
             command:
             - cat
             tty: true
+          - name: trivy
+            image: aquasec/trivy:canary
+            command:
+            - cat
+            tty: true
           volumeMounts:
           - mountPath: /var/run/docker.sock
             name: docker-sock
@@ -33,19 +38,49 @@ pipeline {
         checkout scm
      }
   }
+
+   stage('SonarQube Analysis') {
+      environment {
+             SONAR_SCANNER_OPTS = " -Xmx1024m"
+      }
+      steps {
+        script {
+          def scannerHome = tool 'SonarQube_Scanner';
+          // Execute SonarQube analysis
+          withSonarQubeEnv('SonarQube_Server') {
+           
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+          }
+        }
+      }
+    }
   stage('Build Docker Image') {
       steps {
         container('docker') {
           script {
             // Build the Docker image
             def appImage = docker.build("iyedbnaissa/dolibarr_build:${env.BUILD_NUMBER}", "-f Dockerfile .")
-            // Push the Docker image to your Docker registry
-            docker.withRegistry('', '30') {
-              appImage.push()
-            }
           }
         }
       }
     }
+    stage('trivy scan'){
+      steps{
+          container('trivy'){
+            sh "trivy image iyedbnaissa/dolibarr_build:30 --severity HIGH,CRITICAL --format template --template '@sonarqube.tpl' -o trivy_report.json --scanners vuln"
+            sh "cat trivy_report.json"
+          }
+      }
+    }
+  stage{
+    steps{
+      container('docker'){
+         // Push the Docker image to your Docker registry
+            docker.withRegistry('', '30') {
+              appImage.push()
+            }
+      }
+    }
+  }
   }
 }
