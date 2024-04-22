@@ -33,21 +33,6 @@ pipeline {
         checkout scm
      }
   }
-  stage('SonarQube Analysis') {
-      environment {
-             SONAR_SCANNER_OPTS = "-Xmx512m"
-      }
-      steps {
-        script {
-          def scannerHome = tool 'SonarQube_Scanner';
-          // Execute SonarQube analysis
-          withSonarQubeEnv('SonarQube_Server') {
-           
-            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
-          }
-        }
-      }
-    }
   stage('Build Docker Image') {
       steps {
         container('docker') {
