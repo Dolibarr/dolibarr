@@ -1151,19 +1151,19 @@ if ($action == 'create') {
 				$content = '';
 				if ($val == 'BankCode') {
 					$name = 'code_banque';
-					$css = 'with100';
+					$css = 'width100';
 					$content = $object->code_banque;
 				} elseif ($val == 'DeskCode') {
 					$name = 'code_guichet';
-					$css = 'with100';
+					$css = 'width100';
 					$content = $object->code_guichet;
 				} elseif ($val == 'BankAccountNumber') {
 					$name = 'number';
-					$css = 'with200';
+					$css = 'width200';
 					$content = $object->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					$name = 'cle_rib';
-					$css = 'with50';
+					$css = 'width50';
 					$content = $object->cle_rib;
 				}
 
