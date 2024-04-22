@@ -81,6 +81,12 @@ class UserGroup extends CommonObject
 	public $globalgroup; // Global group
 
 	/**
+	 * @var array		Entity in table llx_user_group
+	 * @deprecated		Seems not used.
+	 */
+	public $usergroup_entity;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -220,6 +226,7 @@ class UserGroup extends CommonObject
 				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
 					$ret[$obj->rowid]->usergroup_entity = array();
 				}
+				// $ret[$obj->rowid] is instance of UserGroup
 				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 			}
 
@@ -295,6 +302,7 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
+					// $ret[$obj->rowid] is instance of User
 					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
 						$ret[$obj->rowid]->usergroup_entity = array();
 					}
