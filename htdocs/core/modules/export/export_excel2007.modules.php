@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,7 +304,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Output record line into file
 	 *
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
-	 *  @param      resource	$objp                       A record from a fetch with all fields from select
+	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										Return integer <0 if KO, >0 if OK
