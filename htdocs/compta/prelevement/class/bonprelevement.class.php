@@ -1790,7 +1790,7 @@ class BonPrelevement extends CommonObject
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
-				if( $conf->global->SEPA_ROUND_TWO_ZERO){
+				if($conf->global->SEPA_ROUND_TWO_ZERO){
 					$this->total=number_format(price2num($this->total,'MT'),2,".","");
                   $this->total=number_format(price2num($this->total,'MT'),2,".","");
 				}
