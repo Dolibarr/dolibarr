@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,7 +493,7 @@ if ($action == "importSignature") {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 			$modelpath = "core/modules/bank/doc/";
 			$object = new CompanyBankAccount($db);
-			$object->fetch($ref);
+			$object->fetch(0, $ref);
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
