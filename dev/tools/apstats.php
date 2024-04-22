@@ -21,7 +21,7 @@
 
 /**
  * \file    dev/tools/apstats.php
- * \brief   Script to report Advanced Statistics on a coding PHP project
+ * \brief   Script to report Advanced Statistics and Status on a PHP project
  */
 
 
@@ -536,7 +536,7 @@ $html .= '<body>'."\n";
 // Header
 
 $html .= '<header>'."\n";
-$html .= '<h1>Advanced Project Statistics</h1>'."\n";
+$html .= '<h1>Advanced Project Status</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
 $html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds by <a target="_blank" href="https://github.com/Dolibarr/dolibarr/blob/develop/dev/tools/apstats.php">apstats</a></span>'."\n";
 $html .= '</header>'."\n";
@@ -932,6 +932,11 @@ if ($fh) {
 	if ($url_flux) {
 		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
+	// Image
+	fwrite($fh, '<image>'."\n");
+	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
+	fwrite($fh, '</image>'."\n");
 
 	foreach ($arrayofalerts as $alert) {
 		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
