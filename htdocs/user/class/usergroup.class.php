@@ -81,7 +81,7 @@ class UserGroup extends CommonObject
 	public $globalgroup; // Global group
 
 	/**
-	 * @var array		Entity in table llx_user_group
+	 * @var array<int>		Entity in table llx_user_group
 	 * @deprecated		Seems not used.
 	 */
 	public $usergroup_entity;
@@ -227,7 +227,7 @@ class UserGroup extends CommonObject
 					$ret[$obj->rowid]->usergroup_entity = array();
 				}
 				// $ret[$obj->rowid] is instance of UserGroup
-				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+				$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -306,7 +306,7 @@ class UserGroup extends CommonObject
 					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
 						$ret[$obj->rowid]->usergroup_entity = array();
 					}
-					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+					$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 				}
 			}
 

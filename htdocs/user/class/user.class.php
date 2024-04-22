@@ -396,8 +396,8 @@ class User extends CommonObject
 	//private $egroupware_id;
 
 	/**
-	 * @var array		Entity in table llx_user_group
-	 * @deprecated		Seems not used.
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
 	 */
 	public $usergroup_entity;
 
