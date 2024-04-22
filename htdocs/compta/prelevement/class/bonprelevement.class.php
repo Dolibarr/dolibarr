@@ -1791,8 +1791,8 @@ class BonPrelevement extends CommonObject
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
 				if( $conf->global->SEPA_ROUND_TWO_ZERO){
-					$this->total=number_format( price2num($this->total,'MT'),2,".","");
-                  $this->total=number_format( price2num($this->total,'MT'),2,".","");
+					$this->total=number_format(price2num($this->total,'MT'),2,".","");
+                  $this->total=number_format(price2num($this->total,'MT'),2,".","");
 				}
 				/**
 				 * SECTION CREATION SEPA FILE - ISO200022
