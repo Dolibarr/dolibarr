@@ -280,11 +280,9 @@ class Task extends CommonObjectLine
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
