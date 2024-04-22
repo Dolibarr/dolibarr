@@ -384,7 +384,8 @@ class CMailFile
 			$tabto = explode(",", $to);
 			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 			foreach ($tabto as $key => $addrto) {
-				if (in_array($addrto, $listofemailstonotsendto)) {
+				$addrto = array_keys($this->getArrayAddress($addrto));
+				if (in_array($addrto[0], $listofemailstonotsendto)) {
 					unset($tabto[$key]);
 					$replaceto = true;
 				}
@@ -398,7 +399,8 @@ class CMailFile
 			$replacecc = false;
 			$tabcc = explode(',', $addr_cc);
 			foreach ($tabcc as $key => $cc) {
-				if (in_array($cc, $listofemailstonotsendto)) {
+				$cc = array_keys($this->getArrayAddress($cc));
+				if (in_array($cc[0], $listofemailstonotsendto)) {
 					unset($tabcc[$key]);
 					$replacecc = true;
 				}
@@ -412,7 +414,8 @@ class CMailFile
 			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
-				if (in_array($bcc, $listofemailstonotsendto)) {
+				$bcc = array_keys($this->getArrayAddress($bcc));
+				if (in_array($bcc[0], $listofemailstonotsendto)) {
 					unset($tabbcc[$key]);
 					$replacebcc = true;
 				}
