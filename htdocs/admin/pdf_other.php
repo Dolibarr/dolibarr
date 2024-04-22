@@ -214,7 +214,7 @@ if (isModEnabled('propal')) {
 	print '</div>';
 }
 
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	print load_fiche_titre($langs->trans("Orders"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
