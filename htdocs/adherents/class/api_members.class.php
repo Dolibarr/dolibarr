@@ -549,7 +549,7 @@ class Members extends DolibarrApi
 	private function getThirdparty($barcode = '', $email = '')
 	{
 		$thirdparty = new Societe($this->db);
-		$fetchResult = $thirdparty->fetch('', '', '', $barcode,'', '', '', '', '', '', $email);
+		$fetchResult = $thirdparty->fetch('', '', '', $barcode, '', '', '', '', '', '', $email);
 		if ( 0 === $fetchResult) {
 			throw new RestException(404, 'thirdparty not found');
 		}
