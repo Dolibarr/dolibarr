@@ -521,17 +521,17 @@ if ($resql) {
 		$sql2 .= 'WHERE ac.active = 1 AND ac.entity = '.((int) $conf->entity);
 		$resql2=$db->query($sql2);
 		print '<td class="liste_titre">';
-		if($resql2 !== false) {
-            print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
-            while($obj2 = $db->fetch_object($resql2)) {
-                $id     = $obj2->ac_rowid;
-                $code   = $obj2->ac_code;
-                $selected2 = in_array($id, $search_categories);
-                print '<option '. (($selected2) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
-            }
-            print '</select>';
-            print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span>';
-            print <<<'EOD'
+		if ($resql2 !== false) {
+			print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
+			while ($obj2 = $db->fetch_object($resql2)) {
+				$id     = $obj2->ac_rowid;
+				$code   = $obj2->ac_code;
+				$selected2 = in_array($id, $search_categories);
+				print '<option '. (($selected2) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
+			}
+			print '</select>';
+			print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span>';
+			print <<<'EOD'
 <script>
     function formatResult(record, container) {
     if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }
@@ -556,7 +556,7 @@ if ($resql) {
 						});
 </script>
 EOD;
-        }
+		}
 		print '</td>';
 	}
 
