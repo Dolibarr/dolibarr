@@ -553,6 +553,7 @@ td.rightborder {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+	white-space: nowrap;
 }
 span.amount {
 	white-space: nowrap;
@@ -2029,7 +2030,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
 	.minwidth300imp { min-width: 120px !important; }
-	.minwidth400imp { min-width: 150px !important; }
+	.minwidth400imp { min-width: 200px !important; }
 	.minwidth500imp { min-width: 250px !important; }
 	.titlefield { width: auto; min-width: unset; }
 	.titlefieldcreate { width: auto !important; }
@@ -6474,6 +6475,10 @@ input.select2-input {
 .select2-container .select2-selection--multiple {
 	min-height: 28px !important;
 }
+.tableforfield .select2-container .select2-selection--single {
+	height: 25px;
+}
+
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	margin-top: 5px !important;
 	border: none;

@@ -1156,9 +1156,10 @@ class Form
 	 * @param 	int<0,1>|string 	$showempty 	Add an empty field
 	 * @param 	int 				$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
 	 * @param 	integer 			$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
+	 * @param	string				$morecss	More css
 	 * @return  void
 	 */
-	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
+	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0, $morecss = "")
 	{
 		// phpcs:enable
 		global $langs;
@@ -1169,7 +1170,7 @@ class Form
 			if (empty($hidetext)) {
 				print $langs->trans("Type") . ': ';
 			}
-			print '<select class="flat" id="select_' . $htmlname . '" name="' . $htmlname . '">';
+			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $htmlname . '" name="' . $htmlname . '">';
 			if ($showempty) {
 				print '<option value="-1"';
 				if ($selected == -1) {
