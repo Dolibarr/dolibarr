@@ -136,13 +136,15 @@ class WebsiteTest extends CommonClassTest
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;
 
+		$t = '';
 		$s = '<?php exec("eee"); ?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 
+		$t = '';
 		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
-		$result = checkPHPCode('', $s);
+		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 	}
