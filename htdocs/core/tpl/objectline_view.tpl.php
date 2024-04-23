@@ -428,7 +428,7 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
 	$situationinvoicelinewithparent = 0;
 	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass

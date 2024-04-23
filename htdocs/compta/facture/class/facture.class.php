@@ -177,7 +177,7 @@ class Facture extends CommonInvoice
 	public $fk_bank;
 
 	/**
-	 * @var FactureLigne[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 

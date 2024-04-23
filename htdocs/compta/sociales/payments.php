@@ -52,7 +52,7 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOSTINT("year");
-$search_sc_type = GETPOSTINT('search_sc_type');
+$search_sc_type = GETPOST('search_sc_type', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

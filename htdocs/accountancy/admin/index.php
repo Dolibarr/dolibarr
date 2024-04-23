@@ -68,7 +68,7 @@ $error = 0;
  * Actions
  */
 
-if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT', 'setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTANCY_COMBO_FOR_AUX', 'setACCOUNTING_MANAGE_ZERO'))) {
+if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT', 'setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTANCY_COMBO_FOR_AUX', 'setACCOUNTING_MANAGE_ZERO', 'setACCOUNTING_BANK_CONCILIATED'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
@@ -405,6 +405,21 @@ foreach ($list as $key) {
 	print '</td>';
 	print '</tr>';
 }
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_BANK_CONCILIATED").'</td>';
+if (getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED') == 2) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=1">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=2">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+
 print '</table>';
 print '</div>';
 

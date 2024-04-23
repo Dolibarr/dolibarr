@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2020	Frédéric France    	<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France    	<frederic.france@free.fr>
  * Copyright (C) 2023 		Charlene Benke    	<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1269,7 +1269,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank = $rank + 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
