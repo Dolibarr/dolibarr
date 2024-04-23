@@ -6,6 +6,11 @@ pipeline {
         kind: Pod
         spec:
           containers:
+          - name: trivy
+            image: aquasec/trivy:canary
+            command:
+            - cat
+            tty: true  
           - name: git
             image: alpine/git:latest
             command:
@@ -19,16 +24,11 @@ pipeline {
             volumeMounts:
              - mountPath: /var/run/docker.sock
                name: docker-sock
-            volumes:
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
-                
-          - name: trivy
-            image: aquasec/trivy:canary
-            command:
-            - cat
-            tty: true  
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock   
+          
         '''
     }
   }
