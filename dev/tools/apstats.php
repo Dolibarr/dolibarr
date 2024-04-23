@@ -290,7 +290,7 @@ foreach ($output_arrglpu as $val) {
 		//$alreadyfound=0;
 		if (!$alreadyfound) {
 			// Get branch names
-			$commandgetbranch = "git branch -r --contains '".$val['commitid']."'";
+			$commandgetbranch = "git branch -r --contains '".$tmpval['commitid']."'";
 			print 'Execute git branch to get the name of branches for the commit: '.$commandgetbranch."\n";
 			$output_arrgetbranch = array();
 			$resexecgetbranch = 0;
@@ -928,10 +928,11 @@ foreach ($arrayofalerts as $key => $alert) {
 
 	$arrayofalerts[$key]['description'] .= ']]>';
 
-	// Branch
+	// Branches
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['branch'])) {
 		$html .= implode(', ', $alert['branch']);
+		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.implode(', ', $alert['branch']);
 	}
 	$html .= '</td>';
 
