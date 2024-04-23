@@ -510,7 +510,7 @@ class Members extends DolibarrApi
 	}
 
 	/**
-	 * Get Adherent objet
+	 * Get Adherent object
 	 *
 	 * @param $id
 	 * @param $ref
