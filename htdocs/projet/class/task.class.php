@@ -398,7 +398,7 @@ class Task extends CommonObject
 		$sql .= " dateo=".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
-		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
+		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0").",";
 		$sql .= " priority=".((!empty($this->priority)) ? $this->priority : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
