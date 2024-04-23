@@ -594,6 +594,11 @@ if (empty($reshook)) {
 			$db->commit();
 
 			if ($nb_bills_created == 1) {
+				if (getDolGlobalInt('MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_ONE') == 1) {
+					// Redirect to generated invoice if unique
+					header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode((string) $lastid));
+					exit;
+				}
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
 				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
