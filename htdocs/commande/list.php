@@ -603,6 +603,11 @@ if (empty($reshook)) {
 				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
+				if (getDolGlobalInt('MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_MANY') == 1) {
+					// Redirect to invoice list
+					header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills');
+					exit;
+				}
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 			}
 
