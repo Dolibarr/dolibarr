@@ -5432,7 +5432,7 @@ class Societe extends CommonObject
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $langs, $hookmanager, $user, $action;
+		global $conf, $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
