@@ -510,6 +510,8 @@ class Members extends DolibarrApi
 	}
 
 	/**
+	 * Get Adherent objet
+	 *
 	 * @param $id
 	 * @param $ref
 	 * @param $fk_soc
@@ -535,6 +537,8 @@ class Members extends DolibarrApi
 	}
 
 	/**
+	 * Get Societe object
+	 *
 	 * @param $rowid
 	 * @param $ref
 	 * @param $ref_ext
