@@ -664,6 +664,10 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		$destfile = $srcfile;
 	}
 
+	// Clean the aa/bb/../cc into aa/cc
+	$srcfile = preg_replace('/\.\.\/?/', '', $srcfile);
+	$destfile = preg_replace('/\.\.\/?/', '', $destfile);
+
 	$destexists = dol_is_file($destfile);
 	if (($destfile != $srcfile) && $destexists) {
 		return 0;
