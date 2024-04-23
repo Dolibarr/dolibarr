@@ -512,9 +512,9 @@ class Members extends DolibarrApi
 	/**
 	 * Get Adherent object
 	 *
-	 * @param $id
-	 * @param $ref
-	 * @param $fk_soc
+	 * @param int $id
+	 * @param string $ref
+	 * @param int $fk_soc
 	 *
 	 * @return Adherent
 	 *
@@ -539,17 +539,17 @@ class Members extends DolibarrApi
 	/**
 	 * Get Societe object
 	 *
-	 * @param $rowid
-	 * @param $ref
-	 * @param $ref_ext
-	 * @param $barcode
-	 * @param $idprof1
-	 * @param $idprof2
-	 * @param $idprof3
-	 * @param $idprof4
-	 * @param $idprof5
-	 * @param $idprof6
-	 * @param $email
+	 * @param int $rowid
+	 * @param string $ref
+	 * @param string $ref_ext
+	 * @param string $barcode
+	 * @param string $idprof1
+	 * @param string $idprof2
+	 * @param string $idprof3
+	 * @param string $idprof4
+	 * @param string $idprof5
+	 * @param string $idprof6
+	 * @param string $email
 	 *
 	 * @return Societe
 	 *
