@@ -129,11 +129,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-		if (!$result) {
-			throw new RestException(404, 'thirdparty not found');
-		}
+		$thirdparty = $this->getThirdparty('', '', '', '', '', '', '', '', '', '', $email);
 
 		$member = $this->getMember('', '', $thirdparty->id);
 
@@ -164,11 +160,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', $barcode);
-		if (!$result) {
-			throw new RestException(404, 'thirdparty not found');
-		}
+		$thirdparty = $this->getThirdparty('', '', '', $barcode);
 
 		$member = $this->getMember('', '', $thirdparty->id);
 
@@ -526,7 +518,8 @@ class Members extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	private function getMember($id = '', $ref = '', $fk_soc = '') {
+	private function getMember($id = '', $ref = '', $fk_soc = '')
+	{
 		$member = new Adherent($this->db);
 		$fetchResult = $member->fetch($id, $ref, $fk_soc);
 
@@ -539,5 +532,37 @@ class Members extends DolibarrApi
 		}
 
 		return $member;
+	}
+
+	/**
+	 * @param $rowid
+	 * @param $ref
+	 * @param $ref_ext
+	 * @param $barcode
+	 * @param $idprof1
+	 * @param $idprof2
+	 * @param $idprof3
+	 * @param $idprof4
+	 * @param $idprof5
+	 * @param $idprof6
+	 * @param $email
+	 *
+	 * @return Societe
+	 *
+	 * @throws RestException
+	 */
+	private function getThirdparty($rowid = '', $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '')
+	{
+		$thirdparty = new Societe($this->db);
+		$fetchResult = $thirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email);
+		if ( 0 === $fetchResult) {
+			throw new RestException(404, 'thirdparty not found');
+		}
+
+		if ($fetchResult < 0) {
+			throw new RestException(503, 'Error when retrieve thirdparty : '.$this->db->lasterror());
+		}
+
+		return $thirdparty;
 	}
 }
