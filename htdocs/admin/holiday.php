@@ -533,12 +533,12 @@ print '<tr class="oddeven">';
 print "<td>".$langs->trans("DecreasingHolidayAtTheEndOfMonth")."</td>";
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_Of_MONTH', array(), null, 0, 0, 0, 2, 0, 1);
+	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
-	if (getDolGlobalString('HOLIDAY_DECREASE_AT_END_Of_MONTH')) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_Of_MONTH=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	if (getDolGlobalString('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_Of_MONTH=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&HOLIDAY_DECREASE_AT_END_OF_MONTH=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print "</td>";
