@@ -1658,7 +1658,7 @@ class Holiday extends CommonObject
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
 			$langs->load("holiday");
 
-			$decrease = $conf->global->HOLIDAY_DECREASE_AT_END_Of_MONTH == 1;
+			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_Of_MONTH'));
 
 			// Si mise à jour pour tout le monde en début de mois
 			$now = dol_now();
@@ -1683,7 +1683,6 @@ class Holiday extends CommonObject
 
 				// Update each user counter
 				foreach ($users as $userCounter) {
-
 					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newbymonth']) ? $typeleaves[$userCounter['type']]['newbymonth'] : 0);
 					if (empty($nbDaysToAdd)) {
 						continue;
@@ -1695,7 +1694,7 @@ class Holiday extends CommonObject
 					$newSolde = $nowHoliday + $nbDaysToAdd;
 
 					// We add a log for each user when its balance gets increased
-					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
+					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidayMonthlyCredit'), $newSolde, $userCounter['type']);
 
 					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
@@ -1711,7 +1710,7 @@ class Holiday extends CommonObject
 						$filter .= " AND cp.date_debut<='".date('Y-m-t', $lastUpdate)."' AND cp.fk_type=".$userCounter['type'];
 						$filter .= " AND cp.fk_type=".$userCounter['type'];
 						$this->fetchByUser($userCounter['id'], '', $filter);
-						$nbDaysToDeduct = 0;
+
 						if (!empty($this->holiday)) {
 							$startOfMonth = dol_mktime(0, 0, 0, $month, '01', $year, 1);
 							$endOfMonth = dol_mktime(0, 0, 0, $month, date('t', $lastUpdate), $year, 1);
@@ -1728,26 +1727,27 @@ class Holiday extends CommonObject
 									$endDate = $endOfMonth;
 								}
 
-								$nbDaysToDeduct += intval(num_open_day($startDate, $endDate, 0, 1, $obj['halfday']));
-							}
-						}
+								$nbDaysToDeduct = intval(num_open_day($startDate, $endDate, 0, 1, $obj['halfday']));
 
-						if ($nbDaysToDeduct!=0){
-							$newSolde = $newSolde - $nbDaysToDeduct;
+								if ($nbDaysToDeduct <= 0) {
+									continue;
+								}
 
-							// We add a log for each user when its balance gets decreased
-							$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
+								$newSolde -= $nbDaysToDeduct;
 
-							$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+								// We add a log for each user when its balance gets decreased
+								$this->addLogCP($user->id, $userCounter['rowid'], $obj['ref'].' - '.$langs->trans('HolidayConsumption'), $newSolde, $userCounter['type']);
 
-							if ($result < 0) {
-								$error++;
-								break;
+								$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+
+								if ($result < 0) {
+									$error++;
+									break;
+								}
 							}
 						}
 					}
 				}
-
 
 				if (!$error) {
 					$this->db->commit();
@@ -2583,39 +2583,3 @@ class Holiday extends CommonObject
 		return $return;
 	}
 }
-//							if ($item['fk_user_approve']!=1){
-//								continue;
-//							}
-//							if($item['date_debut']>=dol_mktime(0,0,0, date('m', $now),1,date('Y', $now)) && $item['date_debut']<=dol_mktime(0,0,0, date('m', $now), date('t', $now),date('Y', $now))){
-//								if ($item['date_fin']>dol_mktime(0,0,0, date('m', $now),31,date('Y', $now))){
-//									$nbDaysToDeduct = intval(date('t', $now))-intval(date("d", $item['date_debut']));
-//								}
-//								else{
-//									$nbDaysToDeduct = intval(date("d", $item['date_debut']))-intval(date("d", $item['date_fin']));
-//								}
-//							}
-//						}
-//					}
-//
-//
-//
-//
-//$this->fetchByUser($userCounter['id'], '', 'AND cp.statut='.self::STATUS_APPROVED.' AND cp.date_fin>=\''.date('Y-m', $now).'-01\' AND cp.fk_type='.$userCounter['type']);
-//$nbDaysToDeduct = 0;
-//if (!empty($this->holiday)) {
-//	$startOfMonth = dol_mktime(0, 0, 0, $month, '01', date('Y', $now), 1);
-//	$endOfMonth = dol_mktime(0, 0, 0, $month, date('t', $now), date('Y', $now), 1);
-//	foreach ($this->holiday as $obj) {
-//		if (date('m', $obj['date_debut']) == $month){
-//			if (date('m', $obj['date_fin']) == $month){
-//				$nbDaysToDeduct += intval(num_open_day($obj['date_debut_gmt'], $obj['date_fin_gmt'], 0, 1, $obj['halfday']));
-//			} else {
-//				$nbDaysToDeduct += intval(num_open_day($obj['date_debut_gmt'], $endOfMonth, 0, 1, $obj['halfday']));
-//			}
-//		} elseif (date('m', $obj['date_fin']) == $month){
-//			$nbDaysToDeduct += intval(num_open_day($startOfMonth, $obj['date_fin_gmt'], 0, 1, $obj['halfday']));
-//		} else {
-//			$nbDaysToDeduct += intval(num_open_day($startOfMonth,  $endOfMonth, 0, 1, $obj['halfday']));
-//		}
-//	}
-//}

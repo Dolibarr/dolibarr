@@ -611,7 +611,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
 
-			$decrease = $conf->global->HOLIDAY_DECREASE_AT_END_Of_MONTH == 0;
+			$decrease = empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_Of_MONTH'));
 
 			$db->begin();
 
@@ -627,7 +627,7 @@ if (empty($reshook)) {
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
-				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
+				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
 
 				// The modification is added to the LOG
 				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
@@ -842,7 +842,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
 
-			$decrease = $conf->global->HOLIDAY_DECREASE_AT_END_Of_MONTH == 1;
+			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_Of_MONTH'));
 
 			$result = $object->update($user);
 
@@ -853,15 +853,16 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				$endDate = $object->date_fin_gmt;
 				$startDate = $object->date_debut_gmt;
+				$endDate = $object->date_fin_gmt;
 
 				if ($decrease){
-					$date = strtotime('-1 month', dol_now());
-					$endOfPreviousMonth = dol_mktime(0, 0, 0, date('m', $date), date('t', $date), date('Y', $date), 1);
-					if ($object->date_debut_gmt < $endOfPreviousMonth && $object->date_fin_gmt > $endOfPreviousMonth) {
-						$endDate = $endOfPreviousMonth;
-					} elseif ($object->date_debut_gmt > $endOfPreviousMonth) {
+					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
+					$date = strtotime('-1 month', $lastUpdate);
+					$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, date('m', $date), date('t', $date), date('Y', $date), 1);
+					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
+						$endDate = $endOfMonthBeforeLastUpdate;
+					} elseif ($object->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
 						$endDate = $startDate;
 					}
 				}
@@ -873,7 +874,7 @@ if (empty($reshook)) {
 				$newSolde = ($soldeActuel + $nbopenedday);
 
 				// The modification is added to the LOG
-				$result1 = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $object->fk_type);
+				$result1 = $object->addLogCP($user->id, $object->fk_user, $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayCreditAfterCancellation"), $newSolde, $object->fk_type);
 
 				// Update of the balance
 				$result2 = $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
