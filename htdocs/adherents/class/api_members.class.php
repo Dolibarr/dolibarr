@@ -66,14 +66,11 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
 		if ($id == 0) {
-			$result = $member->initAsSpecimen();
+			$member = new Adherent($this->db);
+			$member->initAsSpecimen();
 		} else {
-			$result = $member->fetch($id);
-		}
-		if (!$result) {
-			throw new RestException(404, 'member not found');
+			$member = $this->getMember($id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id) && $id > 0) {
@@ -103,11 +100,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember('', '', $thirdparty);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -142,11 +135,7 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'thirdparty not found');
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember('', '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -181,11 +170,7 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'thirdparty not found');
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember('', '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -314,11 +299,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -364,19 +345,17 @@ class Members extends DolibarrApi
 	/**
 	 * Delete member
 	 *
-	 * @param int $id   member ID
+	 * @param int $id member ID
 	 * @return array
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
 			throw new RestException(401);
 		}
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+
+		$member = $this->getMember($id);
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -467,11 +446,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		$obj_ret = array();
 		foreach ($member->subscriptions as $subscription) {
@@ -483,14 +458,15 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int 		$id             ID of member
-	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
-	 * @param string 	$end_date       End date {@from body} {@type timestamp}
-	 * @param float 	$amount         Amount (may be 0) {@from body}
-	 * @param string 	$label         	Label {@from body}
+	 * @param int $id ID of member
+	 * @param string $start_date Start date {@from body} {@type timestamp}
+	 * @param string $end_date End date {@from body} {@type timestamp}
+	 * @param float $amount Amount (may be 0) {@from body}
+	 * @param string $label Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions
+	 * @throws RestException
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
@@ -498,11 +474,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
 	}
@@ -510,15 +482,17 @@ class Members extends DolibarrApi
 	/**
 	 * Get categories for a member
 	 *
-	 * @param int		$id         ID of member
-	 * @param string		$sortfield	Sort field
-	 * @param string		$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
+	 * @param int $id ID of member
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int $limit Limit for list
+	 * @param int $page Page number
 	 *
 	 * @return mixed
 	 *
 	 * @url GET {id}/categories
+	 *
+	 * @throws RestException
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -526,11 +500,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (0 === $result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		$categories = new Categorie($this->db);
 
@@ -545,5 +515,29 @@ class Members extends DolibarrApi
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @param $id
+	 * @param $ref
+	 * @param $fk_soc
+	 *
+	 * @return Adherent
+	 *
+	 * @throws RestException
+	 */
+	private function getMember($id = '', $ref = '', $fk_soc = '') {
+		$member = new Adherent($this->db);
+		$fetchResult = $member->fetch($id, $ref, $fk_soc);
+
+		if (0 === $fetchResult) {
+			throw new RestException(404, 'member not found');
+		}
+
+		if ($fetchResult < 0) {
+			throw new RestException(503, 'Error when retrieve member : '.$this->db->lasterror());
+		}
+
+		return $member;
 	}
 }
