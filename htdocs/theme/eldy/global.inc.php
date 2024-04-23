@@ -1157,7 +1157,8 @@ span.fa.fa-plus-circle.paddingleft {
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
 {
-	font-size: 1.5em; vertical-align: text-bottom;
+	font-size: 1.5em;
+	vertical-align: text-bottom;
 }
 
 .divoverflow {
@@ -2082,6 +2083,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		min-width: 300px;
 	}
 }
+
+/* Force values for small screen 320 */
+@media only screen and (max-width: 320px)
+{
+	.maxwidth300 { max-width: 260px; }
+}
+
+
 .linkobject { cursor: pointer; }
 
 table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
@@ -8179,7 +8188,7 @@ table.jPicker {
 	}
 	.badge {
 		min-width: auto;
-		font-size: 12px;
+		font-size: 0.94em;
 	}
 
 	table.table-fiche-title .col-title div.titre{
@@ -8249,6 +8258,7 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
