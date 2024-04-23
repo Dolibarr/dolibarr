@@ -7,6 +7,7 @@
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		Eric Gautheron			<epixfr@opensolus.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -542,8 +543,10 @@ class modFacture extends DolibarrModules
 			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
 			'fd.total_ttc'=>"LineTotalTTC", 'fd.buy_price_ht'=>'BuyingPrice', 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
-			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
-			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode',
+			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId',
+			'aa.account_number' => 'AccountingAffectation', 
+			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',			
+			//$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode',
 			'aa.account_number' => 'AccountingAffectation'
 		);
 		$this->export_TypeFields_array[$r] = array(
@@ -561,8 +564,10 @@ class modFacture extends DolibarrModules
 			'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.buy_price_ht'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
-			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
-			$alias_product_perentity . '.accountancy_code_sell'=>'Text',
+			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 
+			'aa.account_number' => 'Text', 
+			'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
+			//$alias_product_perentity . '.accountancy_code_sell'=>'Text',
 			'aa.account_number' => 'Text'
 		);
 		$this->export_entities_array[$r] = array(
@@ -572,9 +577,11 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line",
 			'fd.subprice'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.buy_price_ht'=>'invoice_line', 'fd.tva_tx'=>"invoice_line",
 			'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>'invoice_line',
-			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity . '.accountancy_code_sell'=>'product',
+			'fd.product_type'=>'invoice_line', 'aa.account_number' => "invoice_line",
+			'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', 
+			//$alias_product_perentity . '.accountancy_code_sell'=>'product',
 			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user',
-			'aa.account_number' => "invoice_line",
+			
 		);
 		$this->export_help_array[$r] = array('fd.buy_price_ht'=>'CostPriceUsage');
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
