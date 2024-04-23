@@ -750,6 +750,7 @@ td.rightborder {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+	white-space: nowrap;
 }
 span.amount {
 	white-space: nowrap;

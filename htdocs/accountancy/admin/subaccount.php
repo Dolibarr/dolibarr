@@ -288,7 +288,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/admin/subaccount.php:: $sql='.$sql);
+dol_syslog("accountancy/admin/subaccount.php:: sql=".$sql);
 $resql = $db->query($sql);
 
 if ($resql) {
