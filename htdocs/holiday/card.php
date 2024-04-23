@@ -611,7 +611,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
 
-			$decrease = empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_Of_MONTH'));
+			$decrease = empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH'));
 
 			$db->begin();
 
@@ -842,7 +842,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
 
-			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_Of_MONTH'));
+			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH'));
 
 			$result = $object->update($user);
 
