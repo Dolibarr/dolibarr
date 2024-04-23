@@ -129,7 +129,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$thirdparty = $this->getThirdparty('', '', '', '', '', '', '', '', '', '', $email);
+		$thirdparty = $this->getThirdparty('', $email);
 
 		$member = $this->getMember('', '', $thirdparty->id);
 
@@ -160,7 +160,7 @@ class Members extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$thirdparty = $this->getThirdparty('', '', '', $barcode);
+		$thirdparty = $this->getThirdparty($barcode);
 
 		$member = $this->getMember('', '', $thirdparty->id);
 
@@ -539,26 +539,17 @@ class Members extends DolibarrApi
 	/**
 	 * Get Societe object
 	 *
-	 * @param int $rowid ID of third party
-	 * @param string $ref Reference of third party, name (Warning, this can return several records)
-	 * @param string $ref_ext External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param string $barcode Barcode of third party to load
-	 * @param string $idprof1 Prof id 1 of third party (Warning, this can return several records)
-	 * @param string $idprof2 Prof id 2 of third party (Warning, this can return several records)
-	 * @param string $idprof3 Prof id 3 of third party (Warning, this can return several records)
-	 * @param string $idprof4 Prof id 4 of third party (Warning, this can return several records)
-	 * @param string $idprof5 Prof id 5 of third party (Warning, this can return several records)
-	 * @param string $idprof6 Prof id 6 of third party (Warning, this can return several records)
 	 * @param string $email Email of third party (Warning, this can return several records)
 	 *
 	 * @return Societe
 	 *
 	 * @throws RestException
 	 */
-	private function getThirdparty($rowid = '', $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '')
+	private function getThirdparty($barcode = '', $email = '')
 	{
 		$thirdparty = new Societe($this->db);
-		$fetchResult = $thirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email);
+		$fetchResult = $thirdparty->fetch('', '', '', $barcode,'', '', '', '', '', '', $email);
 		if ( 0 === $fetchResult) {
 			throw new RestException(404, 'thirdparty not found');
 		}
