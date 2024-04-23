@@ -495,6 +495,7 @@ class Holiday extends CommonObject
 	 */
 	public function fetchByUser($user_id, $order = '', $filter = '')
 	{
+		$this->holiday = [];
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
 		$sql .= " cp.ref,";
@@ -1710,7 +1711,7 @@ class Holiday extends CommonObject
 					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
 					$filter = " AND cp.statut = ".self::STATUS_APPROVED;
 					$filter .= " AND cp.date_fin >= '".date('Y-m-01', $lastUpdate)."'";
-					$filter .= " AND cp.date_debut <= '".date('Y-m-t', $lastUpdate)."' AND cp.fk_type = ".$userCounter['type'];
+					$filter .= " AND cp.date_debut <= '".date('Y-m-t', $lastUpdate)."'";
 					$filter .= " AND cp.fk_type = ".$userCounter['type'];
 					$this->fetchByUser($userCounter['id'], '', $filter);
 
