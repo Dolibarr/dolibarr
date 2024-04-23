@@ -52,7 +52,7 @@ $mode = GETPOST('mode', 'alpha');
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_typeid = GETPOSTINT('search_typeid');
+$search_typeid = GETPOST('search_typeid', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -72,9 +72,9 @@ $search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_users = GETPOST('search_users');
-$search_type = GETPOSTINT('search_type');
-$search_account = GETPOSTINT('search_account');
+$search_users = GETPOST('search_users', 'intcomma');
+$search_type = GETPOST('search_type', 'alpha');
+$search_account = GETPOST('search_account', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
