@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2023 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,7 +138,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$this->posxup = $this->posxtva; // posxtva is picture position reference
 		}
-		$this->posxpicture = $this->posxtva - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxtva - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;

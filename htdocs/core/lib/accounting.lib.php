@@ -175,12 +175,13 @@ function length_accounta($accounta)
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
+ *	@param	array				$moreparam		Array with list of params to add into hidden fields of form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
+ *	@param	array				$moreoptions	Array with list of params to add to table
  *	@return	void
  */
-function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '', $moreoptions = array())
 {
 	global $langs;
 
@@ -253,6 +254,15 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
+
+
+	// more options
+	foreach ($moreoptions as $key => $value) {
+		print '<tr>';
+		print '<td>'.$langs->trans($key).'</td>';
+		print '<td colspan="3">'.$value.'</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 

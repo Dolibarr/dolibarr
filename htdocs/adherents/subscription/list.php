@@ -50,7 +50,7 @@ $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_all = '';
 
@@ -322,7 +322,7 @@ if ($search_login) {
 	$param .= "&search_login=".urlencode($search_login);
 }
 if ($search_account) {
-	$param .= "&search_account=".urlencode((string) ($search_account));
+	$param .= "&search_account=".urlencode($search_account);
 }
 if ($search_amount) {
 	$param .= "&search_amount=".urlencode($search_amount);

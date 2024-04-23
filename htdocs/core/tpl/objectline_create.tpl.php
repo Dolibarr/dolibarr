@@ -216,7 +216,7 @@ if ($nolinesbefore) {
 					echo ' ';
 				}
 			}
-			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall, '');
 			echo '</span>';
 		}
 		// Predefined product/service
@@ -265,9 +265,9 @@ if ($nolinesbefore) {
 				}
 				if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, $statuswarehouse, GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
@@ -461,21 +461,21 @@ if ($nolinesbefore) {
 	</td>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
-		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
+		<input type="text" name="price_ht" id="price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
 	<?php
 	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluht_currency right">
-			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
+			<input type="text" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
 		<?php
 	}
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluttc right">
-			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat right" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
+			<input type="text" name="price_ttc" id="price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
 			<?php
 	}

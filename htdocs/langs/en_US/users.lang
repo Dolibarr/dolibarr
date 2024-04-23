@@ -134,3 +134,4 @@ UserPublicPageDesc=You can enable a virtual card for this user. An url with the 
 EnablePublicVirtualCard=Enable the user's virtual business card
 UserEnabledDisabled=User status changed: %s
 AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Error, The update was canceled because one of the pieces of data, that should be unique, already exists

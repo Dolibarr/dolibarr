@@ -66,6 +66,7 @@ $entitytoicon = array(
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
+	'securityevent' => 'generic',
 	'shipment'     => 'sending',
 	'shipment_line' => 'sending',
 	'reception' => 'sending',
@@ -113,6 +114,7 @@ $entitytolang = array(
 	'category'     => 'Category',
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
+	'securityevent' => 'SecurityEvent',
 	'shipment'     => 'Shipments',
 	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
@@ -269,6 +271,11 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	$separator = GETPOST('delimiter', 'alpha');
 	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
@@ -290,6 +297,11 @@ if ($action == 'builddoc') {
 
 // Delete file
 if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	$file = $upload_dir."/".GETPOST('file');
 
 	$ret = dol_delete_file($file);
@@ -303,6 +315,11 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	if (GETPOSTINT("id")) {
 		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
@@ -311,6 +328,11 @@ if ($action == 'deleteprof') {
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
 if ($action == 'add_export_model') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	if ($export_name) {
 		asort($array_selected);
 
@@ -386,6 +408,11 @@ if ($step == 2 && $action == 'select_model') {
 
 // Get form with filters
 if ($step == 4 && $action == 'submitFormField') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	// on boucle sur les champs selectionne pour recuperer la valeur
 	if (is_array($objexport->array_export_TypeFields[0])) {
 		$_SESSION["export_filtered_fields"] = array();
@@ -469,6 +496,11 @@ if ($step == 1 || !$datatoexport) {
 }
 
 if ($step == 2 && $datatoexport) {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	$h = 0;
@@ -646,6 +678,11 @@ if ($step == 3 && $datatoexport) {
 		exit;
 	}
 
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	$h = 0;
@@ -808,6 +845,11 @@ if ($step == 4 && $datatoexport) {
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
+	}
+
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
 	}
 
 	asort($array_selected);
@@ -1077,6 +1119,11 @@ if ($step == 5 && $datatoexport) {
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
+	}
+
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
 	}
 
 	asort($array_selected);

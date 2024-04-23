@@ -151,7 +151,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 0);
 
 	// Loop over job
 	foreach ($object->lines as $line) {

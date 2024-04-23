@@ -50,6 +50,9 @@ UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTr
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
 DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
 ALTER TABLE llx_actioncomm_extrafields ADD UNIQUE INDEX uk_actioncomm_extrafields (fk_object);
@@ -284,7 +287,7 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
-ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
+ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'commande' NOT NULL;
 ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
 ALTER TABLE llx_expeditiondet DROP INDEX idx_expeditiondet_fk_origin_line;
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elementdet);

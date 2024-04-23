@@ -230,7 +230,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -254,7 +254,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </tr>
 
 <!-- Position -->
-<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($pos); ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" class="width50" value="<?php echo dol_escape_htmltag($pos); ?>"></td></tr>
 
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile); ?>"></td></tr>
@@ -270,7 +270,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </tr>
 
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="width50" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
 
 <!-- Unique -->
 <tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique ? ' checked' : ''); ?>></td></tr>
