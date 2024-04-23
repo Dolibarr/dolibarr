@@ -46,7 +46,7 @@ pipeline {
         container('docker') {
           script {
             // Build the Docker image
-            def appImage = docker.build("iyedbnaissa/dolibarr_build:${env.BUILD_NUMBER}", "-f Dockerfile .")
+            docker.build("iyedbnaissa/dolibarr_build:${env.BUILD_NUMBER}", "-f Dockerfile .")
           }
         }
       }
