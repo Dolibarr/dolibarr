@@ -512,9 +512,9 @@ class Members extends DolibarrApi
 	/**
 	 * Get Adherent object
 	 *
-	 * @param int $id
-	 * @param string $ref
-	 * @param int $fk_soc
+	 * @param int $id ID of member
+	 * @param string $ref reference of member
+	 * @param int $fk_soc ID of third party
 	 *
 	 * @return Adherent
 	 *
@@ -539,17 +539,17 @@ class Members extends DolibarrApi
 	/**
 	 * Get Societe object
 	 *
-	 * @param int $rowid
-	 * @param string $ref
-	 * @param string $ref_ext
-	 * @param string $barcode
-	 * @param string $idprof1
-	 * @param string $idprof2
-	 * @param string $idprof3
-	 * @param string $idprof4
-	 * @param string $idprof5
-	 * @param string $idprof6
-	 * @param string $email
+	 * @param int $rowid ID of third party
+	 * @param string $ref Reference of third party, name (Warning, this can return several records)
+	 * @param string $ref_ext External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+	 * @param string $barcode Barcode of third party to load
+	 * @param string $idprof1 Prof id 1 of third party (Warning, this can return several records)
+	 * @param string $idprof2 Prof id 2 of third party (Warning, this can return several records)
+	 * @param string $idprof3 Prof id 3 of third party (Warning, this can return several records)
+	 * @param string $idprof4 Prof id 4 of third party (Warning, this can return several records)
+	 * @param string $idprof5 Prof id 5 of third party (Warning, this can return several records)
+	 * @param string $idprof6 Prof id 6 of third party (Warning, this can return several records)
+	 * @param string $email Email of third party (Warning, this can return several records)
 	 *
 	 * @return Societe
 	 *
