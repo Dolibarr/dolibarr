@@ -241,7 +241,7 @@ $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 
 // Get stats on nb of commits
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
+$commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
 print 'Execute git log to get list of commits: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -253,7 +253,7 @@ $nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -310,6 +310,27 @@ foreach ($output_arrglpu as $val) {
 			if (empty($arrayofalerts[$alreadyfoundcommitid]['commitidbis'])) {
 				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
 			}
+
+			// Get branch names
+			$commandgetbranch = "git branch -r --contains '".$tmpval['commitid']."'";
+			print 'Execute git branch to get the name of branches for the commit: '.$commandgetbranch."\n";
+			$output_arrgetbranch = array();
+			$resexecgetbranch = 0;
+			exec($commandgetbranch, $output_arrgetbranch, $resexecgetbranch);
+
+			foreach ($output_arrgetbranch as $valbranch) {
+				if (empty($tmpval['branch'])) {
+					$tmpval['branch'] = array();
+				}
+				if (preg_match('/^\s*origin\/(develop|\d)/', $valbranch)) {
+					$tmpval['branch'][] = preg_replace('/^\s*origin\//', '', $valbranch);
+				}
+			}
+			/*var_dump($tmpval['commitid'].' '.$alreadyfoundcommitid);
+			var_dump($arrayofalerts[$alreadyfoundcommitid]['branch']);
+			var_dump($tmpval);*/
+			$arrayofalerts[$alreadyfoundcommitid]['branch'] = array_merge($arrayofalerts[$alreadyfoundcommitid]['branch'], $tmpval['branch']);
+
 			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
 		}
 	}
@@ -931,8 +952,9 @@ foreach ($arrayofalerts as $key => $alert) {
 	// Branches
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['branch'])) {
-		$html .= implode(', ', $alert['branch']);
-		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.implode(', ', $alert['branch']);
+		$listofbranchnames = implode(', ', array_unique($alert['branch']));
+		$html .= $listofbranchnames;
+		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.$listofbranchnames;
 	}
 	$html .= '</td>';
 
