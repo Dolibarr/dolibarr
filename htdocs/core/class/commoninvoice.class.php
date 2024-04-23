@@ -1656,7 +1656,8 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 * @return	string			String for EPC QR Code
 	 */
-	public function buildEPCQrCodeString(){
+	public function buildEPCQrCodeString()
+	{
 		global $mysoc;
 
 		// Convert total_ttc to a string with 2 decimal places
