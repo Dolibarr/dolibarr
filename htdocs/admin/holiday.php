@@ -530,7 +530,7 @@ print "</tr>";
 
 // Set holiday decrease at the end of month
 print '<tr class="oddeven">';
-print "<td>".$langs->trans("DecreasingHolidayAtTheEndOfMonth")."</td>";
+print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);
