@@ -1699,61 +1699,58 @@ class Holiday extends CommonObject
 					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
 					if ($result < 0) {
-						$error++;
-						break;
+						$this->db->rollback();
+						return -1;
 					}
 
-					if ($decrease) {
-						// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
-						$filter = " AND cp.statut=".self::STATUS_APPROVED;
-						$filter .= " AND cp.date_fin>='".date('Y-m-01', $lastUpdate)."'";
-						$filter .= " AND cp.date_debut<='".date('Y-m-t', $lastUpdate)."' AND cp.fk_type=".$userCounter['type'];
-						$filter .= " AND cp.fk_type=".$userCounter['type'];
-						$this->fetchByUser($userCounter['id'], '', $filter);
+					if (!$decrease) {
+						continue;
+					}
 
-						if (!empty($this->holiday)) {
-							$startOfMonth = dol_mktime(0, 0, 0, $month, '01', $year, 1);
-							$endOfMonth = dol_mktime(0, 0, 0, $month, date('t', $lastUpdate), $year, 1);
+					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
+					$filter = " AND cp.statut = ".self::STATUS_APPROVED;
+					$filter .= " AND cp.date_fin >= '".date('Y-m-01', $lastUpdate)."'";
+					$filter .= " AND cp.date_debut <= '".date('Y-m-t', $lastUpdate)."' AND cp.fk_type = ".$userCounter['type'];
+					$filter .= " AND cp.fk_type = ".$userCounter['type'];
+					$this->fetchByUser($userCounter['id'], '', $filter);
 
-							foreach ($this->holiday as $obj) {
-								$startDate = $obj['date_debut_gmt'];
-								$endDate = $obj['date_fin_gmt'];
+					if (empty($this->holiday)) {
+						continue;
+					}
 
-								if ($startDate <= $endOfMonth && $startDate < $startOfMonth) {
-									$startDate = $startOfMonth;
-								}
+					$startOfMonth = dol_mktime(0, 0, 0, $month, '01', $year, 1);
+					$endOfMonth = dol_mktime(0, 0, 0, $month, date('t', $lastUpdate), $year, 1);
 
-								if ($startOfMonth <= $endDate && $endDate > $endOfMonth) {
-									$endDate = $endOfMonth;
-								}
+					foreach ($this->holiday as $obj) {
+						$startDate = $obj['date_debut_gmt'];
+						$endDate = $obj['date_fin_gmt'];
 
-								$nbDaysToDeduct = intval(num_open_day($startDate, $endDate, 0, 1, $obj['halfday']));
+						if ($startDate <= $endOfMonth && $startDate < $startOfMonth) {
+							$startDate = $startOfMonth;
+						}
 
-								if ($nbDaysToDeduct <= 0) {
-									continue;
-								}
+						if ($startOfMonth <= $endDate && $endDate > $endOfMonth) {
+							$endDate = $endOfMonth;
+						}
 
-								$newSolde -= $nbDaysToDeduct;
+						$nbDaysToDeduct = intval(num_open_day($startDate, $endDate, 0, 1, $obj['halfday']));
 
-								// We add a log for each user when its balance gets decreased
-								$this->addLogCP($user->id, $userCounter['rowid'], $obj['ref'].' - '.$langs->trans('HolidayConsumption'), $newSolde, $userCounter['type']);
+						if ($nbDaysToDeduct <= 0) {
+							continue;
+						}
 
-								$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+						$newSolde -= $nbDaysToDeduct;
 
-								if ($result < 0) {
-									$error++;
-									break;
-								}
-							}
+						// We add a log for each user when its balance gets decreased
+						$this->addLogCP($user->id, $userCounter['rowid'], $obj['ref'].' - '.$langs->trans('HolidayConsumption'), $newSolde, $userCounter['type']);
+
+						$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
+
+						if ($result < 0) {
+							$this->db->rollback();
+							return -1;
 						}
 					}
-				}
-
-				if (!$error) {
-					$this->db->commit();
-				} else {
-					$this->db->rollback();
-					return -1;
 				}
 
 				//updating the date of the last monthly balance update
@@ -1763,6 +1760,12 @@ class Holiday extends CommonObject
 				$sql .= " WHERE name = 'lastUpdate'";
 				$result = $this->db->query($sql);
 
+				if (!$result) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 			}
 
 			if (!$error) {
