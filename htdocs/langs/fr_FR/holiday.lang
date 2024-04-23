@@ -158,4 +158,4 @@ ConfirmMassIncreaseHoliday=Augmentation massive du solde des congés
 NumberDayAddMass=Nombre de jours à ajouter à la sélection
 ConfirmMassIncreaseHolidayQuestion=Êtes-vous sûr de vouloir augmenter les vacances du ou des enregistrement(s) sélectionnés %s ?
 HolidayQtyNotModified=Le solde des jours restants pour %s n'a pas été modifié
-DecreasingHolidayAtTheEndOfMonth=Décrémentation des jours de congés dans le mois concerné
+ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Consommer les jours de congés à la fin du mois où ils sont pris
