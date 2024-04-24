@@ -469,15 +469,15 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// type filter (produit/service)
 	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
 
-	//select thirdparty
+	// Third party filter
 	print '<br>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
-	// type of thirdparty
-	print '&nbsp;&nbsp;';
-	print $langs->trans("Type").': ';
+
+	// Type of third party filter
+	print '&nbsp; &nbsp;';
 	$formcompany = new FormCompany($db);
-	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1);
+	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"));
 
 	print '<br>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
