@@ -855,57 +855,21 @@ if ($action == 'create') {
 	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
 
-	print '<tr class="fieldsforemail"><td></td><td>';
+	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
+
 	$out = '';
-	// Add link to add layout
-	if ($formmail->withlayout && $formmail->withfckeditor) {
-		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
-		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-		$out .= $langs->trans("FillMessageWithALayout").'...';
-		$out .= '</a> &nbsp; &nbsp; ';
+	$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+	$formatforouput = 'html';
+	$htmlname = 'bodyemail';
 
-		$out .= '<script>
-			$(document).ready(function() {
-				  $("#linkforlayouttemplates").click(function() {
-					console.log("We click on linkforlayouttemplates");
-					event.preventDefault();
-					jQuery("#template-selector").toggle();
-					//jQuery("#template-selector").attr("style", "aaa");
-					jQuery("#ai_input").hide();
-				});
-			});
-		</script>
-		';
-	}
+	// Fill $out
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-	// Add link to add AI content
-	if ($formmail->withaiprompt && isModEnabled('ai')) {
-		$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
-		$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
-		$out .= $langs->trans("FillMessageWithAIContent").'...';
-		$out .= '</a>';
-		$out .= '<script>
-					$(document).ready(function() {
-						$("#linkforaiprompt").click(function() {
-							console.log("We click on linkforaiprompt");
-							event.preventDefault();
-							jQuery("#ai_input").toggle();
-							jQuery("#template-selector").hide();
-							if (!jQuery("ai_input").is(":hidden")) {
-								console.log("Set focus on input field");
-								jQuery("#ai_instructions").focus();
-							}
-						});
-					});
-				</script>';
-	}
-	if ($formmail->withfckeditor) {
-		$out .= $formmail->getModelEmailTemplate('bodyemail');
-	}
-	if ($formmail->withaiprompt && isModEnabled('ai')) {
-		$out .= $formmail->getSectionForAIPrompt('', 'bodyemail');
-	}
 	print $out;
+
 	print '</td></tr>';
 	print '</table>';
 

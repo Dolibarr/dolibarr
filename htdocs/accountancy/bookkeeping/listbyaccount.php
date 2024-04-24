@@ -973,6 +973,7 @@ $sous_total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
+$totalarray['val']['totalbalance']=0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];

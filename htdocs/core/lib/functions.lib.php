@@ -4593,6 +4593,11 @@ function getPictoForType($key)
 		'checkbox' => 'check-square',
 		'chkbxlst' => 'check-square',
 		'link' => 'link',
+		'icon' => "question",
+		'point' => "country",
+		'multipts' => 'country',
+		'linestrg' => "country",
+		'polygon' => "country",
 		'separate' => 'minus'
 	);
 
@@ -10104,6 +10109,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy")); // more dolibarr functions
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
 
