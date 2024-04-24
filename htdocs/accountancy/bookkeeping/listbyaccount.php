@@ -974,6 +974,7 @@ $sous_total_debit = 0;
 $sous_total_credit = 0;
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
+$totalarray['val']['totalbalance']=0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
@@ -1275,7 +1276,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalbalance';
 		};
-		$totalarray['val']['totalbalance'] += $line->debit - $line->credit;
+		$totalarray['val']['totalbalance'] += $line->debit - $line->credit;	
 	}
 
 	// Exported operation date
