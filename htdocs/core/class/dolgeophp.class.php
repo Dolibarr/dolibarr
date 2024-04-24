@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,8 @@ class DolGeoPHP
 	/**
 	 * Return data from a value
 	 *
-	 * @param	mixed	$value		Value
-	 * @return	array				Centroid
+	 * @param	string	$value		Value
+	 * @return	array{geojson:string,centroid:string,centroidjson:string}	Centroid
 	 */
 	public function parseGeoString($value)
 	{
