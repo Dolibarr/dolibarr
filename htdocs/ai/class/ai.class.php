@@ -131,7 +131,7 @@ class Ai
 
 		try {
 			if (empty($this->apiEndpoint)) {
-				throw Exception('The AI service '.$this->apiService.' is not yet supported for the type of request '.$function);
+				throw new Exception('The AI service '.$this->apiService.' is not yet supported for the type of request '.$function);
 			}
 
 			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');

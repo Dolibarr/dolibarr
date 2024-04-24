@@ -85,6 +85,6 @@ $config['suppress_issue_types'] = [
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
-	];
+];
 
 return $config;

@@ -1935,6 +1935,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 		}
 
+		// LEAFLET AND GEOMAN
+		print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.css'.($ext ? '?'.$ext : '')."\">\n";
+		print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.css'.($ext ? '?'.$ext : '')."\">\n";
+
 		// CSS forced by modules (relative url starting with /)
 		if (!empty($conf->modules_parts['css'])) {
 			$arraycss = (array) $conf->modules_parts['css'];
@@ -2088,6 +2092,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Global js function
 			print '<!-- Includes JS of Dolibarr -->'."\n";
 			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
+
+			// Leaflet TODO use dolibarr files
+			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 
 			// JS forced by modules (relative url starting with /)
 			if (!empty($conf->modules_parts['js'])) {		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
