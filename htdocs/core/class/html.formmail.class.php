@@ -1413,6 +1413,8 @@ class FormMail extends Form
 	{
 		global $langs;
 
+		$langs->load("other");
+
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
 		$out = '<tr id="ai_input" class="hidden">';
@@ -1454,7 +1456,7 @@ class FormMail extends Form
 						}
 					}, 2000);
 
-					//editor on readonly
+					// set editor in readonly
         			if (CKEDITOR.instances.".$htmlContent.") {
 						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 					}
@@ -1473,10 +1475,18 @@ class FormMail extends Form
 							console.log('Add response into field \'".$htmlContent."\': '+response);
 
 							jQuery('#".$htmlContent."').val(response);
+							jQuery('#".$htmlContent."preview').val(response);
 
-							if (CKEDITOR.instances && CKEDITOR.instances.".$htmlContent." && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
-								CKEDITOR.instances.".$htmlContent.".setReadOnly(0);
-								CKEDITOR.instances.".$htmlContent.".setData(response);
+							if (CKEDITOR.instances) {
+								var editorInstance = CKEDITOR.instances.".$htmlContent.";
+								if (editorInstance) {
+									editorInstance.setReadOnly(0);
+									editorInstance.setData(response);
+								}
+								var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+								if (editorInstancepreview) {
+									editorInstancepreview.setData(response);
+								}
 							}
 
 							// remove readonly
