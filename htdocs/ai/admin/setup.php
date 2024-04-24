@@ -66,6 +66,9 @@ $formSetup = new FormSetup($db);
 // List all available IA
 $arrayofia = array('chatgpt' => 'ChatGPT', 'grok' => 'Grok', 'gemini' => 'Gemini');
 
+$item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+$item->setAsSelect($arrayofia);
+
 foreach ($arrayofia as $ia => $ialabel) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.

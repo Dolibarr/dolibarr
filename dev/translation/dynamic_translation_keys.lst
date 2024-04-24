@@ -10,7 +10,6 @@
 AiDescription
 AiDescriptionLong
 AiSetup
-AI_API_CHATGPT_ENDPOINT
 
 # datapolicy
 DATAPOLICY_ADHERENT

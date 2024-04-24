@@ -860,7 +860,7 @@ if ($action == 'create') {
 	$out = '';
 	$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
 	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-	$showlinktoai = $formmail->withaiprompt && isModEnabled('ai');
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
 	$formatforouput = 'html';
 	$htmlname = 'bodyemail';

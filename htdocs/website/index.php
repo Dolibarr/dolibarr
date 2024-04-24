@@ -4313,7 +4313,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		$showlinktolayout = $formmail->withlayout;
 		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
-		$showlinktoai = $formmail->withaiprompt && isModEnabled('ai');
+		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
 		$htmlname = 'content';
 
