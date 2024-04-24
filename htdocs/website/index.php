@@ -4658,8 +4658,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				var selectedf = \'\';
 
 				jQuery("#WEBSITE_TITLE").keyup(function() {
-					if (disableautofillofalias == 0)
-					{
+					if (disableautofillofalias == 0) {
 						var valnospecial = jQuery("#WEBSITE_TITLE").val();
 						valnospecial = valnospecial.replace(/[éèê]/g, \'e\').replace(/[à]/g, \'a\').replace(/[ù]/g, \'u\').replace(/[î]/g, \'i\');
 						valnospecial = valnospecial.replace(/[ç]/g, \'c\').replace(/[ö]/g, \'o\');
@@ -4670,7 +4669,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					}
 				});
 				jQuery("#WEBSITE_PAGENAME").keyup(function() {
-					disableautofillofalias = 1;
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+					} else {
+						disableautofillofalias = 1;
+					}
+				});
+				jQuery("#WEBSITE_PAGENAME").blur(function() {
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+						jQuery("#WEBSITE_TITLE").trigger(\'keyup\');
+					}
 				});
 
 				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").click(function() {
