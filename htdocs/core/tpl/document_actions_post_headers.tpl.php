@@ -32,7 +32,7 @@
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -41,6 +41,7 @@ if (empty($relativepathwithnofile)) {
 	$relativepathwithnofile = '';
 }
 
+// Set $permission from the $permissiontoadd var defined on calling page
 if (!isset($permission)) {
 	$permission = $permissiontoadd;
 }
@@ -69,7 +70,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
@@ -82,9 +83,9 @@ if ($action == 'deletefile' || $action == 'deletelink') {
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 	$savingdocmask = '';
-	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+	if (!getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 		//var_dump($modulepart);
 		if (in_array($modulepart, array(
 			'facture_fournisseur',
@@ -158,5 +159,5 @@ $formfile->list_of_documents(
 print "<br>";
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
+$formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param);
 print "<br>";

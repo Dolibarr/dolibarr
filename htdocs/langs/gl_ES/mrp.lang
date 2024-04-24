@@ -31,9 +31,14 @@ Consumption=Consumo
 ValueOfMeansLoss=O valor de 0,95 significa unha media de 5%% de perda durante a fabricación ou a desmontaxe
 ValueOfMeansLossForProductProduced=O valor de 0,95 significa unha media do 5 %% da perda do produto producido
 DeleteBillOfMaterials=Eliminar listaxe de materiais
+CancelMo=Cancelar pedimento de fabricación
+MoCancelConsumedAndProducedLines=Cancela tamén todas as liñas consumidas e producidas (eliminar liñas e retrotraer stocks)
+ConfirmCancelMo=Está certo de querer cancelar este pedimento de fabricación?
 DeleteMo=Borra pedimento de manufacturación
 ConfirmDeleteBillOfMaterials=Está certo de querer eliminar esta Listaxe de Materiais?
 ConfirmDeleteMo=Está certo de querer eliminar esta orde de fabricación?
+DeleteMoChild = Eliminar os MO fillos vinculados a este MO %s
+MoChildsDeleted = Elimináronse todos os MO fillos
 MenuMRP=Pedimentos de fabricación
 NewMO=Novo pedimento de fabricación
 QtyToProduce=Cant. a producir
@@ -123,3 +128,10 @@ Manufacturing=Fabricación
 Disassemble=Desmontar
 ProducedBy=Producido por
 QtyTot=Cant. total
+
+QtyCantBeSplit= A cantidade non se pode dividir
+NoRemainQtyToDispatch=Non queda ningunha cantidade por dividir
+
+THMOperatorEstimatedHelp=Custo estimado do operador por hora. Usarase para estimar o custo dunha lista de materiais usando esta estación de traballo.
+THMMachineEstimatedHelp=Custo estimado da máquina por hora. Usarase para estimar o custo dunha lista de materiais usando esta estación de traballo.
+

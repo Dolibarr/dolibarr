@@ -81,7 +81,7 @@ if ("Notification" in window) {
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
 		Notification.requestPermission(function(result) {
-			console.log("result for requestPermission is "+result);
+			console.log("result for Notification.requestPermission is "+result);
 		});
 	}
 
@@ -89,7 +89,7 @@ if ("Notification" in window) {
 
 	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+	var time_first_execution = <?php echo max(3, !getDolGlobalString('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION') ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
 
 	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
@@ -138,7 +138,7 @@ function check_events() {
 					console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
 					var audio = null;
 					<?php
-					if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+					if (getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
 						print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 					}
 					?>
@@ -170,7 +170,7 @@ function check_events() {
 							body: body,
 							lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
 							tag: value.id_agenda,
-							requireInteraction: true
+							requireInteraction: true	/* wait that the user click or close the notification */
 							/* only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
 							/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
 						};
@@ -185,7 +185,7 @@ function check_events() {
 
 						if (noti[index]) {
 							noti[index].onclick = function (event) {
-								/* If the use has clicked on button Activate */
+								/* If the user has clicked on button Activate */
 								console.log("A click on notification on browser has been done for url="+url);
 								event.preventDefault(); // prevent the browser from focusing the Notification's tab
 								window.focus();
@@ -212,9 +212,9 @@ function check_events() {
 
 		result = 1;
 	} else {
-		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https or browser is in Private mode).");
 
-		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
+		result = 2;	// We return a positive so the repeated check will done even if authorization is not yet allowed may be after this check)
 	}
 
 	if (dolnotif_nb_test_for_page >= 5) {

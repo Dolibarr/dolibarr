@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,16 @@ class ModeleImports
 	public $error = '';
 
 	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string[] warnings codes (or messages)
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var string Code of driver
 	 */
 	public $id;
@@ -75,37 +86,40 @@ class ModeleImports
 
 	public $libversion = array();
 
+	/**
+	 * @var string charset
+	 */
 	public $charset;
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var Societe thirdparty
+	 */
+	public $thirdpartyobject;
 
 	/**
 	 * @var	array	Element mapping from table name
 	 */
-	public static $mapTableToElement = array(
-		'actioncomm' => 'agenda',
-		'adherent' => 'member',
-		'adherent_type' => 'member_type',
-		//'bank_account' => 'bank_account',
-		'categorie' => 'category',
-		//'commande' => 'commande',
-		//'commande_fournisseur' => 'commande_fournisseur',
-		'contrat' => 'contract',
-		'entrepot' => 'stock',
-		//'expensereport' => 'expensereport',
-		'facture' => 'invoice',
-		//'facture_fourn' => 'facture_fourn',
-		'fichinter' => 'intervention',
-		//'holiday' => 'holiday',
-		//'product' => 'product',
-		'product_price' => 'productprice',
-		'product_fournisseur_price' => 'productsupplierprice',
-		'projet'  => 'project',
-		//'propal' => 'propal',
-		//'societe' => 'societe',
-		'socpeople' => 'contact',
-		//'supplier_proposal' => 'supplier_proposal',
-		//'ticket' => 'ticket',
-	);
+	public static $mapTableToElement = MODULE_MAPPING;
 
 	/**
 	 *  Constructor
@@ -129,7 +143,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return int		Id
+	 * @return string		Code of driver
 	 */
 	public function getDriverId()
 	{

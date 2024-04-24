@@ -23,7 +23,7 @@ Module4100Desc = Modul til at administrere databeskyttelse (overensstemmelse med
 #
 datapolicySetup = Opsætning af moduldatabeskyttelsespolitik
 Deletion = Sletning af data
-datapolicySetupPage = Afhængigt af lovene i dine lande (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> artikel 5 </a> i GDPR), skal personoplysninger opbevares i en periode, der ikke overstiger det, der er nødvendigt for de formål, hvortil de blev indsamlet, undtagen til arkivformål. <br> Sletningen vil ske automatisk efter en vis varighed uden begivenhed (den varighed, som du vil have angivet nedenfor).
+datapolicySetupPage = Afhængigt af lovene i dine lande (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> i GDPR), skal personoplysninger opbevares i en periode ikke overskrider den varighed, dataene er nødvendige til det formål, hvortil de blev indsamlet, undtagen til arkiveringsformål.<br>Sletningen vil ske automatisk efter en vis varighed uden begivenheder (varigheden som du vil have angivet nedenfor).
 NB_MONTHS = %s måneder
 ONE_YEAR = 1 år
 NB_YEARS = %s års
@@ -40,7 +40,7 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Leverandør
 DATAPOLICY_ADHERENT = Medlem
 DATAPOLICY_Tooltip_SETUP = Kontakttype - Angiv dine valg for hver type.
 DATAPOLICYMail = Opsætning af e-mails
-DATAPOLICYSUBJECTMAIL = Emne for e-mail
+DATAPOLICYSUBJECTMAIL = Emnet for e-mailen
 DATAPOLICYCONTENTMAIL = Indholdet af e-mailen
 DATAPOLICYSUBSITUTION = Du kan bruge følgende variabler i din e-mail (LINKACCEPT giver mulighed for at oprette et link, der registrerer personens aftale, LINKREFUSED gør det muligt at registrere personens afslag):
 DATAPOLICYACCEPT = Meddelelse efter aftale
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Du ønsker at eksportere denne kontakts pe
 #
 ANONYMISER_AT = Anonymiseret %s
 
-# V2
-DATAPOLICYReturn = GDPR-validering
 DATAPOLICY_date = Dato for aftale/uenighed GDPR
-DATAPOLICY_send = Dato for afsendelse af aftale-e-mail
-DATAPOLICYReturn = GDPR-validering
+DATAPOLICY_send = Dato aftalemail sendt
 DATAPOLICY_SEND = Send GDPR-e-mail
 MailSent = Emailen er sendt
 
 # ERROR
-ErrorSubjectIsRequired = Fejl: Emnet for e-mail er påkrævet. Angiv det i modulopsætningen
-=På grund af et teknisk problem kunne vi ikke registrere dit valg. Det beklager vi. Kontakt os for at sende os dit valg.
+=På grund af et teknisk problem kunne vi ikke registrere dit valg. Det beklager vi. Kontakt os for at meddele os dit valg.
 NUMBER_MONTH_BEFORE_DELETION = Antal måneder før sletning

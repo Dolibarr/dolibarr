@@ -42,14 +42,14 @@ $langs->loadLangs(array('propal', 'compta', 'other', 'companies'));
 
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -57,11 +57,11 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -74,7 +74,7 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
-$permissiontoadd = $user->rights->propal->creer;
+$permissiontoadd = $user->hasRight('propal', 'creer');
 
 // Security check
 $socid = '';
@@ -113,7 +113,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_head($head, 'document', $langs->trans('Proposal'), -1, 'propal');
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -174,8 +174,8 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'propal';
-	$permissiontoadd = $user->rights->propal->creer;
-	$permtoedit = $user->rights->propal->creer;
+	$permissiontoadd = $user->hasRight('propal', 'creer');
+	$permtoedit = $user->hasRight('propal', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

@@ -34,12 +34,12 @@ if (!defined('NOBROWSERNOTIF')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-if (!$conf->global->TAKEPOS_AUTO_ORDER) {
-	accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
+if (!getDolGlobalString('TAKEPOS_AUTO_ORDER')) {
+	accessforbidden('Auto order is not allwed'); // If Auto Order is disabled never allow access to this page (that is a NO LOGIN access)
 }
 
-$_SESSION["basiclayout"] = 1;
-$_SESSION["takeposterminal"] = 1;
+$_SESSION["basiclayout"] = 1;	// For the simple layout for public submission
+$_SESSION["takeposterminal"] = getDolGlobalInt('TAKEPOS_TERMINAL_NB_FOR_PUBLIC', 1);	// Default terminal for public submission is 1
 
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
 if (GETPOSTISSET("mobilepage")) {

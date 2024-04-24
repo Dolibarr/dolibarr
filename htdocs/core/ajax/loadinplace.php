@@ -49,7 +49,7 @@ $object = fetchObjectByElement($id, $element);
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 
@@ -102,10 +102,10 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$subelement = 'facture';
 	}
 
-	if ($user->rights->$element->lire || $user->rights->$element->read
-	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
+	if ($user->hasRight($element, 'lire') || $user->hasRight($element, 'read')
+	|| (isset($subelement) && ($user->hasRight($element, $subelement, 'lire') || $user->hasRight($element, $subelement, 'read')))
 	|| ($element == 'payment' && $user->hasRight('facture', 'lire'))
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire)) {
+	|| ($element == 'payment_supplier' && $user->hasRight('fournisseur', 'facture', 'lire'))) {
 		if ($type == 'select') {
 			$methodname = 'load_cache_'.$loadmethod;
 			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');

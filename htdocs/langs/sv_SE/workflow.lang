@@ -9,28 +9,30 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter 
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter att en order har stängts (den nya fakturan kommer att ha samma belopp som ordern)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Skapa automatiskt en intervention när du skapar ett ärende.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Märk den länkade källofferten som fakturerad när försäljningsordern är märkt fakturerad (och om orderens storlek är densamma som det totala beloppet för den signerade länkade offerten)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Märk den länkade källofferten som fakturerad när kundfakturan är bekräftad (och om fakturans belopp är samma som det totala beloppet för den signerade länkade offerten)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Märk länkad källorder som fakturerad när kundfaktura är bekräftad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Märk länkad källorder som fakturerad när kundfaktura är inställd på att betalas (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Märk länkad källorder som skickad när en försändelse är bekräftad (och om den mängd som skickas i alla leveranser är densamma som i ordern som ska uppdateras)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Märk länkad källorder som levererad när en försändelse stängs (och om antalet som skickas i alla försändelser är densamma som i ordern som ska uppdateras)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Märk länkad käll-leverantörsoffert som fakturerad när leverantörsfaktura är bekräftad (och om fakturans storlek är densamma som det totala beloppet för den länkade offerten)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Märk länkad inköpsorder som fakturerad när leverantörsfaktura är bekräftad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Märk länkad inköpsorder som mottagen när en mottagning bekräftas (och om antalet som tas emot i alla mottagningar är densamma som i inköpsordern som ska uppdateras)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Märk länkad inköpsorder som mottagen när en mottagning stängs (och om antalet som tas emot i alla mottagningar är densamma som i inköpsordern som ska uppdateras)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Märk mottagningar som "fakturerade" när en länkad inköpsfaktura bekräftas (och om fakturabeloppet är detsamma som det totala beloppet för de länkade mottagningarna)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=När du skapar ett ärende, länka tillgängliga kontrakt från matchande tredjepart
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=När du kopplar kontrakt sök bland moderbolagens
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Stäng alla intervention kopplade till ärendet när ärendet stängs
 AutomaticCreation=Automatiskt skapande
 AutomaticClassification=Automatisk märkning
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Märk länkad källförsändelse som stängd när kundfakturan bekräftas (och om fakturabeloppet är detsamma som det totala beloppet för de länkade försändelserna)
 AutomaticClosing=Automatisk stängning
 AutomaticLinking=Automatisk länkning

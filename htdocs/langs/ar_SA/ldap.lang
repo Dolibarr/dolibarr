@@ -29,3 +29,5 @@ LDAPPasswordHashType=نوع تجزئة كلمة المرور
 LDAPPasswordHashTypeExample=نوع تجزئة كلمة المرور المستخدمة على الخادم
 SupportedForLDAPExportScriptOnly=مدعوم فقط من خلال برنامج نصي للتصدير ldap
 SupportedForLDAPImportScriptOnly=مدعوم فقط بواسطة برنامج نصي للاستيراد ldap
+LDAPUserAccountControl = userAccountControl عند الإنشاء (الدليل النشط)
+LDAPUserAccountControlExample = 512 حساب عادي / 546 حساب عادي + لا يوجد كلمة مرور + معطل (انظر: https://fr.wikipedia.org/wiki/Active_Directory)

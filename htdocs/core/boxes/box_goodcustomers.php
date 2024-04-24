@@ -29,25 +29,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show top-selling customers
  */
 class box_goodcustomers extends ModeleBoxes
 {
-	public $boxcode = "goodcustomers";
-	public $boximg = "object_company";
+	public $boxcode  = "goodcustomers";
+	public $boximg   = "object_company";
 	public $boxlabel = "BoxGoodCustomers";
-	public $depends = array("societe");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
+	public $depends  = array("societe");
 
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -57,15 +48,15 @@ class box_goodcustomers extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
-		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) {
+		if (!getDolGlobalString('MAIN_BOX_ENABLE_BEST_CUSTOMERS')) {
 			$this->enabled = 0; // not enabled by default. Very slow on large database
 		}
 
@@ -145,8 +136,8 @@ class box_goodcustomers extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 					);
 				}
 
@@ -160,8 +151,8 @@ class box_goodcustomers extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

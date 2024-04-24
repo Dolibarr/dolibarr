@@ -162,6 +162,7 @@ CalcModeVATDebt=Modo <b>%sIVE sobre facturas emitidas%s</b>.
 CalcModeVATEngagement=Modo <b>%sIVE sobre facturas cobradas%s</b>.
 CalcModeDebt=Análise de documentos rexistrados coñecidos
 CalcModeEngagement=Análise dos pagamentos rexistrados coñecidos
+CalcModePayment=Análise dos pagamentos rexistrados coñecidos
 CalcModeBookkeeping=Análise dos datos rexistrados no Libro Maior
 CalcModeNoBookKeeping=Aínda que non estean contabilizados no Libro Maior
 CalcModeLT1= Modo <b>%sRE facturas a clientes - facturas de provedores%s</b>

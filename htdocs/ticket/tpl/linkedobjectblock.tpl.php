@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedobjectblock.tpl.php -->\n";
@@ -43,8 +43,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 	<tr class="<?php echo $trclass; ?>" >
 		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Ticket"); ?>
 		<?php if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
@@ -58,7 +57,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		//$objectlink->socid = $objectlink->fk_soc;
 		//$objectlink->fetch_thirdparty();
 		?>
-		<td class="linkedcol-amount right"><?php //echo $objectlink->thirdparty->getNomUrl(1); ?></td>
+		<td class="linkedcol-amount right"><?php //echo $objectlink->thirdparty->getNomUrl(1);?></td>
 		<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
 		<td class="linkedcol-action right">
 			<?php
@@ -67,15 +66,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 				?>
 				<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
 				<?php
-			}
-			?>
+			} ?>
 		</td>
 </tr>
 	<?php
 }
 if (count($linkedObjectBlock) > 1) {
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
 		<td class="center"></td>

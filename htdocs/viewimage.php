@@ -55,7 +55,10 @@ if (!defined('NOREQUIREAJAX')) {
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
+// Keep $_GET here, GETPOST is not available yet
 if (isset($_GET["modulepart"])) {
+	// Some value of modulepart can be used to get resources that are public so no login are required.
+
 	// For logo of company
 	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
@@ -64,10 +67,15 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Some value of modulepart can be used to get resources that are public so no login are required.
+	// Medias files
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
+	// Common files (files into /public/theme/common)
+	if ($_GET["modulepart"] == 'common') {
+		$needlogin = 0;
+	}
+	// User photo when user has made its profile public (for virtual credi card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
@@ -93,7 +101,9 @@ if (!$needlogin) {
 	}
 }
 
-// For multicompany
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -122,11 +132,11 @@ require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); 	// Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp = GETPOST('hashp', 'aZ09', 1);				// Must be read only by GET
-$modulepart = GETPOST('modulepart', 'alpha', 1);	// Must be read only by GET
+$original_file = GETPOST('file', 'alphanohtml');
+$hashp = GETPOST('hashp', 'aZ09', 1);
+$modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity);
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -192,8 +202,7 @@ if (!empty($hashp)) {
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
 	} else {
-		$langs->load("errors");
-		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		httponly_accessforbidden("ErrorFileNotFoundWithSharedLink", 403, 1);
 	}
 }
 
@@ -228,7 +237,7 @@ if ($refname == 'thumbs') {
 
 // Check that file is allowed for view with viewimage.php
 if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
-	httponly_accessforbidden('This file is not qualified for preview', 403);
+	httponly_accessforbidden('This file extension is not qualified for preview', 403);
 }
 
 // Security check
@@ -251,9 +260,11 @@ $fullpath_original_file     = $check_access['original_file']; // $fullpath_origi
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-} elseif (isset($_GET["publictakepos"])) {
-	if (!empty($conf->global->TAKEPOS_AUTO_ORDER)) {
-		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+} elseif (GETPOSTINT("publictakepos")) {
+	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
+		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
+		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// only shared images are visible
 	}
 } else {
 	// Basic protection (against external users only)
@@ -328,6 +339,7 @@ if ($modulepart == 'barcode') {
 
 	// Load barcode class
 	$classname = "mod".ucfirst($generator);
+
 	$module = new $classname($db);
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
@@ -341,8 +353,8 @@ if ($modulepart == 'barcode') {
 	// Output files on browser
 	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
-	// This test is to avoid error images when image is not available (for example thumbs).
-	if (!dol_is_file($fullpath_original_file) && empty($_GET["noalt"])) {
+	if (!dol_is_file($fullpath_original_file) && !GETPOSTINT("noalt", 1)) {
+		// This test is to replace error images with a nice "notfound image" when image is not available (for example when thumbs not yet generated).
 		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
 		print $error;

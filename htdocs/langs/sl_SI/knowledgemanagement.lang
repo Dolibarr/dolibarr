@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Upravljajte bazo upravljanja znanja (KM) ali služ
 # Admin page
 #
 KnowledgeManagementSetup = Nastavitev sistema za upravljanje znanja
-Settings = nastavitve
 KnowledgeManagementSetupPage = Stran z nastavitvami sistema za upravljanje znanja
 
 
 #
 # About page
 #
-About = O programu
 KnowledgeManagementAbout = O upravljanju znanja
 KnowledgeManagementAboutPage = Upravljanje znanja o strani
 
 KnowledgeManagementArea = Upravljanje znanja
 MenuKnowledgeRecord = Baza znanja
+MenuKnowledgeRecordShort = Baza znanja
 ListKnowledgeRecord = Seznam člankov
 NewKnowledgeRecord = Nov članek
 ValidateReply = Potrdite rešitev
@@ -52,3 +51,9 @@ SuggestedForTicketsInGroup=Priporočeno pri ustvarjanju zahtevka
 SetObsolete=Nastavi kot zastarelo
 ConfirmCloseKM=Ali potrjujete, da je ta članek zaprt kot zastarel?
 ConfirmReopenKM=Ali želite obnoviti ta članek v status "Potrjen"?
+BoxLastKnowledgerecordDescription=Zadnji %s članki
+BoxLastKnowledgerecord=Zadnji članki
+BoxLastKnowledgerecordContent=Zadnji članki
+BoxLastKnowledgerecordModifiedContent=Zadnji spremenjeni članki
+BoxLastModifiedKnowledgerecordDescription=Zadnji %s spremenjeni članki
+BoxLastModifiedKnowledgerecord=Zadnji spremenjeni članki

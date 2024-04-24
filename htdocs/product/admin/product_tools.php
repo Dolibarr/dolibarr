@@ -65,7 +65,9 @@ if ($action == 'convert') {
 
 		$nbrecordsmodified = 0;
 
-		$db->begin();
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			$db->begin();
+		}
 
 		// Clean vat code old
 		$vat_src_code_old = '';
@@ -94,7 +96,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				" AND default_vat_code = IS NULL";
+				$sql .= " AND default_vat_code = IS NULL";
 			}
 
 			$resql = $db->query($sql);
@@ -108,7 +110,9 @@ if ($action == 'convert') {
 					$objectstatic = new Product($db); // Object init must be into loop to avoid to get value of previous step
 					$ret = $objectstatic->fetch($obj->rowid);
 					if ($ret > 0) {
-						$ret = 0; $retm = 0; $updatelevel1 = false;
+						$ret = 0;
+						$retm = 0;
+						$updatelevel1 = false;
 
 						// Update multiprice
 						$listofmulti = array_reverse($objectstatic->multiprices, true); // To finish with level 1
@@ -161,7 +165,7 @@ if ($action == 'convert') {
 						}
 						$newvat = str_replace('*', '', $newvatrate);
 						$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-						$newnpr = $objectstatic->recuperableonly;
+						$newnpr = $objectstatic->tva_npr;
 						$newdefaultvatcode = $vat_src_code_new;
 						$newlevel = 0;
 						if (!empty($price_base_type) && !$updatelevel1) {
@@ -209,7 +213,9 @@ if ($action == 'convert') {
 				$objectstatic2 = new ProductFournisseur($db); // Object init must be into loop to avoid to get value of previous step
 				$ret = $objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0) {
-					$ret = 0; $retm = 0; $updatelevel1 = false;
+					$ret = 0;
+					$retm = 0;
+					$updatelevel1 = false;
 
 					$price_base_type = 'HT';
 					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update
@@ -226,7 +232,7 @@ if ($action == 'convert') {
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat = str_replace('*', '', $newvatrate);
 					$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-					//$newnpr=$objectstatic2->recuperableonly;
+					//$newnpr=$objectstatic2->tva_npr;
 					$newnpr = 0;
 					$newdefaultvatcode = $vat_src_code_new;
 
@@ -255,10 +261,21 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
-		if (!$error) {
-			$db->commit();
-		} else {
-			$db->rollback();
+
+		// add hook for external modules
+		$parameters = array('oldvatrate' => $oldvatrate, 'newvatrate' => $newvatrate);
+		$reshook = $hookmanager->executeHooks('hookAfterVatUpdate', $parameters);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$error++;
+		}
+
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 
 		// Output result

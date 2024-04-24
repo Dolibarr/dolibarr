@@ -187,7 +187,7 @@ if (!function_exists('ftp_connect')) {
 	print '<tr class="oddeven">';
 	print '<td width="100">'.$langs->trans("Port").'</td>';
 	print '<td><input type="text" name="FTP_PORT_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PORT_".($lastftpentry + 1)).'" size="64"></td>';
-	print '<td>21 for pure non crypted FTP or if option FTP_CONNECT_WITH_SSL (See Home-Setup-Other) is on (FTPS)<br>22 if option FTP_CONNECT_WITH_SFTP (See Home-Setup-Other) is on (SFTP)</td>';
+	print '<td>21 for pure non encrypted FTP or if option FTP_CONNECT_WITH_SSL (See Home-Setup-Other) is on (FTPS)<br>22 if option FTP_CONNECT_WITH_SFTP (See Home-Setup-Other) is on (SFTP)</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
@@ -206,23 +206,20 @@ if (!function_exists('ftp_connect')) {
 	print '<td>'.$langs->trans("FTPPassiveMode").'</td>';
 	$defaultpassive = GETPOST("FTP_PASSIVE_".($lastftpentry + 1));
 	if (!GETPOSTISSET("FTP_PASSIVE_".($lastftpentry + 1))) {
-		$defaultpassive = empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT) ? 0 : 1;
+		$defaultpassive = !getDolGlobalString('FTP_SUGGEST_PASSIVE_BYDEFAULT') ? 0 : 1;
 	}
 	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry + 1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
 
-	print '</table>';
-
-	?>
+	print '</table>'; ?>
 	<div class="center">
 	<input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></div>
 	<input type="hidden" name="action" value="add">
-	<input type="hidden" name="numero_entry" value="<?php echo ($lastftpentry + 1) ?>">
+	<input type="hidden" name="numero_entry" value="<?php echo($lastftpentry + 1) ?>">
 	<?php
 	print '</form>';
-	print '<br>';
-	?>
+	print '<br>'; ?>
 
 	<br>
 

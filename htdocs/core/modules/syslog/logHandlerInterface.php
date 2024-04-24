@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,17 +73,18 @@ interface LogHandlerInterface
 	public function checkConfiguration();
 
 	/**
-	 * 	Return if logger active
+	 * 	Is the logger active ?
 	 *
-	 * 	@return	boolean		True if active
+	 * 	@return int		1 if logger enabled
 	 */
 	public function isActive();
 
 	/**
-	 * 	Output log content
+	 * Export the message
 	 *
-	 *	@param	string	$content	Content to log
-	 * 	@return	void
+	 * @param   array   $content            Array containing the info about the message
+	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
+	 * @return  void
 	 */
-	public function export($content);
+	public function export($content, $suffixinfilename = '');
 }

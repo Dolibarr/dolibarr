@@ -20,7 +20,7 @@ ModulePartnershipName=Partnerség kezelése
 PartnershipDescription=Partnerség modul kezelés
 PartnershipDescriptionLong= Partnerség modul kezelés
 Partnership=Partnerség
-Partnerships=Partnerships
+Partnerships=Partnerségek
 AddPartnership=Partnerség hozzáadása
 CancelPartnershipForExpiredMembers=Partnerség: A lejárt előfizetéssel rendelkező tagok partnerségének megszüntetése
 PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
 # Menu
 #
 NewPartnership=Új partnerség
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Partnerségi kérelmét sikeresen hozzáadtuk. Hamarosan kapcsolatba léphetünk Önnel...
 ListOfPartnerships=A partnerségek listája
 
 #
@@ -38,10 +38,10 @@ ListOfPartnerships=A partnerségek listája
 PartnershipSetup=Partnerség beállítása
 PartnershipAbout=A partnerségről
 PartnershipAboutPage=Partnerség az oldalról
-partnershipforthirdpartyormember=A partner státuszát „harmadik félre” vagy „tagra” kell állítani
+partnershipforthirdpartyormember=A partner státuszát „partner” vagy „tag” értékre kell beállítani
 PARTNERSHIP_IS_MANAGED_FOR=Partnerség kezelve
 PARTNERSHIP_BACKLINKS_TO_CHECK=Visszamutató hivatkozások az ellenőrzéshez
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb napok a partnerség állapotának lemondása előtt, ha az előfizetés lejárt
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Napok száma a partnerség állapotának megszüntetése előtt, ha a feliratkozás lejárt
 ReferingWebsiteCheck=A webhely hivatkozásának ellenőrzése
 ReferingWebsiteCheckDesc=Engedélyezhet egy funkciót, amellyel ellenőrizheti, hogy partnerei hozzáadtak-e egy visszamutató hivatkozást az Ön webhelyének domainjéhez a saját webhelyükön.
 PublicFormRegistrationPartnerDesc=A Dolibarr nyilvános URL-t/webhelyet tud Önnek biztosítani, amely lehetővé teszi a külső látogatók számára, hogy kérjék a partnerségi programban való részvételt.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Ennek a tagnak szentelt partnerség
 DatePartnershipStart=Kezdő dátum
 DatePartnershipEnd=Befejezés dátuma
 ReasonDecline=Elutasítás oka
-ReasonDeclineOrCancel=Elutasítás oka
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Már létezik partnerség
 ManagePartnership=Partnerség kezelése
 BacklinkNotFoundOnPartnerWebsite=A visszamutató hivatkozás nem található a partner webhelyén
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=A partnerség elutasítva
 YourPartnershipAcceptedTopic=Partnerség elfogadva
 YourPartnershipCanceledTopic=Partnerség törölve
 
-YourPartnershipWillSoonBeCanceledContent=Tájékoztatjuk, hogy partnerségét hamarosan megszüntetjük (a visszamutató hivatkozás nem található)
-YourPartnershipRefusedContent=Tájékoztatjuk, hogy partnerségi kérelmét elutasították.
+YourPartnershipWillSoonBeCanceledContent=Tájékoztatjuk Önöket, hogy partnerkapcsolatunk hamarosan megszűnik (nem kaptuk meg a megújítást, vagy nem teljesült a partnerségünk előfeltétele). Kérjük, forduljon hozzánk, ha ezt hiba miatt kapta.
+YourPartnershipRefusedContent=Tájékoztatjuk, hogy partnerségi kérelmét elutasították. Az előfeltételek nem teljesültek. Kérjük, lépjen kapcsolatba velünk, ha további információra van szüksége.
 YourPartnershipAcceptedContent=Tájékoztatjuk, hogy partnerségi kérelmét elfogadtuk.
-YourPartnershipCanceledContent=Tájékoztatjuk, hogy a partnerségét megszüntettük.
+YourPartnershipCanceledContent=Tájékoztatjuk Önöket, hogy partnerségünket megszüntettük. Kérjük, lépjen kapcsolatba velünk, ha további információra van szüksége.
 
 CountLastUrlCheckError=Az utolsó URL-ellenőrzés hibáinak száma
 LastCheckBacklink=Az utolsó URL-ellenőrzés dátuma
-ReasonDeclineOrCancel=Elutasítás oka
 
 NewPartnershipRequest=Új partnerségi kérelem
 NewPartnershipRequestDesc=Ez az űrlap lehetővé teszi, hogy kérjen részt partnerségi programunkban. Ha segítségre van szüksége az űrlap kitöltéséhez, kérjük, lépjen kapcsolatba e-mailben <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ennek az oldalnak tartalmaznia kell legalább egy linket a következő domainek egyikére: %s
+
+IPOfApplicant=A jelentkező IP címe
 

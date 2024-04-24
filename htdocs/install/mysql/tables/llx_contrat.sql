@@ -29,6 +29,7 @@ create table llx_contrat
   tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec						datetime,                   	-- creation date
   date_contrat				datetime,
+  signed_status        		smallint DEFAULT NULL,          -- signed status
   statut					smallint DEFAULT 0,				-- not used. deprecated
   fin_validite				datetime,
   date_cloture				datetime,
@@ -46,4 +47,3 @@ create table llx_contrat
   import_key				varchar(14),
   extraparams				varchar(255)
 )ENGINE=innodb;
-

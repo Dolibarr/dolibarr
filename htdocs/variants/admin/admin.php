@@ -50,6 +50,11 @@ if ($action) {
 		$error++;
 	}
 
+	if (!dolibarr_set_const($db, 'VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT', GETPOST('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		$error++;
+	}
+
 	if (!$error) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
@@ -73,15 +78,18 @@ print '<th class="right" width="60">'.$langs->trans("Value").'</th>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
-print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD'), 1).'</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-	$separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+	$separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR');
 } else {
 	$separator = "_";
 }
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
+
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('AllowStockMovementVariantParent'), $langs->trans('AllowStockMovementVariantParentHelp')).'</td><td>';
+print $form->selectyesno("VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT", getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 1).'</td></tr>';
 
 print '</table>';
 

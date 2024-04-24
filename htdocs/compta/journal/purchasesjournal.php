@@ -75,7 +75,8 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 $form = new Form($db);
 
 $year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$pastmonth = strftime("%m", dol_now()) - 1;
+//$pastmonth = strftime("%m", dol_now()) - 1;
+$pastmonth = dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
@@ -95,7 +96,7 @@ $periodlink = '';
 $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescPurchasesJournal").'<br>';
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("DepositsAreNotIncluded");
 } else {
 	$description .= $langs->trans("DepositsAreIncluded");
@@ -104,7 +105,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 $idpays = $p[0];
 
 
@@ -119,7 +120,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (0,1,2)";
 } else {
 	$sql .= " AND f.type IN (0,1,2,3)";
@@ -137,8 +138,8 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+	$cptfour = ((getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
+	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 
 	$tabfac = array();
 	$tabht = array();
@@ -156,9 +157,9 @@ if ($result) {
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
 		}
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
@@ -246,14 +247,15 @@ foreach ($tabfac as $key => $val) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+				print "<td>".$k."</td>";
+				print "<td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
 				} else {
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				}
 
 				print "</tr>";

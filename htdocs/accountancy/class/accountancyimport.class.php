@@ -48,7 +48,7 @@ class AccountancyImport
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -66,7 +66,7 @@ class AccountancyImport
 	public function cleanAmount(&$arrayrecord, $listfields, $record_key)
 	{
 		$value_trim = trim($arrayrecord[$record_key]['val']);
-		return floatval($value_trim);
+		return (float) $value_trim;
 	}
 
 	/**
@@ -97,8 +97,8 @@ class AccountancyImport
 			$debit_index = $listfields['b.debit'];
 			$credit_index = $listfields['b.credit'];
 
-			$debit  = floatval($arrayrecord[$debit_index]['val']);
-			$credit = floatval($arrayrecord[$credit_index]['val']);
+			$debit  = (float) $arrayrecord[$debit_index]['val'];
+			$credit = (float) $arrayrecord[$credit_index]['val'];
 			if (!empty($debit)) {
 				$amount = $debit;
 			} else {
@@ -125,7 +125,7 @@ class AccountancyImport
 		if (isset($listfields['b.debit'])) {
 			$debit_index = $listfields['b.debit'];
 
-			$debit = floatval($arrayrecord[$debit_index]['val']);
+			$debit = (float) $arrayrecord[$debit_index]['val'];
 			if (!empty($debit)) {
 				$sens = 'D';
 			} else {

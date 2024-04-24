@@ -34,7 +34,7 @@ if (!defined('NOREQUIREAJAX')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-$invoice_id = GETPOST('id', 'int'); // id of thirdparty
+$invoice_id = GETPOSTINT('id'); // id of thirdparty
 $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 

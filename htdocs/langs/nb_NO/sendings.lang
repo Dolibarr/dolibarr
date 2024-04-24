@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validert
 StatusSendingProcessedShort=Behandlet
 SendingSheet=Pakkseddel
 ConfirmDeleteSending=Er du sikker på at du vil slette denne forsendelsen?
-ConfirmValidateSending=Er du sikker på at du vil validere denne forsendelsen med referanse <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Er du sikker på at du vil kansellere denne forsendelsen?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Advarsel, ingen varer venter på å sendes.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Varemengde fra åpne mottatte besti
 NoProductToShipFoundIntoStock=Ingen varer som skal sendes i lager <b> %s </b>. Korriger lager eller gå tilbake for å velge et annet lager.
 WeightVolShort=Vekt/volum
 ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
+NoLineGoOnTabToAddSome=Ingen linjer, gå til fanen "%s" for å legge til
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Sum varevekt
 # warehouse details
 DetailWarehouseNumber= Lagerdetaljer
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=Forsendelsesdistribusjon
 
-ErrorTooManyCombinationBatchcode=Ingen sending for linje %s da det ble funnet for mange kombinasjonslager, varer, batchkode (%s).
-ErrorNoCombinationBatchcode=Ingen utsendelse for linje %s da ingen kombinasjonslager, varer, batchkode ble funnet.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Antall sendt skal ikke være større enn antall bestilt for linje %s

@@ -119,3 +119,4 @@ ConfirmCloneVariousPayment=Confirmar el duplicado de un pago varios
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a
 BankColorizeMovementName1=Color de fondo para movimiento de débito
 BankColorizeMovementName2=Color de fondo para movimiento de crédito
+XNewLinesConciliated=%sNueva línea(s) conciliadas

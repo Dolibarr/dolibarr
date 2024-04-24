@@ -18,62 +18,63 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Tuyển dụng
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Quản lý và theo dõi các chiến dịch tuyển dụng cho các vị trí công việc mới
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Cài đặt
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Cài đặt tuyển dụng
+RecruitmentSetupPage = Nhấn vào đây để thiết lập các tùy chọn chính cho module tuyển dụng
+RecruitmentArea=Khu vực tuyển dụng
+PublicInterfaceRecruitmentDesc=Các trang công khai về việc làm là các URL công khai để hiển thị và trả lời các công việc đang mở. Có một liên kết khác nhau cho mỗi công việc đang mở, được tìm thấy trên mỗi bản ghi công việc.
+EnablePublicRecruitmentPages=Kích hoạt các trang công khai của việc làm đang mở
 
 #
 # About page
 #
-About = Về
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+RecruitmentAbout = Giới thiệu tuyển dụng
+RecruitmentAboutPage = Tuyển dụng về trang
+NbOfEmployeesExpected=Số lượng nhân viên dự kiến
+JobLabel=Nhãn vị trí công việc
+WorkPlace=Nơi làm việc
+DateExpected=Ngày dự kiến
+FutureManager=Người quản lý tương lai
+ResponsibleOfRecruitement=Phụ trách tuyển dụng
+IfJobIsLocatedAtAPartner=Nếu công việc được đặt tại địa điểm đối tác
 PositionToBeFilled=Vị trí công việc
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+PositionsToBeFilled=Vị trí công việc
+ListOfPositionsToBeFilled=Danh sách vị trí công việc
+NewPositionToBeFilled=Vị trí công việc mới
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+JobOfferToBeFilled=Vị trí công việc cần tuyển
+ThisIsInformationOnJobPosition=Thông tin vị trí công việc cần điền
+ContactForRecruitment=Liên hệ tuyển dụng
+EmailRecruiter=Nhà tuyển dụng email
+ToUseAGenericEmail=Để sử dụng một email chung. Nếu không được xác định, email của người chịu trách nhiệm tuyển dụng sẽ được sử dụng
+NewCandidature=Ứng dụng mới
+ListOfCandidatures=Danh sách ứng dụng
 Remuneration=Mức lương
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+RequestedRemuneration=Mức lương yêu cầu
+ProposedRemuneration=Mức lương đề xuất
+ContractProposed=Hợp đồng đề xuất
+ContractSigned=Hợp đồng đã ký
+ContractRefused=Hợp đồng bị từ chối
+RecruitmentCandidature=Ứng dụng
+JobPositions=Vị trí công việc
+RecruitmentCandidatures=Các ứng dụng
+InterviewToDo=Liên hệ để theo dõi
+AnswerCandidature=Câu trả lời ứng dụng
+YourCandidature=Ứng dụng của bạn
+YourCandidatureAnswerMessage=Cảm ơn bạn đã đăng ký.<br>...
+JobClosedTextCandidateFound=Vị trí công việc đã được đóng lại. Vị trí đã được lấp đầy.
+JobClosedTextCanceled=Vị trí công việc đã được đóng lại.
+ExtrafieldsJobPosition=Thuộc tính bổ sung (vị trí công việc)
+ExtrafieldsApplication=Thuộc tính bổ sung (đơn xin việc)
+MakeOffer=Thực hiện một đề nghị
+WeAreRecruiting=Chúng tôi đang tuyển dụng. Đây là danh sách các vị trí đang trống cần tuyển...
+NoPositionOpen=Không có vị trí nào mở vào lúc này
+ConfirmClose=Xác nhận hủy
+ConfirmCloseAsk=Bạn có chắc chắn muốn hủy ứng tuyển tuyển dụng này không
+recruitment=Tuyển dụng

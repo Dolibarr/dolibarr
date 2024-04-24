@@ -20,13 +20,13 @@
 /**
  *  \file       htdocs/salaries/class/salariesstats.class.php
  *  \ingroup    salaries
- *  \brief      File of class for statistics on salaries
+ *  \brief      File of class to manage salary statistics
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 /**
- *	Classe permettant la gestion des stats des salaires
+ *	Class to manage salary statistics
  */
 class SalariesStats extends Stats
 {
@@ -67,7 +67,7 @@ class SalariesStats extends Stats
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(implode(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= " AND fk_user = ".((int) $this->userid);
 		}
@@ -93,9 +93,9 @@ class SalariesStats extends Stats
 	/**
 	 *  Return the number of salary by month, for a given year
 	 *
-	 *	@param	string	$year		Year to scan
+	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 *	@return	array				Array of values by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{

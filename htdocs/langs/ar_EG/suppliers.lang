@@ -4,7 +4,6 @@ SupplierInvoices=فواتير المورد
 ShowSupplierInvoice=إظهار فاتورة المورد
 ListOfSuppliers=قائمة موردين
 ShowSupplier=فتح صفحة المورد
-OrderDate=تاريخ الأمر
 TotalBuyingPriceMinShort=إجمالي أسعار الشراء
 TotalSellingPriceMinShort=إجمالي أسعار البيع
 SomeSubProductHaveNoPrices=بعض المنتجات غير مسعره

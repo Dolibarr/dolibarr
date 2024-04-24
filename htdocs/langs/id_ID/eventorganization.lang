@@ -34,7 +34,6 @@ PaymentEvent=Pembayaran acara
 NewRegistration=Registrasi
 EventOrganizationSetup=Pengaturan Organisasi Acara
 EventOrganization=Organisasi acara
-Settings=Pengaturan
 EventOrganizationSetupPage = Halaman penyiapan Organisasi Acara
 EVENTORGANIZATION_TASK_LABEL = Label tugas untuk dibuat secara otomatis saat proyek divalidasi
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -53,6 +52,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferensi Atau Stan
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Mengelola organisasi acara
@@ -89,7 +89,7 @@ PriceOfRegistrationHelp=Harga yang harus dibayar untuk mendaftar atau berpartisi
 PriceOfBooth=Harga langganan mendirikan stan
 PriceOfBoothHelp=Harga langganan stand stand
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Informasi Konferensi Atau Stan
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Peserta
 ListOfAttendeesOfEvent=Daftar peserta proyek acara
 DownloadICSLink = Unduh tautan ICS
@@ -97,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration
 SERVICE_BOOTH_LOCATION = Layanan yang digunakan untuk baris faktur tentang lokasi stan
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Jumlah suara
+
 #
 # Status
 #
@@ -106,8 +107,9 @@ EvntOrgConfirmed = Dikonfirmasi
 EvntOrgNotQualified = Tidak Berkualitas
 EvntOrgDone = Selesai
 EvntOrgCancelled = Dibatalkan
+
 #
-# Public page
+# Other
 #
 SuggestForm = Halaman saran
 SuggestOrVoteForConfOrBooth = Halaman untuk saran atau suara
@@ -143,13 +145,8 @@ OrganizationEventBulkMailToAttendees=This is a remind about your participation i
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Application to hold a conference
 EvntOrgRegistrationWelcomeMessage = Selamat datang di halaman saran konferensi atau stan.
 EvntOrgRegistrationConfWelcomeMessage = Selamat datang di halaman saran konferensi.
 EvntOrgRegistrationBoothWelcomeMessage = Selamat datang di halaman saran stan.
@@ -157,8 +154,8 @@ EvntOrgVoteHelpMessage = Di sini, Anda dapat melihat dan memilih acara yang disa
 VoteOk = Suara Anda telah diterima.
 AlreadyVoted = Anda telah memilih acara ini.
 VoteError = Terjadi kesalahan selama pemungutan suara, harap coba lagi.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Konfirmasi langganan Anda ke suatu acara
 Attendee = Peserta
 PaymentConferenceAttendee = Pembayaran peserta konferensi
@@ -168,7 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were alre
 EmailAttendee=Attendee email
 EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

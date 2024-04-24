@@ -22,16 +22,15 @@
  *  \brief      File that contains parent class for sending receipts models
  *              and parent class for sending receipts numbering models
  */
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 /**
  *	Parent class of sending receipts models
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -57,89 +56,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
 /**
  *  Parent Class of numbering models of sending receipts references
  */
-abstract class ModelNumRefReception
+abstract class ModelNumRefReception extends CommonNumRefGenerator
 {
-	public $error = '';
-
-	public $version;
-
-
-	/**
-	 *  Return if a model can be used or not
-	 *
-	 *  @return		boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return     boolean     false if conflit, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next value assigned
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
-	 *	@return	string					Value
-	 */
-	public function getNextValue($objsoc, $reception)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns version of the numbering model
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

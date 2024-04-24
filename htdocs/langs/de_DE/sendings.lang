@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - sendings
-RefSending=Lieferungs-Ref.
+RefSending=Sendungsnr.
 Sending=Lieferung
 Sendings=Lieferungen
 AllSendings=Alle Lieferungen
@@ -51,7 +51,7 @@ DateReceived=Datum der Zustellung
 ClassifyReception=Als 'erhalten' markieren
 SendShippingByEMail=Versand per E-Mail
 SendShippingRef=Versand der Lieferung %s
-ActionsOnShipping=Hinweis zur Lieferung
+ActionsOnShipping=Ereignisse zu dieser Lieferung
 LinkToTrackYourPackage=Link zur Paket- bzw. Sendungsverfolgung
 ShipmentCreationIsDoneFromOrder=Im Moment erfolgt die Erstellung einer neuen Lieferung aus dem Datensatz des Kundenauftrags.
 ShipmentLine=Zeilen Lieferschein
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Produktmenge aus offenen Bestellung
 NoProductToShipFoundIntoStock=Im Lager <b>%s</b> sind keine Artikel für den Versand vorhanden. Korrigieren Sie den Lagerbestand oder wählen Sie ein anderes Lager.
 WeightVolShort=Gew./Vol.
 ValidateOrderFirstBeforeShipment=Sie müssen den Auftrag erst bestätigen bevor Sie eine Lieferung machen können.
+NoLineGoOnTabToAddSome=Keine Zeile, gehen Sie zum Hinzufügen auf die Registerkarte "%s".
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Summe der Produktgewichte
 # warehouse details
 DetailWarehouseNumber= Warenlagerdetails
 DetailWarehouseFormat= W: %s (Menge: %d) 
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Das letzte Zugangsdatum im Lagerbestand während der Sendungserstellung für Seriennummer oder Batch anzeigen.
+CreationOptions=Verfügbare Optionen während der Sendungserstellung
 
 ShipmentDistribution=Lieferung für den Versand 
 
 ErrorTooManyCombinationBatchcode=Kein Versand für Position %s, da zu viele Kombinationen aus Lager, Produkt und Chargencode gefunden wurden (%s).
-ErrorNoCombinationBatchcode=Kein Versand für Position %s, da keine Kombination aus Lager, Produkt und Chargencode gefunden wurde.
+ErrorNoCombinationBatchcode=Konnte die Zeile %s nicht speichern, da keine Kombination aus Lager, Produkt und Chargencode (%s, %s, %s) gefunden wurde.
+
+ErrorTooMuchShipped=Die versendete Menge sollte nicht größer sein als die bestellte Menge für Zeile %s

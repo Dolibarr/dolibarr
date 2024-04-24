@@ -51,6 +51,7 @@ StripeAccount=Joslas konts
 StripeChargeList=Joslu saraksts
 StripeTransactionList=Lentes darījumu saraksts
 StripeCustomerId=Joslu klienta ID
+StripePaymentId=Svītra maksājuma id
 StripePaymentModes=Stripa maksājumu veidi
 LocalID=Lokālais ID
 StripeID=Stripa ID
@@ -70,9 +71,10 @@ ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingro klientu autentifikācijas noteikumu dēļ karte jāizveido no Stripe biroja. Jūs varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingru klientu autentifikācijas noteikumu dēļ kartes izveide jāveic Stripe back office. Varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s
 STRIPE_CARD_PRESENT=Stripe termināļiem paredzēta karte
 TERMINAL_LOCATION=Stripe Terminals atrašanās vieta (adrese).
 RequestDirectDebitWithStripe=Pieprasiet tiešo debetu, izmantojot Stripe
+RequesCreditTransferWithStripe=Pieprasīt kredīta pārvedumu ar Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Iespējojiet tiešā debeta maksājumus, izmantojot Stripe
-
+StripeConnect_Mode=Stripe Connect režīms

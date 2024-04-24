@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
-Event=Evento
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
@@ -56,6 +55,7 @@ ORDER_SUPPLIER_DELETEInDolibarr=Pedido de compra %s eliminado
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated= Se ha validado el envío%s
+ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 InvoiceDeleted=Se eliminó la factura
 PRODUCT_CREATEInDolibarr=Producto%s creado
@@ -82,6 +82,7 @@ BOM_REOPENInDolibarr=BOM reabrir
 MRP_MO_VALIDATEInDolibarr=MO validado
 MRP_MO_PRODUCEDInDolibarr=MO producido
 MRP_MO_DELETEInDolibarr=MO eliminado
+CANCELInDolibarr=Cancelado
 AgendaModelModule=Plantillas de documento para el evento
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros a la salida del filtro:

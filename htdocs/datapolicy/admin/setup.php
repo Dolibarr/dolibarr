@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,24 +37,24 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array();
 $arrayofparameters['ThirdParty'] = array(
-	'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
+	'DATAPOLICY_TIERS_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
+	'DATAPOLICY_TIERS_PROSPECT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
+	'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
+	'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
+	'DATAPOLICY_TIERS_FOURNISSEUR' => array('css' => 'minwidth200', 'picto' => img_picto('', 'supplier', 'class="pictofixedwidth"')),
 );
-if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
+if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 	$arrayofparameters['Contact'] = array(
-		'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
-		'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
-		'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
-		'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
-		'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
+		'DATAPOLICY_CONTACT_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
+		'DATAPOLICY_CONTACT_PROSPECT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
+		'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
+		'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
+		'DATAPOLICY_CONTACT_FOURNISSEUR' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$arrayofparameters['Member'] = array(
-		'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'member', 'class="pictofixedwidth"')),
+		'DATAPOLICY_ADHERENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'member', 'class="pictofixedwidth"')),
 	);
 }
 
@@ -79,19 +80,20 @@ if (!$user->admin) {
 }
 
 
+'@phan-var-force array<string,array<string,array{type?:string,css?:string,picto?:string}>> $arrayofparameters';
+
 /*
  * Actions
  */
-
 foreach ($arrayofparameters as $title => $tab) {
 	foreach ($tab as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (preg_match('/category:/', $val['type'])) {
-				if (GETPOST($key, 'int') == '-1') {
+			if (preg_match('/category:/', (string) $val['type'])) {
+				if (GETPOSTINT($key) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($key, 'int');
+					$val_const = GETPOSTINT($key);
 				}
 			} else {
 				$val_const = GETPOST($key, 'alpha');
@@ -145,7 +147,7 @@ if ($action == 'edit') {
 			print '</td><td>';
 			print '<select name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
 			foreach ($valTab as $key1 => $val1) {
-				print '<option value="'.$key1.'" '.($conf->global->$key == $key1 ? 'selected="selected"' : '').'>';
+				print '<option value="'.$key1.'" '.(getDolGlobalString($key) == $key1 ? 'selected="selected"' : '').'>';
 				print $val1;
 				print '</option>';
 			}
@@ -172,7 +174,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
 			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
-			print '</td><td>'.($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]).'</td></tr>';
+			print '</td><td>'.(getDolGlobalString($key) == '' ? $langs->trans('None') : $valTab[getDolGlobalString($key)]).'</td></tr>';
 		}
 	}
 

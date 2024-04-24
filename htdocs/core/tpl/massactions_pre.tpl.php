@@ -2,6 +2,7 @@
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,13 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+'@phan-var-force CommonObject $objecttmp';
+
+if (!empty($sall) || !empty($search_all)) {
+	$search_all = empty($sall) ? $search_all : $sall;
+
+	print '<input type="hidden" name="search_all" value="'.$search_all.'">';
+}
 
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
@@ -60,12 +68,12 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 		// Test on $object (should be useless, we already check on $objecttmp just after)
 		if (isset($object) && $categdef['obj_table'] == $object->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 		if (isset($objecttmp) && $categdef['obj_table'] == $objecttmp->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 	}
@@ -73,12 +81,12 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	$formquestion = array();
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
-			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2);
+			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], '', 'parent', 0, 0, 3);
 			$formquestion[] = array(
 				'type' => 'other',
 				'name' => 'affecttag_'.$categ_type['code'],
 				'label' => '',
-				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->trans("SelectTheTagsToAssign"))
+				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->transnoentitiesnoconv("SelectTheTagsToAssign"))
 			);
 		}
 		$formquestion[] = array(
@@ -206,7 +214,7 @@ if ($massaction == 'presend') {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
@@ -242,15 +250,15 @@ if ($massaction == 'presend') {
 	}
 
 
-	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : (GETPOST('oneemailperrecipient', 'int') ? 1 : -1);
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : (GETPOSTINT('oneemailperrecipient') ? 1 : -1);
 	if (in_array($objecttmp->element, array('conferenceorboothattendee'))) {
 		$formmail->withoptiononeemailperrecipient = 0;
 	}
 
-	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ?GETPOST('sendto', 'alpha') : array()) : $liste;
+	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ? GETPOST('sendto', 'alpha') : array()) : $liste;
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	if (!empty($topicmail)) {
 		$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
 	} else {
@@ -282,8 +290,10 @@ if ($massaction == 'presend') {
 
 	$substitutionarray['__EMAIL__'] = $sendto;
 	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
-	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
-	$substitutionarray['__CONTACTCIVNAME__'] = '';
+	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
+	$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+	$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+	$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 
 	$parameters = array(
 		'mode' => 'formemail'
@@ -293,16 +303,16 @@ if ($massaction == 'presend') {
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
-	// Tableau des parametres complementaires du post
+	// Tableau des parameters complementaires du post
 	$formmail->param['action'] = $action;
 	$formmail->param['models'] = $modelmail;	// the filter to know which kind of template emails to show. 'none' means no template suggested.
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int') ? GETPOST('modelmailselected', 'int') : '-1';
-	$formmail->param['id'] = join(',', $arrayofselected);
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected') ? GETPOSTINT('modelmailselected') : '-1';
+	$formmail->param['id'] = implode(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
+	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
 		// Note: MAILING_LIMIT_SENDBYWEB may be forced by conf.php file and variable $dolibarr_mailing_limit_sendbyweb
 		$langs->load("errors");
-		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
 	} else {
@@ -338,12 +348,12 @@ if ($massaction == 'edit_extrafields') {
 		$outputShowOutputFields = '<div class="extrafields-inputs">';
 
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
-			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
-			$outputShowOutputFields.= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
-			$outputShowOutputFields.= '</div>';
+			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields .= '</div>';
 		}
-		$outputShowOutputFields.= '<script>
+		$outputShowOutputFields .= '<script>
 		jQuery(function($) {
             $("#extrafield-key-to-update").on(\'change\',function(){
             	let selectedExtrtafield = $(this).val();
@@ -354,7 +364,7 @@ if ($massaction == 'edit_extrafields') {
             });
 		});
 		</script>';
-		$outputShowOutputFields.= '</div>';
+		$outputShowOutputFields .= '</div>';
 
 
 
@@ -384,6 +394,16 @@ if ($massaction == 'presetcommercial') {
 			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
 }
+if ($massaction == 'unsetcommercial') {
+	$formquestion = array();
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$formquestion[] = array('type' => 'other',
+		'name' => 'unassigncommercial',
+		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
+		'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUnallocateCommercial"), $langs->trans("ConfirmUnallocateCommercialQuestion", count($toselect)), "unassigncommercial", $formquestion, 1, 0, 200, 500, 1);
+}
+
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }

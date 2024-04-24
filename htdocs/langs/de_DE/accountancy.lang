@@ -17,7 +17,7 @@ ThisProduct=Dieses Produkt
 DefaultForService=Standard für Leistungen 
 DefaultForProduct=Standard für Produkte
 ProductForThisThirdparty=Produkt für diesen Geschäftspartner
-ServiceForThisThirdparty=Leistungen für diesen Geschäftspartner
+ServiceForThisThirdparty=Leistung für diesen Geschäftspartner
 CantSuggest=Kann keines vorschlagen
 AccountancySetupDoneFromAccountancyMenu=Die wichtigste Teil der Konfiguration der Buchhaltung aus dem Menü %s wurde erledigt
 ConfigAccountingExpert=Konfiguration des Moduls Buchhaltung (doppelt)
@@ -53,18 +53,16 @@ ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse su
 ExportAccountingSourceDocHelp2=Um Ihre Journale zu exportieren, verwenden Sie den Menüeintrag %s - %s.
 ExportAccountingProjectHelp=Geben Sie ein Projekt an, wenn Sie einen Buchhaltungsbericht nur für ein bestimmtes Projekt benötigen. Spesenabrechnungen und Darlehenszahlungen sind in den Projektberichten nicht enthalten.
 ExportAccountancy=Buchhaltung exportieren
-WarningDataDisappearsWhenDataIsExported=Achtung, diese Liste enthält nur die Buchhaltungseinträge, die noch nicht exportiert wurden (Exportdatum ist leer). Wenn Sie die bereits exportierten Buchhaltungseinträge in den erneuten Export aufnehmen möchten, klicken Sie auf die Schaltfläche oben.
+WarningDataDisappearsWhenDataIsExported=Achtung, dieser Liste enthält nur die Buchhaltungseinträge, die noch nicht exportiert wurden (Export Datum  ist leer). Wenn Sie die bereits exportierten Buchhaltungseinträge einbeziehen möchten, klicken Sie auf die Schaltfläche oben.
 VueByAccountAccounting=Ansicht nach Buchungskonto
 VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 
-MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
-MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
-MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
-MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
-MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
+MainAccountForCustomersNotDefined=Hauptkonto (aus dem Kontenplan) für Kunden, die nicht im Setup definiert sind
+MainAccountForSuppliersNotDefined=Hauptkonto (aus dem Kontenplan) für Kreditoren, die nicht im Setup definiert sind
+MainAccountForUsersNotDefined=Hauptkonto (aus dem Kontenplan) für Benutzer, die nicht im Setup definiert sind
+MainAccountForVatPaymentNotDefined=Konto (aus dem Kontenplan) für Umsatzsteuerzahlungen, die nicht im Setup definiert sind
+MainAccountForSubscriptionPaymentNotDefined=Konto (aus dem Kontoplan) für die Beitragszahlung, sofern im Setup nicht definiert
+MainAccountForRetainedWarrantyNotDefined=Konto (aus dem Kontenplan) für die einbehaltene Gewährleistung, sofern im Setup nicht definiert
 UserAccountNotDefined=Buchungskonto für den Benutzer ist nicht im Setup definiert
 
 AccountancyArea=Bereich Buchhaltung
@@ -77,6 +75,7 @@ AccountancyAreaDescJournalSetup=SCHRITT %s: Liste der Buchhaltungsjournale über
 AccountancyAreaDescChartModel=SCHRITT %s: Prüfen, ob der benötigte Kontenrahmen vorhanden und aktiviert ist – konfigurierbar im Menü %s
 AccountancyAreaDescChart=SCHRITT %s: Wählen und ergänzen Sie einen Kontenplan im Menü %s.
 
+AccountancyAreaDescFiscalPeriod=SCHRITT %s: Definieren Sie ein Geschäftsjahr, in das standardmäßig Ihre Buchhaltungseinträge eingeordnet werden. Verwenden Sie dazu den Menüpunkt %s.
 AccountancyAreaDescVat=SCHRITT %s: Festlegen des Buchhaltungskontos für jeden Steuersatz über den Menüpunkt %s.
 AccountancyAreaDescDefault=SCHRITT %s: Standardkonten über das Menü %s konfigurieren.
 AccountancyAreaDescExpenseReport=SCHRITT %s: Festlegung der Standardbuchhaltungskonten für die verschiedenen Arten der Spesenabrechnung. Verwenden Sie dazu den Menüeintrag %s.
@@ -84,19 +83,20 @@ AccountancyAreaDescSal=SCHRITT %s: Buchungskonto für Gehaltszahlungen definiere
 AccountancyAreaDescContrib=SCHRITT %s: Legen Sie Standardbuchhaltungskonten für Steuern (Sonderausgaben) fest. Verwenden Sie dazu den Menüeintrag %s.
 AccountancyAreaDescDonation=SCHRITT %s: Definition der Buchungskonten für Spenden. Kann im Menü %s geändert werden.
 AccountancyAreaDescSubscription=SCHRITT %s: Definieren Sie die Standardabrechnungskonten für Mitgliederabonnements. Verwenden Sie dazu den Menüeintrag %s.
-AccountancyAreaDescMisc=SCHRITT %s: Buchungskonto für nicht zugeordnete Buchungen definieren. Kann im Menü %s geändert werden.
+AccountancyAreaDescMisc=SCHRITT %s: Definieren Sie ein obligatorisches Standardbuchungskonto sowie Standardbuchungskonten für verschiedene Transaktionen. Verwenden Sie dazu den Menüpunkt %s.
 AccountancyAreaDescLoan=SCHRITT %s: Definition der Buchungskonten für Darlehenszahlungen. Kann im Menü %s geändert werden.
 AccountancyAreaDescBank=SCHRITT %s: Festlegen der Buchungskonten für Banken und Zahlungsdienstleister über den Menüpunkt %s.
 AccountancyAreaDescProd=SCHRITT %s: Festlegen der Buchungskonten für Ihre Produkte und Leistungen über den Menüpunkt %s.
 
 AccountancyAreaDescBind=SCHRITT %s: Prüfen, ob die Kontierung aller Positionen aus %s erfolgt ist,  damit die Übernahme der Buchungen ins Hauptbuch mit einem Klick erfolgen kann. Dies erfolgt im Menüpunkt %s.
 AccountancyAreaDescWriteRecords=SCHRITT %s: Übernehmen Sie die Buchungen in das Hauptbuch. Dazu gehen Sie ins Menü <strong>%s</strong>, und klicken Sie auf die Schaltfläche <strong>%s</strong>
-AccountancyAreaDescAnalyze=SCHRITT %s:  Transaktionen hinzufügen oder bearbeiten sowie Berichte und Exporte generieren.
+AccountancyAreaDescAnalyze=SCHRITT %s: Berichte einsehen oder Export-Dateien für andere Buchhalter generieren.
+AccountancyAreaDescClosePeriod=SCHRITT %s: Buchungszeitraum schließen, damit zukünftig keine weiteren Daten mehr eingeben werden können.
 
-AccountancyAreaDescClosePeriod=SCHRITT %s: Schließen Sie die Periode, damit wir in Zukunft keine Veränderungen vornehmen können.
-
+TheFiscalPeriodIsNotDefined=Ein obligatorischer Schritt in der  Konfiguration wurde nicht abgeschlossen (Geschäftsjahr ist nicht definiert)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Eine erforderliche Einrichtung wurde nicht abgeschlossen. (Kontierungsinformationen fehlen bei einigen Bankkonten)
 Selectchartofaccounts=Aktiven Kontenplan wählen
+CurrentChartOfAccount=Aktuell aktiver Kontenplan
 ChangeAndLoad=Ändern & laden
 Addanaccount=Fügen Sie ein Buchungskonto hinzu
 AccountAccounting=Buchungskonto
@@ -168,11 +168,11 @@ ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Kontenbezeichn
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Kontonummern der Buchhaltung (Wenn dieser Wert auf 6 gesetzt ist, wird Konto '706' als '706000' am Bildschirm angezeigt)
 ACCOUNTING_LENGTH_AACCOUNT=Länge der Geschäftspartner Nebenkonten in der Buchhaltung \n(Wenn Sie hier den Wert 6 einstellen, wird das Konto "401" auf dem Bildschirm als "401000" angezeigt.)
 ACCOUNTING_MANAGE_ZERO=Beibehalten der Nullen am Ende eines Buchungskontos ("1200"). \nIn manchen Ländern notwendig (z.B. Deutschland, Schweiz). \nStandardmäßig deaktiviert. \nWenn ausgeschaltet, können die folgenden zwei Parameter konfigurieren werden, um virtuelle Nullen anzuhängen.
-BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
+BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkten Aufzeichnung von Transaktionen auf dem Bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfexport für Journal aktivieren
 ACCOUNTANCY_COMBO_FOR_AUX=Combo-Liste für Nebenkonto aktivieren (kann langsam sein, wenn Sie viele Geschäftspartner haben; verhindert die Suche nach Teilwerten)
-ACCOUNTING_DATE_START_BINDING=Definieren Sie ein Datum, an dem die Bindung und Übertragung in der Buchhaltung beginnen soll. Transaktionen vor diesem Datum werden nicht in die Buchhaltung übertragen.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Welcher Zeitraum ist beim Buchhaltungstransfer standardmäßig ausgewählt?
+ACCOUNTING_DATE_START_BINDING=Deaktivieren Sie die Kontierung & das Übertragen in der Buchhaltung, wenn das Datum vor diesen Datum liegt  (Transaktionen vor diesem Datum werden standardmäßig ausgeschlossen)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Welcher Zeitraum soll auf der Seite zur Übertragung der Daten in die Buchhaltung standardmäßig ausgewählt werden?
 
 ACCOUNTING_SELL_JOURNAL=Verkaufsjournal - Verkäufe und Retouren
 ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal - Käufe und Retouren
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Sozialabgabenjournal
 ACCOUNTING_RESULT_PROFIT=Ergebnisabrechnungskonto (Gewinn)
 ACCOUNTING_RESULT_LOSS=Ergebnisabrechnungskonto (Verlust)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal für Abschlussbuchungen
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Buchhaltungsgruppen, die für das Bilanzkonto verwendet werden (durch Komma getrennt)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Buchhaltungsgruppen, die für die Gewinn- und Verlustrechnung verwendet werden (durch Komma getrennt)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto (aus dem Kontenplan), das als Verrechnungskonto/Transferkonto für Banküberweisungen verwendet werden soll
 TransitionalAccount=Überweisungskonto
@@ -227,8 +229,8 @@ Codejournal=Journal
 JournalLabel=Journal-Bezeichnung
 NumPiece=Teilenummer
 TransactionNumShort=Buchungsnr.
-AccountingCategory=Benutzerdefinierte Kontengruppe
-AccountingCategories=Benutzerdefinierte Kontengruppe
+AccountingCategory=Benutzerdefinierte Gruppen
+AccountingCategories=Benutzerdefinierte Gruppen
 GroupByAccountAccounting=Gruppieren nach Hauptbuchkonto
 GroupBySubAccountAccounting=Gruppieren nach Nebenbuchkonto
 AccountingAccountGroupsDesc=Hier können Kontengruppen definiert werden. Diese werden für personaliserte Buchhaltungsreports verwendet.
@@ -279,7 +281,7 @@ Pcgtype=Kontenklasse
 PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinierte Filter- und Gruppierungskriterien verwendet. Beispielsweise werden "Aufwand" oder "Ertrag" als Gruppen für die Buchungskonten von Produkten genutzt, um die Ausgaben-/Einnahmenrechnung zu erstellen.
 AccountingCategoriesDesc=Benutzerdefinierte Kontengruppen können verwendet werden, um mehrere Buchhaltungskonten unter einem Namen zu gruppieren, um die Verwendung von Filtern oder das Erstellen von benutzerdefinierten Berichten zu vereinfachen.
 
-Reconcilable=ausgleichsfähig
+Reconcilable=Abstimmkonto
 
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Wenn Sie im Modul Buchhaltung Konten für die Spesen
 DescVentilDoneExpenseReport=Liste der Aufwendungen aus Spesenabrechnungen und ihre zugeordneten Buchungskonten
 
 Closure=Festschreibung
-DescClosure=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, die noch nicht freigegeben und festgeschrieben sind.
+AccountancyClosureStep1Desc=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, die noch nicht freigegeben und festgeschrieben sind.
 OverviewOfMovementsNotValidated=Übersicht der noch nicht festgeschriebenen Buchungen
 AllMovementsWereRecordedAsValidated=Alle Buchungen wurden als freigegeben und festgeschrieben registriert
 NotAllMovementsCouldBeRecordedAsValidated=Nicht alle Buchungen konnten als freigegeben und festgeschrieben registriert werden
@@ -322,18 +324,17 @@ Accounted=im Hauptbuch erfasst
 NotYetAccounted=Noch nicht in die Buchhaltung übernommen
 ShowTutorial=Tutorial anzeigen
 NotReconciled=Nicht abgeglichen
-WarningRecordWithoutSubledgerAreExcluded=Achtung, alle Zeilen ohne definiertes Nebenbuchkonto werden gefiltert und von dieser Ansicht ausgeschlossen
+WarningRecordWithoutSubledgerAreExcluded=Achtung: diese Ansicht zeigt nur Buchungszeilen mit definiertem Nebenbuchkonto
 AccountRemovedFromCurrentChartOfAccount=Im aktuellen Kontenplan nicht vorhandenes Buchungskonto
 
 ## Admin
-BindingOptions=Verbindungsoptionen
+BindingOptions=Kontierungsoptionen
 ApplyMassCategories=Massenaktualisierung der Kategorien
 AddAccountFromBookKeepingWithNoCategories=Verfügbares Konto noch nicht in der personalisierten Gruppe
 CategoryDeleted=Die Gruppe für das Buchungskonto wurde entfernt
 AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
 NewAccountingJournal=Neues Buchhaltungsjournal
-ShowAccountingJournal=Buchhaltungsjournal anzeigen
 NatureOfJournal=Art des Journals
 AccountingJournalType1=Sonstige Buchungen
 AccountingJournalType2=Verkäufe
@@ -347,17 +348,19 @@ ErrorAccountingJournalIsAlreadyUse=Dieses Journal wird bereits verwendet
 AccountingAccountForSalesTaxAreDefinedInto=Hinweis: Buchaltungskonten für Steuern werden im Menü <b>%s</b> - <b>%s</b> definiert
 NumberOfAccountancyEntries=Anzahl der Einträge
 NumberOfAccountancyMovements=Anzahl der Buchungen
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung bei Verkäufen (Kundenrechnungen werden in der Buchhaltung nicht berücksichtigt).
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung bei Einkäufen (Lieferantenrechnungen werden in der Buchhaltung nicht berücksichtigt).
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung bei Verkäufen (Kundenrechnungen werden in der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung bei Einkäufen (Lieferantenrechnungen werden in der Buchhaltung nicht berücksichtigt).
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Kontierung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
 ACCOUNTING_ENABLE_LETTERING=Aktivieren Sie die Abstimmungsfunktion in der Buchhaltung
 ACCOUNTING_ENABLE_LETTERING_DESC=Wenn diese Option aktiviert ist, können Sie für jeden Buchungseintrag einen Tracking-Code definieren, sodass Sie verschiedene Buchungen gruppieren können. In der Vergangenheit, als verschiedene Journale unabhängig voneinander verwaltet wurden, war diese Funktion erforderlich, um Buchungszeilen verschiedener Journale zusammenzufassen. Bei der Dolibarr-Buchhaltung wird jedoch ein solcher Tracking-Code namens "<b>%s</b>" bereits automatisch gespeichert, sodass ein automatisches Tracking bereits erfolgt ist, ohne dass ein Fehlerrisiko besteht. Damit ist diese Funktion für eine allgemeine Verwendung unnötig geworden. Die manuelle Funktion ist für Endbenutzer vorgesehen, die der Computer-Engine, die die Datenübertragung in der Buchhaltung durchführt, wirklich nicht vertrauen.
 EnablingThisFeatureIsNotNecessary=Die Aktivierung dieser Funktion ist für strenge Anforderungen an die Buchhaltung nicht mehr erforderlich.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktivieren Sie den automatischen Buchungsabgleich bei der Übergabe an die Buchhaltung
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Der Code für die Kennzeichnung zusammengehöriger Transaktionen wird automatisch generiert und hochgezählt und nicht vom Endverbraucher gewählt
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Der Code für die Kennzeichnung zusammengehöriger Transaktionen wird automatisch generiert und hochgezählt und nicht vom Benutzer gewählt
+ACCOUNTING_LETTERING_NBLETTERS=Anzahl der Buchstaben beim Generieren des Beschriftungs-/Zuordnungs-Codes (Standard 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Manche Buchhaltungssoftware akzeptiert nur einen aus zwei Buchstaben bestehenden Code. Mit diesem Parameter können Sie diesen Aspekt festlegen. Die Standardanzahl an Buchstaben beträgt drei.
 OptionsAdvanced=Erweiterte Optionen
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivieren Sie die Verwaltung des Reverse Charge-Verfahrens (Umkehr der Steuerschuldnerschaft) bei Lieferantenkäufen
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wenn diese Option aktiviert ist, können Sie festlegen, dass eine Lieferanten- oder eine bestimmte Kreditorenrechnung anders in die Buchhaltung übertragen werden muss: Eine zusätzliche Soll- und Habenbuchung wird in der Buchhaltung auf 2 gegebenen Konten aus dem Kontenplan generiert, die in der "%s" Setup-Seite festgelegt werden.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wenn diese Option aktiviert ist, können Sie festlegen, dass eine Lieferant oder eine bestimmte Kreditorenrechnung anders in die Buchhaltung übertragen werden muss: Eine zusätzliche Soll- und Habenbuchung wird in der Buchhaltung auf 2 gegebenen Konten aus dem Kontenplan generiert, die in der "%s" Setup-Seite festgelegt werden.
 
 ## Export
 NotExportLettering=Beim Generieren der Datei die Abstimmungsinformationen nicht exportieren
@@ -394,15 +397,15 @@ ChartofaccountsId=Kontenplan ID
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
 InitAccountancyDesc=Auf dieser Seite kann ein Buchungskonto für Produkte und Leistungen, für die noch kein Buchungskonto für Ein- und Verkäufe definiert ist, vorgegeben werden.
-DefaultBindingDesc=Auf dieser Seite können Standardbuchungskonten (aus dem Kontenplan) festgelegt werden, die für Transaktionen zu Lohnzahlungen, Spenden, Steuern und USt. verwendet werden sollen, wenn kein bestimmtes Konto angegeben wurde.
+DefaultBindingDesc=Auf dieser Seite können Standardbuchungskonten (aus dem Kontenplan) festgelegt werden, die für Transaktionen zu Gehaltszahlungen, Spenden, Steuern und USt. verwendet werden sollen, wenn kein bestimmtes Konto angegeben wurde.
 DefaultClosureDesc=Diese Seite kann verwendet werden, um Parameter festzulegen, die für Abrechnungsabschlüsse verwendet werden.
 Options=Optionen
 OptionModeProductSell=Modus Verkäufe Inland
 OptionModeProductSellIntra=Modus Verkäufe in EU/EWG
-OptionModeProductSellExport=Modus Verkäufe Export (ausserhalb EU/EWG)
-OptionModeProductBuy=Modus Einkäufe
-OptionModeProductBuyIntra=Modus in die EU importierte Einkäufe
-OptionModeProductBuyExport=Modus aus anderen Staaten importierte Einkäufe
+OptionModeProductSellExport=Modus Verkäufe in andere Staaten (nicht-EU/EWG)
+OptionModeProductBuy=Modus Einkäufe Inland
+OptionModeProductBuyIntra=Modus aus der EU/EWG importierte Einkäufe
+OptionModeProductBuyExport=Modus aus anderen Staaten (nicht-EU/EWG) importierte Einkäufe
 OptionModeProductSellDesc=Alle Produkte mit Buchungskonto für Verkäufe (Inland) anzeigen.
 OptionModeProductSellIntraDesc=Alle Produkte mit Buchungskonto für Verkäufe in der EWG anzeigen.
 OptionModeProductSellExportDesc=Alle Produkte mit Buchungskonto für Verkäufe Ausland anzeigen.
@@ -420,7 +423,7 @@ SaleLocal=Verkauf Inland
 SaleExport=Verkauf Export (ausserhalb EWG)
 SaleEEC=Verkauf in EU/EWG
 SaleEECWithVAT=Verkauf in der EU mit Mehrwertsteuer (nicht null), und daher anzunehmen ist, dass es sich NICHT um einen innergemeinschaftlichen Verkauf handelt und das vorgeschlagene Konto daher das Standardproduktkonto ist.
-SaleEECWithoutVATNumber=Verkauf in der EWG ohne Mehrwertsteuer, ohne dass die Umsatzsteuer-ID des Geschäftspartners definiert ist. Es wird stattdessen auf das Buchungskonto für Standardverkäufe zurückgegriffen. Sie können die Umsatzsteuer-ID des Geschäftspartners korrigieren oder das zur Kontierung vorgeschlagene Buchungskonto bei Bedarf ändern.
+SaleEECWithoutVATNumber=Verkauf in der EWG ohne Umsatzsteuer, aber die Umsatzsteuer-ID des Geschäftspartners ist nicht definiert. Es wird stattdessen auf das Buchungskonto für Standardverkäufe zurückgegriffen. Sie können die Umsatzsteuer-ID des Geschäftspartners korrigieren oder das zur Kontierung vorgeschlagene Buchungskonto bei Bedarf ändern.
 ForbiddenTransactionAlreadyExported=Unzulässig: Die Transaktion wurde bereits freigegeben und/oder exportiert.
 ForbiddenTransactionAlreadyValidated=Unzulässig: Die Transaktion wurde bereits freigegeben.
 ## Dictionary
@@ -441,16 +444,30 @@ AccountancyNoUnletteringModified=Kein Abgleich geändert
 AccountancyOneUnletteringModifiedSuccessfully=Ein Abgleich wurde erfolgreich geändert
 AccountancyUnletteringModifiedSuccessfully=%s aufgehobene Abgleiche erfolgreich modifiziert
 
+## Closure
+AccountancyClosureStep1=Schritt 1: Buchungen freigeben und festschreiben
+AccountancyClosureStep2=Schritt 2: Geschäftsjahr schließen
+AccountancyClosureStep3=Schritt 3: Einträge extrahieren (optional)
+AccountancyClosureClose=Geschäftsjahr schließen
+AccountancyClosureAccountingReversal=Extrahieren und erfassen von Einträgen zu Eröffnungsbuchungen
+AccountancyClosureStep3NewFiscalPeriod=Nächstes Geschäftsjahr
+AccountancyClosureGenerateClosureBookkeepingRecords=Eröffnungsbuchungen für das nächste Geschäftsjahr erzeugen
+AccountancyClosureSeparateAuxiliaryAccounts=Beim Generieren der Eröffnungsbuchungen auch Einträge für die Nebenbücher erzeugen
+AccountancyClosureCloseSuccessfully=Geschäftsjahr wurde erfolgreich geschlossen
+AccountancyClosureInsertAccountingReversalSuccessfully=Buchhaltungsdatensätze für Eröffnungsbuchungen wurden erfolgreich eingefügt
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bestätigung für das Aufheben aller automatischen Abgleiche
 ConfirmMassUnletteringManual=Bestätigung für das Aufheben aller manuellen Abgleiche
 ConfirmMassUnletteringQuestion=Möchten Sie den Abgleich für die ausgewählten %s Datensätze wirklich rückgängig machen?
 ConfirmMassDeleteBookkeepingWriting=Bestätigung für Massenlöschen
 ConfirmMassDeleteBookkeepingWritingQuestion=Dadurch wird die Transaktion aus der Buchhaltung gelöscht (alle Zeilen, die sich auf dieselbe Transaktion beziehen, werden gelöscht). Möchten Sie die %s ausgewählten Einträge wirklich löschen?
+AccountancyClosureConfirmClose=Sind Sie sicher, dass Sie das aktuelle Geschäftsjahr schließen wollen? <span class="warning">Sie bestätigen, dass das Schließen des Geschäftsjahrs eine unumkehrbare Aktion ist, die dauerhaft jede Änderung oder Löschung von Einträgen in diesem Zeitraum verhindert</span>.
+AccountancyClosureConfirmAccountingReversal=Sind Sie sicher, dass Sie Einträge für Eröffnungsbuchungen erzeugen wollen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
-ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Start - Einstellungen - Stammdaten)
+ErrorNoAccountingCategoryForThisCountry=Es sind dem Land %s keine benutzerdefinierten Kontogruppen zugeordnet. Daher ist keine Buchhaltungskontogruppe auswählbar (siehe %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Sie versuchen einige Rechnungspositionen der Rechnung <strong>%s</strong> zu journalisieren, aber einige Postionen sind keinem Buchungskonto zugewiesen. Alle Rechnungspositionen dieser Rechnung werden ignoriert.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Einige Rechnungspositionen sind unkontiert.
 ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt
@@ -465,6 +482,9 @@ AccountancyErrorMismatchBalanceAmount=Der Saldo (%s) ist ungleich 0
 AccountancyErrorLetteringBookkeeping=Bei den Transaktionen sind Fehler aufgetreten: %s
 ErrorAccountNumberAlreadyExists=Das Buchungskonto %s existiert bereits
 ErrorArchiveAddFile=Die Datei „%s“ kann nicht im Archiv abgelegt werden
+ErrorNoFiscalPeriodActiveFound=Kein aktives Geschäftsjahr gefunden
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Das Datum des Buchhaltungsdokuments befindet sich nicht im aktiven Geschäftsjahr
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Das Datum des Buchhaltungsdokuments befindet sich in einem geschlossenen Geschäftsjahr
 
 ## Import
 ImportAccountingEntries=Buchaltungseinträge

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ function dol_getwebuser($mode)
 }
 
 /**
- *  Return a login if login/pass was successfull
+ *  Return a login if login/pass was successful
  *
  *	@param		string	$usertotest			Login value to test
  *	@param		string	$passwordtotest		Password value to test
@@ -63,7 +64,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 		$entitytotest = 1;
 	}
 
-	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
+	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".implode(',', $authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules
@@ -97,7 +98,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
 					if ($login && $login != '--bad-login-validity--') {
-						// Login is successfull with this method
+						// Login is successful with this method
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
 						/*$dol_tz = GETPOST('tz');
@@ -149,9 +150,9 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.' '.constant('DOL_VERSION');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$title = $conf->global->MAIN_APPLICATION_TITLE;
+		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -192,7 +193,7 @@ if (!function_exists('dol_loginfunction')) {
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
-		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 			if (session_status() != PHP_SESSION_ACTIVE) {
 				if (PHP_VERSION_ID < 70300) {
 					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
@@ -209,7 +210,7 @@ if (!function_exists('dol_loginfunction')) {
 					session_set_cookie_params($sessioncookieparams);
 				}
 
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', (empty($dolibarr_main_force_https) ? false : true), true);
 			}
 		}
 
@@ -234,17 +235,17 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Execute hook getLoginPageOptions (for table)
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$moreloginextracontent = $hookmanager->resPrint;
 
 		//Redirect after connection
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('redirectAfterConnection', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$php_self = $hookmanager->resPrint;
 
@@ -270,7 +271,7 @@ if (!function_exists('dol_loginfunction')) {
 		// Security graphical code
 		$captcha = 0;
 		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 			$captcha = 1;
 			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
 		}
@@ -278,28 +279,28 @@ if (!function_exists('dol_loginfunction')) {
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
-			if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
+			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
 				$helpcenterlink = 1;
 			}
 		}
 
 		// Home message
 		$main_home = '';
-		if (!empty($conf->global->MAIN_HOME)) {
+		if (getDolGlobalString('MAIN_HOME')) {
 			$substitutionarray = getCommonSubstitutionArray($langs);
 			complete_substitutions_array($substitutionarray, $langs);
-			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+			$texttoshow = make_substitutions(getDolGlobalString('MAIN_HOME'), $substitutionarray, $langs);
 
 			$main_home = dol_htmlcleanlastbr($texttoshow);
 		}
 
 		// Google AD
-		$main_google_ad_client = ((!empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) ? 1 : 0);
+		$main_google_ad_client = ((getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) ? 1 : 0);
 
 		// Set jquery theme
 		$dol_loginmesg = (!empty($_SESSION["dol_loginmesg"]) ? $_SESSION["dol_loginmesg"] : '');
@@ -308,21 +309,21 @@ if (!function_exists('dol_loginfunction')) {
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
-		if (!empty($conf->global->MAIN_FAVICON_URL)) {
-			$favicon = $conf->global->MAIN_FAVICON_URL;
+		if (getDolGlobalString('MAIN_FAVICON_URL')) {
+			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
 		}
 
 		$jquerytheme = 'base';
-		if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) {
-			$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+		if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
+			$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
 		}
 
 		// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover
-		$dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
-		$dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
-		$dol_optimize_smallscreen = GETPOST('dol_optimize_smallscreen', 'int');
-		$dol_no_mouse_hover = GETPOST('dol_no_mouse_hover', 'int');
-		$dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
+		$dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
+		$dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu');
+		$dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen');
+		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover');
+		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile');
 
 		// Include login page template
 		include $template_dir.'login.tpl.php';
@@ -335,11 +336,11 @@ if (!function_exists('dol_loginfunction')) {
 }
 
 /**
- *  Fonction pour initialiser un salt pour la fonction crypt.
+ *  Initialise the salt for the crypt function.
  *
- *  @param		int		$type		2=>renvoi un salt pour cryptage DES
- *									12=>renvoi un salt pour cryptage MD5
- *									non defini=>renvoi un salt pour cryptage par defaut
+ *  @param		int		$type		2 =>Return a salt for DES encryption
+ *									12=>Return a salt for MD5 encryption
+ *									Undefined=>Return a salt for default encryption
  *	@return		string				Salt string
  */
 function makesalt($type = CRYPT_SALT_LENGTH)
@@ -351,7 +352,7 @@ function makesalt($type = CRYPT_SALT_LENGTH)
 			$saltprefix = '$1$';
 			$saltsuffix = '$';
 			break;
-		case 8:		// 8 (Pour compatibilite, ne devrait pas etre utilise)
+		case 8:		// 8 (For compatibility, do not use this)
 			$saltlen = 8;
 			$saltprefix = '$1$';
 			$saltsuffix = '$';
@@ -377,7 +378,7 @@ function makesalt($type = CRYPT_SALT_LENGTH)
  *  Encode or decode database password in config file
  *
  *  @param   	int		$level   	Encode level: 0 no encoding, 1 encoding
- *	@return		int					<0 if KO, >0 if OK
+ *	@return		int					Return integer <0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level = 0)
 {
@@ -393,7 +394,7 @@ function encodedecode_dbpassconf($level = 0)
 			$lineofpass = 0;
 
 			$reg = array();
-			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save crypted value
+			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save encrypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
@@ -455,7 +456,7 @@ function encodedecode_dbpassconf($level = 0)
 		// Write new conf file
 		$file = DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file, 'w')) {
-			fputs($fp, $config);
+			fwrite($fp, $config);
 			fflush($fp);
 			fclose($fp);
 			clearstatcache();
@@ -479,7 +480,7 @@ function encodedecode_dbpassconf($level = 0)
  * Return a generated password using default module
  *
  * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
+ * @param		array		$replaceambiguouschars	Discard ambiguous characters. For example array('I').
  * @param       int         $length                 Length of random string (Used only if $generic is true)
  * @return		string		    					New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
@@ -535,7 +536,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 
 			$generated_password = str_shuffle($randomCode);
 		}
-	} elseif (!empty($conf->global->USER_PASSWORD_GENERATED)) {
+	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier = $nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
@@ -562,7 +563,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 }
 
 /**
- * Ouput javacript to autoset a generated password using default module into a HTML element.
+ * Output javascript to autoset a generated password using default module into a HTML element.
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button

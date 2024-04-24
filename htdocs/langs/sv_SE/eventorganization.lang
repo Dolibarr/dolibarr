@@ -34,7 +34,6 @@ PaymentEvent=Betalning för evenemang
 NewRegistration=Registrering
 EventOrganizationSetup=Inställning för evenemangsorganisation
 EventOrganization=Eventorganisation
-Settings=Inställningar
 EventOrganizationSetupPage = Inställningssida för evenemangsorganisation
 EVENTORGANIZATION_TASK_LABEL = Etikett för uppgifter som ska skapas automatiskt när projektet bekräftas
 EVENTORGANIZATION_TASK_LABELTooltip = När du validerar ett evenemang att organisera kommer vissa uppgifter automatiskt bli skapat i projektet <br>  <br> Exempel:  <br> Skapa konferenssamtal <br> Skapa samtal för bås <br> Validera förslag för konferensen <br> Validera beställning för bås <br> Öppna prenumeration för evenemangen för deltagare <br> Skicka en påminnelse om evenemanget till talare <br> Skicka en påminnelse om evenemanget till båsvärdar <br> Skicka en påminnelse om evenemanget till deltagarna
@@ -53,7 +52,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = I formuläret för att skapa/lägga til
 #
 # Object
 #
-OrganizedEvent=Organized event
+OrganizedEvent=Organiserat evenemang
 EventOrganizationConfOrBooth= Konferens eller monter
 EventOrganizationConfOrBoothes=Konferens eller monter
 ManageOrganizeEvent = Hantera organisationen av ett evenemang
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed för att säkra nyckeln för registrering fö
 SERVICE_BOOTH_LOCATION = Tjänst som används på fakturaraden för monterplats
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tjänst som används på fakturaraden för deltagaravgift för ett evenemang
 NbVotes=Antal röster
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Föreslagen
 EvntOrgConfirmed = Bekräftad
 EvntOrgNotQualified = Inte kvalificerad
 EvntOrgDone = Klar
-EvntOrgCancelled = Inställd
+EvntOrgCancelled = Avbruten
+
 #
-# Public page
+# Other
 #
 SuggestForm = Förslagssida
 SuggestOrVoteForConfOrBooth = Sida för förslag eller omröstning
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Detta är en påminnelse om ett evenemang d
 OrganizationEventBulkMailToSpeakers=Detta är en påminnelse ett evenemanget du skall tala på
 OrganizationEventLinkToThirdParty=Länk till tredjepart (kund, leverantör eller partner)
 OrganizationEvenLabelName=Offentligt namn på konferensen eller montern
-
 NewSuggestionOfBooth=Ansökan om monter
-NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Ansökan om att hålla en konferens
 EvntOrgRegistrationWelcomeMessage = Välkommen till konferens- eller montersidan.
 EvntOrgRegistrationConfWelcomeMessage = Välkommen till konferenssidan.
 EvntOrgRegistrationBoothWelcomeMessage = Välkommen till förslagssidan för monter.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Här kan du se och rösta på de föreslagna evenemange
 VoteOk = Din röst har tagits emot.
 AlreadyVoted = Du har redan röstat på det här evenemanget.
 VoteError = Ett fel har inträffat under omröstningen, försök igen.
-
 SubscriptionOk=Din registrering har skapats
+AmountOfRegistrationPaid=Registreringsbelopp betalat
 ConfAttendeeSubscriptionConfirmation = Bekräftelse av ditt deltagande på ett evenemang
 Attendee = Deltagare
 PaymentConferenceAttendee = Betalning för deltagare
@@ -169,9 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=En registrering och en betalning har r
 EmailAttendee=Deltagarens e-post
 EmailCompany=Företagets e-post
 EmailCompanyForInvoice=Företagets e-postadress (för faktura, om den skiljer sig från deltagarens e-postadress)
-ErrorSeveralCompaniesWithEmailContactUs=Flera företag med denna e-postadress har hittats så vi kan inte bekräfta din registrering automatiskt. Kontakta oss på %s för en manuell bekräftelse
-ErrorSeveralCompaniesWithNameContactUs=Flera företag med detta namn har hittats så vi kan inte validera din registrering automatiskt. Kontakta oss på %s för en manuell validering
+ErrorSeveralCompaniesWithEmailContactUs=Flera företag med denna e-postadress har hittats så vi kan inte automatiskt validera din registrering. Kontakta oss på %s för en manuell validering
+ErrorSeveralCompaniesWithNameContactUs=Flera företag med detta namn har hittats så vi kan inte automatiskt validera din registrering. Kontakta oss på %s för en manuell validering
 NoPublicActionsAllowedForThisEvent=Det finns inga åtgärder som är öppna för allmänheten för detta evenemang
 MaxNbOfAttendees=Max antal deltagare
 DateStartEvent=Eventets startdatum
 DateEndEvent=Eventets slutdatum
+ModifyStatus=Ändra status
+ConfirmModifyStatus=Bekräfta statusändring
+ConfirmModifyStatusQuestion=Är du säker på att du vill ändra %s valda post(er)?
+RecordsUpdated = %s Posterna uppdaterade
+RecordUpdated = Rekordet uppdaterat
+NoRecordUpdated = Ingen post uppdaterad

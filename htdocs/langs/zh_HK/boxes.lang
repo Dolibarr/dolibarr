@@ -26,7 +26,7 @@ BoxTitleMemberNextBirthdays=Birthdays of this month (members)
 BoxTitleMembersByType=Members by type and status
 BoxTitleMembersByTags=Members by tags and status
 BoxTitleMembersSubscriptionsByYear=Members Subscriptions by year
-BoxTitleLastRssInfos=最新%s 來自<span class='notranslate'>%s</span>的新聞\n
+BoxTitleLastRssInfos=Latest %s news from %s
 BoxTitleLastProducts=產品/服務：最後%s 修改的
 BoxTitleProductsAlertStock=產品：庫存提醒
 BoxTitleLastSuppliers=最新%s 記錄的供應商
@@ -115,7 +115,7 @@ BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=No recorded customer shipment
-BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership

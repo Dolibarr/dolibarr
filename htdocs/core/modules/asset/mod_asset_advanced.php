@@ -53,11 +53,12 @@ class mod_asset_advanced extends ModeleNumRefAsset
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -80,7 +81,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="mask" value="'.getDolGlobalString('ASSET_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$text .= '</tr>';
 
@@ -114,7 +115,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 	 * 	Return next free value
 	 *
 	 *  @param  Asset		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

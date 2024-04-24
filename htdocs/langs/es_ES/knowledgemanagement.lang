@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Gestionar una base de Gestión del Conocimiento (K
 # Admin page
 #
 KnowledgeManagementSetup = Configuración del Sistema de Gestión del Conocimiento
-Settings = Configuraciones
 KnowledgeManagementSetupPage = Página de configuración del Sistema de Gestión del Conocimiento
 
 
 #
 # About page
 #
-About = Acerca de
 KnowledgeManagementAbout = Acerca de la Gestión del Conocimiento
 KnowledgeManagementAboutPage = Gestión del Conocimiento sobre la página
 
 KnowledgeManagementArea = Gestión del Conocimiento
 MenuKnowledgeRecord = Base de Conocimientos
+MenuKnowledgeRecordShort = Base de Conocimientos
 ListKnowledgeRecord = Lista de articulos
 NewKnowledgeRecord = Articulo nuevo
 ValidateReply = Validar solución
