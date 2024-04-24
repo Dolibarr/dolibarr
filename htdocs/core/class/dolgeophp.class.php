@@ -50,7 +50,7 @@ class DolGeoPHP
 	 * Return data from a value
 	 *
 	 * @param	string	$value		Value
-	 * @return	array{geojson:string,centroid:string,centroidjson:string}	Centroid
+	 * @return	array				Centroid
 	 */
 	public function parseGeoString($value)
 	{
