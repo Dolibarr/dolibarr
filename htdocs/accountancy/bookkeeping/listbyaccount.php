@@ -1276,7 +1276,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalbalance';
 		};
-		$totalarray['val']['totalbalance'] += $line->debit - $line->credit;	
+		$totalarray['val']['totalbalance'] += $line->debit - $line->credit;
 	}
 
 	// Exported operation date
