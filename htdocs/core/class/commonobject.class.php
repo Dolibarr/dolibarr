@@ -549,13 +549,6 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $model_pdf instead.
-	 * @see $model_pdf
-	 */
-	private $modelpdf;
-
-	/**
-	 * @var string
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;
@@ -5137,7 +5130,7 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
-		// Define usemargins
+		// Define $usemargins (used by objectline_xxx.tpl.php files)
 		$usemargins = 0;
 		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
@@ -5350,7 +5343,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form, $action;
+		global $langs, $hookmanager, $form, $action;
 
 		print '<tr class="liste_titre">';
 		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
@@ -5393,7 +5386,7 @@ abstract class CommonObject
 	/**
 	 * 	Return HTML with a line of table array of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
-	 *  If lines are into a template, title must also be into a template
+	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 * 	@param	CommonObjectLine	$line				Line
@@ -6330,8 +6323,21 @@ abstract class CommonObject
 		if (is_array($optionsArray) && count($optionsArray) > 0) {
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] != 'separate') {
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
 					$sql .= ", ".$name;
+				}
+				// use geo sql fonction to read as text
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'multipts') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -6678,9 +6684,37 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
+				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point', 'multipts', 'linestrg', 'polygon'])) { // Only for other type than separator)
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
@@ -8036,6 +8070,8 @@ abstract class CommonObject
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
 				$value = $langs->trans(explode('|', $value)[0]);
+			} elseif (! is_numeric($value)) {
+				$value = $langs->trans($value);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
@@ -10065,7 +10101,8 @@ abstract class CommonObject
 
 		// $this->oldcopy should have been set by the caller of update
 		//if (empty($this->oldcopy)) {
-		//	$this->oldcopy = dol_clone($this);
+		//	dol_syslog("this->oldcopy should have been set by the caller of update (here properties were already modified)", LOG_WARNING);
+		//	$this->oldcopy = dol_clone($this, 2);
 		//}
 
 		$fieldvalues = $this->setSaveQuery();

@@ -1548,7 +1548,7 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);

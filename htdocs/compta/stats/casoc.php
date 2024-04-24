@@ -60,7 +60,7 @@ $socid = GETPOSTINT('socid');
 // Category
 $selected_cat = GETPOSTINT('search_categ');
 if ($selected_cat == -1) {
-	$selected_cat = '';
+	$selected_cat = 0;
 }
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {

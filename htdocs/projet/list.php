@@ -505,6 +505,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+// FIXME Move the left join into the where exists
 if ($search_sale > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 }
@@ -1135,7 +1136,7 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isMod
 	/*$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
 	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300im minwidth300 widthcentpercentminusx', 0, 0, '', 'category', $tmptitle);
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';

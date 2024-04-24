@@ -58,9 +58,9 @@ $search_dateend_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateend_startmont
 $search_dateend_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateend_endmonth'), GETPOSTINT('search_dateend_endday'), GETPOSTINT('search_dateend_endyear'));
 $search_datepayment_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datepayment_startmonth'), GETPOSTINT('search_datepayment_startday'), GETPOSTINT('search_datepayment_startyear'));
 $search_datepayment_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datepayment_endmonth'), GETPOSTINT('search_datepayment_endday'), GETPOSTINT('search_datepayment_endyear'));
-$search_type = GETPOSTINT('search_type');
-$search_account				= GETPOSTINT('search_account');
-$search_amount 				= GETPOST('search_amount', 'alpha');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_account	= GETPOST('search_account', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

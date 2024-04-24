@@ -1595,16 +1595,17 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
-			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+			if ($objecttmp->status != Holiday::STATUS_VALIDATED) {
 				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
 				continue;
 			}
 			if ($user->id == $objecttmp->fk_validator) {
-				$objecttmp->oldcopy = dol_clone($objecttmp);
+				$objecttmp->oldcopy = dol_clone($objecttmp, 2);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
-				$objecttmp->statut = Holiday::STATUS_APPROVED;
+				$objecttmp->status = Holiday::STATUS_APPROVED;
+				$objecttmp->statut = $objecttmp->status;	// deprecated
 
 				$verif = $objecttmp->approve($user);
 

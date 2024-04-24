@@ -973,6 +973,7 @@ $sous_total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
+$totalarray['val']['totalbalance']=0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
@@ -1248,7 +1249,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		}
-		$totalarray['val']['totaldebit'] += $line->debit;
+		$totalarray['val']['totaldebit'] += (float) $line->debit;
 	}
 
 	// Amount credit
@@ -1260,7 +1261,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		}
-		$totalarray['val']['totalcredit'] += $line->credit;
+		$totalarray['val']['totalcredit'] += (float) $line->credit;
 	}
 
 	// Amount balance

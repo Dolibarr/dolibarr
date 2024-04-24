@@ -549,7 +549,7 @@ if ($resql) {
 		/*
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
+		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 3);
 		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
 		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';

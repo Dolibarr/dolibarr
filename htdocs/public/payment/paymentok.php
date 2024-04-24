@@ -775,7 +775,7 @@ if ($ispaymentok) {
 						if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
 							$infouserlogin = '';
 							$nuser = new User($db);
-							$tmpuser = dol_clone($object);
+							$tmpuser = dol_clone($object, 0);
 
 							$result = $nuser->create_from_member($tmpuser, $object->login);
 							$newpassword = $nuser->setPassword($user, '');

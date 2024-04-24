@@ -315,9 +315,9 @@ if (empty($reshook)) {
 		foreach ($toselect as $idtoclose) {
 			$tmpmember->fetch($idtoclose);
 
-			if (!empty($tmpmember->fk_soc)) {
+			if (!empty($tmpmember->socid)) {
 				$nuser = new User($db);
-				$tmpuser = dol_clone($tmpmember);
+				$tmpuser = dol_clone($tmpmember, 2);
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 

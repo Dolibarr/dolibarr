@@ -469,7 +469,7 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string		$selected     		Preselected value
+	 *  @param	int|string	$selected     		Preselected value
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
