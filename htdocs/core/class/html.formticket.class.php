@@ -659,7 +659,7 @@ class FormTicket
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');
-				print $formcontract->select_contract(-1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1);
+				print $formcontract->select_contract(-1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -675,9 +675,10 @@ class FormTicket
 
 		if ($withdolfichehead) {
 			print dol_get_fiche_end();
+		} else {
+			print '<br>';
 		}
 
-		print '<br><br>';
 
 		print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
