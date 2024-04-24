@@ -5432,7 +5432,7 @@ class Societe extends CommonObject
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $langs, $hookmanager, $user, $action;
+		global $conf, $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
@@ -5592,6 +5592,25 @@ class Societe extends CommonObject
 				}
 				// End call triggers
 			}
+
+			if (!$error) {
+				// Move files from the dir of the third party to delete into the dir of the third party to keep
+				if (!empty($conf->societe->multidir_output[$this->entity])) {
+					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
+					$destdir = $conf->societe->multidir_output[$this->entity]."/".$this->id;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+			}
+
 
 			if (!$error) {
 				// We finally remove the old thirdparty
