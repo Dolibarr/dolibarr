@@ -833,6 +833,7 @@ return [
         'htdocs/core/tpl/document_actions_post_headers.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/extrafields_list_print_fields.tpl.php' => ['PhanTypeArraySuspiciousNullable', 'PhanTypePossiblyInvalidDimOffset', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/extrafields_view.tpl.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/tpl/formlayoutai.tpl.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredVariableAssignOp', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/tpl/filemanager.tpl.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/list_print_total.tpl.php' => ['PhanTypePossiblyInvalidDimOffset'],
         'htdocs/core/tpl/login.tpl.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],

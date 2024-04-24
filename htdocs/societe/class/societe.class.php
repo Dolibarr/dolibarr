@@ -5520,6 +5520,25 @@ class Societe extends CommonObject
 			}
 
 			if (!$error) {
+				// Move files from the dir of the third party to delete into the dir of the third party to keep
+				if (!empty($conf->societe->multidir_output[$this->entity])) {
+					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
+					$destdir = $conf->societe->multidir_output[$this->entity]."/".$this->id;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+			}
+
+
+			if (!$error) {
 				// We finally remove the old thirdparty
 				if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 					$this->error = $soc_origin->error;

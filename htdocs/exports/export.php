@@ -37,9 +37,9 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
-//  accessforbidden();
+	//  accessforbidden();
 
-// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
+	// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
 	'invoice_line' => 'bill',
@@ -185,8 +185,8 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 		$array_selected[$field] = count($array_selected) + 1; // We tag the key $field as "selected"
 		// We check if there is a dependency to activate
 		/*var_dump($field);
-		var_dump($fieldsentitiesarray[$field]);
-		var_dump($fieldsdependenciesarray);*/
+		 var_dump($fieldsentitiesarray[$field]);
+		 var_dump($fieldsdependenciesarray);*/
 		$listofdependencies = array();
 		if (!empty($fieldsentitiesarray[$field]) && !empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]])) {
 			// We found a dependency on the type of field
