@@ -1712,14 +1712,14 @@ class ExtraFields
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
-			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
 			$geojson = '{}';
 			$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkt');
-				$geojson = $geom->out('json');
-				$centroid = $geom->getCentroid();
-				$centroidjson = $centroid->out('json');
+				$tmparray = $dolgeophp->parseGeoString($value);
+				$geojson = $tmparray['geojson'];
+				$centroidjson = $tmparray['centroidjson'];
 			}
 			if (!preg_match('/search_/', $keyprefix)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
@@ -2094,18 +2094,18 @@ class ExtraFields
 				}
 			}
 		} elseif ($type == 'point') {
-			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkt');
-				$value = $geom->x().' '.$geom->y();
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getXYString($value);
 			} else {
 				$value = '';
 			}
 		} elseif (in_array($type, ['multipts','linestrg', 'polygon'])) {
-			require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
 			if (!empty($value)) {
-				$geom = geoPHP::load($value, 'wkt');
-				$value = get_class($geom) . ' : '. $geom->numPoints() . ' Points';
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getPointString($value);
 			} else {
 				$value = '';
 			}
@@ -2380,11 +2380,11 @@ class ExtraFields
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 					// construct point
-					require_once DOL_DOCUMENT_ROOT.'/includes/geoPHP/geoPHP.inc.php';
+					require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 					$geojson = GETPOST("options_".$key, 'restricthtml');
 					if ($geojson != '{}') {
-						$geom = geoPHP::load($geojson, 'json');
-						$value_key = $geom->out('wkt');
+						$dolgeophp = new DolGeoPHP($this->db);
+						$value_key = $dolgeophp->getWkt($geojson);
 					} else {
 						$value_key = '';
 					}
