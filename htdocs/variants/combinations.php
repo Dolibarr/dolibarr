@@ -32,13 +32,12 @@ $langs->loadLangs(array("products", "other"));
 $id = GETPOSTINT('id');
 $valueid = GETPOSTINT('valueid');
 $ref = GETPOST('ref', 'alpha');
-$weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
+
+$weight_impact = GETPOSTFLOAT('weight_impact');
+
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
-if ($price_impact_percent) {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 2);
-} else {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 'MU');
-}
+$price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact') : GETPOSTFLOAT('price_impact', 'MU');
+
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 
@@ -687,10 +686,9 @@ if (!empty($id) || !empty($ref)) {
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					foreach ($productCombination2ValuePairs1 as $key => $val) {
-						$result1 = $prodattr->fetch($val->fk_prod_attr);
-						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-						//print 'rr'.$result1.' '.$result2;
+					foreach ($productCombination2ValuePairs1 as $pc2v) {
+						$result1 = $prodattr->fetch($pc2v->fk_prod_attr);
+						$result2 = $prodattr_val->fetch($pc2v->fk_prod_attr_val);
 						if ($result1 > 0 && $result2 > 0) {
 							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
