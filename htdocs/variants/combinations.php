@@ -58,8 +58,8 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : $ref);
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$fieldvalue = $id ?: $ref;
+$fieldtype = !empty($ref) ? 'ref' : 'rowid';
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -70,8 +70,8 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-$selected = "";
+$selectedvariant = $_SESSION['addvariant_'.$object->id] ?: array();
+$selected = '';
 // Security check
 if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
@@ -81,10 +81,10 @@ if ($user->socid > 0) { // Protection if external user
 }
 
 if ($object->id > 0) {
-	if ($object->type == $object::TYPE_PRODUCT) {
+	if ($object->type == Product::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
 	}
-	if ($object->type == $object::TYPE_SERVICE) {
+	if ($object->type == Product::TYPE_SERVICE) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
