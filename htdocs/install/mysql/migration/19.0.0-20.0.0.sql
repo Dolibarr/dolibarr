@@ -287,7 +287,7 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
-ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'commande' NOT NULL;
+ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
 ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
 ALTER TABLE llx_expeditiondet DROP INDEX idx_expeditiondet_fk_origin_line;
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elementdet);
