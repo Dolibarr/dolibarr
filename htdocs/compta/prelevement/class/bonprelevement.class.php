@@ -1791,8 +1791,8 @@ class BonPrelevement extends CommonObject
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
 				if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
-					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
-					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
+					$this->total = number_format((float) price2num($this->total, 'MT'), 2, ".", "");
+					$this->total = number_format((float) price2num($this->total, 'MT'), 2, ".", "");
 				}
 				/**
 				 * SECTION CREATION SEPA FILE - ISO200022
@@ -1931,7 +1931,7 @@ class BonPrelevement extends CommonObject
 				}
 
 				if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
-					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
+					$this->total = number_format((float) price2num($this->total, 'MT'), 2, ".", "");
 				}
 
 				/**
@@ -2167,7 +2167,7 @@ class BonPrelevement extends CommonObject
 		global $conf;
 
 		if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
-			$row_somme = number_format(price2num($row_somme, 'MT'), 2, ".", "");
+			$row_somme = number_format((float) price2num($row_somme, 'MT'), 2, ".", "");
 		} else {
 			$row_somme = round((float) $row_somme, 2);
 		}
@@ -2434,7 +2434,7 @@ class BonPrelevement extends CommonObject
 
 
 			if ($configuration->global->SEPA_ROUND_TWO_ZEROES) {
-				$total = number_format(price2num($total, 'MT'), 2, ".", "");
+				$total = number_format((float) price2num($total, 'MT'), 2, ".", "");
 			}
 
 			if ($type != 'bank-transfer') {
