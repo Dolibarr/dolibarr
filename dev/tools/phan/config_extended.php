@@ -86,6 +86,7 @@ $config['suppress_issue_types'] = [
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
+		'PhanUndeclaredGlobalVariable',			// Too many false positives on .tpl.php files
 		'PhanPluginUnknownObjectMethodCall',	// False positive for some class
 ];
 
