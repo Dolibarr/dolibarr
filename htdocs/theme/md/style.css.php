@@ -2049,8 +2049,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	display: inline-block;
 }
 
-/* Force values for small screen 767 */
-@media only screen and (max-width: 767px)
+/* Force values for small screen 768 */
+@media only screen and (max-width: 768px)
 {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
@@ -2240,6 +2240,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		min-width: 300px;
 	   }
 }
+
+/* Force values for small screen 320 */
+@media only screen and (max-width: 320px)
+{
+	.maxwidth300 { max-width: 260px; }
+}
+
 .linkobject { cursor: pointer; }
 
 table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {

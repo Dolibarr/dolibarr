@@ -360,6 +360,15 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
 		}
+	} elseif ($modulepart == 'ticket') {
+		foreach ($filearray as $key => $val) {
+			$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']);
+			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+			if ($rel_dir != $relativedir) {
+				$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC));
+			}
+		}
 	}
 
 	//var_dump($relativedir);
@@ -651,7 +660,7 @@ function dol_fileperm($pathoffile)
  * @param	int						$indexdatabase		       1=index new file into database.
  * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dol_copy()
+ * @see		dol_copy(), dolCopyDir()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
 {
@@ -741,7 +750,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							Return integer <0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
- * @see		dol_delete_file() dolCopyDir()
+ * @see		dol_delete_file(), dolCopyDir()
  */
 function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
 {
@@ -975,7 +984,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
- * @param	array	$moreinfo			Array with more information
+ * @param	array	$moreinfo			Array with more information to set in index table
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
@@ -1141,9 +1150,8 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
  * @param	int		$indexdatabase		Index new name of files into database.
  * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
- *
- * @return boolean 	True if OK, false if KO
-*/
+ * @return  boolean 					True if OK, false if KO
+ */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
 {
 	$result = false;

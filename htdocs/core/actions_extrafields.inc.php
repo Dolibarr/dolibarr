@@ -192,7 +192,7 @@ if ($action == 'add') {
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -360,7 +360,7 @@ if ($action == 'update') {
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 

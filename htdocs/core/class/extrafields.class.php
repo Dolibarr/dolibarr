@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -47,7 +47,7 @@ class ExtraFields
 	/**
 	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
-	public $attributes;
+	public $attributes = array();
 
 	/**
 	 * @var array<string,bool>	Array with boolean of status of groups
@@ -96,6 +96,10 @@ class ExtraFields
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
+		'point' => 'ExtrafieldPointGeo',
+		'multipts' => 'ExtrafieldMultiPointGeo',
+		'linestrg' => 'ExtrafieldLinestringGeo',
+		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
 
@@ -107,9 +111,6 @@ class ExtraFields
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->error = '';
-		$this->errors = array();
-		$this->attributes = array();
 	}
 
 	/**
@@ -312,6 +313,18 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
+				$lengthdb = '';
+			} elseif ($type == 'linestrg') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
+				$lengthdb = '';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
 				$lengthdb = $length;
@@ -670,6 +683,18 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
+				$lengthdb = '';
+			} elseif ($type == 'linestrg') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
+				$lengthdb = '';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
@@ -1686,6 +1711,24 @@ class ExtraFields
 
 			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
 			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
+		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
+			$geojson = '{}';
+			$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
+			if (!empty($value)) {
+				$tmparray = $dolgeophp->parseGeoString($value);
+				$geojson = $tmparray['geojson'];
+				$centroidjson = $tmparray['centroidjson'];
+			}
+			if (!preg_match('/search_/', $keyprefix)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
+				$geomapeditor = new GeoMapEditor();
+				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
+			} else {
+				// If keyprefix is search_ or search_options_, we must just use a simple text field
+				$out = ''; // @phan-suppress-current-line PhanPluginRedundantAssignment
+			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
@@ -2050,6 +2093,22 @@ class ExtraFields
 					return 'Error bad setup of extrafield';
 				}
 			}
+		} elseif ($type == 'point') {
+			if (!empty($value)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getXYString($value);
+			} else {
+				$value = '';
+			}
+		} elseif (in_array($type, ['multipts','linestrg', 'polygon'])) {
+			if (!empty($value)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getPointString($value);
+			} else {
+				$value = '';
+			}
 		} elseif ($type == 'text') {
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'html') {
@@ -2233,7 +2292,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'multipts', 'linestrg', 'polygon')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2319,6 +2378,16 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
+				} elseif (in_array($key_type, ['point', 'multipts', 'linestrg', 'polygon'])) {
+					// construct point
+					require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+					$geojson = GETPOST("options_".$key, 'restricthtml');
+					if ($geojson != '{}') {
+						$dolgeophp = new DolGeoPHP($this->db);
+						$value_key = $dolgeophp->getWkt($geojson);
+					} else {
+						$value_key = '';
+					}
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
 					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html

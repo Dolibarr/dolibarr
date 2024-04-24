@@ -4303,62 +4303,23 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if ($action == 'createcontainer') {
 		$formmail = new FormMail($db);
 		$formmail->withaiprompt = 'html';
+		$formmail->withlayout = 1;
 
 		print '<tr><td class="titlefield fieldrequired tdtop">';
-		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
+		//print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td class="tdtop">';
 
 		$out = '';
-		// Add link to add a predefined layout
-		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
-		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-		$out .= $langs->trans("FillPageWithALayout").'...';
-		$out .= '</a> &nbsp; &nbsp; ';
 
-		$out .= '<script>
-			$(document).ready(function() {
-				$("#linkforlayouttemplates").click(function() {
-					console.log("We click on linkforlayouttemplates");
-					event.preventDefault();
-					jQuery("#template-selector").toggle();
-					//jQuery("#template-selector").attr("style", "aaa");
-					jQuery("#ai_input").hide();
-					jQuery("#pageContent").show();
-				});
-			});
-		</script>
-		';
+		$showlinktolayout = $formmail->withlayout;
+		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
+		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
+		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		$htmlname = 'content';
 
-		// Add link to add AI content
-		if ($formmail->withaiprompt && isModEnabled('ai')) {
-			$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
-			$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
-			$out .= $langs->trans("FillPageWithAIContent").'...';
-			$out .= '</a>';
-			$out .= '<script>
-						$(document).ready(function() {
-							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
-								event.preventDefault();
-								jQuery("#ai_input").toggle();
-								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
-									if (!jQuery("pageContent").is(":hidden")) {
-										jQuery("#pageContent").show();
-									}
-								}
-							});
-						});
-					</script>';
-		}
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-		$out .= $formwebsite->getContentPageTemplate('content');
-
-		if ($formmail->withaiprompt && isModEnabled('ai')) {
-			$out .= $formmail->getSectionForAIPrompt('', 'content');
-		}
 		print $out;
 		print '</td></tr>';
 	}
@@ -4697,8 +4658,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				var selectedf = \'\';
 
 				jQuery("#WEBSITE_TITLE").keyup(function() {
-					if (disableautofillofalias == 0)
-					{
+					if (disableautofillofalias == 0) {
 						var valnospecial = jQuery("#WEBSITE_TITLE").val();
 						valnospecial = valnospecial.replace(/[éèê]/g, \'e\').replace(/[à]/g, \'a\').replace(/[ù]/g, \'u\').replace(/[î]/g, \'i\');
 						valnospecial = valnospecial.replace(/[ç]/g, \'c\').replace(/[ö]/g, \'o\');
@@ -4709,7 +4669,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					}
 				});
 				jQuery("#WEBSITE_PAGENAME").keyup(function() {
-					disableautofillofalias = 1;
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+					} else {
+						disableautofillofalias = 1;
+					}
+				});
+				jQuery("#WEBSITE_PAGENAME").blur(function() {
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+						jQuery("#WEBSITE_TITLE").trigger(\'keyup\');
+					}
 				});
 
 				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").click(function() {

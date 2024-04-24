@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type = 'commande'";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND (ed.element_type = 'commande' OR ed.element_type = 'order')";
 			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}

@@ -348,3 +348,4 @@ SelectANewDate=Select a new date
 EmailContent=Email content
 Pre-Prompt=Pre-prompt
 Post-Prompt=Post-prompt
+AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
