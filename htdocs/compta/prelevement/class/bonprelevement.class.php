@@ -1790,7 +1790,7 @@ class BonPrelevement extends CommonObject
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
-				if ($conf->global->SEPA_ROUND_TWO_ZERO) {
+				if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
 					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
 					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
 				}
@@ -1930,7 +1930,7 @@ class BonPrelevement extends CommonObject
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
 
-				if ($conf->global->SEPA_ROUND_TWO_ZERO) {
+				if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
 					$this->total = number_format(price2num($this->total, 'MT'), 2, ".", "");
 				}
 
@@ -2166,10 +2166,10 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if ($conf->global->SEPA_ROUND_TWO_ZERO) {
+		if ($conf->global->SEPA_ROUND_TWO_ZEROES) {
 			$row_somme = number_format(price2num($row_somme, 'MT'), 2, ".", "");
 		} else {
-			$row_somme = round((float)$row_somme, 2);
+			$row_somme = round((float) $row_somme, 2);
 		}
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
@@ -2257,7 +2257,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
 			$XML_CREDITOR .= '				<Amt>' . $CrLf;
-			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">' . round((float)$row_somme, 2) . '</InstdAmt>' . $CrLf;
+			$XML_CREDITOR .= '				<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>' . $CrLf;
 			/*
 			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
@@ -2433,7 +2433,7 @@ class BonPrelevement extends CommonObject
 			$RefBon = $obj->ref;
 
 
-			if ($configuration->global->SEPA_ROUND_TWO_ZERO) {
+			if ($configuration->global->SEPA_ROUND_TWO_ZEROES) {
 				$total = number_format(price2num($total, 'MT'), 2, ".", "");
 			}
 
