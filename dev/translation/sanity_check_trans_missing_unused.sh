@@ -114,8 +114,6 @@ fi
 
 # Produce reports on STDOUT.
 # Some output is already compatible with message extraction for github annotation (logToCs.py)
-# # Produce reports on STDOUT.
-# Some output is already compatible with message extraction for github annotation (logToCs.py)
 #
 diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	| grep -E "^[<>]" \
