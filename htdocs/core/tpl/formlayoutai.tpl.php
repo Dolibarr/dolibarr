@@ -20,7 +20,7 @@
  * $formwebsite (optional)
  * $showlinktolayout
  * $showlinktolayoutlabel
- * $showlinktoai
+ * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
  * $showlinktoailabel
  * $htmlname
  */
@@ -48,7 +48,6 @@ if ($showlinktolayout) {
 								console.log("We click on linkforlayouttemplates");
 								event.preventDefault();
 								jQuery("#template-selector").toggle();
-								//jQuery("#template-selector").attr("style", "aaa");
 								jQuery("#ai_input").hide();
 								jQuery("#pageContent").show();	// May exists for website page only
 							});
@@ -90,7 +89,7 @@ if ($showlinktolayout) {
 	}
 }
 if ($showlinktoai) {
-	$out .= $formmail->getSectionForAIPrompt($formmail->withaiprompt, $htmlname);
+	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
 }
 
 ?>
