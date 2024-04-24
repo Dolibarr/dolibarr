@@ -194,7 +194,7 @@ class ExportExcel2007 extends ModeleExports
 	public function open_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs;
+		global $user, $langs;
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
@@ -326,7 +326,8 @@ class ExportExcel2007 extends ModeleExports
 			if (empty($alias)) {
 				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
-			$newvalue = $objp->$alias;
+
+			$newvalue = property_exists($objp, $alias) ? $objp->$alias : '';
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';

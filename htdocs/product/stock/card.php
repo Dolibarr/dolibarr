@@ -392,7 +392,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
@@ -977,7 +977,7 @@ if ($action == 'create') {
 			// Tags-Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
 				$arrayselected = array();
