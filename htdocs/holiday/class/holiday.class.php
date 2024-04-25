@@ -1771,7 +1771,6 @@ class Holiday extends CommonObject
 			} else {
 				return 0;
 			}
-
 		} else {
 			// Mise à jour pour un utilisateur
 			$nbHoliday = price2num($nbHoliday, 5);

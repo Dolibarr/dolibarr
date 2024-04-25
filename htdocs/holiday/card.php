@@ -856,7 +856,7 @@ if (empty($reshook)) {
 				$startDate = $object->date_debut_gmt;
 				$endDate = $object->date_fin_gmt;
 
-				if ($decrease){
+				if ($decrease) {
 					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
 					$date = strtotime('-1 month', $lastUpdate);
 					$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, date('m', $date), date('t', $date), date('Y', $date), 1);
