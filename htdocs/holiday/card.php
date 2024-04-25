@@ -611,7 +611,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
 
-			$decrease = empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH'));
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
 			$db->begin();
 
@@ -622,7 +622,7 @@ if (empty($reshook)) {
 			}
 
 			// If no SQL error, we redirect to the request form
-			if (!$error && $decrease) {
+			if (!$error && empty($decrease)) {
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
@@ -842,7 +842,7 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
 
-			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH'));
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
 			$result = $object->update($user);
 
@@ -856,7 +856,7 @@ if (empty($reshook)) {
 				$startDate = $object->date_debut_gmt;
 				$endDate = $object->date_fin_gmt;
 
-				if ($decrease) {
+				if (!empty($decrease)) {
 					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
 					$date = strtotime('-1 month', $lastUpdate);
 					$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, date('m', $date), date('t', $date), date('Y', $date), 1);

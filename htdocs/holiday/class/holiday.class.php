@@ -1656,7 +1656,7 @@ class Holiday extends CommonObject
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
 			$langs->load("holiday");
 
-			$decrease = !empty(getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH'));
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
 			// Si mise à jour pour tout le monde en début de mois
 			$now = dol_now();
@@ -1701,7 +1701,7 @@ class Holiday extends CommonObject
 						return -1;
 					}
 
-					if (!$decrease) {
+					if (empty($decrease)) {
 						continue;
 					}
 
