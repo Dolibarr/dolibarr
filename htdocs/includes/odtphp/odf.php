@@ -913,16 +913,18 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
-			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
-				if (headers_sent($filename, $linenum)) {
-					throw new OdfException("headers already sent ($filename at $linenum)");
-				}
+			if (empty($conf->global->EASYA_DISABLE_PDF_AUTO_DOWNLOAD_AFTER_CONVERTION_FROM_ODT)) {
+				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
+					if (headers_sent($filename, $linenum)) {
+						throw new OdfException("headers already sent ($filename at $linenum)");
+					}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					$name=preg_replace('/\.od(x|t)/i', '', $name);
-					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-					readfile($name.".pdf");
+					if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$name = preg_replace('/\.od(x|t)/i', '', $name);
+						header('Content-type: application/pdf');
+						header('Content-Disposition: attachment; filename="' . $name . '.pdf"');
+						readfile($name . ".pdf");
+					}
 				}
 			}
 
