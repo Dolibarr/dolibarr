@@ -856,6 +856,7 @@ if ($search_array_options) {
 
 
 $arrayofmassactions = array(
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
@@ -1435,7 +1436,25 @@ print $hookmanager->resPrint;
 print "</table>";
 print "</div>";
 print '</form>';
+
 $db->free($resql);
 
+$hidegeneratedfilelistifempty = 1;
+if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+	$hidegeneratedfilelistifempty = 0;
+}
+
+// Show list of available documents
+$urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+$urlsource .= str_replace('&amp;', '&', $param);
+
+$filedir    = $diroutputmassaction;
+$genallowed = $user->hasRight('reception', 'lire');
+$delallowed = $user->hasRight('reception', 'creer');
+$title      = '';
+
+print $formfile->showdocuments('massfilesarea_receipts', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+
+// End of page
 llxFooter();
 $db->close();
