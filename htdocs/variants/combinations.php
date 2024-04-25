@@ -36,7 +36,7 @@ $ref = GETPOST('ref', 'alpha');
 $weight_impact = GETPOSTFLOAT('weight_impact');
 
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
-$price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact') : GETPOSTFLOAT('price_impact', 'MU');
+$price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOSTFLOAT('price_impact', 'MU');
 
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
