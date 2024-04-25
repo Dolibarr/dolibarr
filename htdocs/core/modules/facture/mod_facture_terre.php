@@ -73,7 +73,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $conf, $mysoc;
 
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
 			$this->prefixreplacement = 'IR';
 			$this->prefixdeposit = 'ID';

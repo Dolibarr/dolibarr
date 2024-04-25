@@ -169,6 +169,7 @@ if (empty($reshook)) {
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$fk_workstation = GETPOST('idworkstations', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
@@ -177,7 +178,8 @@ if (empty($reshook)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
-				$fk_default_workstation = $product->fk_default_workstation;
+				if (!empty($fk_workstation)) $fk_default_workstation = $fk_workstation;
+				else $fk_default_workstation = $product->fk_default_workstation;
 			}
 			if (empty($fk_unit)) {
 				$fk_unit = $product->fk_unit;

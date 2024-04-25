@@ -465,6 +465,7 @@ if (empty($reshook)) {
 
 					$action = 'view';
 				} else {
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'edit';
 				}
