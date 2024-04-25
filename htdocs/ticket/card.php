@@ -1303,7 +1303,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '</td>';
 
 			if ($user->hasRight('ticket', 'write') && $action == 'categories') {
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
 				if (is_array($cate_arbo)) {
 					// Categories
 					print '<td colspan="3">';

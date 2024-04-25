@@ -1169,9 +1169,14 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		} elseif ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
-			// Warning if date out of range
+			// Warning if date out of range or error if this conf is ON
+			if (getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES')) {
+				$error++;
+			}
+
 			$langs->load("errors");
-			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+			$type = $error > 0 ? 'errors' : 'warnings';
+			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, $type);
 		}
 
 		// If no price entered
@@ -1329,8 +1334,13 @@ if (empty($reshook)) {
 		}
 		// Warning if date out of range
 		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
+			if (getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES')) {
+				$error++;
+			}
+
 			$langs->load("errors");
-			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+			$type = $error > 0 ? 'errors' : 'warnings';
+			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, $type);
 		}
 
 		// If no project entered

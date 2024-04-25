@@ -1767,6 +1767,8 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
+			// Can be retrieve with getSignatureAppearanceArray()
+			// Can be also detected by putting the mouse over the area when using evince pdf reader
 			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);
 		}
 
