@@ -104,7 +104,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = $this->getMember('', '', $thirdparty);
+		$member = $this->getMember(0, '', $thirdparty);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -135,7 +135,7 @@ class Members extends DolibarrApi
 
 		$thirdparty = $this->getThirdparty('', $email);
 
-		$member = $this->getMember('', '', $thirdparty->id);
+		$member = $this->getMember(0, '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -166,7 +166,7 @@ class Members extends DolibarrApi
 
 		$thirdparty = $this->getThirdparty($barcode);
 
-		$member = $this->getMember('', '', $thirdparty->id);
+		$member = $this->getMember(0, '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -597,7 +597,7 @@ class Members extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	private function getMember($id = '', $ref = '', $fk_soc = '')
+	private function getMember($id = 0, $ref = '', $fk_soc = 0)
 	{
 		$member = new Adherent($this->db);
 		$fetchResult = $member->fetch($id, $ref, $fk_soc);
