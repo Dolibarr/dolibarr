@@ -1467,7 +1467,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Role
 			if (!empty($arrayfields['sc.role']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $formcompany->showRoles("roles", $contactstatic, 'view');
 				print '</td>';
 			}
