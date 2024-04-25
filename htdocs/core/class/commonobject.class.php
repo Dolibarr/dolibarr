@@ -7327,9 +7327,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12) {
+				if (is_numeric($size) && round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (is_numeric($size) && round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -8006,9 +8006,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (is_numeric($size) && round($size) < 12) {
+				if (is_numeric($size) && round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (is_numeric($size) && round($size) <= 48) {
+				} elseif (is_numeric($size) && round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
