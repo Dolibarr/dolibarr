@@ -314,7 +314,7 @@ if (strlen(trim($search_import_key))) {
 }
 
 if (is_array($search_categories) && count($search_categories) > 0) {
-	$sql .= ' AND ac.rowid IN ('.$db->escape(implode(',', $search_categories)).')';
+	$sql .= " AND ac.rowid IN (".$db->sanitize(implode(',', $search_categories)).")";
 }
 
 // Add where from hooks
