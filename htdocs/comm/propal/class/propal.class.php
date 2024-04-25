@@ -825,9 +825,10 @@ class Propal extends CommonObject
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
 	 * @param       integer $rang   line rank
+	 *  @param      false|string  $vat_code	        VAT code ( overwrite code into $txtva )
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0,$vat_code = false)
 	{
 		global $mysoc, $langs;
 
@@ -878,6 +879,9 @@ class Propal extends CommonObject
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			}
+			if($vat_code){
+				$vat_src_code = $vat_code;
 			}
 
 			// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) ?
