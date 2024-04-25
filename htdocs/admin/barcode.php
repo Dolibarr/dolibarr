@@ -457,7 +457,7 @@ if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
