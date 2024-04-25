@@ -1178,8 +1178,8 @@ class Conf extends stdClass
 
 					require_once $handler_file_found;
 					$loghandlerinstance = new $handler();
-					if (!$loghandlerinstance instanceof LogHandlerInterface) {
-						throw new Exception('Log handler does not extend LogHandlerInterface');
+					if (!$loghandlerinstance instanceof LogHandler) {
+						throw new Exception('Log handler does not extend LogHandler');
 					}
 
 					if (empty($this->loghandlers[$handler])) {
