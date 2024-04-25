@@ -4144,7 +4144,7 @@ class Facture extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			if ($vat_code){
+			if ($vat_code) {
 				$vat_src_code = $vat_code;
 			}
 
