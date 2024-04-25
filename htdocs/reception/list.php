@@ -50,7 +50,6 @@ $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-$diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
 
 $search_ref_rcp = GETPOST("search_ref_rcp");
 $search_ref_liv = GETPOST('search_ref_liv');
@@ -99,7 +98,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->reception->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
