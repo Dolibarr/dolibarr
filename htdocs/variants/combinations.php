@@ -32,13 +32,11 @@ $langs->loadLangs(array("products", "other"));
 $id = GETPOSTINT('id');
 $valueid = GETPOSTINT('valueid');
 $ref = GETPOST('ref', 'alpha');
-$weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
+
+$weight_impact = GETPOSTFLOAT('weight_impact', 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
-if ($price_impact_percent) {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 2);
-} else {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 'MU');
-}
+$price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOSTFLOAT('price_impact', 'MU');
+
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 
@@ -58,8 +56,8 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : $ref);
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$fieldvalue = $id ?: $ref;
+$fieldtype = !empty($ref) ? 'ref' : 'rowid';
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -70,8 +68,8 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-$selected = "";
+$selectedvariant = $_SESSION['addvariant_'.$object->id] ?: array();
+$selected = '';
 // Security check
 if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
@@ -81,10 +79,10 @@ if ($user->socid > 0) { // Protection if external user
 }
 
 if ($object->id > 0) {
-	if ($object->type == $object::TYPE_PRODUCT) {
+	if ($object->type == Product::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
 	}
-	if ($object->type == $object::TYPE_SERVICE) {
+	if ($object->type == Product::TYPE_SERVICE) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
@@ -687,10 +685,9 @@ if (!empty($id) || !empty($ref)) {
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					foreach ($productCombination2ValuePairs1 as $key => $val) {
-						$result1 = $prodattr->fetch($val->fk_prod_attr);
-						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-						//print 'rr'.$result1.' '.$result2;
+					foreach ($productCombination2ValuePairs1 as $pc2v) {
+						$result1 = $prodattr->fetch($pc2v->fk_prod_attr);
+						$result2 = $prodattr_val->fetch($pc2v->fk_prod_attr_val);
 						if ($result1 > 0 && $result2 > 0) {
 							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
