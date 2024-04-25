@@ -255,10 +255,16 @@ if ($action == 'builddoc') {
 
 			if (!$mesg) {
 				$outputlangs = $langs;
+				$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = getDolGlobalInt('K_TCPDF_THROW_EXCEPTION_ERROR')!=1 ? 1 : getDolGlobalInt('K_TCPDF_THROW_EXCEPTION_ERROR');
+
 
 				// This generates and send PDF to output
 				// TODO Move
-				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				try {
+					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				} catch (Exception $e) {
+					$mesg = $langs->trans('ErrorInvalidCodeShape');
+				}
 			}
 		}
 
