@@ -1706,10 +1706,10 @@ class Holiday extends CommonObject
 					}
 
 					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
-					$filter = " AND cp.statut = ".self::STATUS_APPROVED;
-					$filter .= " AND cp.date_fin >= '".date('Y-m-01', $lastUpdate)."'";
-					$filter .= " AND cp.date_debut <= '".date('Y-m-t', $lastUpdate)."'";
-					$filter .= " AND cp.fk_type = ".$userCounter['type'];
+					$filter = " AND cp.statut = ".((int) self::STATUS_APPROVED);
+					$filter .= " AND cp.date_fin >= '".$this->db->idate(strtotime(date('Y-m-01', $lastUpdate)))."'";
+					$filter .= " AND cp.date_debut <= '".$this->db->idate(strtotime(date('Y-m-t', $lastUpdate)))."'";
+					$filter .= " AND cp.fk_type = ".((int) $userCounter['type']);
 					$this->fetchByUser($userCounter['id'], '', $filter);
 
 					if (empty($this->holiday)) {
