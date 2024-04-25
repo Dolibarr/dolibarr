@@ -98,7 +98,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
+$diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
