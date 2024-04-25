@@ -1123,9 +1123,6 @@ class BonPrelevement extends CommonObject
 
 					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
-						//$bac = new CompanyBankAccount($this->db);
-						//$bac->fetch(0, $soc->id);
-
 						if ($type != 'bank-transfer') {
 							if ($format == 'FRST' && $fac[12] != 'FRST') {
 								continue;

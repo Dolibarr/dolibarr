@@ -497,7 +497,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	/*
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);
+	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 3);
 	$categoriesKnowledgeArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 	$moreforfilter .= Form::multiselectarray('search_category_knowledgemanagement_list', $categoriesKnowledgeArr, $searchCategoryKnowledgemanagementList, 0, 0, 'minwidth300');
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_knowledgemanagement_operator" name="search_category_knowledgemanagement_operator" value="1"'.($searchCategoryKnowledgemanagementOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_knowledgemanagement_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';

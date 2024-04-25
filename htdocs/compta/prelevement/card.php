@@ -559,7 +559,7 @@ if ($id > 0 || $ref) {
 				$userSalary = new User($db);
 				$userSalary->fetch($obj->fk_user);
 			}
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print(!$salaryBonPl ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
 			print "</td>\n";
 

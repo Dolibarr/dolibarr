@@ -392,8 +392,8 @@ foreach ($handlers as $handler) {
 
 	require_once $file;
 	$loghandlerinstance = new $handler();
-	if (!$loghandlerinstance instanceof LogHandlerInterface) {
-		throw new Exception('Log handler does not extend LogHandlerInterface');
+	if (!$loghandlerinstance instanceof LogHandler) {
+		throw new Exception('Log handler does not extend LogHandler');
 	}
 
 	if (empty($conf->loghandlers[$handler])) {
@@ -507,8 +507,8 @@ function conf($dolibarr_main_document_root)
 
 		require_once $file;
 		$loghandlerinstance = new $handler();
-		if (!$loghandlerinstance instanceof LogHandlerInterface) {
-			throw new Exception('Log handler does not extend LogHandlerInterface');
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
 		}
 
 		if (empty($conf->loghandlers[$handler])) {

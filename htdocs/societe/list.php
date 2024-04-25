@@ -1792,14 +1792,14 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
 			print '<td class="tdoverflowmax50" data-key="id">';
-			print $obj->rowid;
+			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(!getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
 			if ($contextpage == 'poslist') {
 				print dol_escape_htmltag($companystatic->name);
 			} else {

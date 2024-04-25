@@ -461,9 +461,16 @@ class pdf_sponge extends ModelePDFFactures
 				$qrcodestring = '';
 				if (getDolGlobalString('INVOICE_ADD_ZATCA_QR_CODE')) {
 					$qrcodestring = $object->buildZATCAQRString();
-				} elseif (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == '1') {
-					$qrcodestring = $object->buildSwitzerlandQRString();
+				} elseif (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == '1' && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')) {
+					if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
+						$qrcodestring = $object->buildSwitzerlandQRString();
+					}
+				} elseif (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == '1' && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')) {
+					if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
+						$qrcodestring = $object->buildEPCQrCodeString();
+					}
 				}
+
 				if ($qrcodestring) {
 					$qrcodecolor = array('25', '25', '25');
 					// set style for QR-code
@@ -476,6 +483,15 @@ class pdf_sponge extends ModelePDFFactures
 						'module_height' => 1 // height of a single module in points
 					);
 					$pdf->write2DBarcode($qrcodestring, 'QRCODE,M', $this->marge_gauche, $this->tab_top - 5, 25, 25, $styleQr, 'N');
+
+					if (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == '1' && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')) {
+						if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
+							$pdf->SetXY($this->marge_gauche + 30, $pdf->GetY() - 15);
+							$pdf->SetFont('', '', $default_font_size - 4);
+							$pdf->MultiCell(40, 3, $langs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						}
+					}
+
 					$extra_under_address_shift += 25;
 				}
 
@@ -1215,7 +1231,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			if ($mysoc->forme_juridique_code == 92) {
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
@@ -1234,7 +1250,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		// Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $titre, 0, 'L');
@@ -1250,7 +1266,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		// Show category of operations
 		if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 2 && $this->categoryOfOperation >= 0) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$categoryOfOperationTitle = $outputlangs->transnoentities("MentionCategoryOfOperations").' : ';
 			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $categoryOfOperationTitle, 0, 'L');
@@ -1276,7 +1292,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$pdf->SetTextColor(200, 0, 0);
-				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->SetFont('', '', $default_font_size - 2);
 				$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup", $object->mode_reglement_code);
 				$pdf->MultiCell($posxend - $this->marge_gauche, 3, $this->error, 0, 'L', 0);
 				$pdf->SetTextColor(0, 0, 0);
@@ -1288,7 +1304,7 @@ class pdf_sponge extends ModelePDFFactures
 			if (!empty($object->mode_reglement_code)
 				&& $object->mode_reglement_code != 'CHQ'
 				&& $object->mode_reglement_code != 'VIR') {
-				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$titre = $outputlangs->transnoentities("PaymentMode").':';
 				$pdf->MultiCell($posxend - $this->marge_gauche, 5, $titre, 0, 'L');
@@ -1405,7 +1421,7 @@ class pdf_sponge extends ModelePDFFactures
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
+					$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : $object->fk_account);
 					if ($object->fk_bank > 0) {
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
@@ -1418,6 +1434,29 @@ class pdf_sponge extends ModelePDFFactures
 					$posy = pdf_bank($pdf, $outputlangs, $curx, $cury, $account, 0, $default_font_size);
 
 					$posy += 2;
+
+					// SHOW EPC QR CODE
+					if (getDolGlobalString('INVOICE_ADD_EPC_QR_CODE') == 'bottom') {
+						$qrPosX = 120;
+						$qrPosY = $posy;
+						$qrCodeColor = array('25', '25', '25');
+						$styleQr = array(
+							'border' => false,
+							'padding' => 0,
+							'fgcolor' => $qrCodeColor,
+							'bgcolor' => false, //array(255,255,255)
+							'module_width' => 1, // width of a single module in points
+							'module_height' => 1 // height of a single module in points
+						);
+
+						$EPCQrCodeString = $object->buildEPCQrCodeString();
+						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
+
+						$pdf->SetXY($qrPosX + 5, $posy);
+						$pdf->SetFont('', '', $default_font_size - 5);
+						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						$posy = $pdf->GetY() + 2;
+					}
 				}
 			}
 		}

@@ -6323,8 +6323,21 @@ abstract class CommonObject
 		if (is_array($optionsArray) && count($optionsArray) > 0) {
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] != 'separate') {
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
 					$sql .= ", ".$name;
+				}
+				// use geo sql fonction to read as text
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'multipts') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+				}
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
+					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -6671,9 +6684,37 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
+				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point', 'multipts', 'linestrg', 'polygon'])) { // Only for other type than separator)
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+					} else {
+						$sql .= ",null";
+					}
+				}
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
+					if (!empty($new_array_options[$key])) {
+						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
 					} else {
 						$sql .= ",null";
 					}
@@ -7175,7 +7216,7 @@ abstract class CommonObject
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
-	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
+	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
@@ -7286,9 +7327,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12) {
+				if (is_numeric($size) && round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (is_numeric($size) && round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -7965,9 +8006,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (is_numeric($size) && round($size) < 12) {
+				if (is_numeric($size) && round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (is_numeric($size) && round($size) <= 48) {
+				} elseif (is_numeric($size) && round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -10060,7 +10101,8 @@ abstract class CommonObject
 
 		// $this->oldcopy should have been set by the caller of update
 		//if (empty($this->oldcopy)) {
-		//	$this->oldcopy = dol_clone($this);
+		//	dol_syslog("this->oldcopy should have been set by the caller of update (here properties were already modified)", LOG_WARNING);
+		//	$this->oldcopy = dol_clone($this, 2);
 		//}
 
 		$fieldvalues = $this->setSaveQuery();

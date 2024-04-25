@@ -1425,7 +1425,7 @@ class Contrat extends CommonObject
 		}
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-		// $this->oldcopy should have been set by the caller of update
+		// $this->oldcopy must have been set by the caller of update
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
@@ -3543,7 +3543,8 @@ class ContratLigne extends CommonObjectLine
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$this->oldcopy = dol_clone($this);
+			dol_syslog("this->oldcopy should have been set by the caller of update (here properties were already modified)", LOG_WARNING);
+			$this->oldcopy = dol_clone($this, 2);
 		}
 
 		$this->db->begin();

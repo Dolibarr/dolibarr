@@ -222,7 +222,7 @@ if (empty($reshook)) {
 		if (!($socid > 0)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
-			$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+			$objectutil = dol_clone($object, 1); // We use a clone to avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
 			'@phan-var-force Facture $objectutil';
 
 			$objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth'), GETPOSTINT('newdateday'), GETPOSTINT('newdateyear'));

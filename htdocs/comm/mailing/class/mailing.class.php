@@ -762,10 +762,10 @@ class Mailing extends CommonObject
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->title)) {
-			$datas['title'] .= '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
+			$datas['title'] = '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
 		}
 		if (isset($this->sujet)) {
-			$datas['subject'] .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
+			$datas['subject'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
 		}
 
 		return $datas;

@@ -793,6 +793,10 @@ class Product extends CommonObject
 
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -847,7 +851,7 @@ class Product extends CommonObject
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
 					$sql .= ") VALUES (";
-					$sql .= "'".$this->db->idate($now)."'";
+					$sql .= "'".$this->db->idate($this->date_creation)."'";
 					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 					$sql .= ", '".$this->db->escape($this->ref)."'";
 					$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -880,6 +884,7 @@ class Product extends CommonObject
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
+
 					$result = $this->db->query($sql);
 					if ($result) {
 						$id = $this->db->last_insert_id($this->db->prefix()."product");

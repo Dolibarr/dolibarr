@@ -2,7 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: bionic = 18.04, focal = 20.04
+# We use dist: focal = 20.04
 os: linux
 dist: focal
 

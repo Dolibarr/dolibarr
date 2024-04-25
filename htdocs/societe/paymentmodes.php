@@ -163,14 +163,16 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companybankaccount->socid           = $object->id;
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
-			$companybankaccount->clos            = GETPOSTINT('clos');
+			$companybankaccount->type            = GETPOSTINT('courant');
+			$companybankaccount->courant         = $companybankaccount->type;
+			$companybankaccount->status          = GETPOSTINT('clos');
+			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -179,9 +181,10 @@ if (empty($reshook)) {
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
 			$companybankaccount->address         = GETPOST('address', 'alpha');
-			$companybankaccount->domiciliation = $companybankaccount->address;
+			$companybankaccount->domiciliation   = $companybankaccount->address;
 
-			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
+			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
@@ -240,7 +243,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
