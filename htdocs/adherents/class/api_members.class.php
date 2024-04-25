@@ -549,7 +549,7 @@ class Members extends DolibarrApi
 		return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
 	}
 
-  
+
 	/**
 	 * Get categories for a member
 	 *
@@ -627,15 +627,16 @@ class Members extends DolibarrApi
 	{
 		$thirdparty = new Societe($this->db);
 		$fetchResult = $thirdparty->fetch('', '', '', $barcode, '', '', '', '', '', '', $email);
-		if ( 0 === $fetchResult) {
+		if (0 === $fetchResult) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		if ($fetchResult < 0) {
-			throw new RestException(503, 'Error when retrieve thirdparty : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve thirdparty : ' . $this->db->lasterror());
 		}
 
 		return $thirdparty;
+	}
 
 
 
