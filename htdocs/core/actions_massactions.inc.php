@@ -348,6 +348,14 @@ if (!$error && $massaction == 'confirm_presend') {
 						$filepath = $fileparams['fullname'];
 					}
 
+					if (!empty($conf->global->ESAYA_SEND_EMAIL_IN_MASS_MOST_RECENT_FILE_IF_NOT_FOUND) && !dol_is_file($filepath)) {
+						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+');
+						if (isset($fileparams)) {
+							$filepath = $fileparams['fullname'];
+							$filename = $fileparams['name'];
+						}
+					}
+
 					// try to find other files generated for this object (last_main_doc)
 					$filename_found = '';
 					$filepath_found = '';
