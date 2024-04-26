@@ -104,9 +104,19 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
 
-
+$filters= [];
+if (($search_statut != '' && $search_statut >= 0)) {
+	$filters[]= "statut = ".$search_statut;
+}
+if (($search_employee != '' && $search_employee >= 0)) {
+	$filters [] = "employee = ".$search_employee;
+}
+$filter= '';
+if (!empty($filters)) {
+	$filter = join(' AND ', $filters);
+}
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
+$user_arbo = $userstatic->get_full_tree(0, $filter);
 
 
 // Count total nb of records
