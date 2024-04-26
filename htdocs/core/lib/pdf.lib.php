@@ -1304,8 +1304,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 
-	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
+	// Show page nb and apply correction for some font.
 	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
+	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
 	$fontRenderCorrection = 0;
 	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
 		$fontRenderCorrection = 10;
