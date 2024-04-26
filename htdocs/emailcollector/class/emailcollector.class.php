@@ -3062,9 +3062,15 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
 
-							$alreadycreated = $tickettocreate->fetch(0, '', $trackid, $msgid);
-							if ($alreadycreated == 0) {
+							$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket) && $alreadycreated == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;
