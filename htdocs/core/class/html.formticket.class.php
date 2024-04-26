@@ -155,11 +155,11 @@ class FormTicket
 	 *
 	 * Check required fields
 	 *
-	 * @param array $fields	Array of fields to check
-	 * @param int $errors	Reference of errors variable
+	 * @param array<string, array<string, string>> $fields Array of fields to check
+	 * @param int $errors Reference of errors variable
 	 * @return void
 	 */
-	public static function checkRequiredFields(array $fields, int &$errors): void
+	public static function checkRequiredFields(array $fields, int &$errors)
 	{
 		global $langs;
 
