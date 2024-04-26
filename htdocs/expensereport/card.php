@@ -2233,10 +2233,10 @@ if ($action == 'create') {
 											// If the preview file is found we display the thumb
 											if (file_exists($fileimage)) {
 												print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
-											}
+											} 
 											// Else, we display an icon
-											else { 
-												print img_mime($ecmfilesstatic->filename); 
+											else {
+												print img_mime($ecmfilesstatic->filename);
 											}
 											print '</a>';
 										}
