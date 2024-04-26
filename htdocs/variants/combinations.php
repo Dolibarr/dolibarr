@@ -928,14 +928,8 @@ if (!empty($id) || !empty($ref)) {
 
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
-				$iMax = count($productCombination2ValuePairs);
-
-				for ($i = 0; $i < $iMax; $i++) {
-					echo dol_htmlentities($productCombination2ValuePairs[$i]);
-					if ($i !== ($iMax - 1)) {
-						echo ', ';
-					}
+				foreach ($comb2val->fetchByFkCombination($currcomb->id) as $pc2v) {
+					print dol_htmlentities($pc2v).'<br>';
 				}
 				print '</td>';
 				print '<td class="right">'.($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '').'</td>';
