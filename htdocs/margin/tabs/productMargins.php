@@ -269,7 +269,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+					print '<td class="right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';
 				print "</tr>\n";
@@ -288,7 +288,7 @@ if ($id > 0 || !empty($ref)) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, $conf->currency).'");
         $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
         $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
     });

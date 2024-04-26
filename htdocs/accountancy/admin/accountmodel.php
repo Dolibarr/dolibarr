@@ -75,7 +75,7 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 
 
 // Security check

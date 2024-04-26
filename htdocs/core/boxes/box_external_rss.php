@@ -145,6 +145,12 @@ class box_external_rss extends ModeleBoxes
 				//$item['modified']
 				//$item['atom_content']
 			}
+			if (!is_numeric($date)) {
+				$timestamp = strtotime($date);
+				if ($timestamp > 0) {
+					$date = $timestamp;
+				}
+			}
 			if (is_numeric($date)) {
 				$date = dol_print_date($date, "dayhour", 'tzuserrel');
 			}

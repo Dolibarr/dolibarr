@@ -1407,7 +1407,7 @@ function dol_get_object_properties($obj, $properties = [])
 
 /**
  *	Create a clone of instance of object (new instance with same value for each properties)
- *  With native = 0: Property that are reference are different memory area in the new object (full isolation clone). This means $this->db of new object may not be valid.
+ *  With native = 0: Property that are references are different memory area in the new object (full isolation clone). This means $this->object of new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
  *
@@ -4593,6 +4593,11 @@ function getPictoForType($key)
 		'checkbox' => 'check-square',
 		'chkbxlst' => 'check-square',
 		'link' => 'link',
+		'icon' => "question",
+		'point' => "country",
+		'multipts' => 'country',
+		'linestrg' => "country",
+		'polygon' => "country",
 		'separate' => 'minus'
 	);
 
@@ -6347,16 +6352,16 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		Function to format a value into an amount for visual output
  *		Function used into PDF and HTML pages
  *
- *		@param	string|float		$amount			Amount value to format
- *		@param	int<0,1>			$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
+ *		@param	string|float			$amount			Amount value to format
+ *		@param	int<0,1>				$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
  *		@param	Translate|string|null	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
- *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
- *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
- *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
- *		@return	string								String with formatted amount
+ *		@param	int						$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
+ *		@param	int						$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+ *		@param	int|string				$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
+ *		@param	string					$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
+ *		@return	string									String with formatted amount
  *
- *		@see	price2num()							Revert function of price
+ *		@see	price2num()								Revert function of price
  */
 function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $forcerounding = -1, $currency_code = '')
 {
@@ -10104,6 +10109,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy")); // more dolibarr functions
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
 
@@ -12734,7 +12740,7 @@ function getNonce()
  * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
  * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
- * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown as '...'
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
@@ -12752,11 +12758,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print $langs->trans($header);
 
-	// extra space between the first header and the number
-	if ($number > -1) {
-		print ' ';
-	}
-
 	if (!empty($link)) {
 		if (!empty($arguments)) {
 			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
@@ -12766,7 +12767,9 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 	}
 
 	if ($number > -1) {
-		print '<span class="badge">'.$number.'</span>';
+		print '<span class="badge marginleftonlyshort">'.$number.'</span>';
+	} elseif (!empty($link)) {
+		print '<span class="badge marginleftonlyshort">...</span>';
 	}
 
 	if (!empty($link)) {
@@ -12777,20 +12780,6 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	if ($number < 0 && !empty($link)) {
 		print '<th class="right">';
-
-		if (!empty($arguments)) {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
-		} else {
-			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
-		}
-
-		if ($pictofulllist) {
-			print img_picto($langs->trans("FullList"), $pictofulllist);
-		} else {
-			print $langs->trans("FullList");
-		}
-
-		print '</a>';
 		print '</th>';
 	}
 
@@ -13963,7 +13952,23 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
 				$out .= '<div class="timeline-body" >';
-				$out .= $histo[$key]['message'];
+				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
+				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
+				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
+					$out .= '<div class="readmore-block --closed" >';
+					$out .= '	<div class="readmore-block__excerpt" >';
+					$out .= 	$truncatedText ;
+					$out .= ' 	<a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
+					$out .= '	</div>';
+					$out .= '	<div class="readmore-block__full-text" >';
+					$out .= $histo[$key]['message'];
+					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> '.$langs->trans("ReadLess").'</a>';
+					$out .= '	</div>';
+					$out .= '</div>';
+				} else {
+					$out .= $histo[$key]['message'];
+				}
+
 				$out .= '</div>';
 			}
 
@@ -14057,6 +14062,26 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		}
 
 		$out .= "</ul>\n";
+
+		$out .= '<script>
+				jQuery(document).ready(function () {
+				   $(document).on("click", "[data-read-more-action]", function(e){
+					   let readMoreBloc = $(this).closest(".readmore-block");
+					   if(readMoreBloc.length > 0){
+							e.preventDefault();
+							if($(this).attr("data-read-more-action") == "close"){
+								readMoreBloc.addClass("--closed").removeClass("--open");
+								 $("html, body").animate({
+									scrollTop: readMoreBloc.offset().top - 200
+								}, 100);
+							}else{
+								readMoreBloc.addClass("--open").removeClass("--closed");
+							}
+					   }
+					});
+				});
+			</script>';
+
 
 		if (empty($histo)) {
 			$out .= '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
@@ -14153,7 +14178,7 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
  */
 function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-	global $conf, $db, $user, $langs, $hookmanager;
+	global $conf, $db, $langs, $hookmanager;
 	global $action, $object;
 
 	if (!is_object($langs)) {

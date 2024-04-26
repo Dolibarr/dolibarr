@@ -54,7 +54,7 @@ $search_datev_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_value_startmon
 $search_datev_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_value_endmonth'), GETPOSTINT('search_date_value_endday'), GETPOSTINT('search_date_value_endyear'));
 $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
-$search_bank_account = GETPOSTINT('search_account');
+$search_bank_account = GETPOST('search_account', "intcomma");
 $search_bank_entry = GETPOST('search_bank_entry', 'alpha');
 $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) {
@@ -76,7 +76,7 @@ if (empty($search_datev_start)) {
 if (empty($search_datev_end)) {
 	$search_datev_end = GETPOSTINT("search_datev_end");
 }
-$search_type_id = GETPOSTINT('search_type_id');
+$search_type_id = GETPOST('search_type_id', 'int');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');

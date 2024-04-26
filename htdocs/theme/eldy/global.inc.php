@@ -390,7 +390,8 @@ div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
- select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
+ .select2-container--focus span.selection span.select2-selection {
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
@@ -552,6 +553,10 @@ td.rightborder {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+	white-space: nowrap;
+}
+span.amount {
+	white-space: nowrap;
 }
 td.actionbuttons a {
 	padding-left: 6px;
@@ -1152,7 +1157,8 @@ span.fa.fa-plus-circle.paddingleft {
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
 {
-	font-size: 1.5em; vertical-align: text-bottom;
+	font-size: 1.5em;
+	vertical-align: text-bottom;
 }
 
 .divoverflow {
@@ -1582,25 +1588,30 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	padding-bottom: 0px;
 }
 .amountalreadypaid {
+	white-space: nowrap;
 }
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
 }
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
 }
 .amountremaintopayback {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
 }
 .amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
 }
 
 .onlinepaymentbody .amountpaymentcomplete {
@@ -1890,6 +1901,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
+	.showonsmartphone { display: block !important; }
 
 	.margintoponsmartphone { margin-top: 6px; }
 
@@ -2019,10 +2031,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
 	.minwidth300imp { min-width: 120px !important; }
-	.minwidth400imp { min-width: 150px !important; }
+	.minwidth400imp { min-width: 200px !important; }
 	.minwidth500imp { min-width: 250px !important; }
 	.titlefield { width: auto; min-width: unset; }
-	.titlefieldcreate { width: auto; }
+	.titlefieldcreate { width: auto !important; }
 
 	#tooltip {
 		position: absolute;
@@ -2071,6 +2083,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		min-width: 300px;
 	}
 }
+
+/* Force values for small screen 320 */
+@media only screen and (max-width: 320px)
+{
+	.maxwidth300 { max-width: 260px; }
+}
+
+
 .linkobject { cursor: pointer; }
 
 table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
@@ -5446,7 +5466,8 @@ div.visible {
 	display: block;
 }
 
-div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
+img.hidden, span.hidden, br.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -6463,6 +6484,10 @@ input.select2-input {
 .select2-container .select2-selection--multiple {
 	min-height: 28px !important;
 }
+.tableforfield .select2-container .select2-selection--single {
+	height: 25px;
+}
+
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	margin-top: 5px !important;
 	border: none;
@@ -8163,7 +8188,7 @@ table.jPicker {
 	}
 	.badge {
 		min-width: auto;
-		font-size: 12px;
+		font-size: 0.94em;
 	}
 
 	table.table-fiche-title .col-title div.titre{
@@ -8233,6 +8258,7 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {

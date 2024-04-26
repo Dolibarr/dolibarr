@@ -1108,7 +1108,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOSTINT("search_rowid");
+	$search_rowid   = GETPOST("search_rowid", "intcomma");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');

@@ -39,6 +39,7 @@ $langs->loadLangs(array('companies', 'donations'));
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
+$mode = GETPOST('mode', 'alpha');
 
 $paiementid				= GETPOSTINT('paiementid');
 
@@ -52,19 +53,16 @@ $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company = GETPOST("search_company", 'alpha');
-$search_paymenttype = GETPOST("search_paymenttype");
-$search_account = GETPOSTINT("search_account");
+$search_paymenttype = GETPOST("search_paymenttype", "intcomma");
+$search_account = GETPOST("search_account", 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_sale = GETPOSTINT('search_sale');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$type = GETPOST('type', 'aZ');
-$mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1

@@ -26,6 +26,7 @@ PHP libraries:
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation. Used by dynamic price only. TODO Replace with dol_eval ?
 Escpos-php             3.0           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
+GeoPHP                 1.2           Modified BSD License        Yes             Lib to make geo convert
 MathPHP                2.8.1         MIT License                 Yes             Modern math library for PHP (only few files)
 Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.16        LGPL 2.1+                   Yes             Library to develop SOAP Web services. From https://github.com/f00b4r/nusoap/tree/v0.9.16
