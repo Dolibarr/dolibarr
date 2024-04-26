@@ -3044,6 +3044,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id.'/'.$original_file;
+	} elseif ($modulepart == 'massfilesarea_receipts') {
+		if ($fuser->hasRight('reception', $lire) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	} elseif ($modulepart == 'massfilesarea_invoices') {
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
