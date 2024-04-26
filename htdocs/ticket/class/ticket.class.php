@@ -489,12 +489,12 @@ class Ticket extends CommonObject
 	 *
 	 * Check if ref exists or not
 	 *
-	 * @param $action
-	 * @param $getRef
+	 * @param $action    Action
+	 * @param $getRef    Reference of object
 	 * @return bool
 	 */
-	public function checkExistingRef($action, $getRef) {
-
+	public function checkExistingRef($action, $getRef): bool
+	{
 		$test = new self($this->db);
 
 		if ($test->fetch('', $getRef) > 0) {
