@@ -224,7 +224,7 @@ class ActionsTicket extends CommonHookActions
 		} else {
 			print '<div class="longmessagecut">';
 			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
-			print dolPrintHTML($object->message);
+			print nl2br($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
 			print $langs->trans("More").'...';
@@ -418,7 +418,7 @@ class ActionsTicket extends CommonHookActions
 
 			foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
 				if (!$arraymsgs['private']
-				|| ($arraymsgs['private'] == "1" && $show_private)
+					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					print '<div class="cd-timeline-block">';
 					print '<div class="cd-timeline-img">';
