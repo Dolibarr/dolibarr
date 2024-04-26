@@ -873,13 +873,15 @@ function security_prepare_head()
 		dol_print_error($db);
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-	$head[$h][1] = $langs->trans("DefaultRights");
-	if ($nbPerms > 0) {
-		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+	if (getDolGlobalString('MAIN_SECURITY_USE_DEFAULT_PERMISSIONS')) {
+		$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+		$head[$h][1] = $langs->trans("DefaultRights");
+		if ($nbPerms > 0) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		}
+		$head[$h][2] = 'default';
+		$h++;
 	}
-	$head[$h][2] = 'default';
-	$h++;
 
 	return $head;
 }
