@@ -108,8 +108,15 @@ if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 }
 
 // Define image path files and other constants
-$fontlist = 'arial,tahoma,verdana,helvetica'; //$fontlist='helvetica, verdana, arial, sans-serif';
-//$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
+
+//$fontlist='helvetica, verdana, arial, sans-serif';
+//$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif';
+
+$fontlist = 'arial,tahoma,verdana,helvetica';
+if (getDolGlobalString('THEME_FONT_FAMILY')) {
+	$fontlist = getDolGlobalString('THEME_FONT_FAMILY').', '.$fontlist;
+}
+
 $img_head = '';
 $img_button = dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
 $dol_hide_topmenu = $conf->dol_hide_topmenu;

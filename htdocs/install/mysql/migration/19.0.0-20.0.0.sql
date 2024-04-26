@@ -50,6 +50,9 @@ UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTr
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
 DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
 ALTER TABLE llx_actioncomm_extrafields ADD UNIQUE INDEX uk_actioncomm_extrafields (fk_object);
@@ -285,6 +288,9 @@ ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
+ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
+ALTER TABLE llx_expeditiondet DROP INDEX idx_expeditiondet_fk_origin_line;
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elementdet);
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
@@ -296,20 +302,19 @@ ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
+ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
+ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 
-create table llx_societe_users
-(
-    rowid           integer AUTO_INCREMENT PRIMARY KEY,
-    entity          integer DEFAULT 1 NOT NULL,
-    date_creation           datetime NOT NULL,
-    fk_soc		        integer NOT NULL,
-    fk_c_type_contact	int NOT NULL,
-    fk_user        integer NOT NULL,
-    tms TIMESTAMP,
-    import_key VARCHAR(14)
-)ENGINE=innodb;
+DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
-ALTER TABLE llx_societe_users ADD UNIQUE INDEX idx_societe_users_idx1 (entity, fk_soc, fk_c_type_contact, fk_user);
-ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
-ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
-ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
+
+insert into llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+
+ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
+
+-- VMYSQL4.1 DROP INDEX uk_societe_commerciaux ON llx_societe_commerciaux;
+-- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
+ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);

@@ -447,7 +447,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
-			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->fetch($id);
@@ -460,7 +460,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (empty(DolibarrApi::_checkAccessToResource('societe', $this->company->id))) {
-			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->company->setPriceLevel($priceLevel, DolibarrApiAccess::$user);
@@ -1027,6 +1027,7 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
@@ -1070,6 +1071,7 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if ($result < 0) {

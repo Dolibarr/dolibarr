@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -718,16 +719,16 @@ class ProductCombination
 	 * [...]
 	 * )
 	 *
-	 * @param User 			$user 				Object user
-	 * @param Product 		$product 			Parent product
-	 * @param array<array<string,string>> $combinations Attribute and value combinations.
+	 * @param User 				$user 			Object user
+	 * @param Product 			$product 		Parent product
+	 * @param array<int,int> 	$combinations 	Attribute and value combinations.
 	 * @param array<string,array<string,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations
-	 * @param bool|array 	$price_var_percent 	Is the price variation a relative variation?
-	 * @param bool|float 	$forced_pricevar 	If the price variation is forced
-	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
-	 * @param bool|string 	$forced_refvar 		If the reference is forced
-	 * @param string 	    $ref_ext            External reference
-	 * @return int<-1,1>						Return integer <0 KO, >0 OK
+	 * @param bool|array 		$price_var_percent 	Is the price variation a relative variation?
+	 * @param bool|float 		$forced_pricevar 	If the price variation is forced
+	 * @param bool|float 		$forced_weightvar 	If the weight variation is forced
+	 * @param bool|string 		$forced_refvar 		If the reference is forced
+	 * @param string 	    	$ref_ext            External reference
+	 * @return int<-1,1>							Return integer <0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
@@ -794,7 +795,6 @@ class ProductCombination
 		$prodattrval = new ProductAttributeValue($this->db);
 
 		// $combination contains list of attributes pairs key->value. Example: array('id Color'=>id Blue, 'id Size'=>id Small, 'id Option'=>id val a, ...)
-		//var_dump($combinations);
 		foreach ($combinations as $currcombattr => $currcombval) {
 			//This was checked earlier, so no need to double check
 			$prodattr->fetch($currcombattr);

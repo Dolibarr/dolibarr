@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW                      <mdeweerd@users.noreply.github.com>
  * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ class MyObject extends CommonObject
 	//public $element_for_permission = 'mymodule';
 
 	/**
-	 * @var int  	Does this object support multicompany module ?
-	 * 				0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -78,7 +78,7 @@ class MyObject extends CommonObject
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
 	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
 	 *  	'chkbxlst:...',
 	 *  	'varchar(x)',

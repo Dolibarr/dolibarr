@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 
 /**
- * \file    bom/class/api_boms.class.php
+ * \file    htdocs/bom/class/api_boms.class.php
  * \ingroup bom
  * \brief   File for API management of BOM.
  */

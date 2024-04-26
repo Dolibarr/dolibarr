@@ -208,6 +208,8 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 	$object->fetch(0, $ref);
 }
 
+// $action == "dosign" is handled later...
+
 
 /*
  * View

@@ -40,13 +40,18 @@ global $conf, $db, $langs, $user;
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
-$id = GETPOSTINT('id');
-$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
+$batch = GETPOST('batch', 'alpha');
+$productid = GETPOSTINT('productid');
+$ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
 // Initialize technical objects
 $object = new Productlot($db);
@@ -70,10 +75,6 @@ foreach ($object->fields as $key => $val) {
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
-
-$batch = GETPOST('batch', 'alpha');
-$productid = GETPOSTINT('productid');
-$ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
 $search_entity = GETPOSTINT('search_entity');
 $search_fk_product = GETPOSTINT('search_fk_product');

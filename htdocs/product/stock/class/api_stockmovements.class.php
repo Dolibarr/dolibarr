@@ -264,7 +264,7 @@ class StockMovements extends DolibarrApi
 		}
 
 		if (! $this->stockmovement->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401,'error when delete stock movement');
+			throw new RestException(403,'error when delete stock movement');
 		}
 
 		return array(

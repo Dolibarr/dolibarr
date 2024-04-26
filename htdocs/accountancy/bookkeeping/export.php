@@ -661,7 +661,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		} else {
 			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 				if (is_array($object->lines)) {
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file set movements as exported", LOG_DEBUG);
 
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
@@ -678,7 +678,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 
 						if ($setfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$db->sanitize($setfields);
+							$sql .= " SET ".$setfields;		// $setfields is already a sanitized SQL string
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);
@@ -840,7 +840,7 @@ if ($action == 'export_file') {
 	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS
 		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC
 		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC2
-		) {
+	) {
 		$form_question['notifiedexportfull'] = array(
 			'name' => 'notifiedexportfull',
 			'type' => 'checkbox',
@@ -1173,8 +1173,6 @@ $line = new BookKeepingLine($db);
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$total_debit = 0;
-$total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
@@ -1212,9 +1210,6 @@ while ($i < min($num, $limit)) {
 	$line->date_modification = $db->jdate($obj->date_modification);
 	$line->date_export = $db->jdate($obj->date_export);
 	$line->date_validation = $db->jdate($obj->date_validation);
-
-	$total_debit += $line->debit;
-	$total_credit += $line->credit;
 
 	print '<tr class="oddeven">';
 	// Action column
@@ -1265,6 +1260,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Document ref
+	$modulepart = '';
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
 		$documentlink = '';
 		$objectstatic = null;
@@ -1291,6 +1287,7 @@ while ($i < min($num, $limit)) {
 			//$modulepart = 'invoice_supplier';
 
 			if ($objectstatic->id > 0) {
+				$modulepart = 'invoice_supplier';
 				$filename = dol_sanitizeFileName($line->doc_ref);
 				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);

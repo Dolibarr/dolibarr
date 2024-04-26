@@ -81,7 +81,7 @@ if (!$sortfield) {
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
-$status = GETPOSTINT("status");
+$status = GETPOST("status", "intcomma");
 $subscription = GETPOSTINT("subscription");
 $amount = GETPOST('amount', 'alpha');
 $duration_value = GETPOSTINT('duration_value');

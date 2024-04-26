@@ -10,7 +10,7 @@
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018-2024	Eric Seigne	            <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -76,13 +76,21 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
-if ($in_bookkeeping == '') {
-	$in_bookkeeping = 'notyet';
+
+$only_rappro = GETPOSTINT('only_rappro');
+if ($only_rappro == 0) {
+	//GET page for the first time, use default settings
+	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
 
 $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
+
+if ($in_bookkeeping == '') {
+	$in_bookkeeping = 'notyet';
+}
+
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -91,7 +99,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -164,6 +172,9 @@ if ($in_bookkeeping == 'already') {
 }
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
+if ($only_rappro == 2) {
+	$sql .= " AND (b.rappro = '1')";
 }
 $sql .= " ORDER BY b.datev";
 //print $sql;
@@ -307,6 +318,8 @@ if ($result) {
 
 		// Load of url links to the line into llx_bank (so load llx_bank_url)
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
+		// print '<p>' . json_encode($object) . "</p>";//exit;
+		// print '<p>' . json_encode($links) . "</p>";//exit;
 
 		// By default
 		$tabpay[$obj->rowid]['type'] = 'unknown'; // Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
@@ -434,7 +447,7 @@ if ($result) {
 					$resultmid = $db->query($sqlmid);
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
-						$tabtp[$obj->rowid][$objmid->accountancy_code] += $amounttouse;
+						$tabtp[$obj->rowid][$objmid->accountancy_code] = isset($tabtp[$obj->rowid][$objmid->accountancy_code]) ? $tabtp[$obj->rowid][$objmid->accountancy_code] + $amounttouse : $amounttouse;
 					}
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
@@ -442,7 +455,7 @@ if ($result) {
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
-					$tabtp[$obj->rowid][$account_pay_donation] += $amounttouse;
+					$tabtp[$obj->rowid][$account_pay_donation] = isset($tabtp[$obj->rowid][$account_pay_donation]) ? $tabtp[$obj->rowid][$account_pay_donation] + $amounttouse : $amounttouse;
 				} elseif ($links[$key]['type'] == 'member') {
 					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->ref = $links[$key]['url_id'];
@@ -450,14 +463,14 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsubscriptionstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsubscriptionid"] = $paymentsubscriptionstatic->id;
 					$paymentsubscriptionstatic->fetch($paymentsubscriptionstatic->id);
-					$tabtp[$obj->rowid][$account_pay_subscription] += $amounttouse;
+					$tabtp[$obj->rowid][$account_pay_subscription] = isset($tabtp[$obj->rowid][$account_pay_subscription]) ? $tabtp[$obj->rowid][$account_pay_subscription] + $amounttouse : $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					$paymentvatstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentvatstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentvatid"] = $paymentvatstatic->id;
-					$tabtp[$obj->rowid][$account_pay_vat] += $amounttouse;
+					$tabtp[$obj->rowid][$account_pay_vat] = isset($tabtp[$obj->rowid][$account_pay_vat]) ? $tabtp[$obj->rowid][$account_pay_vat] + $amounttouse : $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
@@ -516,7 +529,7 @@ if ($result) {
 					$account_various = (!empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined'); // NotDefined is a reserved word
 					$account_subledger = (!empty($paymentvariousstatic->subledger_account) ? $paymentvariousstatic->subledger_account : ''); // NotDefined is a reserved word
 					$tabpay[$obj->rowid]["account_various"] = $account_various;
-					$tabtp[$obj->rowid][$account_subledger] += $amounttouse;
+					$tabtp[$obj->rowid][$account_subledger] = isset($tabtp[$obj->rowid][$account_subledger]) ? $tabtp[$obj->rowid][$account_subledger] + $amounttouse : $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					$paymentloanstatic->id = $links[$key]['url_id'];
 					$paymentloanstatic->ref = $links[$key]['url_id'];
@@ -532,14 +545,14 @@ if ($result) {
 					$resultmid = $db->query($sqlmid);
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
-						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] -= $objmid->amount_capital;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] -= $objmid->amount_insurance;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] -= $objmid->amount_interest;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_capital]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_capital] - $objmid->amount_capital : $amounttouse;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_insurance]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_insurance] - $objmid->amount_insurance : $amounttouse;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] = isset($tabtp[$obj->rowid][$objmid->accountancy_account_interest]) ? $tabtp[$obj->rowid][$objmid->accountancy_account_interest] - $objmid->amount_interes : $amounttouse;
 					}
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
 					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- '.$accountLinestatic ->getNomUrl(1);
-					$tabtp[$obj->rowid][$account_transfer] += $amounttouse;
+					$tabtp[$obj->rowid][$account_transfer] = isset($tabtp[$obj->rowid][$account_transfer]) ? $tabtp[$obj->rowid][$account_transfer] + $amounttouse : $amounttouse;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
 				}
@@ -1095,7 +1108,13 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 
-	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	$listofchoices = array(
+		1 => $langs->trans("TransfertAllBankLines"),
+		2 => $langs->trans("TransfertOnlyConciliatedBankLine")
+	);
+	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro)];
+
+	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink, $moreoptions);
 
 	$desc = '';
 
@@ -1273,12 +1292,12 @@ if (empty($action) || $action == 'view') {
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= $val['lib'].($val['soclib'] ? " - " : "");
+						$reflabel .= $val['lib'].(isset($val['soclib']) ? " - " : "");
 					}
 					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= $langs->trans('TransitionalAccount').' '.$account_transfer;
 					} else {
-						$reflabel .= $val['soclib'];
+						$reflabel .= isset($val['soclib']) ? $val['soclib'] : "";
 					}
 
 					print '<!-- Thirdparty bank.rowid='.$key.' -->';

@@ -43,7 +43,7 @@ class modExpedition extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user;	// $conf is required by /core/extrafieldsinexport.inc.php
 
 		$this->db = $db;
 		$this->numero = 80;
@@ -144,21 +144,21 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 101;
-		$this->rights[$r][1] = 'Lire les expeditions';
+		$this->rights[$r][1] = 'Read shipments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 102;
-		$this->rights[$r][1] = 'Creer modifier les expeditions';
+		$this->rights[$r][1] = 'Create/modify shipments';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 104;
-		$this->rights[$r][1] = 'Valider les expeditions';
+		$this->rights[$r][1] = 'Validate shipments';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'shipping_advance';
@@ -166,7 +166,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les expeditions aux clients'; // libelle de la permission
+		$this->rights[$r][1] = 'Send shipments by email to customers'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'shipping_advance';
@@ -174,7 +174,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 106;
-		$this->rights[$r][1] = 'Exporter les expeditions';
+		$this->rights[$r][1] = 'Export shipments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'shipment';
@@ -182,7 +182,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 109;
-		$this->rights[$r][1] = 'Supprimer les expeditions';
+		$this->rights[$r][1] = 'Delete shipments';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
@@ -318,7 +318,7 @@ class modExpedition extends DolibarrModules
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
-		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
+		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_elementdet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('expedition').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);

@@ -82,7 +82,7 @@ class RejetPrelevement
 		$this->motifs = array();
 		$this->labelsofinvoicing = array();
 
-		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
+		$this->motifs[0] = "";
 		$this->motifs[1] = $langs->trans("StatusMotif1");
 		$this->motifs[2] = $langs->trans("StatusMotif2");
 		$this->motifs[3] = $langs->trans("StatusMotif3");

@@ -57,8 +57,8 @@ class Contact extends CommonObject
 	public $table_element = 'socpeople';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -151,7 +151,7 @@ class Contact extends CommonObject
 	/**
 	 * @var int egroupware_id
 	 */
-	public $egroupware_id;
+	//private $egroupware_id;
 
 	/**
 	 * @var int birthday_alert
@@ -871,11 +871,13 @@ class Contact extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
+			/*
 			if (dol_strlen($this->egroupware_id) == 0) {
 				$this->egroupware_id = 1;
 			}
-
 			$info["phpgwContactOwner"] = $this->egroupware_id;
+			*/
+			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {
 				$info["rfc822Mailbox"] = $this->email;

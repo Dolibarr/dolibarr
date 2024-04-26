@@ -1533,7 +1533,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') && $usercancreate) {
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') != '' && $usercancreate) {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -3546,6 +3546,10 @@ if ($action == 'create') {
 
 			// Other attributes
 			$cols = 2;
+			if ($object->status != $object::STATUS_DRAFT) {
+				$disableedit = 1;
+				$disableremove = 1;
+			}
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print '</table>';

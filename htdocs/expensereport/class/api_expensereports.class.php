@@ -174,7 +174,7 @@ class ExpenseReports extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 
 		// Check mandatory fields
@@ -694,7 +694,7 @@ class ExpenseReports extends DolibarrApi
 	/*public function delete($id)
 	 {
 	 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
-	 throw new RestException(401);
+	 throw new RestException(403);
 	 }
 	 $paymentExpenseReport = new PaymentExpenseReport($this->db);
 	 $result = $paymentExpenseReport->fetch($id);
@@ -703,7 +703,7 @@ class ExpenseReports extends DolibarrApi
 	 }
 
 	 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
-	 throw new RestException(401, 'error when deleting paymentExpenseReport');
+	 throw new RestException(403, 'error when deleting paymentExpenseReport');
 	 }
 
 	 return array(

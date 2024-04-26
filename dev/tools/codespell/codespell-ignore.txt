@@ -13,6 +13,11 @@ categorie
 categories
 clos
 crypted
+contaxt
+courant
+datea
+datee
+doubleclick
 errorstring
 exten
 falsy

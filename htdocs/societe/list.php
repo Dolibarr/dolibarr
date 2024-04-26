@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = GETPOSTINT("search_id");
+$search_id = GETPOST("search_id", 'int');
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -376,7 +377,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1791,14 +1792,14 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
 			print '<td class="tdoverflowmax50" data-key="id">';
-			print $obj->rowid;
+			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(!getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
 			if ($contextpage == 'poslist') {
 				print dol_escape_htmltag($companystatic->name);
 			} else {
@@ -2125,7 +2126,7 @@ while ($i < $imaxinloop) {
 		}
 		// Import key
 		if (!empty($arrayfields['s.import_key']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->import_key).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->import_key).'">';
 			print dol_escape_htmltag($obj->import_key);
 			print "</td>\n";
 			if (!$i) {

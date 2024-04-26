@@ -332,9 +332,16 @@ if ($result) {
 		$lastmodified .= '<div class="div-table-responsive-no-min">';
 		$lastmodified .= '<table class="noborder centpercent">';
 
-		$lastmodified .= '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
+		$lastmodified .= '<tr class="liste_titre"><th colspan="2">';
+		//$lastmodified .= img_picto('', 'company', 'class="pictofixedwidth"');
+		$lastmodified .= $transRecordedType;
+		$lastmodified .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+		$lastmodified .= '</a>';
+		$lastmodified .= '</th>';
 		$lastmodified .= '<th>&nbsp;</th>';
-		$lastmodified .= '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'company').'</th>';
+		$lastmodified .= '<th class="right">';
+		$lastmodified .= '</th>';
 		$lastmodified .= '</tr>'."\n";
 
 		while ($i < $num) {
@@ -353,7 +360,7 @@ if ($result) {
 			$thirdparty_static->email = $objp->email;
 			$thirdparty_static->entity = $objp->entity;
 			$thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdparty_static->code_compta = $objp->code_compta;
+			$thirdparty_static->code_compta_client = $objp->code_compta;
 
 			$lastmodified .= '<tr class="oddeven">';
 			// Name
@@ -448,9 +455,17 @@ if ($result) {
 		$lastmodifiedcontact .= '<div class="div-table-responsive-no-min">';
 		$lastmodifiedcontact .= '<table class="noborder centpercent">';
 
-		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
+		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">';
+		//$lastmodifiedcontact .= img_picto('', 'contact', 'class="pictofixedwidth"');
+		$lastmodifiedcontact .= $transRecordedType;
+		$lastmodifiedcontact .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		//$lastmodifiedcontact .= img_picto($langs->trans("FullList"), 'contact');
+		$lastmodifiedcontact .= '<span class="badge marginleftonlyshort">...</span>';
+		$lastmodifiedcontact .= '</th>';
 		$lastmodifiedcontact .= '<th>&nbsp;</th>';
-		$lastmodifiedcontact .= '<th class="right"><a href="'.DOL_URL_ROOT.'/socpeople/list.php?sortfield=s.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'contact').'</th>';
+		$lastmodifiedcontact .= '<th class="right">';
+		//$lastmodifiedcontact .= '<a href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=s.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'contact');
+		$lastmodifiedcontact .= '</th>';
 		$lastmodifiedcontact .= '</tr>'."\n";
 
 		while ($i < $num) {
@@ -469,7 +484,6 @@ if ($result) {
 			$thirdparty_static->email = $objp->email;
 			$thirdparty_static->entity = $objp->entity;
 			$thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdparty_static->code_compta = $objp->code_compta;
 			$thirdparty_static->code_compta_client = $objp->code_compta;
 
 			$contact_static->id = $objp->cid;
@@ -482,14 +496,14 @@ if ($result) {
 			$contact_static->address = $objp->caddress;
 
 			$lastmodifiedcontact .= '<tr class="oddeven">';
-			// Name
-			$lastmodifiedcontact .= '<td class="nowrap tdoverflowmax200">';
-			$lastmodifiedcontact .= $thirdparty_static->getNomUrl(1);
-			$lastmodifiedcontact .= "</td>\n";
 			// Contact
 			$lastmodifiedcontact .= '<td>';
 			$lastmodifiedcontact .= $contact_static->getNomUrl(1);
 			$lastmodifiedcontact .= '</td>';
+			// Third party
+			$lastmodifiedcontact .= '<td class="nowrap tdoverflowmax200">';
+			$lastmodifiedcontact .= $thirdparty_static->getNomUrl(1);
+			$lastmodifiedcontact .= "</td>\n";
 			// Last modified date
 			$lastmodifiedcontact .= '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").' '.dol_print_date($thirdparty_static->date_modification, 'dayhour', 'tzuserrel')).'">';
 			$lastmodifiedcontact .= dol_print_date($thirdparty_static->date_modification, 'day', 'tzuserrel');

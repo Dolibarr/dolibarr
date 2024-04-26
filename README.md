@@ -7,7 +7,7 @@
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open-Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
+It's an Open-Source Software suite (written in PHP with JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
 You can freely use, study, modify or distribute it according to its license.
 
@@ -37,11 +37,10 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Advanced setup
+### Recommended setup
 
-You can use a web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
+You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 #### Generic install steps
 
@@ -49,7 +48,7 @@ On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 - Uncompress the downloaded .zip archive to copy the `dolibarr/htdocs` directory and all its files inside your web server root or get the files directly from GitHub (recommended if you know git as it makes it easier if you want to upgrade later):
 
-  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 3.6, 9.0, ...)
+  `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is the main version like 9.0, 19.0, ...)
 
 - Set up your web server to use `dolibarr/htdocs` as root if your web server does not already define a directory to point to.
 
@@ -187,7 +186,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country-specific features:
-  - Spanish Tax RE and ISPF
+  - Spanish Tax RE and IRPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp

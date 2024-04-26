@@ -54,6 +54,7 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
@@ -69,7 +70,7 @@ $changeaccount_buy = GETPOST('changeaccount_buy', 'array');
 '@phan-var-force string[] $changeaccount_buy';
 $changeaccount_sell = GETPOST('changeaccount_sell', 'array');
 '@phan-var-force string[] $changeaccount_sell';
-$searchCategoryProductOperator = (GETPOSTINT('search_category_product_operator') ? GETPOSTINT('search_category_product_operator') : 0);
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 '@phan-var-force string[] $searchCategoryProductList';
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -515,10 +516,12 @@ if ($resql) {
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
+	$massactionbutton = '';
+
 	if ($massaction !== 'set_default_account') {
 		$arrayofmassactions = array(
-			'changeaccount' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Save")
-			,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+			'changeaccount' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Save"),
+			'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		);
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions, 1);
 	}
@@ -546,7 +549,7 @@ if ($resql) {
 		/*
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
+		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 3);
 		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
 		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';

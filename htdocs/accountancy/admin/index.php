@@ -51,7 +51,7 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $list = array(
 	'ACCOUNTING_LENGTH_GACCOUNT',
 	'ACCOUNTING_LENGTH_AACCOUNT',
-//	'ACCOUNTING_LIMIT_LIST_VENTILATION'		   // there is already a global parameter to define the nb of records in lists, we must use it in priority. Having one parameter for nb of record for each page is deprecated.
+//	'ACCOUNTING_LIMIT_LIST_VENTILATION'		 // there is already a global parameter to define the nb of records in lists, we must use it in priority. Having one parameter for nb of record for each page is deprecated.
 //	'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
 //	'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
@@ -68,7 +68,7 @@ $error = 0;
  * Actions
  */
 
-if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT', 'setACCOUNTANCY_COMBO_FOR_AUX', 'setACCOUNTING_MANAGE_ZERO'))) {
+if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT', 'setACCOUNTANCY_ER_DATE_RECORD', 'setACCOUNTANCY_COMBO_FOR_AUX', 'setACCOUNTING_MANAGE_ZERO', 'setACCOUNTING_BANK_CONCILIATED'))) {
 	$constname = preg_replace('/^set/', '', $action);
 	$constvalue = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
@@ -346,6 +346,19 @@ if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
 print '</tr>';
 
 print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTANCY_ER_DATE_RECORD").'</td>';
+if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX");
 print ' - <span class="opacitymedium">'.$langs->trans("NotRecommended").'</span>';
 print '</td>';
@@ -392,6 +405,21 @@ foreach ($list as $key) {
 	print '</td>';
 	print '</tr>';
 }
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_BANK_CONCILIATED").'</td>';
+if (getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED') == 2) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=1">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=2">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+
 print '</table>';
 print '</div>';
 

@@ -131,6 +131,7 @@ class FormWebsite
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
+
 					if ($selected == $obj->rowid || $selected == $obj->code) {
 						print '<option value="'.$obj->code.'" selected>';
 					} else {
@@ -138,6 +139,9 @@ class FormWebsite
 					}
 					print $langs->trans($obj->label);
 					print '</option>';
+
+					$conf->cache['type_of_container'][$obj->code] = $obj->label;
+
 					$i++;
 				}
 				print "</select>";
@@ -170,7 +174,7 @@ class FormWebsite
 	 */
 	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
-		global $langs, $conf, $user;
+		global $langs, $user;
 
 		$langs->load("admin");
 
@@ -310,12 +314,15 @@ class FormWebsite
 
 	/**
 	 * Return HTML code for selection of page layout
+	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      HTML for model page boxes
 	 */
 	public function getContentPageTemplate($htmlContent = 'message')
 	{
 		global $user, $langs;
+
+		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
@@ -337,12 +344,11 @@ class FormWebsite
 
 		$templates = array(
 			'empty' => 'empty',
-			'text' => 'dynamic',
+			//'text' => 'dynamic',
 			'basic' => 'basic',
 			//'news'  => 'news',
 			//'commerce' => 'commerce',
 		);
-
 
 
 		foreach ($templates as $template => $templateFunction) {
@@ -367,7 +373,7 @@ class FormWebsite
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for website");
+						console.log("We choose a layout for website, we fill the field \''.$htmlContent.'\'");
 
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
@@ -377,6 +383,7 @@ class FormWebsite
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);
 						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+
 						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);

@@ -265,7 +265,7 @@ class Orders extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -1007,7 +1007,7 @@ class Orders extends DolibarrApi
 		$sql .= " JOIN ".MAIN_DB_PREFIX."expeditiondet as edet";
 		$sql .= " ON e.rowid = edet.fk_expedition";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cdet";
-		$sql .= " ON edet.fk_origin_line = cdet.rowid";
+		$sql .= " ON edet.fk_elementdet = cdet.rowid";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " ON cdet.fk_commande = c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);

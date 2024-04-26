@@ -71,7 +71,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -463,7 +463,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		}
 
 		// Error if some lines are not binded/ready to be journalized
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			$error++;
 			$errorforline++;
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
@@ -471,7 +471,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Warranty
 		if (!$errorforline) {
-			if (is_array($tabwarranty[$key])) {
+			if (isset($tabwaranty[$key]) && is_array($tabwarranty[$key])) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -713,7 +713,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			if (is_array($tabrevenuestamp[$key])) {
+			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
 						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
@@ -1129,7 +1129,7 @@ if (empty($action) || $action == 'view') {
 			$i++;
 			continue;
 		}
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			print '<tr class="oddeven">';
 			print "<!-- Some lines are not bound -->";
 			print "<td>".$date."</td>";
@@ -1151,7 +1151,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		if (is_array($tabwarranty[$key])) {
+		if (isset($tabwaranty[$key]) && is_array($tabwarranty[$key])) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty warranty -->";
@@ -1299,7 +1299,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Revenue stamp
-		if (is_array($tabrevenuestamp[$key])) {
+		if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 			foreach ($tabrevenuestamp[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty revenuestamp -->";
