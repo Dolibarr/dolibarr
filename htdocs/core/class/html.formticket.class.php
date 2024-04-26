@@ -155,11 +155,12 @@ class FormTicket
 	 *
 	 * Check required fields
 	 *
-	 * @param array $fields
-	 * @param int $errors
+	 * @param array $fields	Array of fields to check
+	 * @param int $errors	Reference of errors variable
 	 * @return void
 	 */
-	public static function checkRequiredFields($fields, &$errors) {
+	public static function checkRequiredFields(array $fields, int &$errors): void
+	{
 		global $langs;
 
 		foreach ($fields as $field => $type) {
@@ -178,6 +179,7 @@ class FormTicket
 	 * @param	int				$public					1=If we show the form for the public interface
 	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
 	 * @param	string			$action					[=''] Action in card
+	 * @param	Ticket			$object					[=NULL] Ticket object
 	 * @return 	void
 	 */
 	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '', Ticket $object = null)
