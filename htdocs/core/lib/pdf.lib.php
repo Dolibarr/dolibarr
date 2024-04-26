@@ -1304,13 +1304,13 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 
-	$paginationWidth = 18;
+	$fontRenderCorrection = 0;
 	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
-		$paginationWidth = 25;
+		$fontRenderCorrection = 10;
 	}
-	$pdf->SetXY($dims['wk'] - $dims['rm'] - $paginationWidth - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
+	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
 	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
-	$pdf->MultiCell($paginationWidth, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
