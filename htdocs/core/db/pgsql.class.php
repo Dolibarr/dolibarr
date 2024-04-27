@@ -850,7 +850,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
 	 * @param	string	$fieldid	Field name
-	 * @return  string     			Id of row
+	 * @return  int     			Id of row
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
