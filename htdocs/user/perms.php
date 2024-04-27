@@ -671,6 +671,12 @@ if ($result) {
 			print '<td>';
 		}
 		print $permlabel;
+		if ($langs->trans("Permission".$obj->id.'b') != "Permission".$obj->id.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';

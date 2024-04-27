@@ -375,17 +375,15 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-
+			if ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 				$this->id = $res['rowid'];
 				//$this->ref = $res['rowid'];
-				$this->fk_parent	= (int) $res['fk_parent'];
-				$this->label		= $res['label'];
+				$this->fk_parent = (int) $res['fk_parent'];
+				$this->label = $res['label'];
 				$this->description = $res['description'];
-				$this->color    	= $res['color'];
-				$this->position    	= $res['position'];
-				$this->socid		= (int) $res['fk_soc'];
+				$this->color = $res['color'];
+				$this->position = $res['position'];
+				$this->socid = (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
 				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];

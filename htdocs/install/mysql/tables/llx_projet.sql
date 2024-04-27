@@ -43,6 +43,7 @@ create table llx_projet
   note_private     	text,
   note_public      	text,
   email_msgid      	varchar(175),				-- if project or lead is created by email collector, we store here MSG ID. Do not use a too large value, it generates trouble with unique index
+  email_date 		datetime,					-- if project or lead is created by email collector, we store here Date of message
   --budget_days     real,                       -- budget in days is sum of field planned_workload of tasks
   opp_amount       	double(24,8),
   budget_amount    	double(24,8),

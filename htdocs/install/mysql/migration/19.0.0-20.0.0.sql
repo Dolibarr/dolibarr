@@ -298,6 +298,7 @@ ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementd
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
 ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
+ALTER TABLE llx_projet ADD COLUMN email_date datetime after email_msgid;
 
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
