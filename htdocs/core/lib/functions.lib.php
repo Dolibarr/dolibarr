@@ -5999,8 +5999,6 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
  */
 function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
-	global $conf;
-
 	$return = '';
 
 	if ($picto == 'setup') {
