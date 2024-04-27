@@ -477,8 +477,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Type of third party filter
 	print '&nbsp; &nbsp;';
 	$formcompany = new FormCompany($db);
-	// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-	$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); 
+	// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on ascending label.
+	$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC');
 	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"), 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 
 	print '<br>';
