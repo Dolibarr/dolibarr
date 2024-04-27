@@ -114,7 +114,7 @@ if (($search_employee != '' && $search_employee >= 0)) {
 }
 $sqlfilter= '';
 if (!empty($filters)) {
-	$sqlfilter = join(' AND ', $filters);
+	$sqlfilter = implode(' AND ', $filters);
 }
 // Load hierarchy of users
 $user_arbo_all = $userstatic->get_full_tree(0, '');
@@ -196,17 +196,30 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 				if (!empty($user_arbo_all[$idparent])) {
 					$val = $user_arbo_all[$idparent];
 					$userstatic->id = $val['id'];
-					$userstatic->ref = $val['id'];
+					$userstatic->ref = (string) $val['id'];
 					$userstatic->login = $val['login'];
 					$userstatic->firstname = $val['firstname'];
 					$userstatic->lastname = $val['lastname'];
-					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
 					$userstatic->email = $val['email'];
 					$userstatic->gender = $val['gender'];
 					$userstatic->socid = $val['fk_soc'];
 					$userstatic->admin = $val['admin'];
 					$userstatic->entity = $val['entity'];
 					$userstatic->photo = $val['photo'];
+
+					$entity = $val['entity'];
+					$entitystring = '';
+
+					// TODO Set of entitystring should be done with a hook
+					if (isModEnabled('multicompany') && is_object($mc)) {
+						if (empty($entity)) {
+							$entitystring = $langs->trans("AllEntities");
+						} else {
+							$mc->getInfo($entity);
+							$entitystring = $mc->label;
+						}
+					}
 
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
@@ -238,7 +251,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					// We should not be here. If a record has a parent id, parent id should be into $user_arbo_all
 					$data[$key]['fk_menu'] = -2;
 					if (empty($data[-2])) {
-						$li = '<span class="opacitymedium">'.$langs->trans("ParentIDDoesNotExistAnymore").'</span>';
+						$li = '<span class="opacitymedium">'.$langs->trans("WarningParentIDDoesNotExistAnymore").'</span>';
 						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
 						$data[-2] = array(
 							'rowid'=>'-2',
