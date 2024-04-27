@@ -1477,6 +1477,8 @@ $totalarray['val']['f.total_vat']=0;
 $totalarray['val']['f.total_localtax1']=0;
 $totalarray['val']['f.total_localtax1']=0;
 $totalarray['val']['f.total_ttc']=0;
+$totalarray['val']['totalam']=0;
+$totalarray['val']['rtp']=0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -1643,7 +1645,8 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-		}
+		}			// Avoid PHP Warning:  Undefined array key "totalam" on line 1890
+
 
 		// Type
 		if (!empty($arrayfields['f.type']['checked'])) {
@@ -1885,10 +1888,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
 			}
-			// Avoid PHP Warning:  Undefined array key "totalam" on line 1890
-			if (!empty($totalarray['val']['totalam'])) {
-				$totalarray['val']['totalam'] += $totalpay;
-			}
+			$totalarray['val']['totalam'] += $totalpay;
 		}
 
 		if (!empty($arrayfields['rtp']['checked'])) {
