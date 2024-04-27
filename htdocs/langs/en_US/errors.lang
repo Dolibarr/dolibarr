@@ -380,7 +380,7 @@ WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s 
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
 WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Stock movement already reversed
-
+WarningParentIDDoesNotExistAnymore=Parent this parent ID does not exists anymore
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s

@@ -1498,8 +1498,14 @@ LineDescription
 LineDiscount
 LineID
 LineLabel
+LineLT1Rate
+LineLT1Type
+LineLT2Rate
+LineLT2Type
 LineQty
 LineTotalHT
+LineTotalLT1
+LineTotalLT2
 LineTotalTTC
 LineTotalVAT
 LineUnitPrice
@@ -2251,6 +2257,7 @@ PriceQtyMinHTCurrency
 PriceU
 PrintGCPDesc
 PrintIPPDesc
+PRINTIPP_SSL
 PrintMethod
 PrintTestDescprintgcp
 PrintTestDescprintipp
@@ -2598,6 +2605,9 @@ StateId
 StateOrigin
 StatusAtInstall
 StatusDebitCredit
+StatusMotif0
+StatusMotif1
+StatusMotif2
 StatusOrderApproved
 StatusOrderApprovedShort
 StatusOrderOnProcessShort

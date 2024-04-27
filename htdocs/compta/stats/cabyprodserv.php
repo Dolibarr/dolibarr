@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
  *
