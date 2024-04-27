@@ -2649,7 +2649,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$parameters = array('linkback' => $linkback, 'morehtmlref' => $morehtmlref);
 		$reshook = $hookmanager->executeHooks('printBannerTab', $parameters, $object, $action);
 		// these are not used yet in this file
-		$moreparam = $morehtmlleft = $morehtmlright = '';
+		$moreparam = $morehtmlleft = $morehtmlstatus = $morehtmlright = '';
 		if (empty($reshook)) {
 			$morehtmlref .= $hookmanager->resArray['morehtmlref'];
 			$moreparam .= $hookmanager->resArray['moreparam'];
