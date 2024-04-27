@@ -178,8 +178,8 @@ interface Database
 	/**
 	 *    Return datas as an array
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array|null|false           							Result with row
 	 */
 	public function fetch_array($resultset);
 	// phpcs:enable
@@ -255,14 +255,14 @@ interface Database
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
 	/**
-	 *    Connection to server
+	 * Connection to server
 	 *
-	 * @param   string $host database server host
-	 * @param   string $login login
-	 * @param   string $passwd password
-	 * @param   string $name name of database (not used for mysql, used for pgsql)
-	 * @param   int    $port Port of database server
-	 * @return  resource            Database access handler
+	 * @param   string 			$host 						Database server host
+	 * @param   string 			$login 						Login
+	 * @param   string 			$passwd 					Password
+	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
+	 * @param   int    			$port 						Port of database server
+	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0);
@@ -525,8 +525,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
-	 * @return  Object|false                    				Object result line or false if KO or end of cursor
+	 * @param   mysqli_result|resource|PgSql\Connection|SQLite3Result|		$resultset 		Handler of the desired request
+	 * @return  Object|false                    											Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable
