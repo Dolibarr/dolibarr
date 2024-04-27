@@ -954,6 +954,10 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -992,7 +996,10 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."',";
+			$sql .= " '".$this->db->escape($this->name_alias)."',";
+			$sql .= " ".((int) $this->entity).",";
+			$sql .= " '".$this->db->idate($this->date_creation)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
@@ -1012,6 +1019,7 @@ class Societe extends CommonObject
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
