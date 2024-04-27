@@ -179,7 +179,7 @@ class FormTicket
 	 * @param	int				$public					1=If we show the form for the public interface
 	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
 	 * @param	string			$action					[=''] Action in card
-	 * @param	Ticket			$object					[=NULL] Ticket object
+	 * @param	?Ticket			$object					[=NULL] Ticket object
 	 * @return 	void
 	 */
 	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '', Ticket $object = null)
