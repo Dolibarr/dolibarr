@@ -262,7 +262,7 @@ interface Database
 	 * @param   string 			$passwd 					Password
 	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
 	 * @param   int    			$port 						Port of database server
-	 * @return  false|resource|mysqli|mysqliDoli|SQLite3    Database access handler
+	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0);
