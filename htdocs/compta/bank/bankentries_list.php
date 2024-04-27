@@ -822,7 +822,7 @@ if ($resql) {
 	// Form to reconcile
 	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
-		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT') > 0) {
+		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT')) {
 			print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
 			print '<input class="flat width175" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
 		} else {
