@@ -20,8 +20,23 @@
  */
 
 /**
+ *	\file       htdocs/variants/class/ProductCombination.class.php
+ *	\ingroup    variants
+ *	\brief      File of the ProductCombination class
+ */
+
+/**
  * Class ProductCombination
- * Used to represent a product combination
+ * Used to represent the relation between a product and one of its variants.
+ *
+ * Example: a product "shirt" has two variants "shirt XL white" and "shirt XL grey".
+ * This is represented with two ProductCombination objects:
+ * - One for "shirt XL white":
+ *     * $object->fk_product_parent     ID of the Product object "shirt"
+ *     * $object->fk_product_child      ID of the Product object "shirt XL white"
+ * - Another for "shirt XL grey":
+ *     * $object->fk_product_parent     ID of the Product object "shirt"
+ *     * $object->fk_product_child      ID of the Product object "shirt XL grey"
  */
 class ProductCombination
 {
@@ -32,19 +47,19 @@ class ProductCombination
 	public $db;
 
 	/**
-	 * Rowid of combination
+	 * Rowid of this ProductCombination
 	 * @var int
 	 */
 	public $id;
 
 	/**
-	 * Rowid of parent product
+	 * Rowid of the parent Product
 	 * @var int
 	 */
 	public $fk_product_parent;
 
 	/**
-	 * Rowid of child product
+	 * Rowid of the variant Product
 	 * @var int
 	 */
 	public $fk_product_child;
@@ -56,7 +71,8 @@ class ProductCombination
 	public $variation_price;
 
 	/**
-	 * Is the price variation a relative variation? Can be an array if multiprice feature per level is enabled.
+	 * Is the price variation a relative variation?
+	 * Can be an array if multiprice feature per level is enabled.
 	 * @var bool|array
 	 */
 	public $variation_price_percentage = false;
@@ -86,12 +102,14 @@ class ProductCombination
 	public $variation_ref_ext = '';
 
 	/**
-	 * @var string error
+	 * Error message
+	 * @var string
 	 */
 	public $error;
 
 	/**
-	 * @var string[] array of errors
+	 * Array of error messages
+	 * @var string[]
 	 */
 	public $errors = array();
 
@@ -109,10 +127,10 @@ class ProductCombination
 	}
 
 	/**
-	 * Retrieves a combination by its rowid
+	 * Retrieves a ProductCombination by its rowid
 	 *
-	 * @param 	int 	$rowid 		Row id
-	 * @return 	int 				Return integer <0 KO, >0 OK
+	 * @param   int     $rowid      ID of the ProductCombination
+	 * @return  -1|1                -1 if KO, 1 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -153,7 +171,7 @@ class ProductCombination
 	 *
 	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
 	 * @param 	bool 	$useCache 		To use cache or not
-	 * @return 	int 					Return integer <0 KO, >0 OK
+	 * @return 	-1|1 					-1 if KO, 1 if OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
