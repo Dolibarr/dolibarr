@@ -1646,7 +1646,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Type
 		if (!empty($arrayfields['f.type']['checked'])) {
 			print '<td class="nowrap">';
