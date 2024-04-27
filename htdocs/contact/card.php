@@ -1331,8 +1331,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		$morehtmlref .= '</div>';
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+		$parameters = array('linkback' => $linkback, 'morehtmlref' => $morehtmlref);
+		$reshook = $hookmanager->executeHooks('printBannerTab', $parameters, $object, $action);
+		// these are not used yet in this file
+		$moreparam = $morehtmlleft = $morehtmlstatus = $morehtmlright = '';
+		if (empty($reshook)) {
+			$morehtmlref .= $hookmanager->resArray['morehtmlref'];
+			$moreparam .= $hookmanager->resArray['moreparam'];
+			$morehtmlleft .= $hookmanager->resArray['morehtmlleft'];
+			$morehtmlstatus .= $hookmanager->resArray['morehtmlstatus'];
+			$morehtmlright .= $hookmanager->resArray['morehtmlright'];
+			$linkback .= $hookmanager->resArray['linkback'];
+		} elseif ($reshook > 0) {
+			$morehtmlref = $hookmanager->resArray['morehtmlref'];
+			$moreparam = $hookmanager->resArray['moreparam'];
+			$morehtmlleft = $hookmanager->resArray['morehtmlleft'];
+			$morehtmlstatus = $hookmanager->resArray['morehtmlstatus'];
+			$morehtmlright = $hookmanager->resArray['morehtmlright'];
+			$linkback = $hookmanager->resArray['linkback'];
+		}
 
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, $moreparam, 0, $morehtmlleft, $morehtmlstatus, 0, $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
