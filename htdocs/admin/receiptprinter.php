@@ -465,7 +465,7 @@ if ($mode == 'template' && $user->admin) {
 			if (!is_array($printer->listprinterstemplates[$line])) {
 				continue;
 			}
-			if ($action == 'edittemplate' && !empty($printer->listprinterstemplates[$line]['rowid']) && $printer->listprinterstemplates[$line]['rowid'] == $templateid) {
+			if ($action == 'edittemplate' && !empty($printer->listprinterstemplates[$line]) && !empty($printer->listprinterstemplates[$line]['rowid']) && $printer->listprinterstemplates[$line]['rowid'] == $templateid) {
 				print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 				print '<td class="wordbreak">';
