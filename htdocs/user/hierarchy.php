@@ -51,13 +51,13 @@ $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 
-$search_statut = GETPOST('search_statut', 'int');
-if ($search_statut == '' || $search_statut == '0') {
-	$search_statut = '1';
+$search_status = GETPOST('search_statut', 'int') ? GETPOST('search_statut', 'int') : GETPOST('search_status', 'int');
+if ($search_status === '') {
+	$search_status = '1';
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
-	$search_statut = "";
+	$search_status = "";
 }
 
 $search_employee = -1;
@@ -106,8 +106,8 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
 
 $filters = [];
-if (($search_statut != '' && $search_statut >= 0)) {
-	$filters[] = "statut = ".((int) $search_statut);
+if (($search_status != '' && $search_status >= 0)) {
+	$filters[] = "statut = ".((int) $search_status);
 }
 if (($search_employee != '' && $search_employee >= 0)) {
 	$filters[] = "employee = ".((int) $search_employee);
@@ -256,7 +256,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	}
 	//var_dump($data);exit;
 
-	$param = "&search_statut=".urlencode($search_statut);
+	$param = "&search_status=".urlencode($search_status);
 	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
@@ -299,7 +299,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right parentonrightofpage">';
-	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
+	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
 	print '</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
