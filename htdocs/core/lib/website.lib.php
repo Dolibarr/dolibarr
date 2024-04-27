@@ -570,7 +570,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	}
 
 	if ($newurl) {
-		if ($parameters) {
+		if (!empty($parameters)) {
 			$separator = (parse_url($newurl, PHP_URL_QUERY) == null) ? '?' : '&';
 			$newurl = $newurl . $separator . http_build_query($parameters);
 		}
