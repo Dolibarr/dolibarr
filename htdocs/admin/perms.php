@@ -35,11 +35,11 @@ $langs->loadLangs(array('admin', 'users', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 
+$entity = $conf->entity;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$entity = $conf->entity;
 
 
 /*
@@ -64,6 +64,8 @@ if ($action == 'remove') {
 /*
  * View
  */
+
+$form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
