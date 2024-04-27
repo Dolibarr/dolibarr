@@ -4607,7 +4607,27 @@ if ($action == 'create') {
 
 	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '');
+	$parameters = array('linkback' => $linkback, 'morehtmlref' => $morehtmlref);
+	$reshook = $hookmanager->executeHooks('printBannerTab', $parameters, $object, $action);
+	// these are not used yet in this file
+	$moreparam = $morehtmlleft = $morehtmlstatus = $morehtmlright = '';
+	if (empty($reshook)) {
+		$morehtmlref .= $hookmanager->resArray['morehtmlref'];
+		$moreparam .= $hookmanager->resArray['moreparam'];
+		$morehtmlleft .= $hookmanager->resArray['morehtmlleft'];
+		$morehtmlstatus .= $hookmanager->resArray['morehtmlstatus'];
+		$morehtmlright .= $hookmanager->resArray['morehtmlright'];
+		$linkback .= $hookmanager->resArray['linkback'];
+	} elseif ($reshook > 0) {
+		$morehtmlref = $hookmanager->resArray['morehtmlref'];
+		$moreparam = $hookmanager->resArray['moreparam'];
+		$morehtmlleft = $hookmanager->resArray['morehtmlleft'];
+		$morehtmlstatus = $hookmanager->resArray['morehtmlstatus'];
+		$morehtmlright = $hookmanager->resArray['morehtmlright'];
+		$linkback = $hookmanager->resArray['linkback'];
+	}
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam, 0, $morehtmlleft, $morehtmlstatus, 0, $morehtmlright);
 
 	// Call Hook tabContentViewInvoice
 	$parameters = array();
