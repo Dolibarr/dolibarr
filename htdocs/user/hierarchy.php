@@ -60,6 +60,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_statut = "";
 }
 
+$search_employee = -1;
 if ($contextpage == 'employeelist') {
 	$search_employee = 1;
 }
@@ -104,10 +105,24 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
 
-
+$filters = [];
+if (($search_statut != '' && $search_statut >= 0)) {
+	$filters[] = "statut = ".((int) $search_statut);
+}
+if (($search_employee != '' && $search_employee >= 0)) {
+	$filters[] = "employee = ".((int) $search_employee);
+}
+$sqlfilter= '';
+if (!empty($filters)) {
+	$sqlfilter = join(' AND ', $filters);
+}
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
-
+$user_arbo_all = $userstatic->get_full_tree(0, '');
+if ($sqlfilter) {
+	$user_arbo = $userstatic->get_full_tree(0, $sqlfilter);
+} else {
+	$user_arbo = $user_arbo_all;
+}
 
 // Count total nb of records
 $nbtotalofrecords = count($user_arbo);
@@ -121,7 +136,8 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	//var_dump($fulltree);
 	// Define data (format for treeview)
 	$data = array();
-	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[0] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
 		$userstatic->ref = $val['id'];
@@ -159,15 +175,86 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
 
-		$data[] = array(
+		$data[$val['rowid']] = array(
 			'rowid'=>$val['rowid'],
-			'fk_menu'=>$val['fk_user'],
+			'fk_menu'=>$val['fk_user'],	// TODO Replace fk_menu with fk_parent
 			'statut'=>$val['statut'],
 			'entry'=>$entry
 		);
 	}
 
-	//var_dump($data);
+	// Loop on $data to link user linked to a parent that was excluded by the filter
+	foreach ($data as $key => $tmpdata) {
+		$idparent = $tmpdata['fk_menu'];
+		// Loop to check if parent exists
+		if ($idparent > 0) {
+			$parentfound = array_key_exists($idparent, $data) ? 1 : 0;
+
+			$i = 0;
+			while (!$parentfound && $i < 50) {
+				// Parent was not found but we need it to show the child, so we reintroduce the parent
+				if (!empty($user_arbo_all[$idparent])) {
+					$val = $user_arbo_all[$idparent];
+					$userstatic->id = $val['id'];
+					$userstatic->ref = $val['id'];
+					$userstatic->login = $val['login'];
+					$userstatic->firstname = $val['firstname'];
+					$userstatic->lastname = $val['lastname'];
+					$userstatic->statut = $val['statut'];
+					$userstatic->email = $val['email'];
+					$userstatic->gender = $val['gender'];
+					$userstatic->socid = $val['fk_soc'];
+					$userstatic->admin = $val['admin'];
+					$userstatic->entity = $val['entity'];
+					$userstatic->photo = $val['photo'];
+
+					$li = '<span class="opacitymedium">';
+					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
+					if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
+						$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+					} elseif ($userstatic->admin) {
+						$li .= img_picto($langs->trans("Administrator"), 'star');
+					}
+					$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
+					$li .= ' - <span class="opacitymedium">'.$langs->trans("ExcludedByFilter").'</span>';
+					$li .= '</span>';
+
+					$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
+
+					$data[$idparent] = array(
+						'rowid' => $idparent,
+						'fk_menu' => $user_arbo_all[$idparent]['fk_user'],
+						'statut' => $user_arbo_all[$idparent]['statut'],
+						'entry' => $entry
+					);
+					$idparent = $user_arbo_all[$idparent]['fk_user'];
+					if ($idparent > 0) {
+						$parentfound = array_key_exists($idparent, $data) ? 1 : 0;
+					} else {
+						$parentfound = 1;
+					}
+					//var_dump($data[$idparent]);
+				} else {
+					// We should not be here. If a record has a parent id, parent id should be into $user_arbo_all
+					$data[$key]['fk_menu'] = -2;
+					if (empty($data[-2])) {
+						$li = '<span class="opacitymedium">'.$langs->trans("ParentIDDoesNotExistAnymore").'</span>';
+						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
+						$data[-2] = array(
+							'rowid'=>'-2',
+							'fk_menu'=>null,
+							'statut'=>'1',
+							'entry'=>$entry
+						);
+					}
+					$parentfound = 1;
+				}
+
+				$i++;
+			}
+		}
+	}
+	//var_dump($data);exit;
 
 	$param = "&search_statut=".urlencode($search_statut);
 	$param = "&contextpage=".urlencode($contextpage);
