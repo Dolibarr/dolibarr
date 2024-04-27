@@ -2528,7 +2528,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	$showimage = 1;
 	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 	// @phan-suppress-next-line PhanUndeclaredMethod
-	$showbarcode = empty($conf->barcode->enabled) ? 0 : (empty($object->barcode) ? 0 : 1);
+	$showbarcode = !isModEnabled('barcode') ? 0 : (empty($object->barcode) ? 0 : 1);
 	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
 		$showbarcode = 0;
 	}
@@ -2848,7 +2848,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$morehtmlref .= '</div>';
 	}
 
-	$parameters = array('morehtmlref' => $morehtmlref);
+	$parameters = array('morehtmlref' => &$morehtmlref, 'moreparam' => &$moreparam, 'morehtmlleft' => &$morehtmlleft, 'morehtmlstatus' => &$morehtmlstatus, 'morehtmlright' => &$morehtmlright);
 	$reshook = $hookmanager->executeHooks('formDolBanner', $parameters, $object, $action);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
