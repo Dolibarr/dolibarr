@@ -476,17 +476,17 @@ if ($mode == 'template' && $user->admin) {
 				print '</td>';
 			} else {
 				print '<td>'.($printer->listprinterstemplates[$line]['name'] ?? '').'</td>';
-				print '<td class="wordbreak">'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template']).'</td>';
+				print '<td class="wordbreak">'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template'] ?? '').'</td>';
 				// edit icon
 				print '<td class="center"><a class="editfielda paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=edittemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print img_picto($langs->trans("Edit"), 'edit');
 				print '</a>';
 				// delete icon
-				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=deletetemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name']).'">';
+				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=deletetemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name'] ?? '').'">';
 				print img_picto($langs->trans("Delete"), 'delete');
 				print '</a>';
 				// test icon
-				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=testtemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name']).'">';
+				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=testtemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name'] ?? '').'">';
 				print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
 				print '</a></td>';
 			}
