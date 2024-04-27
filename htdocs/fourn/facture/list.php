@@ -1645,9 +1645,8 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-		}			// Avoid PHP Warning:  Undefined array key "totalam" on line 1890
-
-
+		}
+		
 		// Type
 		if (!empty($arrayfields['f.type']['checked'])) {
 			print '<td class="nowrap">';
