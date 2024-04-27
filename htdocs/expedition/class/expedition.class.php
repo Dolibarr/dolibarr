@@ -3139,12 +3139,10 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 
 		if (!$error) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->errors[] = $this->error;
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$this->errors[] = $this->error;
+				$error++;
 			}
 		}
 
