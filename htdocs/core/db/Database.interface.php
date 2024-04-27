@@ -525,7 +525,7 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   mysqli_result|resource|PgSql\Connection|SQLite3Result|		$resultset 		Handler of the desired request
+	 * @param   mysqli_result|resource|PgSql\Connection|SQLite3Result		$resultset 		Handler of the desired request
 	 * @return  Object|false                    											Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
