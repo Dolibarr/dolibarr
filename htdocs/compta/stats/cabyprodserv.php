@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
  *
@@ -477,7 +477,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Type of third party filter
 	print '&nbsp; &nbsp;';
 	$formcompany = new FormCompany($db);
-	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"));
+	// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on ascending label.
+	$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC');
+	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"), 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 
 	print '<br>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');

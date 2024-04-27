@@ -18,11 +18,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/variants/class/ProductAttribute.class.php
+ *	\ingroup    variants
+ *	\brief      File of the ProductAttribute class
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * Class ProductAttribute
- * Used to represent a product attribute
+ * Used to represent a Product attribute
+ * Examples:
+ * - Attribute 'color' (of type ProductAttribute) with values 'white', 'blue' or 'red' (each of type ProductAttributeValue).
+ * - Attribute 'size' (of type ProductAttribute) with values 'S', 'L' or 'XL' (each of type ProductAttributeValue).
  */
 class ProductAttribute extends CommonObject
 {
@@ -31,6 +40,7 @@ class ProductAttribute extends CommonObject
 	 * @var DoliDB
 	 */
 	public $db;
+
 	/**
 	 * @var string ID of module.
 	 */
@@ -144,6 +154,7 @@ class ProductAttribute extends CommonObject
 	 * @var ProductAttributeValue[]
 	 */
 	public $lines = array();
+
 	/**
 	 * @var ProductAttributeValue
 	 */
@@ -326,7 +337,7 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Returns an array of all product variants
+	 * Returns an array with all the ProductAttribute objects of a given entity
 	 *
 	 * @return ProductAttribute[]
 	 */
@@ -366,9 +377,9 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Updates a product attribute
 	 *
-	 * @param   User    $user      Object user
-	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int 				Return integer <0 KO, >0 OK
+	 * @param   User            $user           User who updates the attribute
+	 * @param   0|1             $notrigger      1 = Do not execute trigger (0 by default)
+	 * @return 	int<min,-1>|1                   <0 if KO, 1 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -782,9 +793,9 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Returns the number of products that are using this attribute
+	 * Return the number of product variants using this attribute
 	 *
-	 * @return int
+	 * @return int<-1,max>		-1 if K0, nb of variants using this attribute
 	 */
 	public function countChildProducts()
 	{
@@ -793,7 +804,7 @@ class ProductAttribute extends CommonObject
 		$count = 0;
 
 		// Clean parameters
-		$this->id = $this->id > 0 ? $this->id : 0;
+		$this->id = ($this->id > 0) ? $this->id : 0;
 
 		// Check parameters
 		if (empty($this->id)) {
@@ -827,9 +838,9 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Test if used by a product
+	 * Test if this attribute is used by a Product
 	 *
-	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
+	 * @return -1|0|1			Return -1 if KO, 0 if not used, 1 if used
 	 */
 	public function isUsed()
 	{

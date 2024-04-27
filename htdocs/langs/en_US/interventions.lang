@@ -29,7 +29,6 @@ InterventionCardsAndInterventionLines=Interventions and lines of interventions
 InterventionClassifyBilled=Classify "Billed"
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
-StatusInterInvoiced=Billed
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by email
 InterventionCreatedInDolibarr=Intervention %s created

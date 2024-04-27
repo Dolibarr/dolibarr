@@ -310,12 +310,12 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Connection to server
 	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		integer	$port		Port of database server
-	 *	@return		SQLite3|string				Database access handler
+	 *	@param	    string			$host		database server host
+	 *	@param	    string			$login		login
+	 *	@param	    string			$passwd		password
+	 *	@param		string			$name		name of database (not used for mysql, used for pgsql)
+	 *	@param		integer			$port		Port of database server
+	 *	@return		SQLite3|false				Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -338,7 +338,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (Exception $e) {
 			$this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
-			return '';
+			return false;
 		}
 
 		//print "Resultat fonction connect: ".$this->db;

@@ -39,7 +39,6 @@ WithdrawalsSetup=Direct debit payment setup
 CreditTransferSetup=Credit transfer setup
 WithdrawStatistics=Direct debit payment statistics
 CreditTransferStatistics=Credit transfer statistics
-Rejects=Rejects
 LastWithdrawalReceipt=Latest %s direct debit receipts
 MakeWithdrawRequest=Make a direct debit payment request
 MakeWithdrawRequestStripe=Make a direct debit payment request via Stripe
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
 RefSalary=Salary
 NoSalaryInvoiceToWithdraw=No salary waiting for a '%s'. Go on tab '%s' on salary card to make a request.
 SalaryInvoiceWaitingWithdraw=Salaries waiting for payment by credit transfer
-

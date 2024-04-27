@@ -326,8 +326,8 @@ class modFournisseur extends DolibarrModules
 
 		// Exports
 		//--------
-		$uselocaltax1 = $mysoc->localtax1_assuj;
-		$uselocaltax2 = $mysoc->localtax2_assuj;
+		$uselocaltax1 = $mysoc->localtax1_assuj ?? 0;
+		$uselocaltax2 = $mysoc->localtax2_assuj ?? 0;
 
 		$r = 0;
 

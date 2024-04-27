@@ -289,31 +289,31 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="1"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbMajMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbNumMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbSpeMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbIteConsecutive")."</td>";
-	print '<td><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 
