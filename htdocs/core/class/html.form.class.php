@@ -8089,7 +8089,7 @@ class Form
 	 * @param 	int			$forcecombo           	Force to load all values and output a standard combobox (with no beautification)
 	 * @param 	int<0,1>	$disabled             	1=Html component is disabled
 	 * @param	string		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string		$objectfield          	Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param	string		$objectfield          	Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Object@module:xxx' (old syntax 'Module_Object:xxx') or 'Object:options_xxx' or 'Object@module:options_xxx' (old syntax 'Module_Object:options_xxx')
 	 * @return  string	    						Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
