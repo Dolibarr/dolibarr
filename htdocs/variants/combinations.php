@@ -29,9 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOSTINT('id');
-$valueid = GETPOSTINT('valueid');
+$id = GETPOSTINT('id');                             // ID of the parent Product
 $ref = GETPOST('ref', 'alpha');
+
+$combination_id = GETPOSTINT('combination_id');     // ID of the combination
+
+$reference = GETPOST('reference', 'alpha');         // Reference of the variant Product
 
 $weight_impact = GETPOSTFLOAT('weight_impact', 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
@@ -40,7 +43,6 @@ $price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOS
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 
-$reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
 $action = GETPOST('action', 'aZ09');
@@ -268,8 +270,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
-} elseif ($action === 'update' && $valueid > 0) {
-	if ($prodcomb->fetch($valueid) < 0) {
+} elseif ($action === 'update' && $combination_id > 0) {
+	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -341,7 +343,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id, true);
 
 if ($action === 'confirm_deletecombination') {
-	if ($prodcomb->fetch($valueid) > 0) {
+	if ($prodcomb->fetch($combination_id) > 0) {
 		$db->begin();
 
 		if ($prodcomb->delete($user) > 0 && (empty($delete_product) || ($delete_product == 'on' && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0))) {
@@ -356,7 +358,7 @@ if ($action === 'confirm_deletecombination') {
 		$action = '';
 	}
 } elseif ($action === 'edit') {
-	if ($prodcomb->fetch($valueid) < 0) {
+	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -368,7 +370,7 @@ if ($action === 'confirm_deletecombination') {
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
 
-	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($valueid);
+	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($combination_id);
 } elseif ($action === 'confirm_copycombination') {
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
@@ -610,9 +612,9 @@ if (!empty($id) || !empty($ref)) {
 
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
-		if ($valueid > 0) {
-			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
+		print '<input type="hidden" name="action" value="'.(($combination_id > 0) ? "update" : "create").'">'."\n";
+		if ($combination_id > 0) {
+			print '<input type="hidden" name="combination_id" value="'.$combination_id.'">'."\n";
 		}
 
 		print dol_get_fiche_head();
@@ -784,11 +786,11 @@ if (!empty($id) || !empty($ref)) {
 		print '</form>';
 	} else {
 		if ($action === 'delete') {
-			if ($prodcomb->fetch($valueid) > 0) {
+			if ($prodcomb->fetch($combination_id) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".urlencode((string) ($id))."&valueid=".urlencode((string) ($valueid)),
+					"combinations.php?id=".urlencode((string) ($id))."&combination_id=".urlencode((string) ($combination_id)),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
@@ -928,14 +930,8 @@ if (!empty($id) || !empty($ref)) {
 
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
-				$iMax = count($productCombination2ValuePairs);
-
-				for ($i = 0; $i < $iMax; $i++) {
-					echo dol_htmlentities($productCombination2ValuePairs[$i]);
-					if ($i !== ($iMax - 1)) {
-						echo ', ';
-					}
+				foreach ($comb2val->fetchByFkCombination($currcomb->id) as $pc2v) {
+					print dol_htmlentities($pc2v).'<br>';
 				}
 				print '</td>';
 				print '<td class="right">'.($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '').'</td>';
@@ -946,8 +942,8 @@ if (!empty($id) || !empty($ref)) {
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
 
 				print '<td class="right">';
-				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
-				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
+				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&combination_id='.$currcomb->id.'">'.img_edit().'</a>';
+				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&combination_id='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Action column
