@@ -8066,7 +8066,7 @@ class Form
 				if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
 					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
 					$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
-				} elseif (empty($objectdesc)) {
+				} elseif (empty($objectdesc)) {	// For backward compatibility
 					$objectdesc = $objectdescorig;
 				}
 			}
