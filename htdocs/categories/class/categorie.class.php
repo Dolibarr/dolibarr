@@ -1377,7 +1377,7 @@ class Categorie extends CommonObject
 				 * So if the result have the same id, update is not for label, and if result have an other one,
 				 * update may be for label.
 				 */
-				if ($obj && $obj[0] > 0 && $obj[0] != $this->id) {
+				if (!empty($obj) && $obj[0] > 0 && $obj[0] != $this->id) {
 					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
