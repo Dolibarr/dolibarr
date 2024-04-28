@@ -493,7 +493,7 @@ interface Database
 	/**
 	 * Free last resultset used.
 	 *
-	 * @param  	resource 		$resultset 		Free cursor
+	 * @param  	resource|mysqli_result|SQLite3Result	$resultset 		Free cursor
 	 * @return  void
 	 */
 	public function free($resultset = null);
