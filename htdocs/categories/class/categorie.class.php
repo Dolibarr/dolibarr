@@ -1201,7 +1201,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are fields with buildPathFromId
+				// fields are filled with buildPathFromId
 				$this->cats[$obj->rowid]['fullpath'] = '';
 				$this->cats[$obj->rowid]['fulllabel'] = '';
 				$i++;
