@@ -141,6 +141,15 @@ if ($dirscc != 'disabled') {
 // Get technical debt with PHPStan
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --version';
+	print 'Execute PHPStan to get the version: '.$commandcheck."\n";
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
+$phpstanversion = $output_arrtd[0];
+
+$output_arrtd = array();
+if ($dirphpstan != 'disabled') {
 	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
@@ -1035,7 +1044,7 @@ if ($dirphpstan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpstanversion.' - level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
