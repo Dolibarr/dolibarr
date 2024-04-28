@@ -37,7 +37,7 @@
 
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require_once __DIR__ . '/' . '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';

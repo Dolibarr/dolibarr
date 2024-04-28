@@ -28,7 +28,7 @@ if (!defined('NOTOKENRENEWAL')) {
  *      \brief      Page des information dolistore
  */
 
-require "../../../main.inc.php";
+require_once __DIR__ . '/' . '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
 

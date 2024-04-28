@@ -24,7 +24,7 @@
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require_once __DIR__ . '/' . '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

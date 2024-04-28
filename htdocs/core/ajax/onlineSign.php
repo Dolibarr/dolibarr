@@ -52,7 +52,7 @@ $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['ent
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
-include '../../main.inc.php';
+require_once __DIR__ . '/' . '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');

@@ -23,6 +23,7 @@
  *      \brief      This script returns content of a directory for filetree
  */
 
+require_once __DIR__.'/../../main.inc.php';
 
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'] and encode by js escape() if ajax is used or encoded by urlencode if mode=noajax
@@ -41,7 +42,6 @@ if (!defined('NOREQUIREAJAX')) {
 }
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
-	$res = @include '../../main.inc.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';

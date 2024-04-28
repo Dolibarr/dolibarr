@@ -42,7 +42,7 @@ if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
 
-require_once '../main.inc.php';
+require_once __DIR__ . '/' . '../main.inc.php';
 
 
 /*

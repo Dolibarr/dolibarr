@@ -128,7 +128,7 @@ function llxFooter()
 {
 }
 
-require 'main.inc.php'; // Load $user and permissions
+require_once __DIR__ . '/' . 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');

@@ -22,7 +22,7 @@
  * \ingroup Accountancy (Double entries)
  * \brief 	Card customer ventilation
  */
-require '../../main.inc.php';
+require_once __DIR__ . '/' . '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';

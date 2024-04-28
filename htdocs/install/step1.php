@@ -801,6 +801,7 @@ if ($ret) {
  *  @param	string		$main_dir		Full path name to main.inc.php file
  *  @return	void
  */
+/* UNUSED DEPRECATED as of 2024-04. To be delete in 2025-04
 function write_main_file($mainfile, $main_dir)
 {
 	$fp = @fopen("$mainfile", "w");
@@ -812,6 +813,7 @@ function write_main_file($mainfile, $main_dir)
 		fclose($fp);
 	}
 }
+ */
 
 
 /**
@@ -821,6 +823,7 @@ function write_main_file($mainfile, $main_dir)
  *  @param	string		$main_dir		Full path name to master.inc.php file
  *  @return	void
  */
+/* UNUSED DEPRECATED as of 2024-04. To be delete in 2025-04
 function write_master_file($masterfile, $main_dir)
 {
 	$fp = @fopen("$masterfile", "w");
@@ -832,6 +835,7 @@ function write_master_file($masterfile, $main_dir)
 		fclose($fp);
 	}
 }
+ */
 
 
 /**

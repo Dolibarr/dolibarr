@@ -27,7 +27,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		To define accounting account on product / service
  */
-require '../../main.inc.php';
+require_once __DIR__ . '/' . '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';

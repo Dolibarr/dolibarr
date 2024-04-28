@@ -54,10 +54,10 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/website2.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
+require_once __DIR__.'/../../htdocs/main.inc.php';
+require_once __DIR__.'/../../htdocs/core/lib/website.lib.php';
+require_once __DIR__.'/../../htdocs/core/lib/website2.lib.php';
+require_once __DIR__.'/../../htdocs/website/class/website.class.php';
 
 
 if (empty($user->id)) {

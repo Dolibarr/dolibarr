@@ -45,7 +45,7 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	require '../main.inc.php';
+	require_once __DIR__.'/../main.inc.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
