@@ -684,7 +684,7 @@ class ProductCombination
 	 * (filtered on its 'to sell' variants)
 	 *
 	 * @param	int $productid			Parent Product rowid
-	 * @return	array<object{'id': int, 'ref': string, 'label': string, 'values': ProductAttributeValue[]}>	Array of attributes
+	 * @return	array<object{id:int,ref:string,label:string,values:ProductAttributeValue[]}>		Array of attributes
 	 */
 	public function getUniqueAttributesAndValuesByFkProductParent($productid)
 	{
