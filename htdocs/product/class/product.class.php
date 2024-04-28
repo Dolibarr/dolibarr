@@ -2878,9 +2878,10 @@ class Product extends CommonObject
 						$sql .= " ORDER BY date_price DESC, rowid DESC";
 						$sql .= " LIMIT 1";
 						$resql = $this->db->query($sql);
-						if ($resql) {
-							$result = $this->db->fetch_array($resql);
-
+						if (!$resql) {
+							$this->error = $this->db->lasterror;
+							return -1;
+						} elseif ($result = $this->db->fetch_array($resql)) {
 							$this->multiprices[$i] = (!empty($result["price"]) ? $result["price"] : 0);
 							$this->multiprices_ttc[$i] = (!empty($result["price_ttc"]) ? $result["price_ttc"] : 0);
 							$this->multiprices_min[$i] = (!empty($result["price_min"]) ? $result["price_min"] : 0);
@@ -2920,9 +2921,6 @@ class Product extends CommonObject
 									return -1;
 								}
 							}
-						} else {
-							$this->error = $this->db->lasterror;
-							return -1;
 						}
 					}
 				}
