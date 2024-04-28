@@ -3776,6 +3776,9 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$this->users[$obj->rowid]['admin'] = $obj->admin;
 				$this->users[$obj->rowid]['photo'] = $obj->photo;
+				$this->users[$obj->rowid]['fullpath'] = '';
+				$this->users[$obj->rowid]['fullname'] = '';
+				$this->users[$obj->rowid]['level'] = 0;
 				$i++;
 			}
 		} else {
