@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ interface Database
 	 * Return datas as an array
 	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
-	 * @param   resource $resultset 	Resultset of request
+	 * @param   resource|mysqli_result|SQLite3Result $resultset 	Resultset of request
 	 * @return  array                   Array
 	 */
 	public function fetch_row($resultset);
@@ -114,7 +115,7 @@ interface Database
 	/**
 	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
-	 * @param   resource $resultset Cursor of the desired request
+	 * @param   resource|mysqli_result|SQLite3Result $resultset Cursor of the desired request
 	 * @return 	int            Number of lines
 	 * @see    	num_rows()
 	 */
@@ -303,7 +304,7 @@ interface Database
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   resource $resultset Resulset of requests
+	 * @param   resource|mysqli_result|SQLite3Result $resultset Resulset of requests
 	 * @return 	int                        Nb of lines
 	 * @see    	affected_rows()
 	 */
