@@ -245,12 +245,12 @@ interface Database
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string 	$query 			SQL query string
-	 * @param   int		$usesavepoint 	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                            		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string 	$type 			Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @param	int		$result_mode	Result mode
-	 * @return  bool|resource			Resultset of answer or false
+	 * @param   string 	$query 					SQL query string
+	 * @param   int		$usesavepoint 			0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                            				Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type 					Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode			Result mode
+	 * @return  bool|mysqli_result|resource		Resultset of answer or false
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
@@ -303,8 +303,8 @@ interface Database
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   mysqli_result|resource $resultset 	Resulset of requests
-	 * @return 	int                        			Nb of lines
+	 * @param   mysqli_result|resource|SQLite3Result 	$resultset 	Resulset of requests
+	 * @return 	int                        							Nb of lines
 	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset);
