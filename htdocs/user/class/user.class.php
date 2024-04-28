@@ -1203,7 +1203,7 @@ class User extends CommonObject
 	 *	@return	void
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
-	public function getrights($moduletag = '', $forcereload = 0)
+	public function loadRights($moduletag = '', $forcereload = 0)
 	{
 		global $conf;
 
@@ -1439,6 +1439,23 @@ class User extends CommonObject
 				$this->_tab_loaded[$moduletag] = 1;
 			}
 		}
+	}
+
+	/**
+	 *	Load permissions granted to a user->id into object user->rights
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject.
+	 *
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
+	 *	@return	void
+	 *
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
+	 *  @deprecated Use instead loadRights()
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '', $forcereload = 0)
+	{
+		$this->loadRights($moduletag, $forcereload);
 	}
 
 	/**

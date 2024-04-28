@@ -351,6 +351,9 @@ class Expedition extends CommonObject
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
+		if (empty($this->date_shipping) && !empty($this->date_expedition)) {
+			$this->date_shipping = $this->date_expedition;
+		}
 
 		$this->user = $user;
 
@@ -387,7 +390,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".($this->date_expedition > 0 ? "'".$this->db->idate($this->date_expedition)."'" : "null");
+		$sql .= ", ".($this->date_shipping > 0 ? "'".$this->db->idate($this->date_shipping)."'" : "null");
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
