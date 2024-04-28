@@ -414,7 +414,7 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field 			Optional : Name of field if we want description of field
-	 * @return   resource            		Resource
+	 * @return   bool|resource|mysqli_result|SQLite3Result            Resource
 	 */
 	public function DDLDescTable($table, $field = "");
 	// phpcs:enable
