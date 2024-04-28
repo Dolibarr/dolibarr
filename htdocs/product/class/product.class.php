@@ -5659,11 +5659,15 @@ class Product extends CommonObject
 		if (isset($this->finished) && $this->finished >= 0) {
 			$sql = "SELECT label, code FROM ".$this->db->prefix()."c_product_nature where code = ".((int) $this->finished)." AND active=1";
 			$resql = $this->db->query($sql);
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-				$label = $langs->trans($res['label']);
-				$this->db->free($resql);
-				return $label;
+			if ($resql) {
+				if ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+					$label = $langs->trans($res['label']);
+					$this->db->free($resql);
+					return $label;
+				} else {
+					$this->db->free($resql);
+					return '';
+				}
 			} else {
 				$this->error = $this->db->error().' sql='.$sql;
 				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
