@@ -5653,27 +5653,22 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
+		$label = '';
 
 		if (isset($this->finished) && $this->finished >= 0) {
 			$sql = "SELECT label, code FROM ".$this->db->prefix()."c_product_nature where code = ".((int) $this->finished)." AND active=1";
 			$resql = $this->db->query($sql);
-			if ($resql) {
-				if ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
-					$label = $langs->trans($res['label']);
-					$this->db->free($resql);
-					return $label;
-				} else {
-					$this->db->free($resql);
-					return '';
-				}
-			} else {
+			if (!$resql) {
 				$this->error = $this->db->error().' sql='.$sql;
 				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
 				return -1;
+			} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+				$label = $langs->trans($res['label']);
 			}
+			$this->db->free($resql);
 		}
 
-		return '';
+		return $label;
 	}
 
 
@@ -6439,7 +6434,7 @@ class Product extends CommonObject
 		}
 
 		$langs->load('products');
-
+		$label = '';
 		$label_type = 'label';
 		if ($type == 'short') {
 			$label_type = 'short_label';
@@ -6448,16 +6443,16 @@ class Product extends CommonObject
 		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			$res = $this->db->fetch_array($resql);
-			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
-			$this->db->free($resql);
-			return $label;
-		} else {
+		if (!$resql) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
+		} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
 		}
+		$this->db->free($resql);
+
+		return $label;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
