@@ -863,7 +863,7 @@ class DoliDBPgsql extends DoliDB
 		}
 		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result, 0, 0);
-		return $row;
+		return (int) $row;
 	}
 
 	/**
