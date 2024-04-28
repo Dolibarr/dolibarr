@@ -1299,6 +1299,11 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 	margin-left: 5px;
 }
 
+
+.linecolht {
+	white-space: nowrap;
+}
+
 .text-warning{
 	color : <?php print $textWarning; ?>
 }

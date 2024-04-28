@@ -1042,7 +1042,7 @@ class dolReceiptPrinter extends Printer
 				dol_syslog("initPrinter printerid=".$printerid." parameter=".$parameter);
 
 				try {
-					$type = $obj['fk_type'];
+					$type = empty($obj['fk_type']) ? 0 : (int) $obj['fk_type'];
 					$found = true;
 					switch ($type) {
 						case 1:
