@@ -375,17 +375,15 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-
+			if ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 				$this->id = $res['rowid'];
 				//$this->ref = $res['rowid'];
-				$this->fk_parent	= (int) $res['fk_parent'];
-				$this->label		= $res['label'];
+				$this->fk_parent = (int) $res['fk_parent'];
+				$this->label = $res['label'];
 				$this->description = $res['description'];
-				$this->color    	= $res['color'];
-				$this->position    	= $res['position'];
-				$this->socid		= (int) $res['fk_soc'];
+				$this->color = $res['color'];
+				$this->position = $res['position'];
+				$this->socid = (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
 				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
@@ -1379,7 +1377,7 @@ class Categorie extends CommonObject
 				 * So if the result have the same id, update is not for label, and if result have an other one,
 				 * update may be for label.
 				 */
-				if ($obj[0] > 0 && $obj[0] != $this->id) {
+				if ($obj && $obj[0] > 0 && $obj[0] != $this->id) {
 					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}

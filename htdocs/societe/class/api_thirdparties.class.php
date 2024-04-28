@@ -1399,7 +1399,7 @@ class Thirdparties extends DolibarrApi
 		$account = new CompanyBankAccount($this->db);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$account->fetch($bankaccount_id, $id, -1, '');
+		$account->fetch($bankaccount_id, '', $id, -1, '');
 
 		if ($account->socid != $id) {
 			throw new RestException(403);
