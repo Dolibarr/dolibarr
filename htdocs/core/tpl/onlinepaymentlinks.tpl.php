@@ -149,6 +149,8 @@ print dolJSToSetRandomPassword($constname);
 
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-print info_admin($langs->trans("YouCanEmbedOnWebsite"));
+if (isModEnabled('website')) {
+	print info_admin($langs->trans("YouCanEmbedOnWebsite"));
+}
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';
