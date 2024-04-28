@@ -203,10 +203,10 @@ class Shipments extends DolibarrApi
 				$shipmentline = new ExpeditionLigne($this->db);
 
 				$shipmentline->entrepot_id = $line->entrepot_id;
-				$shipmentline->fk_element = $this->origin_id;			// example: order id.  this->origin is 'commande'
+				$shipmentline->fk_element = $line->origin_id;			// example: order id.  this->origin is 'commande'
 				$shipmentline->origin_line_id = $line->origin_line_id;		// example: order id
 				$shipmentline->fk_elementdet = $line->origin_line_id;	// example: order line id
-				$shipmentline->element_type = $this->origin_type;		// example 'commande' or 'order'
+				$shipmentline->element_type = $line->origin_type;		// example 'commande' or 'order'
 				$shipmentline->qty = $line->qty;
 				$shipmentline->rang = $line->rang;
 				$shipmentline->array_options = $line->array_options;

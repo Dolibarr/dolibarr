@@ -1450,7 +1450,6 @@ class User extends CommonObject
 	 *	@return	void
 	 *
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
-	 *  @deprecated Use instead loadRights()
 	 *  @phpstan-ignore-next-line
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
