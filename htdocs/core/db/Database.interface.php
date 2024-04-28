@@ -50,8 +50,8 @@ interface Database
 	 * Return datas as an array
 	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
-	 * @param   resource|mysqli_result|SQLite3Result $resultset 	Resultset of request
-	 * @return  array                   Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array                   			Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -90,7 +90,7 @@ interface Database
 	 * @param   string 		$charset 		Charset used to store data
 	 * @param   string 		$collation 		Charset used to sort data
 	 * @param   string 		$owner 			Username of database owner
-	 * @return  resource                	resource defined if OK, null if KO
+	 * @return  bool|SQLite3Result|mysqli_result|resource      Resource result of the query to create database if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
 	// phpcs:enable
@@ -115,8 +115,8 @@ interface Database
 	/**
 	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
-	 * @param   resource|mysqli_result|SQLite3Result $resultset Cursor of the desired request
-	 * @return 	int            Number of lines
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Cursor of the desired request
+	 * @return 	int            						Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset);
@@ -304,8 +304,8 @@ interface Database
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   resource|mysqli_result|SQLite3Result $resultset Resulset of requests
-	 * @return 	int                        Nb of lines
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resulset of requests
+	 * @return 	int                        			Nb of lines
 	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset);
