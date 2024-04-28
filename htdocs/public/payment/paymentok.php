@@ -175,7 +175,7 @@ $error = 0;
 
 // Check if we have redirtodomain to do.
 if ($ws) {
-	$doactionsthenrediret = 1;
+	$doactionsthenredirect = 1;
 }
 
 
@@ -210,7 +210,7 @@ $conf->dol_hide_leftmenu = 1;
 
 
 // Show header
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 	llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
@@ -1866,7 +1866,7 @@ if ($ispaymentok) {
 
 
 // Show result message
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
@@ -2057,7 +2057,7 @@ unset($_SESSION["TRANSACTIONID"]);
 
 
 // Close page content id="dolpaymentdiv"
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
 	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
@@ -2065,7 +2065,7 @@ if (empty($doactionsthenrediret)) {
 
 
 // Show footer
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 	llxFooter('', 'public');
@@ -2076,7 +2076,7 @@ $db->close();
 
 
 // If option to do a redirect somewhere else.
-if (!empty($doactionsthenrediret)) {
+if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
