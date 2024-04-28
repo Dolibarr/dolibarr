@@ -79,6 +79,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
 	$amount_ttc_2 = price2num($discount->amount_ttc - $amount_ttc_1);
+
 	if (!($res > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
@@ -159,15 +160,12 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	}
 }
 
-if ($action == 'confirm_split_multicurrency' && GETPOST("confirm", "alpha") == 'yes' && $user->rights->societe->creer) {
-	//if ($user->rights->societe->creer)
-	//if ($user->rights->facture->creer)
-
+if ($action == 'confirm_split_multicurrency' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
 	$multicurrency_amount_ttc_1 = GETPOST('multicurrency_amount_ttc_1', 'alpha');
 	$multicurrency_amount_ttc_1 = price2num($multicurrency_amount_ttc_1);
 
 	$error = 0;
-	$remid = (GETPOST("remid", 'int') ? GETPOST("remid", 'int') : 0);
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
 	$multicurrency_amount_ttc_2 = price2num($discount->multicurrency_amount_ttc - $multicurrency_amount_ttc_1);
@@ -210,7 +208,9 @@ if ($action == 'confirm_split_multicurrency' && GETPOST("confirm", "alpha") == '
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
 		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
 		$newdiscount1->discount_type = $discount->discount_type;
 		$newdiscount2->discount_type = $discount->discount_type;
 		$newdiscount1->datec = $discount->datec;
@@ -243,7 +243,7 @@ if ($action == 'confirm_split_multicurrency' && GETPOST("confirm", "alpha") == '
 		$newid2 = $newdiscount2->create($user);
 		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
 			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb whith back
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
 			exit;
 		} else {
 			$db->rollback();
@@ -616,7 +616,7 @@ if ($socid > 0) {
 					}
 					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+					if ($permissiontocreate) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '</td>';
@@ -625,7 +625,7 @@ if ($socid > 0) {
 					}
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
-						if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+						if ($permissiontocreate) {
 							print '<td class="center nowrap">';
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split_multicurrency&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 							print '</td>';
@@ -638,7 +638,7 @@ if ($socid > 0) {
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
 
-					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+					if ($permissiontocreate) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
@@ -677,7 +677,6 @@ if ($socid > 0) {
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 1);
 			} elseif (count($showconfirminfo_multicurrency)) {
 				$multicurrency_amount1 = price2num($showconfirminfo_multicurrency['multicurrency_amount_ttc'] / 2, 'MT');
-			//	$multicurrency_amount2 = ($showconfirminfo['multicurrency_amount_ttc'] - $amount1);
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
 					0 => array('type' => 'text', 'name' => 'multicurrency_amount_ttc_1', 'label' => $langs->trans("MulticurrencyAmountTTC").' 1', 'value' => $multicurrency_amount1, 'size' => '5')
@@ -789,14 +788,14 @@ if ($socid > 0) {
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+					if ($permissiontocreate) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '</td>';
 					} 
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
-						if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+						if ($permissiontocreate) {
 							print '<td class="center nowrap">';
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split_multicurrency&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 							print '</td>';
@@ -807,8 +806,7 @@ if ($socid > 0) {
 					print '<td class="tdoverflowmax100">';
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
-
-					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
+					if ($permissiontocreate) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
@@ -849,7 +847,7 @@ if ($socid > 0) {
 				$multicurrency_amount1 = price2num($showconfirminfo_multicurrency['multicurrency_amount_ttc'] / 2, 'MT');
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-					0 => array('type' => 'text', 'id'=> 'multicurrency_amount_ttc_1', 'name' => 'multicurrency_amount_ttc_1', 'label' => $langs->trans("MulticurrencyAmountTTC").' 1', 'value' => $multicurrency_amount1, 'size' => '5')
+					0 => array('type' => 'text', 'name' => 'multicurrency_amount_ttc_1', 'label' => $langs->trans("MulticurrencyAmountTTC").' 1', 'value' => $multicurrency_amount1, 'size' => '5')
 				);
 				$langs->load("dict");
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo_multicurrency['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo_multicurrency['multicurrency_amount_ttc']), $langs->trans("MulticurrencyAmountTTC")), 'confirm_split_multicurrency', $formquestion, '', 1);
