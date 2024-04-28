@@ -26,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
 
+
 /**
  * Class to manage Dolibarr database access
  */
