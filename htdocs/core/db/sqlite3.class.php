@@ -45,7 +45,10 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	private $_results;
 
-	private string $queryString;
+	/**
+	 * @var string					Last query string
+	 */
+	private $queryString;
 
 	const WEEK_MONDAY_FIRST = 1;
 	const WEEK_YEAR = 2;

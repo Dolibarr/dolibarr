@@ -681,31 +681,37 @@ class ProductCombination
 
 	/**
 	 * Retrieves all unique attributes for a parent product
+	 * (filtered on its 'to sell' variants)
 	 *
-	 * @param	int $productid			Product rowid
-	 * @return	ProductAttributeValue[]	Array of attributes
+	 * @param	int $productid			Parent Product rowid
+	 * @return	array<object{id:int,ref:string,label:string,values:ProductAttributeValue[]}>		Array of attributes
 	 */
 	public function getUniqueAttributesAndValuesByFkProductParent($productid)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-		$variants = array();
-
-		//Attributes
-		$sql = "SELECT DISTINCT fk_prod_attr, a.position";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c ON c2v.fk_prod_combination = c.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = c.fk_product_child";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a ON a.rowid = fk_prod_attr";
-		$sql .= " WHERE c.fk_product_parent = ".((int) $productid)." AND p.tosell = 1";
+		// Attributes
+		// Select all unique attributes of the variants (which are to sell) of a given parent product.
+		$sql = "SELECT DISTINCT c2v.fk_prod_attr, a.position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c";
+		$sql .= "   ON c2v.fk_prod_combination = c.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p";
+		$sql .= "   ON p.rowid = c.fk_product_child";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a";
+		$sql .= "   ON a.rowid = fk_prod_attr";
+		$sql .= " WHERE c.fk_product_parent = ".((int) $productid);
+		$sql .= " AND p.tosell = 1";
 		$sql .= $this->db->order('a.position', 'asc');
 
-		$query = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		//Values
-		while ($result = $this->db->fetch_object($query)) {
+		// Values
+		$variants = array();
+		while ($obj = $this->db->fetch_object($resql)) {
 			$attr = new ProductAttribute($this->db);
-			$attr->fetch($result->fk_prod_attr);
+			$attr->fetch($obj->fk_prod_attr);
 
 			$tmp = new stdClass();
 			$tmp->id = $attr->id;
@@ -714,7 +720,8 @@ class ProductCombination
 			$tmp->values = array();
 
 			$attrval = new ProductAttributeValue($this->db);
-			foreach ($res = $attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
+			// fetch only the used values of this attribute
+			foreach ($attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
 				'@phan-var-force ProductAttributeValue $val';
 				$tmp->values[] = $val;
 			}
