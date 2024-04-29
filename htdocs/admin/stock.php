@@ -689,7 +689,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
 print $formproduct->selectWarehouses(getDolGlobalString('MAIN_DEFAULT_WAREHOUSE') ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
 
