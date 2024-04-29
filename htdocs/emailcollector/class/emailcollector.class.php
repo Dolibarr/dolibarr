@@ -2036,6 +2036,7 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'proj') {   // Project
 								$objectemail = new Project($this->db);
+								$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'tas') {   // Task
 								$objectemail = new Task($this->db);
@@ -2048,19 +2049,21 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'tic') {   // Ticket
 								$objectemail = new Ticket($this->db);
+								$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
 								$objectemail = new RecruitmentCandidature($this->db);
+								$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'mem') {   // Member
 								$objectemail = new Adherent($this->db);
 							}
 							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-							 $objectemail = new Holiday($db);
-							 }
-							 if ($reg[1] == 'exp') {   // ExpenseReport
-							 $objectemail = new ExpenseReport($db);
-							 }*/
+								$objectemail = new Holiday($db);
+							}
+							if ($reg[1] == 'exp') {   // ExpenseReport
+								$objectemail = new ExpenseReport($db);
+							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
 							if (!is_object($objectemail) && isModEnabled('ticket')) {
