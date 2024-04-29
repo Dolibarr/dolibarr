@@ -231,7 +231,7 @@ if ($action == 'builddoc') {
 						'code'=>$code,
 						'encoding'=>$encoding,
 						'is2d'=>$is2d,
-						'photo'=>!empty($barcodeimage) ??  ''	// Photo must be a file that exists with format supported by TCPDF
+						'photo'=>$barcodeimage ??  ''	// Photo must be a file that exists with format supported by TCPDF
 					);
 				}
 			} else {
