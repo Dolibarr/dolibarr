@@ -189,6 +189,7 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) A
 ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
+ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
 
 CREATE TABLE llx_product_thirdparty
 (
@@ -313,4 +314,3 @@ DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 -- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
 
 ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
-
