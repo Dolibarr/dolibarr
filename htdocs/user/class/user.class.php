@@ -1203,7 +1203,7 @@ class User extends CommonObject
 	 *	@return	void
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
-	public function getrights($moduletag = '', $forcereload = 0)
+	public function loadRights($moduletag = '', $forcereload = 0)
 	{
 		global $conf;
 
@@ -1439,6 +1439,22 @@ class User extends CommonObject
 				$this->_tab_loaded[$moduletag] = 1;
 			}
 		}
+	}
+
+	/**
+	 *	Load permissions granted to a user->id into object user->rights
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject.
+	 *
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
+	 *	@return	void
+	 *
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '', $forcereload = 0)
+	{
+		$this->loadRights($moduletag, $forcereload);
 	}
 
 	/**
@@ -3776,6 +3792,10 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$this->users[$obj->rowid]['admin'] = $obj->admin;
 				$this->users[$obj->rowid]['photo'] = $obj->photo;
+				// fields are filled with build_path_from_id_user
+				$this->users[$obj->rowid]['fullpath'] = '';
+				$this->users[$obj->rowid]['fullname'] = '';
+				$this->users[$obj->rowid]['level'] = 0;
 				$i++;
 			}
 		} else {
@@ -3810,7 +3830,7 @@ class User extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
-		$this->users = dol_sort_array($this->users, 'fullname', 'asc', true, false);
+		$this->users = dol_sort_array($this->users, 'fullname', 'asc', true, false, 1);
 
 		//var_dump($this->users);
 

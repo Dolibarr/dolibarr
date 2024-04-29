@@ -491,8 +491,8 @@ class modFacture extends DolibarrModules
 
 		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));
 
-		$uselocaltax1 = $mysoc->localtax1_assuj;
-		$uselocaltax2 = $mysoc->localtax2_assuj;
+		$uselocaltax1 = $mysoc->localtax1_assuj ?? 0;
+		$uselocaltax2 = $mysoc->localtax2_assuj ?? 0;
 
 		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 

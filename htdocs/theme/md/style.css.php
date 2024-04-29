@@ -1299,6 +1299,11 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 	margin-left: 5px;
 }
 
+
+.linecolht {
+	white-space: nowrap;
+}
+
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
@@ -1747,6 +1752,7 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
+	word-break: break-word;
 }
 .tenlinesmax {
 	display: -webkit-box;

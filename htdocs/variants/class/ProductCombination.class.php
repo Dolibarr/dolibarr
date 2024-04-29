@@ -20,8 +20,23 @@
  */
 
 /**
+ *	\file       htdocs/variants/class/ProductCombination.class.php
+ *	\ingroup    variants
+ *	\brief      File of the ProductCombination class
+ */
+
+/**
  * Class ProductCombination
- * Used to represent a product combination
+ * Used to represent the relation between a product and one of its variants.
+ *
+ * Example: a product "shirt" has two variants "shirt XL white" and "shirt XL grey".
+ * This is represented with two ProductCombination objects:
+ * - One for "shirt XL white":
+ *     * $object->fk_product_parent     ID of the Product object "shirt"
+ *     * $object->fk_product_child      ID of the Product object "shirt XL white"
+ * - Another for "shirt XL grey":
+ *     * $object->fk_product_parent     ID of the Product object "shirt"
+ *     * $object->fk_product_child      ID of the Product object "shirt XL grey"
  */
 class ProductCombination
 {
@@ -32,19 +47,19 @@ class ProductCombination
 	public $db;
 
 	/**
-	 * Rowid of combination
+	 * Rowid of this ProductCombination
 	 * @var int
 	 */
 	public $id;
 
 	/**
-	 * Rowid of parent product
+	 * Rowid of the parent Product
 	 * @var int
 	 */
 	public $fk_product_parent;
 
 	/**
-	 * Rowid of child product
+	 * Rowid of the variant Product
 	 * @var int
 	 */
 	public $fk_product_child;
@@ -56,7 +71,8 @@ class ProductCombination
 	public $variation_price;
 
 	/**
-	 * Is the price variation a relative variation? Can be an array if multiprice feature per level is enabled.
+	 * Is the price variation a relative variation?
+	 * Can be an array if multiprice feature per level is enabled.
 	 * @var bool|array
 	 */
 	public $variation_price_percentage = false;
@@ -86,12 +102,14 @@ class ProductCombination
 	public $variation_ref_ext = '';
 
 	/**
-	 * @var string error
+	 * Error message
+	 * @var string
 	 */
 	public $error;
 
 	/**
-	 * @var string[] array of errors
+	 * Array of error messages
+	 * @var string[]
 	 */
 	public $errors = array();
 
@@ -109,10 +127,10 @@ class ProductCombination
 	}
 
 	/**
-	 * Retrieves a combination by its rowid
+	 * Retrieves a ProductCombination by its rowid
 	 *
-	 * @param 	int 	$rowid 		Row id
-	 * @return 	int 				Return integer <0 KO, >0 OK
+	 * @param   int     $rowid      ID of the ProductCombination
+	 * @return  -1|1                -1 if KO, 1 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -153,7 +171,7 @@ class ProductCombination
 	 *
 	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
 	 * @param 	bool 	$useCache 		To use cache or not
-	 * @return 	int 					Return integer <0 KO, >0 OK
+	 * @return 	-1|1 					-1 if KO, 1 if OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
@@ -663,31 +681,37 @@ class ProductCombination
 
 	/**
 	 * Retrieves all unique attributes for a parent product
+	 * (filtered on its 'to sell' variants)
 	 *
-	 * @param	int $productid			Product rowid
-	 * @return	ProductAttributeValue[]	Array of attributes
+	 * @param	int $productid			Parent Product rowid
+	 * @return	array<object{id:int,ref:string,label:string,values:ProductAttributeValue[]}>		Array of attributes
 	 */
 	public function getUniqueAttributesAndValuesByFkProductParent($productid)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-		$variants = array();
-
-		//Attributes
-		$sql = "SELECT DISTINCT fk_prod_attr, a.position";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c ON c2v.fk_prod_combination = c.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = c.fk_product_child";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a ON a.rowid = fk_prod_attr";
-		$sql .= " WHERE c.fk_product_parent = ".((int) $productid)." AND p.tosell = 1";
+		// Attributes
+		// Select all unique attributes of the variants (which are to sell) of a given parent product.
+		$sql = "SELECT DISTINCT c2v.fk_prod_attr, a.position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c";
+		$sql .= "   ON c2v.fk_prod_combination = c.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p";
+		$sql .= "   ON p.rowid = c.fk_product_child";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a";
+		$sql .= "   ON a.rowid = fk_prod_attr";
+		$sql .= " WHERE c.fk_product_parent = ".((int) $productid);
+		$sql .= " AND p.tosell = 1";
 		$sql .= $this->db->order('a.position', 'asc');
 
-		$query = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		//Values
-		while ($result = $this->db->fetch_object($query)) {
+		// Values
+		$variants = array();
+		while ($obj = $this->db->fetch_object($resql)) {
 			$attr = new ProductAttribute($this->db);
-			$attr->fetch($result->fk_prod_attr);
+			$attr->fetch($obj->fk_prod_attr);
 
 			$tmp = new stdClass();
 			$tmp->id = $attr->id;
@@ -696,7 +720,8 @@ class ProductCombination
 			$tmp->values = array();
 
 			$attrval = new ProductAttributeValue($this->db);
-			foreach ($res = $attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
+			// fetch only the used values of this attribute
+			foreach ($attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
 				'@phan-var-force ProductAttributeValue $val';
 				$tmp->values[] = $val;
 			}

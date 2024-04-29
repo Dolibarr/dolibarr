@@ -35,11 +35,11 @@ $langs->loadLangs(array('admin', 'users', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 
+$entity = $conf->entity;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$entity = $conf->entity;
 
 
 /*
@@ -64,6 +64,8 @@ if ($action == 'remove') {
 /*
  * View
  */
+
+$form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
@@ -253,6 +255,12 @@ if ($result) {
 		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		print '<td>';
 		print $permlabel;
+		if ($langs->trans("Permission".$obj->id.'b') != "Permission".$obj->id.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';

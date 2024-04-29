@@ -200,7 +200,19 @@ class Shipments extends DolibarrApi
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$shipmentline = new ExpeditionLigne($this->db);
+
+				$shipmentline->entrepot_id = $line->entrepot_id;
+				$shipmentline->fk_element = $line->origin_id;			// example: order id.  this->origin is 'commande'
+				$shipmentline->origin_line_id = $line->origin_line_id;		// example: order id
+				$shipmentline->fk_elementdet = $line->origin_line_id;	// example: order line id
+				$shipmentline->element_type = $line->origin_type;		// example 'commande' or 'order'
+				$shipmentline->qty = $line->qty;
+				$shipmentline->rang = $line->rang;
+				$shipmentline->array_options = $line->array_options;
+				$shipmentline->detail_batch = $line->detail_batch;
+
+				$lines[] = $shipmentline;;
 			}
 			$this->shipment->lines = $lines;
 		}
@@ -679,6 +691,8 @@ class Shipments extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->canvas);
+
 		unset($object->thirdparty); // id already returned
 
 		unset($object->note);
@@ -695,6 +709,8 @@ class Shipments extends DolibarrApi
 						unset($line->detail_batch[$keytmp2]->db);
 					}
 				}
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

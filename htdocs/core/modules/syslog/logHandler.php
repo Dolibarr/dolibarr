@@ -18,12 +18,10 @@
  * or see https://www.gnu.org/
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
-
 /**
  * Parent class for log handlers
  */
-abstract class LogHandler implements LogHandlerInterface
+abstract class LogHandler
 {
 	/**
 	 * @var string Code for the handler
@@ -37,6 +35,16 @@ abstract class LogHandler implements LogHandlerInterface
 	 */
 	public $errors = [];
 
+
+	/**
+	 * Return name of logger
+	 *
+	 * @return string
+	 */
+	public function getName()
+	{
+		return ucfirst($this->code);
+	}
 
 	/**
 	 * Content of the info tooltip.
@@ -109,5 +117,18 @@ abstract class LogHandler implements LogHandlerInterface
 	public function setIdent($ident)
 	{
 		$this->ident += $ident;
+	}
+
+	/**
+	 * Export the message
+	 *
+	 * @param   array   $content            Array containing the info about the message
+	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
+	 * @return  void
+	 */
+	public function export($content, $suffixinfilename = '')
+	{
+		// Code to output log
+		return;
 	}
 }

@@ -5240,13 +5240,18 @@ class Facture extends CommonInvoice
 	 */
 	public function newCycle()
 	{
-		$sql = 'SELECT max(situation_cycle_ref) FROM '.MAIN_DB_PREFIX.'facture as f';
+		$sql = "SELECT max(situation_cycle_ref) as maxsituationref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-				$ref = $res['max(situation_cycle_ref)'];
+				$ref = 0;
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$ref = $obj->maxsituationref;
+				}
 				$ref++;
 			} else {
 				$ref = 1;
@@ -5367,8 +5372,7 @@ class Facture extends CommonInvoice
 			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
+			if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 				$last = $res['max(situation_counter)'];
 				return ($last == $this->situation_counter);
 			} else {
@@ -6744,12 +6748,18 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
-			$resql = $this->db->query($sql);
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
+			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet";
+			$sql .= " WHERE rowid = ".((int) $this->fk_prev_id);
 
-				$returnPercent = (float) $res['situation_percent'];
+			$resql = $this->db->query($sql);
+
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				$returnPercent = 0;
+
+				$obj = $this->db->fetch_ojbect($resql);
+				if ($obj) {
+					$returnPercent = (float) $obj->situation_percent;
+				}
 
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
