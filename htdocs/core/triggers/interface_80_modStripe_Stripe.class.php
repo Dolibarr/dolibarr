@@ -229,6 +229,7 @@ class InterfaceStripe extends DolibarrTriggers
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
 							// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
+							// @phpstan-ignore-next-line
 							$card->metadata = array('dol_id' => $object->id, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
 								// @phan-suppress-next-line PhanDeprecatedFunction
