@@ -220,13 +220,15 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
+		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		print '</a>';
+		print '</th>';
 		print '<th>'.$langs->trans("from").'</th>';
 		print '<th>'.$langs->trans("to").'</th>';
 		print '<th></th>';
 		print '<th class="right">';
-		print '<a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">';
-		print img_picto($langs->trans("FullList"), 'holiday');
 		print '</th>';
 		print '</tr>';
 
@@ -281,7 +283,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 // Latest modified expense report
 if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
-	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
+	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ht, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
@@ -303,11 +305,16 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		//print img_picto($langs->trans("FullList"), 'expensereport');
+		print '</a>';
+		print '</th>';
+		print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
 		print '<th></th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
-		print img_picto($langs->trans("FullList"), 'expensereport');
+		print '<th class="right">';
 		print '</th>';
 		print '</tr>';
 
@@ -333,6 +340,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
@@ -383,11 +391,13 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">';
 		print $langs->trans("BoxTitleLatestModifiedCandidatures", min($max, $num));
+		print '<a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		//print img_picto($langs->trans("FullList"), 'recruitmentcandidature');
+		print '</a>';
 		print '</th>';
 		print '<th></th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">';
-		print img_picto($langs->trans("FullList"), 'recruitmentcandidature');
-		//print $langs->trans("FullList");
+		print '<th class="right">';
 		print '</th>';
 		print '</tr>';
 		if ($num) {

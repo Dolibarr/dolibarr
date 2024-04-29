@@ -1169,9 +1169,14 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		} elseif ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
-			// Warning if date out of range
+			// Warning if date out of range or error if this conf is ON
+			if (getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES')) {
+				$error++;
+			}
+
 			$langs->load("errors");
-			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+			$type = $error > 0 ? 'errors' : 'warnings';
+			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, $type);
 		}
 
 		// If no price entered
@@ -1329,8 +1334,13 @@ if (empty($reshook)) {
 		}
 		// Warning if date out of range
 		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
+			if (getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES')) {
+				$error++;
+			}
+
 			$langs->load("errors");
-			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+			$type = $error > 0 ? 'errors' : 'warnings';
+			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, $type);
 		}
 
 		// If no project entered
@@ -2194,8 +2204,6 @@ if ($action == 'create') {
 									print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
 									print '</a>';
 								} else {
-									$modulepart = 'expensereport';
-									$thumbshown = 0;
 									if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename)) {
 										$filepdf = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename;
 										$fileimage = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
@@ -2220,19 +2228,17 @@ if ($action == 'create') {
 											if (!empty($conf->dol_optimize_smallscreen)) {
 												$heightforphotref = 60;
 											}
-											// If the preview file is found
+											$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
+											print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+											// If the preview file is found we display the thumb
 											if (file_exists($fileimage)) {
-												$thumbshown = 1;
-												$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
-												print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 												print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
-												print '</a>';
+											} else {
+												// Else, we display an icon
+												print img_mime($ecmfilesstatic->filename);
 											}
+											print '</a>';
 										}
-									}
-
-									if (!$thumbshown) {
-										print img_mime($ecmfilesstatic->filename);
 									}
 								}
 							}

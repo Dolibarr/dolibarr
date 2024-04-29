@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +198,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }

@@ -441,6 +441,11 @@ return [
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
+
+		'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled into config_extended only.
+		'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled into config_extended only.
+		'PhanUndeclaredGlobalVariable',			// Too many false positives on .tpl.php files. Is enabled into config_extended only.
+		'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled into config_extended only.
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

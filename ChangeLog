@@ -8,7 +8,8 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Compatibility with PHP 8.2 (with no need to disable warnings)
-NEW: Font param Look and Feel THEME_FONT_FAMILY
+NEW: Font param Look and Feel THEME_FONT_FAMILY (#29302)
+NEW: Param to show main menu logo in color (#29305)
 ...
 
 For developers or integrators:
@@ -39,6 +40,7 @@ The following changes may create regressions for some external modules, but were
   test that ($object->fac_rec > 0) to know if creation trigger is from a recurring invoice or not. Also this old trigger was never enabled
   into table llx_c_action_trigger.
 * Renamings in expedition line table and class, fk_origin_line is now fk_elementdet in table and class.
+* The signature of method fetch() of class CompanyBankAccount has been modified to match the signature of method Account->fetch()
 
 
 

@@ -295,7 +295,7 @@ if ($action == 'edit') {
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotYetAvailable").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
 		}

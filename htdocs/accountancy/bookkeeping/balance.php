@@ -478,8 +478,12 @@ if ($action != 'export_csv') {
 			$nrows = $db->num_rows($resql);
 			for ($i = 0; $i < $nrows; $i++) {
 				$arr = $db->fetch_array($resql);
-				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				if (is_array($arr)) {
+					$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				}
 			}
+		} else {
+			dol_print_error($db);
 		}
 	}
 

@@ -35,7 +35,7 @@ DYNAMIC_KEYS_FILE=${TMP}/dynamic_keys
 MISSING_AND_UNUSED_FILE=${TMP}/missing_and_unused
 MISSING_FILE=${TMP}/missing
 UNUSED_FILE=${TMP}/unused
-EXPECTED_REGEX='(Country..|Language_.._..|MonthVeryShort\d\d|PaperFormat.*|ProfId\d(..)?|unit.*)'
+EXPECTED_REGEX='(Country..|ExportDataset_.*|Language_.._..|MonthVeryShort\d\d|PaperFormat.*||Permission.*|ProfId\d(..)?|unit.*)'
 DYNAMIC_KEYS_SRC_FILE=${MYDIR}/dynamic_translation_keys.lst
 EXCLUDE_KEYS_SRC_FILE=${MYDIR}/ignore_translation_keys.lst
 DUPLICATE_KEYS_SRC_FILE=${MYDIR}/duplicate_translation_keys.lst
@@ -112,9 +112,9 @@ if [ 0 = 1 ] ; then
 fi
 
 
-# Produce reports on STDOUT.
-# Some output is already compatible with message extraction for github annotation (logToCs.py)
-# # Produce reports on STDOUT.
+# Produce reports on STDOUT. It generates the files with missing and unused entries with format
+# < xxx
+# > yyy
 # Some output is already compatible with message extraction for github annotation (logToCs.py)
 #
 diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
@@ -166,7 +166,8 @@ sed -n 's@> \(.*\)'"@${REPL_STR}@p" \
 
 
 if [ -s "${UNUSED_FILE}.grep" ] ; then
-	exit_code=1
+	#exit_code=1
+    exit_code=0     # We do not consider adding new entries for future use as an error (even if ignore_translation_keys.lst not filled).
 
 	# Report unused translation in recognizable format
 	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \

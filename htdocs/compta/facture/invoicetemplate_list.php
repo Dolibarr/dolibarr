@@ -606,19 +606,19 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+	print '<input class="flat width50" type="text"" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_tva']['checked'])) {
 	// Amount Vat
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+	print '<input class="flat width50" type="text" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	// Amount
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+	print '<input class="flat width50" type="text" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {

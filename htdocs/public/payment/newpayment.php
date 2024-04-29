@@ -96,6 +96,9 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
+$noheaderfooter = GETPOSTINT("noheaderfooter");
+$isembed = GETPOSTINT("isembed");
+$ws = GETPOSTINT("ws");
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -212,6 +215,14 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
+}
+
+if ($isembed) {
+	$FULLTAG .= ($FULLTAG ? '.' : '').'EMB='.$isembed;
+}
+
+if ($ws) {
+	$FULLTAG .= ($FULLTAG ? '.' : '').'WS='.$ws;
 }
 
 if (!empty($suffix)) {
@@ -883,6 +894,9 @@ print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECURE
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
+print '<input type="hidden" name="ws" value="'.$ws.'">';
+print '<input type="hidden" name="isembed" value="'.$isembed.'">';
+print '<input type="hidden" name="noheaderfooter" value="'.$noheaderfooter.'">';
 print "\n";
 
 
@@ -909,7 +923,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 }
 
 // Output html code for logo
-if ($urllogo) {
+if ($urllogo && !$noheaderfooter) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
@@ -919,7 +933,7 @@ if ($urllogo) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
-} elseif ($creditor) {
+} elseif ($creditor && !$noheaderfooter) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print $creditor;
@@ -2709,7 +2723,9 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	}
 }
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+if (!$noheaderfooter) {
+	htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

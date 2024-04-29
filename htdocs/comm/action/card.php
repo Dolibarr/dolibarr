@@ -363,7 +363,8 @@ if (empty($reshook) && $action == 'add') {
 		$object->label = GETPOST('label', 'alphanohtml');
 
 		if (GETPOST("elementtype", 'alpha')) {
-			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
+			$modulecodetouseforpermissioncheck = $elProp['module'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -820,7 +821,8 @@ if (empty($reshook) && $action == 'update') {
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
-			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
+			$modulecodetouseforpermissioncheck = $elProp['module'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -1430,7 +1432,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
 		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
@@ -1577,7 +1579,9 @@ if ($action == 'create') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$hasPermissionOnLinkedObject = 0;
-		if ($user->hasRight($origin, 'read')) {
+
+		$elProp = getElementProperties($origin);
+		if ($user->hasRight($elProp['module'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
@@ -1980,7 +1984,7 @@ if ($id > 0) {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
 			$arrayselected = array();

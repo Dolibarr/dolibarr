@@ -70,7 +70,7 @@ $search_date_end		= dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_e
 $search_user			= GETPOST('search_user', 'alpha');
 $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
-$search_bank_account	= GETPOSTINT('search_bank_account');
+$search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

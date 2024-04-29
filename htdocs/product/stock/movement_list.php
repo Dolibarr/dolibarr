@@ -324,7 +324,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras') {
-	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));

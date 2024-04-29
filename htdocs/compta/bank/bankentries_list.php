@@ -8,7 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,9 +75,9 @@ $dateop = dol_mktime(12, 0, 0, GETPOSTINT("opmonth"), GETPOSTINT("opday"), GETPO
 $search_debit = GETPOST("search_debit", 'alpha');
 $search_credit = GETPOST("search_credit", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
-$search_account = GETPOSTINT("search_account") ? GETPOSTINT("search_account") : GETPOSTINT("account");
+$search_account = GETPOST("search_account", 'int') ? GETPOSTINT("search_account", 'int') : GETPOST("account", 'int');
 $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha') ? GETPOST('search_accountancy_code', 'alpha') : GETPOST('accountancy_code', 'alpha');
-$search_bid = GETPOSTINT("search_bid") ? GETPOSTINT("search_bid") : GETPOSTINT("bid");
+$search_bid = GETPOST("search_bid", 'int') ? GETPOST("search_bid", 'int') : GETPOST("bid", 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_description = GETPOST("search_description", 'alpha');
 $search_dt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_start_dtmonth'), GETPOSTINT('search_start_dtday'), GETPOSTINT('search_start_dtyear'));
@@ -822,18 +822,23 @@ if ($resql) {
 	// Form to reconcile
 	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
-		$texttoshow = $langs->trans("InputReceiptNumber").': ';
-		$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
-		$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
-		$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
-		$placeholder = $yyyy.$mm;
-		$placeholder .= ' '.$langs->trans("or").' ';
-		$placeholder .= $yyyy.$mm.$dd;
-		if (!$placeholder) {
-			$texttoshow .= $langs->trans("InputReceiptNumberBis");
+		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT')) {
+			print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
+			print '<input class="flat width175" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
+		} else {
+			$texttoshow = $langs->trans("InputReceiptNumber").': ';
+			$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
+			$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
+			$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
+			$placeholder = $yyyy.$mm;
+			$placeholder .= ' '.$langs->trans("or").' ';
+			$placeholder .= $yyyy.$mm.$dd;
+			if (!$placeholder) {
+				$texttoshow .= $langs->trans("InputReceiptNumberBis");
+			}
+			print $texttoshow;
+			print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
 		}
-		print $texttoshow;
-		print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
 		print '</div>';
 		if (is_array($options) && count($options)) {
 			print $langs->trans("EventualyAddCategory").': ';
@@ -929,7 +934,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
+		$form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->type == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
 		print '</td>';
 		print '<td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq", "alpha").'">';

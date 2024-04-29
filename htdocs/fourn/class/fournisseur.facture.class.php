@@ -37,7 +37,7 @@
  *  \brief      File of class to manage suppliers invoices
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -243,7 +243,7 @@ class FactureFournisseur extends CommonInvoice
 
 	/**
 	 * Invoice lines
-	 * @var SupplierInvoiceLine[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 

@@ -42,7 +42,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('optioncss', 'aZ');
 
 $search_name = GETPOST('search_name', 'alpha');
-$search_supervisor = GETPOSTINT('search_supervisor');
+$search_supervisor = GETPOST('search_supervisor', "intcomma");
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
