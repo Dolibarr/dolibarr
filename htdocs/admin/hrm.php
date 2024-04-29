@@ -68,9 +68,15 @@ $setupnotempty = 0;
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'hrm';
-$myTmpObjects = array();
 // TODO Scan list of objects to fill this array
-$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Evaluation');
+$myTmpObjects = [
+	'evaluation' => [
+		'label' => 'Evaluation',
+		'includerefgeneration' => 1,
+		'includedocgeneration' => 1,
+		'class' => 'Evaluation'
+	],
+];
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
 if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
