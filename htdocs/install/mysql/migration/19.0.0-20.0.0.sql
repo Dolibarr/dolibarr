@@ -303,3 +303,9 @@ ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
 ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
+
+
+-- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
+
+ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+
