@@ -382,7 +382,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
 						if (empty($actiontypecode)) {
-							$actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+							$actiontypecode = 'AC_EMAIL'; // Event insert into agenda automatically
 						}
 
 						$object->socid = $sendtosocid; // To link to a company
