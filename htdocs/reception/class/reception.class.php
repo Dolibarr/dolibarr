@@ -131,7 +131,7 @@ class Reception extends CommonObject
 	public $listmeths; // List of carriers
 
 	/**
-	 * @var CommandeFournisseurDispatch[]
+	 * @var ReceptionLineBatch[]|CommandeFournisseurDispatch[]
 	 */
 	public $lines = array();
 
