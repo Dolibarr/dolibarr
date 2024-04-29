@@ -27,7 +27,7 @@
  */
 
 /**
- *  \file        fichinter/card-rec.php
+ *  \file        htdocs/fichinter/card-rec.php
  *  \ingroup     intervention
  *  \brief       Page to show predefined fichinter
  */
