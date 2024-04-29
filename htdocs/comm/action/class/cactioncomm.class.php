@@ -213,7 +213,7 @@ class CActionComm
 
 					$qualified = 1;
 
-					// $obj->type can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
+					// $obj->type into c_actioncomm can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
 					// Note: type = system... than type of event is added among other standard events.
 					//       type = module... then type of event is grouped into module defined into module = myobject@mymodule. Example: Event organization or external modules
 					//       type = xxx... then type of event is added into list as a new flat value (not grouped). Example: Agefod external module
@@ -292,6 +292,7 @@ class CActionComm
 							$keyfortrans = "Action".$code;
 							$transcode = $langs->trans($keyfortrans);
 						}
+
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
 						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 							if ($typecalendar == 'system' || $typecalendar == 'user') {
@@ -339,10 +340,16 @@ class CActionComm
 				}
 			}
 
-			if (empty($idorcode)) $idorcode = 'all';
+			if (empty($idorcode)) {
+				$idorcode = 'all';
+			}
 			$TType = $TSystem[$idorcode];
-			if (! empty($TSystemAuto[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TSystemAuto[$idorcode]);
-			if (! empty($TModule[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TModule[$idorcode]);
+			if (! empty($TSystemAuto[$idorcode])) {
+				$TType = array_merge($TType, $TSystemAuto[$idorcode]);
+			}
+			if (! empty($TModule[$idorcode])) {
+				$TType = array_merge($TType, $TModule[$idorcode]);
+			}
 			$this->liste_array = $TType;
 
 
