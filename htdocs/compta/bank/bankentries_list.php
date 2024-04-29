@@ -1458,10 +1458,6 @@ if ($resql) {
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td>';
 			if (!$objp->conciliated && $action == 'reconcile') {
-				if ($objp->num_releve) {
-					print '&nbsp;';
-				}
-				$tmparray = GETPOST('rowid', 'array:int');
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
@@ -1863,11 +1859,7 @@ if ($resql) {
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td>';
 			if (!$objp->conciliated && $action == 'reconcile') {
-				if ($objp->num_releve) {
-					print '&nbsp;';
-				}
-					$tmparray = GETPOST('rowid', 'array:int');
-					print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
