@@ -239,9 +239,42 @@ class modResource extends DolibarrModules
 		$this->export_label[$r] = "ResourceSingular"; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("resource", "read"));
 
-		$this->export_fields_array[$r] = array('r.rowid'=>'IdResource', 'r.ref'=>'ResourceFormLabel_ref', 'c.rowid'=>'ResourceTypeID', 'c.code'=>'ResourceTypeCode', 'c.label'=>'ResourceTypeLabel', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>"DateCreation", 'r.tms'=>"DateLastModification");
-		$this->export_TypeFields_array[$r] = array('r.rowid'=>'List:resource:ref', 'r.ref'=>'Text', 'r.asset_number'=>'Text', 'r.description'=>'Text', 'c.code'=>'Text', 'c.label'=>'List:c_type_resource:label', 'r.datec'=>'Date', 'r.tms'=>'Date', 'r.note_private'=>'Text', 'r.note_public'=>'Text');
-		$this->export_entities_array[$r] = array('r.rowid'=>'resource', 'r.ref'=>'resource', 'c.code'=>'resource', 'c.label'=>'resource', 'r.description'=>'resource', 'r.note_private'=>"resource", 'r.resource'=>"resource", 'r.asset_number'=>'resource', 'r.datec'=>"resource", 'r.tms'=>"resource");
+		$this->export_fields_array[$r] = array(
+			'r.rowid'=>'IdResource',
+			'r.ref'=>'ResourceFormLabel_ref',
+			'c.rowid'=>'ResourceTypeID',
+			'c.code'=>'ResourceTypeCode',
+			'c.label'=>'ResourceTypeLabel',
+			'r.description'=>'ResourceFormLabel_description',
+			'r.note_private'=>"NotePrivate",
+			'r.note_public'=>"NotePublic",
+			'r.asset_number'=>'AssetNumber',
+			'r.datec'=>"DateCreation",
+			'r.tms'=>"DateLastModification"
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'r.rowid'=>'List:resource:ref',
+			'r.ref'=>'Text',
+			'r.asset_number'=>'Text',
+			'r.description'=>'Text',
+			'c.code'=>'Text',
+			'c.label'=>'List:c_type_resource:label:label',
+			'r.datec'=>'Date',
+			'r.tms'=>'Date',
+			'r.note_private'=>'Text',
+			'r.note_public'=>'Text'
+		);
+		$this->export_entities_array[$r] = array(
+			'r.rowid'=>'resource',
+			'r.ref'=>'resource',
+			'c.code'=>'resource',
+			'c.label'=>'resource',
+			'r.description'=>'resource',
+			'r.note_private'=>"resource",
+			'r.resource'=>"resource",
+			'r.asset_number'=>'resource',
+			'r.datec'=>"resource",
+			'r.tms'=>"resource");
 
 		$keyforselect = 'resource';
 		$keyforelement = 'resource';
