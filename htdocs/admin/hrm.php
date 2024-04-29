@@ -36,6 +36,7 @@ global $langs, $user;
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
@@ -136,7 +137,7 @@ if ($action == 'update') {
 	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
 			$classname = "pdf_".$modele;
 			break;

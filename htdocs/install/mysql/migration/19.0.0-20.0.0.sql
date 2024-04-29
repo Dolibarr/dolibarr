@@ -231,6 +231,8 @@ ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
+
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
