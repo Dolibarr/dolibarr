@@ -2791,10 +2791,11 @@ class Product extends CommonObject
 							 $sql.= " FROM ".$this->db->prefix()."product_price_by_qty";
 							 $sql.= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[$i]);
 							 $sql.= " ORDER BY quantity ASC";
-							 $resultat=array();
+
 							 $resql = $this->db->query($sql);
 							 if ($resql)
 							 {
+							 $resultat=array();
 							 $ii=0;
 							 while ($result= $this->db->fetch_array($resql)) {
 							 $resultat[$ii]=array();
@@ -2829,38 +2830,42 @@ class Product extends CommonObject
 					$sql .= " WHERE fk_product = ".((int) $this->id);
 					$sql .= " ORDER BY date_price DESC, rowid DESC";
 					$sql .= " LIMIT 1";
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$result = $this->db->fetch_array($resql);
 
-						// Price by quantity
-						$this->prices_by_qty[0] = $result["price_by_qty"];
-						$this->prices_by_qty_id[0] = $result["rowid"];
-						// Récuperation de la liste des prix selon qty si flag positionné
-						if ($this->prices_by_qty[0] == 1) {
-							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
-							$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
-							$sql .= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[0]);
-							$sql .= " ORDER BY quantity ASC";
-							$resultat = array();
-							$resql = $this->db->query($sql);
-							if ($resql) {
-								$ii = 0;
-								while ($result = $this->db->fetch_array($resql)) {
-									$resultat[$ii] = array();
-									$resultat[$ii]["rowid"] = $result["rowid"];
-									$resultat[$ii]["price"] = $result["price"];
-									$resultat[$ii]["unitprice"] = $result["unitprice"];
-									$resultat[$ii]["quantity"] = $result["quantity"];
-									$resultat[$ii]["remise_percent"] = $result["remise_percent"];
-									//$resultat[$ii]["remise"]= $result["remise"];                    // deprecated
-									$resultat[$ii]["price_base_type"] = $result["price_base_type"];
-									$ii++;
+						if ($result) {
+							// Price by quantity
+							$this->prices_by_qty[0] = $result["price_by_qty"];
+							$this->prices_by_qty_id[0] = $result["rowid"];
+							// Récuperation de la liste des prix selon qty si flag positionné
+							if ($this->prices_by_qty[0] == 1) {
+								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
+								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
+								$sql .= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[0]);
+								$sql .= " ORDER BY quantity ASC";
+
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$resultat = array();
+									$ii = 0;
+									while ($result = $this->db->fetch_array($resql)) {
+										$resultat[$ii] = array();
+										$resultat[$ii]["rowid"] = $result["rowid"];
+										$resultat[$ii]["price"] = $result["price"];
+										$resultat[$ii]["unitprice"] = $result["unitprice"];
+										$resultat[$ii]["quantity"] = $result["quantity"];
+										$resultat[$ii]["remise_percent"] = $result["remise_percent"];
+										//$resultat[$ii]["remise"]= $result["remise"];                    // deprecated
+										$resultat[$ii]["price_base_type"] = $result["price_base_type"];
+										$ii++;
+									}
+									$this->prices_by_qty_list[0] = $resultat;
+								} else {
+									$this->error = $this->db->lasterror;
+									return -1;
 								}
-								$this->prices_by_qty_list[0] = $resultat;
-							} else {
-								$this->error = $this->db->lasterror;
-								return -1;
 							}
 						}
 					} else {
@@ -2878,9 +2883,10 @@ class Product extends CommonObject
 						$sql .= " ORDER BY date_price DESC, rowid DESC";
 						$sql .= " LIMIT 1";
 						$resql = $this->db->query($sql);
-						if ($resql) {
-							$result = $this->db->fetch_array($resql);
-
+						if (!$resql) {
+							$this->error = $this->db->lasterror;
+							return -1;
+						} elseif ($result = $this->db->fetch_array($resql)) {
 							$this->multiprices[$i] = (!empty($result["price"]) ? $result["price"] : 0);
 							$this->multiprices_ttc[$i] = (!empty($result["price_ttc"]) ? $result["price_ttc"] : 0);
 							$this->multiprices_min[$i] = (!empty($result["price_min"]) ? $result["price_min"] : 0);
@@ -2899,9 +2905,10 @@ class Product extends CommonObject
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
 								$sql .= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[$i]);
 								$sql .= " ORDER BY quantity ASC";
-								$resultat = array();
+
 								$resql = $this->db->query($sql);
 								if ($resql) {
+									$resultat = array();
 									$ii = 0;
 									while ($result = $this->db->fetch_array($resql)) {
 										$resultat[$ii] = array();
@@ -2920,9 +2927,6 @@ class Product extends CommonObject
 									return -1;
 								}
 							}
-						} else {
-							$this->error = $this->db->lasterror;
-							return -1;
 						}
 					}
 				}
@@ -3969,20 +3973,22 @@ class Product extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$arr = $this->db->fetch_array($resql);
-				$keyfortab = (string) $arr[1];
-				if ($year == -1) {
-					$keyfortab = substr($keyfortab, -2);
-				}
+				if (is_array($arr)) {
+					$keyfortab = (string) $arr[1];
+					if ($year == -1) {
+						$keyfortab = substr($keyfortab, -2);
+					}
 
-				if ($mode == 'byunit') {
-					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
-				} elseif ($mode == 'bynumber') {
-					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
-				} elseif ($mode == 'byamount') {
-					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
-				} else {
-					// Bad value for $mode
-					return -1;
+					if ($mode == 'byunit') {
+						$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
+					} elseif ($mode == 'bynumber') {
+						$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
+					} elseif ($mode == 'byamount') {
+						$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
+					} else {
+						// Bad value for $mode
+						return -1;
+					}
 				}
 				$i++;
 			}
@@ -5655,23 +5661,22 @@ class Product extends CommonObject
 	{
 		global $langs;
 		$langs->load('products');
+		$label = '';
 
 		if (isset($this->finished) && $this->finished >= 0) {
 			$sql = "SELECT label, code FROM ".$this->db->prefix()."c_product_nature where code = ".((int) $this->finished)." AND active=1";
 			$resql = $this->db->query($sql);
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-				$label = $langs->trans($res['label']);
-				$this->db->free($resql);
-				return $label;
-			} else {
+			if (!$resql) {
 				$this->error = $this->db->error().' sql='.$sql;
 				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
 				return -1;
+			} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+				$label = $langs->trans($res['label']);
 			}
+			$this->db->free($resql);
 		}
 
-		return '';
+		return $label;
 	}
 
 
@@ -6437,7 +6442,7 @@ class Product extends CommonObject
 		}
 
 		$langs->load('products');
-
+		$label = '';
 		$label_type = 'label';
 		if ($type == 'short') {
 			$label_type = 'short_label';
@@ -6446,16 +6451,16 @@ class Product extends CommonObject
 		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			$res = $this->db->fetch_array($resql);
-			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
-			$this->db->free($resql);
-			return $label;
-		} else {
+		if (!$resql) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
+		} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
 		}
+		$this->db->free($resql);
+
+		return $label;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

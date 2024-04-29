@@ -286,6 +286,7 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
 ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
@@ -307,3 +308,9 @@ ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
 ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
+
+
+-- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
+
+ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+

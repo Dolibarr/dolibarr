@@ -474,7 +474,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function fetch($id, $ref = '', $socid = 0, $default = 1, $type = 'ban')
 	{
-		if (empty($id) && empty($socid)) {
+		if (empty($id) && empty($ref) && empty($socid)) {
 			return -1;
 		}
 

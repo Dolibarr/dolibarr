@@ -166,7 +166,10 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
+
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max);
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonlyshort">...</span></a>';
+		print '</th>';
 		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
@@ -309,7 +312,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max);
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonlyshort">...</span></a>';
+		print '</th>';
 		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
@@ -427,7 +432,9 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
+		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max);
+		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonlyshort">...</span></a>';
+		print '</th>';
 		print '<th></th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';

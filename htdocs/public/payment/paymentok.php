@@ -128,6 +128,17 @@ if (empty($paymentmethod)) {
 
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
+// Detect $isembed
+$isembed = preg_match('/EMB=([^\.]+)/', $FULLTAG, $reg_emb) ? $reg_emb[1] : 0;
+if ($isembed) {
+	dol_syslog("paymentok.php page is called into an iframe.", LOG_DEBUG, 0, '_payment');
+}
+
+// Detect $ws
+$ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
+if ($ws) {
+	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
+}
 
 $validpaymentmethod = array();
 if (isModEnabled('paypal')) {
@@ -162,8 +173,10 @@ $error = 0;
  * Actions and view
  */
 
-// TODO check if we have redirtodomain to do.
-$doactionsthenrediret = 0;
+// Check if we have redirtodomain to do.
+if ($ws) {
+	$doactionsthenredirect = 1;
+}
 
 
 $now = dol_now();
@@ -197,7 +210,7 @@ $conf->dol_hide_leftmenu = 1;
 
 
 // Show header
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 	llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
@@ -1853,7 +1866,7 @@ if ($ispaymentok) {
 
 
 // Show result message
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
@@ -2044,7 +2057,7 @@ unset($_SESSION["TRANSACTIONID"]);
 
 
 // Close page content id="dolpaymentdiv"
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
 	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
@@ -2052,7 +2065,7 @@ if (empty($doactionsthenrediret)) {
 
 
 // Show footer
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 	llxFooter('', 'public');
@@ -2063,12 +2076,26 @@ $db->close();
 
 
 // If option to do a redirect somewhere else.
-if (empty($doactionsthenrediret)) {
+if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
-		// Do the redirect to a success page
-		// TODO
+		// Redirect to a success page
+		// Paymentok page must be created for the specific website
+		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentok&fulltag='.$FULLTAG;
+		if (!empty($isembed)) {
+			print "<script>window.top.location.href = \"". $ext_urlok ."\";</script>";
+		} else {
+			header("Location: ".$ext_urlok);
+			exit;
+		}
 	} else {
-		// Do the redirect to an error page
-		// TODO
+		// Redirect to an error page
+		// Paymentko page must be created for the specific website
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentko&fulltag='.$FULLTAG;
+		if (!empty($isembed)) {
+			print "<script>window.top.location.href = \"". $ext_urlko ."\";</script>";
+		} else {
+			header("Location: ".$ext_urlko);
+			exit;
+		}
 	}
 }
