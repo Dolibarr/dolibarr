@@ -654,10 +654,11 @@ class FormTicket
 
 		if ($subelement != 'contract') {
 			if (isModEnabled('contract') && !$this->ispublic) {
+				$langs->load('contracts');
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');
-				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
+				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1, 1);
 				print '</td></tr>';
 			}
 		}
