@@ -40,7 +40,7 @@ if (!defined('NOREQUIREMENU')) {
 }
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 $action = GETPOST('action', 'aZ');
 $entityid = GETPOSTINT('entity');

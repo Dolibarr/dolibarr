@@ -42,7 +42,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action = GETPOST('action', 'aZ09');

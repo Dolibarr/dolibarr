@@ -27,7 +27,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 

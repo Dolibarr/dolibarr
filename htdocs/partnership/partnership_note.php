@@ -23,7 +23,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';

@@ -26,7 +26,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 // Security check (access forbidden for external user too)
 if (!$user->hasRight('holiday', 'define_holiday') || $user->socid > 0) {

@@ -25,7 +25,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 // Load translation files required by the page
 $langs->load("companies");

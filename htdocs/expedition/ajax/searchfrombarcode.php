@@ -34,7 +34,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $action = GETPOST("action", "alpha");

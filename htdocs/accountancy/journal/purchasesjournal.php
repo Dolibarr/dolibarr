@@ -29,7 +29,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		Page with purchases journal
  */
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';

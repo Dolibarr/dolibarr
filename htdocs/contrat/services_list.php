@@ -29,7 +29,7 @@
  *		\brief      Page to list services in contracts
  */
 
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";

@@ -22,7 +22,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';

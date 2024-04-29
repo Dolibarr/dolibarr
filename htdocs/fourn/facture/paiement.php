@@ -36,7 +36,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';

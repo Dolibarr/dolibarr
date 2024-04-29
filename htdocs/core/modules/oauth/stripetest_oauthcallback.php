@@ -23,7 +23,7 @@
  */
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../../../main.inc.php';
+require_once __DIR__.'/../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;

@@ -29,7 +29,7 @@
 
 define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
-require_once __DIR__ . '/' . 'main.inc.php';
+require_once __DIR__.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"

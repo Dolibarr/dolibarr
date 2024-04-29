@@ -66,7 +66,7 @@ if (!defined('DISABLE_SELECT2')) {
 	define('DISABLE_SELECT2', 1);
 }
 
-require_once __DIR__ . '/' . '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php

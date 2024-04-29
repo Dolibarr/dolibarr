@@ -36,7 +36,7 @@ if (!defined('NOREQUIREAJAX')) {
 }
 
 // Load Dolibarr environment
-require_once __DIR__ . '/' . '../main.inc.php'; // Load $user and permissions
+require_once __DIR__.'/../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));

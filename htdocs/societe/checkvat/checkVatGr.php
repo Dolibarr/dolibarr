@@ -23,7 +23,7 @@
  *  \brief      Request VAT details from the Greek Ministry of Finance GSIS SOAP web service
  */
 
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 $username = getDolGlobalString('AADE_WEBSERVICE_USER'); // Get username from request
 $password = getDolGlobalString('AADE_WEBSERVICE_KEY'); // Get password from request

@@ -24,7 +24,7 @@
  * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 // Enable and test if module Api is enabled
 if (!isModEnabled('api')) {

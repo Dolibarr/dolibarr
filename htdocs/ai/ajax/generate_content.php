@@ -41,7 +41,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-require_once __DIR__ . '/' . '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
