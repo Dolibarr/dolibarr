@@ -114,7 +114,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->STOCK_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('STOCK_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
