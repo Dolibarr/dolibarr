@@ -12742,10 +12742,10 @@ function getNonce()
  * Start a table with headers and a optional clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
  * @param string	$header			The first left header of the table (automatic translated)
- * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$link			(optional) The link to a internal dolibarr page, where to go on clicking on the number or the ... (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
  * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
- * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown as '...'
+ * @param integer	$number			(optional) The number that is shown right after the first header, when -1 the link is shown as '...'
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
