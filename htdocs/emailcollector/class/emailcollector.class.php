@@ -1694,6 +1694,7 @@ class EmailCollector extends CommonObject
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
 				}
 				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+
 				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
@@ -1715,7 +1716,7 @@ class EmailCollector extends CommonObject
 					if (empty($trackidfoundintorecipienttype)) {
 						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 							$nbemailprocessed++;
-							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching signature of application so with a trackid");
+							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
 							continue; // Exclude email
 						}
 					}
@@ -2062,8 +2063,9 @@ class EmailCollector extends CommonObject
 							 }*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
-							if (!is_object($objectemail)) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
+							if (!is_object($objectemail) && isModEnabled('ticket')) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
+								$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
@@ -2077,7 +2079,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('project')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -2092,7 +2094,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('recruitment')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
