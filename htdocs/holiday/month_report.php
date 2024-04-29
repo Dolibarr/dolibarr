@@ -43,7 +43,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '', 'readall');
+$result = restrictedArea($user, 'holiday', $id);
 
 $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
@@ -75,6 +75,11 @@ $hookmanager->initHooks(array('leavemovementlist'));
 
 $arrayfields = array();
 $arrayofmassactions = array();
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
