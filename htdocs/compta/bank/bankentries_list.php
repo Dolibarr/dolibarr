@@ -1086,6 +1086,8 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+	$selectedfields .= ($action == 'reconcile' ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
 	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
 	if ($action == 'reconcile') {
 		$arrayfields['b.num_releve']['checked'] = 1;
@@ -1401,14 +1403,7 @@ if ($resql) {
 					print '</td>';
 				}
 				if (!empty($arrayfields['b.num_releve']['checked'])) {
-					print '<td class="center">';
-					print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
-					print ' <script type="text/javascript">
-							$("input#selectAll").change(function() {
-								$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
-							});
-							</script>';
-					print '</td>';
+					print '<td></td>';
 				}
 
 				// conciliate
@@ -1462,12 +1457,12 @@ if ($resql) {
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td>';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
+			if (!$objp->conciliated && $action == 'reconcile') {
+				if ($objp->num_releve) {
+					print '&nbsp;';
 				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				$tmparray = GETPOST('rowid', 'array:int');
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1799,13 +1794,6 @@ if ($resql) {
 				if ($objp->num_releve) {
 					print '<a href="releve.php?num='.urlencode($objp->num_releve).'&account='.urlencode($objp->bankid).'&save_lastsearch_values=1">'.dol_escape_htmltag($objp->num_releve).'</a>';
 				}
-				if (!$objp->conciliated && $action == 'reconcile') {
-					if ($objp->num_releve) {
-						print '&nbsp;';
-					}
-					$tmparray = GETPOST('rowid', 'array:int');
-					print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
-				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1874,12 +1862,12 @@ if ($resql) {
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td>';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($objp->rowid, $arrayofselected)) {
-					$selected = 1;
+			if (!$objp->conciliated && $action == 'reconcile') {
+				if ($objp->num_releve) {
+					print '&nbsp;';
 				}
-				print '<input id="cb'.$objp->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					$tmparray = GETPOST('rowid', 'array:int');
+					print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
