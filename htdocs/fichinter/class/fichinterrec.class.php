@@ -53,7 +53,7 @@ class FichinterRec extends Fichinter
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $table_ref_field = 'titre';
+	protected $table_ref_field = 'title';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -178,7 +178,7 @@ class FichinterRec extends Fichinter
 
 		if ($result > 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter_rec (";
-			$sql .= "titre";
+			$sql .= "title";
 			$sql .= ", fk_soc";
 			$sql .= ", entity";
 			$sql .= ", datec";
@@ -290,7 +290,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.titre as title, f.fk_soc';
+		$sql = 'SELECT f.title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';

@@ -190,7 +190,7 @@ ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
 ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
-
+ALTER TABLE llx_fichinter_rec CHANGE COLUMN titre title varchar(50) NOT NULL;
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,

@@ -23,7 +23,7 @@
 create table llx_fichinter_rec
 (
 	rowid				integer AUTO_INCREMENT PRIMARY KEY,
-	titre				varchar(50) NOT NULL,
+	title				varchar(50) NOT NULL,
 	entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
 	fk_soc				integer DEFAULT NULL,
 	datec				datetime,  -- date de creation
