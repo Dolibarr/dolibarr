@@ -29,7 +29,7 @@
 $pathMainInclude = "main.inc.php";
 $res = 0; $limit = 15;
 while ( ! $res && $limit ) {
-    if ( file_exists( __DIR__.'/'.$pathMainInclude) ) {
+    if ( file_exists(__DIR__.'/'.$pathMainInclude)) {
         $res = require_once __DIR__.'/'.$pathMainInclude;
     }
     // Trying one folder up
