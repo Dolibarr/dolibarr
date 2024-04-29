@@ -308,7 +308,6 @@ class CActionComm
 							}
 
 							if ($typecalendar == 'module') {
-								//TODO check if possible to push it between system and systemauto
 								$module = preg_replace('/^[^@]+@/', '', $obj->module);
 								$label = '&nbsp;&nbsp; '.$label;
 								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
