@@ -233,11 +233,16 @@ class DolibarrApi
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
+		unset($object->oldref);
 		unset($object->alreadypaid);
 		unset($object->openid);
-
-		//unset($object->labelStatus);
-		//unset($object->labelStatusShort);
+		unset($object->fk_bank);
+		unset($object->showphoto_on_popup);
+		unset($object->nb);
+		unset($object->nbphoto);
+		unset($object->output);
+		unset($object->tpl);
+		//unset($object->libelle);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);
@@ -248,6 +253,8 @@ class DolibarrApi
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
 
+		unset($object->origin_object);
+		unset($object->origin);
 		unset($object->element);
 		unset($object->element_for_permission);
 		unset($object->fk_element);
@@ -255,6 +262,7 @@ class DolibarrApi
 		unset($object->table_element_line);
 		unset($object->class_element_line);
 		unset($object->picto);
+		unset($object->linked_objects);
 
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);
@@ -268,11 +276,17 @@ class DolibarrApi
 		unset($object->country);
 		unset($object->state);
 		unset($object->state_code);
+		unset($object->fk_departement);
 		unset($object->departement);
 		unset($object->departement_code);
 
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
+		unset($object->labelStatus);
+		unset($object->labelStatusShort);
+
+		unset($object->actionmsg);
+		unset($object->actionmsg2);
 
 		unset($object->prefix_comm);
 

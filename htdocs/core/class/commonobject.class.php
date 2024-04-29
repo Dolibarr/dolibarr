@@ -68,11 +68,6 @@ abstract class CommonObject
 	public $id;
 
 	/**
-	 * @var int			Another ID that is the $id but with an offset so that ID of the website start at 1
-	 */
-	public $newid;
-
-	/**
 	 * @var int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
@@ -279,7 +274,7 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
-	 * @var	?CommonObject	Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 * @var	?CommonObject	Origin object. This is set by fetch_origin() from this->origin_type and this->origin_id.
 	 */
 	public $origin_object;
 
@@ -806,7 +801,7 @@ abstract class CommonObject
 	public $nbphoto;
 
 	/**
-	 * @var string 		output
+	 * @var string 		output content. Used topropagate information by cron jobs.
 	 */
 	public $output;
 
@@ -2038,7 +2033,6 @@ abstract class CommonObject
 	/**
 	 *	Read linked origin object.
 	 *	Set ->origin_object
-	 *	Set also ->expedition or ->livraison or ->commandeFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
@@ -2047,6 +2041,7 @@ abstract class CommonObject
 		// phpcs:enable
 		$origin = $this->origin ? $this->origin : $this->origin_type;
 
+		// Manage classes with non standard name
 		if ($origin == 'shipping') {
 			$origin = 'expedition';
 		}
