@@ -785,10 +785,10 @@ class ImportCsv extends ModeleImports
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $tmpkey => $tmpval) {
-						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $tmpkey)) {
+						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $tmpkey)) {
 							continue; // Not a field of current table
 						}
-						$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
 						// avoid duplicates in insert
 						if (in_array($keyfield, $listfields)) {
 							continue;
