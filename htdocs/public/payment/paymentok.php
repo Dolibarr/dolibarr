@@ -128,12 +128,6 @@ if (empty($paymentmethod)) {
 
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
-// Detect $isembed
-$isembed = preg_match('/EMB=([^\.]+)/', $FULLTAG, $reg_emb) ? $reg_emb[1] : 0;
-if ($isembed) {
-	dol_syslog("paymentok.php page is called into an iframe.", LOG_DEBUG, 0, '_payment');
-}
-
 // Detect $ws
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
@@ -2081,21 +2075,11 @@ if (!empty($doactionsthenredirect)) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
 		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentok&fulltag='.$FULLTAG;
-		if (!empty($isembed)) {
-			print "<script>window.top.location.href = \"". $ext_urlok ."\";</script>";
-		} else {
-			header("Location: ".$ext_urlok);
-			exit;
-		}
+		print "<script>window.top.location.href = \"". $ext_urlok ."\";</script>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
 		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentko&fulltag='.$FULLTAG;
-		if (!empty($isembed)) {
-			print "<script>window.top.location.href = \"". $ext_urlko ."\";</script>";
-		} else {
-			header("Location: ".$ext_urlko);
-			exit;
-		}
+		print "<script>window.top.location.href = \"". $ext_urlko ."\";</script>";
 	}
 }
