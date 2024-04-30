@@ -1,0 +1,11 @@
+meta {
+  name: Delete all accounts attached to a thirdparty --
+  type: http
+  seq: 36
+}
+
+delete {
+  url: {{base_url}}/thirdparties/{id}/accounts
+  body: none
+  auth: none
+}
