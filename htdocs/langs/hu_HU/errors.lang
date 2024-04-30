@@ -134,7 +134,7 @@ ErrorLoginDoesNotExists=A(z) <b>%s</b> bejelentkezési névvel rendelkező felha
 ErrorLoginHasNoEmail=Ennek a felhasználónak nincs e-mail címe. A folyamat megszakítva.
 ErrorBadValueForCode=A biztonsági kód hibás értéke. Próbálja újra új értékkel...
 ErrorBothFieldCantBeNegative=A %s és a %s mező nem lehet negatív
-ErrorFieldCantBeNegativeOnInvoice=A <strong>%s</strong> mező nem lehet negatív ezen a típusú <span classon ='notranslate'>számla</span>. Ha kedvezménysort kell hozzáadnia, először csak hozza létre a kedvezményt (a harmadik féltől származó kártya „%s” mezőjéből), és alkalmazza a számla.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in third-party card) and apply it to the invoice.
 ErrorLinesCantBeNegativeForOneVATRate=A sorok összessége (adó nélkül) nem lehet negatív egy adott nem null áfakulcs esetén (Negatív összeget találtunk a(z) <b>%s</b>%% áfakulcshoz.
 ErrorLinesCantBeNegativeOnDeposits=A sorok nem lehetnek negatívak a betétben. Problémákkal kell szembenéznie, amikor a végszámlán szereplő letétet fel kell használnia.
 ErrorQtyForCustomerInvoiceCantBeNegative=A vevői számlák sorának mennyisége nem lehet negatív

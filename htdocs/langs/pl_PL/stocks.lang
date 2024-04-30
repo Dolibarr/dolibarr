@@ -282,7 +282,7 @@ ModuleStockTransferName=Zaawansowany transfer zapasów
 ModuleStockTransferDesc=Zaawansowane zarządzanie przesunięciami magazynowymi z generowaniem arkusza przeniesień
 StockTransferNew=Nowy transfer akcji
 StockTransferList=Lista transferów akcji
-ConfirmValidateStockTransfer=Czy na pewno chcesz zatwierdzić ten transfer zapasów za pomocą referencji <b>%s<span class='notranslate'></b></ rozpiętość>?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Zmniejszenie zapasów wraz z przeniesieniem %s
 ConfirmDestockCancel=Anuluj zmniejszenie zapasów poprzez przeniesienie %s
 DestockAllProduct=Zmniejszenie zapasów

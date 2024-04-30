@@ -84,7 +84,7 @@ $model_option = array(
 if ($action == 'update') {
 	$error = 0;
 
-	$modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
+	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
 	if (!empty($modelcsv)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
@@ -216,20 +216,6 @@ if ($num) {
 	}
 }
 
-print "</table>\n";
-
-print "<br>\n";
-
-/*
- * Export model
- */
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Modelcsv").'</td>';
-print '</tr>';
-
-
 print '<tr class="oddeven">';
 print '<td width="50%">'.$langs->trans("Selectmodelcsv").'</td>';
 if (!$conf->use_javascript_ajax) {
@@ -238,12 +224,13 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = $accountancyexport->getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	$listofexporttemplates = $accountancyexport->getType(1);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listofexporttemplates, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }
 print "</td></tr>";
+
 print "</table>";
 
 print "<br>\n";

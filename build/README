@@ -34,7 +34,7 @@ See makepack-howto.txt for prerequisites.
 
 --------------------------------------------------------------------------------------------------
 
-- To build developper documentation, launch the script
+- To build developer documentation, launch the script
 > perl dolibarr-doxygen-build.pl
 
 

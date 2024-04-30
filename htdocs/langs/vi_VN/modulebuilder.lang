@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Không thêm được mã vào bộ mô tả. Ki�
 DictionariesCreated=Từ điển <b>%s</b> đã được tạo thành công
 DictionaryDeleted=Đã xóa thành công từ điển <b>%s</b>
 PropertyModuleUpdated=Thuộc tính <b>%s</b> đã được cập nhật thành công
-InfoForApiFile=* Khi bạn tạo tệp lần đầu tiên thì tất cả các phương thức sẽ được tạo <strong>cho từng đối tượng.</strong><br>* Khi bạn nhấp vào <strong>remove</strong>, bạn chỉ cần xóa tất cả các phương thức cho lớp <span> ='notranslate'><strong></span>đối tượng được chọn</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Trang để thiết lập mô-đun
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Bạn có thể tạo và chỉnh sửa các tệp lớp tại đây để cung cấp bộ chọn mục tiêu email mới cho mô-đun gửi email hàng loạt

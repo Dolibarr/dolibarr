@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/core/lib/categories.lib.php
- *	\brief      Ensemble de fonctions de base pour le module categorie
+ *	\brief      Ensemble de functions de base pour le module categorie
  *	\ingroup    categorie
  */
 

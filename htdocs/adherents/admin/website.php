@@ -63,7 +63,7 @@ if ($action == 'update') {
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
 	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
+	$forcetype = GETPOSTINT('MEMBER_NEWFORM_FORCETYPE');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
@@ -220,6 +220,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
+	$morphys = array();
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';

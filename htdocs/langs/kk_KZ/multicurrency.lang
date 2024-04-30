@@ -25,7 +25,7 @@ CreateRate=Тариф құру
 FormCreateRate=Бағаны құру
 FormUpdateRate=Бағаны өзгерту
 successRateCreate=Дерекқорға %s валютасының бағамы қосылды
-ConfirmDeleteLineRate=%s</span сайтындағы <span class='notranslate'>%s валютасының %s бағамын шынымен алып тастағыңыз келе ме? > күні?
+ConfirmDeleteLineRate=Are you sure you want to remove the %s rate for currency %s on %s date?
 DeleteLineRate=Таза тариф
 successRateDelete=Бағасы жойылды
 errorRateDelete=Тарифті жою кезінде қате пайда болды

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error = 0;
 $website = GETPOST('website', 'alpha');
-$websiteid = GETPOST('websiteid', 'int');
+$websiteid = GETPOSTINT('websiteid');
 $pageid = GETPOST('page', 'alpha') ? GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;
@@ -82,7 +83,7 @@ $type = '';
 
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 //print 'Directory with '.$appli.' websites.<br>';
@@ -128,7 +129,7 @@ $original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity
 $refname = basename(dirname($original_file)."/");
 
 // Security:
-// Limite acces si droits non corrects
+// Limit access if permissions are insufficient
 if (!$accessallowed) {
 	accessforbidden();
 }
@@ -139,7 +140,7 @@ if (!$accessallowed) {
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $file));
 	exit;
 }
 
@@ -155,7 +156,7 @@ $original_file_osencoded = dol_osencode($original_file); // New file name encode
 if (!file_exists($original_file_osencoded)) {
 	$langs->load("website");
 	print $langs->trans("RequestedPageHasNoContentYet", $pageid);
-	//dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	//dol_print_error(null,$langs->trans("ErrorFileDoesNotExists",$original_file));
 	exit;
 }
 

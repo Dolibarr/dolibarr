@@ -605,10 +605,9 @@ class Plugin extends ServerPlugin
      *
      * This method may update $newObject to add any status changes.
      *
-     * @param VCalendar|string $oldObject
-     * @param array            $ignore    any addresses to not send messages to
-     * @param bool             $modified  a marker to indicate that the original object
-     *                                    modified by this process
+     * @param VCalendar|string|null $oldObject
+     * @param array                 $ignore    any addresses to not send messages to
+     * @param bool                  $modified  a marker to indicate that the original object modified by this process
      */
     protected function processICalendarChange($oldObject, VCalendar $newObject, array $addresses, array $ignore = [], &$modified = false)
     {
@@ -969,7 +968,7 @@ class Plugin extends ServerPlugin
      *
      * @return bool
      */
-    private function scheduleReply(RequestInterface $request)
+    protected function scheduleReply(RequestInterface $request)
     {
         $scheduleReply = $request->getHeader('Schedule-Reply');
 

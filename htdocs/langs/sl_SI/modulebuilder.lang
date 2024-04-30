@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Kode ni bilo mogoče dodati v deskriptor. Preverit
 DictionariesCreated=Slovar <b>%s</b> je bil uspešno ustvarjen
 DictionaryDeleted=Slovar <b>%s</b> je bil uspešno odstranjen
 PropertyModuleUpdated=Lastnost <b>%s</b> je bila uspešno posodobljena
-InfoForApiFile=* Ko prvič ustvarite datoteko, bodo vse metode ustvarjene <strong>za vsak predmet.</strong><br>* Ko kliknete <strong>remove</strong>, samo odstranite vse metode za razred <span ='notranslate'><strong></span>izbrani predmet</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Stran za nastavitev modula
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module

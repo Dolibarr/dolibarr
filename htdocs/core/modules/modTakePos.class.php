@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 SuperAdmin
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -54,7 +55,7 @@ class modTakePos extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "portal";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '45';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -120,8 +121,8 @@ class modTakePos extends DolibarrModules
 			//1=>array('TAKEPOS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
-
-		if (!isset($conf->takepos) || !isset($conf->takepos->enabled)) {
+		// To avoid warning
+		if (!isModEnabled('takepos')) {
 			$conf->takepos = new stdClass();
 			$conf->takepos->enabled = 0;
 		}
@@ -142,7 +143,7 @@ class modTakePos extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -281,9 +282,9 @@ class modTakePos extends DolibarrModules
 			if ($searchcompanyid == 0) {
 				$societe->name = $nametouse;
 				$societe->client = 1;
-				$societe->code_client = -1;
-				$societe->code_fournisseur = -1;
-				$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
+				$societe->code_client = '-1';
+				$societe->code_fournisseur = '-1';
+				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
 				$searchcompanyid = $societe->create($user);
 			}
@@ -295,11 +296,11 @@ class modTakePos extends DolibarrModules
 			}
 		}
 
-		//Create category if not exists
+		// Create product category DefaultPOSCatLabel if not exists
 		$categories = new Categorie($this->db);
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo)) {
+			if (!count($cate_arbo) || !getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID')) {
 				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");
@@ -308,6 +309,8 @@ class modTakePos extends DolibarrModules
 				$result = $category->create($user);
 
 				if ($result > 0) {
+					dolibarr_set_const($this->db, 'TAKEPOS_ROOT_CATEGORY_ID', $result, 'chaine', 0, 'Id of category for products visible in TakePOS', $conf->entity);
+
 					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
 					/*
 					$product = new Product($this->db);
@@ -323,7 +326,7 @@ class modTakePos extends DolibarrModules
 			}
 		}
 
-		//Create cash account if not exists
+		// Create cash account CASH-POS / DefaultCashPOSLabel if not exists
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($this->db);
@@ -331,7 +334,8 @@ class modTakePos extends DolibarrModules
 			if ($searchaccountid == 0) {
 				$cashaccount->ref = "CASH-POS";
 				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
-				$cashaccount->courant = 2;
+				$cashaccount->courant = Account::TYPE_CASH; // deprecated
+				$cashaccount->type = Account::TYPE_CASH;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
 				$searchaccountid = $cashaccount->create($user);

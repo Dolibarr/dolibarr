@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Неуспешно добавяне на код в
 DictionariesCreated=Речникът <b>%s</b> е създаден успешно
 DictionaryDeleted=Речникът <b>%s</b> премахнат успешно
 PropertyModuleUpdated=Собствеността <b>%s</b> е актуализирана успешно
-InfoForApiFile=* Когато генерирате файл за първи път, всички методи ще бъдат създадени <strong>за всеки обект.</strong><br>* Когато щракнете върху <strong>remove</strong>, вие просто премахвате всички методи за класа <span ='notranslate'><strong></span>избран обект</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Страница за настройка на модула
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Можете да генерирате и редактирате тук файловете на класа, за да предоставите нови целеви селектори за имейл за модула за масово изпращане по имейл

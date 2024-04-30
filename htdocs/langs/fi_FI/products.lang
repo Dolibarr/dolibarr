@@ -208,11 +208,6 @@ unitSET=Aseta
 unitS=Sekunti
 unitH=Tunti
 unitD=Päivä
-unitG=Gramma
-unitM=Metri
-unitLM=Lineaarinen mittari
-unitM2=Neliömetri
-unitM3=Kuutiometri
 unitL=Litra
 unitT=tonnia
 unitKG=kg
@@ -221,6 +216,7 @@ unitMG=mg
 unitLB=punta
 unitOZ=unssi
 unitM=Metri
+unitLM=Lineaarinen mittari
 unitDM=dm
 unitCM=cm
 unitMM=mm
@@ -289,9 +285,9 @@ MinimumRecommendedPrice=Suositeltu vähimmäishinta on: %s
 PriceExpressionEditor=Hintailmaisueditori
 PriceExpressionSelected=Valittu hintalauseke
 PriceExpressionEditorHelp1="hinta = 2 + 2" tai "2 + 2" hinnan määrittämiseksi. Käytä ; ilmaisujen erottamiseen
-PriceExpressionEditorHelp2=Voit käyttää ExtraFields-kenttiä muuttujilla, kuten <b>#extrafield_myextrafieldkey#</b> b0ae65a9e50</2span6e> muuttujat <span class='notranslate'><b>#global_mycode#</b>
-PriceExpressionEditorHelp3=Molemmissa tuotteen/palvelun ja Toimittaja hinnoissa on saatavilla seuraavat muuttujat:<br> ><b>#tva_tx# #localtax1_tx# #localtax2_tx# #Massa# #length# #pinta#<span class_min# ='notranslate'></b></span>
-PriceExpressionEditorHelp4=Vain tuotteen/palvelun hinta: <b>#supplier_min_price#</b>b0342fccfda</span19bz0 <span class='notranslate'>Toimittaja vain hinnat: <b>#supplier_quantity# ja #suppli class='notranslate'></b></span>
+PriceExpressionEditorHelp2=You can access ExtraFields with variables like <b>#extrafield_myextrafieldkey#</b> and global variables with <b>#global_mycode#</b>
+PriceExpressionEditorHelp3=In both product/service and vendor prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceExpressionEditorHelp5=Käytettävissä olevat globaalit arvot:
 PriceMode=Hinta-tila
 PriceNumeric=Numero
@@ -410,7 +406,7 @@ PMPValueShort=WAP
 mandatoryperiod=Pakolliset ajanjaksot
 mandatoryPeriodNeedTobeSet=Huomaa: jakso (alku ja loppu päiväys) on määritettävä
 mandatoryPeriodNeedTobeSetMsgValidate=Palvelu vaatii aloitusjakson ja
-mandatoryHelper=Valitse tämä, jos haluat viestiä käyttäjälle luodessasi/vahvisttaessasi laskua, Tarjouspyyntö, myyntitilausta ilman alkua ja lopeta päiväys tämän palvelun linjoilla.<br>Huomaa, että viesti on varoitus <span class='notranslate'>ja /span> ei ole estovirhe.
+mandatoryHelper=Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.<br>Note that the message is a warning and not a blocking error.
 DefaultBOM=oletus tuoteluettelo
 DefaultBOMDesc=Tämän tuotteen valmistukseen suositeltu oletus tuoteluettelo. Tämä Kenttä voidaan asettaa vain, jos tuotteen luonne on %s.
 Rank=Sijoitus
@@ -436,5 +432,7 @@ ConfirmEditExtrafieldQuestion = Haluatko varmasti muokata tätä lisäkenttää?
 ModifyValueExtrafields = Muokkaa lisäkentän arvoa
 OrProductsWithCategories=Tai tuotteet tunnisteilla/luokilla
 WarningTransferBatchStockMouvToGlobal = Jos haluat deserialisoida tämän tuotteen, kaikki sen sarjoitetut varastot muutetaan maailmanlaajuisiksi varastoiksi
-WarningConvertFromBatchToSerial=Jos sinulla on tällä hetkellä tuotteen määrä suurempi tai yhtä suuri kuin 2, tähän valintaan vaihtaminen tarkoittaa, että sinulla on edelleen tuote, jossa on saman erän eri kohteita (vaikka haluat ainutlaatuisen <span class='notranslate'>Sarjanumero</. span>). Kaksoiskappale säilyy, kunnes inventaario tai manuaalinen varastosiirto tämän korjaamiseksi on tehty.
+WarningConvertFromBatchToSerial=If you currently have a quantity higher or equal to 2 for the product, switching to this choice means you will still have a product with different objects of the same batch (while you want a unique serial number). The duplicate will remain until an inventory or a manual stock movement to fix this is done.
+AllowStockMovementVariantParent=Also records stock movements on parent products of variant products
+AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtual product, so no stock is managed for it. By enabling this option, a stock will be managed for parent products and each time a stock quantity is modified for a variant product, the same quantity will be modified for the parent product. You should not need this option, except if you are using variant to manage the same product than parent (but with different descriptions, prices...)
 ConfirmSetToDraftInventory=Haluatko varmasti palata Luonnos-tilaan?<br>Mainosjakaumaan tällä hetkellä asetetut määrät nollataan.

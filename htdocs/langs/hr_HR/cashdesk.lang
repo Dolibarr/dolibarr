@@ -97,7 +97,7 @@ ReceiptPrinterMethodDescription=Snažna metoda s puno parametara. Potpuno prilag
 ByTerminal=Po terminalu
 TakeposNumpadUsePaymentIcon=Koristite ikonu umjesto teksta na gumbima za plaćanje numeričke tipkovnice
 CashDeskRefNumberingModules=Modul numeracije za POS prodaju
-CashDeskGenericMaskCodes6 = <br><b>{TN}</b></span span> <span class='notranslate'>oznaka koristi se za dodavanje broja terminala
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=Merge lines of the same products
 StartAParallelSale=Započnite novu paralelnu prodaju
 SaleStartedAt=Prodaja je počela u %s

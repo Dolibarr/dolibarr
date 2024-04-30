@@ -95,7 +95,7 @@ NbOfLinesImported=کامیابی سے درآمد شدہ لائنوں کی تعد
 DataComeFromNoWhere=داخل کرنے کی قدر سورس فائل میں کہیں سے نہیں آتی ہے۔
 DataComeFromFileFieldNb=داخل کرنے کی قدر ماخذ فائل میں کالم <b>%s</b> سے آتی ہے۔
 DataComeFromIdFoundFromRef=ماخذ فائل سے آنے والی قدر کو استعمال کرنے کے لیے پیرنٹ آبجیکٹ کی شناخت تلاش کرنے کے لیے استعمال کیا جائے گا (لہذا آبجیکٹ <b>%s</b> جس میں ماخذ فائل سے حوالہ ڈیٹا بیس میں موجود ہونا چاہیے)۔
-DataComeFromIdFoundFromCodeId=ماخذ فائل سے آنے والے کوڈ کی قدر کو استعمال کرنے کے لیے پیرنٹ آبجیکٹ کی شناخت تلاش کرنے کے لیے استعمال کیا جائے گا (لہذا ماخذ فائل کا کوڈ لغت میں موجود ہونا چاہیے <b><span کلاس ='notranslate'>%s</span></b>)۔ نوٹ کریں کہ اگر آپ کو آئی ڈی معلوم ہے تو آپ اسے کوڈ کے بجائے سورس فائل میں بھی استعمال کر سکتے ہیں۔ درآمد دونوں صورتوں میں کام کرنا چاہئے.
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=سورس فائل سے آنے والا ڈیٹا درج ذیل فیلڈ میں داخل کیا جائے گا:
 DataIDSourceIsInsertedInto=پیرنٹ آبجیکٹ کی آئی ڈی، جو سورس فائل میں ڈیٹا کا استعمال کرتے ہوئے پائی گئی تھی، درج ذیل فیلڈ میں ڈالی جائے گی:
 DataCodeIDSourceIsInsertedInto=پیرنٹ لائن کی آئی ڈی، جو کوڈ سے ملی تھی، درج ذیل فیلڈ میں ڈالی جائے گی:

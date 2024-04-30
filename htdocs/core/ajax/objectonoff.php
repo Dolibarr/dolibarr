@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
  *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
- *       			 This Ajax service is oftenly called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -44,10 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
-$value = GETPOST('value', 'int');
+$value = GETPOSTINT('value');
 $format = 'int';
 
 // Load object according to $id and $element

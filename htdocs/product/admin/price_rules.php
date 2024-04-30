@@ -167,7 +167,7 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					// Label of price
 					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 				if (!empty($conf->global->$keyforlabel)) {
-					print ' - '.$langs->trans($conf->global->$keyforlabel);
+					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				?>
 					</td>

@@ -21,7 +21,7 @@
 /**
  * \file scripts/user/sync_users_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des users dans LDAP depuis base Dolibarr
+ * \brief Script to update users in LDAP from Dolibarr DB
  */
 
 if (!defined('NOSESSION')) {
@@ -35,12 +35,12 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: $script_file now\n";
-	exit(-1);
+	exit(1);
 }
 $now = $argv[1];
 
@@ -51,6 +51,9 @@ require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -63,7 +66,7 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 /*
  * if (! getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
@@ -76,7 +79,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
@@ -96,7 +99,7 @@ if ($resql) {
 		$info = $fuser->_load_ldap_info();
 		$dn = $fuser->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->trans("OK");

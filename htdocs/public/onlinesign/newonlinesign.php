@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "stripe", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -112,8 +113,8 @@ if (!empty($SECUREKEY)) {
 	$urlko .= 'securekey='.urlencode($SECUREKEY).'&';
 }
 if (!empty($entity)) {
-	$urlok .= 'entity='.urlencode($entity).'&';
-	$urlko .= 'entity='.urlencode($entity).'&';
+	$urlok .= 'entity='.urlencode((string) ($entity)).'&';
+	$urlko .= 'entity='.urlencode((string) ($entity)).'&';
 }
 $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
@@ -146,19 +147,19 @@ if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $e
 if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
-	$result= $object->fetch(0, $ref, '', $entity);
+	$result = $object->fetch(0, $ref, '', $entity);
 } elseif ($source == 'contract') {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$object = new Contrat($db);
-	$result= $object->fetch(0, $ref);
+	$result = $object->fetch(0, $ref);
 } elseif ($source == 'fichinter') {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$object = new Fichinter($db);
-	$result= $object->fetch(0, $ref);
+	$result = $object->fetch(0, $ref);
 } elseif ($source == 'societe_rib') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 	$object = new CompanyBankAccount($db);
-	$result= $object->fetch($ref);
+	$result = $object->fetch(0, $ref);
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
@@ -207,6 +208,8 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 
 	$object->fetch(0, $ref);
 }
+
+// $action == "dosign" is handled later...
 
 
 /*
@@ -262,9 +265,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
-	$logosmall = $conf->global->ONLINE_SIGN_LOGO;
+	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -571,11 +574,11 @@ if ($source == 'proposal') {
 
 		$object->setDocModel($user, $defaulttemplate);
 		$moreparams = array(
-			'use_companybankid'=>$object->id,
-			'force_dir_output'=>$diroutput
+			'use_companybankid' => $object->id,
+			'force_dir_output' => $diroutput
 		);
 		$result = $object->thirdparty->generateDocument($defaulttemplate, $langs, 0, 0, 0, $moreparams);
-		$object->last_main_doc=$object->thirdparty->last_main_doc;
+		$object->last_main_doc = $object->thirdparty->last_main_doc;
 	}
 	$directdownloadlink = $object->getLastMainDocLink('company');
 	if ($directdownloadlink) {

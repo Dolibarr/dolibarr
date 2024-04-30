@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,21 +37,21 @@ function recruitmentjobpositionPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("PositionToBeFilled");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/recruitmentcandidature_list.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentcandidature_list.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
-	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = ".((int) $object->id);
+	$sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = " . ((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
 			$nCandidature = $obj->nb;
 			if ($nCandidature > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nCandidature.'</span>';
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nCandidature . '</span>';
 			}
 		}
 	} else {
@@ -67,29 +68,29 @@ function recruitmentjobpositionPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dol_buildpath('/recruitment/recruitmentjobposition_note.php', 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_note.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->recruitment->dir_output."/recruitmentjobposition/".dol_sanitizeFileName($object->ref);
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->recruitment->dir_output . "/recruitmentjobposition/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_document.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_document.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 	}
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_agenda.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentjobposition_agenda.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -113,9 +114,9 @@ function recruitmentjobpositionPrepareHead($object)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		      0=True url, 1=Url formated with colors
+ * @param   int		$mode		      0=True url, 1=Url formatted with colors
  * @param	string	$ref		      Ref of object
- * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
+ * @param   int     $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string
  */
 function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
@@ -126,8 +127,8 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	$out = '';
 
 	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	$urltouse = DOL_MAIN_URL_ROOT;
@@ -135,7 +136,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 		$urltouse = $urlwithroot;
 	}
 
-	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<span style="color: #666666">' : '').$ref.($mode ? '</span>' : '');
+	$out = $urltouse . '/public/recruitment/view.php?ref=' . ($mode ? '<span style="color: #666666">' : '') . $ref . ($mode ? '</span>' : '');
 	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
 	{
 		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);
@@ -144,7 +145,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=" . $conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;
