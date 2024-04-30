@@ -7378,10 +7378,9 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
-				$out = '';
 				if (!empty($param['options'])) {
 					$out .= "<br>";
-					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], GETPOST($keyprefix.$key.$keysuffix."_multiselect"), 0, 1, "flat ".$morecss, 0, '90%', '', '', '', '', 1);
+					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], GETPOST($keyprefix.$key.$keysuffix."_multiselect"), 0, 1, "flat ".$morecss, 0, '90%');
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
