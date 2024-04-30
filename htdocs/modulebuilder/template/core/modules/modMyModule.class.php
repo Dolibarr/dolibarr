@@ -64,6 +64,7 @@ class modMyModule extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModule is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
+		// DESCRIPTION_FLAG
 		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
 		$this->description = "MyModuleDescription";
 		// Used only if file README.md and README-LL.md not found.
@@ -117,6 +118,7 @@ class modMyModule extends DolibarrModules
 				//   '/mymodule/js/mymodule.js.php',
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
+			/* BEGIN MODULEBUILDER HOOKSCONTEXTS */
 			'hooks' => array(
 				//   'data' => array(
 				//       'hookcontext1',
@@ -124,6 +126,7 @@ class modMyModule extends DolibarrModules
 				//   ),
 				//   'entity' => '0',
 			),
+			/* END MODULEBUILDER HOOKSCONTEXTS */
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
 			// Set this to 1 if the module provides a website template into doctemplates/websites/website_template-mytemplate
@@ -179,8 +182,7 @@ class modMyModule extends DolibarrModules
 			$conf->mymodule->enabled = 0;
 		}
 
-		// Array to add new pages in new tabs
-		$this->tabs = array();
+		// Tabs
 		// Example:
 		// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');
@@ -209,6 +211,10 @@ class modMyModule extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
+		// Array to add new pages in new tabs
+		/* BEGIN MODULEBUILDER TABS */
+		$this->tabs = array();
+		/* END MODULEBUILDER TABS */
 
 		// Dictionaries
 		/* Example:
@@ -281,9 +287,7 @@ class modMyModule extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = array();
 		$r = 0;
-		// Add here entries to declare new permissions
-		/* BEGIN MODULEBUILDER PERMISSIONS */
-		/*
+		/* Exemples :
 		$o = 1;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
@@ -301,12 +305,14 @@ class modMyModule extends DolibarrModules
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'delete'))
 		$r++;
 		*/
+		// Add here entries to declare new permissions
+		/* BEGIN MODULEBUILDER PERMISSIONS */
 		/* END MODULEBUILDER PERMISSIONS */
+
 
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
-
 		// Add here entries to declare new menus
 
 		/* BEGIN MODULEBUILDER TOPMENU */
