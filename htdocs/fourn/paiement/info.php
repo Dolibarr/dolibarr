@@ -46,6 +46,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
 // Security check
+$socid = ''; // Prevents PHP Warning:  Undefined variable $socid on line 55
 if ($user->socid) {
 	$socid = $user->socid;
 }

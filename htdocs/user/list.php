@@ -5,6 +5,7 @@
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
-$search_categ = GETPOSTINT("search_categ");
+$search_categ = GETPOST("search_categ", 'intcomma');
 $searchCategoryUserOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryUserOperator = GETPOSTINT('search_category_user_operator');
@@ -190,7 +191,7 @@ if (!empty($catid) && empty($search_categ)) {
 }
 
 // Default search
-if ($search_status == '') {
+if ($search_status == '' && empty($search_all)) {
 	$search_status = '1';
 }
 if ($contextpage == 'employeelist' && !GETPOSTISSET('search_employee')) {
@@ -237,7 +238,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -686,8 +687,10 @@ if (!empty($catid)) {
 }
 
 if ($search_all) {
+	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if USER_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';

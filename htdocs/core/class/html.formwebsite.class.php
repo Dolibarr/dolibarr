@@ -314,12 +314,15 @@ class FormWebsite
 
 	/**
 	 * Return HTML code for selection of page layout
+	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      HTML for model page boxes
 	 */
 	public function getContentPageTemplate($htmlContent = 'message')
 	{
 		global $user, $langs;
+
+		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
@@ -341,12 +344,11 @@ class FormWebsite
 
 		$templates = array(
 			'empty' => 'empty',
-			'text' => 'dynamic',
+			//'text' => 'dynamic',
 			'basic' => 'basic',
 			//'news'  => 'news',
 			//'commerce' => 'commerce',
 		);
-
 
 
 		foreach ($templates as $template => $templateFunction) {
@@ -371,7 +373,7 @@ class FormWebsite
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for website");
+						console.log("We choose a layout for website, we fill the field \''.$htmlContent.'\'");
 
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
@@ -381,6 +383,7 @@ class FormWebsite
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);
 						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+
 						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);

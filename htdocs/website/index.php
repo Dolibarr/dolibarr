@@ -4303,62 +4303,23 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if ($action == 'createcontainer') {
 		$formmail = new FormMail($db);
 		$formmail->withaiprompt = 'html';
+		$formmail->withlayout = 1;
 
 		print '<tr><td class="titlefield fieldrequired tdtop">';
-		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
+		//print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td class="tdtop">';
 
 		$out = '';
-		// Add link to add layout
-		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
-		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-		$out .= $langs->trans("FillPageWithALayout").'...';
-		$out .= '</a> &nbsp; &nbsp; ';
 
-		$out .= '<script>
-			$(document).ready(function() {
-				$("#linkforlayouttemplates").click(function() {
-					console.log("We click on linkforlayouttemplates");
-					event.preventDefault();
-					jQuery("#template-selector").toggle();
-					//jQuery("#template-selector").attr("style", "aaa");
-					jQuery("#ai_input").hide();
-					jQuery("#pageContent").show();
-				});
-			});
-		</script>
-		';
+		$showlinktolayout = $formmail->withlayout;
+		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
+		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
+		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		$htmlname = 'content';
 
-		// Add link to add AI content
-		if ($formmail->withaiprompt && isModEnabled('ai')) {
-			$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
-			$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
-			$out .= $langs->trans("FillMessageWithAIContent").'...';
-			$out .= '</a>';
-			$out .= '<script>
-						$(document).ready(function() {
-							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
-								event.preventDefault();
-								jQuery("#ai_input").toggle();
-								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
-									if (!jQuery("pageContent").is(":hidden")) {
-										jQuery("#pageContent").show();
-									}
-								}
-							});
-						});
-					</script>';
-		}
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-		$out .= $formwebsite->getContentPageTemplate('content');
-
-		if ($formmail->withaiprompt && isModEnabled('ai')) {
-			$out .= $formmail->getSectionForAIPrompt('', 'content');
-		}
 		print $out;
 		print '</td></tr>';
 	}
@@ -4370,7 +4331,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
 	print '</td></tr>';
 
-	// Alias
+	// Alias page
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
@@ -4390,12 +4351,29 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
 	print '</td></tr>';
 
-	print '<tr><td>';
-	$htmlhelp = $langs->trans("WEBSITE_IMAGEDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'imagetooltip');
-	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
-	print '</td></tr>';
+	// Deprecated. Image for RSS or Thumbs must be taken from the content.
+	if (getDolGlobalInt('WEBSITE_MANAGE_IMAGE_FOR_PAGES')) {
+		print '<tr class="trimageforpage hidden"><td>';
+		$htmlhelp = $langs->trans("WEBSITE_IMAGEDesc");
+		print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'imagetooltip');
+		print '</td><td>';
+		print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
+		print '</td></tr>';
+
+		print '<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery("#selectWEBSITE_TYPE_CONTAINER").change(function() {
+					console.log("We change type of page : "+jQuery("#selectWEBSITE_TYPE_CONTAINER").val());
+					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'blogpost\') {
+						jQuery(".trimageforpage").show();
+					} else {
+						jQuery(".trimageforpage").hide();
+					}
+				});
+			});
+			</script>
+		';
+	}
 
 	// Keywords
 	print '<tr><td>';
@@ -4542,49 +4520,42 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	$fuser = new User($db);
 
-	print '<tr><td>';
-	print $langs->trans('Author');
-	print '</td><td>';
-	if ($pageauthorid > 0) {
-		$fuser->fetch($pageauthorid);
-		print $fuser->getNomUrl(1);
-	} else {
-		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
-	}
-	print '</td></tr>';
-
-	print '<tr><td>';
-	print $langs->trans('PublicAuthorAlias');
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
-	print '</td></tr>';
-
-	print '<tr><td>';
-	print $langs->trans('DateCreation');
-	print '</td><td>';
-	print $form->selectDate($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
-	//print dol_print_date($pagedatecreation, 'dayhour');
-	print '</td></tr>';
-
 	if ($action != 'createcontainer') {
 		print '<tr><td>';
-		print $langs->trans('UserModif');
+		print $langs->trans('DateLastModification');
 		print '</td><td>';
-		if ($pageusermodifid > 0) {
-			$fuser->fetch($pageusermodifid);
-			print $fuser->getNomUrl(1);
-		}
+		print dol_print_date($pagedatemodification, 'dayhour', 'tzuser');
 		print '</td></tr>';
 
 		print '<tr><td>';
-		print $langs->trans('DateModification');
+		print $langs->trans('UserModification');
 		print '</td><td>';
-		print dol_print_date($pagedatemodification, 'dayhour', 'tzuser');
+		if ($pageusermodifid > 0) {
+			$fuser->fetch($pageusermodifid);
+			print $fuser->getNomUrl(-1);
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+		}
 		print '</td></tr>';
 	}
 
 	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
-	print $langs->trans('PreviewPageContent');
+	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
+
+	$htmltext = '<small>';
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
+	$htmltext .= '<br>';
+	$htmltext .= '</small>';
+	if ($conf->browser->layout == 'phone') {
+		print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+	} else {
+		//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+		print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+	}
 	print '</td><td>';
 	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
 	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
@@ -4592,6 +4563,33 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
 	print '</div>';
 	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+	print '</td></tr>';
+
+	// Date creation
+	print '<tr><td>';
+	print $langs->trans('DateCreation');
+	print '</td><td>';
+	print $form->selectDate($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
+	//print dol_print_date($pagedatecreation, 'dayhour');
+	print '</td></tr>';
+
+	// Author
+	print '<tr><td>';
+	print $langs->trans('Author');
+	print '</td><td>';
+	if ($pageauthorid > 0) {
+		$fuser->fetch($pageauthorid);
+		print $fuser->getNomUrl(-1);
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+	}
+	print '</td></tr>';
+
+	// Author - public alias
+	print '<tr><td>';
+	print $langs->trans('PublicAuthorAlias');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
@@ -4658,9 +4656,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				var disableautofillofalias = 0;
 				var selectedm = \'\';
 				var selectedf = \'\';
+
 				jQuery("#WEBSITE_TITLE").keyup(function() {
-					if (disableautofillofalias == 0)
-					{
+					if (disableautofillofalias == 0) {
 						var valnospecial = jQuery("#WEBSITE_TITLE").val();
 						valnospecial = valnospecial.replace(/[éèê]/g, \'e\').replace(/[à]/g, \'a\').replace(/[ù]/g, \'u\').replace(/[î]/g, \'i\');
 						valnospecial = valnospecial.replace(/[ç]/g, \'c\').replace(/[ö]/g, \'o\');
@@ -4671,7 +4669,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					}
 				});
 				jQuery("#WEBSITE_PAGENAME").keyup(function() {
-					disableautofillofalias = 1;
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+					} else {
+						disableautofillofalias = 1;
+					}
+				});
+				jQuery("#WEBSITE_PAGENAME").blur(function() {
+					if (jQuery("#WEBSITE_PAGENAME").val() == \'\') {
+						disableautofillofalias = 0;
+						jQuery("#WEBSITE_TITLE").trigger(\'keyup\');
+					}
 				});
 
 				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").click(function() {

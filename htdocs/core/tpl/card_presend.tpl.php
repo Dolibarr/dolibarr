@@ -69,7 +69,9 @@ if ($action == 'presend') {
 	$outputlangs = $langs;
 	$newlang = '';
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-		$newlang = $object->thirdparty->default_lang;
+		if (is_object($object->thirdparty)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}

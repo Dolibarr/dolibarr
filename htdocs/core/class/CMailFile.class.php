@@ -384,7 +384,8 @@ class CMailFile
 			$tabto = explode(",", $to);
 			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 			foreach ($tabto as $key => $addrto) {
-				if (in_array($addrto, $listofemailstonotsendto)) {
+				$addrto = array_keys($this->getArrayAddress($addrto));
+				if (in_array($addrto[0], $listofemailstonotsendto)) {
 					unset($tabto[$key]);
 					$replaceto = true;
 				}
@@ -398,7 +399,8 @@ class CMailFile
 			$replacecc = false;
 			$tabcc = explode(',', $addr_cc);
 			foreach ($tabcc as $key => $cc) {
-				if (in_array($cc, $tabcc)) {
+				$cc = array_keys($this->getArrayAddress($cc));
+				if (in_array($cc[0], $listofemailstonotsendto)) {
 					unset($tabcc[$key]);
 					$replacecc = true;
 				}
@@ -412,7 +414,8 @@ class CMailFile
 			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
-				if (in_array($bcc, $tabbcc)) {
+				$bcc = array_keys($this->getArrayAddress($bcc));
+				if (in_array($bcc[0], $listofemailstonotsendto)) {
 					unset($tabbcc[$key]);
 					$replacebcc = true;
 				}
@@ -584,7 +587,7 @@ class CMailFile
 			$smtps->setBCC($this->addr_bcc);
 			$smtps->setErrorsTo($this->errors_to);
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
-			if (!empty($conf->global->$keyforsslseflsigned)) {
+			if (getDolGlobalString($keyforsslseflsigned)) {
 				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 			}
 
@@ -2180,19 +2183,18 @@ class CMailFile
 	 * Return a formatted array of address string for SMTP protocol
 	 *
 	 * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
-	 * @return  array                       array of email => name
+	 * @return  array                       array(email => name)
 	 * @see getValidAddress()
 	 */
 	public static function getArrayAddress($address)
 	{
-		global $conf;
-
 		$ret = array();
 
 		$arrayaddress = explode(',', $address);
 
 		// Boucle sur chaque composant de l'address
 		foreach ($arrayaddress as $val) {
+			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
@@ -2201,7 +2203,7 @@ class CMailFile
 				$email = trim($val);
 			}
 
-			$ret[$email] = !getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL') ? $name : null;
+			$ret[$email] = getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL') ? null : $name;
 		}
 
 		return $ret;

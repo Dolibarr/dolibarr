@@ -5,6 +5,7 @@
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +44,12 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sh
 
 $socid = GETPOSTINT('socid');
 
+$action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-$diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
 
 $search_ref_rcp = GETPOST("search_ref_rcp");
 $search_ref_liv = GETPOST('search_ref_liv');
@@ -97,7 +98,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
+$diroutputmassaction = $conf->reception->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $object = new Reception($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -164,7 +165,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -855,6 +856,7 @@ if ($search_array_options) {
 
 
 $arrayofmassactions = array(
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
@@ -1434,7 +1436,25 @@ print $hookmanager->resPrint;
 print "</table>";
 print "</div>";
 print '</form>';
+
 $db->free($resql);
 
+$hidegeneratedfilelistifempty = 1;
+if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+	$hidegeneratedfilelistifempty = 0;
+}
+
+// Show list of available documents
+$urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+$urlsource .= str_replace('&amp;', '&', $param);
+
+$filedir    = $diroutputmassaction;
+$genallowed = $user->hasRight('reception', 'lire');
+$delallowed = $user->hasRight('reception', 'creer');
+$title      = '';
+
+print $formfile->showdocuments('massfilesarea_receipts', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+
+// End of page
 llxFooter();
 $db->close();

@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DatePropal").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -264,10 +264,10 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="2"></td>';
 				print '<td class="center">'.$total_qty.'</td>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- */
-/*
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -18,7 +18,7 @@
 
 /**
  *    \file       /htdocs/core/ajax/onlineSign.php
- *    \brief      File to make Ajax action on Knowledge Management
+ *    \brief      File to make Ajax action to add the signature of a document
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -172,7 +172,7 @@ if ($action == "importSignature") {
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tppl);
 
-								if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES")) {
+								if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE") == $i) {
 									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 									// TODO Get position of box from PDF template
 
@@ -189,7 +189,7 @@ if ($action == "importSignature") {
 							}
 						}
 
-						if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES")) {
+						if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
 							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 							// TODO Get position of box from PDF template
 
@@ -493,7 +493,7 @@ if ($action == "importSignature") {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 			$modelpath = "core/modules/bank/doc/";
 			$object = new CompanyBankAccount($db);
-			$object->fetch($ref);
+			$object->fetch(0, $ref);
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
@@ -636,7 +636,7 @@ if ($action == "importSignature") {
 				}
 			} else {
 				$error++;
-				$response = "cannot find Rib";
+				$response = "cannot find BAN/RIB";
 			}
 
 			if (!$error) {
@@ -693,7 +693,7 @@ echo $response;
 
 
 /**
- * Output the signature file
+ * Output the signature file into the PDF object.
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language

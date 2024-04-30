@@ -50,7 +50,7 @@ $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_all = '';
 
@@ -322,7 +322,7 @@ if ($search_login) {
 	$param .= "&search_login=".urlencode($search_login);
 }
 if ($search_account) {
-	$param .= "&search_account=".urlencode((string) ($search_account));
+	$param .= "&search_account=".urlencode($search_account);
 }
 if ($search_amount) {
 	$param .= "&search_amount=".urlencode($search_amount);
@@ -414,7 +414,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

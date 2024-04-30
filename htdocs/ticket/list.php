@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket", "companies", "other", "projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
 
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -197,7 +198,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }
@@ -407,7 +408,7 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
-	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
+	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
 			$sql .= natural_search($key, $search[$key], 2);
 		}

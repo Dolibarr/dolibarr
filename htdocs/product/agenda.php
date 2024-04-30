@@ -190,6 +190,12 @@ if ($id > 0 || $ref) {
 
 	$out = '';
 	$morehtmlcenter = '';
+
+	$messagingUrl = DOL_URL_ROOT.'/product/messaging.php?id='.$object->id;
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
 	if (isModEnabled('agenda')) {
 		$permok = $user->hasRight('agenda', 'myactions', 'create');
 		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
@@ -200,8 +206,9 @@ if ($id > 0 || $ref) {
 		}
 
 		$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
+
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
@@ -215,7 +222,7 @@ if ($id > 0 || $ref) {
 		}
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

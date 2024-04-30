@@ -152,7 +152,7 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	dol_syslog("Page is called without code parameter defined");
+	dol_syslog("Page is called without the 'code' parameter defined");
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
@@ -349,7 +349,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

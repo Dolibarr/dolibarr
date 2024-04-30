@@ -38,14 +38,20 @@ class Ai
 	protected $db;
 
 	/**
-	 * @var string $apiEndpoint
+	 * @var string $apiService
 	 */
-	private $apiEndpoint;
+	private $apiService;
 
 	/**
 	 * @var string $apiKey
 	 */
 	private $apiKey;
+
+	/**
+	 * @var string $apiEndpoint
+	 */
+	private $apiEndpoint;
+
 
 	/**
 	 * Constructor
@@ -57,7 +63,9 @@ class Ai
 	{
 		$this->db = $db;
 
-		$this->apiKey = getDolGlobalString('AI_API_CHATGPT_KEY');
+		// Get API key according to enabled AI
+		$this->apiService = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
+		$this->apiKey = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_KEY');
 	}
 
 	/**
@@ -72,38 +80,49 @@ class Ai
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
 		if (empty($this->apiKey)) {
-			return array('error' => true, 'message' => 'API key is no defined');
+			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service '.$this->apiService);
 		}
 
 		if (empty($this->apiEndpoint)) {
-			if ($function == 'textgeneration') {
-				$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
-				if ($model == 'auto') {
-					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
-				}
-			}
 			if ($function == 'imagegeneration') {
-				$this->apiEndpoint = 'https://api.openai.com/v1/images/generations';
-				if ($model == 'auto') {
-					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = 'https://api.openai.com/v1/images/generations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
+					}
 				}
-			}
-			if ($function == 'audiotext') {
-				$this->apiEndpoint = 'https://api.openai.com/v1/audio/speech';
-				if ($model == 'auto') {
-					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
+			} elseif ($function == 'audiotext') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = 'https://api.openai.com/v1/audio/speech';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
+					}
 				}
-			}
-			if ($function == 'transcription') {
-				$this->apiEndpoint = 'https://api.openai.com/v1/audio/transcriptions';
-				if ($model == 'auto') {
-					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
+			} elseif ($function == 'transcription') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = 'https://api.openai.com/v1/audio/transcriptions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
+					}
 				}
-			}
-			if ($function == 'translation') {
-				$this->apiEndpoint = 'https://api.openai.com/v1/audio/translations';
-				if ($model == 'auto') {
-					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
+			} elseif ($function == 'translation') {
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = 'https://api.openai.com/v1/audio/translations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
+					}
+				}
+			} else {	// else textgeneration...
+				if ($this->apiService == 'grok') {
+					$this->apiEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
+					}
 				}
 			}
 		}
@@ -111,6 +130,10 @@ class Ai
 		dol_syslog("Call API for apiEndpoint=".$this->apiEndpoint." apiKey=".substr($this->apiKey, 0, 3).'***********, model='.$model);
 
 		try {
+			if (empty($this->apiEndpoint)) {
+				throw new Exception('The AI service '.$this->apiService.' is not yet supported for the type of request '.$function);
+			}
+
 			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 			$configurations = json_decode($configurationsJson, true);
 
@@ -152,14 +175,21 @@ class Ai
 			$decodedResponse = json_decode($response['content'], true);
 
 			// Extraction content
-			$generatedEmailContent = $decodedResponse['choices'][0]['message']['content'];
+			$generatedContent = $decodedResponse['choices'][0]['message']['content'];
+
+			dol_syslog("generatedContent=".$generatedContent);
 
 			// If content is not HTML, we convert it into HTML
-			if (!dol_textishtml($generatedEmailContent)) {
-				$generatedEmailContent = dol_nl2br($generatedEmailContent);
+			if ($format == 'html') {
+				if (!dol_textishtml($generatedContent)) {
+					dol_syslog("Result was detected as not HTML so we convert it into HTML.");
+					$generatedContent = dol_nl2br($generatedContent);
+				} else {
+					dol_syslog("Result was detected as already HTML. Do nothing.");
+				}
 			}
 
-			return $generatedEmailContent;
+			return $generatedContent;
 		} catch (Exception $e) {
 			$errormessage = $e->getMessage();
 			if (!empty($response['content'])) {
@@ -171,7 +201,15 @@ class Ai
 				}
 			}
 
-			return array('error' => true, 'message' => $errormessage, 'code' => (empty($response['http_code']) ? 0 : $response['http_code']), 'curl_error_no' => (empty($response['curl_error_no']) ? $response['curl_error_no'] : ''));
+			return array(
+				'error' => true,
+				'message' => $errormessage,
+				'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
+				'curl_error_no' => (empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
+				'format' => $format,
+				'service' => $this->apiService,
+				'function'=>$function
+			);
 		}
 	}
 }

@@ -169,8 +169,15 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="2">'.$langs->trans("LatestBOMModified", $max).'</th>';
-	print '<th class="right"><a href="'.DOL_URL_ROOT.'/bom/bom_list.php?sortfield=t.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'bom').'</th>';
+	print '<th colspan="2">'.$langs->trans("LatestBOMModified", $max);
+	$lastmodified = '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?sortfield=t.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+	$lastmodified .= '</a>';
+	print $lastmodified;
+	print '</th>';
+	print '<th class="right">';
+	//print '<a href="'.DOL_URL_ROOT.'/bom/bom_list.php?sortfield=t.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'bom');
+	print '</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);
@@ -219,8 +226,15 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="2">'.$langs->trans("LatestMOModified", $max).'</th>';
-	print '<th class="right"><a href="'.DOL_URL_ROOT.'/mrp/mo_list.php?sortfield=t.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'mrp').'</th>';
+	print '<th colspan="2">'.$langs->trans("LatestMOModified", $max);
+	$lastmodified = '<a href="'.DOL_URL_ROOT.'/mrp/mo_list.php?sortfield=t.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+	$lastmodified .= '</a>';
+	print $lastmodified;
+	print '</th>';
+	print '<th class="right">';
+	//print '<a href="'.DOL_URL_ROOT.'/mrp/mo_list.php?sortfield=t.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'mrp');
+	print '</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);

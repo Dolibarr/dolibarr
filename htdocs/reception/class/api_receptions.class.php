@@ -16,9 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 
 /**
  * API class for receptions
@@ -175,7 +176,7 @@ class Receptions extends DolibarrApi
 	 * Create reception object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of reception
+	 * @return  int     				ID of reception created
 	 */
 	public function post($request_data = null)
 	{
@@ -197,7 +198,25 @@ class Receptions extends DolibarrApi
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$receptionline = new ReceptionLineBatch($this->db);
+
+				$receptionline->fk_product = $line['fk_product'];
+				$receptionline->fk_entrepot = $line['fk_entrepot'];
+				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->qty = $line['qty'];
+				//$receptionline->rang = $line['rang'];
+				$receptionline->array_options = $line['array_options'];
+				$receptionline->batch = $line['batch'];
+				$receptionline->eatby = $line['eatby'];
+				$receptionline->sellby = $line['sellby'];
+				$receptionline->cost_price = $line['cost_price'];
+				$receptionline->status = $line['status'];
+
+				$lines[] = $receptionline;
 			}
 			$this->reception->lines = $lines;
 		}
@@ -684,6 +703,8 @@ class Receptions extends DolibarrApi
 
 		if (!empty($object->lines) && is_array($object->lines)) {
 			foreach ($object->lines as $line) {
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

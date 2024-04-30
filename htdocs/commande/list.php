@@ -12,7 +12,8 @@
  * Copyright (C) 2016-2023  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -593,10 +594,20 @@ if (empty($reshook)) {
 			$db->commit();
 
 			if ($nb_bills_created == 1) {
+				if (getDolGlobalInt('MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_ONE') == 1) {
+					// Redirect to generated invoice if unique
+					header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode((string) $lastid));
+					exit;
+				}
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
 				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
+				if (getDolGlobalInt('MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_MANY') == 1) {
+					// Redirect to invoice list
+					header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills');
+					exit;
+				}
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 			}
 
@@ -820,7 +831,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT';
-if ($search_all || $search_user > 0) {
+if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
@@ -867,11 +878,6 @@ if ($search_all) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
-if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
-}
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -969,9 +975,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
-if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
-}
 if ($search_total_ht != '') {
 	$sql .= natural_search('c.total_ht', $search_total_ht, 1);
 }
@@ -1019,6 +1022,15 @@ if ($search_fk_mode_reglement > 0) {
 }
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
+}
+// Search on user
+if ($search_user > 0) {
+	$sql .= " AND EXISTS (";
+	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
+	$sql .= " FROM llx_element_contact as ec";
+	$sql .= " INNER JOIN  llx_c_type_contact as tc";
+	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal'";
+	$sql .= " WHERE ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
@@ -1419,7 +1431,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('CreateOneBillByThird');
 	print '</td>';
 	print '<td>';
-	print $form->selectyesno('createbills_onebythird', '', 1);
+	print $form->selectyesno('createbills_onebythird', getDolGlobalString('MAIN_ORDERLIST_CREATEBILLS_ONEBYTHIRD', 'no'), 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -1522,7 +1534,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 if (GETPOSTINT('autoselectall')) {

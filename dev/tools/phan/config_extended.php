@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 
 // Load default configuration (with many exclusions)
@@ -85,6 +86,6 @@ $config['suppress_issue_types'] = [
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
-	];
+];
 
 return $config;

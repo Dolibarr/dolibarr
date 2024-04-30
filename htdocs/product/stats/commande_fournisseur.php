@@ -233,7 +233,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
@@ -290,10 +290,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				// delivery planned date

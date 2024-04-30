@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -556,7 +556,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch(0, $obj->socid);
+				$bac->fetch(0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;

@@ -9,7 +9,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
- * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -385,7 +385,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {

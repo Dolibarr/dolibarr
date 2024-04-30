@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,11 +76,11 @@ class ExpenseReportIk extends CommonObject
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'index' => 1)
-		,'fk_c_exp_tax_cat' => array('type' => 'integer', 'index' => 1)
-		,'fk_range' => array('type' => 'integer', 'index' => 1)
-		,'coef' => array('type' => 'double')
-		,'ikoffset' => array('type' => 'double')
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 10),
+		'fk_c_exp_tax_cat' => array('type' => 'integer', 'label' => 'Tax cat id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 20),
+		'fk_range' => array('type' => 'integer', 'label' => 'Tax range id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 30),
+		'coef' => array('type' => 'double', 'label' => 'Coef', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'ikoffset' => array('type' => 'double', 'label' => 'Offset', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 	);
 
 
@@ -120,9 +121,7 @@ class ExpenseReportIk extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-
-		return $result;
+		return $this->fetchCommon($id, $ref);
 	}
 
 
