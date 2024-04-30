@@ -819,84 +819,6 @@ if ($resql) {
 		print '<input type="hidden" name="bid" value="'.GETPOSTINT("bid").'">';
 	}
 
-	// Form to reconcile
-	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
-		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
-		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT')) {
-			print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-			print '<input class="flat width175" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
-		} else {
-			$texttoshow = $langs->trans("InputReceiptNumber").': ';
-			$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
-			$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
-			$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
-			$placeholder = $yyyy.$mm;
-			$placeholder .= ' '.$langs->trans("or").' ';
-			$placeholder .= $yyyy.$mm.$dd;
-			if (!$placeholder) {
-				$texttoshow .= $langs->trans("InputReceiptNumberBis");
-			}
-			print $texttoshow;
-			print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
-		}
-		print '</div>';
-		if (is_array($options) && count($options)) {
-			print $langs->trans("EventualyAddCategory").': ';
-			print Form::selectarray('cat', $options, GETPOST('cat'), 1);
-		}
-		print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
-		print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-
-		// Show last bank statements
-		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
-		$liste = "";
-		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
-		$sql .= $db->order("num_releve", "DESC");
-		$sql .= $db->plimit($nbmax + 1);
-		print '<br>';
-		print $langs->trans("LastAccountStatements").' : ';
-		$resqlr = $db->query($sql);
-		if ($resqlr) {
-			$numr = $db->num_rows($resqlr);
-			$i = 0;
-			$last_ok = 0;
-			while (($i < $numr) && ($i < $nbmax)) {
-				$objr = $db->fetch_object($resqlr);
-				if (!$last_ok) {
-					$last_releve = $objr->num_releve;
-					$last_ok = 1;
-				}
-				$i++;
-				$liste = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
-			}
-			if ($numr >= $nbmax) {
-				$liste = "... &nbsp; ".$liste;
-			}
-			print $liste;
-			if ($numr <= 0) {
-				print '<b>'.$langs->trans("None").'</b>';
-			}
-		} else {
-			dol_print_error($db);
-		}
-
-		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
-		if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
-			print '
-			    <script type="text/javascript">
-			    	$("#num_releve").val("' . $last_releve.'");
-			    </script>
-			';
-		}
-		print '<br><br>';
-	}
-
 	// Form to add a transaction with no invoice
 	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
@@ -991,7 +913,7 @@ if ($resql) {
 	$bankcateg = new BankCateg($db);
 
 	$newcardbutton = '';
-	if ($action != 'addline' && $action != 'reconcile') {
+	if ($action != 'addline') {
 		if (!getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
 			if (!getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {	// Default is to record miscellaneous direct entries using miscellaneous payments
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
@@ -1015,7 +937,7 @@ if ($resql) {
 		$morehtml .= $buttonreconcile;
 	}
 
-	$morehtml .= '<!-- Add New button -->'.$newcardbutton;
+	$morehtmlright = '<!-- Add New button -->'.$newcardbutton;
 
 	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) {
@@ -1023,7 +945,86 @@ if ($resql) {
 	}
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.$morehtml, $num, $nbtotalofrecords, $picto, 0, $morehtmlright, '', $limit, 0, 0, 1);
+
+	// Form to reconcile
+	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+		print '<!-- form with reconciliation input -->'."\n";
+		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
+		if (getDolGlobalInt('NW_RECEIPTNUMBERFORMAT')) {
+			print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
+			print '<input class="flat width175" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve') ? GETPOST('num_releve') : '').'">';
+		} else {
+			$texttoshow = $langs->trans("InputReceiptNumber").': ';
+			$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
+			$mm = dol_substr($langs->transnoentitiesnoconv("Month"), 0, 1).substr($langs->transnoentitiesnoconv("Month"), 0, 1);
+			$dd = dol_substr($langs->transnoentitiesnoconv("Day"), 0, 1).substr($langs->transnoentitiesnoconv("Day"), 0, 1);
+			$placeholder = $yyyy.$mm;
+			$placeholder .= ' '.$langs->trans("or").' ';
+			$placeholder .= $yyyy.$mm.$dd;
+			if (!$placeholder) {
+				$texttoshow .= $langs->trans("InputReceiptNumberBis");
+			}
+			print $texttoshow;
+			print '<input class="flat width175" pattern="[0-9]+" title="'.dol_escape_htmltag($texttoshow.($placeholder ? ': '.$placeholder : '')).'" id="num_releve" name="num_releve" placeholder="'.dol_escape_htmltag($placeholder).'" type="text" value="'.(GETPOSTINT('num_releve') ? GETPOSTINT('num_releve') : '').'">'; // The only default value is value we just entered
+		}
+		print '</div>';
+		if (is_array($options) && count($options)) {
+			print $langs->trans("EventualyAddCategory").': ';
+			print Form::selectarray('cat', $options, GETPOST('cat'), 1);
+		}
+		print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
+		print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
+		print ' '.$langs->trans("or").' ';
+		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
+		print ' '.$langs->trans("or").' ';
+		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+
+		// Show last bank statements
+		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
+		$liste = "";
+		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
+		$sql .= $db->order("num_releve", "DESC");
+		$sql .= $db->plimit($nbmax + 1);
+		print '<br>';
+		print $langs->trans("LastAccountStatements").' : ';
+		$resqlr = $db->query($sql);
+		if ($resqlr) {
+			$numr = $db->num_rows($resqlr);
+			$i = 0;
+			$last_ok = 0;
+			while (($i < $numr) && ($i < $nbmax)) {
+				$objr = $db->fetch_object($resqlr);
+				if (!$last_ok) {
+					$last_releve = $objr->num_releve;
+					$last_ok = 1;
+				}
+				$i++;
+				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">'.dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
+			}
+			if ($numr >= $nbmax) {
+				$liste = "... &nbsp; ".$liste;
+			}
+			print $liste;
+			if ($numr <= 0) {
+				print '<b>'.$langs->trans("None").'</b>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+
+		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
+		if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
+			print '
+			    <script type="text/javascript">
+			    	$("#num_releve").val("' . $last_releve.'");
+			    </script>
+			';
+		}
+		print '<br><br>';
+	}
 
 	// We can add page now to param
 	if ($page != '') {
@@ -1031,7 +1032,6 @@ if ($resql) {
 	}
 
 	$moreforfilter = '';
-
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort');
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
@@ -1456,7 +1456,7 @@ if ($resql) {
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td>';
+			print '<td class="center">';
 			if (!$objp->conciliated && $action == 'reconcile') {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
@@ -1857,7 +1857,7 @@ if ($resql) {
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td>';
+			print '<td class="center">';
 			if (!$objp->conciliated && $action == 'reconcile') {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 			}
@@ -1891,7 +1891,7 @@ if ($resql) {
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
 				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
-					print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
+					print '<input class="button smallpaddingimp" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 				}
 				print '</td>';
 			} else {
