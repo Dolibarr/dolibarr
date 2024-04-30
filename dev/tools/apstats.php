@@ -897,6 +897,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+
 	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
 
 	$html .= '<tr style="vertical-align: top;">';
@@ -955,8 +956,6 @@ foreach ($arrayofalerts as $key => $alert) {
 	// Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 
-	$arrayofalerts[$key]['description'] .= ']]>';
-
 	// Branches
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['branch'])) {
@@ -965,6 +964,8 @@ foreach ($arrayofalerts as $key => $alert) {
 		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.$listofbranchnames;
 	}
 	$html .= '</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]>';
 
 	$html .= '</tr>';
 }
@@ -995,13 +996,18 @@ if ($fh) {
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
 	fwrite($fh, '<language>en-US</language>'."\n");
-	fwrite($fh, '<pubDate>'.date('r').'</pubDate>'."\n");
+	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
+	/*
+	<lastBuildDate>Mon, 29 Apr 2024 11:33:54 +0000</lastBuildDate>
+	<atom:link href="https://cti.dolibarr.org/security-index.rss" rel="self" type="application/rss+xml" />
+	*/
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
 	}
 	// Image
 	fwrite($fh, '<image>'."\n");
 	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
 	}
