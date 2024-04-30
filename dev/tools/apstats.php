@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024 	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -39,8 +39,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
-
-$phpstanlevel = 3;
 
 // Include Dolibarr environment
 if (!is_readable("{$path}../../htdocs/config/config.php")) {
@@ -99,11 +97,12 @@ while ($i < $argc) {
 	$i++;
 }
 
+// PHPSTAN setup
+$PHPSTANLEVEL = 4;
 
-// Configuration is required, otherwise phan is disabled.
+// PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
-// BASELINE is ignored if it does not exist
-$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";
+$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";		// BASELINE is ignored if it does not exist
 $PHAN_MIN_PHP = "7.0";
 $PHAN_MEMORY_OPT = "--memory-limit 5G";
 
@@ -150,7 +149,7 @@ $phpstanversion = $output_arrtd[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
@@ -1044,7 +1043,7 @@ if ($dirphpstan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpstanversion.' - level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpstanversion.' - level '.$PHPSTANLEVEL.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";

@@ -3445,9 +3445,9 @@ function dol_filecache($directory, $filename, $object)
 /**
  * Test if Refresh needed.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @param int $cachetime Cachetime delay
+ * @param string 	$directory 		Directory of cache
+ * @param string 	$filename 		Name of filecache
+ * @param int 		$cachetime 		Cachetime delay
  * @return boolean 0 no refresh 1 if refresh needed
  */
 function dol_cache_refresh($directory, $filename, $cachetime)
@@ -3461,9 +3461,9 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string $directory 	Directory of cache
- * @param string $filename 		Name of filecache
- * @return mixed 				Unserialise from file
+ * @param string 	$directory 		Directory of cache
+ * @param string 	$filename 		Name of filecache
+ * @return mixed 					Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
@@ -3475,7 +3475,7 @@ function dol_readcachefile($directory, $filename)
 /**
  * Return the relative dirname (relative to DOL_DATA_ROOT) of a full path string.
  *
- * @param 	string $pathfile		Full path of a file
+ * @param 	string 	$pathfile		Full path of a file
  * @return 	string					Path of file relative to DOL_DATA_ROOT
  */
 function dirbasename($pathfile)
