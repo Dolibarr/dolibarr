@@ -1193,7 +1193,7 @@ class ActionComm extends CommonObject
 		}
 
 		$code = $this->code;
-		if (empty($code) || (!empty($this->oldcopy) && $this->oldcopy->type_code != $this->type_code)) {	// If code unknown or if we change the type, we reset $code too
+		if (empty($code) || (($this->oldcopy !== null) && ($this->oldcopy->type_code != $this->type_code))) {	// If code unknown or if we change the type, we reset $code too
 			$code = $this->type_code;
 		}
 
