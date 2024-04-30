@@ -3705,7 +3705,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
-				
+
 				$posCursor = (empty($find)) ? array() : array('find'=>$find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
