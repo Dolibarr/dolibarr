@@ -995,6 +995,7 @@ if ($fh) {
 	fwrite($fh, '<channel>'."\n");
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	fwrite($fh, '<atom:link href="http://dallas.example.com/rss.xml" rel="self" type="application/rss+xml" />'."\n");
 	fwrite($fh, '<language>en-US</language>'."\n");
 	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
 	/*
@@ -1020,7 +1021,9 @@ if ($fh) {
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
-		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
+		$tmpdate = strtotime($alert['created_at']);
+		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
+		fwrite($fh, '<guid isPermaLink="true"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
 		fwrite($fh, '</item>'."\n");
 	}
 
