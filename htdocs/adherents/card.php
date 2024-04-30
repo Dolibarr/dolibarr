@@ -1855,7 +1855,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>';
 				print $form->select_company($object->socid, 'socid', '', 1);
 				print '</td>';
-				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+				print '<td class="left"><input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
 				if ($object->socid) {
