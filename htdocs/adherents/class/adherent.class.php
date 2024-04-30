@@ -821,7 +821,7 @@ class Adherent extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		// If we change the type of membership, we set also label of new type
-		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
+		if (($this->oldcopy !== null) && ($this->typeid != $this->oldcopy->typeid)) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 			$sql2 .= " WHERE rowid = ".((int) $this->typeid);
@@ -2786,7 +2786,7 @@ class Adherent extends CommonObject
 
 				// Check if it is the LDAP key and if its value has been changed
 				if (getDolGlobalString('LDAP_KEY_MEMBERS') && getDolGlobalString('LDAP_KEY_MEMBERS') == getDolGlobalString($constname)) {
-					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
+					if (($this->oldcopy !== null) && ($this->$varname != $this->oldcopy->$varname)) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
