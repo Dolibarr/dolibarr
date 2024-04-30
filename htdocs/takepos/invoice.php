@@ -540,49 +540,56 @@ if (empty($reshook)) {
 		if (isModEnabled('productbatch') && isModEnabled('stock')) {
 			$batch = GETPOST('batch', 'alpha');
 
-			if (!empty($batch)) {
-				$action="setbatch";
+			if (!empty($batch)) {	// We have just clicked on the batch number
+				$action = "setbatch";
 			} else {
 				// Set nb of suggested with nb of batch into the warehouse of the terminal
 				$nbofsuggested = 0;
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch != "") {
-					if (is_object($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && count($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
-						foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {
+				$warehouseid = getDolGlobalInt($constantforkey);
+				if ($warehouseid && !empty($prod->stock_warehouse[$warehouseid]) && $prod->stock_warehouse[$warehouseid]->detail_batch != "") {
+					if (is_object($prod->stock_warehouse[$warehouseid]) && count($prod->stock_warehouse[$warehouseid]->detail_batch)) {
+						foreach ($prod->stock_warehouse[$warehouseid]->detail_batch as $dbatch) {
 							$nbofsuggested++;
 						}
 					}
 				}
 
-				echo "<script>";
-				echo "function addbatch(batch, warehouseid) {";
-				echo '$("#poslines").load("invoice.php?action=addline&batch="+batch+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});';
-				echo "}";
-				echo "</script>";
+				echo "<script>\n";
+				echo "function addbatch(batch, warehouseid) {\n";
+				echo "console.log('We add batch '+batch+' from warehouse id '+warehouseid);\n";
+				echo '$("#poslines").load("invoice.php?action=addline&batch="+batch+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});'."\n";
+				echo "}\n";
+				echo "</script>\n";
 
-				if ($nbofsuggested>0) {
+				if ($nbofsuggested > 0) {
+					$suggestednb = 1;
 					echo "<center>".$langs->trans("SearchIntoBatch").": <b> $nbofsuggested </b></center><br><table>";
 					foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 						$batchStock = + $dbatch->qty; // To get a numeric
+						$quantityToBeDelivered = 1;
 						$deliverableQty = min($quantityToBeDelivered, $batchStock);
-						print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
+						print '<tr>';
+						print '<!-- subj='.$suggestednb.'/'.$nbofsuggested.' -->';
 						print '<!-- Show details of lot -->';
 						print '<td class="left">';
 						$staticwarehouse = new Entrepot($db);
-						if ($warehouse_id > 0) {
-							$staticwarehouse->fetch(getDolGlobalString($constantforkey));
+						if (getDolGlobalInt($constantforkey) > 0) {
+							$staticwarehouse->fetch(getDolGlobalInt($constantforkey));
 						}
 						$detail = '';
-						$detail .= $langs->trans("LotSerial").': '.$dbatch->batch;
+						$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							//$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 						}
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 						}
-						$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
-						$detail .= ' <button onclick="addbatch(\''.$dbatch->batch.'\', '.getDolGlobalInt($constantforkey).')">'.$langs->trans("Select")."</button>";
+						$detail .= '</td><td>';
+						$detail .= '<span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
+						$detail .= '</td><td>';
+						$detail .= ' <button class="marginleftonly" onclick="addbatch(\''.dol_escape_js($dbatch->batch).'\', '.getDolGlobalInt($constantforkey).')">'.$langs->trans("Select")."</button>";
 						$detail .= '<br>';
 						print $detail;
 
@@ -590,7 +597,7 @@ if (empty($reshook)) {
 						if ($quantityToBeDelivered < 0) {
 							$quantityToBeDelivered = 0;
 						}
-						$subj++;
+						$suggestednb++;
 						print '</td></tr>';
 					}
 					print "</table>";
@@ -692,7 +699,7 @@ if (empty($reshook)) {
 				}
 
 				if (empty($err)) {
-					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
+					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, '', null, 0);
 				}
 			}
 
@@ -930,7 +937,9 @@ if (empty($reshook)) {
 
 	if ($action=="setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".$db->escape($batch).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
+		$warehouseid = getDolGlobalInt($constantforkey);	// TODO Get the wrehouse id from GETPOSTINT('warehouseid');
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET batch = '".$db->escape($batch)."', fk_warehouse = ".((int) $warehouseid);
+		$sql .= " WHERE rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
