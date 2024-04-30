@@ -1023,7 +1023,7 @@ if ($fh) {
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
-		fwrite($fh, '<guid isPermaLink="true"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
 		fwrite($fh, '</item>'."\n");
 	}
 
