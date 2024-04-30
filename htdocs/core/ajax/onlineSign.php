@@ -800,6 +800,30 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 			}
+
+			if (!$error) {
+				$db->begin();
+
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition";
+				$sql .= " SET signed_status = " . ((int) $object::STATUS_SIGNED) ;
+				$sql .= " WHERE rowid = " . ((int) $object->id);
+
+				dol_syslog(__FILE__, LOG_DEBUG);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				} else {
+					$num = $db->affected_rows($resql);
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("ExpeditionSigned", null, 'warnings');
+				} else {
+					$db->rollback();
+				}
+			}
 		}
 	} else {
 		$error++;
