@@ -788,19 +788,22 @@ class ImportCsv extends ModeleImports
 						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $tmpkey)) {
 							continue; // Not a field of current table
 						}
-						if ($tmpval == 'user->id') {
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+						$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+						// avoid duplicates in insert
+						if (in_array($keyfield, $listfields)) {
+							continue;
+						} elseif ($tmpval == 'user->id') {
+							$listfields[] = $keyfield;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $tmpval)) {
 							$tmp = explode('-', $tmpval);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listfields[] = $keyfield;
 							$listvalues[] = (int) $lastinsertid;
 							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $tmpval)) {
 							$tmp = explode('-', $tmpval, 2);
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $tmpval)) {
 							$fieldname = $tmpkey;
