@@ -609,6 +609,7 @@ if (empty($reshook)) {
 						}
 					}
 				}
+				//var_dump($prod->stock_warehouse);
 
 				echo "<script>\n";
 				echo "function addbatch(batch, warehouseid) {\n";
