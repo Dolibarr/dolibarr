@@ -460,6 +460,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if ($type) {
+		$param .= '&type=' . urlencode((string) $type);
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
