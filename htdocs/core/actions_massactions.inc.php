@@ -349,7 +349,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					}
 
 					if (!empty($conf->global->ESAYA_SEND_EMAIL_IN_MASS_MOST_RECENT_FILE_IF_NOT_FOUND) && !dol_is_file($filepath)) {
-						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+');
+						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+' . (!empty($conf->global->MAIN_ODT_AS_PDF) ? '\.pdf$' : ''));
 						if (isset($fileparams)) {
 							$filepath = $fileparams['fullname'];
 							$filename = $fileparams['name'];
