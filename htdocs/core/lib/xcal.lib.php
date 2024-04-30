@@ -367,7 +367,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		if (!empty($mysoc->logo_squarred_small)) {
 			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
 			if ($urlimage) {
-				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>".$title."</title></image>\n");
+				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>".htmlspecialchars($title)."</title><link><![CDATA[".$url."]]></link></image>\n");
 			}
 		}
 
@@ -417,6 +417,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
+				fwrite($fichier, "<description><![CDATA[".$summary."]]></description>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
@@ -435,8 +436,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "]]></description>\n");
 				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
-				fwrite($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
-				fwrite($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
+				fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.$uid.']]></guid>'."\n");
+				fwrite($fichier, '<source url="'.$url.'"><![CDATA[Dolibarr]]></source>'."\n");
 				fwrite($fichier, "</item>\n");
 			}
 		}
