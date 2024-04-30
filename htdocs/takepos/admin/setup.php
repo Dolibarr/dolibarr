@@ -95,12 +95,14 @@ if ($action == 'set') {
 	}
 
 	if (!$error) {
-		// add terminal permissions
-		require_once DOL_DOCUMENT_ROOT . '/core/modules/modTakePos.class.php';
-		$module = new modTakePos($db);
-		$module->delete_permissions(); // $module->rights already loaded in module _construct so we don't lose anything
-		addTerminalPermissions($module);
-		$module->insert_permissions(1);
+		if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
+			// add terminal permissions
+			require_once DOL_DOCUMENT_ROOT . '/core/modules/modTakePos.class.php';
+			$module = new modTakePos($db);
+			$module->delete_permissions(); // $module->rights already loaded in module _construct so we don't lose anything
+			addTerminalPermissions($module);
+			$module->insert_permissions(1);
+		}
 
 		$db->commit();
 	} else {

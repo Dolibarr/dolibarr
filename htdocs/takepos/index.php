@@ -57,28 +57,30 @@ $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 $hookmanager->initHooks(array('takeposfrontend'));
 
-// get user authorized terminals
-$nb_auth_terms = 0;
-$curterm = 0;
-$numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
-for ($i = 1; $i <= $numterminals; $i++) {
-	if ($user->hasRights('takepos', 'access_takepos_' . $i)) {
-		$curterm = $i;
-		$nb_auth_terms++;
-	}
-}
-
-// TERMINAL SELECTION IF NOT SET
-if (empty($_SESSION["takeposterminal"])) {
-	if (empty($nb_auth_terms)) {
-		accessforbidden();
-	} elseif ($nb_auth_terms > 1) {
-		if (!empty($_COOKIE["takeposterminal"]) && $user->hasRight('takepos', 'access_takepos_' . $_COOKIE["takeposterminal"])) {
-			$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
+	// get user authorized terminals
+	$nb_auth_terms = 0;
+	$curterm = 0;
+	$numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
+	for ($i = 1; $i <= $numterminals; $i++) {
+		if ($user->hasRights('takepos', 'access_takepos_' . $i)) {
+			$curterm = $i;
+			$nb_auth_terms++;
 		}
-	} else {
-		$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
-		$_SESSION["takeposterminal"] = $curterm;
+	}
+
+	// TERMINAL SELECTION IF NOT SET
+	if (empty($_SESSION["takeposterminal"])) {
+		if (empty($nb_auth_terms)) {
+			accessforbidden();
+		} elseif ($nb_auth_terms > 1) {
+			if (!empty($_COOKIE["takeposterminal"]) && $user->hasRight('takepos', 'access_takepos_' . $_COOKIE["takeposterminal"])) {
+				$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+			}
+		} else {
+			$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
+			$_SESSION["takeposterminal"] = $curterm;
+		}
 	}
 }
 
@@ -1058,23 +1060,25 @@ function WeighingScale(){
 
 $( document ).ready(function() {
 	<?php
-	// TERMINAL SELECTION IF NOT SET
-	if ($_SESSION["takeposterminal"] == "") {
-		if (empty($nb_auth_terms)) {
-			accessforbidden();
-		} elseif ($nb_auth_terms > 1) {
-			print "ModalBox('ModalTerminal');";
-		} else {
-			$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
-			$_SESSION["takeposterminal"] = $curterm;
+	if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
+		// TERMINAL SELECTION IF NOT SET
+		if ($_SESSION["takeposterminal"] == "") {
+			if (empty($nb_auth_terms)) {
+				accessforbidden();
+			} elseif ($nb_auth_terms > 1) {
+				print "ModalBox('ModalTerminal');";
+			} else {
+				$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$curterm) : $langs->transnoentities("TerminalName", $curterm);
+				$_SESSION["takeposterminal"] = $curterm;
+			}
 		}
-	}
 
-	if (empty($_SESSION["takeposterminal"])) {
-		if (empty($nb_auth_terms)) {
-			accessforbidden();
-		} elseif ($nb_auth_terms > 1) {
-			print "ModalBox('ModalTerminal');";
+		if (empty($_SESSION["takeposterminal"])) {
+			if (empty($nb_auth_terms)) {
+				accessforbidden();
+			} elseif ($nb_auth_terms > 1) {
+				print "ModalBox('ModalTerminal');";
+			}
 		}
 	}
 	?>
@@ -1180,8 +1184,14 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		<div id="topnav" class="topnav">
 			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
-				<a href="#" onclick="closeTerminal(true);" title="<?php echo $langs->trans("CloseTerminal"); ?>" style="font-weight: bolder; font-size: 1.5em; margin: auto 0;">X</a>
-				<a class="topnav-terminalhour" <?php echo $nb_auth_terms > 1 ? "onclick=\"ModalBox('ModalTerminal');\"" : ""; ?>>
+				<?php
+				if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
+					?>
+					<a href="#" onclick="closeTerminal(true);" title="<?php echo $langs->trans("CloseTerminal"); ?>" style="font-weight: bolder; font-size: 1.5em; margin: auto 0;">X</a>
+					<a class="topnav-terminalhour" <?php echo $nb_auth_terms > 1 ? "onclick=\"ModalBox('ModalTerminal');\"" : ""; ?>>
+					<?php
+				}
+				?>
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
 				<?php
@@ -1262,10 +1272,20 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 	</div>
 	<div class="modal-body">
 		<?php
-		for ($i = 1; $i <= $numterminals; $i++) {
-			if ($user->hasRight('takepos', 'access_takepos_' . $i)) {
-				$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i);
-				print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
+		if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
+			for ($i = 1; $i <= $numterminals; $i++) {
+				if ($user->hasRight('takepos', 'access_takepos_' . $i)) {
+					$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i);
+					print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
+				}
+			}
+		} else {
+			?>
+			<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
+			<?php
+			$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
+			for ($i = 2; $i <= $nbloop; $i++) {
+				print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 			}
 		}
 		?>
@@ -1645,7 +1665,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	</div>
 </div>
 <?php
-if (getDolGlobalInt("TAKEPOS_CLOSE_TERMINAL_ON_WINDOW_CLOSE")) {
+if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS') && getDolGlobalInt("TAKEPOS_CLOSE_TERMINAL_ON_WINDOW_CLOSE")) {
 	?>
 	<script type="text/javascript">
 	// close terminal
