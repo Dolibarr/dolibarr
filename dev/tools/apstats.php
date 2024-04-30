@@ -994,11 +994,10 @@ if ($fh) {
 	fwrite($fh, '<channel>'."\n");
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	fwrite($fh, '<language>en-US</language>'."\n");
+	fwrite($fh, '<pubDate>'.date('r').'</pubDate>'."\n");
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
-	}
-	if ($url_flux) {
-		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
 	// Image
 	fwrite($fh, '<image>'."\n");
