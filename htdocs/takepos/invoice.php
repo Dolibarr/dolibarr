@@ -199,6 +199,8 @@ if (empty($reshook)) {
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 
+		$db->begin();
+
 		if ($invoice->total_ttc < 0) {
 			$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 
@@ -226,7 +228,7 @@ if (empty($reshook)) {
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		if ($error) {
 			dol_htmloutput_errors($errormsg, null, 1);
-		} elseif ($invoice->statut != Facture::STATUS_DRAFT) {
+		} elseif ($invoice->status != Facture::STATUS_DRAFT) {
 			//If invoice is validated but it is not fully paid is not error and make the payment
 			if ($invoice->getRemainToPay() > 0) {
 				$res = 1;
@@ -238,26 +240,31 @@ if (empty($reshook)) {
 			$error++;
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-		} elseif (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1" && !isModEnabled('productbatch')) {
+		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && getDolGlobalString($constantforkey) != "1") {
+			// Validation of invoice with change into stock when produt/lot module is not enabled and stock change not disabled.
+			// The case for isModEnabled('productbatch') is processed few lines later.
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 
 			if (isModEnabled('productbatch') && !getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
-				$conf->global->STOCK_CALCULATE_ON_BILL = 0;	// To not change the stock (not yet compatible with batch management)
+				$conf->global->STOCK_CALCULATE_ON_BILL = 0;	// To not change the stock (this will be done later)
 			} else {
+				// Deprecated: CASHDESK_FORCE_DECREASE_STOCK is now always false. No more required/used.
 				$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// To force the change of stock
 			}
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey));
+
 			$batch_rule = 0;
 			if (isModEnabled('productbatch') && getDolGlobalString('CASHDESK_FORCE_DECREASE_STOCK')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
-			$res = $invoice->validate($user, '', getDolGlobalString($constantforkey), 0, $batch_rule);
+			$res = $invoice->validate($user, '', getDolGlobalInt($constantforkey), 0, $batch_rule);
 
 			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 		} else {
+			// Validation of invoice with no change into stock
 			$res = $invoice->validate($user);
 			if ($res < 0) {
 				$error++;
@@ -265,12 +272,6 @@ if (empty($reshook)) {
 				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)' : $invoice->error, $invoice->errors, 1);
 			}
 		}
-
-		// Restore save values
-		//if (!empty($sav_FACTURE_ADDON))
-		//{
-		//	$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
-		//}
 
 		// Add the payment
 		if (!$error && $res >= 0) {
@@ -320,26 +321,51 @@ if (empty($reshook)) {
 		} else {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
+
 		// Update stock for batch products
-		if (isModEnabled('productbatch')) {
-			require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-			foreach ($invoice->lines as $line) {
-				if ($line->batch && $line->fk_warehouse > 0) {
-					$prod_batch = new Productbatch($db);
-					$prod_batch->find(0, '', '', $line->batch, $line->fk_warehouse);
-					$mouvP = new MouvementStock($db);
-					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
-				} else {
-					$mouvP = new MouvementStock($db);
-					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '');
+		if (!$error && $res >= 0) {
+			if (isModEnabled('stock') && isModEnabled('productbatch')) {	// The case !isModEnabled('productbatch') was processed few lines before.
+				require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
+				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+				$labeltakeposmovement = 'TakePOS - '.$langs->trans("Invoice").' '.$invoice->ref;
+
+				foreach ($invoice->lines as $line) {
+					$warehouseid = ($line->fk_warehouse ? $line->fk_warehouse : getDolGlobalInt($constantforkey));
+
+					// var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);
+					if ($line->batch != '' && $warehouseid > 0) {
+						$prod_batch = new Productbatch($db);
+						$prod_batch->find(0, '', '', $line->batch, $warehouseid);
+						$mouvP = new MouvementStock($db);
+						$mouvP->origin = $invoice;
+						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
+						if ($res < 0) {
+							setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+							$error++;
+						}
+					} else {
+						$mouvP = new MouvementStock($db);
+						$mouvP->origin = $invoice;
+						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						if ($res < 0) {
+							setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+							$error++;
+						}
+					}
 				}
 			}
 		}
+
+		if (!$error && $res >= 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
+		$db->begin();
+
 		$creditnote = new Facture($db);
 		$creditnote->socid = $invoice->socid;
 		$creditnote->date = dol_now();
@@ -480,6 +506,12 @@ if (empty($reshook)) {
 		} else {
 			$res = $creditnote->validate($user);
 		}
+
+		if (!$error && $res >= 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	if (($action == 'history' || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
@@ -504,13 +536,24 @@ if (empty($reshook)) {
 			$langs->load('errors');
 			dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
 		} else {
+			$db->begin();
+
 			// Create invoice
 			$placeid = $invoice->create($user);
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
-			$db->query($sql);
+			$resql = $db->query($sql);
+			if (!$resql) {
+				$error++;
+			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 	}
 
@@ -548,6 +591,7 @@ if (empty($reshook)) {
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 				$warehouseid = getDolGlobalInt($constantforkey);
+				//var_dump($prod->stock_warehouse);
 				if ($warehouseid && !empty($prod->stock_warehouse[$warehouseid]) && $prod->stock_warehouse[$warehouseid]->detail_batch != "") {
 					if (is_object($prod->stock_warehouse[$warehouseid]) && count($prod->stock_warehouse[$warehouseid]->detail_batch)) {
 						foreach ($prod->stock_warehouse[$warehouseid]->detail_batch as $dbatch) {
@@ -563,42 +607,44 @@ if (empty($reshook)) {
 				echo "}\n";
 				echo "</script>\n";
 
-				if ($nbofsuggested > 0) {
+				if ($prod->status_batch > 0) {
 					$suggestednb = 1;
 					echo "<center>".$langs->trans("SearchIntoBatch").": <b> $nbofsuggested </b></center><br><table>";
-					foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
-						$batchStock = + $dbatch->qty; // To get a numeric
-						$quantityToBeDelivered = 1;
-						$deliverableQty = min($quantityToBeDelivered, $batchStock);
-						print '<tr>';
-						print '<!-- subj='.$suggestednb.'/'.$nbofsuggested.' -->';
-						print '<!-- Show details of lot -->';
-						print '<td class="left">';
-						$staticwarehouse = new Entrepot($db);
-						if (getDolGlobalInt($constantforkey) > 0) {
-							$staticwarehouse->fetch(getDolGlobalInt($constantforkey));
-						}
-						$detail = '';
-						$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
-						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-							//$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
-						}
-						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-							//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
-						}
-						$detail .= '</td><td>';
-						$detail .= '<span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
-						$detail .= '</td><td>';
-						$detail .= ' <button class="marginleftonly" onclick="addbatch(\''.dol_escape_js($dbatch->batch).'\', '.getDolGlobalInt($constantforkey).')">'.$langs->trans("Select")."</button>";
-						$detail .= '<br>';
-						print $detail;
+					if (!empty($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && is_array($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
+						foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
+							$batchStock = + $dbatch->qty; // To get a numeric
+							$quantityToBeDelivered = 1;
+							$deliverableQty = min($quantityToBeDelivered, $batchStock);
+							print '<tr>';
+							print '<!-- subj='.$suggestednb.'/'.$nbofsuggested.' -->';
+							print '<!-- Show details of lot -->';
+							print '<td class="left">';
+							$staticwarehouse = new Entrepot($db);
+							if (getDolGlobalInt($constantforkey) > 0) {
+								$staticwarehouse->fetch(getDolGlobalInt($constantforkey));
+							}
+							$detail = '';
+							$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
+							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								//$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+							}
+							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+							}
+							$detail .= '</td><td>';
+							$detail .= '<span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
+							$detail .= '</td><td>';
+							$detail .= ' <button class="marginleftonly" onclick="addbatch(\''.dol_escape_js($dbatch->batch).'\', '.getDolGlobalInt($constantforkey).')">'.$langs->trans("Select")."</button>";
+							$detail .= '<br>';
+							print $detail;
 
-						$quantityToBeDelivered -= $deliverableQty;
-						if ($quantityToBeDelivered < 0) {
-							$quantityToBeDelivered = 0;
+							$quantityToBeDelivered -= $deliverableQty;
+							if ($quantityToBeDelivered < 0) {
+								$quantityToBeDelivered = 0;
+							}
+							$suggestednb++;
+							print '</td></tr>';
 						}
-						$suggestednb++;
-						print '</td></tr>';
 					}
 					print "</table>";
 					exit;
@@ -776,6 +822,7 @@ if (empty($reshook)) {
 
 		if (count($invoice->lines) == 0) {
 			$invoice->delete($user);
+
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
 			} else {
@@ -1685,6 +1732,7 @@ if ($placeid > 0) {
 		return;
 	}
 
+	// Loop on each lines on invoice
 	if (is_array($invoice->lines) && count($invoice->lines)) {
 		print '<!-- invoice.php show lines of invoices -->'."\n";
 		$tmplines = array_reverse($invoice->lines);
@@ -1761,6 +1809,12 @@ if ($placeid > 0) {
 				if ($line->product_ref) {
 					$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
 					$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+					if (!empty($line->batch)) {
+						$tooltiptext .= '<br><b>'.$langs->trans("LotSerial").'</b> : '.$line->batch.'<br>';
+					}
+					if (!empty($line->fk_warehouse)) {
+						$tooltiptext .= '<b>'.$langs->trans("Warehouse").'</b> : '.$line->fk_warehouse.'<br>';
+					}
 					if ($line->product_label != $line->desc) {
 						if ($line->desc) {
 							$tooltiptext .= '<br>';
