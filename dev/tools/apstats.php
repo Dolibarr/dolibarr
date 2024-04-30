@@ -995,7 +995,7 @@ if ($fh) {
 	fwrite($fh, '<channel>'."\n");
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
-	fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
+	//fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
 	fwrite($fh, '<language>en-US</language>'."\n");
 	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
 	/*
