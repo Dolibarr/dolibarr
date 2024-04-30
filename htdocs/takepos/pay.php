@@ -526,12 +526,13 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 
 <?php
 $showothercurrency = 0;
-if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+$sessioncurrency = $_SESSION["takeposcustomercurrency"] ?? '';
+if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency != $sessioncurrency) {
 	// Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	$showothercurrency = 1;
 	include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
-	$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+	$multicurrency->fetch(0, $sessioncurrency);
 }
 ?>
 
@@ -539,8 +540,8 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 	<div class="paymentbordline paymentbordlinetotal center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans('TotalTTC'); ?>: <span id="totaldisplay" class="colorwhite"><?php
 		echo price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-		if ($showothercurrency && !empty($_SESSION["takeposcustomercurrency"])) {
-			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
+		if ($showothercurrency) {
+			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span></span>
 	</div>
@@ -548,8 +549,8 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 		<div class="paymentbordline paymentbordlineremain center">
 			<span class="takepospay colorwhite"><?php echo $langs->trans('RemainToPay'); ?>: <span id="remaintopaydisplay" class="colorwhite"><?php
 			echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-			if ($showothercurrency && !empty($_SESSION["takeposcustomercurrency"])) {
-				print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($remaintopay * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
+			if ($showothercurrency) {
+				print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($remaintopay * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 			}
 			?></span></span>
 		</div>
@@ -557,16 +558,16 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 	<div class="paymentbordline paymentbordlinereceived center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
 		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-		if ($showothercurrency && !empty($_SESSION["takeposcustomercurrency"])) {
-			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
+		if ($showothercurrency) {
+			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change1" class="change1" value="0"></span>
 	</div>
 	<div class="paymentbordline paymentbordlinechange center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php
 		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-		if ($showothercurrency && !empty($_SESSION["takeposcustomercurrency"])) {
-			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
+		if ($showothercurrency) {
+			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change2" class="change2" value="0"></span>
 	</div>
