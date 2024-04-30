@@ -6714,6 +6714,11 @@ select.multiselectononeline {
 	}
 }
 
+/* must be after the other .select2-container.select2-container--open .select2-dropdown.ui-dialog */
+.limit.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	min-width: 100px !important;
+}
+
 .parentonrightofpage {
   direction: rtl;
 }

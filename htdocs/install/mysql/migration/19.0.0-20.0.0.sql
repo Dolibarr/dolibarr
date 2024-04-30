@@ -189,7 +189,8 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) A
 ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
-
+ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
+ALTER TABLE llx_fichinter_rec CHANGE COLUMN titre title varchar(50) NOT NULL;
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -229,6 +230,8 @@ ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
+
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
@@ -313,4 +316,3 @@ DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 -- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
 
 ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
-

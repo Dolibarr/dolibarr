@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,8 @@ require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOSTINT('socid');
-$type = GETPOSTINT('type');
+// type can be empty string or 0 or 1
+$type = GETPOST('type', 'int');
 $mode = GETPOSTINT('mode');
 $status = ((GETPOSTINT('status') >= 0) ? GETPOSTINT('status') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
 $status_purchase = ((GETPOSTINT('status_purchase') >= 0) ? GETPOSTINT('status_purchase') : - 1);	// status purchase when mode = customer

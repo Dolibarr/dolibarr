@@ -6235,7 +6235,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<datalist id="limitlist">';
 			} else {
 				print '<li class="paginationxxx">';
-				print '<select class="flat selectlimit nopadding maxwidth75 center" id="limit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
+				print '<select id="limit" class="flat selectlimit nopadding maxwidth75 center" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
 			}
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit.':'.$limit;
@@ -6263,7 +6263,8 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '</datalist>';
 			} else {
 				print '</select>';
-				print ajax_combobox("limit");
+				print ajax_combobox("limit", array(), 0, 0, 'resolve', -1, 'limit');
+				//print ajax_combobox("limit");
 			}
 
 			if ($conf->use_javascript_ajax) {

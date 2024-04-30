@@ -1406,7 +1406,7 @@ select.flat.selectlimit {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-.selectlimit, .marginrightonly {
+.marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
@@ -6831,6 +6831,11 @@ select.multiselectononeline {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
 	}
+}
+
+/* must be after the other .select2-container.select2-container--open .select2-dropdown.ui-dialog */
+.limit.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	min-width: 100px !important;
 }
 
 

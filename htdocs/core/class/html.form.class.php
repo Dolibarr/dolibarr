@@ -8587,6 +8587,7 @@ class Form
 			}
 		}
 		$out .= "</select>";
+
 		// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
