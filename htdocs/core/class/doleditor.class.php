@@ -101,7 +101,7 @@ class DolEditor
 		if ( isset($poscursor['find']) ) {
 			$posy = 0;
 			$lines = explode("\n", $content);
-			$nblines = count($lines)
+			$nblines = count($lines);
 			for ($i = 0 ; $i < $nblines ; $i++) {
 				if (preg_match('/'.$poscursor['find'].'/', $lines[$i])) {
 					$posy = $i;
