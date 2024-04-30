@@ -66,7 +66,7 @@ class DolEditor
 	 *  @param  int				$rows                   		Size of rows for textarea tool
 	 *  @param  string			$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *  @param	int				$readonly						0=Read/Edit, 1=Read only
-	 *  @param	array			$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y). 
+	 *  @param	array			$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y).
 	 *                                             				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
 	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
@@ -101,7 +101,8 @@ class DolEditor
 		if ( isset($poscursor['find']) ) {
 			$posy = 0;
 			$lines = explode("\n", $content);
-			for ($i = 0 ; $i < count($lines) ; $i++) {
+			$nblines = count($lines)
+			for ($i = 0 ; $i < $nblines ; $i++) {
 				if (preg_match('/'.$poscursor['find'].'/', $lines[$i])) {
 					$posy = $i;
 					break;
