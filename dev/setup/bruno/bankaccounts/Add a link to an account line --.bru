@@ -1,0 +1,11 @@
+meta {
+  name: Add a link to an account line --
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{base_url}}/bankaccounts/{id}/lines/{line_id}/links
+  body: none
+  auth: none
+}

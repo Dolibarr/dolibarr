@@ -88,7 +88,8 @@ $arrayfields = array(
 	't.datev'			=> array('checked' => 1, 'position' => 30, 'label' => "PeriodEndDate"),
 	't.fk_typepayment'	=> array('checked' => 1, 'position' => 50, 'label' => "DefaultPaymentMode"),
 	't.amount'			=> array('checked' => 1, 'position' => 90, 'label' => "Amount"),
-	't.status'			=> array('checked' => 1, 'position' => 90, 'label' => "Status"),
+	't.datec'			=> array('checked' => 1, 'position' => 91, 'label' => "DateCreation"),
+	't.status'			=> array('checked' => 1, 'position' => 92, 'label' => "Status"),
 );
 
 if (isModEnabled("bank")) {
@@ -172,7 +173,7 @@ $help_url = '';
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye as status, t.fk_typepayment as type, t.fk_account,';
+$sql = 'SELECT t.rowid, t.amount, t.label, t.datec, t.datev, t.paye as status, t.fk_typepayment as type, t.fk_account,';
 $sql .= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
 $sql .= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
@@ -216,7 +217,8 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND t.paye = ".((int) $search_status);
 }
 
-$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
+$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datec, t.datev, t.paye, t.fk_typepayment, t.fk_account,";
+$sql .= " ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -485,6 +487,13 @@ if (!empty($arrayfields['t.amount']['checked'])) {
 	print '</td>';
 }
 
+// Filter: Date creation
+if (!empty($arrayfields['t.datec']['checked'])) {
+	print '<td class="liste_titre right">';
+	//print '<input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'">';
+	print '</td>';
+}
+
 // Status
 if (!empty($arrayfields['t.status']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -530,11 +539,11 @@ if (!empty($arrayfields['t.rowid']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.label']['checked'])) {
-	print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER['PHP_SELF'], 't.label', '', $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER['PHP_SELF'], 't.label', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.datev']['checked'])) {
-	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
@@ -547,6 +556,10 @@ if (!empty($arrayfields['t.fk_account']['checked'])) {
 }
 if (!empty($arrayfields['t.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.datec']['checked'])) {
+	print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER['PHP_SELF'], 't.datec', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.status']['checked'])) {
@@ -585,6 +598,7 @@ while ($i < $imaxinloop) {
 	$tva_static->label = $obj->label;
 	$tva_static->type_payment = $obj->payment_code;
 	$tva_static->datev = $obj->datev;
+	$tva_static->date_creation = $obj->datec;
 	$tva_static->amount = $obj->amount;
 	$tva_static->paye = $obj->status;
 	$tva_static->status = $obj->status;
@@ -723,6 +737,13 @@ while ($i < $imaxinloop) {
 				$totalarray['val']['amount'] = $obj->amount;
 			} else {
 				$totalarray['val']['amount'] += $obj->amount;
+			}
+		}
+
+		if (!empty($arrayfields['t.datec']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 
