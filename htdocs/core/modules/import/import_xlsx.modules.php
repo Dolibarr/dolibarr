@@ -836,7 +836,7 @@ class ImportXlsx extends ModeleImports
 							continue; // Not a field of current table
 						}
 						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
-						
+
 						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
 							continue;
 						} elseif ($val == 'user->id') {
