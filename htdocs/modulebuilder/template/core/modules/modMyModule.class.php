@@ -214,7 +214,7 @@ class modMyModule extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-		
+
 
 		// Dictionaries
 		/* Example:
