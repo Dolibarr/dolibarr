@@ -366,8 +366,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
 			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
-			if ($urlimage) {
-				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title></image>\n");
+			//$urlimage = $GLOBALS['website']->virtualhost
+			if ($urlimage && (empty($GLOBALS['website']) || preg_match('/'.preg_quote($GLOBALS['website']->virtualhost, '/').'/', $urlwithroot))) {
+				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title><link><![CDATA[".$url."]]></link></image>\n");
 			}
 		}
 
