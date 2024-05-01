@@ -789,7 +789,7 @@ class ImportCsv extends ModeleImports
 							continue; // Not a field of current table
 						}
 						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
-						
+
 						if (in_array($keyfield, $listfields)) {		// avoid duplicates in insert
 							continue;
 						} elseif ($tmpval == 'user->id') {
