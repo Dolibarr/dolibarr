@@ -402,12 +402,22 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$uid		  = $event["uid"];
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
+				$description  = $event["desc"];
 				$url		  = $event["url"];
 				$author       = $event["author"];
 				$category     = empty($event["category"]) ? null : $event["category"];
 				if (!empty($event["image"])) {
 					$image = $event["image"];
+				} else {
+					$reg = array();
+					if (preg_match('/<img\s*src="([^"]+)"/m', $description, $reg)) {
+						if (!empty($reg[0])) {
+							$image = $reg[1];
+						}
+					}
 				}
+
+
 				/* No place inside a RSS
 				$priority     = $event["priority"];
 				$fulldayevent = $event["fulldayevent"];
