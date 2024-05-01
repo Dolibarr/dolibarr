@@ -393,7 +393,13 @@ class User extends CommonObject
 	/**
 	 * @var int egroupware id
 	 */
-	public $egroupware_id;
+	//private $egroupware_id;
+
+	/**
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
+	 */
+	public $usergroup_entity;
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -1833,11 +1839,11 @@ class User extends CommonObject
 	public function create_from_member($member, $login = '')
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user;
 
 		// Set properties on new user
 		$this->admin = 0;
-		$this->civility_code = $member->civility_id;
+		$this->civility_code = $member->civility_code;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
 		$this->gender		= $member->gender;
@@ -3405,11 +3411,13 @@ class User extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
+			/*
 			if (dol_strlen($this->egroupware_id) == 0) {
 				$this->egroupware_id = 1;
 			}
-
 			$info["phpgwContactOwner"] = $this->egroupware_id;
+			*/
+			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {
 				$info["rfc822Mailbox"] = $this->email;

@@ -92,11 +92,9 @@ $search_date_start_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_start_tom
 $search_date_end_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_end_frommonth'), GETPOSTINT('search_date_end_fromday'), GETPOSTINT('search_date_end_fromyear'));
 $search_date_end_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_end_tomonth'), GETPOSTINT('search_date_end_today'), GETPOSTINT('search_date_end_toyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_type_id = GETPOST('search_type_id', 'intcomma');
-
-$filtre = GETPOST("filtre", 'restricthtml');
 
 $childids = $user->getAllChildIds(1);
 

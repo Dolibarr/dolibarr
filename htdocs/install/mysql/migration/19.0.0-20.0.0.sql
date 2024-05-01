@@ -50,6 +50,9 @@ UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTr
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
 DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
 ALTER TABLE llx_actioncomm_extrafields ADD UNIQUE INDEX uk_actioncomm_extrafields (fk_object);

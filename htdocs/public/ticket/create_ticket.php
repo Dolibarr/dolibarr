@@ -533,7 +533,7 @@ if ($action != "infos_success") {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-	if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')=='') {
+	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';

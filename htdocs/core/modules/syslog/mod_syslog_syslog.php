@@ -19,7 +19,7 @@ class mod_syslog_syslog extends LogHandler
 	 */
 	public function getName()
 	{
-		return 'Syslogd';
+		return 'Syslog';
 	}
 
 	/**
@@ -125,7 +125,11 @@ class mod_syslog_syslog extends LogHandler
 
 		// (int) is required to avoid error parameter 3 expected to be long
 		openlog('dolibarr', LOG_PID | LOG_PERROR, (int) $facility);
-		syslog($content['level'], $content['message']);
+
+		$message = sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+		$message .= " ".$content['message'];
+
+		syslog($content['level'], $message);
 		closelog();
 	}
 }

@@ -63,7 +63,7 @@ $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
 $search_other = GETPOST("search_other", 'alphanohtml');
-$search_dest_status = GETPOST('search_dest_status');	// Must be '' if not set, so do not use GETPOSTINT here.
+$search_dest_status = GETPOST('search_dest_status', 'int');
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');

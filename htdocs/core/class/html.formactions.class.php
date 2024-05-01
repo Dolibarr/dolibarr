@@ -171,7 +171,7 @@ class FormActions
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -211,18 +211,41 @@ class FormActions
 				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
 			}
 
-			$newcardbutton = '';
+			$url = '';
+			$morehtmlright = '';
 			if (isModEnabled('agenda') && $usercanaddaction) {
 				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
 				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
 				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
 				$url .= '&backtopage='.urlencode($urlbacktopage);
-				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
+				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
-			print '<!-- formactions->showactions -->'."\n";
-			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
+			$parameters = array(
+				'title' => &$title,
+				'morehtmlright' => &$morehtmlright,
+				'morehtmlcenter' => &$morehtmlcenter,
+				'usercanaddaction' => $usercanaddaction,
+				'url' => &$url,
+				'typeelement' => $typeelement,
+				'projectid' => $projectid,
+				'assignedtouser' => $assignedtouser,
+				'taskid' => $taskid,
+				'urlbacktopage' => $urlbacktopage
+			);
+
+			$reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
+
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			$error = 0;
+			if (empty($reshook)) {
+				print '<!-- formactions->showactions -->' . "\n";
+				print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
+			}
 
 			$page = 0;
 			$param = '';

@@ -216,3 +216,5 @@ ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIME
 ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
+
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
