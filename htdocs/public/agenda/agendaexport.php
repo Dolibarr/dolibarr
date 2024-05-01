@@ -123,11 +123,14 @@ if (GETPOST("logina", 'alpha')) {
 if (GETPOST("logint", 'alpha')) {
 	$filters['logint'] = GETPOST("logint", 'alpha');
 }
-if (GETPOST("notactiontype", 'alpha')) {
+if (GETPOST("notactiontype", 'alpha')) {	// deprecated
 	$filters['notactiontype'] = GETPOST("notactiontype", 'alpha');
 }
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
+}
+if (GETPOST("actioncode", 'alpha')) {
+	$filters['actioncode'] = GETPOST("actioncode", 'alpha');
 }
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
@@ -220,11 +223,14 @@ foreach ($filters as $key => $value) {
 	if ($key == 'logint') {
 		$filename .= '-logint'.$value; // Assigned to
 	}
-	if ($key == 'notactiontype') {
+	if ($key == 'notactiontype') {	// deprecated
 		$filename .= '-notactiontype'.$value;
 	}
 	if ($key == 'actiontype') {
 		$filename .= '-actiontype'.$value;
+	}
+	if ($key == 'actioncode') {
+		$filename .= '-actioncode'.$value;
 	}
 	if ($key == 'module') {
 		$filename .= '-module'.$value;

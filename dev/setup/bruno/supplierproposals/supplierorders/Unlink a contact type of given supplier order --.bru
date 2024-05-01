@@ -1,0 +1,11 @@
+meta {
+  name: Unlink a contact type of given supplier order --
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{base_url}}/supplierorders/{id}/contact/{contactid}/{type}/{source}
+  body: none
+  auth: none
+}

@@ -1,0 +1,11 @@
+meta {
+  name: Delete account --
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/bankaccounts/{id}
+  body: none
+  auth: none
+}

@@ -220,7 +220,9 @@ $message .= $langs->trans("AgendaUrlOptions3", $user->login, $user->login).'<br>
 $message .= $langs->trans("AgendaUrlOptionsNotAdmin", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptions4", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsProject", $user->login, $user->login).'<br>';
-$message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
+$message .= $langs->trans("AgendaUrlOptionsType", 'systemauto|system').'<br>';
+$message .= $langs->trans("AgendaUrlOptionsCode", 'AC_COMPANY_CREATE,AC_PROPAL_VALIDATE,AC_CODE...').'<br>';
+//$message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);

@@ -119,6 +119,7 @@ $entitytolang = array(
 	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
+	'resource'     => 'Resource',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
 	'expensereport' => 'ExpenseReport',

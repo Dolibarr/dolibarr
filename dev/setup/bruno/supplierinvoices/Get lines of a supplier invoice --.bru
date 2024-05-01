@@ -1,0 +1,11 @@
+meta {
+  name: Get lines of a supplier invoice --
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{base_url}}/supplierinvoices/{id}/lines
+  body: none
+  auth: none
+}

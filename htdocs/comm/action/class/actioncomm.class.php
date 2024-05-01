@@ -2075,6 +2075,7 @@ class ActionComm extends CommonObject
 					if ($key == 'status') {
 						$sql .= " AND p.fk_statut = ".((int) $value);
 					}
+					// TODO Add filters on event code of meetings/talks only
 				}
 
 				$eventorganization = 'project';
@@ -2128,12 +2129,46 @@ class ActionComm extends CommonObject
 					if ($key == 'project') {
 						$sql .= " AND a.fk_project = ".(is_numeric($value) ? $value : 0);
 					}
-					if ($key == 'actiontype') {
-						$sql .= " AND c.type = '".$this->db->escape($value)."'";
-					}
-					if ($key == 'notactiontype') {
+					if ($key == 'notactiontype') {	// deprecated
 						$sql .= " AND c.type <> '".$this->db->escape($value)."'";
 					}
+					if ($key == 'actiontype') {	// 'system', 'systemauto', 'module', ...
+						$newvalue = $value;
+						$usenotin = 0;
+						if (preg_match('/^!/', $newvalue)) {
+							$newvalue = preg_replace('/^!/', '', $value);
+							$usenotin = 1;
+						}
+						$arraynewvalue = explode(',', $newvalue);
+						$newvalue = "";
+						foreach ($arraynewvalue as $tmpval) {
+							$newvalue .= ($newvalue ? "," : "")."'".$tmpval."'";
+						}
+						if ($usenotin) {
+							$sql .= " AND c.type NOT IN (".$this->db->sanitize($newvalue, 1).")";
+						} else {
+							$sql .= " AND c.type IN (".$this->db->sanitize($newvalue, 1).")";
+						}
+					}
+					if ($key == 'actioncode') {	// 'AC_COMPANY_CREATE', 'AC_COMPANY_MODIFY', ...
+						$newvalue = $value;
+						$usenotin = 0;
+						if (preg_match('/^!/', $newvalue)) {
+							$newvalue = preg_replace('/^!/', '', $value);
+							$usenotin = 1;
+						}
+						$arraynewvalue = explode(',', $newvalue);
+						$newvalue = "";
+						foreach ($arraynewvalue as $tmpval) {
+							$newvalue .= ($newvalue ? "," : "")."'".$tmpval."'";
+						}
+						if ($usenotin) {
+							$sql .= " AND a.code NOT IN (".$this->db->sanitize($newvalue, 1).")";
+						} else {
+							$sql .= " AND a.code IN (".$this->db->sanitize($newvalue, 1).")";
+						}
+					}
+
 					// We must filter on assignment table
 					if ($key == 'logint') {
 						$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";

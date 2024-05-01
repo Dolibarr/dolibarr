@@ -377,7 +377,7 @@ class FormActions
 	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
-		global $langs, $user, $form, $conf;
+		global $langs, $user, $form;
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -408,13 +408,23 @@ class FormActions
 
 		$out = '';
 
+		// Reformat the array
+		$newarraylist = array();
+		foreach ($arraylist as $key => $value) {
+			$disabled = '';
+			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
+				$disabled = 'disabled';
+			}
+			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
+		}
+
 		if (!empty($multiselect)) {
 			if (!is_array($selected) && !empty($selected)) {
 				$selected = explode(',', $selected);
 			}
-			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+			$out .= $form->selectarray($htmlname, $newarraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

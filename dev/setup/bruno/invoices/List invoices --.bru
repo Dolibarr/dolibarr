@@ -1,0 +1,22 @@
+meta {
+  name: List invoices --
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/invoices
+  body: none
+  auth: none
+}
+
+query {
+  ~sortfield:
+  ~sortorder:
+  ~limit:
+  ~page:
+  ~thirdparty_ids:
+  ~status:
+  ~sqlfilters:
+  ~properties:
+}

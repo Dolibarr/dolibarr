@@ -23,7 +23,7 @@
 create table llx_fichinter_rec
 (
 	rowid				integer AUTO_INCREMENT PRIMARY KEY,
-	titre				varchar(50) NOT NULL,
+	title				varchar(50) NOT NULL,
 	entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
 	fk_soc				integer DEFAULT NULL,
 	datec				datetime,  -- date de creation
@@ -43,6 +43,6 @@ create table llx_fichinter_rec
 	date_last_gen		datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
 	nb_gen_done			integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
 	nb_gen_max			integer DEFAULT NULL,		-- maximum number of generation
-	auto_validate		integer NULL DEFAULT NULL	-- statut of the generated intervention
-
+	auto_validate		integer NULL DEFAULT NULL,	-- status of the generated intervention
+	status				smallint DEFAULT 0			-- status of the model
 )ENGINE=innodb;

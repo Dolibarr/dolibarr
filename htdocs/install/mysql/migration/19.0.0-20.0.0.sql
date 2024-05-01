@@ -189,7 +189,8 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) A
 ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
-
+ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
+ALTER TABLE llx_fichinter_rec CHANGE COLUMN titre title varchar(50) NOT NULL;
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -229,6 +230,8 @@ ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
+
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
@@ -286,6 +289,7 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
 ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
@@ -298,6 +302,7 @@ ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementd
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
 ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
+ALTER TABLE llx_projet ADD COLUMN email_date datetime after email_msgid;
 
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
@@ -306,3 +311,8 @@ ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
 ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
+
+
+-- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
+
+ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
