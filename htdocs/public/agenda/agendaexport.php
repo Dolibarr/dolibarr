@@ -136,7 +136,7 @@ if (GETPOST("actioncode", 'alpha')) {
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
-	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
+	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 }
 if (GETPOSTINT("limit")) {
 	$filters['limit'] = GETPOSTINT("limit");

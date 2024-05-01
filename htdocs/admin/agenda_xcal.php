@@ -227,7 +227,8 @@ $message .= $langs->trans("AgendaUrlOptionsType", 'systemauto|system').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsCode", 'AC_COMPANY_CREATE,AC_PROPAL_VALIDATE,AC_CODE...').'<br>';
 //$message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
-$message .= $langs->trans("AgendaUrlOptionsLimitDays", '99', '99').'<br>';
+$defaultnotolderthan = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+$message .= $langs->trans("AgendaUrlOptionsLimitDays", $defaultnotolderthan, $defaultnotolderthan, $defaultnotolderthan).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsLimit", '1000').'<br>';
 
 print info_admin($message);
