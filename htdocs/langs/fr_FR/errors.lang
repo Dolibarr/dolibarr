@@ -310,6 +310,7 @@ ErrorFieldExist=La valeur pour <b>%s</b> existe déjà
 ErrorEqualModule=Module invalide dans <b>%s</b>.
 ErrorFieldValue=La valeur pour <b>%s</b> est incorrecte
 ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
+ErrorGeneratingBarcode=Erreur à la génération du code-barre (probablement une valeur invalide)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
