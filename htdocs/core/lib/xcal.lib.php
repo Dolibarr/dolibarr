@@ -388,7 +388,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				if (is_object($event) && get_class($event) == 'WebsitePage') {
 					// Convert object WebsitePage into an array $event
 					$tmpevent = array();
-					$tmpevent['uid'] = $event->id;
+					$tmpevent['uid'] = (string) $event->id;
 					$tmpevent['startdate'] = $event->date_creation;
 					$tmpevent['summary'] = $event->title;
 					$tmpevent['url'] = $event->fullpageurl ? $event->fullpageurl : $event->pageurl.'.php';
