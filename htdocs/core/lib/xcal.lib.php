@@ -418,12 +418,12 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
-				fwrite($fichier, "<description><![CDATA[".$summary."]]></description>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
 					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
 				}
+				//fwrite($fichier, "<description><![CDATA[".$summary."]]></description>\n");
 				fwrite($fichier, "<description><![CDATA[");
 				if (!empty($image)) {
 					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
@@ -437,7 +437,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "]]></description>\n");
 				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
-				fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.$uid.']]></guid>'."\n");
+				fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.str_pad($uid, 10, "0", STR_PAD_LEFT).']]></guid>'."\n");
 				fwrite($fichier, '<source url="'.$url.'"><![CDATA[Dolibarr]]></source>'."\n");
 				fwrite($fichier, "</item>\n");
 			}
