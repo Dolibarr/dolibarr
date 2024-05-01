@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  *              Other parameters into url are:
  *              &notolderthan=99
  *              &year=2015
+ *              &limit=1000
  *              &id=..., &idfrom=..., &idto=...
  */
 
@@ -136,6 +137,11 @@ if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
+}
+if (GETPOSTINT("limit")) {
+	$filters['limit'] = GETPOSTINT("limit");
+} else {
+	$filters['limit'] = 1000;
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');

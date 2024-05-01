@@ -142,6 +142,7 @@ AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automati
 AgendaUrlOptionsType=<b>actiontype=%s</b> to get only automatic events or manual events
 AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 recent events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
