@@ -348,6 +348,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		fwrite($fichier, "<channel>\n");
 		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
+		fwrite($fichier, "<description>".dol_escape_xml($title)."</description>\n");
 		if ($langcode) {
 			fwrite($fichier, "<language>".dol_escape_xml($langcode)."</language>\n");
 		}
@@ -419,7 +420,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
-				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
+				//fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
 					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
 				}
