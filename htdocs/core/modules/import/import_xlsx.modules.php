@@ -835,9 +835,9 @@ class ImportXlsx extends ModeleImports
 						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
 							continue; // Not a field of current table
 						}
-						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
-						// avoid duplicates in insert
-						if (in_array($keyfield, $listfields)) {
+						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+						
+						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
 							continue;
 						} elseif ($val == 'user->id') {
 							$listfields[] = $keyfield;
