@@ -386,7 +386,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$nbevents++;
 
 				if (is_object($event) && get_class($event) == 'WebsitePage') {
-					// Convert object into an array
+					// Convert object WebsitePage into an array $event
 					$tmpevent = array();
 					$tmpevent['uid'] = $event->id;
 					$tmpevent['startdate'] = $event->date_creation;
@@ -395,7 +395,11 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
 					//$tmpevent['category'] = '';
 					$tmpevent['desc'] = $event->description;
-					$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+					if (!empty($event->image)) {
+						$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+					}
+					$tmpevent['content'] = $event->content;
+
 					$event = $tmpevent;
 				}
 
@@ -410,7 +414,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					if (preg_match('/<img\s*src="([^"]+)"/m', $description, $reg)) {
+					if (preg_match('/<img\s*src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];
 						}
