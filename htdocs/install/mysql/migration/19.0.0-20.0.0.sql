@@ -317,4 +317,4 @@ DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
 ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
 
-ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT NULL AFTER billed;
+ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT 0 AFTER billed;
