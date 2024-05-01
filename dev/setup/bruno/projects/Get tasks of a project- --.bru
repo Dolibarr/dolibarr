@@ -1,0 +1,15 @@
+meta {
+  name: Get tasks of a project- --
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{base_url}}/projects/{id}/tasks
+  body: none
+  auth: none
+}
+
+query {
+  ~includetimespent:
+}

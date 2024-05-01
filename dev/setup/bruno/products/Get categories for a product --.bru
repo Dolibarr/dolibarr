@@ -1,0 +1,18 @@
+meta {
+  name: Get categories for a product --
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{base_url}}/products/{id}/categories
+  body: none
+  auth: none
+}
+
+query {
+  ~sortfield:
+  ~sortorder:
+  ~limit:
+  ~page:
+}
