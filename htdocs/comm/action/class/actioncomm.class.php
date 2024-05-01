@@ -2224,7 +2224,7 @@ class ActionComm extends CommonObject
 			}
 
 			if (!empty($filters['limit'])) {
-				$sql .= $this->db->limit((int) $filters['limit']);
+				$sql .= $this->db->plimit((int) $filters['limit']);
 			}
 
 			//print $sql;exit;
