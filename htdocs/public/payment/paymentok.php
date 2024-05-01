@@ -2074,12 +2074,12 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
-		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentok&fulltag='.$FULLTAG;
-		print "<script>window.top.location.href = \"". $ext_urlok ."\";</script>";
+		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentko&fulltag='.$FULLTAG;
-		print "<script>window.top.location.href = \"". $ext_urlko ."\";</script>";
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 	}
 }
