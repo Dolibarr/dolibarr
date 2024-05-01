@@ -8419,6 +8419,8 @@ abstract class CommonObject
 			return false;
 		}
 
+		$val = $fields[$fieldKey];
+
 		$param = array();
 		$param['options'] = array();
 		$type  = $val['type'];
