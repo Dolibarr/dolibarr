@@ -357,6 +357,8 @@ if ($format == 'rss') {
 		}
 		if ($attachment) {
 			header('Content-Disposition: attachment; filename="'.$filename.'"');
+		} else {
+			header('Content-Disposition: inline;');
 		}
 
 		// Ajout directives pour resoudre bug IE
