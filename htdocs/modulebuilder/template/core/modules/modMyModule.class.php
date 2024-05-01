@@ -182,7 +182,10 @@ class modMyModule extends DolibarrModules
 			$conf->mymodule->enabled = 0;
 		}
 
-		// Tabs
+		// Array to add new pages in new tabs
+		/* BEGIN MODULEBUILDER TABS */
+		$this->tabs = array();
+		/* END MODULEBUILDER TABS */
 		// Example:
 		// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');
@@ -211,10 +214,7 @@ class modMyModule extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-		// Array to add new pages in new tabs
-		/* BEGIN MODULEBUILDER TABS */
-		$this->tabs = array();
-		/* END MODULEBUILDER TABS */
+		
 
 		// Dictionaries
 		/* Example:
@@ -287,7 +287,9 @@ class modMyModule extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = array();
 		$r = 0;
-		/* Examples :
+		// Add here entries to declare new permissions
+		/* BEGIN MODULEBUILDER PERMISSIONS */
+		/*
 		$o = 1;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
@@ -305,8 +307,6 @@ class modMyModule extends DolibarrModules
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'delete'))
 		$r++;
 		*/
-		// Add here entries to declare new permissions
-		/* BEGIN MODULEBUILDER PERMISSIONS */
 		/* END MODULEBUILDER PERMISSIONS */
 
 
@@ -314,7 +314,6 @@ class modMyModule extends DolibarrModules
 		$this->menu = array();
 		$r = 0;
 		// Add here entries to declare new menus
-
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
