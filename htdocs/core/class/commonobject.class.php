@@ -8381,7 +8381,7 @@ abstract class CommonObject
 		//print $type.'-'.$size.'-'.$value;
 		$out = $value;
 
-		return $out;
+		return is_null($out) ? '' : $out;
 	}
 
 	/**
@@ -8449,6 +8449,8 @@ abstract class CommonObject
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
+
+		$val = $fields[$fieldKey];
 
 		$param = array();
 		$param['options'] = array();
