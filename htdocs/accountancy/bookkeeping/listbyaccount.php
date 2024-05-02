@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -973,6 +973,7 @@ $sous_total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
+$totalarray['val']['totalbalance']=0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
@@ -1248,7 +1249,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		}
-		$totalarray['val']['totaldebit'] += $line->debit;
+		$totalarray['val']['totaldebit'] += (float) $line->debit;
 	}
 
 	// Amount credit
@@ -1260,7 +1261,7 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		}
-		$totalarray['val']['totalcredit'] += $line->credit;
+		$totalarray['val']['totalcredit'] += (float) $line->credit;
 	}
 
 	// Amount balance

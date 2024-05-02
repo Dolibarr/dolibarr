@@ -28,7 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
 
-$langs->loadLangs(array("admin"));
+$langs->loadLangs(array("admin", "website", "other"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -67,7 +67,9 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // List of AI features
 $arrayofaifeatures = array(
-	'textgeneration' => array('label' => 'TextGeneration', 'picto'=>'', 'status'=>'development'),
+	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
+	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
+	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
 	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
 	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
 	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
@@ -206,7 +208,7 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-if ($action == 'edit') {
+if ($action == 'edit' || $action == 'deleteproperty') {
 	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
@@ -229,7 +231,7 @@ if ($action == 'edit') {
 	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
 	foreach ($arrayofaifeatures as $key => $val) {
-		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotUsed").')</span>' : "");
+		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
 		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
 		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
@@ -253,18 +255,18 @@ if ($action == 'edit') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
+	$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
+	$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -278,7 +280,7 @@ if ($action == 'edit') {
 }
 
 
-if ($action == 'edit' || $action == 'create') {
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
 	if (!empty($currentConfigurations)) {
@@ -292,7 +294,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<tr class="liste_titre">';
 			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
 			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
-			$out .= '<a class="deletefielda  marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
@@ -305,7 +307,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<input type="hidden" name="action" value="updatePrompts">';
 			$out .= '<tr class="oddeven">';
 			$out .= '<td class="col-setup-title">';
-			$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
+			$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
 			$out .= '<textarea class="flat minwidth500" id="prePromptInput_'.$key.'" name="prePrompt" rows="2" disabled>'.$config['prePrompt'].'</textarea>';
@@ -313,7 +315,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '</tr>';
 			$out .= '<tr class="oddeven">';
 			$out .= '<td class="col-setup-title">';
-			$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
+			$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
 			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';

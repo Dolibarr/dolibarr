@@ -373,6 +373,21 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					}
 				}
 
+				// We also check content
+				$extractphp = dolKeepOnlyPhpCode($sql);
+				$extractphpold = '';
+
+				// Security analysis
+				$errorphpcheck = checkPHPCode($extractphpold, $extractphp);	// Contains the setEventMessages
+				if ($errorphpcheck) {
+					$error++;
+					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
+					//print "newsqlclean = ".$newsqlclean."<br>\n";
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains PHP code and checking this code returns errorphpcheck='.$errorphpcheck.'", LOG_WARNING);
+					dol_syslog("sql=".$sql, LOG_DEBUG);
+					break;
+				}
+
 				if (!$qualified) {
 					$error++;
 					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
@@ -858,13 +873,15 @@ function security_prepare_head()
 		dol_print_error($db);
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-	$head[$h][1] = $langs->trans("DefaultRights");
-	if ($nbPerms > 0) {
-		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+	if (getDolGlobalString('MAIN_SECURITY_USE_DEFAULT_PERMISSIONS')) {
+		$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+		$head[$h][1] = $langs->trans("DefaultRights");
+		if ($nbPerms > 0) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		}
+		$head[$h][2] = 'default';
+		$h++;
 	}
-	$head[$h][2] = 'default';
-	$h++;
 
 	return $head;
 }

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ interface Database
 	 * Return datas as an array
 	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
-	 * @param   resource $resultset 	Resultset of request
-	 * @return  array                   Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array                   			Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -89,7 +90,7 @@ interface Database
 	 * @param   string 		$charset 		Charset used to store data
 	 * @param   string 		$collation 		Charset used to sort data
 	 * @param   string 		$owner 			Username of database owner
-	 * @return  resource                	resource defined if OK, null if KO
+	 * @return  bool|SQLite3Result|mysqli_result|resource      Resource result of the query to create database if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
 	// phpcs:enable
@@ -114,8 +115,8 @@ interface Database
 	/**
 	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
-	 * @param   resource $resultset Cursor of the desired request
-	 * @return 	int            Number of lines
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Cursor of the desired request
+	 * @return 	int            						Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset);
@@ -178,8 +179,8 @@ interface Database
 	/**
 	 *    Return datas as an array
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array|null|false           							Result with row
 	 */
 	public function fetch_array($resultset);
 	// phpcs:enable
@@ -245,24 +246,24 @@ interface Database
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string 	$query 			SQL query string
-	 * @param   int		$usesavepoint 	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                            		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string 	$type 			Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @param	int		$result_mode	Result mode
-	 * @return  bool|resource			Resultset of answer or false
+	 * @param   string 	$query 					SQL query string
+	 * @param   int		$usesavepoint 			0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                            				Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type 					Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode			Result mode
+	 * @return  bool|mysqli_result|resource		Resultset of answer or false
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
 	/**
-	 *    Connection to server
+	 * Connection to server
 	 *
-	 * @param   string $host database server host
-	 * @param   string $login login
-	 * @param   string $passwd password
-	 * @param   string $name name of database (not used for mysql, used for pgsql)
-	 * @param   int    $port Port of database server
-	 * @return  resource            Database access handler
+	 * @param   string 			$host 						Database server host
+	 * @param   string 			$login 						Login
+	 * @param   string 			$passwd 					Password
+	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
+	 * @param   int    			$port 						Port of database server
+	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0);
@@ -303,8 +304,8 @@ interface Database
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   resource $resultset Resulset of requests
-	 * @return 	int                        Nb of lines
+	 * @param   mysqli_result|resource|SQLite3Result 	$resultset 	Resulset of requests
+	 * @return 	int                        							Nb of lines
 	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset);
@@ -413,7 +414,7 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field 			Optional : Name of field if we want description of field
-	 * @return   resource            		Resource
+	 * @return   bool|resource|mysqli_result|SQLite3Result            Resource
 	 */
 	public function DDLDescTable($table, $field = "");
 	// phpcs:enable
@@ -492,7 +493,7 @@ interface Database
 	/**
 	 * Free last resultset used.
 	 *
-	 * @param  	resource 		$resultset 		Free cursor
+	 * @param  	resource|mysqli_result|SQLite3Result	$resultset 		Free cursor
 	 * @return  void
 	 */
 	public function free($resultset = null);
@@ -525,8 +526,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
-	 * @return  Object|false                    				Object result line or false if KO or end of cursor
+	 * @param   mysqli_result|resource|PgSql\Connection|SQLite3Result		$resultset 		Handler of the desired request
+	 * @return  Object|false                    											Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

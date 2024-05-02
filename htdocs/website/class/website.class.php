@@ -1242,16 +1242,26 @@ class Website extends CommonObject
 			$error++;
 		}
 
-		$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);
-		if ($result < 0) {
-			$this->errors[] = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
-			return -5;
+		// Copy dir medias/image/websitekey
+		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);
+			if ($result < 0) {
+				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				dol_syslog($this->error, LOG_WARNING);
+				$this->errors[] = $this->error;
+				return -5;
+			}
 		}
 
-		$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);
-		if ($result < 0) {
-			$this->errors[] = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
-			return -5;
+		// Copy dir medias/js/websitekey
+		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);
+			if ($result < 0) {
+				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				dol_syslog($this->error, LOG_WARNING);
+				$this->errors[] = $this->error;
+				return -6;
+			}
 		}
 
 		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';

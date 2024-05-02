@@ -315,9 +315,9 @@ if (empty($reshook)) {
 		foreach ($toselect as $idtoclose) {
 			$tmpmember->fetch($idtoclose);
 
-			if (!empty($tmpmember->fk_soc)) {
+			if (!empty($tmpmember->socid)) {
 				$nuser = new User($db);
-				$tmpuser = dol_clone($tmpmember);
+				$tmpuser = dol_clone($tmpmember, 2);
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 
@@ -819,7 +819,8 @@ if ($search_all) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';

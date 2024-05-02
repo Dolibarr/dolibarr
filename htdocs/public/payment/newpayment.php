@@ -96,6 +96,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
+$ws = GETPOSTINT("ws"); // Website reference where the newpayment page is embedded
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -212,6 +213,10 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
+}
+
+if ($ws) {
+	$FULLTAG .= ($FULLTAG ? '.' : '').'WS='.$ws;
 }
 
 if (!empty($suffix)) {
@@ -883,6 +888,7 @@ print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECURE
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
+print '<input type="hidden" name="ws" value="'.$ws.'">';
 print "\n";
 
 
@@ -909,7 +915,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 }
 
 // Output html code for logo
-if ($urllogo) {
+if ($urllogo && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
@@ -919,7 +925,7 @@ if ($urllogo) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
-} elseif ($creditor) {
+} elseif ($creditor && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print $creditor;
@@ -2382,13 +2388,18 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					$arrayforcheckout = array(
 						'payment_method_types' => array('card'),
 						'line_items' => array(array(
-							'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
-							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-							'amount' => $amountstripe,
-							'currency' => $currency,
-							//'images' => array($urllogofull),
+							'price_data' => array(
+								'currency' => $currency,
+								'unit_amount' => $amountstripe,
+								'product_data' => array(
+									'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
+									'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+									//'images' => array($urllogofull),
+								),
+							),
 							'quantity' => 1,
 						)),
+						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
 						'success_url' => $urlok,
 						'cancel_url' => $urlko,
@@ -2709,7 +2720,9 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	}
 }
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+if (!$ws) {
+	htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

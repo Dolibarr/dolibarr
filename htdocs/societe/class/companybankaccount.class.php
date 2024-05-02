@@ -174,12 +174,6 @@ class CompanyBankAccount extends Account
 	public $iban_prefix;
 
 	public $bank;
-	/**
-	 * @var string	Bank address
-	 * @deprecated Replaced with address
-	 */
-	public $domiciliation;
-	public $address;
 
 	/**
 	 * @var int state id
@@ -192,17 +186,6 @@ class CompanyBankAccount extends Account
 	public $fk_country;
 
 	public $country_code;
-
-
-	/**
-	 * @var string owner
-	 */
-	public $proprio;
-
-	/**
-	 * @var string owner address
-	 */
-	public $owner_address;
 
 	/**
 	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
@@ -483,26 +466,29 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
+	 *	@param	string	$ref		Ref of record
 	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
 	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
 	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
+	public function fetch($id, $ref = '', $socid = 0, $default = 1, $type = 'ban')
 	{
-		if (empty($id) && empty($socid)) {
+		if (empty($id) && empty($ref) && empty($socid)) {
 			return -1;
 		}
 
 		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql .= " domiciliation as address,";
-		$sql .= " proprio, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
 		$sql .= " last_main_doc, model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
+		} elseif ($ref) {
+			$sql .= " WHERE rowid = ".((int) $ref);
 		} elseif ($socid > 0) {
 			$sql .= " WHERE fk_soc  = ".((int) $socid);
 			if ($default > -1) {
@@ -534,7 +520,8 @@ class CompanyBankAccount extends Account
 				$this->domiciliation   = $obj->address;
 				$this->address         = $obj->address;
 
-				$this->proprio         = $obj->proprio;
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
 				$this->default_rib     = $obj->default_rib;
@@ -656,7 +643,7 @@ class CompanyBankAccount extends Account
 				$result3 = $this->db->query($sql3);
 
 				if (!$result2 || !$result3) {
-					dol_print_error($this->db);
+					$this->errors[] = $this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				} else {
@@ -665,7 +652,7 @@ class CompanyBankAccount extends Account
 				}
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->errors[] = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -679,12 +666,13 @@ class CompanyBankAccount extends Account
 	 */
 	public function initAsSpecimen()
 	{
+		$this->id = 0;
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';
 		$this->label           = 'CustomerCorp Bank account';
 		$this->bank            = 'CustomerCorp Bank';
-		$this->courant         = Account::TYPE_CURRENT;
-		$this->clos            = Account::STATUS_OPEN;
+		$this->type = 'ban';
+		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
@@ -696,6 +684,7 @@ class CompanyBankAccount extends Account
 		$this->country_id      = 1;
 
 		$this->proprio         = 'Owner';
+		$this->owner_name = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_country_id = 1;
 

@@ -62,7 +62,7 @@ $month = GETPOSTINT('month');
 $year = GETPOSTINT('year');
 
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_paymenttype = GETPOST('search_paymenttype');
 $search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
 $search_company = GETPOST('search_company', 'alpha');

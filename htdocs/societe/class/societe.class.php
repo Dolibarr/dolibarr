@@ -954,6 +954,10 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -992,7 +996,10 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."',";
+			$sql .= " '".$this->db->escape($this->name_alias)."',";
+			$sql .= " ".((int) $this->entity).",";
+			$sql .= " '".$this->db->idate($this->date_creation)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
@@ -1012,6 +1019,7 @@ class Societe extends CommonObject
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
@@ -2474,7 +2482,7 @@ class Societe extends CommonObject
 				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
 			}
 
-			$discount->tva_tx = price2num($vatrate);
+			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -3338,7 +3346,7 @@ class Societe extends CommonObject
 
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$bac->fetch(0, $this->id);
+		$bac->fetch(0, '', $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
 			if ($mode == 'label') {
@@ -4983,7 +4991,7 @@ class Societe extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				$result = $bac->fetch(0, $this->id);
+				$result = $bac->fetch(0, '', $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
 				} else {
@@ -5518,6 +5526,25 @@ class Societe extends CommonObject
 				}
 				// End call triggers
 			}
+
+			if (!$error) {
+				// Move files from the dir of the third party to delete into the dir of the third party to keep
+				if (!empty($conf->societe->multidir_output[$this->entity])) {
+					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
+					$destdir = $conf->societe->multidir_output[$this->entity]."/".$this->id;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+			}
+
 
 			if (!$error) {
 				// We finally remove the old thirdparty

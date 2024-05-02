@@ -182,18 +182,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $module_parts = array();
 
 	/**
-	 * @var        string Module documents ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $docs;
-
-	/**
-	 * @var        string ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $dbversion = "-";
-
-	/**
 	 * @var string Error message
 	 */
 	public $error;
@@ -272,7 +260,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_enabled;
 	public $export_permission;
 	public $export_fields_array;
-	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
+	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:fieldlabel:rowid'
 	public $export_entities_array;
 	public $export_aggregate_array;
 	public $export_examplevalues_array;
@@ -1958,7 +1946,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$objcount = $this->db->fetch_object($resqlselect);
 						if ($objcount && $objcount->nb == 0) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
-
 							$sql .= "id";
 							$sql .= ", entity";
 							$sql .= ", libelle";
@@ -1969,9 +1956,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", perms";
 							$sql .= ", subperms";
 							$sql .= ", enabled";
-
 							$sql .= ") VALUES (";
-
 							$sql .= ((int) $r_id);
 							$sql .= ", ".((int) $entity);
 							$sql .= ", '".$this->db->escape($r_label)."'";
@@ -1982,7 +1967,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
 							$sql .= ", '".$this->db->escape($r_enabled)."'";
-
 							$sql.= ")";
 
 							$resqlinsert = $this->db->query($sql, 1);

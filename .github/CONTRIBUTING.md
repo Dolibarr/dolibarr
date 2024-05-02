@@ -30,6 +30,7 @@ Default **language here is English**. So please prepare your contributions in En
 5. Commit and push your changes.
 6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
+
 <span id="branches" name="branches"></span>
 ### Branches
 
@@ -44,8 +45,10 @@ higher versions.
 The rule N - 2 is just a tip if you don't know which version to choose to get the best the best compromise between ease of correction 
 and number of potential beneficiaries of the correction.
 
+
 ### General rules
 Please don't edit the ChangeLog file. This file is generated from all commit messages during release process by the project manager.
+
 
 ### <a name="commits"></a>Commits
 Use clear commit messages with the following structure:
@@ -110,7 +113,9 @@ Short description (when the commit is not introducing feature nor closing a bug)
 Long description (Can span across multiple lines).
 </pre>
 
+
 ### Pull Requests
+
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
@@ -119,6 +124,8 @@ a process to follow to optimize the chance to have PRs merged efficiently...
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
+
+* A screenshot will be always required for any PR of change/addition of a GUI behaviour.
 
 Also, some code changes need a prior approbation:
 

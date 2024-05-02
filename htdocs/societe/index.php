@@ -335,7 +335,7 @@ if ($result) {
 		$lastmodified .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodified .= img_picto('', 'company', 'class="pictofixedwidth"');
 		$lastmodified .= $transRecordedType;
-		$lastmodified .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">';
+		$lastmodified .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodified .= '</a>';
 		$lastmodified .= '</th>';
@@ -458,7 +458,7 @@ if ($result) {
 		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodifiedcontact .= img_picto('', 'contact', 'class="pictofixedwidth"');
 		$lastmodifiedcontact .= $transRecordedType;
-		$lastmodifiedcontact .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=s.tms&sortorder=DESC">';
+		$lastmodifiedcontact .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		//$lastmodifiedcontact .= img_picto($langs->trans("FullList"), 'contact');
 		$lastmodifiedcontact .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodifiedcontact .= '</th>';

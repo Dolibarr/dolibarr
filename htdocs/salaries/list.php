@@ -92,11 +92,9 @@ $search_date_start_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_start_tom
 $search_date_end_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_end_frommonth'), GETPOSTINT('search_date_end_fromday'), GETPOSTINT('search_date_end_fromyear'));
 $search_date_end_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_end_tomonth'), GETPOSTINT('search_date_end_today'), GETPOSTINT('search_date_end_toyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_type_id = GETPOST('search_type_id', 'intcomma');
-
-$filtre = GETPOST("filtre", 'restricthtml');
 
 $childids = $user->getAllChildIds(1);
 
@@ -564,7 +562,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
