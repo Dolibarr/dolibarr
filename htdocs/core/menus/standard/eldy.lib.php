@@ -128,7 +128,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			)
 			|| (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))
 		),
-		'perms' => ($user->hasRight('societe', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
+		'perms' => ($user->hasRight('societe', 'lire') || $user->hasRight('societe', 'contact', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
 		'module' => 'societe|fournisseur'
 	);
 
