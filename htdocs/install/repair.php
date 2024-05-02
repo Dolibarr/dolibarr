@@ -1652,10 +1652,8 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 // WARNING : The process can be long on production environments du to restrictions.
 // consider raising php_max_execution time if failing to execute completely.
 if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
-	
 	$err = 0;
 	$db->begin();
-
 	$sql = "
 		SELECT
 			f.rowid,
