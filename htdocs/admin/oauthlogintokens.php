@@ -291,7 +291,7 @@ if ($mode == 'setup' && $user->admin) {
 			print "</tr>\n";
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("OAuthIDSecret").'</td>';
 			print '<td>';
@@ -310,7 +310,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '</td></tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("IsTokenGenerated");
 			print '</td>';
@@ -351,7 +351,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '</tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("Token").'</td>';
 			print '<td colspan="2">';
@@ -372,7 +372,7 @@ if ($mode == 'setup' && $user->admin) {
 			if (is_object($tokenobj)) {
 				// Token refresh
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_REFRESH");
 				print '</td>';
@@ -383,7 +383,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRED");
 				print '</td>';
@@ -394,7 +394,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired at
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRE_AT");
 				print '</td>';
