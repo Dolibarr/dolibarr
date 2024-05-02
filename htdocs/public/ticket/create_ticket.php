@@ -481,6 +481,11 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
+
+		if ($error || $errors) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	}
 }
 
