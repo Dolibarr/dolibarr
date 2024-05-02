@@ -1101,7 +1101,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			<?php else : ?>
 				var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
 				if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
-	
+
 				var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
 				if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 			<?php endif; ?>
