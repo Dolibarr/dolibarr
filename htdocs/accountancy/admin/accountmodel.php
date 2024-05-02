@@ -574,7 +574,11 @@ if ($resql) {
 						$class = "left";
 						$tmpvar = $fieldlist[$field];
 						$valuetoshow = $obj->$tmpvar;
-						if ($valuetoshow == 'all') {
+						if ($value == 'element') {
+							$valuetoshow = $valuetoshow;
+						} elseif ($value == 'source') {
+							$valuetoshow = $valuetoshow;
+						} elseif ($valuetoshow == 'all') {
 							$valuetoshow = $langs->trans('All');
 						} elseif ($fieldlist[$field] == 'country') {
 							if (empty($obj->country_code)) {
