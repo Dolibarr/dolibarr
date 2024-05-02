@@ -1,0 +1,11 @@
+meta {
+  name: Deletes a line of a given invoice --
+  type: http
+  seq: 13
+}
+
+delete {
+  url: {{base_url}}/invoices/{id}/lines/{lineid}
+  body: none
+  auth: none
+}

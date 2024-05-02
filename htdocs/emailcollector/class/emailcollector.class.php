@@ -2277,7 +2277,7 @@ class EmailCollector extends CommonObject
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
-
+						$ticketalreadyexists = 0;
 						if ($errorforactions) {
 							break;
 						}
@@ -2311,6 +2311,31 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+
+						if ($operation['type'] == 'ticket') {
+							// Verify if ticket already exists to fall back on the right operation
+							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
+							$alreadycreated1 = 0;
+							if (!empty($trackid)) {
+								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							}
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket)) {
+								if ($alreadycreated == 0) {
+									$ticketalreadyexists = 0;
+								} else {
+									$ticketalreadyexists = 1;
+									$operation['type'] = 'recordevent';
+								}
+							} else {
+								$ticketalreadyexists = -1;
+							}
 						}
 
 						// Search and create thirdparty
@@ -3067,15 +3092,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
-							$errorfetchticket = 0;
-
-							$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
-							}
-							if (empty($errorfetchticket) && $alreadycreated == 0) {
+							if ($ticketalreadyexists == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;

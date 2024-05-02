@@ -897,6 +897,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+
 	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
 
 	$html .= '<tr style="vertical-align: top;">';
@@ -955,8 +956,6 @@ foreach ($arrayofalerts as $key => $alert) {
 	// Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 
-	$arrayofalerts[$key]['description'] .= ']]>';
-
 	// Branches
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['branch'])) {
@@ -965,6 +964,8 @@ foreach ($arrayofalerts as $key => $alert) {
 		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.$listofbranchnames;
 	}
 	$html .= '</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]>';
 
 	$html .= '</tr>';
 }
@@ -994,15 +995,20 @@ if ($fh) {
 	fwrite($fh, '<channel>'."\n");
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	//fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
+	fwrite($fh, '<language>en-US</language>'."\n");
+	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
+	/*
+	<lastBuildDate>Mon, 29 Apr 2024 11:33:54 +0000</lastBuildDate>
+	<atom:link href="https://cti.dolibarr.org/security-index.rss" rel="self" type="application/rss+xml" />
+	*/
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
-	}
-	if ($url_flux) {
-		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
 	// Image
 	fwrite($fh, '<image>'."\n");
 	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
 	}
@@ -1015,7 +1021,9 @@ if ($fh) {
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
-		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
+		$tmpdate = strtotime($alert['created_at']);
+		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
 		fwrite($fh, '</item>'."\n");
 	}
 
@@ -1024,9 +1032,9 @@ if ($fh) {
 
 	fclose($fh);
 
-	print 'Generation of RSS output file '.$outputfilerss.' done.'."\n";
+	print 'Generation of RSS output file '.$outputdir.'/'.$outputfilerss.' done.'."\n";
 } else {
-	print 'Failed to generate the RSS file '.$outputfilerss."\n";
+	print 'Failed to generate the RSS file '.$outputdir.'/'.$outputfilerss."\n";
 }
 
 
@@ -1114,9 +1122,9 @@ if ($fh) {
 	fwrite($fh, $html);
 	fclose($fh);
 
-	print 'Generation of output file '.$outputfile.' done.'."\n";
+	print 'Generation of output file '.$outputpath.' done.'."\n";
 } else {
-	print 'Failed to open '.$outputfile.' for output.'."\n";
+	print 'Failed to open '.$outputpath.' for output.'."\n";
 }
 
 

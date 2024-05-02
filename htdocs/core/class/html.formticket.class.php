@@ -701,6 +701,7 @@ class FormTicket
 
 		if ($subelement != 'contract') {
 			if (isModEnabled('contract') && !$this->ispublic) {
+				$langs->load('contracts');
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');
