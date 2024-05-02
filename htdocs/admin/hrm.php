@@ -59,8 +59,8 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'evaluation';
 
 $arrayofparameters = array(
-	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1),
+	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1, 'css' => ''),
+	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1, 'css' => ''),
 );
 
 $error = 0;
