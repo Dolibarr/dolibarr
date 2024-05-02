@@ -85,6 +85,7 @@ if ($resql) {
 					SUM(fd.total_ht) as 'total_ht', 
 					SUM(fd.total_tva) as 'total_tva',
 					SUM(fd.total_localtax1) as 'localtax1',
+					SUM(fd.total_localtax2) as 'localtax2',
 					SUM(fd.total_ttc) as 'total_ttc'
 				FROM
 					".MAIN_DB_PREFIX."facturedet fd
@@ -95,10 +96,11 @@ if ($resql) {
 				$sql_maj = "
 					UPDATE ".MAIN_DB_PREFIX."facture 
 					SET 
-						total_ht = ".($obj_calcul->total_ht ? round($obj_calcul->total_ht, 2) : 0).", 
-						total_tva = ".($obj_calcul->total_tva ? round($obj_calcul->total_tva, 2) : 0).", 
-						localtax1 = ".($obj_calcul->localtax1 ? round($obj_calcul->localtax1, 2) : 0).", 
-						total_ttc = ".($obj_calcul->total_ttc ? round($obj_calcul->total_ttc, 2) : 0)." 
+						total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).", 
+						total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).", 
+						localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).", 
+						localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).", 
+						total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)." 
 					WHERE 
 						rowid = $obj->rowid";
 				print "Exécution du SQL : $sql_maj\n";
