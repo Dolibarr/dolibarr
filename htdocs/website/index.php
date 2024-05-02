@@ -3070,12 +3070,15 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 			}
 
-			// Export web site
-			print '<input type="submit" class="button bordertransp"'.$disabledexport.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+			// // Export web site
+			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
+			print '<input type="submit" class="button bordertransp ' . $extraCssClass . '" ' . $disabledexport . ' value="' . dol_escape_htmltag($exportlabel) . '" name="exportsite">';
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
+				$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
+				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl);
+				//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 			}
 
 			// Clone web site

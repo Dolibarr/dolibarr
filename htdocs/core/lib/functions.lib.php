@@ -2152,6 +2152,83 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 }
 
 /**
+ * Create a dialog with two buttons for export and overwrite of a website
+ *
+ * @param string $name          Unique identifier for the dialog
+ * @param string $label         Title of the dialog
+ * @param string $buttonstring  Text for the button that opens the dialog
+ * @param string $exportSiteName Name of the "submit" input for site export
+ * @param string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
+ * @return string               HTML and JavaScript code for the button and the dialog
+ */
+function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl)
+{
+	global $langs;
+
+	$out = '';
+	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="'.dol_escape_htmltag($buttonstring).'"/>';
+
+	// for generate popup
+	$out .= '<script nonce="' . getNonce() . '" type="text/javascript">';
+	$out .= 'jQuery(document).ready(function () {';
+	$out .= '  jQuery("#open-dialog-' . $name . '").click(function () {';
+	$out .= '    var dialogHtml = \'';
+	$out .= '      <div id="custom-dialog-' . $name . '">';
+	$out .= '        <div style="margin-top: 20px;">';
+	$out .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").' : </label>';
+	$out .= '          <button id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportSite")) . '</button>';
+	$out .= '        </div>';
+	$out .= '        <div style="margin-top: 20px;">';
+	$out .= '          <h4 for="overwrite-git-' . $name . '">'.$langs->trans("ExportSiteGitLabel").' : </h4>';
+	$out .= '          <input style="width:400px " type="text" id="export-path-' . $name . '" placeholder="'.$langs->trans('ExportPath').'" />';
+	$out .= '          <button id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$out .= '        </div>';
+	$out .= '      </div>\';';
+
+	// Add the content of the dialog to the body of the page
+	$out .= '    var $dialog = jQuery("#custom-dialog-' . $name . '");';
+	$out .= ' if ($dialog.length > 0) {
+        $dialog.remove();
+    }
+    jQuery("body").append(dialogHtml);';
+
+	// Configuration of popup
+	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
+	$out .= '      autoOpen: false,';
+	$out .= '      modal: true,';
+	$out .= '      height: 220,';
+	$out .= '      width: "40%",';
+	$out .= '      title: "' . dol_escape_js($label) . '",';
+	$out .= '    });';
+
+	// Simulate a click on the original "submit" input to export the site.
+	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
+	$out .= '      console.log("Clic on exportsite.");';
+	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
+	$out .= '      console.log("element founded:", target.length > 0);';
+	$out .= '      if (target.length > 0) { target.click(); }';
+	$out .= '      jQuery("#custom-dialog-' . $name . '").dialog("close");';
+	$out .= '    });';
+
+	// submit a click
+	$out .= '    jQuery("#overwrite-git-' . $name . '").click(function () {';
+	$out .= '      console.log("Redirection to:", "' . dol_escape_js($overwriteGitUrl) . '");';
+	$out .= '      window.location.href = "' . dol_escape_js($overwriteGitUrl) . '";';
+	$out .= '      jQuery("#custom-dialog-' . $name . '").dialog("close");';
+	$out .= '    });';
+
+	// open popup
+	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog("open");';
+	$out .= '    return false;';
+	$out .= '  });';
+	$out .= '});';
+	$out .= '</script>';
+
+	return $out;
+}
+
+
+/**
  *	Return HTML code to output a button to open a dialog popup box.
  *  Such buttons must be included inside a HTML form.
  *
@@ -11944,21 +12021,21 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param int|boolean	$userRight  	User action right
  * // phpcs:disable
  * @param array<string,mixed>	$params = [ // Various params for future : recommended rather than adding more function arguments
- *                              'attr' => [ // to add or override button attributes
- *                              'xxxxx' => '', // your xxxxx attribute you want
- *                              'class' => 'reposition', // to add more css class to the button class attribute
- *                              'classOverride' => '' // to replace class attribute of the button
- *                              ],
- *                              'confirm' => [
- *                              'url' => 'http://', // Override Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                              'title' => '', // Override title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                              'action-btn-label' => '', // Override label of action button,  if empty default label use "Confirm" lang key
- *                              'cancel-btn-label' => '', // Override label of cancel button,  if empty default label use "CloseDialog" lang key
- *                              'content' => '', // Override text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                              'modal' => true, // true|false to display dialog as a modal (with dark background)
- *                              'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
- *                              ],
- *                              ]
+ *                                      'attr' => [ // to add or override button attributes
+ *                                      'xxxxx' => '', // your xxxxx attribute you want
+ *                                      'class' => 'reposition', // to add more css class to the button class attribute
+ *                                      'classOverride' => '' // to replace class attribute of the button
+ *                                      ],
+ *                                      'confirm' => [
+ *                                      'url' => 'http://', // Override Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                                      'title' => '', // Override title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                                      'action-btn-label' => '', // Override label of action button,  if empty default label use "Confirm" lang key
+ *                                      'cancel-btn-label' => '', // Override label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                                      'content' => '', // Override text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                                      'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                                      'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
+ *                                      ],
+ *                                      ]
  * // phpcs:enable
  * @return string               	html button
  */
