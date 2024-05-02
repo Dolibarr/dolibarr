@@ -131,6 +131,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms' => ($user->hasRight('societe', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
 		'module' => 'societe|fournisseur'
 	);
+
 	$menu_arr[] = array(
 		'name' => 'Companies',
 		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
