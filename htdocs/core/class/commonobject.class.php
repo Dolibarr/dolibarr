@@ -7289,7 +7289,7 @@ abstract class CommonObject
 			} else {
 				$valuearray = explode(",", $value);
 				foreach ($valuearray as $keytmp => $valuetmp) {
-					if (in_array($valuetmp, $this->fields[$key]['arrayofkeyval'])) {
+					if (!empty($this->fields[$key]['arrayofkeyval'][$valuetmp])) {
 						$valuemultiselectinput[] = $valuetmp;
 						unset($valuearray[$keytmp]);
 					}
@@ -7390,7 +7390,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				if (!empty($param['options'])) {
 					$out .= "<br>";
-					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], (GETPOSTISSET($keyprefix.$key.$keysuffix."_multiselect") ? GETPOST($keyprefix.$key.$keysuffix."_multiselect") : $valuemultiselectinput), 0, 1, "flat maxwidthonphone".$morecss, 0, '90%', '', '', '', ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) ? 1 : -1));
+					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], (GETPOSTISSET($keyprefix.$key.$keysuffix."_multiselect") ? GETPOST($keyprefix.$key.$keysuffix."_multiselect") : $valuemultiselectinput), 0, 0, "flat maxwidthonphone".$morecss, 0, '90%', '', '', '', ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) ? 1 : -1));
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
