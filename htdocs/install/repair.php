@@ -6,6 +6,7 @@
  * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1649,7 +1650,7 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 }
 
 // Repair llx_invoice to calculate totals from line items
-// WARNING : The process can be long on production environments du to restrictions.
+// WARNING : The process can be long on production environments due to restrictions.
 // consider raising php_max_execution time if failing to execute completely.
 if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	$err = 0;
@@ -1717,8 +1718,6 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 }
 
 print '</table>';
-
-
 
 if (empty($actiondone)) {
 	print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
