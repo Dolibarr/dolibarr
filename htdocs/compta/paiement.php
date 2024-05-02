@@ -511,7 +511,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			}
 
 			print '<td>';
-			print img_picto('', 'bank_account');
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			print $form->select_comptes($accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
 			print '</td>';
 		} else {
