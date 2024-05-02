@@ -574,6 +574,9 @@ if ($resql) {
 						$class = "left";
 						$tmpvar = $fieldlist[$field];
 						$valuetoshow = $obj->$tmpvar;
+						if ($value == 'type_template') {
+							$valuetoshow = $valuetoshow;
+						}
 						if ($value == 'element') {
 							$valuetoshow = $valuetoshow;
 						} elseif ($value == 'source') {
