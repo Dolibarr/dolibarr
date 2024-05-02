@@ -2381,13 +2381,18 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 					$arrayforcheckout = array(
 						'payment_method_types' => array('card'),
 						'line_items' => array(array(
-							'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
-							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-							'amount' => $amountstripe,
-							'currency' => $currency,
-							//'images' => array($urllogofull),
+							'price_data' => array(
+								'currency' => $currency,
+								'unit_amount' => $amountstripe,
+								'product_data' => array(
+									'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
+									'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+									//'images' => array($urllogofull),
+								),
+							),
 							'quantity' => 1,
 						)),
+						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
 						'success_url' => $urlok,
 						'cancel_url' => $urlko,
