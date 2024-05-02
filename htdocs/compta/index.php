@@ -533,6 +533,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			if ($num) {
 				$i = 0;
 				$tot_ttc = 0;
+				$tot_paid = 0;
 				$othernb = 0;
 
 				while ($i < $num) {
@@ -541,6 +542,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 					if ($i >= $max) {
 						$othernb += 1;
 						$tot_ttc += $obj->amount;
+						$tot_paid += $obj->sumpaid;
 						$i++;
 						continue;
 					}
@@ -573,7 +575,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="nowrap right">'.price($tot_ttc).'</td>';
-				print '<td class="right"></td>';
+				print '<td class="nowrap right">'.price($tot_paid).'</td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			} else {
