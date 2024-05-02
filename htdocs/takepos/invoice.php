@@ -1861,6 +1861,13 @@ if ($placeid > 0) {
 				if ($line->product_label) {
 					$htmlforlines .= $line->product_label;
 				}
+				if (!empty($line->batch)) {
+					$tooltiptext .= '<br><b>'.$langs->trans("LotSerial").'</b> : '.$line->batch.'<br>';
+				}
+				if (!empty($line->fk_warehouse)) {
+					$tooltiptext .= '<b>'.$langs->trans("Warehouse").'</b> : '.$line->fk_warehouse.'<br>';
+				}
+
 				if ($line->product_label != $line->desc) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
