@@ -301,7 +301,7 @@ if ($nb) {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print '<span class="hideonsmartphone">'.$title.'</span>';
-		print img_picto('', 'bank_account');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
@@ -460,6 +460,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if ($type) {
+		$param .= '&type=' . urlencode((string) $type);
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}

@@ -65,6 +65,7 @@ class ChargeSociales extends CommonObject
 	public $label;
 	public $type;
 	public $type_label;
+
 	public $amount;
 	public $paye;
 	/**
