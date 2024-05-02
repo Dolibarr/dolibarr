@@ -181,7 +181,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('clean_perm_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
-	|| GETPOST('rebuild_sequences', 'alpha'));
+	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
 
 if ($ok && $oneoptionset) {
 	// Show wait message
@@ -1639,6 +1639,76 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 				$err++;
 			}
 		}
+	}
+
+	if ($err == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
+// Repair llx_invoice to calculate totals from line items
+// WARNING : The process can be long on production environments du to restrictions.
+// consider raising php_max_execution time if failing to execute completely.
+if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
+	
+	$err = 0;
+	$db->begin();
+
+	$sql = "
+		SELECT
+			f.rowid,
+			SUM(fd.total_ht) as total_ht
+		FROM ".MAIN_DB_PREFIX."facture f 
+			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
+				ON fd.fk_facture = f.rowid
+		WHERE f.total_ht = 0 
+		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) != 0";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		print "We found ".$num." factures qualified that will have their total recalculated because they are at zero and line items not at zero\n";
+		dol_syslog("We found ".$num." factures qualified that will have their total recalculated because they are at zero and line items not at zero");
+
+		if ($num) {
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$sql_calculs = "
+					SELECT 
+						SUM(fd.total_ht) as 'total_ht', 
+						SUM(fd.total_tva) as 'total_tva',
+						SUM(fd.total_localtax1) as 'localtax1',
+						SUM(fd.total_localtax2) as 'localtax2',
+						SUM(fd.total_ttc) as 'total_ttc'
+					FROM
+						".MAIN_DB_PREFIX."facturedet fd
+					WHERE 
+						fd.fk_facture = $obj->rowid";
+				$ressql_calculs = $db->query($sql_calculs);
+				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
+					$sql_maj = "
+						UPDATE ".MAIN_DB_PREFIX."facture 
+						SET 
+							total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).", 
+							total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).", 
+							localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).", 
+							localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).", 
+							total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)." 
+						WHERE 
+							rowid = $obj->rowid";
+					$db->query($sql_maj);
+				}
+				$i++;
+			}
+		} else {
+			print "Pas de factures à traiter\n";
+		}
+	} else {
+		dol_print_error($db);
+		dol_syslog("calculate_total_and_taxes.php: Error");
+		$err++;
 	}
 
 	if ($err == 0) {
