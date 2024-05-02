@@ -407,14 +407,14 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
 				$description  = $event["desc"];
-				$url		  = $event["url"];
+				$url		  = empty($event["url"]) ? '' : $event["url"];
 				$author       = $event["author"];
 				$category     = empty($event["category"]) ? null : $event["category"];
 				if (!empty($event["image"])) {
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					if (preg_match('/<img\s*src="([^"]+)"/m', $event["content"], $reg)) {
+					if (!empty($event["content"]) && preg_match('/<img\s*src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];
 						}
