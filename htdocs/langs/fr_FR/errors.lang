@@ -319,6 +319,7 @@ ErrorFixThisHere= <a href="%s"> Corrigez ceci ici </a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Erreur : L'URL de votre instance actuelle (%s) ne correspond pas à l'URL définie dans votre configuration de connexion OAuth2 (%s). La connexion OAuth2 dans une telle configuration n'est pas autorisée.
 ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Les fichiers SVG ne sont pas autorisés en tant que liens externes sans l'option %s
+ErrorGeneratingBarcode=Erreur à la génération du code-barre (probablement une valeur invalide)
 ErrorTypeMenu=Impossible d'ajouter un autre menu pour le même module sur la barre de navigation, pas encore géré
 ErrorTableExist=Le tableau <b> %s </b> existe déjà
 ErrorDictionaryNotFound=Dictionnaire <b> %s </b> introuvable
