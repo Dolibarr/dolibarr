@@ -639,15 +639,15 @@ if (count($amount)) {
 		print '<td class="tdoverflowmax150">'.$linkname."</td>\n";
 
 		print '<td>';
-		print $address_pays($address_zip[$key]);
+		print $address_zip[$key];
 		print '</td>';
 
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_town[$key]).'">';
-		print $address_pays($address_town[$key]);
+		print $address_town[$key];
 		print '</td>';
 
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_pays[$key]).'">';
-		print $address_pays($address_pays[$key]);
+		print $address_pays[$key];
 		print '</td>';
 
 		// Amount w/o VAT
