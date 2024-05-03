@@ -1,3 +1,4 @@
+<!-- file menu.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -82,7 +83,7 @@ if ($context->userIsLog()) {
 		'id' => 'user_logout',
 		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
-		'name' => $langs->trans('Logout'),
+		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
 	);
 }
 
@@ -173,7 +174,7 @@ if (empty($reshook)) {
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
-			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '" >';
+			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
 			print '<span class="brand__name">' . $brandTitle . '</span>';
 		}
