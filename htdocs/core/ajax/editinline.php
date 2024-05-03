@@ -48,10 +48,13 @@ $content = GETPOST('content', 'none');
 $element_id = GETPOST('element_id');
 $element_type = GETPOST('element_type');
 
+$usercanmodify = $user->hasRight('website', 'write');
+if (!$usercanmodify) {
+	print "You don't have permission for this action.";
+	exit;
+}
 
-if (!empty($action) && $action === 'updatedElementContent' && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
-	$db->begin();
-
+if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
 	// Page object
 	$objectpage = new WebsitePage($db);
 	$res = $objectpage->fetch($page_id);
@@ -68,6 +71,9 @@ if (!empty($action) && $action === 'updatedElementContent' && !empty($content) &
 		exit;
 	}
 
+	$db->begin();
+	$error = 0;
+
 	// Replace element content into database and tpl file
 	$objectpage->content = preg_replace('/<' . $element_type . '[^>]*id="' . $element_id . '"[^>]*>\K(.*?)(?=<\/' . $element_type . '>)/s', $content, $objectpage->content, 1);
 	$res = $objectpage->update($user);
@@ -79,14 +85,18 @@ if (!empty($action) && $action === 'updatedElementContent' && !empty($content) &
 		$result = dolSavePageContent($filetpl, $objectwebsite, $objectpage, 1);
 		if (!$result) {
 			print "Failed to write file " . $filetpl . ".";
-			$db->rollback();
-			exit;
+			$error++;
 		}
+	} else {
+		print "Failed to save changes error " . $objectpage->error . ".";
+		$error++;
+	}
+
+	if (!$error) {
 		$db->commit();
 		print "Changes are saved for " . $element_type . " with id " . $element_id;
 	} else {
-		print "Failed to save changes error " . $objectpage->error . ".";
-		exit;
+		$db->rollback();
 	}
 
 	$db->close();
