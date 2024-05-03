@@ -2565,6 +2565,31 @@ class ExtraFields
 	}
 
 	/**
+	 * Return array with all possible types and label of extrafields
+	 *
+	 * @return string[]
+	 */
+	public static function getListofTypesLabels()
+	{
+		global $langs;
+
+		$tmptype2label = ExtraFields::$type2label;
+		$type2label = array('');
+		foreach ($tmptype2label as $key => $val) {
+			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+		}
+
+		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
+			unset($type2label['point']);
+			unset($type2label['multipts']);
+			unset($type2label['linestrg']);
+			unset($type2label['polygon']);
+		}
+
+		return $type2label;
+	}
+
+	/**
 	 * Return if a value is "empty" for a mandatory vision.
 	 *
 	 * @param 	mixed	$v		Value to test

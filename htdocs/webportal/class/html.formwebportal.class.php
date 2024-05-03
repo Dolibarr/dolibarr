@@ -961,13 +961,14 @@ class FormWebPortal extends Form
 
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type = empty($val['type']) ? '' : $val['type'];
-		$size = empty($val['css']) ? '' : $val['css'];
+		$css = empty($val['css']) ? '' : $val['css'];
+		$picto = empty($val['picto']) ? '' : $val['picto'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$size = $reg[1];
+			$css = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
