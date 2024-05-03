@@ -242,11 +242,17 @@ class Expedition extends CommonObject
 
 	/**
 	 * Validated status
+	 * -> parcel is ready to be sent
+	 * prev status : draft
+	 * next status : closed or shipment_in_progress
 	 */
 	const STATUS_VALIDATED = 1;
 
 	/**
 	 * Closed status
+	 * -> parcel was received by customer / end of process
+	 * prev status : validated or shipment_in_progress
+	 *
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -254,6 +260,15 @@ class Expedition extends CommonObject
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
+
+	/**
+	 * Expedition in progress
+	 * -> package exit the warehouse and is now
+	 *    in the truck or into the hand of the deliverer
+	 * prev status : validated
+	 * next status : closed
+	 */
+	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
 
 	/**
