@@ -392,7 +392,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;

@@ -1594,7 +1594,7 @@ if ($action == 'create' || $action == 'presend') {
 			print showDirectPublicLink($object).'<br>';
 			print '</div>';
 
-			if (getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
+			if (!getDolGlobalString('MAIN_HIDE_MESSAGES_ON_CARD')) {
 				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;

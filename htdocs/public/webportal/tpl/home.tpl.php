@@ -1,3 +1,4 @@
+<!-- file home.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
