@@ -312,7 +312,7 @@ class FormListWebPortal
 			$sql .= " WHERE 1 = 1";
 		}
 		// filter on logged third-party
-		$sql .= " AND t.fk_soc = " . $socid;
+		$sql .= " AND t.fk_soc = " . ((int) $socid);
 
 		foreach ($search as $key => $val) {
 			if (array_key_exists($key, $object->fields)) {
