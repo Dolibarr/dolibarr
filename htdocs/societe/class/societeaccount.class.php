@@ -183,6 +183,13 @@ class SocieteAccount extends CommonObject
 
 		// add site type list and set visible
 		$site_type_list = array();
+
+		if (isModEnabled('webportal')) {
+			$this->fields['site']['visible'] = 1;
+			$this->fields['site']['enabled'] = 1;
+			$site_type_list['dolibarr_portal'] = $langs->trans('WebsiteTypeDolibarrPortal');
+		}
+
 		if (isModEnabled('website')) {
 			$this->fields['fk_website']['visible'] = 1;
 			$this->fields['fk_website']['enabled'] = 1;
@@ -190,11 +197,7 @@ class SocieteAccount extends CommonObject
 			$this->fields['site']['enabled'] = 1;
 			$site_type_list['dolibarr_website'] = $langs->trans('WebsiteTypeDolibarrWebsite');
 		}
-		if (isModEnabled('webportal')) {
-			$this->fields['site']['visible'] = 1;
-			$this->fields['site']['enabled'] = 1;
-			$site_type_list['dolibarr_portal'] = $langs->trans('WebsiteTypeDolibarrPortal');
-		}
+
 		$this->fields['site']['arrayofkeyval'] = $site_type_list;
 	}
 

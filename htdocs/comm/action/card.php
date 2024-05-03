@@ -1766,7 +1766,7 @@ if ($id > 0) {
 	$head = actions_prepare_head($object);
 
 	$now = dol_now();
-	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
 	// Confirmation suppression action
@@ -2292,13 +2292,17 @@ if ($id > 0) {
 
 		print '<div class="underbanner clearboth"></div>';
 
-		// Affichage fiche action en mode visu
-		print '<table class="border tableforfield" width="100%">';
+		// Show event in view mode
+		print '<table class="border tableforfield centpercent">';
 
 		// Type
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			print $object->getTypePicto();
+			$labeltoshow = $langs->trans("Action".$object->type_code);
+			if ($object->code) {
+				$labeltoshow .= ' ('.$object->code.')';
+			}
+			print $object->getTypePicto('pictofixedwidth paddingright', $labeltoshow);
 			print $langs->trans("Action".$object->type_code);
 			print '</td></tr>';
 		}

@@ -58,7 +58,7 @@ if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility
 }
 
-if ($cancel) {
+if (!empty($cancel)) {
 	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);

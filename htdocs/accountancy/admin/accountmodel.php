@@ -133,11 +133,6 @@ $tabhelp = array();
 $tabhelp[31] = array('pcg_version' => $langs->trans("EnterAnyCode"));
 
 
-// Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
-$elementList = array();
-$sourceList = array();
-
-
 
 /*
  * Actions
@@ -356,9 +351,7 @@ print load_fiche_titre($titre, $linkback, 'title_accountancy');
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.urlencode((string) ($page)).'&' : '').'sortfield='.urlencode((string) ($sortfield)).'&sortorder='.urlencode((string) ($sortorder)).'&rowid='.urlencode((string) ($rowid)).'&code='.urlencode((string) ($code)).'&id='.urlencode((string) ($id)), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
-// Show a dictionary
 
 // Complete requete recherche valeurs avec critere de tri
 $sql = $tabsql[$id];
@@ -563,8 +556,8 @@ if ($resql) {
 				}
 
 				print '<td colspan="3" class="right">';
-				print '<a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-				print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '<a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '&nbsp;<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 			} else {
 				$tmpaction = 'view';
@@ -580,14 +573,7 @@ if ($resql) {
 						$class = "left";
 						$tmpvar = $fieldlist[$field];
 						$valuetoshow = $obj->$tmpvar;
-						if ($value == 'type_template') {
-							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-						}
-						if ($value == 'element') {
-							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-						} elseif ($value == 'source') {
-							$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
-						} elseif ($valuetoshow == 'all') {
+						if ($valuetoshow == 'all') {
 							$valuetoshow = $langs->trans('All');
 						} elseif ($fieldlist[$field] == 'country') {
 							if (empty($obj->country_code)) {
@@ -679,7 +665,6 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 {
 	global $langs, $db;
 	global $form;
-	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
