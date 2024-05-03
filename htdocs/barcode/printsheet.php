@@ -270,9 +270,18 @@ if (empty($reshook)) {
 				if (!$mesg) {
 					$outputlangs = $langs;
 
+					$previousConf = getDolGlobalInt('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE');
+					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 1;
+
 					// This generates and send PDF to output
 					// TODO Move
-					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+					try {
+						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+					} catch (Exception $e) {
+						$mesg = $langs->trans('ErrorGeneratingBarcode');
+					}
+
+					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
 				}
 			}
 

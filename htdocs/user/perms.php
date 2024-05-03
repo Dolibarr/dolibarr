@@ -671,8 +671,12 @@ if ($result) {
 			print '<td>';
 		}
 		print $permlabel;
-		if ($langs->trans("Permission".$obj->id.'b') != "Permission".$obj->id.'b') {
-			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'b').'</span>';
+		$idtouse = $obj->id;
+		if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+			$idtouse = 122;
+		}
+		if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
 		}
 		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
 			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';

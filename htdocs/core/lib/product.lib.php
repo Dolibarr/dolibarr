@@ -218,7 +218,7 @@ function product_prepare_head($object)
 	$h++;
 
 	// Log
-	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/messaging.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';

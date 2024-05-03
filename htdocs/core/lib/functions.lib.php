@@ -2914,7 +2914,7 @@ function dol_bc($var, $moreclass = '')
  *      @param  Object		$object			A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
  *      @param	string		$sep			Separator to use to separate info when building string
- *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
+ *      @param	?Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
  *      @return string						Formatted string
@@ -7467,7 +7467,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		$path = dol_sanitizeFileName(empty($object->ref) ? (string) $object->id : $object->ref);
+		$path = dol_sanitizeFileName(empty($object->ref) ? (string) (property_exists($object, 'id') ? $object->id : '') : $object->ref);
 	}
 
 	if (empty($withoutslash) && !empty($path)) {
