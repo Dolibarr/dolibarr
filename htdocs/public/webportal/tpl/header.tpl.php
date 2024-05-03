@@ -27,7 +27,7 @@ if (!empty($context->title)) {
 	$title = 'WebPortal';
 }
 
-$head = '<link rel="stylesheet" href="'.$context->rootUrl.'css/global.css">'."\n";
+$head = '<link rel="stylesheet" href="'.$context->rootUrl.'css/global.css.php">'."\n";
 
 //$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.css', 2);
 //$head .= '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";

@@ -185,7 +185,7 @@ class WebPortalPropal extends Propal
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 * @param	int		$withpicto				Add picto into link
-	 * @param	string	$option					Where point the link ('expedition', 'document', ...)
+	 * @param	string	$option					Where the link point to ('expedition', 'document', ...)
 	 * @param	string	$get_params				Parameters added to url
 	 * @param	int		$notooltip				1=Disable tooltip
 	 * @param	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -194,7 +194,7 @@ class WebPortalPropal extends Propal
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
-		global $langs, $conf, $hookmanager;
+		global $conf, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips

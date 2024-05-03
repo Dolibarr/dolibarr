@@ -44,7 +44,7 @@ create table llx_expedition
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
   billed                smallint    DEFAULT 0,
-  
+  signed_status         smallint DEFAULT 0,  --0 = not signed, 1 = signed
   height                float,							-- height
   width                 float,							-- with
   size_units            integer,						-- unit of all sizes (height, width, depth)
