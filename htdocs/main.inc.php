@@ -1936,7 +1936,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// LEAFLET AND GEOMAN
-		if (!getDolGlobalString('MAIN_ALLOW_GEOPHP')) {
+		if (getDolGlobalString('MAIN_USE_GEOPHP')) {
 			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.css'.($ext ? '?'.$ext : '')."\">\n";
 			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.css'.($ext ? '?'.$ext : '')."\">\n";
 		}
@@ -2096,7 +2096,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 
 			// Leaflet TODO use dolibarr files
-			if (!getDolGlobalString('MAIN_ALLOW_GEOPHP')) {
+			if (getDolGlobalString('MAIN_USE_GEOPHP')) {
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
