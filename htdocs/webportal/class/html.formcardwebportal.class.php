@@ -370,7 +370,7 @@ class FormCardWebPortal
 				}
 
 				$object->$key = $value;
-				if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+				if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 					$error++;
 					$context->setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 				}
