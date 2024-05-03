@@ -907,14 +907,14 @@ class Notify
 				// content will be sent.
 				$mailTemplateLabel = isset($conf->global->{$notifcode.'_TEMPLATE'}) ? $conf->global->{$notifcode.'_TEMPLATE'} : '';
 				$emailTemplate = null;
+				// Set output language
+				$outputlangs = $langs;
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
 					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
-					// Set output language
-					$outputlangs = $langs;
 					if ($obj->default_lang && $obj->default_lang != $langs->defaultlang) {
 						$outputlangs = new Translate('', $conf);
 						$outputlangs->setDefaultLang($obj->default_lang);
