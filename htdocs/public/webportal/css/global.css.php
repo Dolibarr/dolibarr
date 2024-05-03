@@ -152,7 +152,7 @@ a:link, a:visited, a:hover, a:active, .classlink {
 .hero-header{
   background-color: #f2f2f2;
   background-image: var(--banner-background);
-  padding: 120px 0 64px 0;
+  padding: 100px 0 64px 0;
   margin: 0;
 
   background-position: center center;

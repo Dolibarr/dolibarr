@@ -80,7 +80,7 @@ if (empty($dolibarr_nocache)) {
 	--outline-width: 3px;
 	--spacing: 1rem;
 	--typography-spacing-vertical: 1.5rem;
-	--block-spacing-vertical: calc(var(--spacing) * 2);
+	--block-spacing-vertical: calc(var(--spacing) * 1.5);
 	--block-spacing-horizontal: var(--spacing);
 	--grid-spacing-vertical: 0;
 	--grid-spacing-horizontal: var(--spacing);
@@ -128,7 +128,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 3);
+		--block-spacing-vertical: calc(var(--spacing) * 2.8);
 	}
 }
 @media (min-width: 992px) {
@@ -136,7 +136,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 3.5);
+		--block-spacing-vertical: calc(var(--spacing) * 3.2);
 	}
 }
 @media (min-width: 1200px) {
@@ -144,7 +144,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 4);
+		--block-spacing-vertical: calc(var(--spacing) * 3.5);
 	}
 }
 

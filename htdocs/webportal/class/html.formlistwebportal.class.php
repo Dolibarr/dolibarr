@@ -753,6 +753,11 @@ class FormListWebPortal
 	{
 		global $langs;
 
+		// Return nothing (no navigation bar), if there is only 1 page.
+		if ($nbPages <= 1) {
+			return '';
+		}
+
 		$pSep = strpos($url, '?') === false ? '?' : '&amp;';
 
 		$html = '<ul class="pages-nav-list">';
