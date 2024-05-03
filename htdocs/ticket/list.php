@@ -38,7 +38,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket", "companies", "other", "projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
 
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -414,7 +414,7 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, join(',', $newarrayofstatus), 2);
 		}
 		continue;
-	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
+	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
 			$sql .= natural_search($key, $search[$key], 2);
 		}

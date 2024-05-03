@@ -58,6 +58,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$show_files = GETPOST('show_files', 'aZ');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOST('id', 'int');

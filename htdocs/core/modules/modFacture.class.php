@@ -487,8 +487,8 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
-		$uselocaltax1 = $mysoc->localtax1_assuj;
-		$uselocaltax2 = $mysoc->localtax2_assuj;
+		$uselocaltax1 = $mysoc->localtax1_assuj ?? null;
+		$uselocaltax2 = $mysoc->localtax2_assuj ?? null;
 
 		$r = 1;
 
