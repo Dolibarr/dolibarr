@@ -7956,7 +7956,6 @@ abstract class CommonObject
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
-		$value = '';  // Default return value
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -8381,7 +8380,7 @@ abstract class CommonObject
 		//print $type.'-'.$size.'-'.$value;
 		$out = $value;
 
-		return $out;
+		return is_null($out) ? '' : $out;
 	}
 
 	/**
@@ -8449,6 +8448,8 @@ abstract class CommonObject
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
+
+		$val = $fields[$fieldKey];
 
 		$param = array();
 		$param['options'] = array();

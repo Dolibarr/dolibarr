@@ -162,18 +162,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
-		';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
-												multicurrency_code: item.multicurrency_code,
-												multicurrency_unitprice: item.multicurrency_unitprice,
-		';
-	}
-	$script .= '
+												 multicurrency_code: item.multicurrency_code,
+												 multicurrency_unitprice: item.multicurrency_unitprice,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
-												 default_vat_code: item.default_vat_code
+												 default_vat_code: item.default_vat_code,
+												 supplier_ref: item.supplier_ref
 										}
 									}));
 								} else {
@@ -187,7 +182,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties retrieved by ajax into data-xxx properties of #'.$htmlnamejquery.' component");
+							console.log("Before, we propagate some properties, retrieved by the ajax of the get, into the data-xxx properties of the component #'.$htmlnamejquery.'");
 							//console.log(ui.item);
 
 							// For supplier price and customer when price by quantity is off
@@ -200,18 +195,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
-	';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
+							$("#'.$htmlnamejquery.'").attr("data-supplier-ref", ui.item.supplier_ref);	// supplier_ref of price
+
 							// For multi-currency values
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
 		';
-	}
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
-							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
+							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, so we propagate also prices by quantity into data-pbqxxx properties");
 							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -221,7 +214,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	}
 	$script .= '
 							// A new value has been selected, we trigger the handlers on #htmlnamejquery
-							console.log("Trigger changes on #'.$htmlnamejquery.'");
+							console.log("Now, we trigger changes on #'.$htmlnamejquery.'");
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
 
 							// Complementary actions
