@@ -61,7 +61,10 @@ if (!class_exists('FormSetup')) {
 }
 $formSetup = new FormSetup($db);
 
+
 // root url
+
+// @var	FormSetupItem	$item
 $item = $formSetup->newItem('WEBPORTAL_ROOT_URL')->setAsString();
 $item->nameText = $langs->transnoentities('UrlPublicInterfaceLabelAdmin');
 $item->fieldAttr = array('placeholder' => 'https://');
@@ -106,8 +109,10 @@ $formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
 //$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
 // only enabled users
 $userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 0, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 1);
+
 $item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
 $item->setAsSelect($userList);
+$item->picto = 'user';
 $item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
 
 $setupnotempty += count($formSetup->items);

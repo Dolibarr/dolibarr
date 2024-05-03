@@ -251,8 +251,6 @@ class FormWebPortal extends Form
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$out = '';
@@ -283,9 +281,8 @@ class FormWebPortal extends Form
 
 		//var_dump($file_list);
 		// For ajax treatment
-		$out .= '<!-- html.formfile::getDocumentsLink -->' . "\n";
+		$out .= '<!-- html.formwebportal::getDocumentsLink -->' . "\n";
 		if (!empty($file_list)) {
-			$out = '';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -322,13 +319,13 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="button"';
+				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$tmpout .= '>';
-				//$tmpout .= img_mime($relativepath, $file["name"]);
+				$tmpout .= img_mime($relativepath, $file["name"]);
 				$tmpout .= strtoupper($ext);
 				$tmpout .= '</a>';
 			}
