@@ -1734,15 +1734,41 @@ class Ticket extends CommonObject
 			$actioncomm->attachedfiles = $attachedfiles;
 		}
 
-		if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
-			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
-		}
+		//if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
+		//	$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
+		//}
 
 		$actionid = $actioncomm->create($user);
 		if ($actionid <= 0) {
 			$error++;
 			$this->error = $actioncomm->error;
 			$this->errors = $actioncomm->errors;
+		}
+		
+		if ($actionid > 0) {
+			if (is_array($attachedfiles) && array_key_exists('paths', $attachedfiles) && count($attachedfiles['paths']) > 0) {
+				foreach ($attachedfiles['paths'] as $key => $filespath) {
+					$destdir = $conf->agenda->dir_output.'/'.$actionid;
+					$destfile = $destdir.'/'.$attachedfiles['names'][$key];
+					if (dol_mkdir($destdir) >= 0) {
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						dol_move($filespath, $destfile);
+						if ($actioncomm->code == "TICKET_MSG") {
+							$ecmfile = new EcmFiles($this->db);
+							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
+							$destdir = preg_replace('/[\\/]$/', '', $destdir);
+							$destdir = preg_replace('/^[\\/]/', '', $destdir);
+							$ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+							$ecmfile->share = getRandomPassword(true);
+							$result = $ecmfile->update($user);
+							if ($result < 0) {
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+					}
+				}
+			}
 		}
 
 		// Commit or rollback
