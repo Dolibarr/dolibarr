@@ -1659,9 +1659,10 @@ class Website extends CommonObject
 	 * Overite template by copying all files
 	 *
 	 * @param	string	$pathtotmpzip		Path to the tmp zip file
+	 * @param   string  $exportPath         Path to export files to (specified by the user)
 	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function overwriteTemplate(string $pathtotmpzip)
+	public function overwriteTemplate(string $pathtotmpzip, $exportPath = '')
 	{
 		global $conf;
 
@@ -1683,12 +1684,25 @@ class Website extends CommonObject
 
 		// Replace modified files into the doctemplates directory.
 		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
-			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+			// If the user has not specified a path
+			if (empty($exportPath)) {
+				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+			} else {
+				$exportPath = rtrim($exportPath, '/');
+				$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+
+				if (strpos($exportPath, '..') !== false) {
+					setEventMessages("Invalid path.", null, 'errors');
+					return -1;
+				}
+			}
 			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 		} else {
 			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
 			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
 		}
+
 
 		dol_mkdir($destdir);
 
@@ -1696,8 +1710,10 @@ class Website extends CommonObject
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
 		// Remove the file README and LICENSE from the $destdir (already into the containers directory)
-		dol_delete_file($destdir.'/README.md');
-		dol_delete_file($destdir.'/LICENSE');
+		if (empty($exportPath)) {
+			dol_delete_file($destdir.'/README.md');
+			dol_delete_file($destdir.'/LICENSE');
+		}
 
 		// Remove non required files (will be re-generated during the import)
 		dol_delete_file($destdir.'/containers/index.php');

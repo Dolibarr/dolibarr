@@ -240,4 +240,5 @@ PreviewPageContent=Page content
 Cart=Cart
 ExportSiteLabel=Would you like to export the website by downloading it ?
 ExportSiteGitLabel=Would you like to export into the source files ?
-ExportPath=path to export file
+ExportPath=Path to export the website
+SourceFiles =The folder will be exported to this path: install/doctemplates/websites/ followed by the entered path.

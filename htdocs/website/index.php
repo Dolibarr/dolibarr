@@ -2466,9 +2466,9 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 		$fileofzip = $object->exportWebSite();
-
+		$pathToExport = GETPOST('export_path');
 		if ($fileofzip) {
-			$object->overwriteTemplate($fileofzip);
+			$object->overwriteTemplate($fileofzip, $pathToExport);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
