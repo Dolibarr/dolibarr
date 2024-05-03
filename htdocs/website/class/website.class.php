@@ -1690,14 +1690,27 @@ class Website extends CommonObject
 				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 			} else {
 				$exportPath = rtrim($exportPath, '/');
-				$destdirrel = 'install/doctemplates/websites/'.$exportPath;
-
 				if (strpos($exportPath, '..') !== false) {
 					setEventMessages("Invalid path.", null, 'errors');
 					return -1;
 				}
+				// if path start with / (absolute path)
+				if (strpos($exportPath, '/') === 0) {
+					if (!is_dir($exportPath)) {
+						setEventMessages("The specified absolute path does not exist.", null, 'errors');
+						return -1;
+					}
+
+					if (!is_writable($exportPath)) {
+						setEventMessages("The specified absolute path is not writable.", null, 'errors');
+						return -1;
+					}
+				} else {
+					// relatif path
+					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+				}
 			}
-			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 		} else {
 			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
 			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
@@ -1705,6 +1718,11 @@ class Website extends CommonObject
 
 
 		dol_mkdir($destdir);
+
+		if (!is_writable($destdir)) {
+			setEventMessages("The specified path is not writable.", null, 'errors');
+			return -1;
+		}
 
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
