@@ -573,14 +573,7 @@ if ($resql) {
 						$class = "left";
 						$tmpvar = $fieldlist[$field];
 						$valuetoshow = $obj->$tmpvar;
-						if ($value == 'type_template') {
-							$valuetoshow = $valuetoshow;
-						}
-						if ($value == 'element') {
-							$valuetoshow = $valuetoshow;
-						} elseif ($value == 'source') {
-							$valuetoshow = $valuetoshow;
-						} elseif ($valuetoshow == 'all') {
+						if ($valuetoshow == 'all') {
 							$valuetoshow = $langs->trans('All');
 						} elseif ($fieldlist[$field] == 'country') {
 							if (empty($obj->country_code)) {

@@ -1832,8 +1832,8 @@ if ($placeid > 0) {
 					$htmlforlines .= img_object('', 'service').' ';
 				}
 			}
+			$tooltiptext = '';
 			if (!getDolGlobalString('TAKEPOS_SHOW_N_FIRST_LINES')) {
-				$tooltiptext = '';
 				if ($line->product_ref) {
 					$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
 					$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
@@ -1858,8 +1858,9 @@ if ($placeid > 0) {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
 				}
 			} else {
-				if ($line->product_label) {
-					$htmlforlines .= $line->product_label;
+				if ($line->product_ref) {
+					$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+					$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
 				}
 				if (!empty($line->batch)) {
 					$tooltiptext .= '<br><b>'.$langs->trans("LotSerial").'</b> : '.$line->batch.'<br>';
@@ -1868,6 +1869,9 @@ if ($placeid > 0) {
 					$tooltiptext .= '<b>'.$langs->trans("Warehouse").'</b> : '.$line->fk_warehouse.'<br>';
 				}
 
+				if ($line->product_label) {
+					$htmlforlines .= $line->product_label;
+				}
 				if ($line->product_label != $line->desc) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
