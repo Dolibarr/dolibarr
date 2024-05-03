@@ -573,7 +573,9 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $co
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+if (empty($object->id)) {
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+}
 
 llxHeader('', $title, $help_url);
 
