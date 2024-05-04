@@ -148,12 +148,6 @@ class Don extends CommonObject
 
 	public $paid;
 
-
-	/**
-	 * @var array Array of status label
-	 */
-	public $labelStatus;
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_PAID = 2;
@@ -295,6 +289,7 @@ class Don extends CommonObject
 
 		$error_string = array();
 		$err = 0;
+		$amount_invalid = 0;
 
 		if (dol_strlen(trim($this->societe)) == 0) {
 			if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0) {
