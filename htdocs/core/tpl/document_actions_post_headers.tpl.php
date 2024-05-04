@@ -3,6 +3,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 	2024	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +135,10 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+print '<div class="fichecenter">';
+print '<div class="fichehalfleft">';
+print '<div class="ficheaddright">';
+
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -155,9 +160,9 @@ $formfile->list_of_documents(
 	$sortorder,
 	$disablemove
 );
-
-print "<br>";
+print '</div></div>';
+print '<div class="fichehalfright">';
 
 //List of links
 $formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param);
-print "<br>";
+print '</div></div>';
