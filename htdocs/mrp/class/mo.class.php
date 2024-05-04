@@ -236,7 +236,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 * @var array tpl
+	 * @var array<string,int|string> tpl
 	 */
 	public $tpl = array();
 

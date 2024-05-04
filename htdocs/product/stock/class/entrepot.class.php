@@ -115,12 +115,6 @@ class Entrepot extends CommonObject
 	public $warehouse_usage;
 
 	/**
-	 * @var array List of short language codes for status
-	 */
-	public $labelStatus = array();
-
-
-	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'),
