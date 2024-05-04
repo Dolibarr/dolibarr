@@ -149,16 +149,6 @@ class Task extends CommonObjectLine
 
 	public $comments = array();
 
-	/**
-	 * @var array
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var array
-	 */
-	public $labelStatusShort;
-
 	// Properties calculated from sum of llx_element_time linked to task
 	public $tobill;
 	public $billed;
