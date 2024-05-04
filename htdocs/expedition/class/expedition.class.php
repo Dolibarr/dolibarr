@@ -264,10 +264,16 @@ class Expedition extends CommonObject
 	 */
 	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
+
+	/**
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
 	/**
 	 * Signed status
 	 */
-	const STATUS_SIGNED = 4;
+	const STATUS_SIGNED = 1;
 
 
 
