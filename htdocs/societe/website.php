@@ -76,7 +76,7 @@ if (!$sortorder) {
 $object = new Societe($db);
 $objectwebsiteaccount = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('website') ? $conf->website->dir_output.'/temp/massgeneration/'.$user->id : '';
 $hookmanager->initHooks(array('websitethirdpartylist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels

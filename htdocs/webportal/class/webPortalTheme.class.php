@@ -60,9 +60,20 @@ class WebPortalTheme
 	 */
 	public function __construct()
 	{
+		global $mysoc, $conf;
+
 		$this->loadPrimaryColor();
 
-		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL');
+		$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+		}
+
+		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL', $urllogo);
 		$this->menuLogoUrl = getDolGlobalString('WEBPORTAL_MENU_LOGO_URL', $this->loginLogoUrl);
 		$this->loginBackground = getDolGlobalString('WEBPORTAL_LOGIN_BACKGROUND');
 		$this->bannerBackground = getDolGlobalString('WEBPORTAL_BANNER_BACKGROUND');
@@ -76,21 +87,21 @@ class WebPortalTheme
 	 */
 	public function loadPrimaryColor()
 	{
-		global $conf;
-
 		$outColor = '';
 
 		if (getDolGlobalString('WEBPORTAL_PRIMARY_COLOR')) {
 			$outColor = getDolGlobalString('WEBPORTAL_PRIMARY_COLOR');
 		} elseif (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')) {
-			$outColor = '#' . colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1));
+			$outColor = colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')));
+		}
+		if (strpos($outColor, '#') !== 0) {
+			$outColor = '#'.$outColor;
 		}
 
-		if (empty($outColor) || !colorValidateHex($outColor)) {
-			$outColor = '#263c5c';
+		// If custom color is valid, w e use it
+		if (!empty($outColor) && colorValidateHex($outColor)) {
+			$this->primaryColorHex = $outColor;
+			$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
 		}
-
-		$this->primaryColorHex = $outColor;
-		$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
 	}
 }

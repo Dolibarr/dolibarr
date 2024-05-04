@@ -1829,7 +1829,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	int		$updatesessionordb		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
@@ -1839,14 +1839,14 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @return	int                             Return integer <=0 if KO, >0 if OK
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
 		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
@@ -1939,7 +1939,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update session
-					if (empty($donotupdatesession)) {
+					if (empty($updatesessionordb)) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
@@ -1947,7 +1947,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update index table of files (llx_ecm_files)
-					if ($donotupdatesession == 1) {
+					if ($updatesessionordb == 1) {
 						$sharefile = 0;
 						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
 							$sharefile = 1;
@@ -2124,6 +2124,47 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		if ($setsharekey) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$ecmfile->share = getRandomPassword(true);
+		}
+
+		// Use a convertisser Doc to Text
+		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		//$useFullTextIndexation = 1;
+		if ($useFullTextIndexation) {
+			$ecmfile->filepath = $rel_dir;
+			$ecmfile->filename = $filename;
+
+			$filetoprocess = $dir.'/'.$ecmfile->filename;
+
+			$textforfulltextindex = '';
+			$keywords = '';
+			if (preg_match('/\.pdf/i', $filename)) {
+				// TODO Move this into external submodule files
+
+				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($db);
+				$outputfile = $conf->admin->dir_temp.'/tmppdttotext.'.$user->id.'.out'; // File used with popen method
+
+				// We also exclude '/temp/' dir and 'documents/admin/documents'
+				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+				if (!$result['error']) {
+					$txt = $result['output'];
+					$matches = array();
+					if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+						$keywords = $matches[1];
+					}
+					if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+						$textforfulltextindex = dol_string_nospecial($matches[1]);
+					}
+				}
+			}
+
+			$ecmfile->description = $textforfulltextindex;
+			$ecmfile->keywords = $keywords;
 		}
 
 		$result = $ecmfile->create($user);

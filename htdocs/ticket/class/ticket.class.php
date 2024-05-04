@@ -60,21 +60,9 @@ class Ticket extends CommonObject
 	public $fk_element = 'fk_ticket';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does ticketcore support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for ticketcore. Must be the part after the 'object_' into object_ticketcore.png
 	 */
 	public $picto = 'ticket';
-
 
 	/**
 	 * @var ?string Hash to identify ticket publicly
@@ -235,16 +223,6 @@ class Ticket extends CommonObject
 	public $cache_msgs_ticket;
 
 	/**
-	 * @var array status labels
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var array status short labels
-	 */
-	public $labelStatusShort;
-
-	/**
 	 * @var int 	Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
@@ -365,6 +343,9 @@ class Ticket extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		$this->labelStatusShort = array(
 			self::STATUS_NOT_READ => 'Unread',

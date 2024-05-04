@@ -69,17 +69,6 @@ class EmailCollector extends CommonObject
 	public $table_element = 'emailcollector_emailcollector';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
 	public $picto = 'email';
@@ -246,6 +235,9 @@ class EmailCollector extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -2277,7 +2269,7 @@ class EmailCollector extends CommonObject
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
-
+						$ticketalreadyexists = 0;
 						if ($errorforactions) {
 							break;
 						}
@@ -2311,6 +2303,31 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+
+						if ($operation['type'] == 'ticket') {
+							// Verify if ticket already exists to fall back on the right operation
+							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
+							$alreadycreated1 = 0;
+							if (!empty($trackid)) {
+								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							}
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket)) {
+								if ($alreadycreated == 0) {
+									$ticketalreadyexists = 0;
+								} else {
+									$ticketalreadyexists = 1;
+									$operation['type'] = 'recordevent';
+								}
+							} else {
+								$ticketalreadyexists = -1;
+							}
 						}
 
 						// Search and create thirdparty
@@ -3067,15 +3084,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
-							$errorfetchticket = 0;
-
-							$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
-							}
-							if (empty($errorfetchticket) && $alreadycreated == 0) {
+							if ($ticketalreadyexists == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;

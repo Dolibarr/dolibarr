@@ -49,7 +49,7 @@ if ($user->socid) {
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', 0, '', '', '', '');
+$result = restrictedArea($user, 'societe|contact', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
 $contact_static = new Contact($db);
@@ -178,8 +178,9 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= $dolgraph->show();
 	$thirdpartygraph .= '</td></tr>'."\n";
 } else {
+	$statstring = '';
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS')) {
-		$statstring = "<tr>";
+		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
 		$statstring .= "</tr>";
 	}
@@ -190,7 +191,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	}
 	$statstring2 = '';
 	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS')) {
-		$statstring2 = "<tr>";
+		$statstring2 .= "<tr>";
 		$statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
 		$statstring2 .= "</tr>";
 	}

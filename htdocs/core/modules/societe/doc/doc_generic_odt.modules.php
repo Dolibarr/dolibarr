@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
- * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
+ * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,28 +318,39 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
 					try {
-						$listlines = $odfHandler->setSegment('companycontacts');
-
-						foreach ($contact_arrray as $array_key => $contact_id) {
-							$res_contact = $contactstatic->fetch($contact_id);
-							if ((int) $res_contact > 0) {
-								$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-								foreach ($tmparray as $key => $val) {
-									try {
-										$listlines->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
-									} catch (SegmentException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
-									}
-								}
-								$listlines->merge();
-							} else {
-								$this->error = $contactstatic->error;
-								dol_syslog($this->error, LOG_WARNING);
-							}
+						$foundtagforlines = 1;
+						try {
+							$listlines = $odfHandler->setSegment('companycontacts');
+						} catch (OdfExceptionSegmentNotFound $e) {
+							// We may arrive here if tags for lines not present into template
+							$foundtagforlines = 0;
+							dol_syslog($e->getMessage(), LOG_INFO);
+						} catch (OdfException $e) {
+							$foundtagforlines = 0;
+							dol_syslog($e->getMessage(), LOG_INFO);
 						}
-						$odfHandler->mergeSegment($listlines);
+						if ($foundtagforlines) {
+							foreach ($contact_arrray as $array_key => $contact_id) {
+								$res_contact = $contactstatic->fetch($contact_id);
+								if ((int) $res_contact > 0) {
+									$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+									foreach ($tmparray as $key => $val) {
+										try {
+											$listlines->setVars($key, $val, true, 'UTF-8');
+										} catch (OdfException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										} catch (SegmentException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										}
+									}
+									$listlines->merge();
+								} else {
+									$this->error = $contactstatic->error;
+									dol_syslog($this->error, LOG_WARNING);
+								}
+							}
+							$odfHandler->mergeSegment($listlines);
+						}
 					} catch (OdfException $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
