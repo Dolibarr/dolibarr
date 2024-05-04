@@ -47,12 +47,6 @@ class SocieteAccount extends CommonObject
 	public $table_element = 'societe_account';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string String with name of icon for societeaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'lock';
@@ -198,6 +192,8 @@ class SocieteAccount extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;

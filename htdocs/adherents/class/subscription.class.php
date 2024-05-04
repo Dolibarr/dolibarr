@@ -45,14 +45,6 @@ class Subscription extends CommonObject
 	public $table_element = 'subscription';
 
 	/**
-	 * Does this object supports the multicompany module ?
-	 *
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'payment';
@@ -132,6 +124,8 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 
