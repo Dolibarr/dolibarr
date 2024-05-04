@@ -2157,7 +2157,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
-	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@return	int<-2,1>					Return integer <0 if KO, >0 if OK
 	 *  @see updateExtraField()
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
