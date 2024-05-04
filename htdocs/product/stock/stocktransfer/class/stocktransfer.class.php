@@ -1070,27 +1070,3 @@ class StockTransfer extends CommonObject
 		return $error;
 	}
 }
-
-/**
- * Class StockTransferLine. You can also remove this and generate a CRUD class for lines objects.
- */
-//class StockTransferLine
-//{
-//	// To complete with content of an object StockTransferLine
-//	// We should have a field rowid, fk_stocktransfer and position
-//
-//	/**
-//	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-//	 */
-//	public $isextrafieldmanaged = 0;
-//
-//	/**
-//	 * Constructor
-//	 *
-//	 * @param DoliDB $db Database handler
-//	 */
-//	public function __construct(DoliDB $db)
-//	{
-//		$this->db = $db;
-//	}
-//}

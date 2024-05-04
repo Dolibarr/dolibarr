@@ -1367,10 +1367,6 @@ class PartnershipLine extends CommonObjectLine
 	// To complete with content of an object PartnershipLine
 	// We should have a field rowid, fk_partnership and position
 
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Constructor
@@ -1380,5 +1376,7 @@ class PartnershipLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }
