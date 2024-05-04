@@ -2126,6 +2126,47 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->share = getRandomPassword(true);
 		}
 
+		// Use a convertisser Doc to Text
+		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		$useFullTextIndexation = 1;
+		if ($useFullTextIndexation) {
+			$ecmfile->filepath = $rel_dir;
+			$ecmfile->filename = $filename;
+
+			$filetoprocess = $dir.'/'.$ecmfile->filename;
+
+			$textforfulltextindex = '';
+			$keywords = '';
+			if (preg_match('/\.pdf/i', $filename)) {
+				// TODO Move this into external submodule files
+
+				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($db);
+				$outputfile = $conf->admin->dir_temp.'/tmppdttotext.'.$user->id.'.out'; // File used with popen method
+
+				// We also exclude '/temp/' dir and 'documents/admin/documents'
+				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+				if (!$result['error']) {
+					$txt = $result['output'];
+					$matches = array();
+					if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+						$keywords = $matches[1];
+					}
+					if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+						$textforfulltextindex = dol_string_nospecial($matches[1]);
+					}
+				}
+			}
+
+			$ecmfile->description = $textforfulltextindex;
+			$ecmfile->keywords = $keywords;
+		}
+
 		$result = $ecmfile->create($user);
 		if ($result < 0) {
 			dol_syslog($ecmfile->error);
