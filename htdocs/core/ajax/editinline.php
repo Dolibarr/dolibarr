@@ -54,6 +54,13 @@ if (!$usercanmodify) {
 	exit;
 }
 
+
+/*
+ * View
+ */
+
+top_httphead();
+
 if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
 	// Page object
 	$objectpage = new WebsitePage($db);
