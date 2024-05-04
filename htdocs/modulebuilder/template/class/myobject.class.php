@@ -1250,11 +1250,6 @@ class MyObjectLine extends CommonObjectLine
 	// We should have a field rowid, fk_myobject and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1262,5 +1257,7 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }
