@@ -370,7 +370,7 @@ class FormCardWebPortal
 				}
 
 				$object->$key = $value;
-				if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+				if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 					$error++;
 					$context->setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 				}
@@ -466,7 +466,7 @@ class FormCardWebPortal
 		// main information - begin
 		$html .= '<div class="header-card-main-information">';
 		// ref
-		$html .= '<div><strong>' . $object->ref . '</strong></div>';
+		$html .= '<div><strong>' . $langs->trans("Ref").' : '.dol_escape_htmltag($object->ref) . '</strong></div>';
 		// full name
 		$fullname = '';
 		if (method_exists($object, 'getFullName')) {
@@ -737,7 +737,7 @@ class FormCardWebPortal
 	{
 		global $hookmanager, $langs;
 
-		$html = '';
+		$html = '<!-- elementCard -->';
 
 		// initialize
 		$action = $this->action;

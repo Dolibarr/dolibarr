@@ -215,7 +215,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	print img_picto('', 'bank_account', 'pictofixedwidth');
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
 	print '</td></tr>';
 

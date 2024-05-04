@@ -1157,7 +1157,7 @@ class Don extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1172,16 +1172,16 @@ class Don extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'date')) {
-			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
+			$return .= ' &nbsp; | &nbsp; <span class="info-box-label">'.dol_print_date($this->date, 'day', 'tzuserrel').'</span>';
 		}
 		if (property_exists($this, 'societe') && !empty($this->societe)) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
 		}
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="opacitymedium" >'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

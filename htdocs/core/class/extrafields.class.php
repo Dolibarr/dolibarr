@@ -1239,7 +1239,7 @@ class ExtraFields
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone right" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').' placeholder="'.$langs->getCurrencySymbol($conf->currency).'">';
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
 			if (!empty($value)) {
@@ -2562,6 +2562,31 @@ class ExtraFields
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return array with all possible types and label of extrafields
+	 *
+	 * @return string[]
+	 */
+	public static function getListOfTypesLabels()
+	{
+		global $langs;
+
+		$tmptype2label = ExtraFields::$type2label;
+		$type2label = array('');
+		foreach ($tmptype2label as $key => $val) {
+			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+		}
+
+		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
+			unset($type2label['point']);
+			unset($type2label['multipts']);
+			unset($type2label['linestrg']);
+			unset($type2label['polygon']);
+		}
+
+		return $type2label;
 	}
 
 	/**

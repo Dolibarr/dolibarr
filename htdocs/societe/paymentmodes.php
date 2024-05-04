@@ -169,8 +169,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->type            = GETPOSTINT('courant');
-			$companybankaccount->courant         = $companybankaccount->type;
 			$companybankaccount->status          = GETPOSTINT('clos');
 			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
@@ -305,7 +303,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
 			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
@@ -898,7 +895,7 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('fo
 // Load Bank account
 if (!$id) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$companybankaccount->fetch(0, $object->id);
+	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 } else {

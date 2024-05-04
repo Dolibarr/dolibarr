@@ -1299,6 +1299,11 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 	margin-left: 5px;
 }
 
+
+.linecolht {
+	white-space: nowrap;
+}
+
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
@@ -1747,6 +1752,7 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
+	word-break: break-word;
 }
 .tenlinesmax {
 	display: -webkit-box;
@@ -6706,6 +6712,11 @@ select.multiselectononeline {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
 	}
+}
+
+/* must be after the other .select2-container.select2-container--open .select2-dropdown.ui-dialog */
+.limit.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	min-width: 100px !important;
 }
 
 .parentonrightofpage {

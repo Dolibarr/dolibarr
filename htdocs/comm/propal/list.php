@@ -551,7 +551,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($search_all || $search_user > 0) {
+if ($search_all > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
@@ -596,13 +596,6 @@ if ($search_all) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
-if ($search_user > 0) {
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as c";
-	$sql .= " ON  c.element_id = p.rowid AND c.fk_socpeople = ".((int) $search_user);
-	$sql .= " INNER JOIN  ".MAIN_DB_PREFIX."c_type_contact as tc";
-	$sql .= " ON c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal'";
-}
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -724,6 +717,15 @@ if ($search_date_signature_start) {
 }
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
+}
+// Search on user
+if ($search_user > 0) {
+	$sql .= " AND EXISTS (";
+	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
+	$sql .= " FROM llx_element_contact as ec";
+	$sql .= " INNER JOIN  llx_c_type_contact as tc";
+	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal'";
+	$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {

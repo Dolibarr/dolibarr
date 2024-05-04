@@ -486,6 +486,28 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 *
+	 * Check if ref exists or not
+	 *
+	 * @param string $action    Action
+	 * @param string $getRef    Reference of object
+	 * @return bool
+	 */
+	public function checkExistingRef(string $action, string $getRef): bool
+	{
+		$test = new self($this->db);
+
+		if ($test->fetch('', $getRef) > 0) {
+			if (($action == 'add') || ($action == 'update' && $this->ref != $getRef)) {
+				return true;
+			}
+		}
+
+		$this->ref = $getRef;
+		return false;
+	}
+
+	/**
 	 *  Create object into database
 	 *
 	 *  @param  User $user      User that creates
@@ -2394,23 +2416,23 @@ class Ticket extends CommonObject
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$labelType = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
 					$tab[$i] = array(
-							'source' => $obj->source,
-							'socid' => $obj->socid,
-							'id' => $obj->id,
-							'nom' => $obj->lastname, // For backward compatibility
-							'civility' => $obj->civility,
-							'lastname' => $obj->lastname,
-							'firstname' => $obj->firstname,
-							'email' => $obj->email,
-							'rowid' => $obj->rowid,
-							'code' => $obj->code,
-							'libelle' => $labelType,		// deprecated, replaced with labeltype
-							'labeltype' => $labelType,
-							'status' => $obj->statuslink,
-							'statuscontact' => $obj->statuscontact,
-							'fk_c_type_contact' => $obj->fk_c_type_contact,
-							'phone' => $obj->phone,
-							'phone_mobile' => $obj->phone_mobile);
+						'source' => $obj->source,
+						'socid' => $obj->socid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email' => $obj->email,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'libelle' => $labelType,		// deprecated, replaced with labeltype
+						'labeltype' => $labelType,
+						'status' => $obj->statuslink,
+						'statuscontact' => $obj->statuscontact,
+						'fk_c_type_contact' => $obj->fk_c_type_contact,
+						'phone' => $obj->phone,
+						'phone_mobile' => $obj->phone_mobile);
 				} else {
 					$tab[$i] = $obj->id;
 				}

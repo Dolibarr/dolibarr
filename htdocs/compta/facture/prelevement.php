@@ -617,7 +617,7 @@ if ($object->id > 0) {
 
 	$bac = new CompanyBankAccount($db);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$bac->fetch(0, $object->thirdparty->id);
+	$bac->fetch(0, '', $object->thirdparty->id);
 
 	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 	if (!empty($bac->iban)) {

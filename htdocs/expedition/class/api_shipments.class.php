@@ -101,8 +101,6 @@ class Shipments extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
@@ -178,7 +176,7 @@ class Shipments extends DolibarrApi
 	 * Create shipment object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of shipment
+	 * @return  int     				ID of shipment created
 	 */
 	public function post($request_data = null)
 	{
@@ -200,7 +198,20 @@ class Shipments extends DolibarrApi
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$shipmentline = new ExpeditionLigne($this->db);
+
+				$shipmentline->entrepot_id = $line['entrepot_id'];
+				$shipmentline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: order id.  this->origin is 'commande'
+				$shipmentline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order id
+				$shipmentline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order line id
+				$shipmentline->origin_type = $line['element_type'] ?? $line['origin_type'];			// example 'commande' or 'order'
+				$shipmentline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'commande' or 'order'
+				$shipmentline->qty = $line['qty'];
+				$shipmentline->rang = $line['rang'];
+				$shipmentline->array_options = $line['array_options'];
+				$shipmentline->detail_batch = $line['detail_batch'];
+
+				$lines[] = $shipmentline;
 			}
 			$this->shipment->lines = $lines;
 		}
@@ -679,6 +690,8 @@ class Shipments extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->canvas);
+
 		unset($object->thirdparty); // id already returned
 
 		unset($object->note);
@@ -695,6 +708,8 @@ class Shipments extends DolibarrApi
 						unset($line->detail_batch[$keytmp2]->db);
 					}
 				}
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);
