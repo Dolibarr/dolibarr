@@ -57,12 +57,6 @@ class Don extends CommonObject
 	public $fk_element = 'fk_donation';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'donation';
@@ -154,18 +148,6 @@ class Don extends CommonObject
 
 	public $paid;
 
-
-	/**
-	 * @var array Array of status label
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var array Array of status label short
-	 */
-	public $labelStatusShort;
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_PAID = 2;
@@ -180,6 +162,8 @@ class Don extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 
@@ -305,6 +289,7 @@ class Don extends CommonObject
 
 		$error_string = array();
 		$err = 0;
+		$amount_invalid = 0;
 
 		if (dol_strlen(trim($this->societe)) == 0) {
 			if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0) {

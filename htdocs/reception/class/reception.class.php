@@ -70,12 +70,6 @@ class Reception extends CommonObject
 	public $table_element_line = "receptiondet_batch";
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dollyrevert';
@@ -154,6 +148,8 @@ class Reception extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	}
 
 	/**
