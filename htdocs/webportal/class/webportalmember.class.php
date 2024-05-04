@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +36,6 @@ class WebPortalMember extends Adherent
 	 * @var string ID of module.
 	 */
 	public $module = 'webportal';
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Status list (short label)
@@ -197,6 +193,8 @@ class WebPortalMember extends Adherent
 		global $langs;
 
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 
 		$this->getMemberStatic();
 
