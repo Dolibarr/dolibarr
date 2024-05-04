@@ -255,7 +255,7 @@ class Expedition extends CommonObject
 	 */
 	const STATUS_CANCELED = -1;
 
-  /**
+	/**
 	 * Expedition in progress
 	 * -> package exit the warehouse and is now
 	 *    in the truck or into the hand of the deliverer
@@ -264,7 +264,7 @@ class Expedition extends CommonObject
 	 */
 	const STATUS_SHIPMENT_IN_PROGRESS = 3;
 
- 	/**
+	/**
 	 * Signed status
 	 */
 	const STATUS_SIGNED = 4;
