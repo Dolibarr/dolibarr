@@ -1829,7 +1829,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	int		$updatesessionordb		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
@@ -1839,14 +1839,14 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @return	int                             Return integer <=0 if KO, >0 if OK
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
 		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
@@ -1939,7 +1939,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update session
-					if (empty($donotupdatesession)) {
+					if (empty($updatesessionordb)) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
@@ -1947,7 +1947,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update index table of files (llx_ecm_files)
-					if ($donotupdatesession == 1) {
+					if ($updatesessionordb == 1) {
 						$sharefile = 0;
 						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
 							$sharefile = 1;
