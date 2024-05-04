@@ -891,7 +891,7 @@ class FormFile
 						$out .= '<span class="spanoverflow">';
 					}
 					$out .= '<a class="documentdownload paddingright" ';
-					if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB')) {
+					if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB') && getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 						print 'target="_blank" ';
 					}
 					print 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
@@ -1134,7 +1134,7 @@ class FormFile
 
 				// Download
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
-				if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB')) {
+				if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB') && getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 						$tmpout .= 'target="_blank" ';
 				}
 				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
@@ -1382,7 +1382,7 @@ class FormFile
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a class="paddingright valignmiddle" ';
-					if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB')) {
+					if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB') && getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 						print 'target="_blank" ';
 					}
 					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
@@ -1962,7 +1962,7 @@ class FormFile
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
 				print '<a ';
-				if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB')) {
+				if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB') && getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 					print 'target="_blank" ';
 				}
 				print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
