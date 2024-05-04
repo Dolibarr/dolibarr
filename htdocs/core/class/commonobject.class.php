@@ -10003,7 +10003,7 @@ abstract class CommonObject
 	 * @param	string		$ref			Ref
 	 * @param	string		$morewhere		More SQL filters (' AND ...')
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int<-1,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return 	int<-4,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
