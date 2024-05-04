@@ -1,0 +1,15 @@
+meta {
+  name: Do a test of integrity for files and setup- --
+  type: http
+  seq: 40
+}
+
+get {
+  url: {{base_url}}/setup/checkintegrity
+  body: none
+  auth: none
+}
+
+query {
+  target:
+}

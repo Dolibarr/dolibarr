@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -1699,7 +1699,7 @@ if ($resql) {
 					$tmpuser->fetch($userlinked_id);
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
-				print $tmpuser->getNomUrl(1);
+				print $tmpuser->getNomUrl(-1);
 			} else {
 				print '&nbsp;';
 			}

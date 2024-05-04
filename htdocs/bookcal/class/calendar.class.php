@@ -50,17 +50,6 @@ class Calendar extends CommonObject
 	public $table_element = 'bookcal_calendar';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for calendar. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'calendar@bookcal' if picto is file 'img/object_calendar.png'.
 	 */
 	public $picto = 'fa-calendar-check';
@@ -162,6 +151,9 @@ class Calendar extends CommonObject
 		global $langs, $user;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1076,10 +1068,6 @@ class CalendarLine extends CommonObjectLine
 	// To complete with content of an object CalendarLine
 	// We should have a field rowid, fk_calendar and position
 
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Constructor
@@ -1089,5 +1077,7 @@ class CalendarLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

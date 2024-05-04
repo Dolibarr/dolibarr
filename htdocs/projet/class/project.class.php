@@ -63,17 +63,6 @@ class Project extends CommonObject
 	public $fk_element = 'fk_projet';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'project';
@@ -203,9 +192,6 @@ class Project extends CommonObject
 	 * @var int|string Max attendees (may be empty/need cast to iint)
 	 */
 	public $max_attendees;
-
-	public $labelStatusShort;
-	public $labelStatus;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
 
@@ -365,6 +351,9 @@ class Project extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		$this->labelStatusShort = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 		$this->labelStatus = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');

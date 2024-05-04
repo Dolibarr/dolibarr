@@ -543,6 +543,7 @@ if (isModEnabled('product')) {
 	$sql .= $db->plimit($max, 0);
 
 	dol_syslog("Index:list stock movements", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -621,6 +622,14 @@ if (isModEnabled('product')) {
 			$i++;
 		}
 		$db->free($resql);
+
+		if (empty($num)) {
+			$colspan = 4;
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		}
 
 		$latestmovement .= "</table>";
 		$latestmovement .= '</div>';
