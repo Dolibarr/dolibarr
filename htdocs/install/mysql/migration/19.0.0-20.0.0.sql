@@ -327,7 +327,7 @@ ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_use
 
 -- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
 
-ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+ALTER TABLE llx_element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
 
 ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT 0 AFTER billed;
 
