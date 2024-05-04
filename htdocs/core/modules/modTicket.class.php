@@ -172,7 +172,7 @@ class modTicket extends DolibarrModules
 			array(
 				'name' => 'c_ticket_category',
 				'lib' => 'TicketDictCategory',
-				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.$this->prefix().'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.$this->db->prefix().'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
 				'sqlsort' => 'pos ASC',
 				'field' => 'code,label,pos,use_default,public,fk_parent',
 				'fieldvalue' => 'code,label,pos,use_default,public,fk_parent',
@@ -193,7 +193,7 @@ class modTicket extends DolibarrModules
 			array(
 				'name' => 'c_ticket_resolution',
 				'lib' => 'TicketDictResolution',
-				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->prefix().'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')',
 				'sqlsort' => 'pos ASC',
 				'field' => 'code,label,pos,use_default',
 				'fieldvalue' => 'code,label,pos,use_default',
