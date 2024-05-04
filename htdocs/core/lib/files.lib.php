@@ -2128,7 +2128,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 		// Use a convertisser Doc to Text
 		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
-		$useFullTextIndexation = 1;
+		//$useFullTextIndexation = 1;
 		if ($useFullTextIndexation) {
 			$ecmfile->filepath = $rel_dir;
 			$ecmfile->filename = $filename;
