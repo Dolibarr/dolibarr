@@ -1476,7 +1476,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '</td><td>';
 			$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>';
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("shipping")) {
 				$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrderOrShipments").'</span>';
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
