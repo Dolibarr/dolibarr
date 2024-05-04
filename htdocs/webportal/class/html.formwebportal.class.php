@@ -251,8 +251,6 @@ class FormWebPortal extends Form
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$out = '';
@@ -283,9 +281,8 @@ class FormWebPortal extends Form
 
 		//var_dump($file_list);
 		// For ajax treatment
-		$out .= '<!-- html.formfile::getDocumentsLink -->' . "\n";
+		$out .= '<!-- html.formwebportal::getDocumentsLink -->' . "\n";
 		if (!empty($file_list)) {
-			$out = '';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -322,13 +319,13 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="button"';
+				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$tmpout .= '>';
-				//$tmpout .= img_mime($relativepath, $file["name"]);
+				$tmpout .= img_mime($relativepath, $file["name"]);
 				$tmpout .= strtoupper($ext);
 				$tmpout .= '</a>';
 			}
@@ -961,13 +958,14 @@ class FormWebPortal extends Form
 
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type = empty($val['type']) ? '' : $val['type'];
-		$size = empty($val['css']) ? '' : $val['css'];
+		$css = empty($val['css']) ? '' : $val['css'];
+		$picto = empty($val['picto']) ? '' : $val['picto'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$size = $reg[1];
+			$css = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}

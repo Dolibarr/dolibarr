@@ -2157,7 +2157,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
-	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@return	int<-2,1>					Return integer <0 if KO, >0 if OK
 	 *  @see updateExtraField()
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
@@ -2290,7 +2290,7 @@ abstract class CommonObject
 	 *      							Example: "((t.field1:=:'aa') OR (t.field2:=:'bb'))".
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int<0,1>	$nodbprefix	Do not include DB prefix to forge table name
-	 *      @return int<-1,1>      		Return integer <0 if KO, >0 if OK
+	 *      @return int<-2,1>      		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_previous_next_ref($filter, $fieldid, $nodbprefix = 0)
 	{
@@ -7956,7 +7956,6 @@ abstract class CommonObject
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
-		$value = '';  // Default return value
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
@@ -9814,7 +9813,7 @@ abstract class CommonObject
 	 *
 	 * @param  User		$user		User that creates
 	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return int<-1,-1>			Return integer <0 if KO, Id of created object if OK
+	 * @return int<-1,max>			Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = 0)
 	{
@@ -10004,7 +10003,7 @@ abstract class CommonObject
 	 * @param	string		$ref			Ref
 	 * @param	string		$morewhere		More SQL filters (' AND ...')
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int<-1,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return 	int<-4,1>	      			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{

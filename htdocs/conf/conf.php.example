@@ -337,7 +337,7 @@ $dolibarr_nocsrfcheck='0';
 
 // dolibarr_cron_allow_cli
 // =======================
-// If set to 1, you will be able to define some command line in the internale Job scheduler module.
+// If set to 1, you will be able to define some command line in the internal Job scheduler module.
 // Default value: '0'
 // Examples: '1'
 //
