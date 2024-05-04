@@ -2569,7 +2569,7 @@ class ExtraFields
 	 *
 	 * @return string[]
 	 */
-	public static function getListofTypesLabels()
+	public static function getListOfTypesLabels()
 	{
 		global $langs;
 

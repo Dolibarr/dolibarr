@@ -233,7 +233,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var array dictionaries description
 	 */
-	public $dictionaries;
+	public $dictionaries = array();
 
 	/**
 	 * @var array tabs description
@@ -2631,5 +2631,35 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * Helper method to declare dictionaries one at a time (rather than declaring dictionaries property by property).
+	 *
+	 * @param array $dictionaryArray Array describing one dictionary. Keys are:
+	 *                               'name',        table name (without prefix)
+	 *                               'lib',         dictionary label
+	 *                               'sql',         query for select
+	 *                               'sqlsort',     sort order
+	 *                               'field',       comma-separated list of fields to select
+	 *                               'fieldvalue',  list of columns used for editing existing rows
+	 *                               'fieldinsert', list of columns used for inserting new rows
+	 *                               'rowid',       name of the technical ID (primary key) column, usually 'rowid'
+	 *                               'cond',        condition for the dictionary to be shown / active
+	 *                               'help',        optional array of translation keys by column for tooltips
+	 *                               'fieldcheck'   (appears to be unused)
+	 * @param string $langs Optional translation file to include (appears to be unused)
+	 * @return void
+	 */
+	protected function declareNewDictionary($dictionaryArray, $langs = '')
+	{
+		$fields = array('name', 'lib', 'sql', 'sqlsort', 'field', 'fieldvalue', 'fieldinsert', 'rowid', 'cond', 'help', 'fieldcheck');
+
+		foreach ($fields as $field) {
+			if (!empty($dictionaryArray[$field])) {
+				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
+			}
+		}
+		if ($langs && !in_array($langs, $this->dictionaries[$langs])) $this->dictionaries['langs'][] = $langs;
 	}
 }

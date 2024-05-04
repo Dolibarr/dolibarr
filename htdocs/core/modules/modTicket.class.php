@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,38 +135,74 @@ class modTicket extends DolibarrModules
 			$conf->ticket = new stdClass();
 			$conf->ticket->enabled = 0;
 		}
-		$this->dictionaries = array(
-			'langs' => 'ticket',
-			'tabname' => array(
-				"c_ticket_type",
-				"c_ticket_severity",
-				"c_ticket_category",
-				"c_ticket_resolution"
-			),
-			'tablib' => array(
-				"TicketDictType",
-				"TicketDictSeverity",
-				"TicketDictCategory",
-				"TicketDictResolution"
-			),
-			'tabsql' => array(
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_type as f WHERE f.entity IN ('.getEntity('c_ticket_type').')',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f WHERE f.entity IN ('.getEntity('c_ticket_severity').')',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')'
-			),
-			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
-			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default,entity", "code,label,pos,use_default,entity", "code,label,pos,use_default,public,fk_parent,entity", "code,label,pos,use_default,entity"),
-			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
-			'tabhelp' => array(
-				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1")),
-				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1")),
-				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1"), 'public' => $langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc"), 'fk_parent' => $langs->trans("IfThisCategoryIsChildOfAnother")),
-				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1"))
-			),
+
+		// Dictionary of ticket types
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_type',
+				'lib' => 'TicketDictType',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_type as f WHERE f.entity IN ('.getEntity('c_ticket_type').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
+		);
+
+		// Dictionary of ticket severities
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_severity',
+				'lib' => 'TicketDictSeverity',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_severity as f WHERE f.entity IN ('.getEntity('c_ticket_severity').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
+		);
+
+		// Dictionary of ticket categories
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_category',
+				'lib' => 'TicketDictCategory',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.$this->db->prefix().'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default,public,fk_parent',
+				'fieldvalue' => 'code,label,pos,use_default,public,fk_parent',
+				'fieldinsert' => 'code,label,pos,use_default,public,fk_parent,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array(
+					'code' => $langs->trans('EnterAnyCode'),
+					'use_default' => $langs->trans('Enter0or1'),
+					'public' => $langs->trans('Enter0or1').'<br>'.$langs->trans('TicketGroupIsPublicDesc'),
+					'fk_parent' => $langs->trans('IfThisCategoryIsChildOfAnother')
+				)
+			)
+		);
+
+		// (apparently unused) Dictionary of ticket resolutions
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_resolution',
+				'lib' => 'TicketDictResolution',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket') && getDolGlobalString('TICKET_ENABLE_RESOLUTION'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
 		);
 
 		// Boxes
@@ -391,14 +428,14 @@ class modTicket extends DolibarrModules
 		}
 
 		$sql = array(
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
 			// remove old settings
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
+			"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
 			// activate default odt templates
-			array("sql" => "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1),
+			array("sql" => "INSERT INTO ".$this->db->prefix()."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1),
 		);
 
 		return $this->_init($sql, $options);

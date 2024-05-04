@@ -170,7 +170,8 @@ if ($result) {
 	$i = 0;
 
 	$param = "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+	$title = $langs->trans("ListOfValidatedPublicMembers");
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';

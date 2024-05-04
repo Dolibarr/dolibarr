@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,17 +65,6 @@ class ProductAttribute extends CommonObject
 	 * @var string Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_product_attribute';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
@@ -176,6 +165,9 @@ class ProductAttribute extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {

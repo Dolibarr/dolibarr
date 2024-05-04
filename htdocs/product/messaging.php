@@ -216,11 +216,11 @@ $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'f
 
 if (isModEnabled('agenda')) {
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
-	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
-		if (get_class($objproduct) == 'Product') {
-			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
+	if (!empty($object->id) && $permok) {
+		if (get_class($object) == 'Product') {
+			$out .= '&amp;prodid='.$object->id.'&origin=product&originid='.$id;
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
+		$out .= '&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
 	}
 
 	$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');

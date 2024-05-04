@@ -5987,7 +5987,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$titre				Title to show
+ *	@param	string	$title				Title to show
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -5997,7 +5997,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
 	$return = '';
 
@@ -6012,7 +6012,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
-	$return .= '<div class="titre inline-block">'.$titre.'</div>';
+	$return .= '<div class="titre inline-block">'.dol_escape_htmltag($title).'</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
 		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
@@ -6028,7 +6028,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	string	    $titre				Title to show (required)
+ *	@param	string	    $title				Title to show (required)
  *	@param	int|null    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
@@ -6048,7 +6048,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *  @param	string		$morehtmlrightbeforearrow	More html to show (before arrows)
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
+function print_barre_liste($title, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
 	global $conf;
 
@@ -6083,13 +6083,13 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Left
 
-	if ($picto && $titre) {
+	if ($picto && $title) {
 		print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	print '<div class="titre inline-block">'.$titre;
-	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
+	print '<div class="titre inline-block">'.dol_escape_htmltag($title);
+	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
 		print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
@@ -7467,7 +7467,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		$path = dol_sanitizeFileName(empty($object->ref) ? (string) (property_exists($object, 'id') ? $object->id : '') : $object->ref);
+		$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
 	}
 
 	if (empty($withoutslash) && !empty($path)) {

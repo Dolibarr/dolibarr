@@ -40,16 +40,6 @@ class ReceptionLineBatch extends CommonObjectLine
 	public $db;
 
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'receptionlinebatch';

@@ -53,18 +53,6 @@ class StockTransfer extends CommonObject
 	public $table_element_line = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-
-	/**
 	 * @var string[] List of child tables. To know object to delete on cascade.
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
@@ -195,6 +183,10 @@ class StockTransfer extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
+
 		$this->origin_type = 'StockTransfer@product/stock/stocktransfer';
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -1078,27 +1070,3 @@ class StockTransfer extends CommonObject
 		return $error;
 	}
 }
-
-/**
- * Class StockTransferLine. You can also remove this and generate a CRUD class for lines objects.
- */
-//class StockTransferLine
-//{
-//	// To complete with content of an object StockTransferLine
-//	// We should have a field rowid, fk_stocktransfer and position
-//
-//	/**
-//	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-//	 */
-//	public $isextrafieldmanaged = 0;
-//
-//	/**
-//	 * Constructor
-//	 *
-//	 * @param DoliDB $db Database handler
-//	 */
-//	public function __construct(DoliDB $db)
-//	{
-//		$this->db = $db;
-//	}
-//}
