@@ -892,9 +892,9 @@ class FormFile
 					}
 					$out .= '<a class="documentdownload paddingright" ';
 					if (getDolGlobalString('MAIN_FILES_OPEN_NEWTAB') && getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
-						print 'target="_blank" ';
+						$out .= 'target="_blank" ';
 					}
-					print 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
