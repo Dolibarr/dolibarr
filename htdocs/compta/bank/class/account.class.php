@@ -51,12 +51,6 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
@@ -421,6 +415,8 @@ class Account extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 
 		$this->balance = 0;
 

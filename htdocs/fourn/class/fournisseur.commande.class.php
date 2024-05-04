@@ -75,12 +75,6 @@ class CommandeFournisseur extends CommonOrder
 	public $picto = 'supplier_order';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -121,16 +115,6 @@ class CommandeFournisseur extends CommonOrder
 	//									                            -> 6=Canceled -> (reopen) 2=Approved
 	//  		                                      -> 9=Refused  -> (reopen) 1=Validated
 	//  Note: billed or not is on another field "billed"
-
-	/**
-	 * @var array List of status
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var array List of status short
-	 */
-	public $labelStatusShort;
 
 	public $billed;
 
@@ -464,6 +448,8 @@ class CommandeFournisseur extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 
