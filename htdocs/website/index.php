@@ -3491,12 +3491,58 @@ if (!GETPOST('hide_websitemenu')) {
 											    // ...
 											//});
 
+											CKEDITOR.instances[idtouse].on(\'change\', function() {
+												$(this.element.$).addClass(\'modified\');
+											})
 										} else {
 											console.warn("A html section has the contenteditable=true attribute but has no id attribute");
 										}
 									})
 
 									isEditingEnabled = true;
+
+									// Trigger the function when clicking outside the elements with contenteditable=true attribute
+									$(document).on(\'click\', function(e) {
+										var target = $(e.target);
+										// Check if the click is outside the elements with contenteditable=true attribute
+										if (!target.closest(\'[contenteditable="true"]\').length) {
+											// Repeat through the elements with contenteditable="true" attribute
+											$(\'[contenteditable="true"]\').each(function() {
+												var idToUse = $(this).attr(\'id\');
+												var elementType = $(this).prop("tagName").toLowerCase(); // Get the tag name (div, section, footer...)
+												var instance = CKEDITOR.instances[idToUse];
+												// Check if the element has been modified
+												if ($(this).hasClass(\'modified\')) {
+													var content = instance.getData();
+													content = "\\n" + content;
+
+													// Retrieving the content and ID of the element
+													var elementId = $(this).attr(\'id\');
+
+													// Sending data via AJAX
+													$.ajax({
+														type: \'POST\',
+														url: \'' . DOL_URL_ROOT . '/core/ajax/editinline.php\',
+														data: {
+															website_ref: \''.$website->ref.'\',
+															page_id: \'' . $websitepage->id . '\',
+															content: content,
+															element_id: elementId,
+															element_type: elementType,
+															action: \'updatedElementContent\',
+															token: \'' . newToken() . '\'
+														},
+														success: function(response) {
+															console.log(response);
+														}
+													});
+
+													$(this).removeClass(\'modified\');
+												}
+											});
+										}
+									});
+
 								} else {
 									console.log("Disable inline edit");
 									for(name in CKEDITOR.instances) {
