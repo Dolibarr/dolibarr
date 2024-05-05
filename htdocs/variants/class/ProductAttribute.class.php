@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,11 +18,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/variants/class/ProductAttribute.class.php
+ *	\ingroup    variants
+ *	\brief      File of the ProductAttribute class
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * Class ProductAttribute
- * Used to represent a product attribute
+ * Used to represent a Product attribute
+ * Examples:
+ * - Attribute 'color' (of type ProductAttribute) with values 'white', 'blue' or 'red' (each of type ProductAttributeValue).
+ * - Attribute 'size' (of type ProductAttribute) with values 'S', 'L' or 'XL' (each of type ProductAttributeValue).
  */
 class ProductAttribute extends CommonObject
 {
@@ -31,6 +40,7 @@ class ProductAttribute extends CommonObject
 	 * @var DoliDB
 	 */
 	public $db;
+
 	/**
 	 * @var string ID of module.
 	 */
@@ -55,17 +65,6 @@ class ProductAttribute extends CommonObject
 	 * @var string Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_product_attribute';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
@@ -144,6 +143,7 @@ class ProductAttribute extends CommonObject
 	 * @var ProductAttributeValue[]
 	 */
 	public $lines = array();
+
 	/**
 	 * @var ProductAttributeValue
 	 */
@@ -165,6 +165,9 @@ class ProductAttribute extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -326,7 +329,7 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Returns an array of all product variants
+	 * Returns an array with all the ProductAttribute objects of a given entity
 	 *
 	 * @return ProductAttribute[]
 	 */
@@ -366,9 +369,9 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Updates a product attribute
 	 *
-	 * @param   User    $user      Object user
-	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int 				Return integer <0 KO, >0 OK
+	 * @param   User            $user           User who updates the attribute
+	 * @param   0|1             $notrigger      1 = Do not execute trigger (0 by default)
+	 * @return 	int<min,-1>|1                   <0 if KO, 1 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -782,9 +785,9 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Returns the number of products that are using this attribute
+	 * Return the number of product variants using this attribute
 	 *
-	 * @return int
+	 * @return int<-1,max>		-1 if K0, nb of variants using this attribute
 	 */
 	public function countChildProducts()
 	{
@@ -793,7 +796,7 @@ class ProductAttribute extends CommonObject
 		$count = 0;
 
 		// Clean parameters
-		$this->id = $this->id > 0 ? $this->id : 0;
+		$this->id = ($this->id > 0) ? $this->id : 0;
 
 		// Check parameters
 		if (empty($this->id)) {
@@ -827,9 +830,9 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Test if used by a product
+	 * Test if this attribute is used by a Product
 	 *
-	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
+	 * @return -1|0|1			Return -1 if KO, 0 if not used, 1 if used
 	 */
 	public function isUsed()
 	{

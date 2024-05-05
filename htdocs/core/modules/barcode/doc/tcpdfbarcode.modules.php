@@ -144,7 +144,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	Save an image file on disk (with no output)
 	 *
 	 *	@param	   string	    $code		      Value to encode
-	 *	@param	   string	    $encoding	      Mode of encoding
+	 *	@param	   string	    $encoding	      Mode of encoding ('QRCODE', 'EAN13', ...)
 	 *	@param	   string	    $readable	      Code can be read
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)

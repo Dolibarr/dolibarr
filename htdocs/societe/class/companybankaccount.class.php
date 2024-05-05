@@ -466,14 +466,15 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
+	 *	@param	string	$ref		Ref of record
 	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
 	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
 	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
+	public function fetch($id, $ref = '', $socid = 0, $default = 1, $type = 'ban')
 	{
-		if (empty($id) && empty($socid)) {
+		if (empty($id) && empty($ref) && empty($socid)) {
 			return -1;
 		}
 
@@ -486,6 +487,8 @@ class CompanyBankAccount extends Account
 
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
+		} elseif ($ref) {
+			$sql .= " WHERE rowid = ".((int) $ref);
 		} elseif ($socid > 0) {
 			$sql .= " WHERE fk_soc  = ".((int) $socid);
 			if ($default > -1) {

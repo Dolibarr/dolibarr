@@ -46,21 +46,9 @@ class StockTransferLine extends CommonObjectLine
 	public $table_element = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for stocktransferline. Must be the part after the 'object_' into object_stocktransferline.png
 	 */
 	public $picto = 'stocktransferline@stocktransfer';
-
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -135,6 +123,9 @@ class StockTransferLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

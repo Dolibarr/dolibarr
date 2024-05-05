@@ -18,11 +18,7 @@ concurrency:
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   PHAN_CONFIG: >
-    ${{
-      ( github.event.schedule || github.event_name == 'workflow_dispatch' )
-        && 'dev/tools/phan/config_extended.php'
-        || 'dev/tools/phan/config.php'
-    }}
+    ${{ 'dev/tools/phan/config.php' }}
   PHAN_BASELINE: dev/tools/phan/baseline.txt
   PHAN_MIN_PHP: 7.0
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}

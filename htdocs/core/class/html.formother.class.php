@@ -1373,10 +1373,7 @@ class FormOther
 			$boxlista .= "\n<!-- Box left container -->\n";
 
 			// Define $box_max_lines
-			$box_max_lines = 5;
-			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
-			}
+			$box_max_lines = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 			$ii = 0;
 			foreach ($boxactivated as $key => $box) {

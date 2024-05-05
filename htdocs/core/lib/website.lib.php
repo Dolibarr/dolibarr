@@ -508,9 +508,10 @@ function dolWebsiteSaveContent($content)
  * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
  * @param 	int		$containerid		Id of container.
  * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
+ * @param 	array	$parameters			Array of parameters to append to the URL.
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0)
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
 {
 	global $db, $website;
 
@@ -569,6 +570,10 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	}
 
 	if ($newurl) {
+		if (!empty($parameters)) {
+			$separator = (parse_url($newurl, PHP_URL_QUERY) == null) ? '?' : '&';
+			$newurl = $newurl . $separator . http_build_query($parameters);
+		}
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}

@@ -574,6 +574,9 @@ $title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Co
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }
+if (empty($object->id)) {
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url);
@@ -877,7 +880,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Categories
 			if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', 'parent', 64, 0, 3);
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
@@ -1175,7 +1178,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$arrayselected = array();
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, null, null, null, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', '', 64, 0, 3);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, 'contact');
 				foreach ($cats as $cat) {
@@ -1460,7 +1463,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled("propal")) {
 			print '<tr><td class="titlefield tdoverflow">'.$langs->trans("ContactForProposals").'</td><td>';
-			print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
+			print $object->ref_propal ? $object->ref_propal : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'<span>';
 			print '</td></tr>';
 		}
 
@@ -1472,9 +1475,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td>';
-			$none = $langs->trans("NoContactForAnyOrder");
+			$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>';
 			if (isModEnabled("shipping")) {
-				$none = $langs->trans("NoContactForAnyOrderOrShipments");
+				$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrderOrShipments").'</span>';
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
 			print '</td></tr>';
@@ -1482,13 +1485,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled('contract')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
-			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
+			print $object->ref_contrat ? $object->ref_contrat : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>';
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('invoice')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
-			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+			print $object->ref_facturation ? $object->ref_facturation : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>';
 			print '</td></tr>';
 		}
 

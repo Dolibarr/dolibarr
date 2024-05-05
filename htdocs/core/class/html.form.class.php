@@ -3857,6 +3857,7 @@ class Form
 					'tva_tx_formated' => price($objp->tva_tx, 0, $langs, 1, -1, 2),
 					'tva_tx' => price2num($objp->tva_tx),
 					'default_vat_code' => $objp->default_vat_code,
+					'supplier_ref' => $objp->ref_fourn,
 					'discount' => $outdiscount,
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
@@ -3896,6 +3897,7 @@ class Form
 					'tva_tx_formated' => price($objp->tva_tx),
 					'tva_tx' => price2num($objp->tva_tx),
 					'default_vat_code' => $objp->default_vat_code,
+					'supplier_ref' => $objp->ref_fourn,
 					'discount' => $outdiscount,
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
@@ -8078,19 +8080,19 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param	string	$objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
-	 * @param	string	$htmlname             Name of HTML select component
-	 * @param 	int		$preSelectedValue     Preselected value (ID of element)
-	 * @param 	string|int<0,1> $showempty	''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string	$searchkey            Search criteria
-	 * @param	string	$placeholder          Place holder
-	 * @param	string	$morecss              More CSS
-	 * @param	string	$moreparams           More params provided to ajax call
-	 * @param 	int		$forcecombo           Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int<0,1>	$disabled             1=Html component is disabled
-	 * @param	string	$selected_input_value Value of preselected input text (for use with ajax)
-	 * @param	string	$objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
-	 * @return  string	                      	Return HTML string
+	 * @param	string		$objectdesc           	'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param	string		$htmlname             	Name of HTML select component
+	 * @param 	int			$preSelectedValue     	Preselected value (ID of element)
+	 * @param 	string|int<0,1> $showempty			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string		$searchkey            	Search criteria
+	 * @param	string		$placeholder          	Place holder
+	 * @param	string		$morecss              	More CSS
+	 * @param	string		$moreparams           	More params provided to ajax call
+	 * @param 	int			$forcecombo           	Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int<0,1>	$disabled             	1=Html component is disabled
+	 * @param	string		$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param	string		$objectfield          	Object:Field that contains the definition of parent (in table $fields or $extrafields). Example: 'Object:xxx' or 'Object@module:xxx' (old syntax 'Module_Object:xxx') or 'Object:options_xxx' or 'Object@module:options_xxx' (old syntax 'Module_Object:options_xxx')
+	 * @return  string	    						Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
@@ -8100,15 +8102,16 @@ class Form
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
 		$InfoFieldList = array();
+		$classname = '';
 		$filter = '';  // Ensure filter has value (for static analysis)
 		$sortfield = '';  // Ensure filter has value (for static analysis)
 
 		if ($objectfield) {	// We must retrieve the objectdesc from the field or extrafield
-			// Example: $objectfield = 'product:options_package'
+			// Example: $objectfield = 'product:options_package' or 'myobject@mymodule:options_myfield'
 			$tmparray = explode(':', $objectfield);
 			$objectdesc = '';
 
-			// Load object according to $id and $element
+			// Get instance of object from $element
 			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
 
 			$reg = array();
@@ -8127,7 +8130,7 @@ class Form
 			} else {
 				// For a property in ->fields
 				if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
-					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];	// should be integer:ObjectClass...
 					$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
 				}
 			}
@@ -8167,7 +8170,7 @@ class Form
 
 		// Make some replacement in $filter. May not be used if we used the ajax mode with $objectfield. In such a case
 		// we propagate the $objectfield and not the filter and replacement is done by the ajax/selectobject.php component.
-		$sharedentities = getEntity($objecttmp->element);
+		$sharedentities = (is_object($objecttmp) && property_exists($objecttmp, 'element')) ? getEntity($objecttmp->element) : strtolower($classname);
 		$filter = str_replace(
 			array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
 			array($conf->entity, $sharedentities, $user->id),
@@ -8586,6 +8589,7 @@ class Form
 			}
 		}
 		$out .= "</select>";
+
 		// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
@@ -8978,7 +8982,8 @@ class Form
 
 
 	/**
-	 * Show a multiselect dropbox from an array. If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
+	 * Show a multiselect dropbox from an array.
+	 * If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
 	 * @param string 	$htmlname 	Name of HTML field
 	 * @param array<string,array{label:string,checked:string,enabled?:string,type?:string,langfile?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
@@ -9126,7 +9131,7 @@ class Form
 
 		if ($rendermode == 0) {
 			$arrayselected = array();
-			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 3);
 			foreach ($categories as $c) {
 				$arrayselected[] = $c->id;
 			}

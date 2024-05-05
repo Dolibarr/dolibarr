@@ -71,19 +71,19 @@ $item->defaultFieldValue = $webPortalTheme->primaryColorHex;
 
 // Logo URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_MENU_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 
 // Background URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK')->setAsYesNo();

@@ -28,7 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
 
-$langs->loadLangs(array("admin", "website"));
+$langs->loadLangs(array("admin", "website", "other"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -208,7 +208,7 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-if ($action == 'edit') {
+if ($action == 'edit' || $action == 'deleteproperty') {
 	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
@@ -280,7 +280,7 @@ if ($action == 'edit') {
 }
 
 
-if ($action == 'edit' || $action == 'create') {
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
 	if (!empty($currentConfigurations)) {
@@ -294,7 +294,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<tr class="liste_titre">';
 			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
 			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
-			$out .= '<a class="deletefielda  marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';

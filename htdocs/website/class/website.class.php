@@ -47,15 +47,7 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-
 	protected $childtablesoncascade = array();
-
 
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
@@ -149,6 +141,8 @@ class Website extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -1659,9 +1653,10 @@ class Website extends CommonObject
 	 * Overite template by copying all files
 	 *
 	 * @param	string	$pathtotmpzip		Path to the tmp zip file
+	 * @param   string  $exportPath         Path to export files to (specified by the user)
 	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function overwriteTemplate(string $pathtotmpzip)
+	public function overwriteTemplate(string $pathtotmpzip, $exportPath = '')
 	{
 		global $conf;
 
@@ -1683,21 +1678,54 @@ class Website extends CommonObject
 
 		// Replace modified files into the doctemplates directory.
 		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
-			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+			// If the user has not specified a path
+			if (empty($exportPath)) {
+				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+			} else {
+				$exportPath = rtrim($exportPath, '/');
+				if (strpos($exportPath, '..') !== false) {
+					setEventMessages("Invalid path.", null, 'errors');
+					return -1;
+				}
+				// if path start with / (absolute path)
+				if (strpos($exportPath, '/') === 0) {
+					if (!is_dir($exportPath)) {
+						setEventMessages("The specified absolute path does not exist.", null, 'errors');
+						return -1;
+					}
+
+					if (!is_writable($exportPath)) {
+						setEventMessages("The specified absolute path is not writable.", null, 'errors');
+						return -1;
+					}
+				} else {
+					// relatif path
+					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+				}
+			}
 		} else {
 			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
 			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
 		}
 
+
 		dol_mkdir($destdir);
+
+		if (!is_writable($destdir)) {
+			setEventMessages("The specified path is not writable.", null, 'errors');
+			return -1;
+		}
 
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
 		// Remove the file README and LICENSE from the $destdir (already into the containers directory)
-		dol_delete_file($destdir.'/README.md');
-		dol_delete_file($destdir.'/LICENSE');
+		if (empty($exportPath)) {
+			dol_delete_file($destdir.'/README.md');
+			dol_delete_file($destdir.'/LICENSE');
+		}
 
 		// Remove non required files (will be re-generated during the import)
 		dol_delete_file($destdir.'/containers/index.php');

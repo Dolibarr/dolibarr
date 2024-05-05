@@ -12,9 +12,10 @@ ResourceCard=Resource card
 NewResource=New resource
 AddResource=Create a resource
 ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
 ResourceFormLabel_description=Resource description
-
+ResourceType=Resource type
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Resources linked to element
 
 ShowResource=Show resource

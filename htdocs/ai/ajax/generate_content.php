@@ -61,9 +61,10 @@ if (is_null($jsonData)) {
 }
 $ai = new Ai($db);
 
-$function = 'textgeneration';
+// Get parameters
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgenerationemail', 'textgenerationwebpage', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
-$format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
+$format = empty($jsonData['format']) ? '' : $jsonData['format'];
 
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 

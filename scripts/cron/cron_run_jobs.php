@@ -102,7 +102,7 @@ if (!isModEnabled('cron')) {
 
 // Check security key
 if ($key != getDolGlobalString('CRON_KEY')) {
-	print "Error: securitykey is wrong\n";
+	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
 

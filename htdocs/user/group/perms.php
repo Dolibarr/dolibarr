@@ -63,6 +63,10 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 }
 
 // Security check
+$socid = 0;
+if (isset($user->socid) && $user->socid > 0) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'user', $id, 'usergroup', '');
 if (!$canreadperms) {
 	accessforbidden();
@@ -78,11 +82,11 @@ $entity = $conf->entity;
 $hookmanager->initHooks(array('groupperms', 'globalcard'));
 
 
-/**
+/*
  * Actions
  */
 
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -210,10 +214,8 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
-
-
 	print '<table class="border centpercent tableforfield">';
 
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
@@ -244,7 +246,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	print '</div>';
+
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
@@ -345,7 +347,7 @@ if ($object->id > 0) {
 				// Show break line
 				print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
 				// Picto and label of module
-				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName).'">';
+				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName()).'">';
 				print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
@@ -427,6 +429,16 @@ if ($object->id > 0) {
 			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
+			$idtouse = $obj->id;
+			if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+				$idtouse = 122;
+			}
+			if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+			}
+			if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+			}
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (preg_match('/_advance$/', $obj->perms)) {
 					print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';

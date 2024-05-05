@@ -58,7 +58,7 @@ if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility
 }
 
-if ($cancel) {
+if (!empty($cancel)) {
 	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
@@ -102,6 +102,12 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, $tmparray[1]);
 			} else {
 				$value = GETPOST($key, 'nohtml');
+				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
+					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
+					foreach ($tmparraymultiselect as $tmpvalue) {
+						$value .= (!empty($value) ? "," : "").$tmpvalue;
+					}
+				}
 			}
 		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
@@ -255,6 +261,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, $tmparray[1]);
 			} else {
 				$value = GETPOST($key, 'nohtml');
+				if (!empty($object->fields[$key]['arrayofkeyval']) && !empty($object->fields[$key]['multiinput'])) {
+					$tmparraymultiselect = GETPOST($key.'_multiselect', 'array');
+					foreach ($tmparraymultiselect as $keytmp => $tmpvalue) {
+						$value .= (!empty($value) ? "," : "").$tmpvalue;
+					}
+				}
 			}
 		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
