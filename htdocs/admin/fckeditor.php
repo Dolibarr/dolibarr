@@ -57,6 +57,7 @@ $modules = array(
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
+	'SPECIALCHAR' => 'SpecialCharActivation',	// Backport from develop
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -69,6 +70,7 @@ $conditions = array(
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
 	'TICKET' => isModEnabled('ticket'),
+	'SPECIALCHAR' => 1,	// Backport from develop
 );
 // Picto
 $picto = array(
@@ -81,6 +83,7 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
+	'SPECIALCHAR' => 'generic'	// Backport from develop
 );
 
 
