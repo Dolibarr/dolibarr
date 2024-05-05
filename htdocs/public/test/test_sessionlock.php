@@ -57,7 +57,7 @@ print 'session_status='.session_status().' (before main.inc.php)';
 print '<br>';
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 // Security
 if ($dolibarr_main_prod) {

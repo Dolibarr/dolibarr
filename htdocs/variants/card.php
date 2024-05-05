@@ -24,7 +24,7 @@
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 require 'lib/variants.lib.php';

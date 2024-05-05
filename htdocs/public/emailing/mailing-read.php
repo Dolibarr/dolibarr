@@ -71,7 +71,7 @@ function llxFooter()
 
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 $mtid = GETPOST('mtid');
 $email = GETPOST('email');

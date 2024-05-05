@@ -45,7 +45,7 @@ if (!defined('NOREQUIREAJAX')) {
 
 session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');

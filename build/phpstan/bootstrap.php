@@ -17,4 +17,4 @@ if (!defined("NOHTTPSREDIRECT")) {
 }
 
 global $conf, $db, $langs, $user;
-include_once __DIR__ . '/../../htdocs/main.inc.php';
+require_once __DIR__ . '/../../htdocs/main.inc.php';

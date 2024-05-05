@@ -41,7 +41,7 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOSTINT('socid');

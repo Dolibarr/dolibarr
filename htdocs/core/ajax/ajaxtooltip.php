@@ -38,7 +38,7 @@ if (!defined('NOHEADERNOFOOTER')) {
 	define('NOHEADERNOFOOTER', '1');
 }
 
-include '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 

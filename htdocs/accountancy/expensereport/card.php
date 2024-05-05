@@ -26,7 +26,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief		Card expense report ventilation
  */
-require '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';

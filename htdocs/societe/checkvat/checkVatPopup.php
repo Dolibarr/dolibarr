@@ -25,7 +25,7 @@ if (! defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 
-require "../../main.inc.php";
+require_once __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
 

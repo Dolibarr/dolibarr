@@ -72,7 +72,7 @@ function llxFooter()
 	print "\n".'</html>'."\n";
 }
 
-require_once '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

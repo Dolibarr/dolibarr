@@ -19,4 +19,4 @@ define('DOL_MAIN_URL_ROOT', '/');
 define('MAIN_DB_PREFIX', 'llx_');
 
 global $conf, $db, $langs, $user;
-// include_once DOL_DOCUMENT_ROOT . '/../../htdocs/main.inc.php';
+// include_once __DIR__ . '/../../htdocs/main.inc.php';

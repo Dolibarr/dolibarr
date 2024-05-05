@@ -24,7 +24,7 @@
 
 
 
-require '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php';
 dol_include_once('/product/stock/class/productlot.class.php');
 dol_include_once('/core/lib/product.lib.php');
 

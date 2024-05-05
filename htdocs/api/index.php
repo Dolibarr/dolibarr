@@ -82,13 +82,7 @@ if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 header('X-Frame-Options: SAMEORIGIN');
 
 
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) {
-	$res = include '../main.inc.php';
-}
-if (!$res) {
-	die("Include of main fails");
-}
+require_once __DIR__ . '/../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 

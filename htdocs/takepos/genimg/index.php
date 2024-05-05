@@ -38,7 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 }
 
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	require '../../main.inc.php'; // Load $user and permissions
+	require_once __DIR__ . '/../../main.inc.php'; // Load $user and permissions
 }
 
 $id = GETPOSTINT('id');

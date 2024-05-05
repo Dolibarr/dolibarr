@@ -46,7 +46,7 @@ if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
