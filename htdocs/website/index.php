@@ -2466,9 +2466,9 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 		$fileofzip = $object->exportWebSite();
-
+		$pathToExport = GETPOST('export_path');
 		if ($fileofzip) {
-			$object->overwriteTemplate($fileofzip);
+			$object->overwriteTemplate($fileofzip, $pathToExport);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -3070,12 +3070,15 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 			}
 
-			// Export web site
-			print '<input type="submit" class="button bordertransp"'.$disabledexport.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+			// // Export web site
+			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
+			print '<input type="submit" class="button bordertransp ' . $extraCssClass . '" ' . $disabledexport . ' value="' . dol_escape_htmltag($exportlabel) . '" name="exportsite">';
 
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
+				$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
+				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl);
+				//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 			}
 
 			// Clone web site
@@ -3488,12 +3491,58 @@ if (!GETPOST('hide_websitemenu')) {
 											    // ...
 											//});
 
+											CKEDITOR.instances[idtouse].on(\'change\', function() {
+												$(this.element.$).addClass(\'modified\');
+											})
 										} else {
 											console.warn("A html section has the contenteditable=true attribute but has no id attribute");
 										}
 									})
 
 									isEditingEnabled = true;
+
+									// Trigger the function when clicking outside the elements with contenteditable=true attribute
+									$(document).on(\'click\', function(e) {
+										var target = $(e.target);
+										// Check if the click is outside the elements with contenteditable=true attribute
+										if (!target.closest(\'[contenteditable="true"]\').length) {
+											// Repeat through the elements with contenteditable="true" attribute
+											$(\'[contenteditable="true"]\').each(function() {
+												var idToUse = $(this).attr(\'id\');
+												var elementType = $(this).prop("tagName").toLowerCase(); // Get the tag name (div, section, footer...)
+												var instance = CKEDITOR.instances[idToUse];
+												// Check if the element has been modified
+												if ($(this).hasClass(\'modified\')) {
+													var content = instance.getData();
+													content = "\\n" + content;
+
+													// Retrieving the content and ID of the element
+													var elementId = $(this).attr(\'id\');
+
+													// Sending data via AJAX
+													$.ajax({
+														type: \'POST\',
+														url: \'' . DOL_URL_ROOT . '/core/ajax/editinline.php\',
+														data: {
+															website_ref: \''.$website->ref.'\',
+															page_id: \'' . $websitepage->id . '\',
+															content: content,
+															element_id: elementId,
+															element_type: elementType,
+															action: \'updatedElementContent\',
+															token: \'' . newToken() . '\'
+														},
+														success: function(response) {
+															console.log(response);
+														}
+													});
+
+													$(this).removeClass(\'modified\');
+												}
+											});
+										}
+									});
+
 								} else {
 									console.log("Disable inline edit");
 									for(name in CKEDITOR.instances) {

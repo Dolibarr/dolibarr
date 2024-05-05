@@ -52,8 +52,14 @@ create table llx_expedition
   size                  float,							-- depth
   weight_units          integer,						-- unit of weight
   weight                float,							-- weight
+
+  signed_status         smallint DEFAULT NULL, 			-- signed status NULL, 0 or 1
+  online_sign_ip		varchar(48),
+  online_sign_name		varchar(64),
+
   note_private          text,
   note_public           text,
+
   model_pdf             varchar(255),
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 
