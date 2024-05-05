@@ -897,8 +897,8 @@ class ExtraFields
 			$sql .= " ".$pos.",";
 			$sql .= " '".$this->db->escape($alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
-			$sql .= " '".$this->db->escape($list)."', ";
-			$sql .= " '".$this->db->escape($printable)."', ";
+			$sql .= " '".$this->db->escape($list)."',";
+			$sql .= " ".((int) $printable).",";
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
