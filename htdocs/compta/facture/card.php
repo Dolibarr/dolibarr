@@ -2108,7 +2108,7 @@ if (empty($reshook)) {
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
 			$tvatx= $line->tva_tx;
-			if (!empty($line->vat_src_code) && !preg_match('/\(/', $tvatx)) {
+			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
 			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
