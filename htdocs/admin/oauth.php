@@ -209,7 +209,7 @@ if ($action == 'delete_entry') {
 $form = new Form($db);
 
 $title = $langs->trans('ConfigOAuth');
-$help_url = 'EN:Module_OAuth|FR:Module_OAuth_EN|ES:Módulo_OAuth_ES';
+$help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
 
 llxHeader('', $title, $help_url);
 
