@@ -2278,6 +2278,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$userstatic->firstname = $task_time->firstname;
 					$userstatic->photo = $task_time->photo;
 					$userstatic->status = $task_time->user_status;
+
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';

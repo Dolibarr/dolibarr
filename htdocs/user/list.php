@@ -559,6 +559,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&amp;limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&amp;optioncss='.urlencode($optioncss);
+}
 if ($search_all != '') {
 	$param .= '&amp;search_all='.urlencode($search_all);
 }
@@ -603,9 +606,6 @@ if ($search_supervisor > 0) {
 }
 if ($search_status != '') {
 	$param .= "&amp;search_status=".urlencode($search_status);
-}
-if ($optioncss != '') {
-	$param .= '&amp;optioncss='.urlencode($optioncss);
 }
 if ($search_categ > 0) {
 	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
@@ -855,7 +855,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
