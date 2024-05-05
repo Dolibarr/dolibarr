@@ -225,6 +225,11 @@ class Expedition extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var int
+	 */
+	public $signed_status = 0;
+
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -258,6 +263,18 @@ class Expedition extends CommonObject
 	 * next status : closed
 	 */
 	const STATUS_SHIPMENT_IN_PROGRESS = 3;
+
+
+	/**
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/**
+	 * Signed status
+	 */
+	const STATUS_SIGNED = 1;
+
 
 
 	/**
@@ -603,6 +620,7 @@ class Expedition extends CommonObject
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
 		$sql .= ", e.note_private, e.note_public";
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
+		$sql .= ', e.signed_status';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', s.libelle as shipping_method';
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
@@ -653,7 +671,7 @@ class Expedition extends CommonObject
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
-
+				$this->signed_status        = $obj->signed_status;
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
 
