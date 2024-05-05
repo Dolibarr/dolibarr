@@ -1586,7 +1586,7 @@ if ($action == 'create' || $action == 'presend') {
 			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $codelang);
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array());
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show direct link to public interface

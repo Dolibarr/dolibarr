@@ -6047,7 +6047,7 @@ if ($action == 'create') {
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('invoice'));
+		$linktoelem = $form->showLinkToObjectBlock($object, array(), array());
 
 		$compatibleImportElementsList = false;
 		if ($usercancreate

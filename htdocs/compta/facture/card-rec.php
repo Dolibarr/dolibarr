@@ -1786,7 +1786,7 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array());
 
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
