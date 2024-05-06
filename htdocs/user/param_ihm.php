@@ -32,10 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
 
-// Defini si peux lire/modifier permisssions
+// Defini si peux lire/modifier permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
@@ -110,10 +110,16 @@ if (empty($reshook)) {
 				$tabparam["MAIN_LANG_DEFAULT"] = '';
 			}
 
-			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
+			if (GETPOST("check_MAIN_SIZE_LISTE_LIMIT") == "on") {
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOSTINT("MAIN_SIZE_LISTE_LIMIT");
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+			}
+
+			if (GETPOST("check_MAIN_SIZE_SHORTLIST_LIMIT") == "on") {
+				$tabparam["MAIN_SIZE_SHORTLIST_LIMIT"] = GETPOSTINT("MAIN_SIZE_SHORTLIST_LIMIT");
+			} else {
+				$tabparam["MAIN_SIZE_SHORTLIST_LIMIT"] = '';
 			}
 
 			if (GETPOST("check_AGENDA_DEFAULT_VIEW") == "on") {
@@ -132,7 +138,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = implode(
 					',',
 					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array())
 				);
@@ -142,7 +148,7 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = join(
+				$tabparam['THEME_ELDY_BACKTITLE1'] = implode(
 					',',
 					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array())
 				);
@@ -173,6 +179,10 @@ if (empty($reshook)) {
 			}
 
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
+
+			// Clear cache of widgets (because we may have modified the length of cached widget lists)
+			$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
+			dol_delete_dir_recursive($cachedir);
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
@@ -209,16 +219,16 @@ if (isModEnabled('holiday') || isModEnabled('expensereport')) {
 if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label'=>'ProductsAndServicesArea', 'picto'=>'product');
 }
-if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
+if (isModEnabled("propal") || isModEnabled('order') || isModEnabled('intervention') || isModEnabled('contract')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
 }
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
 }
 if (isModEnabled('agenda')) {
@@ -307,8 +317,11 @@ if ($action == 'edit') {
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
 
-                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
+                if (jQuery("#check_MAIN_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
         		else { jQuery("#MAIN_SIZE_LISTE_LIMIT").attr(\'disabled\',\'disabled\'); }
+
+                if (jQuery("#check_MAIN_SIZE_SHORTLIST_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_SHORTLIST_LIMIT").removeAttr(\'disabled\'); }
+        		else { jQuery("#MAIN_SIZE_SHORTLIST_LIMIT").attr(\'disabled\',\'disabled\'); }
 
                 if (jQuery("#check_AGENDA_DEFAULT_VIEW").prop("checked")) { jQuery("#AGENDA_DEFAULT_VIEW").removeAttr(\'disabled\'); }
         		else { jQuery("#AGENDA_DEFAULT_VIEW").attr(\'disabled\',\'disabled\'); }
@@ -322,7 +335,8 @@ if ($action == 'edit') {
         	init_myfunc();
         	jQuery("#check_MAIN_LANDING_PAGE").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_LANG_DEFAULT").click(function() { init_myfunc(); });
-            jQuery("#check_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
+            jQuery("#check_MAIN_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
+            jQuery("#check_MAIN_SIZE_SHORTLIST_LIMIT").click(function() { init_myfunc(); });
             jQuery("#check_AGENDA_DEFAULT_VIEW").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_THEME").click(function() { init_myfunc(); });
             jQuery("#check_THEME_ELDY_TOPMENU_BACK1").click(function() { init_myfunc(); });
@@ -379,10 +393,18 @@ if ($action == 'edit') {
 	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
 	print '<td>' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT').'</td>';
-	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
+	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_SIZE_LISTE_LIMIT" id="check_MAIN_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
-	print '> <label for="check_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
+	print '> <label for="check_MAIN_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" id="MAIN_SIZE_LISTE_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
+
+	// Max size of lists
+	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeShortList").'</td>';
+	print '<td>' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT').'</td>';
+	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_SIZE_SHORTLIST_LIMIT" id="check_MAIN_SIZE_SHORTLIST_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? " checked" : "");
+	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
+	print '> <label for="check_MAIN_SIZE_SHORTLIST_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
+	print '<td><input class="flat" name="MAIN_SIZE_SHORTLIST_LIMIT" id="MAIN_SIZE_SHORTLIST_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? $object->conf->MAIN_SIZE_SHORTLIST_LIMIT : '').'"></td></tr>';
 
 	print '</table><br>';
 
@@ -438,7 +460,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_end();
 
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
@@ -505,9 +527,15 @@ if ($action == 'edit') {
 
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
-	print '<td>'.(getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') ? $conf->global->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td>';
+	print '<td>'.getDolGlobalString('MAIN_SIZE_LISTE_LIMIT', '&nbsp;').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td></tr>';
+
+	// Max size for lists
+	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeShortList").'</td>';
+	print '<td>'.getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', '&nbsp;').'</td>';
+	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
+	print '<td>'.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? $object->conf->MAIN_SIZE_SHORTLIST_LIMIT : '&nbsp;').'</td></tr>';
 
 	print '</table>';
 	print '</div>';

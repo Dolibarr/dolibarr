@@ -47,7 +47,7 @@ global $langs, $db;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
 

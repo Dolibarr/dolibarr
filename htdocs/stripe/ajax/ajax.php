@@ -1,6 +1,5 @@
 <?php
-
- /*  Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +17,7 @@
 
 /**
  *	\file       htdocs/stripe/ajax/ajax.php
- *	\brief      Ajax action for Stipe ie: Terminal
+ *	\brief      Ajax action for Stipe ie: Terminal. Used when doing payment with Stripe Terminal in TakePOS.
  *
  *  Calling with
  *  action=getConnexionToken return a token of Stripe terminal
@@ -51,8 +50,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 $action = GETPOST('action', 'aZ09');
 $location = GETPOST('location', 'alphanohtml');
 $stripeacc = GETPOST('stripeacc', 'alphanohtml');
-$servicestatus = GETPOST('servicestatus', 'int');
-$amount = GETPOST('amount', 'int');
+$servicestatus = GETPOSTINT('servicestatus');
+$amount = GETPOSTINT('amount');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden('Not allowed to use TakePOS');

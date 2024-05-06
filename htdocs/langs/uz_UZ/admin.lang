@@ -366,9 +366,9 @@ GenericMaskCodes2= <b> {cccc} </b> n kodidagi mijoz kodi <br> <b> {cccc000} a09a
 GenericMaskCodes3=Maskadagi barcha boshqa belgilar buzilmasdan qoladi. <br> bo'sh joylarga ruxsat berilmaydi. <br>
 GenericMaskCodes3EAN=Maskadagi barcha boshqa belgilar buzilmasdan qoladi (* yoki "EAN13" ning 13-pozitsiyasidan tashqari). <br> bo'sh joylarga ruxsat berilmaydi. <br> EAN13 da 13-o'rinda oxirgi} dan keyin oxirgi belgi * yoki bo'lishi kerak? . U hisoblangan kalit bilan almashtiriladi. <br>
 GenericMaskCodes4a=<u>31-01-2023 sanasi bilan uchinchi tomon TheCompany kompaniyasining 99-chi %sdagi misol:</u><br>
-GenericMaskCodes4b=<u>31-01-2023-yilda uchinchi tomonda yaratilgan misol:</u><span class='notranslate'>b0342fccfda19b >
-GenericMaskCodes4c=<u>2023-01-31 da yaratilgan mahsulotga misol:</u><span class='notranslate'>b0342fccfda19b
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> b0aee833608</span8 beradi span>ABC2301-000099<span class='notranslate'></b><br>b0aee83365837{100@ }-ZZZ/{dd}/XXX<span class='notranslate'></b> <b>0199-ZZZ/31/XXX<span class='notranslate beradi '></b></span><br><b>IN{yy}{mm}-{0000}-{t}</b>, agar kompaniya turi bo'lsa, <b>IN2301-0099-A<span class='notranslate'>b09a4b739f17f8z beradi. "A_RI" turi uchun kodli "Ma'suliyatli Inscripto"
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Belgilangan niqobga ko'ra moslashtirilgan raqamni qaytaradi.
 ServerAvailableOnIPOrPort=Server <b> %s </b> manzilida <b> %s </b>
 ServerNotAvailableOnIPOrPort=Server <b> %s </b> manzilida <b> %s </b> manzilida mavjud emas
@@ -464,7 +464,7 @@ ExtrafieldParamHelpPassword=Bu maydonni boʻsh qoldirish, bu qiymat shifrlashSIZ
 ExtrafieldParamHelpselect=Qadriyatlar ro'yxati format bo'lishi kerak, bu erda kalit '0' bo'lishi mumkin emas <br> masalan: <br> 2, value2 <br> boshqa to'ldiruvchi xususiyati ro'yxatida qarab ro'yxati: <br> 1, VALUE1 | options_ <i> parent_list_code </i>: parent_key <br> 2, değer2 | options_ <i> parent_list_code </i>: maqsadida parent_key <br> <br> boshqa ro'yxatiga qarab ro'yxatini ega bo'lishi: <br> 1, VALUE1 | <i> parent_list_code </i>: parent_key <br> 2, value2 | <i> parent_list_code </i>: parent_key
 ExtrafieldParamHelpcheckbox=Qadriyatlar ro'yxati format kaliti bo'lgan satrlardan iborat bo'lishi kerak, (agar bu erda '0' bo'lishi mumkin emas) <br> <br> masalan: <br> 1, value1 <br> 2, value2 <br> 3 ,03f03f
 ExtrafieldParamHelpradio=Qadriyatlar ro'yxati format kaliti bo'lgan satrlardan iborat bo'lishi kerak, (agar bu erda '0' bo'lishi mumkin emas) <br> <br> masalan: <br> 1, value1 <br> 2, value2 <br> 3 ,03f03f
-ExtrafieldParamHelpsellist=Qiymatlar roʻyxati jadvaldan olingan<br>Sintaksis: table_name:label_field:id_field::filtersql<br>Misol: c_typent: ::filtersql<br><br>- id_field birlamchi int kalitidirb0342fcczfda19> - filtersql - bu SQL sharti. Bu faqat faol qiymatni ko'rsatish uchun oddiy sinov (masalan, active=1) bo'lishi mumkin<span class='notranslate'><br>Shuningdek, joriy ob'ekt<span sinfining joriy identifikatori bo'lgan filtrda $ID$ dan ham foydalanishingiz mumkin. ='notranslate'><br></span>Filtrda SELECTdan foydalanish uchun in'ektsiyaga qarshi himoyani chetlab o'tish uchun $SEL$ kalit so'zidan foydalaning.<br>agar siz qo'shimcha maydonlarda filtrlashni xohlasangiz extra.fieldcode=... sintaksisidan foydalaning (bu erda maydon kodi - ekstrafield kodi)<br><br> boshqa qo'shimcha atributlar ro'yxatiga qarab ro'yxat:<br>c_typent:libelle:id:options_<i>parent_list_code<spante class='translate </i></span>|parent_column:filtr <br><br>Roʻyxat boshqa roʻyxatga bogʻliq boʻlishi uchun:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758baclum>0333
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Qadriyatlar ro'yxati <br> jadvalidan olingan Sintaksis: table_name: label_field: id_field :: filtersql <br> Misol: c_typent: libelle: id :: filtersql <br> <br> filter faqat oddiy bo'lishi mumkin jodugarda $ ID $ ni ishlatishi mumkin, bu joriy ob'ektning identifikatori <br> Filtrda SELECT qilish uchun $ SEL $ <br> dan foydalaning, agar ekstra maydonlarda filtrlashni xohlasangiz, sintaksisidan foydalaning. extra.fieldcode = ... (bu erda maydon kodi extrafield kodi) <br> <br> boshqa to'ldiruvchi xususiyati ro'yxatida qarab ro'yxatini bo'lishi uchun: <br> c_typent: libelle: id: options_ <i> parent_list_code </i> | parent_column: filtri <br> <br> boshqa ro'yxatiga qarab ro'yxatini ega bo'lish uchun: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filter
 ExtrafieldParamHelplink=Parametrlar ObjectName: Classpath <br> sintaksis: ObjectName: Classpath bo'lishi kerak
 ExtrafieldParamHelpSeparator=<br> oddiy ajratuvchisi uchun bo'sh joyni saqlang holat har bir foydalanuvchi seansida saqlanadi)
@@ -1197,6 +1197,7 @@ Skin=Teri mavzusi
 DefaultSkin=Standart teri mavzusi
 MaxSizeList=Ro'yxat uchun maksimal uzunlik
 DefaultMaxSizeList=Ro'yxatlar uchun standart maksimal uzunlik
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Qisqa ro'yxatlar uchun standart maksimal uzunlik (ya'ni mijozlar kartasida)
 MessageOfDay=Kunning xabari
 MessageLogin=Kirish sahifasidagi xabar
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Eskiroq voqeani eksport qilmang
 SecurityKey = Elektron kalit
 ##### ClickToDial #####
 ClickToDialSetup=To Dial modulini o'rnatish uchun bosing
-ClickToDialUrlDesc=Telefon piktogrammasi bosilganda URL chaqiriladi. URL manzilida siz teglardan foydalanishingiz mumkin<br><b>__PHONETO__b09a4b739f17f80 bo'ladi qo'ng'iroq qilish uchun shaxsning telefon raqami bilan almashtirildi<span class='notranslate'><br><b>__PHONEFROM__b09a4b739f017 qo'ng'iroq qilayotgan shaxsning telefon raqami (sizniki) bilan almashtiriladi<span class='notranslate'><br><b>__LOGIN__b09a4170z span> bu klik orqali kirish bilan almashtiriladi (foydalanuvchi kartasida belgilangan)<span class='notranslate'><br><b>__PASS__ </b> bu tugmani bosish paroli bilan almashtiriladi (foydalanuvchi kartasida belgilangan).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Ushbu modul statsionar kompyuterdan foydalanilganda telefon raqamlarini bosish mumkin bo'lgan havolalarga o'zgartiradi. Bir marta bosish raqamga qo'ng'iroq qiladi. Bu ish stolida yumshoq telefondan foydalanilganda yoki masalan, SIP protokoliga asoslangan CTI tizimidan foydalanilganda telefon qo'ng'irog'ini boshlash uchun ishlatilishi mumkin. Eslatma: Smartfondan foydalanganda telefon raqamlari doim bosilishi mumkin.
 ClickToDialUseTelLink=Telefon raqamlarida faqat "tel:" havolasidan foydalaning
 ClickToDialUseTelLinkDesc=Agar sizning foydalanuvchilaringiz brauzer bilan bir xil kompyuterda o'rnatilgan va brauzeringizda "tel:" bilan boshlangan havolani bosganingizda qo'ng'iroq qiladigan dasturiy ta'minot yoki dasturiy ta'minot interfeysi bo'lsa, ushbu usuldan foydalaning. Agar sizga "sip:" bilan boshlanadigan havola yoki serverning to'liq echimi kerak bo'lsa (mahalliy dasturiy ta'minotni o'rnatishga hojat yo'q), buni "Yo'q" deb belgilashingiz va keyingi maydonni to'ldirishingiz kerak.
@@ -2291,7 +2292,7 @@ APIsAreNotEnabled=API modullari yoqilmagan
 YouShouldSetThisToOff=Buni 0 ga yoki o'chirib qo'yishingiz kerak
 InstallAndUpgradeLockedBy=O'rnatish va yangilanishlar <b> %s </b> fayli bilan qulflangan.
 InstallLockedBy=Oʻrnatish/qayta oʻrnatish <b>%s</b> fayli tomonidan bloklangan.
-InstallOfAddonIsNotBlocked=Qo'shimchalarning o'rnatilishi qulflanmagan. <b>installmodules.lock</b> faylini b0aee83365837fz<span class0 katalogiga yarating ='notranslate'>%s</span></b> tashqi qoʻshimchalar/modullarni oʻrnatishni bloklash.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Eski dastur
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Agar ba'zi onlayn to'lov modullari yoqilgan bo'lsa (Paypal, Stripe, ...), onlayn to'lovni amalga oshirish uchun PDF -ga havola qo'shing.
 DashboardDisableGlobal=Butun dunyo bo'ylab ochiq narsalarning bosh barmog'ini o'chirib qo'ying
@@ -2405,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Sukut bo'yicha yaratilmagan. Faqa
 CSSPage=CSS uslubi
 Defaultfortype=Standart
 DefaultForTypeDesc=Shablon turi uchun yangi elektron pochta yaratishda sukut bo'yicha qo'llaniladigan shablon
-OptionXShouldBeEnabledInModuleY="<b>%s</b>" varianti <span class modulida yoqilishi kerak ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY="<b>%s</b>" varianti <span class= modulida yoqilgan 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Onlayn imzoga ruxsat berish
 AtBottomOfPage=Sahifaning pastki qismida
 FailedAuth=muvaffaqiyatsiz autentifikatsiyalar
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

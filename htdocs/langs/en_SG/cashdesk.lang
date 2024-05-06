@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+NoVAT=No GST for this sale
+TicketVatGrouped=Group GST by rate in tickets|receipts
+MainPrinterToUseMore=empty means the browser printer system

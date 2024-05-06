@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Kan code niet toevoegen aan descriptor. Controleer
 DictionariesCreated=Woordenboek <b> %s </b> succesvol aangemaakt
 DictionaryDeleted=Woordenboek <b> %s </b> succesvol verwijderd
 PropertyModuleUpdated=Property <b>%s</b> is succesvol bijgewerkt
-InfoForApiFile=* Wanneer u voor de eerste keer een bestand genereert, worden alle methoden <strong>voor elk object gemaakt.</strong><br>* Wanneer u in <strong>remove</strong> klikt, verwijdert u gewoon alle methoden voor de <span-klasse ='notranslate'><strong></span>geselecteerd object</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Pagina voor module-instellingen
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=U kunt hier de klasbestanden genereren en bewerken om nieuwe e-maildoelkiezers te bieden voor de module voor massa-e-mailen

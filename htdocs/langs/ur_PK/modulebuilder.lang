@@ -94,7 +94,7 @@ SeeExamples=یہاں مثالیں دیکھیں
 EnabledDesc=اس فیلڈ کو فعال رکھنے کی شرط۔<br><br>مثالیں:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=کیا میدان نظر آتا ہے؟ (مثالیں: 0=کبھی دکھائی نہیں دیتا، 1=فہرست پر نظر آتا ہے اور فارمز بنائیں/اپ ڈیٹ کریں/دیکھیں، 2=صرف فہرست میں مرئی، 3=صرف بنانے/اپ ڈیٹ کرنے/دیکھنے کے فارم پر مرئی (فہرستوں پر نہیں)، 4=فہرستوں پر مرئی اور صرف فارم کو اپ ڈیٹ/دیکھیں (تخلیق نہیں)، 5=صرف فہرست میں دکھائی دیتا ہے اور فارم کو صرف دیکھتا ہے (تخلیق نہیں کرتا، اپ ڈیٹ نہیں کرتا)۔<br><br> منفی قدر کا استعمال کرنے کا مطلب ہے کہ فیلڈ کو فہرست میں بطور ڈیفالٹ نہیں دکھایا جاتا ہے لیکن اسے دیکھنے کے لیے منتخب کیا جا سکتا ہے)۔
 ItCanBeAnExpression=یہ ایک اظہار ہوسکتا ہے۔ مثال:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user -> ہے حق ('چھٹی'، 'تعریف_چھٹی')؟1:5
-DisplayOnPdfDesc=اس فیلڈ کو مطابقت پذیر پی ڈی ایف دستاویزات پر ڈسپلے کریں، آپ "پوزیشن" فیلڈ کے ساتھ پوزیشن کا نظم کر سکتے ہیں۔<br><strong>دستاویز کے لیے:</strong><br>0 = ڈسپلے نہیں کیا گیا <br>1 = ڈسپلے<br>2 = صرف ڈسپلے کریں اگر خالی نہ ہو<br><br>b0e784943 span>دستاویزی خطوط کے لیے :<span class='notranslate'></strong><br>0 = ظاہر نہیں کیا گیا <br>1 = ایک کالم میں ظاہر ہوتا ہے<br>3 = تفصیل کے بعد لائن تفصیل کے کالم میں ڈسپلے<br>4 = تفصیل کے بعد تفصیل کے کالم میں ڈسپلے صرف اس صورت میں جب خالی نہ ہو۔
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=پی ڈی ایف پر
 IsAMeasureDesc=کیا فہرست میں کل حاصل کرنے کے لیے فیلڈ کی قدر کو جمع کیا جا سکتا ہے؟ (مثالیں: 1 یا 0)
 SearchAllDesc=کیا کوئیک سرچ ٹول سے تلاش کرنے کے لیے فیلڈ کا استعمال کیا جاتا ہے؟ (مثالیں: 1 یا 0)
@@ -148,7 +148,7 @@ CSSListClass=فہرست کے لیے سی ایس ایس
 NotEditable=قابل تدوین نہیں۔
 ForeignKey=غیر ملکی چابی
 ForeignKeyDesc=اگر اس فیلڈ کی قدر کسی دوسرے ٹیبل میں موجود ہونے کی ضمانت ہونی چاہیے۔ یہاں ایک قدر مماثل نحو درج کریں: tablename.parentfieldtocheck
-TypeOfFieldsHelp=مثال:<br>varchar(99)<br>ای میل<br>فون<span class='notranslate' ='notranslate'><br></span>ip<br>url<br>پاس ورڈ<br> span>double(24,8)<br>real<br>text<br>html <br>date<br>تاریخ کا وقت<br>ٹائم اسٹیمپ<span class='notranslate' <br></span>انٹیجر<br>انٹیجر:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fcc<b0342f /span><span class='notranslate'><br>'1' کا مطلب ہے کہ ہم ریکارڈ بنانے کے لیے کومبو کے بعد + بٹن شامل کرتے ہیں<br>'فلٹر' ایک ہے یونیورسل فلٹر نحو کی حالت، مثال: '((status:=:1) AND (fk_user:=:__USER_ID__) اور (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=یہ فیلڈ/انتساب کی قسم ہے۔
 AsciiToHtmlConverter=Ascii سے HTML کنورٹر
 AsciiToPdfConverter=Ascii سے پی ڈی ایف کنورٹر
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=ڈسکرپٹر میں کوڈ شامل کرنے م�
 DictionariesCreated=ڈکشنری <b>%s</b> کامیابی کے ساتھ بنائی گئی
 DictionaryDeleted=ڈکشنری <b>%s</b> کو کامیابی سے ہٹا دیا گیا
 PropertyModuleUpdated=پراپرٹی <b>%s</b> کو کامیابی سے اپ ڈیٹ کر دیا گیا ہے۔
-InfoForApiFile=* جب آپ پہلی بار فائل بنائیں گے تو تمام طریقے بنائے جائیں گے <strong>ہر چیز کے لیے۔</strong><br>* جب آپ <strong>ہٹائیں</strong> پر کلک کریں تو آپ <span کلاس کے تمام طریقے ہٹا دیتے ہیں ='notranslate'><strong></span>منتخب کردہ آبجیکٹ</strong>۔
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=ماڈیول سیٹ اپ کے لیے صفحہ
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module

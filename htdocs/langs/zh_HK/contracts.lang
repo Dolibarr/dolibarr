@@ -35,7 +35,7 @@ DeleteAContract=刪除合同
 ActivateAllOnContract=Activate all services
 CloseAContract=關閉合同
 ConfirmDeleteAContract=您確定要刪除此合同及其所有服務嗎？
-ConfirmValidateContract=您確定要以 <span class='notranslate'><b></span> 名義驗證此合同嗎\n %s </b> ？
+ConfirmValidateContract=Are you sure you want to validate this contract under name <b>%s</b>?
 ConfirmActivateAllOnContract=This will open all services (not yet active). Are you sure you want to open all services?
 ConfirmCloseContract=這將關閉所有服務（過期或未過期）。您確定要關閉此合同嗎？
 ConfirmCloseService=您確定要關閉此服務嗎？日期為 <b> %s </b> ？
@@ -78,12 +78,12 @@ CloseAllContracts=關閉所有合同行
 DeleteContractLine=刪除合同行
 ConfirmDeleteContractLine=您確定要刪除此合同行嗎？
 MoveToAnotherContract=將服務轉移到另一個合同中。
-ConfirmMoveToAnotherContract=我選擇了新的目標合同並確認我想將此服務移至此合同中。
+ConfirmMoveToAnotherContract=I chose a new target contract and confirm I want to move this service into this contract.
 ConfirmMoveToAnotherContractQuestion=選擇您想要將此服務移至哪個現有合同（同一第三方）？
 PaymentRenewContractId=續訂合同%s （服務%s）
 ExpiredSince=截止日期
 NoExpiredServices=沒有過期的活動服務
-ListOfServicesToExpireWithDuration=將於 <span class='notranslate'>%s</span> 到期的服務列表\n 天
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
 ListOfServicesToExpireWithDurationNeg=服務列表已過期超過 %s 天
 ListOfServicesToExpire=即將到期的服務列表
 NoteListOfYourExpiredServices=此列表僅包含您作為銷售代錶鍊接到的第三方的合同服務。

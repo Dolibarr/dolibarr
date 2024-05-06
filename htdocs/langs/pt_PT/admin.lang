@@ -465,7 +465,7 @@ ExtrafieldParamHelpselect=Lista de valores devem ser linhas com chave de formato
 ExtrafieldParamHelpcheckbox=A lista de valores deve ser composta por linhas com chave de formato, valor (onde a chave não pode ser '0') <br> <br> por exemplo: <br> 1, valor1 <br> 2, valor2 <br>19bz3, valor3
 ExtrafieldParamHelpradio=A lista de valores deve ser composta por linhas com chave de formato, valor (onde a chave não pode ser '0') <br> <br> por exemplo: <br> 1, valor1 <br> 2, valor2 <br>19bz3, valor3
 ExtrafieldParamHelpsellist=A lista de valores vem de uma tabela<br>Sintaxe: table_name:label_field: id_field::filtersql<br>Exemplo: c_typent:libelle:Id.::filtersql<br><br>- id_field é necessariamente uma chave int primária<br>- filtersql é uma condição SQL. Pode ser um teste simples (por exemplo, active=1) para exibir apenas o valor ativo<br>Você também pode usar $Id.$ em filtro que é o Id. atual do objeto atual<br>Para usar um SELECT no filtro, use a palavra-chave $SEL$ para ignorar o anti -proteção contra injeção.<br>se você deseja filtrar campos extras, use a sintaxe extra.fieldcode=... (onde o campo Código é o Código do campo extra)<br><br>Em encomenda para ter a lista dependendo de outra lista de atributos complementares:<br>c_typent:libelle:Id.:options_ <i>  PANTER_LIST_CODE  </i>  Parent_Column  BS0582FAFE CFDA19BZ0 <br>Em encomenda para ter a lista dependendo de outra lista:<br>c_typent:libelle:Id.:<i>parent_list_code</i>|parent_column:filtro
-ExtrafieldParamHelpchkbxlst=A lista de valores vem de uma tabela<br>Sintaxe: table_name:label_field: id_field::filtersql<br>Exemplo: c_typent:libelle:Id.::filtersql<br><br>o filtro pode ser um teste simples (por exemplo, active=1 ) para exibir apenas o valor ativo<br>Você também pode usar $Id.$ no filtro que é o <span class='notranslate atual '>Id.</span> do objeto atual<br>Para fazer um SELECT no filtro use $SEL$<br>se desejar filtrar em campos extras use a sintaxe extra.fieldcode=... (onde o campo Código é o Código do campo extra)<br><br>Em encomenda para ter a lista dependendo de outra lista de atributos complementares:<br>c_typent:libelle: Id.:options_<i>parent_list_code</i> |parent_column:filtro <br><br>Em encomenda para ter a lista dependendo de outra lista:<br>c_typent:libelle:Id.:<i>parent_list_code</i>|parent_column:filtro
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Os parâmetros devem ser ObjectName:Classpath<br>Sintaxe: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Mantenha vazio para um separador simples<br>Defina como 1 para um separador recolhível (abrir por padrão para uma nova sessão, então o status é mantido para cada sessão utilizador)<br>Defina como 2 para um separador recolhido (recolhido por padrão para uma nova sessão, então o status é mantido antes de cada sessão utilizador)
 LibraryToBuildPDF=Biblioteca utilizada para gerar PDF
@@ -543,7 +543,7 @@ DAV_ALLOW_PRIVATE_DIRTooltip=O diretoria genérico privado é um WebDAV diretori
 DAV_ALLOW_PUBLIC_DIR=Ative o público genérico diretoria (WebDAV dedicado diretoria chamado "public" - não é necessário fazer login)
 DAV_ALLOW_PUBLIC_DIRTooltip=O público genérico diretoria é um WebDAV diretoria que qualquer pessoa pode acessar (em leitura e modo de gravação), sem necessidade de autorização (login/senha conta).
 DAV_ALLOW_ECM_DIR=Habilite o diretoria privado do DMS/ECM (raiz diretoria do DMS/ECM módulo - login necessário)
-DAV_ALLOW_ECM_DIRTooltip=A raiz diretoria onde todos os arquivos são manualmente carregados ao usar o DMS/ECM <span class='notranslate'>módulo</ intervalo>. Da mesma forma que o acesso pela interface web, você precisará de um login/senha válido com permissões adequadas para acessá-lo.
+DAV_ALLOW_ECM_DIRTooltip=The root directory where all files are manually uploaded when using the DMS/ECM module. Similarly as access from the web interface, you will need a valid login/password with adequate permissions to access it.
 ##### Modules #####
 Module0Name=Utilizadores e Grupos
 Module0Desc=Gestão de Utilizadores / Funcionários e Grupos
@@ -1197,6 +1197,7 @@ Skin=Tema
 DefaultSkin=Tema predefinido
 MaxSizeList=Tamanho máximo da lista
 DefaultMaxSizeList=Tamanho máximo predefinido para listas
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Comprimento máximo padrão para listas curtas (ou seja, no cartão do cliente)
 MessageOfDay=Mensagem do día
 MessageLogin=Mensagem da página de inicio de sessão
@@ -1953,7 +1954,7 @@ Format=Formato
 TypePaymentDesc=0:cliente tipo de pagamento, 1:Fornecedor, Vendedor tipo de pagamento, 2:Ambos clientes e forma de pagamento de fornecedores
 IncludePath=Caminho para o dirétorio "include" (definido na variável %s)
 ExpenseReportsSetup=Configuração do módulo "Relatórios de Despesas"
-TemplatePDFExpenseReports=Modelos de documentos para a produção de relatórios de despesa 
+TemplatePDFExpenseReports=Modelos de documentos para a produção de relatórios de despesa
 ExpenseReportsRulesSetup=Configuração do módulo Relatórios de despesas - Regras
 ExpenseReportNumberingModules=Módulo de numeração de relatórios de despesas
 NoModueToManageStockIncrease=Não foi ativado nenhum módulo capaz de efetuar a gestão automática do acréscimo de stock. O acrescimo de stock será efetuado manualmente.
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

@@ -22,8 +22,8 @@
  *     \brief      	Page that build two frames: One for menu, the other for the target page to show
  *					Usage:
  *					  /externalsite/frames.php to show URL set into setup
- *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into $conf->global->EXTERNAL_SITE_CONTENT_abc
- *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into conf 'EXTERNAL_SITE_CONTENT_abc'
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into conf 'EXTERNAL_SITE_URL_abc'
  */
 
 // Load Dolibarr environment
@@ -35,7 +35,7 @@ $langs->load("other");
 
 $mainmenu = GETPOST('mainmenu', "aZ09");
 $leftmenu = GETPOST('leftmenu', "aZ09");
-$idmenu = GETPOST('idmenu', 'int');
+$idmenu = GETPOSTINT('idmenu');
 $theme = GETPOST('theme', 'aZ09');
 $codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');

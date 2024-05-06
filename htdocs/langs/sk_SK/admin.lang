@@ -106,7 +106,7 @@ NextValueForInvoices=Ďalšie hodnota (faktúry)
 NextValueForCreditNotes=Ďalšie hodnota (dobropisov)
 NextValueForDeposit=Ďalšia hodnota (záloha)
 NextValueForReplacements=Ďalšie hodnota (náhrady)
-MustBeLowerThanPHPLimit=Poznámka: Vaša konfigurácia PHP momentálne obmedzuje maximálnu veľkosť súboru na nahrávanie do <b>%s</b> span> <span class='notranslate'>%s, bez ohľadu na hodnotu tohto parametra
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=Poznámka: No limit je nastavený v konfigurácii PHP
 MaxSizeForUploadedFiles=Maximálna veľkosť nahraných súborov (0, aby tak zabránil akejkoľvek odosielanie)
 UseCaptchaCode=Použite grafický kód (CAPTCHA) na prihlasovacej stránke a niektorých verejných stránkach
@@ -163,7 +163,7 @@ PurgeAreaDesc=Táto stránka vám umožňuje vymazať všetky súbory vygenerova
 PurgeDeleteLogFile=Odstráňte súbory denníka vrátane <b>%s</b> (definovaný pre modul Sys riziko straty údajov)
 PurgeDeleteTemporaryFiles=Odstráňte všetky protokoly a dočasné súbory (bez rizika straty údajov). Parameter môže byť 'tempfilesold', 'logfiles' alebo oba 'tempfilesold+logfiles'. Poznámka: Vymazanie dočasných súborov sa vykoná iba vtedy, ak bol dočasný adresár vytvorený pred viac ako 24 hodinami.
 PurgeDeleteTemporaryFilesShort=Odstráňte denník a dočasné súbory (bez rizika straty údajov)
-PurgeDeleteAllFilesInDocumentsDir=Odstráňte všetky súbory v adresári: <b>%s</b>.%s</b>.%s. 'notranslate'><br></span>Týmto sa vymažú všetky vygenerované dokumenty súvisiace s prvkami (tretie strany, faktúry atď...), súbory nahrané do modulu ECM, výpisy zálohy databázy a dočasné súbory.
+PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.
 PurgeRunNow=Vyčistiť teraz
 PurgeNothingToDelete=Žiadne súbory alebo priečinky na zmazanie
 PurgeNDirectoriesDeleted=<b>%s</b> súbory alebo adresáre odstránené.
@@ -221,13 +221,13 @@ ModulesDevelopDesc=Môžete si tiež vytvoriť svoj vlastný modul alebo nájsť
 DOLISTOREdescriptionLong=Namiesto zapínania <a href="https://www.dolistore.com">www.dolistore.com</a> webovej stránky na nájdenie externého modulu môžete použiť tento vložený nástroj, ktorý vykoná vyhľadávanie na externom trhu za vás (môže byť pomalé, vyžaduje prístup na internet)...
 FreeModule=zadarmo
 CompatibleUpTo=Kompatibilné s verziou %s
-NotCompatible=Zdá sa, že tento modul nie je kompatibilný s vaším Dolibarr %s (Min. %s – Max <span class='notranslate'>b0ecb2zec87f49 rozpätie>).
-CompatibleAfterUpdate=Tento modul vyžaduje aktualizáciu vášho Dolibarr %s (min. %s – max. <span class='notranslate'>%s >).
+NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
+CompatibleAfterUpdate=This module requires an update to your Dolibarr %s (Min %s - Max %s).
 SeeInMarkerPlace=Pozrite si na Trhovisku
 SeeSetupOfModule=Pozrite si nastavenie modulu %s
 SeeSetupPage=Pozrite si stránku nastavenia na %s
 SeeReportPage=Pozrite si stránku správy na adrese %s
-SetOptionTo=Nastavte možnosť <b>%s</b> na <span' class='notranslate %s</span>
+SetOptionTo=Set option <b>%s</b> to %s
 Updated=Aktualizované
 AchatTelechargement=Kúpiť / stiahnuť
 GoModuleSetupArea=Ak chcete nasadiť alebo nainštalovať nový modul, prejdite do oblasti Nastavenie modulu: <a href="%s">%s</a> .
@@ -250,8 +250,8 @@ Security=Zabezpečenie
 Passwords=Heslá
 DoNotStoreClearPassword=Šifrovať heslá uložené v databáze (NIE ako obyčajný text). Dôrazne sa odporúča aktivovať túto možnosť.
 MainDbPasswordFileConfEncrypted=Zašifrovať heslo databázy uložené v conf.php. Dôrazne sa odporúča aktivovať túto možnosť.
-InstrucToEncodePass=Ak chcete mať heslo zakódované do súboru <b>conf.php</b>, nahraďte riadok b0392bzccf /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b0342bzccfda19 >by<span class='notranslate'><br><b>$dolibarr_main_db_pass="crypted:b0ecb2ec87f49";f span class='notranslate'></b>
-InstrucToClearPass=Ak chcete, aby bolo heslo dekódované (vymazané) do súboru <b>conf.php</b>, nahraďte riadok <br><b>$dolibarr_main_db_pass="crypted:...";b09a4b739f17f8z'no<spanlate' ><br></span>by<br><b>$dolibarr_main_db_pass="<span class='0bec7</notranslate>9 ";</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Chráňte vygenerované súbory PDF. Toto sa NEODPORÚČA, pretože to prerušuje hromadné generovanie PDF.
 ProtectAndEncryptPdfFilesDesc=Ochrana dokumentu PDF umožňuje jeho čítanie a tlač pomocou ľubovoľného prehliadača PDF. Úprava a kopírovanie však už nie je možné. Všimnite si, že pri použití tejto funkcie nebude fungovať vytváranie globálnych zlúčených súborov PDF.
 Feature=Rys
@@ -268,8 +268,8 @@ OtherResources=Iné zdroje
 ExternalResources=Externé zdroje
 SocialNetworks=Sociálne siete
 SocialNetworkId=ID sociálnej siete
-ForDocumentationSeeWiki=Používateľskú alebo vývojársku dokumentáciu (Doc, FAQ...)<br>nahliadnite na Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s<span class='notranslate'c>65d40 </b>
-ForAnswersSeeForum=V prípade akýchkoľvek ďalších otázok alebo pomoci môžete použiť fórum Dolibarr:<br><b><a href="%s" target="_blank" rel="noopener noreferrer"> /span><span class='notranslate'>%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Tu je niekoľko zdrojov na získanie pomoci a podpory s Dolibarrom.
 HelpCenterDesc2=Niektoré z týchto zdrojov sú dostupné iba v <b>angličtine</b>.
 CurrentMenuHandler=Aktuálna ponuka handler
@@ -290,8 +290,8 @@ EMailsSetup=Nastavenie e-mailov
 EMailsDesc=Táto stránka vám umožňuje nastaviť parametre alebo možnosti odosielania e-mailov.
 EmailSenderProfiles=Profily odosielateľov e-mailov
 EMailsSenderProfileDesc=Túto sekciu môžete ponechať prázdnu. Ak sem zadáte nejaké e-maily, pridajú sa do zoznamu možných odosielateľov v rozbaľovacom poli, keď napíšete nový e-mail.
-MAIN_MAIL_SMTP_PORT=Port SMTP/SMTPS (predvolená hodnota v php.ini: <b>%s<span class='notranslate'>b09a4f739f17 >)
-MAIN_MAIL_SMTP_SERVER=Hostiteľ SMTP/SMTPS (predvolená hodnota v php.ini: <b>%s<span class='notranslate'>b09a4f739f17 >)
+MAIN_MAIL_SMTP_PORT=SMTP/SMTPS Port (default value in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Port SMTP/SMTPS
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Hostiteľ SMTP/SMTPS
 MAIN_MAIL_EMAIL_FROM=E-mail odosielateľa pre automatické e-maily
@@ -345,12 +345,12 @@ ThisIsAlternativeProcessToFollow=Toto je alternatívne nastavenie na manuálne s
 StepNb=Krok %s
 FindPackageFromWebSite=Nájdite balík, ktorý poskytuje funkcie, ktoré potrebujete (napríklad na oficiálnej webovej stránke %s).
 DownloadPackageFromWebSite=Stiahnite si balík (napríklad z oficiálnej webovej stránky %s).
-UnpackPackageInDolibarrRoot=Rozbaľte/rozbaľte zabalené súbory do adresára vášho servera Dolibarr: <b>%sb09a4b839f<span class='notranslate'>b09a4b839f >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=Ak chcete nasadiť/inštalovať externý modul, musíte rozbaliť/rozbaliť archívny súbor do adresára servera vyhradeného pre externé moduly:<br><b>%s</b>
 SetupIsReadyForUse=Nasadenie modulu je dokončené. Musíte však povoliť a nastaviť modul vo svojej aplikácii tak, že prejdete na moduly nastavenia stránky: <a href="%s">%s<span class=' nottranslate'></a></span>.
 NotExistsDirect=Alternatívny koreňový adresár nie je definovaný pre existujúci adresár.<br>
 InfDirAlt=Od verzie 3 je možné definovať alternatívny koreňový adresár. To vám umožňuje ukladať do vyhradeného adresára zásuvné moduly a vlastné šablóny.<br>Stačí vytvoriť adresár v koreňovom adresári Dolibarr (napr.: custom).<br>
-InfDirExample=<br>Potom to deklarujte v súbore <strong>conf.phpb0a65d071f6><fc9z0 class='notranslate'><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt/docht='/span> 'notranslate'><br></span>Ak sú tieto riadky zakomentované znakom „#“, ak ich chcete povoliť, odkomentujte ich odstránením znaku „#“.
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Súbor .zip balíka modulu môžete nahrať odtiaľto:
 CurrentVersion=Dolibarr aktuálna verzia
 CallUpdatePage=Prejdite na stránku, ktorá aktualizuje štruktúru databázy a údaje: %s.
@@ -361,14 +361,14 @@ LastActivationIP=Posledná aktivačná IP
 LastActivationVersion=Najnovšia verzia aktivácie
 UpdateServerOffline=Aktualizovať server offline
 WithCounter=Spravovať počítadlo
-GenericMaskCodes=Môžete zadať akúkoľvek masku číslovania. V tejto maske možno použiť nasledujúce značky:<br><b>{000000}b09a4b839f /span> zodpovedá číslu, ktoré sa zvýši pri každom <span class='notranslate'>%s. Zadajte toľko núl, koľko je požadovaná dĺžka počítadla. Počítadlo bude doplnené nulami zľava, aby bolo toľko núl ako maska. <br><b>{000000+000}</b>, ale rovnaký ako predchádzajúci posun zodpovedajúci číslu napravo od znamienka + sa použije od prvého %s. <br><b>{000000@x}</b> ako predchádzajúci, ale rovnaké počítadlo sa vynuluje po dosiahnutí mesiaca x (x medzi 1 a 12, alebo 0, ak chcete použiť prvé mesiace fiškálneho roka definovaného vo vašej konfigurácii, alebo 99 na vynulovanie každý mesiac). Ak sa použije táto možnosť a x je 2 alebo vyššie, potom sa vyžaduje aj postupnosť {yy}{mm} alebo {yyyy}{mm}. <br><b>{dd}</b> deň (01 až 3). span class='notranslate'><br></span><b>{mm}</b> mesiac (01 až 12). class='notranslate'><br></span><b>{yy}</b>, <span'e class=3b0306 </span>{yyyy}</b> alebo <b>{y}b09a4b739f17f8 rok nad 2, 4 alebo 1 číslo. <span class='notranslate'><br>
-GenericMaskCodes2=<b>{cccc}</b> klientsky kód na'n znakov<br><b>{cccc000}b09fa4b8>39 klient</b09a4b7 na n znakoch nasleduje počítadlo venované zákazníkovi. Toto počítadlo určené pre zákazníka sa vynuluje v rovnakom čase ako globálne počítadlo.<span class='notranslate'><br><b>b06a5f451419e8z </b> Kód typu tretej strany na n znakoch (pozri menu Domov - Nastavenie - Slovník - Typy tretích strán). Ak pridáte túto značku, počítadlo sa bude líšiť pre každý typ tretej strany.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=Všetky ostatné znaky v maske zostanú nedotknuté. <br> Medzery nie sú povolené. <br>
 GenericMaskCodes3EAN=Všetky ostatné znaky v maske zostanú nedotknuté (okrem * alebo ? na 13. pozícii v EAN13).<br>Medzery nie sú povolené.<br> span>V EAN13 by mal byť posledný znak za posledným } na 13. pozícii * alebo ? . Bude nahradený vypočítaným kľúčom.<br>
 GenericMaskCodes4a=<u>Príklad na 99. %s tretej strany TheCompany s dátumom 2023-01-31:</u><br>
-GenericMaskCodes4b=<u>Príklad na tretej strane vytvorený 31.01.2023:</u><span class='notranslate'>b0342fccfda19b >
-GenericMaskCodes4c=<u>Príklad produktu vytvoreného 31.01.2023:</u><span class='notranslate'><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> poskytne b0aee</083f span>ABC2301-000099<span class='notranslate'></b><br>b0aee833065101+01 }-ZZZ/{dd}/XXX<span class='notranslate'></b> poskytne <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> poskytne <b>IN2301-0099-Ab09a4b730 typ spoločnostiak je typ spoločnosti 8 'Responsable Inscripto' s kódom pre typ, ktorý je 'A_RI'
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Vracia číslo prispôsobiteľný podľa tvarovanou maskou.
 ServerAvailableOnIPOrPort=Server je k dispozícii na adrese <b>%s</b> na porte <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server nie je k dispozícii na adrese <b>%s</b> na porte <b>%s</b>
@@ -390,9 +390,9 @@ LanguageFilesCachedIntoShmopSharedMemory=Súbory. Lang vložený do zdieľanej p
 LanguageFile=Jazykový súbor
 ExamplesWithCurrentSetup=Príklady s aktuálnou konfiguráciou
 ListOfDirectories=Zoznam OpenDocument šablóny zoznamov
-ListOfDirectoriesForModelGenODT=Zoznam adresárov obsahujúcich súbory šablón vo formáte OpenDocument.<br><br>Sem vložte úplnú cestu k adresárom.<br>Pridajte návrat vozíka medzi každý adresár.<br>Ak chcete pridať adresár modulu GED, pridajte sem <b> >DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br>b0342fz0Files in 9 directories in musí končiť reťazcom <b>.odt</b> alebo b0aee83365837.ods0 ='notranslate'></b></span>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Počet súborov šablón ODT/ODS nájdených v týchto adresároch
-ExampleOfDirectoriesForModelGen=Príklady syntaxe:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir<span class/mysubdir 'notranslate'><br></span>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> Ak chcete vedieť, ako vytvoriť svoje ODT šablóny dokumentov pred ich uložením do týchto adresárov, prečítajte si wiki dokumentácie:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Pozícia Meno / Priezvisko
@@ -461,10 +461,10 @@ ComputedFormulaDesc=Tu môžete zadať vzorec pomocou iných vlastností objektu
 Computedpersistent=Uložiť vypočítané pole
 ComputedpersistentDesc=Vypočítané nadbytočné polia sa uložia do databázy, avšak hodnota sa prepočíta len pri zmene objektu tohto poľa. Ak vypočítané pole závisí od iných objektov alebo globálnych údajov, táto hodnota môže byť nesprávna!!
 ExtrafieldParamHelpPassword=Ak toto pole ponecháte prázdne, znamená to, že táto hodnota bude uložená BEZ šifrovania (pole je na obrazovke iba skryté hviezdičkami).<br><br>Zadajte hodnota 'dolcrypt' na zakódovanie hodnoty pomocou reverzibilného šifrovacieho algoritmu. Jasné údaje možno stále poznať a upravovať, ale sú zašifrované do databázy.<br><br>Zadajte 'auto' (alebo 'md5', 'sha256', 'password_hash', ...) na použitie predvoleného algoritmu šifrovania hesla (alebo md5, sha256, password_hash...) na uloženie nevratného hashovaného hesla do databázy (žiadny spôsob, ako získať pôvodnú hodnotu)
-ExtrafieldParamHelpselect=Zoznam hodnôt musí byť riadky s formátom key,value (kde kľúč nemôže byť '0')<br><br> : <br>1,value1<br>2,value2b0342fccfda19bzz0,3 span class='notranslate'><br></span>...<br><br>Aby bol zoznam závislý od iného zoznam doplnkových atribútov:<br>1,value1|options_<i>parent_list_codeb0bac>3408 parent_key<span class='notranslate'><br>2,value2|options_<i>parent_list_codeb0ae_key <span>:parentba8 class='notranslate'><br><br>Ak chcete, aby bol zoznam závislý od iného zoznamu:<br>1, value1|<i>parent_list_code</i>:parent_keyb0342fccfda>29bz0 class='notranslate'><i>parent_list_code</i>:parent_key
-ExtrafieldParamHelpcheckbox=Zoznam hodnôt musí byť riadky s formátom key,value (kde kľúč nemôže byť '0')<br><br> : <br>1,value1<br>2,value2<br> span class='notranslate'><br></span>...
-ExtrafieldParamHelpradio=Zoznam hodnôt musí byť riadky s formátom key,value (kde kľúč nemôže byť '0')<br><br> : <br>1,value1<br>2,value2<br> span class='notranslate'><br></span>...
-ExtrafieldParamHelpsellist=Zoznam hodnôt pochádza z tabuľky<br>Syntax: table_name:label_field:id_field::filtersql<br>Príklad: c_typid:libelle: ::filtersql<br><br>- id_field je nevyhnutne primárny kľúč typu intb0342fccfda19b - filtersql je podmienka SQL. Môže to byť jednoduchý test (napr. active=1) na zobrazenie iba aktívnej hodnoty<span class='notranslate'><br>Vo filtri môžete použiť aj $ID$, čo je aktuálne ID aktuálneho objektu<br>Ak chcete vo filtri použiť SELECT, použite kľúčové slovo $SEL$ na obídenie ochrany proti vstreknutiu.<br>ak chcete filtrovať extrapole použite syntax extra.fieldcode=... (kde kód poľa je kód extrapola)<br><br>Ak chcete mať zoznam závisí od iného zoznamu doplnkových atribútov:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>Ak chcete, aby bol zoznam závislý od iného zoznamu:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758bac>33z0_filter
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Zoznam hodnôt pochádza z tabuľky<br>Syntax: table_name:label_field:id_field::filtersql<br>Príklad: c_typid:libelle: ::filtersql<br><br>filter môže byť jednoduchým testom (napr. active=1) na zobrazenie iba aktívnej hodnoty<br>Vo filtri môžete použiť aj $ID$, čo je aktuálne ID aktuálneho objektu<br>Na vykonanie SELECT vo filtri použite $SEL$<br>ak chcete filtrovať extrapolia, použite syntax extra.fieldcode=... (kde kód poľa je kód extrafield)<br><br>Ak chcete, aby bol zoznam závislý od iného zoznamu doplnkových atribútov:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter b0342fccfda19translate'>0319bzf'cc Ak chcete, aby bol zoznam závislý od iného zoznamu:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametre musia byť ObjectName:Classpath<br>Syntax: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Ponechajte prázdne pre jednoduchý oddeľovač<br>Nastavte toto na 1 pre zbalený oddeľovač (predvolene otvorený pre novú reláciu, potom sa stav zachová pre každú reláciu používateľa)<br>Nastavte toto na 2 pre zbalený oddeľovač (predvolene zbalený pre novú reláciu, potom sa stav zachová pre každú reláciu používateľa)
@@ -518,8 +518,8 @@ DependsOn=Tento modul potrebuje modul(y)
 RequiredBy=Tento modul vyžadujú moduly
 TheKeyIsTheNameOfHtmlField=Toto je názov poľa HTML. Na čítanie obsahu stránky HTML, aby ste získali názov kľúča poľa, sú potrebné technické znalosti.
 PageUrlForDefaultValues=Musíte zadať relatívnu cestu adresy URL stránky. Ak do URL zahrniete parametre, bude to účinné, ak všetky parametre v prehliadanej URL budú mať tu definovanú hodnotu.
-PageUrlForDefaultValuesCreate=<br>Príklad:<br>Pre formulár na vytvorenie novej tretej strany je to b0e7843947c06b /span><span class='notranslate'>%s</strong>.<br>Pre adresu URL externých modulov nainštalovaných do vlastný adresár, nezahŕňajte "custom/", takže použite cestu ako <strong>mymodule/mypage.php</strong> a nie vlastnú /mymodule/mypage.php.<br>Ak chcete predvolenú hodnotu, iba ak adresa URL obsahuje nejaký parameter, môžete použiť <strong>%s</strong>
-PageUrlForDefaultValuesList=<br>Príklad:<br>Pre stránku, ktorá obsahuje zoznam tretích strán, je to <strong> ><span class='notranslate'>%s</strong>.<br>Pre adresy URL externých modulov nainštalovaných do vlastného adresára , nezahŕňajte „custom/“, takže použite cestu ako <strong>mymodule/mypagelist.php</strong> a nie custom/mymodule /mypagelist.php.<br>Ak chcete predvolenú hodnotu iba vtedy, ak adresa URL obsahuje nejaký parameter, môžete použiť <strong>%s</strong>
+PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third party, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/", so use path like <strong>mymodule/mypage.php</strong> and not custom/mymodule/mypage.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
+PageUrlForDefaultValuesList=<br>Example:<br>For the page that lists third parties, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/" so use a path like <strong>mymodule/mypagelist.php</strong> and not custom/mymodule/mypagelist.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Všimnite si tiež, že prepísanie predvolených hodnôt pre vytváranie formulárov funguje len pre stránky, ktoré boli správne navrhnuté (takže s parametrom action=create alebo presend...)
 EnableDefaultValues=Povoliť prispôsobenie predvolených hodnôt
 EnableOverwriteTranslation=Povoliť prispôsobenie prekladov
@@ -1197,6 +1197,7 @@ Skin=Skin téma
 DefaultSkin=Default skin téma
 MaxSizeList=Maximálna dĺžka zoznamu
 DefaultMaxSizeList=Základná max. dĺžka zoznamu
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Predvolená maximálna dĺžka pre krátke zoznamy (t. j. na zákazníckej karte)
 MessageOfDay=Správa dňa
 MessageLogin=Prihlasovacia stránka správu
@@ -1249,7 +1250,7 @@ SetupDescription2=Nasledujúce dve časti sú povinné (prvé dve položky v pon
 SetupDescription3=<a href="%s">%s -> %s<span class='0e40dcb6> </span><br><br>Základné parametre používané na prispôsobenie predvoleného správania vašej aplikácie (napr. pre funkcie súvisiace s krajinou).
 SetupDescription4=<a href="%s">%s -> %s<span class='0e40dcb6> </span><br><br>Tento softvér je balíkom mnohých modulov/aplikácií. Moduly súvisiace s vašimi potrebami musia byť povolené a nakonfigurované. Po aktivácii týchto modulov sa zobrazia položky ponuky.
 SetupDescription5=Ďalšie položky ponuky Setup spravujú voliteľné parametre.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'>8cz08 /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Základné parametre používané na prispôsobenie predvoleného správania vašej aplikácie (napr. pre funkcie súvisiace s krajinou).
 SetupDescription4b=Tento softvér je balíkom mnohých modulov/aplikácií. Moduly súvisiace s vašimi potrebami musia byť aktivované. Po aktivácii týchto modulov sa zobrazia položky ponuky.
 AuditedSecurityEvents=Udalosti zabezpečenia, ktoré sú auditované
@@ -1281,7 +1282,7 @@ AvailableModules=Dostupné aplikácie/moduly
 ToActivateModule=Pre aktiváciu modulov, prejdite na nastavenie priestoru (Domov-&gt; Nastavenie-&gt; Modules).
 SessionTimeOut=Time out na zasadnutí
 SessionExplanation=Toto číslo zaručuje, že relácia nikdy nevyprší pred týmto oneskorením, ak čistenie relácie vykoná Internal PHP session cleaner (a nič iné). Interný čistič relácie PHP nezaručuje, že relácia po tomto oneskorení vyprší. Jeho platnosť vyprší po tomto oneskorení a keď sa spustí čistič relácie, takže každý <b>%s/%s</b> prístup, ale iba počas prístupu vykonaného inými reláciami (ak je hodnota 0, znamená to, že vymazanie relácie vykonáva iba externý proces) .<br>Poznámka: na niektorých serveroch s externým mechanizmom čistenia relácií (cron v debiane, ubuntu ...) môžu byť relácie zničené po uplynutí doby definovanej externým nastavením, bez ohľadu na to, aká je tu zadaná hodnota.
-SessionsPurgedByExternalSystem=Zdá sa, že relácie na tomto serveri sú vyčistené externým mechanizmom (cron pod debianom, ubuntu ...), pravdepodobne každý <b>%s</b> sekúnd (= hodnota parametra <b>session.gc_maxlifetime<span class='notranslate'>b09a4b8z39f) , takže zmena hodnoty tu nemá žiadny vplyv. O zmenu oneskorenia relácie musíte požiadať správcu servera.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Dostupné spúšťače
 TriggersDesc=Spúšťače sú súbory, ktoré po skopírovaní do adresára <b>htdocs/core/triggers</b> zmenia správanie pracovného postupu Dolibarr. Realizujú nové akcie, aktivované na udalostiach Dolibarr (založenie novej firmy, validácia faktúr, ...).
 TriggerDisabledByName=Trigger v tomto súbore sú <b>zakázané-NoRun</b> prípona vo svojom názve.
@@ -1306,7 +1307,7 @@ NoEventOrNoAuditSetup=Nebola zaznamenaná žiadna udalosť zabezpečenia. To je 
 NoEventFoundWithCriteria=Pre tieto kritériá vyhľadávania sa nenašla žiadna udalosť zabezpečenia.
 SeeLocalSendMailSetup=Pozrite sa na miestne sendmail nastavenie
 BackupDesc=<b>úplná</b> záloha inštalácie Dolibarr vyžaduje dva kroky.
-BackupDesc2=Zálohujte obsah adresára „documents“ (<b>%s<span class='notranslate'>b09a4b739f17>f8z0 obsahujúce všetky nahrané a vygenerované súbory. To bude zahŕňať aj všetky súbory výpisu vygenerované v kroku 1. Táto operácia môže trvať niekoľko minút.
+BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
 BackupDesc3=Zálohujte štruktúru a obsah svojej databázy (<b>%s</b>) súbor výpisu. Na tento účel môžete použiť nasledujúceho asistenta.
 BackupDescX=Archivovaný adresár by mal byť uložený na bezpečnom mieste.
 BackupDescY=Vygenerovaný súbor výpisu by sa mal skladovať na bezpečnom mieste.
@@ -1349,8 +1350,8 @@ DefineHereComplementaryAttributes=Definujte všetky ďalšie / vlastné atribút
 ExtraFields=Doplnkové atribúty
 ExtraFieldsLines=Doplnkové atribúty (linky)
 ExtraFieldsLinesRec=Doplnkové atribúty (šablóny riadkov faktúr)
-ExtraFieldsSupplierOrdersLines=Doplnkové hodnoty ( riadky objednávky ) 
-ExtraFieldsSupplierInvoicesLines=Doplnkové hodnoty ( riadky faktúry ) 
+ExtraFieldsSupplierOrdersLines=Doplnkové hodnoty ( riadky objednávky )
+ExtraFieldsSupplierInvoicesLines=Doplnkové hodnoty ( riadky faktúry )
 ExtraFieldsThirdParties=Doplnkové atribúty (tretia strana)
 ExtraFieldsContacts=Doplnkové atribúty (kontakty/adresa)
 ExtraFieldsMember=Doplnkové atribúty (člen)
@@ -1371,7 +1372,7 @@ SendmailOptionMayHurtBuggedMTA=Funkcia odosielania e-mailov pomocou metódy „P
 TranslationSetup=Nastavenie prekladu
 TranslationKeySearch=Vyhľadajte prekladový kľúč alebo reťazec
 TranslationOverwriteKey=Preprísať prekladový reľazec
-TranslationDesc=Ako nastaviť jazyk zobrazenia:<br>* Predvolené/Celý systém: ponuka <strong>Domov -> Nastavenie -> Displej</strong><br>* Pre používateľa: Kliknite na používateľské meno v hornej časti obrazovky a upravte b0e7843947c06b span>Nastavenie zobrazenia používateľa<span class='notranslate'></strong> na karte používateľa.
+TranslationDesc=How to set the display language:<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* Per user: Click on the username at the top of the screen and modify the <strong>User Display Setup</strong> tab on the user card.
 TranslationOverwriteDesc=Môžete tiež prepísať reťazce vypĺňajúce nasledujúcu tabuľku. Vyberte si jazyk z rozbaľovacej ponuky „%s“, vložte reťazec kľúča prekladu do „%s“ a váš nový preklad do „%s"
 TranslationOverwriteDesc2=Môžete použiť druhú kartu, ktorá vám pomôže zistiť, ktorý prekladový kľúč máte použiť
 TranslationString=Prekladový reťazec
@@ -1379,7 +1380,7 @@ CurrentTranslationString=Aktuálny prekladovy reťazec
 WarningAtLeastKeyOrTranslationRequired=Kritériá vyhľadávania sa vyžadujú aspoň pre kľúč alebo reťazec prekladu
 NewTranslationStringToShow=Novy prekladový reťazec na zobrzenie
 OriginalValueWas=Pôvodný preklad je prepísaný. Pôvodná hodnota bola:<br><br>%s
-TransKeyWithoutOriginalValue=Vynútili ste nový preklad pre prekladový kľúč '<strong>%s<span class='notranslate'></strong></span'> ktorý neexistuje v žiadnych jazykových súboroch
+TransKeyWithoutOriginalValue=You forced a new translation for the translation key '<strong>%s</strong>' that does not exist in any language files
 TitleNumberOfActivatedModules=Aktivované moduly
 TotalNumberOfActivatedModules=Aktivované moduly: <b>%s</b> / <translate' class= ><b></span>%s</b>
 YouMustEnableOneModule=Musíte povoliť aspoň jeden modul
@@ -1511,7 +1512,7 @@ ContractsSetup=Nastaviť modul Zmluvy / Predplatné
 ContractsNumberingModules=Zákazky číslovanie moduly
 TemplatePDFContracts=Modely zmlúv
 FreeLegalTextOnContracts=Poznámka k zmluve
-WatermarkOnDraftContractCards=Vodoznak na návrhy zmluvy ( nie ak prázdne ) 
+WatermarkOnDraftContractCards=Vodoznak na návrhy zmluvy ( nie ak prázdne )
 ##### Members #####
 MembersSetup=Členovia modul nastavenia
 MemberMainOptions=Hlavné voľby
@@ -1686,7 +1687,7 @@ CacheByServerDesc=Napríklad pomocou direktívy Apache "ExpiresByType image/gif 
 CacheByClient=Cache v prehliadači
 CompressionOfResources=Kompresia odpovedí HTTP
 CompressionOfResourcesDesc=Napríklad pomocou direktívy Apache "AddOutputFilterByType DEFLATE"
-TestNotPossibleWithCurrentBrowsers=So súčasnými prehliadačmi taká automatická detekcia nie je možná 
+TestNotPossibleWithCurrentBrowsers=So súčasnými prehliadačmi taká automatická detekcia nie je možná
 DefaultValuesDesc=Tu môžete definovať predvolenú hodnotu, ktorú chcete použiť pri vytváraní nového záznamu, a/alebo predvolené filtre alebo poradie triedenia pri uvádzaní záznamov.
 DefaultCreateForm=Predvolené hodnoty (na použitie vo formulároch)
 DefaultSearchFilters=Predvolené filtre vyhľadávania
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Neexportovať udalosti staršie ako
 SecurityKey = Bezpečnostný kľúč
 ##### ClickToDial #####
 ClickToDialSetup=Kliknite pre Dial Nastavenie modulu
-ClickToDialUrlDesc=Adresa URL volaná po kliknutí na ikonu telefónu. V adrese URL môžete použiť značky<br><b>__PHONETO__b09a4b739f17f to bude nahradené telefónnym číslom osoby, ktorej chcete zavolať<span class='notranslate'><br><b>__PHONEFROM__b09a4f739f17> bude nahradené telefónnym číslom volajúcej osoby (vaším)<span class='notranslate'><br><b>__LOGIN__b09a4b839 span>, ktoré bude nahradené prihlásením pomocou kliknutia (definované na karte používateľa)<span class='notranslate'><br><b>__PASS__ </b>, ktoré bude nahradené heslom clicktodial (definovaným na karte používateľa).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Tento modul mení telefónne čísla, keď používate stolný počítač, na klikateľné odkazy. Kliknutím zavoláte na číslo. Toto je možné použiť na začatie telefonického hovoru, keď používate softvérový telefón na pracovnej ploche alebo keď používate systém CTI založený napríklad na protokole SIP. Poznámka: Pri používaní smartfónu sa na telefónne čísla vždy dá kliknúť.
 ClickToDialUseTelLink=Na telefónne čísla použite iba odkaz „tel:“.
 ClickToDialUseTelLinkDesc=Túto metódu použite, ak vaši používatelia majú softvérový telefón alebo softvérové rozhranie nainštalované na rovnakom počítači ako prehliadač a volajú po kliknutí na odkaz začínajúci „tel:“ vo vašom prehliadači. Ak potrebujete odkaz začínajúci „sip:“ alebo úplné serverové riešenie (nie je potrebná inštalácia lokálneho softvéru), musíte to nastaviť na „Nie“ a vyplniť ďalšie pole.
@@ -1967,11 +1968,11 @@ GoOntoContactCardToAddMore=Ak chcete pridať alebo odstrániť upozornenia pre k
 Threshold=Maximálna hodnota
 BackupDumpWizard=Sprievodca zostavením súboru výpisu databázy
 BackupZipWizard=Sprievodca vytvorením adresára archívu dokumentov
-SomethingMakeInstallFromWebNotPossible=Inštalácia externého modulu z webu nie je možná kôli : 
+SomethingMakeInstallFromWebNotPossible=Inštalácia externého modulu z webu nie je možná kôli :
 SomethingMakeInstallFromWebNotPossible2=Z tohto dôvodu je proces aktualizácie popísaný tu manuálnym procesom, ktorý môže vykonať iba privilegovaný používateľ.
 InstallModuleFromWebHasBeenDisabledContactUs=Inštalácia alebo vývoj externých modulov alebo dynamických webových stránok z aplikácie je momentálne z bezpečnostných dôvodov uzamknutý. Ak potrebujete povoliť túto funkciu, kontaktujte nás.
 InstallModuleFromWebHasBeenDisabledByFile=Inštaláciu externého modulu z aplikácie zakázal váš administrátor. Ak to chcete povoliť, musíte ho požiadať o odstránenie súboru <strong>%s</strong> vlastnosť.
-ConfFileMustContainCustom=Pri inštalácii alebo zostavovaní externého modulu z aplikácie je potrebné uložiť súbory modulu do adresára <strong>%s </strong>. Ak chcete, aby tento adresár spracoval Dolibarr, musíte nastaviť <strong>conf/conf.php</strong> na pridanie 2 riadkov direktív: <br><strong>$dolibarr_main_url_root_alt='/custom';071f065d ='notranslate'><br><strong>$dolibarr_main_document_root_alt='b0ecb2ec'spanec87f49/translate= '></strong>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Zvýrazniť riadok pre prechode kurzora
 HighlightLinesColor=Zvýrazniť farbu čiary pri prechode myšou (použite „ffffff“ pre žiadne zvýraznenie)
 HighlightLinesChecked=Zvýrazniť farbu čiary, keď je začiarknutá (použite 'ffffff' pre žiadne zvýraznenie)
@@ -2065,7 +2066,7 @@ DetectionNotPossible=Zmazanie nie je možné
 UrlToGetKeyToUseAPIs=Adresa URL na získanie tokenu na používanie rozhrania API (po prijatí tokenu sa uloží do tabuľky používateľov databázy a musí byť poskytnutá pri každom volaní rozhrania API)
 ListOfAvailableAPIs=Zoznam dostupných API
 activateModuleDependNotSatisfied=Modul "%s" závisí od modulu "%s", ktorý chýba, takže modul " %1$s" nemusí fungovať správne. Nainštalujte modul "%2$s" alebo deaktivujte modul "%1$s", ak chcete byť v bezpečí pred akýmkoľvek prekvapením
-CommandIsNotInsideAllowedCommands=Príkaz, ktorý sa pokúšate spustiť, nie je v zozname povolených príkazov definovaných v parametri <strong>$dolibarr_main_restrict_os_commands</strong> v class='notranslate'><strong></span>conf.php</strong>.
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=Vstupná stránka
 SamePriceAlsoForSharedCompanies=Ak používate modul pre viacero spoločností, s voľbou „Jedna cena“ bude cena rovnaká pre všetky spoločnosti, ak sú produkty zdieľané medzi prostrediami
 ModuleEnabledAdminMustCheckRights=Modul bol aktivovaný. Povolenia pre aktivované moduly boli udelené iba administrátorom. V prípade potreby možno budete musieť udeliť povolenia iným používateľom alebo skupinám manuálne.
@@ -2074,7 +2075,7 @@ TypeCdr=Ak je dátumom splatnosti dátum faktúry plus delta v dňoch, použite 
 BaseCurrency=Referenčná mena spoločnosti (pre zmenu prejdite do nastavenia spoločnosti)
 WarningNoteModuleInvoiceForFrenchLaw=Tento modul %s je v súlade s francúzskymi zákonmi (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=Tento modul %s je v súlade s francúzskymi zákonmi (Loi Finance 2016), pretože modul Non Reversible Logs je automaticky aktivovaný.
-WarningInstallationMayBecomeNotCompliantWithLaw=Pokúšate sa nainštalovať modul %s, ktorý je externým modulom. Aktivácia externého modulu znamená, že dôverujete vydavateľovi tohto modulu a ste si istí, že tento modul nemá nepriaznivý vplyv na správanie vašej aplikácie a je v súlade so zákonmi vašej krajiny (<span class='notranslate'>%s</ rozpätie>). Ak modul zavádza nelegálnu funkciu, preberáte zodpovednosť za používanie nelegálneho softvéru.
+WarningInstallationMayBecomeNotCompliantWithLaw=You are trying to install module %s that is an external module. Activating an external module means you trust the publisher of that module and that you are sure that this module does not adversely impact the behavior of your application, and is compliant with laws of your country (%s). If the module introduces an illegal feature, you become responsible for the use of illegal software.
 
 MAIN_PDF_MARGIN_LEFT=Ľavý okraj na PDF
 MAIN_PDF_MARGIN_RIGHT=Pravý okraj v PDF
@@ -2262,7 +2263,7 @@ ModuleActivatedMayExposeInformation=Toto rozšírenie PHP môže odhaliť citliv
 ModuleActivatedDoNotUseInProduction=Bol aktivovaný modul určený pre vývoj. Nepovoľujte ho v produkčnom prostredí.
 CombinationsSeparator=Oddeľovací znak pre kombinácie produktov
 SeeLinkToOnlineDocumentation=Príklady nájdete v odkaze na online dokumentáciu v hornej ponuke
-SHOW_SUBPRODUCT_REF_IN_PDF=Ak je funkcia "%s" modulu <b>%s<span class= Používa sa 'notranslate'></b></span>, zobraziť podrobnosti o vedľajších produktoch súpravy vo formáte PDF.
+SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
 AskThisIDToYourBank=Ak chcete získať toto ID, kontaktujte svoju banku
 AdvancedModeOnly=Povolenie je k dispozícii iba v rozšírenom režime povolení
 ConfFileIsReadableOrWritableByAnyUsers=Súbor conf je čitateľný alebo zapisovateľný pre všetkých používateľov. Udeľte povolenie iba používateľovi a skupine webového servera.
@@ -2291,7 +2292,7 @@ APIsAreNotEnabled=Moduly API nie sú povolené
 YouShouldSetThisToOff=Mali by ste to nastaviť na 0 alebo vypnúť
 InstallAndUpgradeLockedBy=Inštalácia a inovácie sú uzamknuté súborom <b>%s</b>
 InstallLockedBy=Inštalácia/opätovná inštalácia je uzamknutá súborom <b>%s</b>
-InstallOfAddonIsNotBlocked=Inštalácie doplnkov nie sú uzamknuté. Vytvorte súbor <b>installmodules.lock</b> do adresára <b><span> ='notranslate'>%s</span></b> na blokovanie inštalácií externých doplnkov/modulov.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Stará implementácia
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Ak sú povolené niektoré online platobné moduly (Paypal, Stripe, ...), pridajte do PDF odkaz na uskutočnenie online platby
 DashboardDisableGlobal=Globálne zakázať všetky palce otvorených objektov
@@ -2405,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Predvolene nie je vytvorený. Vyt
 CSSPage=CSS štýl
 Defaultfortype=Štandardné
 DefaultForTypeDesc=Šablóna sa predvolene používa pri vytváraní nového e-mailu pre daný typ šablóny
-OptionXShouldBeEnabledInModuleY=Možnosť "<b>%s</b>" by mala byť povolená v module <span> ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=Možnosť „<b>%s</b>“ je povolená v module <class= 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Povoliť podpis online
 AtBottomOfPage=V spodnej časti stránky
 FailedAuth=neúspešné overenia
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

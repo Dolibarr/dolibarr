@@ -336,3 +336,5 @@ FTPFailedToUploadFile=Falha ao enviar o ficheiro <b> %s</b>.
 AddFolder=Criar pasta
 FileWasCreateFolder=A pasta <b>%s</b> foi criada
 FTPFailedToCreateFolder=Falha ao criar a pasta <b>%s</b>.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date

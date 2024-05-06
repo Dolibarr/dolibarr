@@ -57,7 +57,7 @@ FileMustHaveOneOfFollowingFormat=要導入的文件必須具有以下格式之�
 DownloadEmptyExampleShort=Download a sample file
 DownloadEmptyExample=下載包含可導入字段的示例和信息的模板文件
 StarAreMandatory=Into the template file, all fields with a * are mandatory fields
-ChooseFormatOfFileToImport=單擊 <span class='notranslate'>%s</span> 選擇要用作導入文件格式的文件格式\n 圖標來選擇它...
+ChooseFormatOfFileToImport=Choose the file format to use as import file format by clicking on the %s icon to select it...
 ChooseFileToImport=上傳文件，然後點擊%s 圖標選擇文件作為源導入文件...
 SourceFileFormat=源文件格式
 FieldsInSourceFile=源文件中的字段
@@ -83,13 +83,13 @@ SelectFormat=選擇此導入文件格式
 RunImportFile=導入數據
 NowClickToRunTheImport=檢查導入模擬的結果。更正所有錯誤並重新測試。 <br> 當模擬報告沒有錯誤時，您可以繼續將數據導入數據庫。
 DataLoadedWithId=導入的數據將在每個數據庫表中具有一個具有以下導入 ID 的附加字段：<b> %s </b> ，以便在調查與此導入相關的問題時可以對其進行搜索。
-ErrorMissingMandatoryValue=源文件中 <span class='notranslate'><b></span> 列中的強制數據為空\n %s </b> 。
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=還有<b> %s </b>  其他源代碼行有錯誤，但輸出受到限制。
 TooMuchWarnings=還有<b> %s </b>  其他源代碼行帶有警告，但輸出受到限制。
 EmptyLine=空行（將被丟棄）
-CorrectErrorBeforeRunningImport=您<b> 必須</b>  更正所有錯誤<b> 在<span class='notranslate'></b></span>之前\n  運行最終導入。
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=文件已導入，編號為 <b> %s </b> 。
-YouCanUseImportIdToFindRecord=您可以通過過濾字段<span class='notranslate'><b></span>來查找數據庫中所有導入的記錄\n import_key='%s' </b> 。
+YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=沒有錯誤和警告的行數：<b> %s </b> 。
 NbOfLinesImported=成功導入的行數：<b> %s </b> 。
 DataComeFromNoWhere=要插入的值來自源文件中的任何地方。
@@ -101,8 +101,8 @@ DataIDSourceIsInsertedInto=使用源文件中的數據找到的父對象的 ID �
 DataCodeIDSourceIsInsertedInto=從代碼中找到的父行的 id 將被插入到以下字段中：
 SourceRequired=數據值是必填項
 SourceExample=可能的數據值示例
-ExampleAnyRefFoundIntoElement=找到元素 <span class='notranslate'><b></span> 的任何引用\n %s </b> 
-ExampleAnyCodeOrIdFoundIntoDictionary=在字典中找到的任何代碼（或 ID）<b> %s </b> 
+ExampleAnyRefFoundIntoElement=Any ref found for element <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionary=在字典中找到的任何代碼（或 ID）<b> %s </b>
 CSVFormatDesc= <b> 逗號分隔值 </b>  文件格式 (.csv)。 <br> 這是一種文本文件格式，其中字段由分隔符分隔 [ %s ]。如果在字段內容中找到分隔符，則字段將按四捨五入字符 [ %s ]。轉義圓字符的轉義字符是 [ %s ]。
 Excel95FormatDesc= <b> Excel </b>  文件格式 (.xls) <br> 這是本機 Excel 95 格式 (BIFF5)。
 Excel2007FormatDesc= <b> Excel </b>  文件格式 (.xlsx) <br> 這是本機 Excel 2007 格式 (SpreadsheetML)。

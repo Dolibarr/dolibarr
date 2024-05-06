@@ -88,6 +88,7 @@ PriceOfRegistration=Precio de inscripción
 PriceOfRegistrationHelp=Precio a pagar por registrarse o participar en el evento
 PriceOfBooth=Precio de suscripción para hacer stand
 PriceOfBoothHelp=Precio de suscripción para hacer stand
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Enlace ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencias o stands
 Attendees=Asistentes
@@ -173,7 +174,7 @@ DateStartEvent=Fecha de inicio del evento
 DateEndEvent=Fecha de finalización del evento
 ModifyStatus=Modificar estado
 ConfirmModifyStatus=Confirmar modificación de estado
-ConfirmModifyStatusQuestion=¿Está seguro de que desea modificar el <span class='notranslate'>%s</span>? registro(s) seleccionado(s)?
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
 RecordsUpdated = %s Registros actualizados
 RecordUpdated = Registro actualizado
 NoRecordUpdated = Sin registro actualizado

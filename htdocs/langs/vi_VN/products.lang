@@ -433,4 +433,6 @@ ModifyValueExtrafields = Sửa đổi giá trị của trường ngoại vi
 OrProductsWithCategories=Hoặc các sản phẩm có thẻ/danh mục
 WarningTransferBatchStockMouvToGlobal = Nếu bạn muốn giải tuần tự hóa sản phẩm này, tất cả hàng tồn kho được xê-ri hóa của nó sẽ được chuyển thành hàng tồn kho toàn cầu
 WarningConvertFromBatchToSerial=Nếu bạn hiện có số lượng cao hơn hoặc bằng 2 cho sản phẩm, việc chuyển sang lựa chọn này có nghĩa là bạn vẫn sẽ có một sản phẩm với các đối tượng khác nhau trong cùng một lô (trong khi bạn muốn có một số sê-ri duy nhất). Bản sao sẽ vẫn tồn tại cho đến khi hoàn thành việc kiểm kê hoặc di chuyển kho thủ công để khắc phục vấn đề này.
+AllowStockMovementVariantParent=Also records stock movements on parent products of variant products
+AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtual product, so no stock is managed for it. By enabling this option, a stock will be managed for parent products and each time a stock quantity is modified for a variant product, the same quantity will be modified for the parent product. You should not need this option, except if you are using variant to manage the same product than parent (but with different descriptions, prices...)
 ConfirmSetToDraftInventory=Bạn có chắc chắn muốn quay lại trạng thái Dự thảo không?<br>Số lượng hiện được đặt trong kho sẽ được đặt lại.

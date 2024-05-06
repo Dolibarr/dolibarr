@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 /**
  * \file       htdocs/core/modules/expensereport/mod_expensereport_sand.php
  * \ingroup    expensereport
- * \brief      Fichier contenant la classe du modele de numerotation de reference de note de frais Sand
+ * \brief      Fichier contenant la class du modele de numerotation de reference de note de frais Sand
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
@@ -120,8 +121,8 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	/**
 	 *  Return next free value
 	 *
-	 *  @param  Object      $object     Object we need next value for
-	 *  @return string                  Value if KO, <0 if KO
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|0                	Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

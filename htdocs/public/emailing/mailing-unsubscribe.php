@@ -23,7 +23,7 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
- *      \brief      Script use to update unsubcribe status of an email
+ *      \brief      Script use to update unsubscribe status of an email
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
@@ -63,7 +63,7 @@ $langs->loadLangs(array("main", "mails"));
 
 $mtid = GETPOST('mtid');
 $email = GETPOST('email');
-$tag = GETPOST('tag');	// To retreive the emailing, and recipient
+$tag = GETPOST('tag');	// To retrieve the emailing, and recipient
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
 

@@ -30,6 +30,7 @@ global $conf, $user, $langs, $db;
 require_once dirname(__FILE__) . '/../../htdocs/master.inc.php';
 require_once dirname(__FILE__) . '/../../htdocs/core/class/CMailFile.class.php';
 require_once dirname(__FILE__) . '/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -46,90 +47,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupStaticAttributes enabled
  * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CMailFileTest extends PHPUnit\Framework\TestCase
+class CMailFileTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return CMailFile
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf, $user, $langs, $db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		print __METHOD__ . " db->type=" . $db->type . " user->id=" . $user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf, $user, $langs, $db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__ . "\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return    void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf, $user, $langs, $db;
-		$db->rollback();
-
-		print __METHOD__ . "\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function setUp(): void
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$conf->global->MAIN_DISABLE_ALL_MAILS = 1;    // If I comment/remove this lien, unit test still works alone but failed when ran from AllTest. Don't know why.
-
-		print __METHOD__ . "\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return    void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__ . "\n";
-	}
-
 	/**
 	 * testCMailFileText
 	 *
@@ -236,36 +155,37 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 		$msg .= ' <p>From wikipedia</p> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />';
 		$msg .= '</body></html>';
 
-
-		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', '/tmp');
+		$tmp_dir = $conf->admin->dir_temp.'/'.__FUNCTION__.getmypid().'_tmp';
+		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', $tmp_dir);
 
 		$result = count($localobject->html_images);
 		print __METHOD__ . " result count image detected in the mail=" . $result . "\n";
 		$this->assertEquals($result, 2);
 
 
-		foreach ($localobject->html_images as $i => $val)
-		if ($localobject->html_images[$i]) {
-			if (preg_match('/img250x20\.png/i', $localobject->html_images[$i]['fullpath'])) {
-				print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-				$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+		foreach ($localobject->html_images as $i => $val) {
+			if ($localobject->html_images[$i]) {
+				if (preg_match('/img250x20\.png/i', $localobject->html_images[$i]['fullpath'])) {
+					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-				print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
-				$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
+					print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
 
-				$fileSize = 9744;
-				print __METHOD__ . " File size must be =" . $fileSize . "\n";
-				$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
-			} elseif (preg_match('/\.png/i', $localobject->html_images[$i]['fullpath'])) {
-				print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-				$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+					$fileSize = 9744;
+					print __METHOD__ . " File size must be =" . $fileSize . "\n";
+					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
+				} elseif (preg_match('/\.png/i', $localobject->html_images[$i]['fullpath'])) {
+					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-				print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
-				$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
+					print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
 
-				$fileSize = 85;
-				print __METHOD__ . " File size must be =" . $fileSize . "\n";
-				$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
+					$fileSize = 85;
+					print __METHOD__ . " File size must be =" . $fileSize . "\n";
+					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
+				}
 			}
 		}
 

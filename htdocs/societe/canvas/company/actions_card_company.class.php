@@ -34,7 +34,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	DoliDB	$db				Handler access base de donnees
 	 *    @param	string	$dirmodule		Name of directory of module
 	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *    @param	string	$canvas			Name of canvas

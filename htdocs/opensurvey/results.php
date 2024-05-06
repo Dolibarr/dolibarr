@@ -42,7 +42,7 @@ $numsondage = GETPOST("id", 'alphanohtml');
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
 if ($result <= 0) {
-	dol_print_error('', 'Failed to get survey id '.$numsondage);
+	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
 
 $nblines = $object->fetch_lines();
@@ -344,7 +344,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 
 		//parcours de tous les sujets actuels
 		while (isset($toutsujet[$j])) {
-			//si le sujet n'est pas celui qui a été effacé alors on concatene
+			// If the subject is not the deleted subject, then concatenate the current subject
 			if ($i != $j) {
 				if (!empty($nouveauxsujets)) {
 					$nouveauxsujets .= ',';
@@ -384,7 +384,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 			// parcours de toutes les réponses actuelles
 			for ($j = 0; $j < $nbcolonnes; $j++) {
 				$car = substr($ensemblereponses, $j, 1);
-				//si les reponses ne concerne pas la colonne effacée, on concatene
+				//si les reponses ne concerne pas la colonne effacée, on concatenate
 				if ($i != $j) {
 					$newcar .= $car;
 				}
@@ -906,7 +906,7 @@ while ($compteur < $num) {
 			}
 		}
 	} else {
-		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
+		// Else, replace the user's choices with a line of checkboxes to retrieve new values
 		if ($compteur == $ligneamodifier) {
 			for ($i = 0; $i < $nbcolonnes; $i++) {
 				$car = substr($ensemblereponses, $i, 1);

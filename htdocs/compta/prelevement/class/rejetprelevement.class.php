@@ -67,8 +67,8 @@ class RejetPrelevement
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
+	 *  @param	DoliDB	$db			Database handler
+	 *  @param 	User	$user       Object user
 	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
@@ -82,7 +82,7 @@ class RejetPrelevement
 		$this->motifs = array();
 		$this->labelsofinvoicing = array();
 
-		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
+		$this->motifs[0] = "";
 		$this->motifs[1] = $langs->trans("StatusMotif1");
 		$this->motifs[2] = $langs->trans("StatusMotif2");
 		$this->motifs[3] = $langs->trans("StatusMotif3");
@@ -178,9 +178,6 @@ class RejetPrelevement
 			// Make a negative payment
 			// Amount must be an array (id of invoice -> amount)
 			$pai->amounts = array();
-
-			//var_dump($this->type);exit;
-
 			$pai->amounts[$facs[$i][0]] = price2num($amountrejected * -1);		// The payment must be negative because it is a refund
 
 			$pai->datepaye = $date_rejet;
@@ -299,7 +296,7 @@ class RejetPrelevement
 				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
 			}
 		} else {
-			dol_syslog("RejetPrelevement::_send_email Userid invalide");
+			dol_syslog("RejetPrelevement::_send_email Userid invalid");
 		}
 	}
 

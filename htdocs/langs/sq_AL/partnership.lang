@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partneritet kushtuar këtij anëtari
 DatePartnershipStart=Data e fillimit
 DatePartnershipEnd=Data e përfundimit
 ReasonDecline=Refuzoni arsyen
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Arsyeja e refuzimit ose anulimit
 PartnershipAlreadyExist=Partneriteti tashmë ekziston
 ManagePartnership=Menaxhoni partneritetin
 BacklinkNotFoundOnPartnerWebsite=Lidhja e pasme nuk u gjet në faqen e internetit të partnerit
@@ -91,8 +91,7 @@ CountLastUrlCheckError=Numri i gabimeve për kontrollin e fundit të URL-së
 LastCheckBacklink=Data e kontrollit të fundit të URL-së
 
 NewPartnershipRequest=Kërkesë e re për partneritet
-NewPartnershipRequestDesc=Ky formular ju lejon të kërkoni të jeni pjesë e një prej programeve tona të partneritetit. Nëse keni nevojë për ndihmë për të plotësuar këtë formular, ju lutemi kontaktoni me email <b>%s<span class='notranslate'>b09a4b739f17f8z span>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Kjo faqe duhet të përmbajë të paktën një lidhje me një nga domenet e mëposhtme: %s
 
 IPOfApplicant=IP e aplikantit
-

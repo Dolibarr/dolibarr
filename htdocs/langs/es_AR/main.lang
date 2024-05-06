@@ -376,7 +376,6 @@ Reason=Motivo
 FeatureNotYetSupported=Característica todavía sin soportar
 Response=Responder
 SendByMail=Enviar por email
-MailSentBy=Email enviado por
 TextUsedInTheMessageBody=Cuerpo del mensaje
 SendMail=Enviar email
 NoEMail=Sin email

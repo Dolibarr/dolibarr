@@ -1,0 +1,11 @@
+meta {
+  name: Classify the order as invoiced- Could be also called setbilled --
+  type: http
+  seq: 17
+}
+
+post {
+  url: {{base_url}}/orders/{id}/setinvoiced
+  body: none
+  auth: none
+}

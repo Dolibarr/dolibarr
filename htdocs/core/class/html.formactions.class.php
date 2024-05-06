@@ -171,7 +171,7 @@ class FormActions
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -211,18 +211,41 @@ class FormActions
 				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
 			}
 
-			$newcardbutton = '';
+			$url = '';
+			$morehtmlright = '';
 			if (isModEnabled('agenda') && $usercanaddaction) {
 				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
 				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
 				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
 				$url .= '&backtopage='.urlencode($urlbacktopage);
-				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
+				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
-			print '<!-- formactions->showactions -->'."\n";
-			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
+			$parameters = array(
+				'title' => &$title,
+				'morehtmlright' => &$morehtmlright,
+				'morehtmlcenter' => &$morehtmlcenter,
+				'usercanaddaction' => $usercanaddaction,
+				'url' => &$url,
+				'typeelement' => $typeelement,
+				'projectid' => $projectid,
+				'assignedtouser' => $assignedtouser,
+				'taskid' => $taskid,
+				'urlbacktopage' => $urlbacktopage
+			);
+
+			$reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
+
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			$error = 0;
+			if (empty($reshook)) {
+				print '<!-- formactions->showactions -->' . "\n";
+				print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
+			}
 
 			$page = 0;
 			$param = '';
@@ -253,7 +276,7 @@ class FormActions
 					// Ref
 					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
-					// Onwer
+					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
@@ -354,7 +377,7 @@ class FormActions
 	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
-		global $langs, $user, $form, $conf;
+		global $langs, $user, $form;
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -385,13 +408,23 @@ class FormActions
 
 		$out = '';
 
+		// Reformat the array
+		$newarraylist = array();
+		foreach ($arraylist as $key => $value) {
+			$disabled = '';
+			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
+				$disabled = 'disabled';
+			}
+			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
+		}
+
 		if (!empty($multiselect)) {
 			if (!is_array($selected) && !empty($selected)) {
 				$selected = explode(',', $selected);
 			}
-			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+			$out .= $form->selectarray($htmlname, $newarraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {
