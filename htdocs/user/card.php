@@ -1269,7 +1269,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Categories
 	if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
-		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
+		$cate_arbo = $form->select_all_categories('user', '', 'parent', 0, 0, 3);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
 		print "</td></tr>";
 	}

@@ -5119,8 +5119,8 @@ class Form
 	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
-	 * @param 	int|string|array	$markafterid 	Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                             	    	     	$markafterid can be an :
+	 * @param 	int|string|array	$fromid 		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                             	    	     	$fromid can be an :
 	 *                                 	    	 	- int (id of category)
 	 *                                 		 		- string (categories ids separated by comma)
 	 * 	                                  	 		- array (list of categories ids)
@@ -5131,7 +5131,7 @@ class Form
 	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
-	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
+	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -5168,7 +5168,7 @@ class Form
 			}
 		} else {
 			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
+			$cate_arbo = $cat->get_full_arbo($type, $fromid, $include);
 		}
 
 		$outarray = array();
