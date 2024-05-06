@@ -812,7 +812,7 @@ if ($id > 0 || $ref) {
 					$result = $object->load_stats_sending(0, '2', 1, $filterShipmentStatus);
 					$helpondiff .= $langs->trans("ProductQtyInShipmentAlreadySent").': '.$object->stats_expedition['qty'];
 				}
-	
+
 				// Number of supplier order running
 				if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 					if ($found) {
