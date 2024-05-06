@@ -105,6 +105,7 @@ if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
+
 		$object->update($user);
 	}
 

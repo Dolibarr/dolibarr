@@ -238,10 +238,10 @@ abstract class CommonObject
 
 	/**
 	 * @var int
-	 * @deprecated  Use $fk_project instead.
+	 * @deprecated  		Use $fk_project instead.
 	 * @see $fk_project
 	 */
-	private $fk_projet;
+	public $fk_projet;
 
 	/**
 	 * @var Contact|null 	A related contact object
@@ -347,7 +347,7 @@ abstract class CommonObject
 	 * @see $status
 	 * @see setStatut(), $status
 	 */
-	private $statut;
+	public $statut;
 
 	/**
 	 * @var int|array<int, string>      The object's status (an int).
