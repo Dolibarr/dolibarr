@@ -273,7 +273,14 @@ class Task extends CommonObjectLine
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
+			// Update extrafield
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 
+		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_CREATE', $user);
@@ -281,14 +288,6 @@ class Task extends CommonObjectLine
 					$error++;
 				}
 				// End call triggers
-			}
-		}
-
-		// Update extrafield
-		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
-				$error++;
 			}
 		}
 
