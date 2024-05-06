@@ -46,6 +46,7 @@ InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
 MailSentBy
+MaxNbOfLinesForBoxes
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
