@@ -2409,6 +2409,8 @@ ResetSms
 ResourceNotAssignedToTheTask
 ResourcePageIndex
 ResourceTypeCode
+ResourceTypeID
+ResourceTypeLabel
 ResponsibleOfRecruitement
 Rest
 RestOfEurope
