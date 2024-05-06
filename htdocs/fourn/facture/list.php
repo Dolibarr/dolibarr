@@ -1477,6 +1477,8 @@ $totalarray['val']['f.total_vat']=0;
 $totalarray['val']['f.total_localtax1']=0;
 $totalarray['val']['f.total_localtax1']=0;
 $totalarray['val']['f.total_ttc']=0;
+$totalarray['val']['totalam']=0;
+$totalarray['val']['rtp']=0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -1884,6 +1886,9 @@ while ($i < $imaxinloop) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
+			}
+			if (empty($totalarray['val']['totalam'])) {
+				$totalarray['val']['totalam'] = 0;		// avoid PHP Warning:  Undefined array key "totalam" on line 1891
 			}
 			$totalarray['val']['totalam'] += $totalpay;
 		}
