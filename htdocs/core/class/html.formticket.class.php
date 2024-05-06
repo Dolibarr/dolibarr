@@ -195,7 +195,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : '';
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
-			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : '';
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : '';
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $this->fk_user_create;
 			$contractid = GETPOSTISSET('contractid') ? GETPOSTINT('contractid') : '';
 		} else {
@@ -206,7 +206,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject;
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
-			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid', 'int') : $object->fk_project;
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : $object->fk_project;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $object->fk_user_assign;
 			$contractid = GETPOSTISSET('contractid') ? GETPOSTINT('contractid') : $object->fk_contract;
 		}
