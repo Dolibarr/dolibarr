@@ -705,6 +705,13 @@ if ($result) {
 				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
+		// Special cas for reading bank account when you have permission to manage Chart of account
+		if ($obj->module == 'banque' && $obj->perms == 'lire') {
+			if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
+				print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
+			}
+		}
+
 		print '</td>';
 
 		// Permission id
