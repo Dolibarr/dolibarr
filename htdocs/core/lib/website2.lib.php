@@ -147,8 +147,28 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	if (dol_is_file($filetpl)) {
 		if ($backupold) {
-			dol_delete_file($filetpl.'.old');
-			$result = dol_move($filetpl, $filetpl.'.old', 0, 1, 0, 0);
+			$max_versions = 5;
+
+			$old_files = [];
+			for ($i = 0; $i < $max_versions; $i++) {
+				$old_file = $filetpl . ".old" . ($i > 0 ? "." . $i : "");
+				if (dol_is_file($old_file)) {
+					$old_files[] = $old_file;
+				}
+			}
+
+			// delete the oldest file
+			if (count($old_files) >= $max_versions) {
+				$oldest_file = $old_files[count($old_files) - 1];
+				dol_delete_file($oldest_file);
+			}
+
+			// reorder the files
+			for ($i = count($old_files) - 1; $i >= 0; $i--) {
+				dol_move($old_files[$i], $filetpl . ".old." . ($i + 1), 0, 1, 0, 0);
+			}
+
+			$result =  dol_move($filetpl, $filetpl . ".old", 0, 1, 0, 0);
 			if (! $result) {
 				return false;
 			}
