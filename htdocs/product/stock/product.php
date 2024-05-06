@@ -725,25 +725,25 @@ if ($id > 0 || $ref) {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
-			if(empty($reshook)){
+			if (empty($reshook)) {
 				print '</table>';
-	
+
 				print '</div>';
 				print '<div class="fichehalfright"><div class="underbanner clearboth"></div>';
-	
+
 				print '<table class="border tableforfield centpercent">';
-	
+
 				// Stock alert threshold
 				print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1), 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer')).'</td><td>';
 				print $form->editfieldval("StockLimit", 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer'), 'string');
 				print '</td></tr>';
-	
+
 				// Desired stock
 				print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1), 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'));
 				print '</td><td>';
 				print $form->editfieldval("DesiredStock", 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'), 'string');
 				print '</td></tr>';
-	
+
 				// Real stock
 				$text_stock_options = $langs->trans("RealStockDesc").'<br>';
 				$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
@@ -763,7 +763,7 @@ if ($id > 0 || $ref) {
 				} else {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
-	
+
 				print '<tr><td>';
 				print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
 				print '</td>';
@@ -771,13 +771,13 @@ if ($id > 0 || $ref) {
 				if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) {
 					print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
 				}
-	
+
 				print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?productid='.$object->id.'">'.$langs->trans("StockAtDate").'</a>';
 				print '</td>';
 				print '</tr>';
-	
+
 				$stocktheo = price2num($object->stock_theorique, 'MS');
-	
+
 				$found = 0;
 				$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
 				// Number of sales orders running
@@ -794,7 +794,7 @@ if ($id > 0 || $ref) {
 					}
 					$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 				}
-	
+
 				// Number of product from sales order already sent (partial shipping)
 				if (isModEnabled("shipping")) {
 					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -828,7 +828,7 @@ if ($id > 0 || $ref) {
 					}
 					$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')</span>';
 				}
-	
+
 				// Number of product from supplier order already received (partial receipt)
 				if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 					if ($found) {
@@ -838,7 +838,7 @@ if ($id > 0 || $ref) {
 					}
 					$helpondiff .= $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
 				}
-	
+
 				// Number of product in production
 				if (isModEnabled('mrp')) {
 					if ($found) {
@@ -858,8 +858,8 @@ if ($id > 0 || $ref) {
 				} else {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
-	
-	
+
+
 				// Calculating a theoretical value
 				print '<tr><td>';
 				print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
@@ -873,7 +873,7 @@ if ($id > 0 || $ref) {
 				print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?mode=future&productid='.$object->id.'">'.$langs->trans("VirtualStockAtDate").'</a>';
 				print '</td>';
 				print '</tr>';
-	
+
 				// Last movement
 				if ($user->hasRight('stock', 'mouvement', 'lire')) {
 					$sql = "SELECT max(m.datem) as datem";
