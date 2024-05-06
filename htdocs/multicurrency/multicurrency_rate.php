@@ -62,22 +62,24 @@ $rateinput 			= (float) price2num(GETPOST('rateinput', 'alpha'));
 $rateindirectinput 	= (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield 			= GETPOST('sortfield', 'aZ09comma');
-$sortorder 			= GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOSTINT("page") ? GETPOSTINT("page") : 0);
-
+$page = GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$sortfield 			= GETPOST('sortfield', 'aZ09comma');
+$sortorder 			= GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "cr.date_sync";
 }
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
+$type = '';
+$texte = '';
+$newcardbutton = '';
 
 // Initialize technical objects
 $object = new CurrencyRate($db);
@@ -546,7 +548,7 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
-	$totalarray['nbfield'] = 0;		// Prevents PHP warning
+	$totalarray['nbfield'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
