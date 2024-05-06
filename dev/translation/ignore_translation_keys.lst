@@ -46,6 +46,7 @@ InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
 MailSentBy
+MaxNbOfLinesForBoxes
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
@@ -68,7 +69,9 @@ ThirdPartyCustomersWithIdProf12
 TicketPublicInfoCreateTicket
 TitreRequestCP
 UseAsciiDocFormat
+UsePassword
 ViewPageInNewTab
+WEBSITE_PAGE_EXAMPLE
 YourTicketSuccessfullySaved
 #
 # ██████╗  █████╗ ██████╗ ████████╗██████╗

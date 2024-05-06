@@ -2565,7 +2565,7 @@ class ExtraFields
 	}
 
 	/**
-	 * Return array with all possible types and label of extrafields
+	 * Return array with all possible types and labels of extrafields
 	 *
 	 * @return string[]
 	 */
@@ -2579,6 +2579,9 @@ class ExtraFields
 			$type2label[$key] = $langs->transnoentitiesnoconv($val);
 		}
 
+		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
+			unset($type2label['icon']);
+		}
 		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
 			unset($type2label['point']);
 			unset($type2label['multipts']);
