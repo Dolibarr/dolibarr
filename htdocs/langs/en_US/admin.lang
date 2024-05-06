@@ -1487,6 +1487,8 @@ InvoiceOptionCategoryOfOperations=Display the mention "category of operations" o
 InvoiceOptionCategoryOfOperationsHelp=Depending on the situation, the mention will appear in the form:<br>- Category of operations: Delivery of goods<br>- Category of operations: Provision of services<br>- Category of operations: Mixed - Delivery of goods & provision of services
 InvoiceOptionCategoryOfOperationsYes1=Yes, below the address block
 InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
+InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow to classify billed an order without invoice.
+InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=Classify billed an order without invoice is allow by default. If this conf is set to true, it will be not.
 ##### Supplier Orders #####
 SupplierOrderClassifyBilledWithoutInvoice=Disallow to classify billed a supplier order without invoice.
 SupplierOrderClassifyBilledWithoutInvoiceHelp=Classify billed a supplier order without invoice is allow by default. If this conf is set to true, it will be not.

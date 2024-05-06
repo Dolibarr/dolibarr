@@ -826,6 +826,14 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 print '</td></tr>';
 
+
+// Disallow to classify billed an order without invoice
+print '<tr class="oddeven"><td>'.$langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoice"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp"), 1, 'help') . '</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER');
+print '</td></tr>';
+
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
