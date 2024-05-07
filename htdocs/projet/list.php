@@ -260,6 +260,7 @@ if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.usage_organize_event']['visible'] = 1;
 	$arrayfields['p.usage_organize_event']['checked'] = 1;
 }
+$arrayfields['p.fk_project']['enabled'] = 0;
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1111,7 +1112,8 @@ $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisContact');
-$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->select_contact(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -1799,10 +1801,14 @@ while ($i < $imaxinloop) {
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
-			print '<td class="center">';
 			if ($obj->opp_status_code) {
-				print $langs->trans("OppStatus".$obj->opp_status_code);
+				$s = $langs->trans("OppStatus".$obj->opp_status_code);
+				if (empty($arrayfields['p.opp_percent']['checked']) && $obj->opp_percent) {
+					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
+				}
 			}
+			print '<td class="center tdoverflowmax150" title="'.$s.'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
