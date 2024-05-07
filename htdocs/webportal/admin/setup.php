@@ -93,7 +93,7 @@ if (isModEnabled('invoice')) {
 }
 
 // Enable access for the partnership record
-if (isModEnabled('patnership')) {
+if (isModEnabled('partnership')) {
 	$access_list = array(
 		'hidden' => $langs->trans('WebPortalAccessHidden'),
 		'visible' => $langs->trans('WebPortalAccessVisible'),
@@ -104,7 +104,7 @@ if (isModEnabled('patnership')) {
 }
 
 // Enable access for the membership record
-if (isModEnabled('membership')) {
+if (isModEnabled('adherent')) {
 	$access_list = array(
 		'hidden' => $langs->trans('WebPortalAccessHidden'),
 		'visible' => $langs->trans('WebPortalAccessVisible'),
