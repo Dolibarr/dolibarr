@@ -556,7 +556,7 @@ if ($id > 0 || $ref) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock');
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
