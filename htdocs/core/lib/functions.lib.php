@@ -120,14 +120,16 @@ if (!function_exists('str_contains')) {
 
 
 /**
- * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
+ * Return the full path of the directory where a module (or an object of a module) stores its files.
+ * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param CommonObject 	$object 	Dolibarr common object
- * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @return string|null				The path of the relative directory of the module
+ * @param 	CommonObject 	$object 	Dolibarr common object
+ * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	string			$mode		'output' or 'temp' or 'version'
+ * @return 	string|null					The path of the relative directory of the module
  * @since Dolibarr V18
  */
-function getMultidirOutput($object, $module = '')
+function getMultidirOutput($object, $module = '', $mode = 'output')
 {
 	global $conf;
 
@@ -137,16 +139,56 @@ function getMultidirOutput($object, $module = '')
 	if (empty($module) && !empty($object->element)) {
 		$module = $object->element;
 	}
+
 	// Special case for backward compatibility
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
 	}
-	if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
-		return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+
+	// Get the relative path of directory
+	if ($mode == 'output' || $mode == 'version') {
+		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
+			return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+		} else {
+			return 'error-diroutput-not-defined-for-this-object='.$module;
+		}
+	} elseif ($mode == 'temp') {
+		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
+			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+		} else {
+			return 'error-dirtemp-not-defined-for-this-object='.$module;
+		}
 	} else {
-		return 'error-diroutput-not-defined-for-this-object='.$module;
+		return 'error-bad-value-for-mode';
 	}
 }
+
+/**
+ * Return the full path of the directory where a module (or an object of a module) stores its temporary files.
+ * Path may depends on the entity if a multicompany module is enabled.
+ *
+ * @param CommonObject 	$object 	Dolibarr common object
+ * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @return string|null				The path of the relative temp directory of the module
+ */
+function getMultidirTemp($object, $module = '')
+{
+	return getMultiDirOutput($object, $module, 'temp');
+}
+
+/**
+ * Return the full path of the directory where a module (or an object of a module) stores its versionned files.
+ * Path may depends on the entity if a multicompany module is enabled.
+ *
+ * @param CommonObject 	$object 	Dolibarr common object
+ * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @return string|null				The path of the relative version directory of the module
+ */
+function getMultidirVersion($object, $module = '')
+{
+	return getMultiDirOutput($object, $module, 'version');
+}
+
 
 /**
  * Return dolibarr global constant string value
@@ -4911,7 +4953,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment', 'reception'))) {
 				$morecss .= ' em092';
 			}
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
@@ -4952,7 +4994,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'knowledgemanagement' => 'infobox-contrat rotate90', 'loan' => 'infobox-bank_account',
 				'payment' => 'infobox-bank_account', 'payment_vat' => 'infobox-bank_account', 'poll' => 'infobox-adherent', 'pos' => 'infobox-bank_account', 'project' => 'infobox-project', 'projecttask' => 'infobox-project',
 				'propal' => 'infobox-propal', 'proposal' => 'infobox-propal','private' => 'infobox-project',
-				'reception' => 'flip', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
+				'reception' => 'flip infobox-order_supplier', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
 				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier', 'supplier_order' => 'infobox-order_supplier', 'supplier_proposal' => 'infobox-supplier_proposal',
@@ -4975,7 +5017,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'lock' => '#ddd', 'lot' => '#a69944',
 				'map-marker-alt' => '#aaa', 'mrp' => '#a69944', 'product' => '#a69944', 'service' => '#a69944', 'inventory' => '#a69944', 'stock' => '#a69944', 'movement' => '#a69944',
 				'other' => '#ddd', 'world' => '#986c6a',
-				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'reception' => '#a69944', 'resize' => '#444', 'rss' => '#cba',
+				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'resize' => '#444', 'rss' => '#cba',
 				//'shipment'=>'#a69944',
 				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
 				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
@@ -7509,7 +7551,7 @@ function yn($yesno, $case = 1, $color = 0)
  *  @param	?CommonObject	$object		Object to use to get ref to forge the path.
  *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
  *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
- *  @see getMultiDirOuput()
+ *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {

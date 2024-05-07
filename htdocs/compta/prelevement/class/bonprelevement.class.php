@@ -171,7 +171,17 @@ class BonPrelevement extends CommonObject
 	public $ref;
 	public $datec;
 	public $amount;
+
+	/**
+	 * @var int	Status
+	 * @deprecated
+	 */
 	public $statut;
+	/**
+	 * @var int	Status
+	 */
+	public $status;
+
 	public $credite;
 	public $note;
 	public $date_trans;
@@ -429,7 +439,10 @@ class BonPrelevement extends CommonObject
 				$this->fk_bank_account = $obj->fk_bank_account;
 
 				$this->status         = $obj->status;
-				$this->statut         = $obj->status; // For backward compatibility
+				if (empty($this->status)) {		// Value is sometimes null in database
+					$this->status = 0;
+				}
+				$this->statut         = $this->status; // For backward compatibility
 
 				$this->fetched = 1;
 
