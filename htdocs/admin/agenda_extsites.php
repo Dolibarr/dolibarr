@@ -249,9 +249,10 @@ print "</tr>";
 print "</table>";
 print "<br>";
 
-print "<table class=\"noborder\" width=\"100%\">";
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">'."\n";
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
@@ -280,7 +281,7 @@ while ($i <= $MAXAGENDA) {
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
 	// Color (Possible colors are limited by Google)
-	print '<td class="nowrap right">';
+	print '<td class="nowraponall right">';
 	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
 	// Calendar active by default
@@ -301,6 +302,7 @@ while ($i <= $MAXAGENDA) {
 }
 
 print '</table>';
+print '</div>';
 
 print dol_get_fiche_end();
 
