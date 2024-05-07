@@ -242,7 +242,7 @@ print "</tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td class="center">';
-print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="' . getDolGlobalString('AGENDA_EXT_NB').'">';
+print '<input class="flat hideifnotset width50 center" type="text" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="' . getDolGlobalString('AGENDA_EXT_NB').'">';
 print "</td>";
 print "</tr>";
 

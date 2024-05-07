@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006      	Andre Cianfarani     	<acianfa@free.fr>
+ * Copyright (C) 2005-2012 	Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2007-2019 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *       \file       htdocs/societe/ajax/company.php
- *       \brief      File to return Ajax response on thirdparty list request. Used by the combo list of thirdparties.
- *       			 Search done on name, name_alias, barcode, tva_intra, ...
+ *       \file       htdocs/contact/ajax/contact.php
+ *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts.
+ *       			 Search done on name, firstname...
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,18 +42,19 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$filter = GETPOST('filter', 'alpha');
+$search_project_contact = GETPOST('search_project_contact', 'alpha');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
-$id = GETPOSTINT('id');
-$excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOSTINT('showtype');
-$showcode = GETPOSTINT('showcode');
 
-$object = new Societe($db);
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
+$exclude = GETPOST('exclude', 'intcomma');
+$showsoc = GETPOSTINT('showsoc');
+
+$object = new Contact($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
@@ -76,7 +77,7 @@ top_httphead('application/json');
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if (!empty($action) && $action == 'fetch' && !empty($id)) {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 	$outjson = array();
 
@@ -115,17 +116,25 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$form = new Form($db);
 	}
 
-	if (!empty($excludeids)) {
-		$excludeids = explode(',', $excludeids);
-	} else {
-		$excludeids = array();
-	}
+	$limitto = '';
+	$showfunction = 0;
+	$morecss = 'minwidth100';
+	$options_only = 2;
+	$forcecombo = 0;
+	$events = array();
+	$moreparam = '';
+	$htmlid = '';
+	$multiple = 0;
+	$disableifempty = 0;
+
+	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
+
+	$filter = "(lastname:like:'".$prefix.$search_project_contact."%') OR (firstname:like:'".$prefix.$search_project_contact."'%)";
 
 	// FIXME
-	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
 
-
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
+	$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 
 	if ($outjson) {
 		print json_encode($arrayresult);
