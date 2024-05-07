@@ -46,7 +46,6 @@ $massaction			= GETPOST('massaction', 'alpha');
 $confirm			= GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
-
 $facid				= GETPOST('facid', 'int');
 $socid				= GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
@@ -72,6 +71,7 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST('sortfield', 'aZ09comma');
 $sortorder			= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
