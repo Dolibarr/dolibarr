@@ -3685,3 +3685,68 @@ function dragAndDropFileUpload($htmlname)
 	$out .= "</script>\n";
 	return $out;
 }
+
+/**
+ * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
+ *
+ * @param string $filetpl          The base filename for the backups.
+ * @param int    $max_versions     The maximum number of backup versions to keep.
+ * @return bool                    Returns true if successful, false otherwise.
+ */
+function manageFileBackups($filetpl, $max_versions = 5)
+{
+
+	$base_file_pattern = $filetpl . ".v";
+	$files_in_directory = glob($base_file_pattern . "*");
+
+	// Extract the modification timestamps for each file
+	$files_with_timestamps = [];
+	foreach ($files_in_directory as $file) {
+		$files_with_timestamps[] = [
+			'file' => $file,
+			'timestamp' => filemtime($file)
+		];
+	}
+
+	// Sort the files by modification date
+	$sorted_files = [];
+	while (count($files_with_timestamps) > 0) {
+		$latest_file = null;
+		$latest_index = null;
+
+		// Find the latest file by timestamp
+		foreach ($files_with_timestamps as $index => $file_info) {
+			if ($latest_file === null || $file_info['timestamp'] > $latest_file['timestamp']) {
+				$latest_file = $file_info;
+				$latest_index = $index;
+			}
+		}
+
+		// Add the latest file to the sorted list and remove it from the original list
+		if ($latest_file !== null) {
+			$sorted_files[] = $latest_file['file'];
+			unset($files_with_timestamps[$latest_index]);
+		}
+	}
+
+	// Delete the oldest files to keep only the allowed number of versions
+	if (count($sorted_files) >= $max_versions) {
+		$oldest_files = array_slice($sorted_files, $max_versions - 1);
+		foreach ($oldest_files as $oldest_file) {
+			dol_delete_file($oldest_file);
+		}
+	}
+
+
+	$timestamp = dol_now();
+	$new_backup = $filetpl . ".v" . $timestamp;
+
+	// Move the original file to the new backup with the timestamp
+	$result = dol_move($filetpl, $new_backup, 0, 1, 0, 0);
+
+	if (!$result) {
+		return false;
+	}
+
+	return true;
+}
