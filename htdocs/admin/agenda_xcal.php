@@ -126,13 +126,13 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("PastDelayVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat width50\" name=\"MAIN_AGENDA_EXPORT_PAST_DELAY\" value=\"".$MAIN_AGENDA_EXPORT_PAST_DELAY."\"> ".$langs->trans("days")."</td>";
+print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_PAST_DELAY" value="'.$MAIN_AGENDA_EXPORT_PAST_DELAY.'"> '.$langs->trans("days")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
-print "<td><input type=\"text\" class=\"flat width50\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"".$MAIN_AGENDA_EXPORT_CACHE."\"></td>";
+print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_CACHE" value="'.$MAIN_AGENDA_EXPORT_CACHE.'"></td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 

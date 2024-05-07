@@ -168,7 +168,7 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
-	<ul>
+	<ul class="brand">
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
@@ -182,7 +182,7 @@ if (empty($reshook)) {
 		?>
 		</li>
 	</ul>
-	<ul>
+	<ul class="menu-entries">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
 		// show menu
@@ -190,7 +190,13 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul>
+	<ul class="menu-entries-alt">
+	<?php
+		// show menu
+	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
+	?>
+	</ul>
+	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
 		// show menu
