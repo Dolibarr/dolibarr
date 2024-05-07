@@ -182,7 +182,9 @@ if ($action == 'set') {
  * View
  */
 
+$form = new Form($db);
 $formactions = new FormActions($db);
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
