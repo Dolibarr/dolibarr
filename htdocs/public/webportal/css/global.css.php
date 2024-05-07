@@ -86,9 +86,46 @@ body > nav {
   box-shadow: 0px 1px 0 var(--nav-border-color);
 }
 
+nav.primary-top-nav ul:first-of-type {
+	clear: both;
+	min-width: 100px;
+}
+
 .primary-top-nav{
   --border-radius: 0;
 }
+
+ul.brand {
+	max-width:	80px;
+}
+nav.primary-top-nav ul:first-of-type {
+	margin-left: unset !important;
+}
+
+ul.menu-entries li {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+ul.menu-entries-alt {
+	display: none;
+}
+
+@media (max-width: 576px) {
+	ul.brand li.brand {
+		padding-left: 0px;
+	}
+	ul.menu-entries li {
+		display: none;
+	}
+	ul.menu-entries-alt {
+		display: block;
+	}
+}
+
+
+
 
 /**
   NAV BRAND LOGO
