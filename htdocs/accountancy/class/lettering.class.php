@@ -848,6 +848,7 @@ class Lettering extends BookKeeping
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table_link_line'] . " AS tll ON tll." . $linked_info['fk_table_link_line'] . " = tl." . $linked_info['fk_line_link'];
 				$sql .= ") AS tl2 ON tl2.fk_link = tl.fk_link";
 				$sql .= " WHERE tl.fk_doc IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+				$sql .= " AND tl2.fk_doc IS NOT NULL";
 			}
 
 			dol_syslog(__METHOD__ . " - Get document lines", LOG_DEBUG);
