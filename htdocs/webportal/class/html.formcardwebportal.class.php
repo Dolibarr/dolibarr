@@ -454,11 +454,17 @@ class FormCardWebPortal
 		//    }
 		//}
 
+		$html .= '<!-- html.formcardwebportal.class.php -->';
 		$html .= '<header>';
 
 		// Left block - begin
 		$html .= '<div class="header-card-left-block" style="width: 75%;">';
 		$html .= '<div>';
+
+		$form = new Form($this->db);
+		$html .= $form->showphoto('memberphoto', $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+		//include DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+		//$html .= getImagePublicURLOfObject($object, 1, '_small');
 
 		// logo or photo
 		$html .= '<div></div>';
@@ -504,7 +510,7 @@ class FormCardWebPortal
 		// Left block - end
 
 		// Right block - begin
-		$html .= '<div class="grid header-card-right-block">';
+		$html .= '<div class="header-card-right-block">';
 		// show status
 		$htmlStatus = $object->getLibStatut(6);
 		if (empty($htmlStatus) || $htmlStatus == $object->getLibStatut(3)) {
