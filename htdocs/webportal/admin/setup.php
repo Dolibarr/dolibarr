@@ -104,7 +104,7 @@ if (isModEnabled('partnership')) {
 }
 
 // Enable access for the membership record
-if (isModEnabled('membership')) {
+if (isModEnabled('adherent')) {
 	$access_list = array(
 		'hidden' => $langs->trans('WebPortalAccessHidden'),
 		'visible' => $langs->trans('WebPortalAccessVisible'),
