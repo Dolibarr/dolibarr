@@ -1001,47 +1001,26 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode')) {
+		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_RECEPTION_INVOICE')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
-			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/phpbarcode.modules.php';
 
-			$encoding ='';
-			if (getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')) {
-				$sql = 'SELECT rowid, code,coder FROM '.MAIN_DB_PREFIX.'c_barcode_type';
-				$sql .= ' WHERE rowid='.((int) (getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')));
-				$sql .= ' AND entity = 1';
-				$resql = $db->query($sql);
-				if ($resql) {
-					$num = $db->num_rows($resql);
-					if ($num > 0) {
-						$obj = $db->fetch_object($resql);
-						$encoding = $obj->code;
-						$classname = "mod".ucfirst($obj->coder);
-					}
+			$encoding = 'QRCODE';
+			$module = new modTcpdfbarcode($this->db);
+			if ($module->encodingIsSupported($encoding)) {
+				$result = $module->writeBarCode($object->ref, $encoding);
 
-					if (class_exists($classname)) {
-						$module = new $classname($db);
-						if ($module->encodingIsSupported($obj->code)) {
-							$result = $module->writeBarCode($object->ref, $encoding);
-
-							// get path of codeBar image
-							$newcode = $object->ref;
-							if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
-								$newcode = dol_hash($newcode, 'md5');
-							}
-							$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
-						}
-
-						//var_dump($result);exit;
-						if ($result > 0) {
-							$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute, 0);
-						} else {
-							$this->error = 'Failed to generate barcode';
-						}
-					} else {
-						print 'ErrorClassNotFoundInModule '.$module.' '.$obj->coder;
-					}
+				// get path of qrcode image
+				$newcode = $object->ref;
+				if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+					$newcode = dol_hash($newcode, 'md5');
 				}
+				$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+			}
+
+			if ($result > 0) {
+				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute +80 -5, 20, 20);
+			} else {
+				$this->error = 'Failed to generate barcode';
 			}
 		}
 

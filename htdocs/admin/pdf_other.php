@@ -104,6 +104,10 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
+	if (GETPOSTISSET('BARCODE_RECEPTION_INVOICE')) {
+		dolibarr_set_const($db, "BARCODE_RECEPTION_INVOICE", GETPOSTINT("BARCODE_RECEPTION_INVOICE"), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -340,6 +344,17 @@ if (isModEnabled('reception')) {
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, $conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BARCODE_RECEPTION_INVOICE");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BARCODE_RECEPTION_INVOICE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("BARCODE_RECEPTION_INVOICE", $arrval, getDolGlobalString('BARCODE_RECEPTION_INVOICE'));
 	}
 	print '</td></tr>';
 
