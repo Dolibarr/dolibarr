@@ -152,7 +152,7 @@ FIX: Undefined array key default on fields (#29243)
 FIX: upload odt files should not start/end with space
 FIX: use $conf->browser->os instead
 FIX: used hasRight function
-FIX: Value of field int = 0 from modulebuilder must nto be set to null
+FIX: Value of field int = 0 from modulebuilder must not be set to null
 FIX: We should be able to add a workstation on bom lines (#29361 #29360)
 fix: when invoice is created by WORKFLOW_ORDER_AUTOCREATE_INVOICE on ORDER_NEW, the invoice must have the default bank account of the thirdparty is it's empty on order
 FIX: wrong array key (#29317)
