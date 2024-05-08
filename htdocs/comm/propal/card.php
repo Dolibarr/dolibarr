@@ -1954,7 +1954,8 @@ if ($action == 'create') {
 			// Contacts (ask contact only if thirdparty already defined).
 			print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DefaultContact").'</td><td class="valuefieldcreate">';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
-			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+			//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300 widthcentpercentminusx');
+			print $form->select_contact($soc->id, $contactid, 'contactid', 1, '', '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
 			// Third party discounts info line

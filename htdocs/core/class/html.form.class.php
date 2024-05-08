@@ -1311,7 +1311,7 @@ class Form
 
 	/**
 	 *  Output html form to select a third party
-	 *  This call select_thirdparty_list() of ajax depending on setup. This component is not able to support multiple select.
+	 *  This call select_thirdparty_list() or ajax depending on setup. This component is not able to support multiple select.
 	 *
 	 * @param int|string 	$selected 				Preselected ID
 	 * @param string 		$htmlname 				Name of field in form
@@ -1388,7 +1388,7 @@ class Form
 
 	/**
 	 * Output html form to select a contact
-	 * This call select_contacts() of ajax depending on setup. This component is not able to support multiple select.
+	 * This call select_contacts() or ajax depending on setup. This component is not able to support multiple select.
 	 *
 	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 * This also set the number of contacts found into $this->num
@@ -1398,12 +1398,12 @@ class Form
 	 * @param 	string 			$htmlname 			Name of HTML field ('none' for a not editable field)
 	 * @param 	int<0,3>|string	$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param 	string 			$exclude 			List of contacts id to exclude
-	 * @param 	string 			$limitto 			Disable answers that are not id in this array list
+	 * @param 	string 			$limitto 			Not used
 	 * @param 	integer 		$showfunction 		Add function into label
 	 * @param 	string 			$morecss 			Add more class to class style
-	 * @param 	bool 			$options_only 		Return options only (for ajax treatment)
+	 * @param 	bool 			$nokeyifsocid		When 1, we force the option "Press a key to show list" to 0 if there is a value for $socid
 	 * @param 	integer 		$showsoc 			Add company into label
-	 * @param 	int 			$forcecombo 		Force to use combo box (so no ajax beautify effect)
+	 * @param 	int 			$forcecombo 		1=Force to use combo box (so no ajax beautify effect)
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param 	string 			$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param 	string 			$htmlid 			Html id to use instead of htmlname
@@ -1411,13 +1411,18 @@ class Form
 	 * @param 	string 			$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
 	 * @return  int|string      					Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '')
+	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $nokeyifsocid = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '')
 	{
 		// phpcs:enable
 
 		global $conf, $langs;
 
 		$out = '';
+
+		$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
+		if ($nokeyifsocid && $socid > 0) {
+			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
+		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 			if (is_null($events)) {
@@ -1453,9 +1458,13 @@ class Form
 			// Immediate load of all database
 			$multiple = false;
 			$disableifempty = 0;
+			$options_only = false;
+			$limitto = '';
 
 			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
 		}
+
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
 
 		return $out;
 	}

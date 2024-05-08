@@ -1898,7 +1898,8 @@ if ($action == 'create' && $usercancreate) {
 			// Contacts (ask contact only if thirdparty already defined).
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
-			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, !empty($srccontactslist) ? $srccontactslist : "", '', 1, 'maxwidth200 widthcentpercentminusx');
+			//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx');
+			print $form->select_contact($soc->id, $contactid, 'contactid', 1,  empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
 			// Ligne info remises tiers
