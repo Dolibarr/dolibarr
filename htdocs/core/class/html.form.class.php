@@ -1739,9 +1739,9 @@ class Form
 	 * @param 	string 			$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
 	 * 												If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 												Do not use a filter coming from input of users.
-	 * @return  int|string      					Return integer <0 if KO, HTML with select string if OK.
+	 * @return  int|string|array<int,array{key:int,value:string,label:string,labelhtml:string}>		Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = array())
+	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1887,6 +1887,7 @@ class Form
 					$contactstatic->lastname = $obj->lastname;
 					$contactstatic->firstname = $obj->firstname;
 					if ($obj->statut == 1) {
+						$tmplabel = '';
 						if ($htmlname != 'none') {
 							$disabled = 0;
 							if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) {
@@ -1944,7 +1945,9 @@ class Form
 							}
 						}
 
-						array_push($outarray, array('key' => $obj->rowid, 'value' => $tmplabel, 'label' => $tmplabel, 'labelhtml' => $tmplabel));
+						if ($tmplabel != '') {
+							array_push($outarray, array('key' => $obj->rowid, 'value' => $tmplabel, 'label' => $tmplabel, 'labelhtml' => $tmplabel));
+						}
 					}
 					$i++;
 				}

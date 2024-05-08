@@ -83,11 +83,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	if ($object->id > 0) {
 		$outref = $object->ref;
-		$outname = $object->name;
+		$outfirstname = $object->firstname;
+		$outlastname = $object->lastname;
 		$outdesc = '';
-		$outtype = $object->type;
 
-		$outjson = array('ref' => $outref, 'name' => $outname, 'desc' => $outdesc, 'type' => $outtype);
+		$outjson = array('ref' => $outref, 'firstname' => $outfirstname, 'lastname' => $outlastname, 'desc' => $outdesc);
 	}
 
 	echo json_encode($outjson);
