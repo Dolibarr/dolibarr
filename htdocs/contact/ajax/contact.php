@@ -128,7 +128,10 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
 
-	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."'%)";
+	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
+	if ($showsoc) {
+		$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+	}
 
 	// FIXME
 	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
