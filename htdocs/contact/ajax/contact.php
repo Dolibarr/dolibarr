@@ -45,7 +45,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$search_project_contact = GETPOST('search_project_contact', 'alpha');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
 
@@ -98,9 +97,9 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
-	// Filter on the company to search can be:
+	// The filter on the company to search for can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
-	// Into a var with name $htmlname can be 'prodid', 'productid', ...
+	// Into a var with name $htmlname can be 'elemid', ...
 	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
@@ -129,7 +128,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
 
-	$filter = "(lastname:like:'".$prefix.$search_project_contact."%') OR (firstname:like:'".$prefix.$search_project_contact."'%)";
+	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."'%)";
 
 	// FIXME
 	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
