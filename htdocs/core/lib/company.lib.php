@@ -1598,7 +1598,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
-					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+					print $tmpuser->getNomUrl(-1, '', 0, 0, 24, 1);
 				}
 				print '</td>';
 			}
