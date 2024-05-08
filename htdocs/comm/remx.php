@@ -562,6 +562,7 @@ if ($socid > 0) {
 			print '</tr>';
 
 			$showconfirminfo = array();
+			$showconfirminfo_multicurrency = array();
 
 			$i = 0;
 			$num = $db->num_rows($resql);
@@ -792,7 +793,7 @@ if ($socid > 0) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '</td>';
-					} 
+					}
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 						if ($permissiontocreate) {
