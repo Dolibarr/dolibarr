@@ -1511,7 +1511,7 @@ if ($action == 'create') {
 
 		// Related contact
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		$preselectedids = GETPOST('socpeopleassigned', 'array');
+		$preselectedids = GETPOST('socpeopleassigned', 'array:int');
 		if (GETPOSTINT('contactid')) {
 			$preselectedids[GETPOSTINT('contactid')] = GETPOSTINT('contactid');
 		}
@@ -1520,12 +1520,27 @@ if ($action == 'create') {
 		}
 		// select "all" or "none" contact by default
 		if (getDolGlobalInt('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT')) {
+			// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
 			$select_contact_default = 0; // select "all" contacts by default : avoid to use it if there is a lot of contacts
 		} else {
 			$select_contact_default = -1; // select "none" by default
 		}
 		print img_picto('', 'contact', 'class="paddingrightonly"');
-		print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
+
+		if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
+			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
+			/*
+			 $selected = array_keys($object->socpeopleassigned);
+			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+			 */
+			$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
+			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, array(), false, 'multiple', 'contactid');
+			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
+		} else {
+			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, array(), false, 'multiple', 'contactid');
+		}
+
 		print '</td></tr>';
 	}
 
@@ -2012,14 +2027,28 @@ if ($id > 0) {
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if conf PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
 			print '</div>';
 			print '</td></tr>';
 
-			// related contact
+			// Related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(!getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? $object->socid : 0, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array(), 'multiple', 'contactid');
+			print img_picto('', 'contact', 'class="paddingrightonly"');
+			if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
+				// FIXME Use the select_contact supporting the "multiple"
+				/*
+				$selected = array_keys($object->socpeopleassigned);
+				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array());
+				*/
+				$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
+				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
+			} else {
+				// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
+				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, array(), 'multiple', 'contactid');
+			}
 			print '</div>';
 			print '</td>';
 			print '</tr>';

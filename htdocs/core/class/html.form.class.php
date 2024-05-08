@@ -1311,25 +1311,25 @@ class Form
 
 	/**
 	 *  Output html form to select a third party
-	 *  This call select_thirdparty_list() of ajax depending on setup.
+	 *  This call select_thirdparty_list() of ajax depending on setup. This component is not able to support multiple select.
 	 *
-	 * @param string 	$selected 			Preselected type
-	 * @param string 	$htmlname 			Name of field in form
-	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
-	 * @param string|int<1,1> 	$showempty 	Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
-	 * @param int 		$showtype 			Show third party type in combolist (customer, prospect or supplier)
-	 * @param int 		$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param int 		$limit 				Maximum number of elements
-	 * @param string 	$morecss 			Add more css styles to the SELECT component
-	 * @param string 	$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int<0,3>	$hidelabel 			Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param int|string 	$selected 				Preselected ID
+	 * @param string 		$htmlname 				Name of field in form
+	 * @param string 		$filter 				Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
+	 * @param string|int<1,1> 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param int 			$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int 			$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param int 			$limit 					Maximum number of elements
+	 * @param string 		$morecss 				Add more css styles to the SELECT component
+	 * @param string 		$moreparam 				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
 	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
-	 * @param bool 		$multiple 			add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
-	 * @param string[] 	$excludeids 		Exclude IDs from the select combo
-	 * @param int<0,1>	$showcode 			Show code
-	 * @return string  		                HTML string with select box for thirdparty.
+	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
+	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
+	 * @param int<0,1>		$showcode 				Show code
+	 * @return string  		 	            		HTML string with select box for thirdparty.
 	 */
 	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -1388,13 +1388,13 @@ class Form
 
 	/**
 	 * Output html form to select a contact
-	 * This call select_contacts() of ajax depending on setup.
+	 * This call select_contacts() of ajax depending on setup. This component is not able to support multiple select.
 	 *
 	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 * This also set the number of contacts found into $this->num
 	 *
 	 * @param 	int 			$socid 				Id of third party or 0 for all or -1 for empty list
-	 * @param 	array|int 		$selected 			Array of ID of preselected contact id
+	 * @param 	int|string 		$selected 			ID of preselected contact id
 	 * @param 	string 			$htmlname 			Name of HTML field ('none' for a not editable field)
 	 * @param 	int<0,3>|string	$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param 	string 			$exclude 			List of contacts id to exclude
@@ -1407,13 +1407,11 @@ class Form
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param 	string 			$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param 	string 			$htmlid 			Html id to use instead of htmlname
-	 * @param 	bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
-	 * @param 	integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
 	 * @param 	string 			$selected_input_value 	Value of preselected input text (for use with ajax)
 	 * @param 	string 			$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
 	 * @return  int|string      					Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function select_contact($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $selected_input_value = '', $filter = '')
+	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '')
 	{
 		// phpcs:enable
 
@@ -1453,6 +1451,9 @@ class Form
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
 		} else {
 			// Immediate load of all database
+			$multiple = false;
+			$disableifempty = 0;
+
 			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
 		}
 
@@ -1700,7 +1701,7 @@ class Form
 			$out .= '</select>' . "\n";
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events, getDolGlobalString("COMPANY_USE_SEARCH_TO_SELECT"));
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("COMPANY_USE_SEARCH_TO_SELECT"));
 			}
 		} else {
 			dol_print_error($this->db);
@@ -1720,25 +1721,25 @@ class Form
 	 * This also set the number of contacts found into $this->num
 	 * Note: you must use the select_contact() to get the component to select a contact. This function must only be called by select_contact.
 	 *
-	 * @param 	int 			$socid 				Id of third party or 0 for all or -1 for empty list
-	 * @param 	array|int 		$selected 			Array of ID of preselected contact id
-	 * @param 	string 			$htmlname 			Name of HTML field ('none' for a not editable field)
-	 * @param 	int<0,3>|string	$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 * @param 	string 			$exclude 			List of contacts id to exclude
-	 * @param 	string 			$limitto 			Disable answers that are not id in this array list
-	 * @param 	integer 		$showfunction 		Add function into label
-	 * @param 	string 			$morecss 			Add more class to class style
-	 * @param 	int 			$options_only 		1=Return options only (for ajax treatment), 2=Return array
-	 * @param 	integer 		$showsoc 			Add company into label
-	 * @param 	int 			$forcecombo 		Force to use combo box (so no ajax beautify effect)
+	 * @param 	int 				$socid 				Id of third party or 0 for all or -1 for empty list
+	 * @param 	array|int|string	$selected 			Array of ID of preselected contact id
+	 * @param 	string 				$htmlname 			Name of HTML field ('none' for a not editable field)
+	 * @param 	int<0,3>|string		$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param 	string 				$exclude 			List of contacts id to exclude
+	 * @param 	string 				$limitto 			Disable answers that are not id in this array list
+	 * @param 	integer 			$showfunction 		Add function into label
+	 * @param 	string 				$morecss 			Add more class to class style
+	 * @param 	int 				$options_only 		1=Return options only (for ajax treatment), 2=Return array
+	 * @param 	integer 			$showsoc 			Add company into label
+	 * @param 	int 				$forcecombo 		Force to use combo box (so no ajax beautify effect)
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param 	string 			$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param 	string 			$htmlid 			Html id to use instead of htmlname
-	 * @param 	bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
-	 * @param 	integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
-	 * @param 	string 			$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
-	 * 												If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
-	 * 												Do not use a filter coming from input of users.
+	 * @param 	string 				$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param 	string 				$htmlid 			Html id to use instead of htmlname
+	 * @param 	bool 				$multiple 			add [] in the name of element and add 'multiple' attribute
+	 * @param 	integer 			$disableifempty 	Set tag 'disabled' on select if there is no choice
+	 * @param 	string 				$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
+	 * 													If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
+	 * 													Do not use a filter coming from input of users.
 	 * @return  int|string|array<int,array{key:int,value:string,label:string,labelhtml:string}>		Return integer <0 if KO, HTML with select string if OK.
 	 */
 	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
@@ -1757,7 +1758,7 @@ class Form
 		if ($selected === '') {
 			$selected = array();
 		} elseif (!is_array($selected)) {
-			$selected = array($selected);
+			$selected = array((int) $selected);
 		}
 
 		// Clean $filter that may contains sql conditions so sql code
@@ -1826,7 +1827,7 @@ class Form
 			$num = $this->db->num_rows($resql);
 
 			if ($htmlname != 'none' && !$options_only) {
-				$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlid . '" name="' . $htmlname . (($num || empty($disableifempty)) ? '' : ' disabled') . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . (!empty($moreparam) ? $moreparam : '') . '>';
+				$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlid . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . (($num || empty($disableifempty)) ? '' : ' disabled') . ($multiple ? 'multiple' : '') . ' ' . (!empty($moreparam) ? $moreparam : '') . '>';
 			}
 
 			if ($showempty && !is_numeric($showempty)) {
@@ -1975,7 +1976,7 @@ class Form
 
 			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, getDolGlobalString("CONTACT_USE_SEARCH_TO_SELECT"));
+				$out .= ajax_combobox($htmlid, $events, getDolGlobalInt("CONTACT_USE_SEARCH_TO_SELECT"));
 			}
 
 			$this->num = $num;
