@@ -1153,10 +1153,10 @@ class KnowledgeRecord extends CommonObject
 			$return .= '<br>'.picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow paddingrightonly"');
 		}
 		if (property_exists($this, 'question')) {
-			$return .= '<span class="info-box-label">'.dolGetFirstLineOfText($this->question).'</span>';
+			$return .= '<div class="info-box-label tdoverflowmax150 classfortooltip" title="'.dolPrintHTMLForAttribute($this->question).'">'.dolGetFirstLineOfText($this->question).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
