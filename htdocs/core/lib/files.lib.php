@@ -980,7 +980,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   string	$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
@@ -1130,7 +1130,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		}
 
 		if (empty($newmask)) {
-			$newmask = !getDolGlobalString('MAIN_UMASK') ? '0755' : $conf->global->MAIN_UMASK;
+			$newmask = getDolGlobalString('MAIN_UMASK', '0755');
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -3689,14 +3689,16 @@ function dragAndDropFileUpload($htmlname)
 /**
  * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
  *
- * @param string $filetpl          The base filename for the backups.
- * @param int    $max_versions     The maximum number of backup versions to keep.
- * @return bool                    Returns true if successful, false otherwise.
+ * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
+ * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
+ * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
+ * @param	string	$moveorcopy			'move' or 'copy'
+ * @return 	bool                    	Returns true if successful, false otherwise.
  */
-function manageFileBackups($filetpl, $max_versions = 5)
+function manageFileBackups($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
-
-	$base_file_pattern = $filetpl . ".v";
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
 	$files_in_directory = glob($base_file_pattern . "*");
 
 	// Extract the modification timestamps for each file
@@ -3716,7 +3718,7 @@ function manageFileBackups($filetpl, $max_versions = 5)
 
 		// Find the latest file by timestamp
 		foreach ($files_with_timestamps as $index => $file_info) {
-			if ($latest_file === null || $file_info['timestamp'] > $latest_file['timestamp']) {
+			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
 				$latest_file = $file_info;
 				$latest_index = $index;
 			}
@@ -3737,12 +3739,15 @@ function manageFileBackups($filetpl, $max_versions = 5)
 		}
 	}
 
-
-	$timestamp = dol_now();
+	$timestamp = dol_now('gmt');
 	$new_backup = $filetpl . ".v" . $timestamp;
 
-	// Move the original file to the new backup with the timestamp
-	$result = dol_move($filetpl, $new_backup, 0, 1, 0, 0);
+	// Move or copy the original file to the new backup with the timestamp
+	if ($moveorcopy == 'move') {
+		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+	} else {
+		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+	}
 
 	if (!$result) {
 		return false;
