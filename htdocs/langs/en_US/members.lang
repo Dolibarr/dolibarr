@@ -200,7 +200,7 @@ MembersStatisticsDesc=Choose statistics you want to read...
 MenuMembersStats=Statistics
 LastMemberDate=Latest membership date
 LatestSubscriptionDate=Latest contribution date
-MemberNature=Nature member
+MemberNature=Nature of member
 MembersNature=Nature of members
 Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Public membership
