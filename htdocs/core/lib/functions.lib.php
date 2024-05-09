@@ -6113,7 +6113,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show
+ *	@param	string	$title				Title to show (HTML sanitized content)
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -6138,7 +6138,9 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
-	$return .= '<div class="titre inline-block">'.dol_escape_htmltag($title).'</div>';
+	$return .= '<div class="titre inline-block">';
+	$return .= $title;	// $title is already HTML sanitized content
+	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
 		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
@@ -13336,8 +13338,10 @@ function dolForgeCriteriaCallback($matches)
 		$operator = $realOperator[$operator];
 	}
 
-
 	$tmpescaped = $tmp[2];
+
+	//print "Case: ".$operator." ".$operand." ".$tmpescaped."\n";
+
 	$regbis = array();
 
 	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
@@ -13358,7 +13362,7 @@ function dolForgeCriteriaCallback($matches)
 
 		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		if (preg_match('/^\'([^\']*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
 		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";

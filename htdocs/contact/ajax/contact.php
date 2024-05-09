@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006      	Andre Cianfarani     	<acianfa@free.fr>
+ * Copyright (C) 2005-2012 	Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2007-2019 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *       \file       htdocs/societe/ajax/company.php
- *       \brief      File to return Ajax response on thirdparty list request. Used by the combo list of thirdparties.
- *       			 Search done on name, name_alias, barcode, tva_intra, ...
+ *       \file       htdocs/contact/ajax/contact.php
+ *       \brief      File to return Ajax response on contact list request. Used by the combo list of contacts.
+ *       			 Search done on name, firstname...
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,18 +42,18 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
-$id = GETPOSTINT('id');
-$excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOSTINT('showtype');
-$showcode = GETPOSTINT('showcode');
 
-$object = new Societe($db);
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
+$exclude = GETPOST('exclude', 'intcomma');
+$showsoc = GETPOSTINT('showsoc');
+
+$object = new Contact($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
@@ -76,17 +76,17 @@ top_httphead('application/json');
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if (!empty($action) && $action == 'fetch' && !empty($id)) {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 	$outjson = array();
 
 	if ($object->id > 0) {
 		$outref = $object->ref;
-		$outname = $object->name;
+		$outfirstname = $object->firstname;
+		$outlastname = $object->lastname;
 		$outdesc = '';
-		$outtype = $object->type;
 
-		$outjson = array('ref' => $outref, 'name' => $outname, 'desc' => $outdesc, 'type' => $outtype);
+		$outjson = array('ref' => $outref, 'firstname' => $outfirstname, 'lastname' => $outlastname, 'desc' => $outdesc);
 	}
 
 	echo json_encode($outjson);
@@ -99,13 +99,13 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	// The filter on the company to search for can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
-	// Into a var with name $htmlname can be 'prodid', 'productid', ...
+	// Into a var with name $htmlname can be 'elemid', ...
 	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
-	// When used from jQuery, the search term is added as GET param $htmlname.
+	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 	if (!$searchkey) {
 		return;
@@ -115,17 +115,28 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$form = new Form($db);
 	}
 
-	if (!empty($excludeids)) {
-		$excludeids = explode(',', $excludeids);
-	} else {
-		$excludeids = array();
+	$limitto = '';
+	$showfunction = 0;
+	$morecss = 'minwidth100';
+	$options_only = 2;
+	$forcecombo = 0;
+	$events = array();
+	$moreparam = '';
+	$htmlid = '';
+	$multiple = 0;
+	$disableifempty = 0;
+
+	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
+
+	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
+	if ($showsoc) {
+		$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
 	}
 
 	// FIXME
-	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
 
-
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
+	$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 
 	if ($outjson) {
 		print json_encode($arrayresult);
