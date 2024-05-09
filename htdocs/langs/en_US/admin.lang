@@ -1344,6 +1344,7 @@ AdvancedNumRefModelDesc=Returns the reference number in the format %syymm-nnnn w
 SimpleNumRefNoDateModelDesc=Returns the reference number in the format %s-nnnn where nnnn is a sequential auto-incrementing number with no reset
 ShowProfIdInAddress=Show professional ID with addresses
 ShowVATIntaInAddress=Hide intra-Community VAT number
+ShowLegalFormInAddress=Show the legal form with addresses
 TranslationUncomplete=Partial translation
 MAIN_DISABLE_METEO=Disable weather thumb
 MeteoStdMod=Standard mode
