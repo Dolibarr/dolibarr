@@ -18,8 +18,7 @@
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf
+ *	\remarks	To be used, an Asterisk user must be created by adding this in /etc/asterisk/manager.conf
  * 				[dolibarr]
  * 				secret = dolibarr
  * 				deny=0.0.0.0/0.0.0.0

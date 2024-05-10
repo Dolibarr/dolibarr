@@ -400,7 +400,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$keyforforeignMAIN_MAX_DECIMALS_UNIT = 'MAIN_MAX_DECIMALS_UNIT_'.$multicurrency_code;
 			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
 			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
-			if (!empty($conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT)) {
+			if (getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT)) {
 				$conf->global->MAIN_MAX_DECIMALS_UNIT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT);
 				$conf->global->MAIN_MAX_DECIMALS_TOT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT);
 				$conf->global->MAIN_ROUNDING_RULE_TOT = getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT);
@@ -412,9 +412,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 		if ($multicurrency_code) {
 			// Restore setup of currency accurency
-			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
-			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
-			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 		}
 
 		$result[16] = $newresult[0];

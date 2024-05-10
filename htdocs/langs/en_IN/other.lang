@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
 Notify_PROPAL_VALIDATE=Quotation validated
 Notify_PROPAL_SENTBYMAIL=Quotation sent by mail
+AIProcessingPleaseWait=AI interrogation in progress, please wait...

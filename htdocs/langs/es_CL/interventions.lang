@@ -18,7 +18,6 @@ InterventionCardsAndInterventionLines=Intervenciones y líneas de intervenciones
 InterventionClassifyBilled=Clasificar "Facturado"
 InterventionClassifyUnBilled=Clasificar "Sin facturar"
 InterventionClassifyDone=Clasificar "Hecho"
-StatusInterInvoiced=Pagado
 SendInterventionRef=Presentación de la intervención %s
 SendInterventionByMail=Enviar intervención por correo electrónico
 InterventionCreatedInDolibarr=Intervención %s creado
