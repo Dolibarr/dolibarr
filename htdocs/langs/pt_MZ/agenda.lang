@@ -99,7 +99,6 @@ AgendaModelModule=Modelos de documentos para o evento
 DateActionEnd=Data de término
 AgendaUrlOptions1=Você também pode adicionar os seguintes parâmetros nos filtros de saída:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída para ações criada pelo usuário <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir a saída das ações não pertencentes ao usuário<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir a saída às ações atribuídas ao usuário <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>projeto=__PROJECT_ID__</b> para restringir a saída para ações ligadas ao  <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsIncludeHolidays=includeholidays = 1 para incluir eventos de licenças.

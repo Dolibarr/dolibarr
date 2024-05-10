@@ -179,7 +179,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
  */
 function getMultidirTemp($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'temp');
+	return getMultidirOutput($object, $module, $forobject, 'temp');
 }
 
 /**
@@ -193,7 +193,7 @@ function getMultidirTemp($object, $module = '', $forobject = 0)
  */
 function getMultidirVersion($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'version');
+	return getMultidirOutput($object, $module, $forobject, 'version');
 }
 
 
@@ -12398,7 +12398,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
  * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement(), getMultiDirOutput()
+ * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
 {
