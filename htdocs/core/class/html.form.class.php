@@ -289,7 +289,7 @@ class Form
 					$valuetoshow = ($editvalue ? $editvalue : $value);
 					$ret .= '<textarea id="' . $htmlname . '" name="' . $htmlname . '" wrap="soft" rows="' . (empty($tmp[1]) ? '20' : $tmp[1]) . '"' . ($cols ? ' cols="' . $cols . '"' : 'class="quatrevingtpercent"') . $morealt . '" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
-					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
+					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwyg is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
 					$ret .= dol_htmlwithnojs(dol_string_neverthesehtmltags($valuetoshow, array('textarea')));
 					$ret .= '</textarea>';

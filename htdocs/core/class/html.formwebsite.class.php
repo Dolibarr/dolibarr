@@ -315,7 +315,7 @@ class FormWebsite
 	/**
 	 * Return HTML code for selection of page layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      HTML for model page boxes
 	 */
 	public function getContentPageTemplate($htmlContent = 'message')
