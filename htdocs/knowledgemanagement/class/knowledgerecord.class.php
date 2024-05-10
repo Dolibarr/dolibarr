@@ -220,7 +220,7 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		return $this->createCommon($user, $notrigger);
+		return $this->createCommon($user, $notrigger, 'KNOWLEDGERECORD_CREATE');
 	}
 
 	/**
@@ -452,7 +452,7 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		return $this->updateCommon($user, $notrigger);
+		return $this->updateCommon($user, $notrigger, 'KNOWLEDGERECORD_MODIFY');
 	}
 
 	/**
@@ -491,7 +491,7 @@ class KnowledgeRecord extends CommonObject
 			}
 		}
 
-		return $this->deleteCommon($user, $notrigger);
+		return $this->deleteCommon($user, $notrigger, 'KNOWLEDGERECORD_DELETE');
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
