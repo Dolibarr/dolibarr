@@ -1406,7 +1406,7 @@ class FormMail extends Form
 	 *
 	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
 	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
 	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
@@ -1514,7 +1514,7 @@ class FormMail extends Form
 	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field to fill
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
 	 * @return 	string      				HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')

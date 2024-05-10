@@ -179,7 +179,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
  */
 function getMultidirTemp($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'temp');
+	return getMultidirOutput($object, $module, $forobject, 'temp');
 }
 
 /**
@@ -193,7 +193,7 @@ function getMultidirTemp($object, $module = '', $forobject = 0)
  */
 function getMultidirVersion($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'version');
+	return getMultidirOutput($object, $module, $forobject, 'version');
 }
 
 
@@ -6580,7 +6580,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC', 'ZAR');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -12398,7 +12398,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
  * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement(), getMultiDirOutput()
+ * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
 {
@@ -12441,7 +12441,7 @@ function getElementProperties($elementType)
 		}
 	}
 	// For compatibility and to work with non standard path
-	if ($elementType == "action") {
+	if ($elementType == "action" || $elementType == "actioncomm") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
@@ -12764,6 +12764,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+	//var_dump('element_type='.$element_type);
+	//var_dump($element_prop);
+	//var_dump($element_prop['module'].' '.$ismodenabled);
 
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
