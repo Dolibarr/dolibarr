@@ -2,13 +2,13 @@
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
+ * Copyright (C) 2013-2024	Charlene BENKE	    <charlene@patas-monkey.com>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ class FormFile
 				}
 			}
 
-			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
+			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile fichehalfleft">'."\n";
 
 			if (empty($title)) {
 				$title = $langs->trans("AttachANewFile");
@@ -219,7 +219,7 @@ class FormFile
 			$out .= "\n</div><!-- End form attach new file -->\n";
 
 			if ($linkfiles) {
-				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
+				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl fichehalfright">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
