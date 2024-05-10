@@ -88,6 +88,8 @@ SearchString=تلاش کی تار
 NotAvailableWhenAjaxDisabled=Ajax کے غیر فعال ہونے پر دستیاب نہیں ہے۔
 AllowToSelectProjectFromOtherCompany=تیسرے فریق کی دستاویز پر، کسی دوسرے تیسرے فریق سے منسلک پروجیکٹ کا انتخاب کر سکتے ہیں۔
 TimesheetPreventAfterFollowingMonths=درج ذیل مہینوں کے بعد گزارے گئے ریکارڈنگ کے وقت کو روکیں۔
+PROJECT_DISPLAY_LINKED_BY_CONTACT=Display project linked by a common contact
+PROJECT_DISPLAY_LINKED_BY_CONTACT_help=This option adds a new list on Project tab with all projects linked to thirdparty via a contact relationship
 JavascriptDisabled=جاوا اسکرپٹ غیر فعال ہے۔
 UsePreviewTabs=پیش نظارہ ٹیبز استعمال کریں۔
 ShowPreview=پیش نظارہ دکھائیں۔
@@ -303,18 +305,18 @@ MAIN_MAIL_FORCE_SENDTO=تمام ای میلز کو بھیجیں (حقیقی وص
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=نیا ای میل لکھتے وقت پہلے سے طے شدہ وصول کنندہ کی فہرست میں ملازمین کی ای میلز (اگر وضاحت کی گئی ہو) تجویز کریں۔
 MAIN_MAIL_NO_WITH_TO_SELECTED=پہلے سے طے شدہ وصول کنندہ کا انتخاب نہ کریں چاہے صرف 1 ممکنہ انتخاب ہو۔
 MAIN_MAIL_SENDMODE=Sending method
-MAIN_MAIL_SMTPS_ID=SMTP ID (اگر سرور بھیجنے کے لیے تصدیق کی ضرورت ہو)
-MAIN_MAIL_SMTPS_PW=SMTP پاس ورڈ (اگر سرور بھیجنے کے لیے تصدیق کی ضرورت ہے)
+MAIN_MAIL_SMTPS_ID=SMTP username or ID (if sending server requires an authentication)
+MAIN_MAIL_SMTPS_PW=SMTP password or token (if sending server requires an authentication)
 MAIN_MAIL_EMAIL_TLS=TLS (SSL) انکرپشن استعمال کریں۔
 MAIN_MAIL_EMAIL_STARTTLS=TLS (STARTTLS) انکرپشن استعمال کریں۔
-MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=خود دستخط شدہ سرٹیفکیٹ کی اجازت دیں۔
+MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Allow connection to mail servers that are using self-signed certificates
 MAIN_MAIL_EMAIL_DKIM_ENABLED=ای میل دستخط بنانے کے لیے DKIM استعمال کریں۔
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=dkim کے ساتھ استعمال کے لیے ای میل ڈومین
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=dkim سلیکٹر کا نام
 MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY=dkim پر دستخط کرنے کے لیے نجی کلید
 MAIN_DISABLE_ALL_SMS=تمام ایس ایم ایس بھیجنے کو غیر فعال کریں (ٹیسٹ کے مقاصد یا ڈیمو کے لیے)
 MAIN_SMS_SENDMODE=SMS بھیجنے کے لیے استعمال کرنے کا طریقہ
-MAIN_MAIL_SMS_FROM=ایس ایم ایس بھیجنے کے لیے ڈیفالٹ بھیجنے والے کا فون نمبر
+MAIN_SMS_FROM=Default sender phone number for SMS sending
 MAIN_MAIL_DEFAULT_FROMTYPE=ای میل بھیجنے کے لیے پہلے سے طے شدہ بھیجنے والے کا ای میل فارمز پر منتخب کیا گیا ہے۔
 UserEmail=صارف کا ای میل
 CompanyEmail=کمپنی کا ای میل
@@ -341,12 +343,12 @@ MenuHandlers=مینو ہینڈلرز
 MenuAdmin=مینو ایڈیٹر
 DoNotUseInProduction=پیداوار میں استعمال نہ کریں۔
 ThisIsProcessToFollow=اپ گریڈ کا طریقہ کار:
-ThisIsAlternativeProcessToFollow=یہ دستی طور پر کارروائی کرنے کے لیے ایک متبادل سیٹ اپ ہے:
+ThisIsAlternativeProcessToFollow=This is an alternative deployment process you can run manually:
 StepNb=مرحلہ %s
 FindPackageFromWebSite=ایک ایسا پیکیج تلاش کریں جو آپ کو مطلوبہ خصوصیات فراہم کرتا ہو (مثال کے طور پر سرکاری ویب سائٹ %s پر)۔
 DownloadPackageFromWebSite=پیکیج ڈاؤن لوڈ کریں (مثال کے طور پر سرکاری ویب سائٹ %s سے)۔
 UnpackPackageInDolibarrRoot=پیک شدہ فائلوں کو اپنی ڈولیبر سرور ڈائرکٹری میں کھولیں/ان زپ کریں: <b> %s </b>
-UnpackPackageInModulesRoot=کسی بیرونی ماڈیول کو تعینات/انسٹال کرنے کے لیے، آپ کو بیرونی ماڈیولز کے لیے مختص سرور ڈائرکٹری میں آرکائیو فائل کو کھولنا/ان زپ کرنا ہوگا:<br>b0aee8365837fz0 ><span class='notranslate'>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=ماڈیول کی تعیناتی ختم ہو گئی ہے۔ تاہم آپ کو صفحہ سیٹ اپ ماڈیولز: <a href="%s"> %s </a> پر جا کر اپنی درخواست میں ماڈیول کو فعال اور سیٹ اپ کرنا ہوگا۔
 NotExistsDirect=متبادل روٹ ڈائرکٹری موجودہ ڈائرکٹری سے متعین نہیں ہے۔ <br>
 InfDirAlt=ورژن 3 کے بعد سے، متبادل روٹ ڈائریکٹری کی وضاحت ممکن ہے۔ یہ آپ کو ایک وقف شدہ ڈائرکٹری، پلگ ان اور حسب ضرورت ٹیمپلیٹس میں ذخیرہ کرنے کی اجازت دیتا ہے۔ <br> بس Dolibarr کے روٹ پر ایک ڈائرکٹری بنائیں (جیسے: کسٹم)۔ <br>
@@ -368,7 +370,7 @@ GenericMaskCodes3EAN=ماسک میں باقی تمام حروف برقرار ر�
 GenericMaskCodes4a=<u>تیسرے فریق TheCompany کی 99ویں %s پر مثال، تاریخ 2023-01-31 کے ساتھ:</u><br>
 GenericMaskCodes4b=<u>31-01-2023 کو بنائے گئے فریق ثالث کی مثال:</u><br> >
 GenericMaskCodes4c=<u>31-01-2023 کو تیار کردہ پروڈکٹ کی مثال:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> دے گا b0aee83365830 span>ABC2301-000099</b><br>b0aee8365837fz0{0@0@0@span }-ZZZ/{dd}/XXX<span class='notranslate'></b> دے گا <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}<span> class='notranslate'></b></span> دے گا <b>IN2301-0099-A<span class='notranslate'></b> اگر کمپنی کی قسم ہے 'ذمہ دار انسکرپٹو' اس قسم کے کوڈ کے ساتھ جو 'A_RI' ہے
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=ایک متعین ماسک کے مطابق حسب ضرورت نمبر لوٹاتا ہے۔
 ServerAvailableOnIPOrPort=سرور <b> <b> %s </b> پورٹ <b> %s a09a4b739f17f80 پر دستیاب ہے۔
 ServerNotAvailableOnIPOrPort=پورٹ <b> <b> %s </b> پر سرور دستیاب نہیں ہے <b> %s a09a4b739f178
@@ -456,6 +458,10 @@ ExtrafieldRadio=ریڈیو بٹن (صرف ایک انتخاب)
 ExtrafieldCheckBox=چیک باکسز
 ExtrafieldCheckBoxFromList=میز سے چیک باکسز
 ExtrafieldLink=کسی چیز سے لنک کریں۔
+ExtrafieldPointGeo=Geometric Point
+ExtrafieldMultiPointGeo=Geometric Multi Point
+ExtrafieldLinestringGeo=Geometric Linestring
+ExtrafieldPolygonGeo=Geometric Polygon
 ComputedFormula=شمار شدہ فیلڈ
 ComputedFormulaDesc=ڈائنامک کمپیوٹیڈ ویلیو حاصل کرنے کے لیے آپ یہاں آبجیکٹ کی دیگر خصوصیات یا کسی بھی پی ایچ پی کوڈنگ کا استعمال کرتے ہوئے ایک فارمولا درج کر سکتے ہیں۔ آپ کسی بھی پی ایچ پی کے موافق فارمولے استعمال کر سکتے ہیں بشمول "؟" حالت آپریٹر، اور مندرجہ ذیل عالمی آبجیکٹ: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong> >.<br><strong>وارننگ</strong>: اگر آپ کو کسی چیز کی خصوصیات کی ضرورت ہو لوڈ نہیں ہے، بس اپنے آپ کو اپنے فارمولے میں آبجیکٹ لائیں جیسا کہ دوسری مثال میں ہے۔<br>کمپیوٹیڈ فیلڈ استعمال کرنے کا مطلب ہے کہ آپ انٹرفیس سے اپنی کوئی قدر درج نہیں کر سکتے۔ نیز، اگر نحو کی خرابی ہے تو، فارمولہ کچھ نہیں لوٹا سکتا۔<br><br>فارمولے کی مثال:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * ( int) substr($mysoc->zip, 1, 2)<br><br>آجیکٹ کو دوبارہ لوڈ کرنے کی مثال<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldreloadedkey'*-j >capital / 5: '-1')<br><br>آجیکٹ اور اس کے بنیادی آبجیکٹ کو زبردستی لوڈ کرنے کے فارمولے کی دوسری مثال: <br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project( $db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ؟ $secondloadedobj->ref: 'پیرنٹ پروجیکٹ نہیں ملا'
 Computedpersistent=حسابی فیلڈ اسٹور کریں۔
@@ -464,7 +470,7 @@ ExtrafieldParamHelpPassword=اس فیلڈ کو خالی چھوڑنے کا مطل
 ExtrafieldParamHelpselect=اقدار کی فہرست شکل کلید کے ساتھ لائنوں کا ہونا لازمی ہے، قدر (جہاں چابی نہیں ہو سکتا '0') مثال کے <br> <br>: <br> 1، VALUE1 <br> 2، VALUE2 <br> code3، value3 <br> ... <br> <br> ہے کرنے کے لئے فہرست ایک اور اعزازی وصف فہرست پر منحصر: <br> 1، VALUE1 | options_ <i> parent_list_code </i>: parent_key <br> 2، VALUE2 | options_ <i> parent_list_code </i>: parent_key <br> <br> واسطے ایک اور فہرست کے لحاظ فہرست ہے کرنا: <br> 1، VALUE1 | <i> parent_list_code </i> :parent_key <br> 2,value2| <i> parent_list_code </i> :parent_key
 ExtrafieldParamHelpcheckbox=اقدار کی فہرست فارمیٹ کلید کے ساتھ لائنوں میں ہونی چاہیے، ویلیو (جہاں کلید '0' نہیں ہو سکتی) <br> <br> مثال کے طور پر: <br> 1,value1 <br> <br> a0342fda19bz0 2,342fdavalue...
 ExtrafieldParamHelpradio=اقدار کی فہرست فارمیٹ کلید کے ساتھ لائنوں میں ہونی چاہیے، ویلیو (جہاں کلید '0' نہیں ہو سکتی) <br> <br> مثال کے طور پر: <br> 1,value1 <br> <br> a0342fda19bz0 2,342fdavalue...
-ExtrafieldParamHelpsellist=اقدار کی فہرست ایک ٹیبل سے آتی ہے<br>نحو: table_name:label_field:id_field::filtersql<br>مثال: ccfda19bz0 ::filtersql<br><br>- id_field لازمی طور پر ایک بنیادی int کلید ہے<br> - filtersql ایک SQL شرط ہے۔ صرف فعال قدر ظاہر کرنے کے لیے یہ ایک سادہ ٹیسٹ (مثلاً فعال=1) ہو سکتا ہے<br>آپ $ID$ کو فلٹر میں بھی استعمال کر سکتے ہیں جو موجودہ آبجیکٹ کی موجودہ id ہے<br>فلٹر میں SELECT استعمال کرنے کے لیے اینٹی انجیکشن تحفظ کو نظرانداز کرنے کے لیے مطلوبہ لفظ $SEL$ استعمال کریں۔<br>اگر آپ ایکسٹرا فیلڈز پر فلٹر کرنا چاہتے ہیں نحو کا استعمال کریں extra.fieldcode=... (جہاں فیلڈ کوڈ extrafield کا کوڈ ہے)<br><br> فہرست ایک اور تکمیلی انتساب کی فہرست پر منحصر ہے:<br>c_typent:libelle:id:options_<i>parent_list_code<span>'notranslate'>'notranslate' </i></span>|parent_column:filter <br><br>دوسری فہرست پر منحصر فہرست رکھنے کے لیے:<br>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758bac33parent_col>
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=اقدار کی فہرست ایک ٹیبل سے آتی ہے فلٹر ڈائن میں $ID$ بھی استعمال کر سکتے ہیں موجودہ آبجیکٹ <br> کی موجودہ آئی ڈی ہے extrafield کا کوڈ) <br> <br> ایک اور اعزازی وصف فہرست پر منحصر فہرست حاصل کرنے کے لیے: <br> c_typent: libelle: ID: options_ <i> parent_list_code </i> | parent_column: فلٹر <br> <br> ایک اور فہرست کے لحاظ فہرست حاصل کرنے کے لیے: <br> c_typent: libelle:id: <i> parent_list_code </i> |parent_column:filter
 ExtrafieldParamHelplink=پیرامیٹرز کا ہونا ضروری ہے ObjectName:Classpath <br> نحو: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=ایک سادہ سیپریٹر کے لیے خالی رکھیں اسٹیٹس کو ہر صارف کے سیشن کے لیے رکھا جاتا ہے)
@@ -533,6 +539,7 @@ WatermarkOnDraftExpenseReports=ڈرافٹ اخراجات کی رپورٹوں پ�
 ProjectIsRequiredOnExpenseReports=اخراجات کی رپورٹ درج کرنے کے لیے پروجیکٹ لازمی ہے۔
 PrefillExpenseReportDatesWithCurrentMonth=موجودہ مہینے کی شروع اور اختتامی تاریخوں کے ساتھ نئے اخراجات کی رپورٹ کے آغاز اور اختتامی تاریخوں کو پہلے سے پُر کریں۔
 ForceExpenseReportsLineAmountsIncludingTaxesOnly=اخراجات کی رپورٹ کی رقم کو ہمیشہ ٹیکس کے ساتھ رقم میں داخل کرنے پر مجبور کریں۔
+BlockExpenseReportLineCreationIfNotBetweenDates=Block line creation if date of line added is not in expense report range
 AttachMainDocByDefault=اسے <b>ہاں</b> پر سیٹ کریں اگر آپ ای میل کے ساتھ بنیادی دستاویز کو بطور ڈیفالٹ منسلک کرنا چاہتے ہیں (اگر قابل اطلاق ہو)
 FilesAttachedToEmail=فائل منسلک
 SendEmailsReminders=ای میلز کے ذریعے ایجنڈے کی یاددہانی بھیجیں۔
@@ -655,7 +662,7 @@ Module2200Desc=قیمتوں کی خودکار تخلیق کے لیے ریاضی 
 Module2300Name=طے شدہ ملازمتیں۔
 Module2300Desc=طے شدہ ملازمتوں کا انتظام (عرف کرون یا کرونو ٹیبل)
 Module2400Name=تقریبات/ایجنڈا
-Module2400Desc=واقعات کو ٹریک کریں۔ ٹریکنگ کے مقاصد کے لیے خودکار ایونٹس کو لاگ کریں یا دستی ایونٹس یا میٹنگز کو ریکارڈ کریں۔ یہ اچھے کسٹمر یا وینڈر ریلیشن شپ مینجمنٹ کے لیے پرنسپل ماڈیول ہے۔
+Module2400Desc=Manage manual and automatic events. Provide a calendar to record events manually. Log also events automatically for tracking purposes or record manual events or meetings. This is the principal module for good Customer or Vendor Relationship Management.
 Module2430Name=آن لائن ملاقات کا شیڈولنگ
 Module2430Desc=آن لائن اپائنٹمنٹ بکنگ کا نظام فراہم کرتا ہے۔ یہ کسی کو بھی پہلے سے طے شدہ رینجز یا دستیابی کے مطابق رینڈیز واؤس بک کرنے کی اجازت دیتا ہے۔
 Module2500Name=ڈی ایم ایس / ای سی ایم
@@ -788,6 +795,7 @@ Permission116=اکاؤنٹس کے درمیان منتقلی
 Permission117=چیک بھیجنے کا انتظام کریں۔
 Permission121=صارف سے منسلک تیسرے فریق کو پڑھیں
 Permission122=صارف سے منسلک تیسرے فریق بنائیں/ترمیم کریں۔
+Permission122b=Not effective for external users (always limited to their third party).
 Permission125=صارف سے منسلک تیسرے فریق کو حذف کریں۔
 Permission126=تیسرے فریق کو برآمد کریں۔
 Permission130=تیسرے فریق کی ادائیگی کی معلومات بنائیں/ترمیم کریں۔
@@ -853,7 +861,9 @@ PermissionAdvanced253=اندرونی/بیرونی صارفین اور اجازت
 Permission254=صرف بیرونی صارفین بنائیں/ترمیم کریں۔
 Permission255=دوسرے صارفین کے پاس ورڈ میں ترمیم کریں۔
 Permission256=دوسرے صارفین کو حذف یا غیر فعال کریں۔
-Permission262=تمام فریق ثالث اور ان کی اشیاء تک رسائی بڑھائیں (صرف تیسرے فریق ہی نہیں جن کے لیے صارف فروخت کا نمائندہ ہے)۔ <br> بیرونی صارفین کے لیے مؤثر نہیں ہے (ہمیشہ تجاویز، آرڈرز، انوائسز، معاہدوں وغیرہ کے لیے خود تک محدود)۔ <br> پراجیکٹس کے لیے موثر نہیں ہے (صرف پراجیکٹ کی اجازتوں، مرئیت اور تفویض کے معاملات پر اصول)۔
+Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
+Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
 Permission263=تمام فریق ثالث تک رسائی ان کی اشیاء کے بغیر بڑھائیں (صرف تیسرے فریق ہی نہیں جن کے لیے صارف فروخت کا نمائندہ ہے)۔ <br> بیرونی صارفین کے لیے مؤثر نہیں ہے (ہمیشہ تجاویز، آرڈرز، انوائسز، معاہدوں وغیرہ کے لیے خود تک محدود)۔ <br> پراجیکٹس کے لیے موثر نہیں ہے (صرف پراجیکٹ کی اجازتوں، مرئیت اور تفویض کے معاملات پر اصول)۔
 Permission271=CA پڑھیں
 Permission272=رسیدیں پڑھیں
@@ -886,13 +896,13 @@ Permission401=چھوٹ پڑھیں
 Permission402=رعایتیں بنائیں/ترمیم کریں۔
 Permission403=چھوٹ کی توثیق کریں۔
 Permission404=چھوٹ کو حذف کریں۔
-Permission430=ڈیبگ بار استعمال کریں۔
+Permission431=Use Debug Bar
 Permission511=تنخواہ اور ادائیگی پڑھیں (آپ کے اور ماتحت)
 Permission512=تنخواہوں اور ادائیگیوں کو بنائیں/ترمیم کریں۔
 Permission514=تنخواہوں اور ادائیگیوں کو حذف کریں۔
 Permission517=تنخواہ اور ادائیگی سب پڑھیں
 Permission519=ایکسپورٹ تنخواہیں۔
-Permission520=لون پڑھیں
+Permission521=Read Loans
 Permission522=قرضے بنائیں/ترمیم کریں۔
 Permission524=قرضوں کو حذف کریں۔
 Permission525=قرض کیلکولیٹر تک رسائی حاصل کریں۔
@@ -913,12 +923,12 @@ Permission609=اسٹیکرز کو حذف کریں۔
 Permission611=متغیرات کی خصوصیات پڑھیں
 Permission612=متغیرات کی خصوصیات بنائیں/اپ ڈیٹ کریں۔
 Permission613=متغیرات کی خصوصیات کو حذف کریں۔
-Permission650=مواد کے بل پڑھیں
-Permission651=مواد کے بل بنائیں/اپ ڈیٹ کریں۔
-Permission652=مواد کے بلز کو حذف کریں۔
-Permission660=مینوفیکچرنگ آرڈر (MO) پڑھیں
-Permission661=مینوفیکچرنگ آرڈر بنائیں/اپ ڈیٹ کریں (MO)
-Permission662=مینوفیکچرنگ آرڈر (MO) کو حذف کریں
+Permission651=Read Bills of Materials
+Permission652=Create/Update Bills of Materials
+Permission653=Delete Bills of Materials
+Permission661=Read Manufacturing Order (MO)
+Permission662=Create/Update Manufacturing Order (MO)
+Permission663=Delete Manufacturing Order (MO)
 Permission701=عطیات پڑھیں
 Permission702=عطیات بنائیں/ترمیم کریں۔
 Permission703=عطیات کو حذف کریں۔
@@ -990,7 +1000,7 @@ Permission2515=دستاویزات کی ڈائریکٹریز ترتیب دیں۔
 Permission2610=صارف API کلید بنائیں/ترمیم کریں۔
 Permission2801=FTP کلائنٹ کو پڑھنے کے موڈ میں استعمال کریں (صرف براؤز اور ڈاؤن لوڈ کریں)
 Permission2802=FTP کلائنٹ کو رائٹ موڈ میں استعمال کریں (فائلیں حذف یا اپ لوڈ کریں)
-Permission3200=محفوظ شدہ واقعات اور فنگر پرنٹس پڑھیں
+Permission3201=Read archived events and fingerprints
 Permission3301=نئے ماڈیولز بنائیں
 Permission4001=مہارت/نوکری/پوزیشن پڑھیں
 Permission4002=مہارت/نوکری/پوزیشن بنائیں/ترمیم کریں۔
@@ -1027,9 +1037,9 @@ Permission50152=سیلز لائنوں میں ترمیم کریں۔
 Permission50153=آرڈر شدہ سیلز لائنوں میں ترمیم کریں۔
 Permission50201=لین دین پڑھیں
 Permission50202=لین دین درآمد کریں۔
-Permission50330=زپیئر کی اشیاء پڑھیں
-Permission50331=Zapier کی اشیاء بنائیں/اپ ڈیٹ کریں۔
-Permission50332=زپیئر کی اشیاء کو حذف کریں۔
+Permission50331=Read objects of Zapier
+Permission50332=Create/Update objects of Zapier
+Permission50333=Delete objects of Zapier
 Permission50401=اکاؤنٹنگ اکاؤنٹس کے ساتھ مصنوعات اور رسیدیں باندھیں۔
 Permission50411=لیجر میں آپریشن پڑھیں
 Permission50412=لیجر میں آپریشنز لکھیں/ترمیم کریں۔
@@ -1054,7 +1064,7 @@ Permission63002=وسائل بنائیں/ترمیم کریں۔
 Permission63003=وسائل کو حذف کریں۔
 Permission63004=وسائل کو ایجنڈے کے واقعات سے جوڑیں۔
 Permission64001=براہ راست پرنٹنگ کی اجازت دیں۔
-Permission67000=رسیدوں کی پرنٹنگ کی اجازت دیں۔
+Permission67001=Allow printing of receipts
 Permission68001=انٹرا کام رپورٹ پڑھیں
 Permission68002=انٹرا کام رپورٹ بنائیں/ترمیم کریں۔
 Permission68004=انٹرا کام رپورٹ کو حذف کریں۔
@@ -1195,9 +1205,11 @@ DefaultMenuManager= معیاری مینو مینیجر
 DefaultMenuSmartphoneManager=اسمارٹ فون مینو مینیجر
 Skin=جلد کی تھیم
 DefaultSkin=پہلے سے طے شدہ جلد کی تھیم
-MaxSizeList=فہرست کے لیے زیادہ سے زیادہ لمبائی
+MaxSizeList=Max length for lists
 DefaultMaxSizeList=فہرستوں کے لیے پہلے سے طے شدہ زیادہ سے زیادہ لمبائی
+MaxSizeShortList=Max length for short lists
 DefaultMaxSizeShortList=مختصر فہرستوں کے لیے پہلے سے طے شدہ زیادہ سے زیادہ لمبائی (یعنی کسٹمر کارڈ میں)
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 MessageOfDay=دن کا پیغام
 MessageLogin=لاگ ان پیج پیغام
 LoginPage=لاگ ان صفحہ
@@ -1205,7 +1217,8 @@ BackgroundImageLogin=پس منظر کی تصویر
 PermanentLeftSearchForm=بائیں مینو پر مستقل تلاش کا فارم
 DefaultLanguage=پہلے سے طے شدہ زبان
 EnableMultilangInterface=گاہک یا وینڈر تعلقات کے لیے کثیر زبانی تعاون کو فعال کریں۔
-EnableShowLogo=مینو میں کمپنی کا لوگو دکھائیں۔
+EnableShowLogo=Show the company logos in the menu
+THEME_MENU_COLORLOGO=Show main menu logo in color
 CompanyInfo=کمپنی/تنظیم
 CompanyIds=کمپنی/تنظیم کی شناخت
 CompanyAddress=پتہ
@@ -1267,6 +1280,7 @@ BrowserName=براؤزر کا نام
 BrowserOS=براؤزر OS
 ListOfSecurityEvents=Dolibarr سیکورٹی کے واقعات کی فہرست
 SecurityEventsPurged=سیکورٹی کے واقعات کو صاف کیا
+SecurityEvent=Security event
 TrackableSecurityEvents=قابل ٹریک سیکیورٹی ایونٹس
 LogEventDesc=مخصوص سیکیورٹی ایونٹس کے لیے لاگنگ کو فعال کریں۔ منتظمین لاگ ان مینو کے ذریعے <b> %s - %s </b> ۔ وارننگ، یہ فیچر ڈیٹا بیس میں بڑی مقدار میں ڈیٹا تیار کر سکتا ہے۔
 AreaForAdminOnly=سیٹ اپ پیرامیٹرز صرف <b> ایڈمنسٹریٹر صارفین </b> کے ذریعے سیٹ کیے جا سکتے ہیں۔
@@ -1435,9 +1449,9 @@ CompanySetup=کمپنیاں ماڈیول سیٹ اپ
 CompanyCodeChecker=کسٹمر/وینڈر کوڈز کی خودکار تخلیق کے اختیارات
 AccountCodeManager=کسٹمر/وینڈر اکاؤنٹنگ کوڈز کی خودکار تخلیق کے لیے اختیارات
 NotificationsDesc=کچھ Dolibarr واقعات کے لیے ای میل اطلاعات خود بخود بھیجی جا سکتی ہیں۔ <br> اطلاعات کے وصول کنندگان کی تعریف کی جا سکتی ہے:
-NotificationsDescUser=* فی صارف، ایک وقت میں ایک صارف۔
-NotificationsDescContact=* فی تھرڈ پارٹی رابطے (گاہک یا دکاندار)، ایک وقت میں ایک رابطہ۔
-NotificationsDescGlobal=* یا ماڈیول کے سیٹ اپ صفحہ میں عالمی ای میل پتوں کو ترتیب دے کر۔
+NotificationsDescUser=* per user (on the tab "Notifications" of a user)
+NotificationsDescContact=* per third-party contacts (on the tab "Notifications" of a third party)
+NotificationsDescGlobal=* or by setting global email addresses (on the setup page of the module).
 ModelModules=دستاویز کے سانچے
 DocumentModelOdt=OpenDocument ٹیمپلیٹس سے دستاویزات تیار کریں (LibreOffice، OpenOffice، KOffice، TextEdit،... سے ODT / .ODS فائلیں)
 WatermarkOnDraft=مسودہ دستاویز پر واٹر مارک
@@ -1663,7 +1677,7 @@ LDAPDescUsers=یہ صفحہ آپ کو Dolibarr صارفین پر پائے جان
 LDAPDescGroups=یہ صفحہ آپ کو Dolibarr گروپس پر پائے جانے والے ہر ڈیٹا کے لیے LDAP ٹری میں LDAP انتساب کے نام کی وضاحت کرنے کی اجازت دیتا ہے۔
 LDAPDescMembers=یہ صفحہ آپ کو ڈولیبر ممبرز ماڈیول پر پائے جانے والے ہر ڈیٹا کے لیے LDAP ٹری میں LDAP انتساب کے نام کی وضاحت کرنے کی اجازت دیتا ہے۔
 LDAPDescMembersTypes=یہ صفحہ آپ کو LDAP ٹری میں LDAP انتسابات کے نام کی وضاحت کرنے کی اجازت دیتا ہے جو Dolibarr ممبرز کی اقسام پر پائے جاتے ہیں۔
-LDAPDescValues=مثال کی قدریں <b> OpenLDAP </b> کے لیے درج ذیل بھری ہوئی اسکیموں کے ساتھ ڈیزائن کی گئی ہیں: <b> core.schema, cosine.schema, inetorgperson.schema a09a4b7789)۔ اگر آپ وہ اقدار اور OpenLDAP استعمال کرتے ہیں، تو اپنی LDAP کنفگ فائل <b> slapd.conf </b> میں ترمیم کریں تاکہ تمام اسکیموں کو لوڈ کیا جاسکے۔
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=ایک مستند رسائی کے لیے (مثال کے طور پر تحریری رسائی کے لیے)
 PerfDolibarr=کارکردگی کا سیٹ اپ/آپٹیمائزنگ رپورٹ
 YouMayFindPerfAdviceHere=یہ صفحہ کارکردگی سے متعلق کچھ چیک یا مشورہ فراہم کرتا ہے۔
@@ -1811,6 +1825,7 @@ DetailRight=غیر مجاز گرے مینو ڈسپلے کرنے کی شرط
 DetailLangs=لیبل کوڈ کے ترجمہ کے لیے Lang فائل کا نام
 DetailUser=اندرونی / بیرونی / تمام
 Target=ہدف
+Targets=Targets
 DetailTarget=لنکس کے لیے ہدف (_خالی اوپر ایک نئی ونڈو کھولتا ہے)
 DetailLevel=سطح (-1: ٹاپ مینو، 0: ہیڈر مینو، >0 مینو اور سب مینو)
 ModifMenu=مینو میں تبدیلی
@@ -1860,7 +1875,7 @@ PastDelayVCalExport=سے پرانا واقعہ برآمد نہ کریں۔
 SecurityKey = سیکیورٹی کلید
 ##### ClickToDial #####
 ClickToDialSetup=ماڈیول سیٹ اپ ڈائل کرنے کے لیے کلک کریں۔
-ClickToDialUrlDesc=یو آر ایل اس وقت کال کیا جاتا ہے جب فون پکٹو پر کلک کیا جاتا ہے۔ URL میں، آپ ٹیگز استعمال کر سکتے ہیں<br><b>__PHONETO__</b>یہ ہوگا کال کرنے والے شخص کے فون نمبر سے بدل دیا گیا<br><b>__PHONEFROM__</b> کال کرنے والے شخص (آپ کا) کے فون نمبر سے بدل دیا جائے گا<br><b>__LOGIN__b09a4b739f17f span> جسے کلک ٹوڈیل لاگ ان سے تبدیل کیا جائے گا (یوزر کارڈ پر بیان کیا گیا ہے)<span class='notranslate'><br><b>__PASS__ </b> جسے کلک ٹوڈیل پاس ورڈ (یوزر کارڈ پر بیان کیا گیا) سے بدل دیا جائے گا۔
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=یہ ماڈیول ڈیسک ٹاپ کمپیوٹر کا استعمال کرتے وقت فون نمبروں کو کلک کے قابل لنکس میں تبدیل کرتا ہے۔ ایک کلک نمبر پر کال کرے گا۔ یہ آپ کے ڈیسک ٹاپ پر سافٹ فون استعمال کرتے وقت یا مثال کے طور پر SIP پروٹوکول پر مبنی CTI سسٹم استعمال کرتے وقت فون کال شروع کرنے کے لیے استعمال کیا جا سکتا ہے۔ نوٹ: اسمارٹ فون استعمال کرتے وقت، فون نمبرز ہمیشہ کلک کے قابل ہوتے ہیں۔
 ClickToDialUseTelLink=فون نمبرز پر صرف ایک لنک "tel:" استعمال کریں۔
 ClickToDialUseTelLinkDesc=یہ طریقہ استعمال کریں اگر آپ کے صارفین کے پاس سافٹ فون یا سافٹ ویئر انٹرفیس ہے، جو براؤزر والے کمپیوٹر پر انسٹال ہے، اور جب آپ اپنے براؤزر میں "tel:" سے شروع ہونے والے لنک پر کلک کرتے ہیں تو اسے کال کیا جاتا ہے۔ اگر آپ کو کسی ایسے لنک کی ضرورت ہے جو "sip:" سے شروع ہو یا ایک مکمل سرور حل (مقامی سافٹ ویئر انسٹالیشن کی ضرورت نہیں)، آپ کو اسے "نہیں" پر سیٹ کرنا ہوگا اور اگلا فیلڈ بھرنا ہوگا۔
@@ -1868,6 +1883,7 @@ ClickToDialUseTelLinkDesc=یہ طریقہ استعمال کریں اگر آپ ک
 CashDesk=پوائنٹ آف سیل
 CashDeskSetup=پوائنٹ آف سیلز ماڈیول سیٹ اپ
 CashDeskThirdPartyForSell=فروخت کے لیے استعمال کرنے کے لیے ڈیفالٹ عام تھرڈ پارٹی
+ForbidSalesToTheDefaultCustomer=Do not allow to record sales on a generic third party (must use a different third party for each sale)
 CashDeskBankAccountForSell=نقد ادائیگی حاصل کرنے کے لیے استعمال کرنے کے لیے ڈیفالٹ اکاؤنٹ
 CashDeskBankAccountForCheque=چیک کے ذریعے ادائیگیاں وصول کرنے کے لیے استعمال کرنے کے لیے ڈیفالٹ اکاؤنٹ
 CashDeskBankAccountForCB=کریڈٹ کارڈز کے ذریعے ادائیگیاں وصول کرنے کے لیے استعمال کرنے کے لیے ڈیفالٹ اکاؤنٹ
@@ -1881,6 +1897,7 @@ CashDeskYouDidNotDisableStockDecease=آپ نے پوائنٹ آف سیل سے س�
 CashDeskForceDecreaseStockLabel=بیچ کی مصنوعات کے اسٹاک میں کمی کو مجبور کیا گیا تھا۔
 CashDeskForceDecreaseStockDesc=سب سے پہلے سب سے پرانے کھانے اور فروخت کی تاریخوں سے کم کریں۔
 CashDeskReaderKeyCodeForEnter=بار کوڈ ریڈر میں بیان کردہ "Enter" کے لیے کلیدی ASCII کوڈ (مثال: 13)
+CashDeskDefaultProject=Assign new POS sales (invoices) to a project
 ##### Bookmark #####
 BookmarkSetup=بک مارک ماڈیول سیٹ اپ
 BookmarkDesc=یہ ماڈیول آپ کو بک مارکس کا انتظام کرنے کی اجازت دیتا ہے۔ آپ اپنے بائیں مینو میں کسی بھی Dolibarr صفحات یا بیرونی ویب سائٹس میں شارٹ کٹس بھی شامل کر سکتے ہیں۔
@@ -1987,6 +2004,7 @@ BackgroundColor=پس منظر کا رنگ
 TopMenuBackgroundColor=ٹاپ مینو کے لیے پس منظر کا رنگ
 TopMenuDisableImages=ٹاپ مینو میں آئیکن یا ٹیکسٹ
 LeftMenuBackgroundColor=بائیں مینو کے لیے پس منظر کا رنگ
+LeftmenuId=Left menu ID
 BackgroundTableTitleColor=ٹیبل ٹائٹل لائن کے لیے پس منظر کا رنگ
 BackgroundTableTitleTextColor=ٹیبل ٹائٹل لائن کے لیے متن کا رنگ
 BackgroundTableTitleTextlinkColor=ٹیبل ٹائٹل لنک لائن کے لیے متن کا رنگ
@@ -2028,6 +2046,7 @@ MailToSendContract=معاہدے
 MailToSendReception=استقبالیہ
 MailToExpenseReport=اخراجات کی رپورٹ
 MailToThirdparty=تیسرے فریقوں
+MailToContact=Contacts
 MailToMember=ممبران
 MailToUser=صارفین
 MailToProject=پروجیکٹس
@@ -2094,7 +2113,7 @@ MAIN_PDF_HIDE_CUSTOMER_CODE=کسٹمر کوڈ چھپائیں۔
 MAIN_PDF_HIDE_SENDER_NAME=ایڈریس بلاک میں بھیجنے والے/کمپنی کا نام چھپائیں۔
 PROPOSAL_PDF_HIDE_PAYMENTTERM=ادائیگی کی شرائط چھپائیں۔
 PROPOSAL_PDF_HIDE_PAYMENTMODE=ادائیگی کا موڈ چھپائیں۔
-MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=پی ڈی ایف میں الیکٹرانک سائن شامل کریں۔
+MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add a hidden markup into the signature area to allow electronic signature tool to reuse it. May be used by external tools or in a future by the online signature feature.
 NothingToSetup=اس ماڈیول کے لیے کسی مخصوص سیٹ اپ کی ضرورت نہیں ہے۔
 SetToYesIfGroupIsComputationOfOtherGroups=اگر یہ گروپ دوسرے گروپوں کی گنتی ہے تو اسے ہاں پر سیٹ کریں۔
 EnterCalculationRuleIfPreviousFieldIsYes=اگر پچھلا فیلڈ ہاں پر سیٹ کیا گیا ہو تو حساب کتاب کا اصول درج کریں۔ <br> مثال کے طور پر: <br> CODEGRP1+CODEGRP2
@@ -2128,6 +2147,7 @@ oauthToken=OAuth2 ٹوکن
 accessType=رسائی کی قسم
 oauthService=اوتھ سروس
 TokenMustHaveBeenCreated=ماڈیول OAuth2 کا فعال ہونا ضروری ہے اور ایک oauth2 ٹوکن درست اجازتوں کے ساتھ بنایا گیا ہو گا (مثال کے طور پر Gmail کے لیے OAuth کے ساتھ دائرہ کار "gmail_full")۔
+TokenNotRequiredForOAuthLogin=Token unnecessary for OAuth entry used for Login
 ImapEncryption = IMAP خفیہ کاری کا طریقہ
 ImapEncryptionHelp = مثال: کوئی نہیں، ssl، tls، notls
 NoRSH = NoRSH کنفیگریشن استعمال کریں۔
@@ -2161,7 +2181,7 @@ NoNewEmailToProcess=کارروائی کے لیے کوئی نیا ای میل (م
 NothingProcessed=کچھ نہیں کیا
 RecordEvent=ایجنڈے میں واقعہ ریکارڈ کریں (جیسی ای میل بھیجی یا موصول ہوئی ہے)
 CreateLeadAndThirdParty=ایک لیڈ بنائیں (اور اگر ضروری ہو تو تیسرا فریق)
-CreateTicketAndThirdParty=ٹکٹ بنائیں (اگر تیسرے فریق کو پچھلے آپریشن کے ذریعے لوڈ کیا گیا ہو یا ای میل ہیڈر میں کسی ٹریکر سے اندازہ لگایا گیا ہو تو تیسرے فریق سے منسلک ہو، بصورت دیگر تیسرے فریق کے بغیر)
+CreateTicketAndThirdParty=Create or complete a ticket (linked to a third party if the third party was loaded by a previous operation or was guessed from a tracker in email header, without third party otherwise)
 CodeLastResult=تازہ ترین نتیجہ کوڈ
 NbOfEmailsInInbox=سورس ڈائرکٹری میں ای میلز کی تعداد
 LoadThirdPartyFromName=%s پر تیسرے فریق کی تلاش کو لوڈ کریں (صرف لوڈ)
@@ -2176,7 +2196,7 @@ CreateCandidature=ملازمت کی درخواست بنائیں
 FormatZip=زپ
 MainMenuCode=مینو انٹری کوڈ (مین مینو)
 ECMAutoTree=خودکار ECM درخت دکھائیں۔
-OperationParamDesc=کچھ ڈیٹا نکالنے کے لیے استعمال کرنے کے لیے قواعد کی وضاحت کریں یا آپریشن کے لیے استعمال کرنے کے لیے قدریں سیٹ کریں۔<br><br>سے کمپنی کا نام نکالنے کی مثال ای میل کا موضوع ایک عارضی متغیر میں:<br>tmp_var=EXTRACT:SUBJECT:کمپنی کی طرف سے پیغام ([^\n]*)<br><br>تخلیق کے لیے کسی آبجیکٹ کی خصوصیات سیٹ کرنے کی مثالیں:<br>objproperty1=SET:ایک ہارڈ کوڈ شدہ قدر<br>objproperty2=SET:__tmp_var__<br>objproperty (MPvalue3=SETIFEa value: صرف اس صورت میں سیٹ کیا جاتا ہے جب پراپرٹی کی پہلے سے وضاحت نہ کی گئی ہو)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<span class='notranslate' '><br></span>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY is:My s([^\\s]*)<br><br>متعدد خصوصیات کو نکالنے یا سیٹ کرنے کے لیے ایک نئی لائن استعمال کریں۔
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=ابتدائی گھنٹے
 OpeningHoursDesc=اپنی کمپنی کے باقاعدہ کھلنے کے اوقات یہاں درج کریں۔
 ResourceSetup=وسائل کے ماڈیول کی ترتیب
@@ -2236,7 +2256,7 @@ NotAPublicIp=عوامی IP نہیں ہے۔
 MakeAnonymousPing=Dolibarr فاؤنڈیشن سرور پر ایک گمنام پنگ '+1' بنائیں (صرف 1 بار انسٹالیشن کے بعد)
 FeatureNotAvailableWithReceptionModule=ماڈیول ریسپشن فعال ہونے پر فیچر دستیاب نہیں ہے۔
 EmailTemplate=ای میل کے لیے ٹیمپلیٹ
-EMailsWillHaveMessageID=ای میلز میں اس نحو سے مماثل ٹیگ 'حوالہ جات' ہوگا۔
+EMailsWillHaveMessageID=Emails will have a 'Message-ID' header matching this syntax
 PDF_SHOW_PROJECT=دستاویز پر پروجیکٹ دکھائیں۔
 ShowProjectLabel=پروجیکٹ لیبل
 PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=تیسرے فریق کے نام میں عرف شامل کریں۔
@@ -2291,7 +2311,7 @@ APIsAreNotEnabled=APIs ماڈیولز فعال نہیں ہیں۔
 YouShouldSetThisToOff=آپ کو اسے 0 یا آف پر سیٹ کرنا چاہیے۔
 InstallAndUpgradeLockedBy=انسٹال اور اپ گریڈ فائل <b> %s </b> کے ذریعہ مقفل ہیں۔
 InstallLockedBy=انسٹال/دوبارہ انسٹال فائل <b>%s</b> کے ذریعہ مقفل ہے۔
-InstallOfAddonIsNotBlocked=ایڈونز کی تنصیبات مقفل نہیں ہیں۔ ایک فائل <b>installmodules.lock</b> ڈائرکٹری <b> میں بنائیں ='notranslate'>%s</span></b> بیرونی ایڈونز/ماڈیولز کی تنصیبات کو بلاک کرنے کے لیے۔
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=پرانا عمل درآمد
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=اگر آن لائن ادائیگی کے کچھ ماڈیولز فعال ہیں (پے پال، پٹی، ...)، آن لائن ادائیگی کرنے کے لیے پی ڈی ایف پر ایک لنک شامل کریں۔
 DashboardDisableGlobal=کھلی اشیاء کے تمام انگوٹھوں کو عالمی سطح پر غیر فعال کریں۔
@@ -2329,7 +2349,7 @@ ExportUseLowMemoryModeHelp=ڈمپ فائل بنانے کے لیے لو میمو�
 ModuleWebhookName = ویب ہُک
 ModuleWebhookDesc = ڈولیبر ٹرگرز کو پکڑنے اور ایونٹ کا ڈیٹا یو آر ایل پر بھیجنے کا انٹرفیس
 WebhookSetup = ویب ہک سیٹ اپ
-WebhookSetupPage = ویب ہک سیٹ اپ صفحہ
+WebhookSetupPage = Webhook setup page. To activate a webhook, go on the %s tab and create targets
 ShowQuickAddLink=اوپری دائیں مینو میں ایک عنصر کو تیزی سے شامل کرنے کے لیے ایک بٹن دکھائیں۔
 ShowSearchAreaInTopMenu=ٹاپ مینو میں سرچ ایریا دکھائیں۔
 HashForPing=ہیش پنگ کے لیے استعمال ہوتا ہے۔
@@ -2346,8 +2366,11 @@ IconOnlyTextOnHover=صرف آئیکن - آئیکن کا متن آئیکن کے �
 IconOnly=صرف آئیکن - صرف ٹول ٹپ پر متن
 INVOICE_ADD_ZATCA_QR_CODE=انوائسز پر ZATCA QR کوڈ دکھائیں۔
 INVOICE_ADD_ZATCA_QR_CODEMore=کچھ عربی ممالک کو اپنے رسیدوں پر اس QR کوڈ کی ضرورت ہوتی ہے۔
-INVOICE_ADD_SWISS_QR_CODE=انوائسز پر سوئس QR-Bill کوڈ دکھائیں۔
+INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices (with a bank account defined for credit transfer)
 INVOICE_ADD_SWISS_QR_CODEMore=انوائس کے لیے سوئٹزرلینڈ کا معیار؛ یقینی بنائیں کہ زپ اور سٹی بھرے ہوئے ہیں اور یہ کہ اکاؤنٹس میں درست سوئس/لیچٹینسٹائن IBANs ہیں۔
+INVOICE_ADD_EPC_QR_CODE=Show the EPC QR code on invoices (with a bank account defined for credit transfer)
+INVOICE_ADD_EPC_QR_CODEMore=This feature allows you to add or remove an EPC QR Code on your invoices, which facilitates automatic SEPA credit transfers. Enabling this option helps your clients make payments easily by scanning the QR code, reducing manual entry errors. Use this feature if you have clients in countries like Austria, Belgium, Finland, Germany, and the Netherlands where this system is supported. Disable it if it's not required for your business operations or client base.
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
 INVOICE_SHOW_SHIPPING_ADDRESS=شپنگ ایڈریس دکھائیں۔
 INVOICE_SHOW_SHIPPING_ADDRESSMore=کچھ ممالک میں لازمی اشارہ (فرانس، ...)
 UrlSocialNetworksDesc=سوشل نیٹ ورک کا یو آر ایل لنک۔ سوشل نیٹ ورک ID پر مشتمل متغیر حصے کے لیے {socialid} استعمال کریں۔
@@ -2363,8 +2386,11 @@ HideAdvancedoptions= اعلی درجے کے اختیارات چھپائیں۔
 OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 کی توثیق تمام میزبانوں کے لیے دستیاب نہیں ہے، اور OAUTH ماڈیول کے ساتھ صحیح اجازتوں کے ساتھ ایک ٹوکن ضرور بنایا گیا ہو گا۔
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 تصدیق کی خدمت
 DontForgetCreateTokenOauthMod=صحیح اجازتوں کے ساتھ ایک ٹوکن OAUTH ماڈیول کے ساتھ اوپر کی طرف بنایا گیا ہوگا۔
+AuthenticationMethod=Authentication method
 MAIN_MAIL_SMTPS_AUTH_TYPE=تصدیق کا طریقہ
 UsePassword=پاس ورڈ استعمال کریں۔
+UseAUTHLOGIN=Use a password (AUTH LOGIN)
+UseAUTHPLAIN=Use a password (AUTH PLAIN)
 UseOauth=OAUTH ٹوکن استعمال کریں۔
 Images=امیجز
 MaxNumberOfImagesInGetPost=فارم میں جمع کرائے گئے HTML فیلڈ میں زیادہ سے زیادہ تصاویر کی اجازت ہے۔
@@ -2405,8 +2431,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=ڈیفالٹ کے ذریعہ نہ
 CSSPage=سی ایس ایس اسٹائل
 Defaultfortype=طے شدہ
 DefaultForTypeDesc=ٹیمپلیٹ کی قسم کے لیے نیا ای میل بناتے وقت بطور ڈیفالٹ استعمال کیا جاتا ہے۔
-OptionXShouldBeEnabledInModuleY=آپشن "<b>%s</b>" ماڈیول <span کلاس میں فعال ہونا چاہئے ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=آپشن "<b>%s</b>" ماڈیول میں فعال ہے <span= class 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=آن لائن دستخط کی اجازت دیں۔
 AtBottomOfPage=صفحہ کے نیچے
 FailedAuth=ناکام تصدیق
@@ -2422,6 +2448,7 @@ LargeModern=بڑا - جدید
 SpecialCharActivation=خصوصی حروف داخل کرنے کے لیے ورچوئل کی بورڈ کھولنے کے لیے بٹن کو فعال کریں۔
 DeleteExtrafield=ایکسٹرا فیلڈ کو حذف کریں۔
 ConfirmDeleteExtrafield=کیا آپ %s فیلڈ کو حذف کرنے کی تصدیق کرتے ہیں؟ اس فیلڈ میں محفوظ کردہ تمام ڈیٹا کو یقینی طور پر حذف کر دیا جائے گا۔
+ConfirmDeleteSetup=Are you sure you want to delete the setup for %s ?
 ExtraFieldsSupplierInvoicesRec=تکمیلی صفات (ٹیمپلیٹس رسیدیں)
 ExtraFieldsSupplierInvoicesLinesRec=Complementary attributes (template invoice lines)
 ParametersForTestEnvironment=ٹیسٹ کے ماحول کے لیے پیرامیٹرز
@@ -2433,3 +2460,18 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different parts of the application. Need external AI API.
+AI_API_KEY=Key for AI api
+AI_API_SERVICE=Service to use for AI features
+AiSetup=AI module setup
+AiCustomPrompt=AI custom prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+TextGeneration=Text generation
+ImageGeneration=Image generation
+VideoGeneration=Video generation
+AudioText=Audio - Text
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address
+ConvertInto=Convert into
+YouAreHere=You are here
