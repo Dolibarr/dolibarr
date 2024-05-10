@@ -36,6 +36,13 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+
+/*
+ * View
+ */
+
+top_httphead('application/json');
+
 //list of fields handled by that file
 $list_of_fields = ['search_date_startday', 'search_date_startmonth', 'search_date_startyear', 'search_date_endday', 'search_date_endmonth', 'search_date_endyear'];
 
