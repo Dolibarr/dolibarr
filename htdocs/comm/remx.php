@@ -851,7 +851,7 @@ if ($socid > 0) {
 					0 => array('type' => 'text', 'name' => 'multicurrency_amount_ttc_1', 'label' => $langs->trans("MulticurrencyAmountTTC").' 1', 'value' => $multicurrency_amount1, 'size' => '5')
 				);
 				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo_multicurrency['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo_multicurrency['multicurrency_amount_ttc']), $langs->trans("MulticurrencyAmountTTC")), 'confirm_split_multicurrency', $formquestion, '', 1);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo_multicurrency['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo_multicurrency['multicurrency_amount_ttc']), $langs->trans("MulticurrencyAmountTTC")), 'confirm_split_multicurrency', $formquestion, 0, 1);
 			}
 		} else {
 			dol_print_error($db);
