@@ -653,7 +653,7 @@ if ($socid > 0) {
 					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo['rowid'] = $obj->rowid;
 						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
-					} elseif ($action == 'split_multicurrency' && GETPOST('remid') == $obj->rowid) {
+					} elseif (!empty($conf->multicurrency->enabled) && $action == 'split_multicurrency' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo_multicurrency['rowid'] = $obj->rowid;
 						$showconfirminfo_multicurrency['multicurrency_amount_ttc'] = $obj->multicurrency_amount_ttc;
 					}
@@ -678,7 +678,7 @@ if ($socid > 0) {
 				);
 				$langs->load("dict");
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 1);
-			} elseif (count($showconfirminfo_multicurrency)) {
+			} elseif (!empty($conf->multicurrency->enabled) && count($showconfirminfo_multicurrency)) {
 				$multicurrency_amount1 = price2num($showconfirminfo_multicurrency['multicurrency_amount_ttc'] / 2, 'MT');
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
@@ -824,7 +824,7 @@ if ($socid > 0) {
 					if ($action == 'split' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo['rowid'] = $obj->rowid;
 						$showconfirminfo['amount_ttc'] = $obj->amount_ttc;
-					} elseif ($action == 'split_multicurrency' && GETPOST('remid') == $obj->rowid) {
+					} elseif (!empty($conf->multicurrency->enabled) && $action == 'split_multicurrency' && GETPOST('remid') == $obj->rowid) {
 						$showconfirminfo_multicurrency['rowid'] = $obj->rowid;
 						$showconfirminfo_multicurrency['multicurrency_amount_ttc'] = $obj->multicurrency_amount_ttc;
 					}
@@ -849,7 +849,7 @@ if ($socid > 0) {
 				);
 				$langs->load("dict");
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 1);
-			} elseif (count($showconfirminfo_multicurrency)) {
+			} elseif (!empty($conf->multicurrency->enabled) && count($showconfirminfo_multicurrency)) {
 				$multicurrency_amount1 = price2num($showconfirminfo_multicurrency['multicurrency_amount_ttc'] / 2, 'MT');
 				$formquestion = array(
 					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
