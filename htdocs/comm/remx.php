@@ -740,6 +740,7 @@ if ($socid > 0) {
 			print '</tr>';
 
 			$showconfirminfo = array();
+			$showconfirminfo_multicurrency = array();
 
 			$i = 0;
 			$num = $db->num_rows($resql);
