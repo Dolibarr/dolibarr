@@ -350,10 +350,10 @@ abstract class CommonObject
 	public $statut;
 
 	/**
-	 * @var int|array<int, string>      The object's status (an int).
-	 *                                  Or an array listing all the potential status of the object:
-	 *                                    array: int of the status => translated label of the status
-	 *                                    See for example the Account class.
+	 * @var int|array<int, string>   The object's status (an int).
+	 *                 						Or an array listing all the potential status of the object:
+	 *                                    	array: int of the status => translated label of the status
+	 *                                    	See for example the Account class.
 	 * @see setStatut()
 	 */
 	public $status;
