@@ -195,7 +195,6 @@ MAIN_MAIL_SMTPS_PW=Contraseña SMTP (si el servidor de envío requiere autentica
 MAIN_MAIL_EMAIL_TLS=Usar cifrado TLS (SSL)
 MAIN_DISABLE_ALL_SMS=Deshabilitar todo el envío de SMS (para fines de prueba o demostraciones)
 MAIN_SMS_SENDMODE=Método a utilizar para enviar SMS
-MAIN_MAIL_SMS_FROM=Número de teléfono predeterminado del remitente para el envío de SMS
 UserEmail=Correo electrónico del usuario
 CompanyEmail=Correo electrónico de la empresa
 FeatureNotAvailableOnLinux=Característica no disponible en sistemas similares a Unix. Prueba tu programa de envio de correo localmente.

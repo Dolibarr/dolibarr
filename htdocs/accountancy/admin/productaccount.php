@@ -517,8 +517,8 @@ if ($resql) {
 
 	$massactionbutton = '';
 
+	$nbselected = is_array($toselect) ? count($toselect) : 0;
 	if ($massaction == 'set_default_account') {
-		$nbselected = is_array($toselect) ? count($toselect) : 0;
 		if ($nbselected <= 0) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'warnings');

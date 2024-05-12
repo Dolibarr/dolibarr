@@ -93,9 +93,9 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
+	 *	Return the list of entries for staff (no translation, it is number ranges)
 	 *
-	 *	@param	int		$mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *	@param	int		$mode		0=return id+label, 1=return code+Label
 	 *	@param  string	$filter     Add a SQL filter to select. Data must not come from user input.
 	 *  @return array				Array of types d'effectifs
 	 */

@@ -4227,7 +4227,7 @@ div.pagination li {
   padding-left: 0px;
   padding-right: 0px;
   /* padding-top: 10px; */
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
   font-size: 1.1em;
 }
 .pagination {

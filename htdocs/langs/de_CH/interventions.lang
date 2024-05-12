@@ -27,7 +27,6 @@ InterventionCardsAndInterventionLines=Einsatz und Einsatzpositionen
 InterventionClassifyBilled=Auf "verrechnet" setzten
 InterventionClassifyUnBilled=Auf "nicht verrechnet" setzen
 InterventionClassifyDone=Auf "erledigt" setzen
-StatusInterInvoiced=Verrechnet
 SendInterventionRef=Einsatz %s einreichen
 SendInterventionByMail=Einsatz per E-Mail versenden
 InterventionCreatedInDolibarr=Einsatz %s erstellt

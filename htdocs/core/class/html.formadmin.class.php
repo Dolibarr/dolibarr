@@ -73,7 +73,7 @@ class FormAdmin
 	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		if (getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')) {
 			if (!is_array($filter)) {
