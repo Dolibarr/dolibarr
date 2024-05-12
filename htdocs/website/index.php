@@ -4345,7 +4345,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1, 'minwidth300');
 	print '</td></tr>';
 
 	print '<script type="text/javascript">
@@ -4578,9 +4578,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
-
 	// Content - Example/templates of page
+	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 	$htmltext = '<small>';
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
@@ -4617,23 +4616,25 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent"><td class="tdtop">';
-	if (! ($action == 'createcontainer' && $showlinktolayout && $showlinktoai)) {
-		if ($conf->browser->layout == 'phone') {
-			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
-		} else {
-			//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-			print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+	if ($action == 'createcontainer') {
+		print '<tr id="pageContent"><td class="tdtop">';
+		if (!$showlinktolayout || !$showlinktoai) {
+			if ($conf->browser->layout == 'phone') {
+				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+			} else {
+				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+				print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+			}
 		}
+		print '</td><td>';
+		//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+		$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+		$doleditor->Create();
+		//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
+		print '</div>';
+		print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+		print '</td></tr>';
 	}
-	print '</td><td>';
-	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
-	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
-	$doleditor->Create();
-	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
-	print '</div>';
-	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
-	print '</td></tr>';
 
 	// Date creation
 	print '<tr><td>';
@@ -4861,7 +4862,6 @@ if ($action == 'editcontent') {
 	$doleditor->Create(0, '', false);
 }
 
-
 print "</div>\n";
 print "</form>\n";
 
@@ -5036,8 +5036,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("UserCreation", 0, $_SERVER['PHP_SELF'], 'fk_user_creat', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
@@ -5101,7 +5101,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					//print '</td>';
 					//print '<td class="tdoverflow100">';
 					print '<br>';
-					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : '&nbsp;').'</span>';
+					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : $langs->trans("NoDescription")).'</span>';
+					print '</td>';
+
+					// Language
+					print '<td class="center">';
+					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Categories - Tags
@@ -5117,11 +5122,6 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						}
 					}
 					//var_dump($existing);
-					print '</td>';
-
-					// Language
-					print '<td class="center">';
-					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Number of words
