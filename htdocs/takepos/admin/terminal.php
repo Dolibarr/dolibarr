@@ -294,6 +294,7 @@ if (isModEnabled('stock')) {
 	}
 	print '</td></tr>';
 
+	// Deprecated: CASHDESK_FORCE_DECREASE_STOCK is now always false. No more required/used.
 	if (isModEnabled('productbatch') && getDolGlobalString('CASHDESK_FORCE_DECREASE_STOCK') && !getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
 		print '<tr class="oddeven"><td>'.$langs->trans('CashDeskForceDecreaseStockLabel').'</td>';
 		print '<td>';

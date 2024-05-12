@@ -8036,6 +8036,8 @@ class Form
 	{
 		global $conf, $extrafields, $user;
 
+		//var_dump($objectdesc); debug_print_backtrace();
+
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
 		$InfoFieldList = array();
@@ -8043,29 +8045,32 @@ class Form
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
-			$objectdesc = '';
 
 			// Load object according to $id and $element
 			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
 
-			$reg = array();
-			if (preg_match('/^options_(.*)$/', $tmparray[1], $reg)) {
-				// For a property in extrafields
-				$key = $reg[1];
-				// fetch optionals attributes and labels
-				$extrafields->fetch_name_optionals_label($objectforfieldstmp->table_element);
+			if (is_object($objectforfieldstmp)) {
+				$objectdesc = '';
 
-				if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key]) && $extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key] == 'link') {
-					if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options'])) {
-						$tmpextrafields = array_keys($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options']);
-						$objectdesc = $tmpextrafields[0];
+				$reg = array();
+				if (preg_match('/^options_(.*)$/', $tmparray[1], $reg)) {
+					// For a property in extrafields
+					$key = $reg[1];
+					// fetch optionals attributes and labels
+					$extrafields->fetch_name_optionals_label($objectforfieldstmp->table_element);
+
+					if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key]) && $extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key] == 'link') {
+						if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options'])) {
+							$tmpextrafields = array_keys($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options']);
+							$objectdesc = $tmpextrafields[0];
+						}
 					}
-				}
-			} else {
-				// For a property in ->fields
-				if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
-					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
-					$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+				} else {
+					// For a property in ->fields
+					if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
+						$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+						$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+					}
 				}
 			}
 		}
@@ -8084,7 +8089,7 @@ class Form
 			$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
 
 			$classname = $InfoFieldList[0];
-			$classpath = $InfoFieldList[1];
+			$classpath = empty($InfoFieldList[1]) ? '' : $InfoFieldList[1];
 			//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 			$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 			$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];

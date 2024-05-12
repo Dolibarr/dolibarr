@@ -64,7 +64,6 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield 			= GETPOST('sortfield', 'aZ09comma');
 $sortorder 			= GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
-
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -77,6 +76,9 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
+$type = '';
+$texte = '';
+$newcardbutton = '';
 
 // Initialize technical objects
 $object = new CurrencyRate($db);
@@ -544,6 +546,7 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield']=0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
