@@ -63,9 +63,9 @@ class Stripe extends CommonObject
 
 	/**
 	 * @var string
+	 * @deprecated Was used by createPaymentStripe only that is deprecated
 	 */
-	// @phan-suppress-next-line
-	public $status;
+	public $result;
 
 	/**
 	 * @var string
@@ -1357,7 +1357,7 @@ class Stripe extends CommonObject
 			if (isset($charge->id)) {
 			}
 
-			$return->status = 'success';
+			$return->result = 'success';
 			$return->id = $charge->id;
 
 			if (preg_match('/pm_/i', $source)) {
@@ -1381,7 +1381,7 @@ class Stripe extends CommonObject
 			$body = $e->getJsonBody();
 			$err = $body['error'];
 
-			$return->status = 'error';
+			$return->result = 'error';
 			$return->id = $err['charge'];
 			$return->type = $err['type'];
 			$return->code = $err['code'];
