@@ -1717,15 +1717,26 @@ class Website extends CommonObject
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
-		// Remove the file README and LICENSE from the $destdir (already into the containers directory)
-		if (empty($exportPath)) {
-			dol_delete_file($destdir.'/README.md');
-			dol_delete_file($destdir.'/LICENSE');
+		// Remove the file README and LICENSE from the $destdir/containers
+		if (dol_is_file($destdir.'/containers/README.md')) {
+			dol_move($destdir.'/containers/README.md', $destdir.'/README.md', '0', 1, 0, 0);
 		}
+		if (dol_is_file($destdir.'/containers/LICENSE')) {
+			dol_move($destdir.'/containers/LICENSE', $destdir.'/LICENSE', '0', 1, 0, 0);
+		}
+		/*
+		if (empty($exportPath)) {
+			dol_delete_file($destdir.'/containers/README.md');
+			dol_delete_file($destdir.'/containers/LICENSE');
+		}
+		*/
 
 		// Remove non required files (will be re-generated during the import)
 		dol_delete_file($destdir.'/containers/index.php');
 		dol_delete_file($destdir.'/containers/master.inc.php');
+
+		// Now we remove the flag o+x on files
+		// TODO
 
 		if (!empty($resultarray)) {
 			setEventMessages("Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray), null, 'errors');
