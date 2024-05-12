@@ -147,8 +147,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	if (dol_is_file($filetpl)) {
 		if ($backupold) {
-			dol_delete_file($filetpl.'.old');
-			$result = dol_move($filetpl, $filetpl.'.old', 0, 1, 0, 0);
+			$result = manageFileBackups($filetpl);
 			if (! $result) {
 				return false;
 			}

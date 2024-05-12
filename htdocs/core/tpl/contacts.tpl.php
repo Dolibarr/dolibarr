@@ -168,7 +168,10 @@ if ($permission) {
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
-			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print img_object('', 'contact', 'class="pictofixedwidth"');
+			//print $form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print $form->select_contact(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp maxwidth400 widthcentpercentminusx', true);
+
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';

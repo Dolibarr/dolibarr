@@ -16,7 +16,6 @@ Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por correo electrónico
 Read=Leer
 NeedMoreInformation=Esperando comentarios del reportero
 Waiting=Esperando
-Type=Tipo
 MailToSendTicketMessage=Para enviar correo electrónico desde el mensaje del ticket
 TicketSetup=Configuración del módulo de tickets
 TicketSettings=Ajustes

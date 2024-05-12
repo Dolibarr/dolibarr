@@ -478,7 +478,8 @@ class Export
 				if ($InfoFieldList[1] == 'select_company') {
 					$szFilterField .= $form->select_company('', $NameField, '', 1, 0, 0, [], 0, 'maxwidth200');
 				} elseif ($InfoFieldList[1] == 'selectcontacts') {
-					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
+					//$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
+					$szFilterField .= $form->select_contact(0, '', $NameField, '&nbsp;', '', '', 0, 'minwidth100imp maxwidth200', true);
 				} elseif ($InfoFieldList[1] == 'select_dolusers') {
 					$szFilterField .= $form->select_dolusers('', $NameField, 1, null, 0, '', '', '', 0, 0, "", 0, "", "maxwidth200");
 				}

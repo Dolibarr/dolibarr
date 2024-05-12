@@ -54,7 +54,7 @@ FIX: #24265 regression cannot see all product on takepos (#28753)
 FIX: #26015
 FIX: #28205
 FIX: #28251 Fixing subpermission name on api_multicurrencies.class.php (#28252)
-FIX: #28347 FIX: #28962 FIX: #29224  FIX: #29035  (#29303)
+FIX: #28347 FIX: occurred#28962 FIX: #29224  FIX: #29035  (#29303)
 FIX: #28369
 FIX: #28429
 FIX: #28491 (#28522)

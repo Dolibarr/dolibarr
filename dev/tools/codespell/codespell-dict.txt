@@ -26,3 +26,4 @@ shippin->shipping
 tableau de bord->state board
 tagret->target
 thridparty->thirdparty
+wysiwig->wysiwyg

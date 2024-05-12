@@ -179,7 +179,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
  */
 function getMultidirTemp($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'temp');
+	return getMultidirOutput($object, $module, $forobject, 'temp');
 }
 
 /**
@@ -193,7 +193,7 @@ function getMultidirTemp($object, $module = '', $forobject = 0)
  */
 function getMultidirVersion($object, $module = '', $forobject = 0)
 {
-	return getMultiDirOutput($object, $module, $forobject, 'version');
+	return getMultidirOutput($object, $module, $forobject, 'version');
 }
 
 
@@ -2203,18 +2203,24 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 /**
  * Create a dialog with two buttons for export and overwrite of a website
  *
- * @param string $name          Unique identifier for the dialog
- * @param string $label         Title of the dialog
- * @param string $buttonstring  Text for the button that opens the dialog
- * @param string $exportSiteName Name of the "submit" input for site export
- * @param string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
- * @return string               HTML and JavaScript code for the button and the dialog
+ * @param 	string $name          	Unique identifier for the dialog
+ * @param 	string $label         	Title of the dialog
+ * @param 	string $buttonstring  	Text for the button that opens the dialog
+ * @param 	string $exportSiteName 	Name of the "submit" input for site export
+ * @param 	string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
+ * @param	Website	$website		Website object
+ * @return 	string               	HTML and JavaScript code for the button and the dialog
  */
-function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl)
+function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl, $website)
 {
 	global $langs, $db;
 
 	$form = new Form($db);
+
+	$templatenameforexport = $website->name_template;	// Example 'website_template-corporate'
+	if (empty($templatenameforexport)) {
+		$templatenameforexport = 'website_'.$website->ref;
+	}
 
 	$out = '';
 	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="'.dol_escape_htmltag($buttonstring).'"/>';
@@ -2224,21 +2230,27 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= 'jQuery(document).ready(function () {';
 	$out .= '  jQuery("#open-dialog-' . $name . '").click(function () {';
 	$out .= '    var dialogHtml = \'';
-	$out .= '      <div id="custom-dialog-' . $name . '">';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").' : </label>';
-	$out .= '          <button id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportSite")) . '</button>';
-	$out .= '        </div>';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <h4>'.$langs->trans("ExportSiteGitLabel").' : '.$form->textwithpicto('', $langs->trans("SourceFiles")).'</h4>';
-	$out .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
-	$out .= '        		<input type="hidden" name="action" value="overwritesite">';
-	$out .= '        		<input type="hidden" name="token" value="'.newToken().'">';
-	$out .= '          		<input type="text" name="export_path" id="export-path-' . $name . '" placeholder="'.$langs->trans('ExportPath').'" style="width:400px "/>';
-	$out .= '          		<button type="submit" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
-	$out .= '      		</form>';
-	$out .= '        </div>';
-	$out .= '      </div>\';';
+
+	$dialogcontent = '      <div id="custom-dialog-' . $name . '">';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").'...</label><br>';
+	$dialogcontent .= '          <button class="button smallpaddingimp" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '        <br>';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <strong>'.$langs->trans("ExportSiteGitLabel").' '.$form->textwithpicto('', $langs->trans("SourceFiles"), 1, 'help', '', 0, 3, '').'</strong><br>';
+	$dialogcontent .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
+	$dialogcontent .= '        		<input type="hidden" name="action" value="overwritesite">';
+	$dialogcontent .= '        		<input type="hidden" name="token" value="'.newToken().'">';
+	$dialogcontent .= '          		<input type="text" autofocus name="export_path" id="export-path-'.$name.'" placeholder="'.$langs->trans('ExportPath').'" style="width:400px " value="'.dol_escape_htmltag($templatenameforexport).'"/><br>';
+	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$dialogcontent .= '      		</form>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '      </div>';
+
+	$out .= dol_escape_js($dialogcontent);
+
+	$out .= '\';';
 
 
 	// Add the content of the dialog to the body of the page
@@ -2252,7 +2264,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 220,';
+	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
 	$out .= '      title: "' . dol_escape_js($label) . '",';
 	$out .= '    });';
@@ -6113,7 +6125,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show
+ *	@param	string	$title				Title to show (HTML sanitized content)
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -6138,7 +6150,9 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
-	$return .= '<div class="titre inline-block">'.dol_escape_htmltag($title).'</div>';
+	$return .= '<div class="titre inline-block">';
+	$return .= $title;	// $title is already HTML sanitized content
+	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
 		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
@@ -6578,7 +6592,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC', 'ZAR');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -12093,7 +12107,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	// If $url is an array, we must build a dropdown button
+	// If $url is an array, we must build a dropdown button or recursively iterate over each value
 	if (is_array($url)) {
 		// Loop on $url array to remove entries of disabled modules
 		foreach ($url as $key => $subbutton) {
@@ -12103,6 +12117,24 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		}
 
 		$out = '';
+
+		if (isset($params["areDropdownButtons"]) && $params["areDropdownButtons"] === false) {
+			foreach ($url as $button) {
+				if (!empty($button['lang'])) {
+					$langs->load($button['lang']);
+				}
+				$label = $langs->trans($button['label']);
+				$text = $button['text'] ?? '';
+				$actionType = $button['actionType'] ?? '';
+				$tmpUrl = DOL_URL_ROOT.$button['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				$id = $button['$id'] ?? '';
+				$userRight = $button['perm'] ?? 1;
+				$params = $button['$params'] ?? [];
+
+				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $params);
+			}
+			return $out;
+		}
 
 		if (count($url) > 1) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
@@ -12396,7 +12428,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
  * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement(), getMultiDirOutput()
+ * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
 {
@@ -12439,7 +12471,7 @@ function getElementProperties($elementType)
 		}
 	}
 	// For compatibility and to work with non standard path
-	if ($elementType == "action") {
+	if ($elementType == "action" || $elementType == "actioncomm") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
@@ -12762,6 +12794,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+	//var_dump('element_type='.$element_type);
+	//var_dump($element_prop);
+	//var_dump($element_prop['module'].' '.$ismodenabled);
 
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
@@ -13336,8 +13371,10 @@ function dolForgeCriteriaCallback($matches)
 		$operator = $realOperator[$operator];
 	}
 
-
 	$tmpescaped = $tmp[2];
+
+	//print "Case: ".$operator." ".$operand." ".$tmpescaped."\n";
+
 	$regbis = array();
 
 	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
@@ -13358,7 +13395,7 @@ function dolForgeCriteriaCallback($matches)
 
 		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		if (preg_match('/^\'([^\']*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
 		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";

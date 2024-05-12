@@ -723,17 +723,22 @@ function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 }
 
 /**
- *    Return the name translated of juridical status
+ *    Return the name translated of juridical status.
+ *    This method include a cache.
  *
  *    @param      string	$code       Code of juridical status
  *    @return     string     			Value of the juridical status
  */
 function getFormeJuridiqueLabel($code)
 {
-	global $db, $langs;
+	global $conf, $db, $langs;
 
 	if (!$code) {
 		return '';
+	}
+
+	if (!empty($conf->cache["legalform_".$langs->defaultlang.'_'.$code])) {
+		return $conf->cache["legalform_".$langs->defaultlang.'_'.$code];
 	}
 
 	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
@@ -748,6 +753,8 @@ function getFormeJuridiqueLabel($code)
 			$obj = $db->fetch_object($resql);
 
 			$label = ($obj->label != '-' ? $obj->label : '');
+
+			$conf->cache["legalform_".$langs->defaultlang.'_'.$code] = $label;
 
 			return $langs->trans($label);
 		} else {
@@ -1598,7 +1605,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
-					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+					print $tmpuser->getNomUrl(-1, '', 0, 0, 24, 1);
 				}
 				print '</td>';
 			}
