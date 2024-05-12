@@ -10,6 +10,15 @@ Check "@CHANGE"
 
 
 
+PCLZIP
+------
+Replace
+	touch($p_entry['filename'], $p_entry['mtime']);
+With
+	@touch($p_entry['filename'], $p_entry['mtime']);
+
+
+
 PHP PrestaShopWebservice:
 -------------------------
 Replace

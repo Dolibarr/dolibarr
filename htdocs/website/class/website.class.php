@@ -1653,7 +1653,7 @@ class Website extends CommonObject
 	 * Overite template by copying all files
 	 *
 	 * @param	string	$pathtotmpzip		Path to the tmp zip file
-	 * @param   string  $exportPath         Path to export files to (specified by the user)
+	 * @param   string  $exportPath         Relative path of directory to export files into (specified by the user)
 	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function overwriteTemplate(string $pathtotmpzip, $exportPath = '')
@@ -1667,8 +1667,8 @@ class Website extends CommonObject
 			setEventMessages("Website id or ref is not defined", null, 'errors');
 			return -1;
 		}
-		if (empty($website->name_template)) {
-			setEventMessages("To export the website template into the GIT sources directory, the name of the directory/template must be know. For this website, the variable 'name_template' is unknown, so export in GIT sources is not possible.", null, 'errors');
+		if (empty($website->name_template) && empty($exportPath)) {
+			setEventMessages("To export the website template into a directory of the server, the name of the directory/template must be provided.", null, 'errors');
 			return -1;
 		}
 		if (!is_writable($conf->website->dir_temp)) {
@@ -1677,7 +1677,7 @@ class Website extends CommonObject
 		}
 
 		// Replace modified files into the doctemplates directory.
-		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
+		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 			// If the user has not specified a path
 			if (empty($exportPath)) {
 				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
@@ -1705,16 +1705,12 @@ class Website extends CommonObject
 					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 				}
 			}
-		} else {
-			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
-			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
 		}
-
 
 		dol_mkdir($destdir);
 
 		if (!is_writable($destdir)) {
-			setEventMessages("The specified path is not writable.", null, 'errors');
+			setEventMessages("The specified path ".$destdir." is not writable.", null, 'errors');
 			return -1;
 		}
 
@@ -1732,7 +1728,7 @@ class Website extends CommonObject
 		dol_delete_file($destdir.'/containers/master.inc.php');
 
 		if (!empty($resultarray)) {
-			setEventMessages("Error, failed to unzip the export into target dir", null, 'errors');
+			setEventMessages("Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray), null, 'errors');
 		} else {
 			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
 		}

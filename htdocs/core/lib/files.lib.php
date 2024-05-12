@@ -2445,8 +2445,12 @@ function dol_uncompress($inputfile, $outputdir)
 			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
 			dol_mkdir(dol_sanitizePathName($outputdir));
 
-			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			try {
+				// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+				$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			} catch (Exception $e) {
+				return array('error' => $e->getMessage());
+			}
 
 			if (!is_array($result) && $result <= 0) {
 				return array('error' => $archive->errorInfo(true));

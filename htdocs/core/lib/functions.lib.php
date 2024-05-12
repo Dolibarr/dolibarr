@@ -2203,18 +2203,24 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 /**
  * Create a dialog with two buttons for export and overwrite of a website
  *
- * @param string $name          Unique identifier for the dialog
- * @param string $label         Title of the dialog
- * @param string $buttonstring  Text for the button that opens the dialog
- * @param string $exportSiteName Name of the "submit" input for site export
- * @param string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
- * @return string               HTML and JavaScript code for the button and the dialog
+ * @param 	string $name          	Unique identifier for the dialog
+ * @param 	string $label         	Title of the dialog
+ * @param 	string $buttonstring  	Text for the button that opens the dialog
+ * @param 	string $exportSiteName 	Name of the "submit" input for site export
+ * @param 	string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
+ * @param	Website	$website		Website object
+ * @return 	string               	HTML and JavaScript code for the button and the dialog
  */
-function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl)
+function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl, $website)
 {
 	global $langs, $db;
 
 	$form = new Form($db);
+
+	$templatenameforexport = $website->name_template;	// Example 'website_template-corporate'
+	if (empty($templatenameforexport)) {
+		$templatenameforexport = 'website_'.$website->ref;
+	}
 
 	$out = '';
 	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="'.dol_escape_htmltag($buttonstring).'"/>';
@@ -2224,21 +2230,27 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= 'jQuery(document).ready(function () {';
 	$out .= '  jQuery("#open-dialog-' . $name . '").click(function () {';
 	$out .= '    var dialogHtml = \'';
-	$out .= '      <div id="custom-dialog-' . $name . '">';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").' : </label>';
-	$out .= '          <button id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportSite")) . '</button>';
-	$out .= '        </div>';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <h4>'.$langs->trans("ExportSiteGitLabel").' : '.$form->textwithpicto('', $langs->trans("SourceFiles")).'</h4>';
-	$out .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
-	$out .= '        		<input type="hidden" name="action" value="overwritesite">';
-	$out .= '        		<input type="hidden" name="token" value="'.newToken().'">';
-	$out .= '          		<input type="text" name="export_path" id="export-path-' . $name . '" placeholder="'.$langs->trans('ExportPath').'" style="width:400px "/>';
-	$out .= '          		<button type="submit" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
-	$out .= '      		</form>';
-	$out .= '        </div>';
-	$out .= '      </div>\';';
+
+	$dialogcontent = '      <div id="custom-dialog-' . $name . '">';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").'...</label><br>';
+	$dialogcontent .= '          <button class="button smallpaddingimp" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '        <br>';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <strong>'.$langs->trans("ExportSiteGitLabel").' '.$form->textwithpicto('', $langs->trans("SourceFiles"), 1, 'help', '', 0, 3, '').'</strong><br>';
+	$dialogcontent .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
+	$dialogcontent .= '        		<input type="hidden" name="action" value="overwritesite">';
+	$dialogcontent .= '        		<input type="hidden" name="token" value="'.newToken().'">';
+	$dialogcontent .= '          		<input type="text" autofocus name="export_path" id="export-path-'.$name.'" placeholder="'.$langs->trans('ExportPath').'" style="width:400px " value="'.dol_escape_htmltag($templatenameforexport).'"/><br>';
+	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$dialogcontent .= '      		</form>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '      </div>';
+
+	$out .= dol_escape_js($dialogcontent);
+
+	$out .= '\';';
 
 
 	// Add the content of the dialog to the body of the page
@@ -2252,7 +2264,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 220,';
+	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
 	$out .= '      title: "' . dol_escape_js($label) . '",';
 	$out .= '    });';
