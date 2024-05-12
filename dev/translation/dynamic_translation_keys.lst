@@ -35,7 +35,6 @@ Map
 Reservation
 CompletePage
 PortionOfPage
-AjaxComponent
 
 # Others
 ACCOUNTING_ACCOUNT_CUSTOMER

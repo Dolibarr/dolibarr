@@ -333,7 +333,9 @@ UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('ban
 UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
 UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
 
-INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('ajax', 1, 'Ajax', 1, 'system', 10, 'ajax');
+UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
+
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'service');
 
 
 -- knowledgemanagement module

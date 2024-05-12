@@ -105,7 +105,7 @@ class FormWebsite
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
 	 *  @param	int		$addjscombo			Add js combo
 	 *  @param	string	$morecss			More CSS
-	 * 	@return	void
+	 * 	@return	string						The HTML select component
 	 */
 	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
@@ -113,20 +113,23 @@ class FormWebsite
 
 		$langs->load("admin");
 
+		$out = '';
+
 		$sql = "SELECT rowid, code, label, entity, position, typecontainer";
 		$sql .= " FROM ".$this->db->prefix().'c_type_container';
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
-		$sql .= " ORDER BY typecontainer DESC, position ASC, label ASC";
+		$sql .= " ORDER BY position ASC, typecontainer DESC, label ASC";
 
 		dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
-					print '<option value="-1">&nbsp;</option>';
+					$out .= '<option value="-1">&nbsp;</option>';
 				}
 
 				$lasttypecontainer = '';
@@ -134,47 +137,49 @@ class FormWebsite
 					$obj = $this->db->fetch_object($result);
 
 					if ($obj->typecontainer != $lasttypecontainer) {
-						print '<option value="0" disabled>--- ';
+						$out .= '<option value="0" disabled>--- ';
 						$transcodecontainer = ucfirst($obj->typecontainer);
 						if ($obj->typecontainer == 'page') {
 							$transcodecontainer = 'CompletePage';
-						}
-						if ($obj->typecontainer == 'container') {
+						} elseif ($obj->typecontainer == 'container') {
 							$transcodecontainer = 'PortionOfPage';
+						} elseif ($obj->typecontainer == 'service') {
+							$transcodecontainer = 'ServiceComponent';
 						}
-						print $langs->trans($transcodecontainer);
-						print ' ---</option>';
+						$out .= $langs->trans($transcodecontainer);
+						$out .= ' ---</option>';
 						$lasttypecontainer = $obj->typecontainer;
 					}
 
 					if ($selected == $obj->rowid || $selected == $obj->code) {
-						print '<option value="'.$obj->code.'" selected>';
+						$out .= '<option value="'.$obj->code.'" selected>';
 					} else {
-						print '<option value="'.$obj->code.'">';
+						$out .= '<option value="'.$obj->code.'">';
 					}
-					print $langs->trans($obj->label);
-					print '</option>';
+					$out .= $langs->trans($obj->label);
+					$out .= '</option>';
 
 					$conf->cache['type_of_container'][$obj->code] = $obj->label;
 
 					$i++;
 				}
-				print "</select>";
+				$out .= "</select>";
 				if ($user->admin) {
-					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 
 				if ($addjscombo) {
-					print ajax_combobox('select'.$htmlname);
+					$out .= ajax_combobox('select'.$htmlname);
 				}
 			} else {
-				print $langs->trans("NoTypeOfPagePleaseEditDictionary");
+				$out .= $langs->trans("NoTypeOfPagePleaseEditDictionary");
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
 		}
-	}
 
+		return $out;
+	}
 
 	/**
 	 *  Return a HTML select list of samples of containers content
