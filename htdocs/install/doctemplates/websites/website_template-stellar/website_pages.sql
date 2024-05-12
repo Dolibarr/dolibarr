@@ -16,10 +16,7 @@ UPDATE llx_website SET fk_default_home = 4__+MAX_llx_website_page__ WHERE rowid 
 -- Page ID 5__+MAX_llx_website_page__ - Aliases menu --;
 INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames) VALUES(5__+MAX_llx_website_page__, null, __WEBSITE_ID__, 'menu', '', 'Menu', 'Menu common to all pages', 'fr', '', '', '1', '2019-08-15 00:03:43', '2020-02-21 10:27:17', null, '', 'menu', '', '<nav id=\"nav\">__N__	<ul>__N__		<li><a href=\"home.php\">Introduction</a></li>__N__		<li><a href=\"home.php#sectionfirst\">Section on home page</a></li>__N__		<li><a href=\"home.php#sectionsecond\">Another section on home page</a></li>__N__		<li><a href=\"generic.php\">Another page</a></li>__N__	</ul>__N__</nav>__N__', '', 0);
 
--- Page ID 6__+MAX_llx_website_page__ - Aliases qqq --;
-INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames) VALUES(6__+MAX_llx_website_page__, null, __WEBSITE_ID__, 'qqq', '', 'qqq', '', '', '', '', '1', '2024-05-12 17:00:10', '2024-05-12 19:00:10', null, '', 'service', '', '', '', 0);
-
--- Page ID 7__+MAX_llx_website_page__ - Aliases this-is-a-blog-post --;
+-- Page ID 6__+MAX_llx_website_page__ - Aliases this-is-a-blog-post --;
 INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames) VALUES(7__+MAX_llx_website_page__, null, __WEBSITE_ID__, 'this-is-a-blog-post', '', 'This is a Blog post', 'This is a full meta description of the article', '', '', 'blog', '1', '2019-08-17 17:18:45', '2022-07-06 23:50:25', null, '', 'blogpost', '', '<!-- Enter here your HTML content. Add a section with an id tag and tag contenteditable=\"true\" if you want to use the inline editor for the content  -->__N__<section id=\"mysection1\" contenteditable=\"true\" style=\"background: #fff; color: #000;\">__N__    This is a blog post article...__N__</section>__N__', 'webmaster', 0);
 
 
