@@ -4348,6 +4348,20 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
 	print '</td></tr>';
 
+	print '<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery("#selectWEBSITE_TYPE_CONTAINER").change(function() {
+					console.log("We change type of page : "+jQuery("#selectWEBSITE_TYPE_CONTAINER").val());
+					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'blogpost\') {
+						jQuery(".trpublicauthor").show();
+					} else {
+						jQuery(".trpublicauthor").hide();
+					}
+				});
+			});
+			</script>
+		';
+
 	// Title
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('WEBSITE_TITLE');
@@ -4633,7 +4647,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td></tr>';
 
 	// Author - public alias
-	print '<tr><td>';
+	print '<tr class="trpublicauthor hidden"><td>';
 	print $langs->trans('PublicAuthorAlias');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
