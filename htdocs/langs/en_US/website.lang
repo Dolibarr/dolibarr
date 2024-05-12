@@ -240,3 +240,6 @@ ExportSiteLabel=Would you like to export the website by downloading a zip file ?
 ExportSiteGitLabel=Would you like to export into a directory on the server ?
 ExportPath=path to export file
 SourceFiles = *If the path is absolute, it must start with a / *If not it will be within install/doctemplates/websites/ followed by the entered path.
+CompletePage=Complete page
+PortionOfPage=Portion of page
+AjaxComponent=Ajax component

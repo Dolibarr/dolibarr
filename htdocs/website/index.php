@@ -4348,31 +4348,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
 	print '</td></tr>';
 
-	// Example/templates of page
-	if ($action == 'createcontainer') {
-		$formmail = new FormMail($db);
-		$formmail->withaiprompt = 'html';
-		$formmail->withlayout = 1;
-
-		print '<tr><td class="titlefield fieldrequired tdtop">';
-		//print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-		print '</td><td class="tdtop">';
-
-		$out = '';
-
-		$showlinktolayout = $formmail->withlayout;
-		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
-		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
-		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
-		$htmlname = 'content';
-
-		// Fill $out
-		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
-
-		print $out;
-		print '</td></tr>';
-	}
-
 	// Title
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('WEBSITE_TITLE');
@@ -4569,6 +4544,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	$fuser = new User($db);
 
+	// Date last modification
 	if ($action != 'createcontainer') {
 		print '<tr><td>';
 		print $langs->trans('DateLastModification');
@@ -4588,23 +4564,45 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
-	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
+	// Content - Example/templates of page
+	$formmail = new FormMail($db);
+	$formmail->withaiprompt = 'html';
+	$formmail->withlayout = 1;
+	$showlinktolayout = $formmail->withlayout;
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
+	if ($action == 'createcontainer' && $showlinktolayout && $showlinktoai) {
+		print '<tr><td class="titlefield tdtop">';
+		$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
-	$htmltext = '<small>';
-	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
-	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
-	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
-	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
-	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
-	$htmltext .= '<br>';
-	$htmltext .= '</small>';
-	if ($conf->browser->layout == 'phone') {
-		print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
-	} else {
-		//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-		print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+		$htmltext = '<small>';
+		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
+		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
+		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
+		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
+		$htmltext .= '<br>';
+		$htmltext .= '</small>';
+		if ($conf->browser->layout == 'phone') {
+			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+		} else {
+			//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+			print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+		}
+		print '</td><td class="tdtop">';
+
+		$out = '';
+
+		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
+		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		$htmlname = 'content';
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		print $out;
+		print '</td></tr>';
 	}
+
+	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
 	print '</td><td>';
 	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
 	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');

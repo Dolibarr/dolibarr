@@ -113,10 +113,10 @@ class FormWebsite
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, code, label, entity";
+		$sql = "SELECT rowid, code, label, entity, position, typecontainer";
 		$sql .= " FROM ".$this->db->prefix().'c_type_container';
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
-		$sql .= " ORDER BY label";
+		$sql .= " ORDER BY typecontainer DESC, position ASC, label ASC";
 
 		dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -129,8 +129,23 @@ class FormWebsite
 					print '<option value="-1">&nbsp;</option>';
 				}
 
+				$lasttypecontainer = '';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
+
+					if ($obj->typecontainer != $lasttypecontainer) {
+						print '<option value="0" disabled>--- ';
+						$transcodecontainer = ucfirst($obj->typecontainer);
+						if ($obj->typecontainer == 'page') {
+							$transcodecontainer = 'CompletePage';
+						}
+						if ($obj->typecontainer == 'container') {
+							$transcodecontainer = 'PortionOfPage';
+						}
+						print $langs->trans($transcodecontainer);
+						print ' ---</option>';
+						$lasttypecontainer = $obj->typecontainer;
+					}
 
 					if ($selected == $obj->rowid || $selected == $obj->code) {
 						print '<option value="'.$obj->code.'" selected>';
@@ -342,25 +357,21 @@ class FormWebsite
 		}
 		$out = '<div id="template-selector" class="template-container hidden">';
 
-		$templates = array(
-			'empty' => 'empty',
-			//'text' => 'dynamic',
-			'basic' => 'basic',
-			//'news'  => 'news',
-			//'commerce' => 'commerce',
-		);
+		// We disable some not ready templates
+		unset($arrayofsamples['dynamiccontent']);
+		unset($arrayofsamples['news']);
 
+		$templates = $arrayofsamples;
 
 		foreach ($templates as $template => $templateFunction) {
-			if ($template == 'text') {
-				$substitutionarray = array();
-				$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
+			$substitutionarray = array();
+			$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
+			$substitutionarray['__WEBSITE_CONTENT__'] = $langs->trans("WebpageContent");
+			$substitutionarray['__WEBSITE_TITLE1__'] = $langs->trans("Title1");
+			$substitutionarray['__WEBSITE_TITLE2__'] = $langs->trans("Title2");
 
-				$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($arrayofsamples['dynamiccontent'])).'.html';
-				$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
-			} else {
-				$contentHtml = getHtmlOfLayout($template);
-			}
+			$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($template).'.html';
+			$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';

@@ -323,9 +323,18 @@ DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
 -- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
 
-ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+ALTER TABLE llx_element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
 
 ALTER TABLE llx_ecm_files DROP column keyword;
+
+ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
+UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
+--UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
+UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
+
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('ajax', 1, 'Ajax', 1, 'system', 10, 'ajax');
+
 
 -- knowledgemanagement module
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
