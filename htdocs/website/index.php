@@ -4520,7 +4520,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$langs->load('categories');
 
 		if (!GETPOSTISSET('categories')) {
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
 			$arrayselected = array();
@@ -4530,7 +4529,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				}
 			}
 
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
+			//$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', '', 0, 0, 3);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', 0, 0, 3);
 		}
 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
@@ -4578,7 +4578,18 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
+	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
+
 	// Content - Example/templates of page
+	$htmltext = '<small>';
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
+	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
+	$htmltext .= '<br>';
+	$htmltext .= '</small>';
+
 	$formmail = new FormMail($db);
 	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
@@ -4586,16 +4597,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
 	if ($action == 'createcontainer' && $showlinktolayout && $showlinktoai) {
 		print '<tr><td class="titlefield tdtop">';
-		$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
-
-		$htmltext = '<small>';
-		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
-		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
-		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
-		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
-		$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
-		$htmltext .= '<br>';
-		$htmltext .= '</small>';
 		if ($conf->browser->layout == 'phone') {
 			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 		} else {
@@ -4616,7 +4617,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
+	print '<tr id="pageContent"><td class="tdtop">';
+	if (! ($action == 'createcontainer' && $showlinktolayout && $showlinktoai)) {
+		if ($conf->browser->layout == 'phone') {
+			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+		} else {
+			//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+			print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+		}
+	}
 	print '</td><td>';
 	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
 	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
