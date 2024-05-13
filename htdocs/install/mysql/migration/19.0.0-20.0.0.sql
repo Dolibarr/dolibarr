@@ -323,6 +323,9 @@ DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
 insert into llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
 
+
+DELETE FROM llx_societe_commericaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
 -- VMYSQL4.1 DROP INDEX uk_societe_commerciaux ON llx_societe_commerciaux;
