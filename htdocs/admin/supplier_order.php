@@ -552,7 +552,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderClassifyBilledWithoutInvoice"). '&nbsp;' ;
 print $form->textwithpicto('', $langs->trans("SupplierOrderClassifyBilledWithoutInvoiceHelp"), 1, 'help') . '</td>';
 print '<td class="left" colspan="2">';
-print ajax_constantonoff('WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
+print ajax_constantonoff('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
 print '</td></tr>';
 
 print '</table></div><br>';
