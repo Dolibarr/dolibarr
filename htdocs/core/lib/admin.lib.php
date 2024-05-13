@@ -328,7 +328,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
-			// Test if th SQL is allowed SQL
+			// Test if the SQL is allowed SQL
 			if ($onlysqltoimportwebsite) {
 				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);	// Replace the \' char
 
@@ -387,6 +387,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					dol_syslog("sql=".$sql, LOG_DEBUG);
 					break;
 				}
+
 
 				if (!$qualified) {
 					$error++;

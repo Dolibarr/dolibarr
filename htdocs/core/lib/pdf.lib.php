@@ -422,7 +422,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 
 /**
- *   	Return a string with full address formatted for output on documents
+ *   	Return a string with full address formatted for output on PDF documents
  *
  * 		@param	Translate	          $outputlangs		    Output langs object
  *   	@param  Societe		          $sourcecompany		Source company object
@@ -435,7 +435,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	if ($mode == 'source' && !is_object($sourcecompany)) {
 		return -1;
@@ -654,6 +654,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				} elseif ($targetcompany->tva_intra) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
+			}
+
+			// Legal form
+			if (getDolGlobalString('MAIN_LEGALFORM_IN_ADDRESS') && !empty($targetcompany->forme_juridique_code)) {
+				$tmp = getFormeJuridiqueLabel($targetcompany->forme_juridique_code);
+				$stringaddress .= ($stringaddress ? "\n" : '').$tmp;
 			}
 
 			// Professional Ids

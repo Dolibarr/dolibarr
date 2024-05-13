@@ -1100,7 +1100,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * WARNING: This function can be used by websites.
  *
  * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,sitefiles')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
@@ -1117,10 +1117,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
 
+	// Clean parameters
 	if (!is_object($weblangs)) {
 		$weblangs = $langs;
 	}
+	if (empty($algo)) {
+		$algo = 'content';
+	}
 
+	/*
 	if (empty($searchstring) && empty($type) && empty($langcode) && empty($otherfilters)) {
 		$error++;
 		$arrayresult['code'] = 'KO';
@@ -1131,6 +1136,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
+	*/
 		$tmparrayoftype = explode(',', $type);
 		/*foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
@@ -1140,7 +1146,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				break;
 			}
 		}*/
-	}
+	//}
 
 	$searchdone = 0;
 	$found = 0;

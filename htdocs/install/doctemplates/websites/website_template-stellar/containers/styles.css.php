@@ -5,8 +5,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
 ob_start();
 if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-	header('Content-type: text/css');
+header('Cache-Control: max-age=3600, public, must-revalidate');
+header('Content-type: text/css');
 }
 // END PHP ?>
 /* CSS content (all pages) */
@@ -146,9 +146,9 @@ html.bodywebsite,
 }
 .bodywebsite {
 	line-height: 1;
-	background-image: -moz-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);   
-	background-image: -webkit-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);   
-	background-image: -ms-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);   
+	background-image: -moz-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);
+	background-image: -webkit-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);
+	background-image: -ms-linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);
 	background-image: linear-gradient(45deg, #4376e2 15%, #5f4d93 85%);
 }
 .bodywebsite ol,
@@ -2693,4 +2693,4 @@ div.bodywebsite .is-preload #header.alt .logo {
 }
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");
-// END PHP ?>
+// END PHP

@@ -116,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Update / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {

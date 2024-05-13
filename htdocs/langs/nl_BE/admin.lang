@@ -130,7 +130,6 @@ MAIN_MAIL_EMAIL_DKIM_DOMAIN=E-maildomein voor gebruik met dkim
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=Naam van dkim-selector
 MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY=Privésleutel voor dkim-ondertekening
 MAIN_DISABLE_ALL_SMS=Schakel alle sms-berichten uit (voor testdoeleinden of demo's)
-MAIN_MAIL_SMS_FROM=Standaard telefoonnummer van afzender voor sms-verzending
 UserEmail=Email gebruiker
 CompanyEmail=Professionele e-mail
 ModuleSetup=Module-instellingen

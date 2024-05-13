@@ -120,14 +120,17 @@ if (!function_exists('str_contains')) {
 
 
 /**
- * Return the full path of the directory where a module (or an object of a module) stores its files. Path may depends on the entity if a multicompany module is enabled.
+ * Return the full path of the directory where a module (or an object of a module) stores its files,
+ * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param CommonObject 	$object 	Dolibarr common object
- * @param string 		$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @return string|null				The path of the relative directory of the module
+ * @param 	CommonObject 	$object 	Dolibarr common object
+ * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	string			$mode		'output' or 'temp' or 'version'
+ * @return 	string|null					The path of the relative directory of the module
  * @since Dolibarr V18
  */
-function getMultidirOutput($object, $module = '')
+function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
 {
 	global $conf;
 
@@ -137,16 +140,62 @@ function getMultidirOutput($object, $module = '')
 	if (empty($module) && !empty($object->element)) {
 		$module = $object->element;
 	}
+
 	// Special case for backward compatibility
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
 	}
-	if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
-		return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+
+	// Get the relative path of directory
+	if ($mode == 'output' || $mode == 'version') {
+		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
+			$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+			if ($forobject && $object->id > 0) {
+				$s .= '/'.get_exdir(0, 0, 0, 0, $object);
+			}
+			return $s;
+		} else {
+			return 'error-diroutput-not-defined-for-this-object='.$module;
+		}
+	} elseif ($mode == 'temp') {
+		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
+			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+		} else {
+			return 'error-dirtemp-not-defined-for-this-object='.$module;
+		}
 	} else {
-		return 'error-diroutput-not-defined-for-this-object='.$module;
+		return 'error-bad-value-for-mode';
 	}
 }
+
+/**
+ * Return the full path of the directory where a module (or an object of a module) stores its temporary files.
+ * Path may depends on the entity if a multicompany module is enabled.
+ *
+ * @param 	CommonObject 	$object 	Dolibarr common object
+ * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
+ * @return 	string|null					The path of the relative temp directory of the module
+ */
+function getMultidirTemp($object, $module = '', $forobject = 0)
+{
+	return getMultidirOutput($object, $module, $forobject, 'temp');
+}
+
+/**
+ * Return the full path of the directory where a module (or an object of a module) stores its versioned files.
+ * Path may depends on the entity if a multicompany module is enabled.
+ *
+ * @param 	CommonObject 	$object 	Dolibarr common object
+ * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
+ * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
+ * @return string|null					The path of the relative version directory of the module
+ */
+function getMultidirVersion($object, $module = '', $forobject = 0)
+{
+	return getMultidirOutput($object, $module, $forobject, 'version');
+}
+
 
 /**
  * Return dolibarr global constant string value
@@ -2154,18 +2203,24 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 /**
  * Create a dialog with two buttons for export and overwrite of a website
  *
- * @param string $name          Unique identifier for the dialog
- * @param string $label         Title of the dialog
- * @param string $buttonstring  Text for the button that opens the dialog
- * @param string $exportSiteName Name of the "submit" input for site export
- * @param string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
- * @return string               HTML and JavaScript code for the button and the dialog
+ * @param 	string $name          	Unique identifier for the dialog
+ * @param 	string $label         	Title of the dialog
+ * @param 	string $buttonstring  	Text for the button that opens the dialog
+ * @param 	string $exportSiteName 	Name of the "submit" input for site export
+ * @param 	string $overwriteGitUrl URL for the link that triggers the overwrite action in GIT
+ * @param	Website	$website		Website object
+ * @return 	string               	HTML and JavaScript code for the button and the dialog
  */
-function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl)
+function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteName, $overwriteGitUrl, $website)
 {
 	global $langs, $db;
 
 	$form = new Form($db);
+
+	$templatenameforexport = $website->name_template;	// Example 'website_template-corporate'
+	if (empty($templatenameforexport)) {
+		$templatenameforexport = 'website_'.$website->ref;
+	}
 
 	$out = '';
 	$out .= '<input type="button" class="cursorpointer button bordertransp" id="open-dialog-' . $name . '"  value="'.dol_escape_htmltag($buttonstring).'"/>';
@@ -2175,21 +2230,27 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= 'jQuery(document).ready(function () {';
 	$out .= '  jQuery("#open-dialog-' . $name . '").click(function () {';
 	$out .= '    var dialogHtml = \'';
-	$out .= '      <div id="custom-dialog-' . $name . '">';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").' : </label>';
-	$out .= '          <button id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportSite")) . '</button>';
-	$out .= '        </div>';
-	$out .= '        <div style="margin-top: 20px;">';
-	$out .= '          <h4>'.$langs->trans("ExportSiteGitLabel").' : '.$form->textwithpicto('', $langs->trans("SourceFiles")).'</h4>';
-	$out .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
-	$out .= '        		<input type="hidden" name="action" value="overwritesite">';
-	$out .= '        		<input type="hidden" name="token" value="'.newToken().'">';
-	$out .= '          		<input type="text" name="export_path" id="export-path-' . $name . '" placeholder="'.$langs->trans('ExportPath').'" style="width:400px "/>';
-	$out .= '          		<button type="submit" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
-	$out .= '      		</form>';
-	$out .= '        </div>';
-	$out .= '      </div>\';';
+
+	$dialogcontent = '      <div id="custom-dialog-' . $name . '">';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <label for="export-site-' . $name . '"><strong>'.$langs->trans("ExportSiteLabel").'...</label><br>';
+	$dialogcontent .= '          <button class="button smallpaddingimp" id="export-site-' . $name . '">' . dol_escape_htmltag($langs->trans("DownloadZip")) . '</button>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '        <br>';
+	$dialogcontent .= '        <div style="margin-top: 20px;">';
+	$dialogcontent .= '          <strong>'.$langs->trans("ExportSiteGitLabel").' '.$form->textwithpicto('', $langs->trans("SourceFiles"), 1, 'help', '', 0, 3, '').'</strong><br>';
+	$dialogcontent .= '     		<form action="'.dol_escape_htmltag($overwriteGitUrl).'" method="POST">';
+	$dialogcontent .= '        		<input type="hidden" name="action" value="overwritesite">';
+	$dialogcontent .= '        		<input type="hidden" name="token" value="'.newToken().'">';
+	$dialogcontent .= '          		<input type="text" autofocus name="export_path" id="export-path-'.$name.'" placeholder="'.$langs->trans('ExportPath').'" style="width:400px " value="'.dol_escape_htmltag($templatenameforexport).'"/><br>';
+	$dialogcontent .= '          		<button type="submit" class="button smallpaddingimp" id="overwrite-git-' . $name . '">' . dol_escape_htmltag($langs->trans("ExportIntoGIT")) . '</button>';
+	$dialogcontent .= '      		</form>';
+	$dialogcontent .= '        </div>';
+	$dialogcontent .= '      </div>';
+
+	$out .= dol_escape_js($dialogcontent);
+
+	$out .= '\';';
 
 
 	// Add the content of the dialog to the body of the page
@@ -2203,7 +2264,7 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '    jQuery("#custom-dialog-' . $name . '").dialog({';
 	$out .= '      autoOpen: false,';
 	$out .= '      modal: true,';
-	$out .= '      height: 220,';
+	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
 	$out .= '      title: "' . dol_escape_js($label) . '",';
 	$out .= '    });';
@@ -2782,7 +2843,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo'
+				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo' or 'memberphoto'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
@@ -4911,7 +4972,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment', 'reception'))) {
 				$morecss .= ' em092';
 			}
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
@@ -4952,7 +5013,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'knowledgemanagement' => 'infobox-contrat rotate90', 'loan' => 'infobox-bank_account',
 				'payment' => 'infobox-bank_account', 'payment_vat' => 'infobox-bank_account', 'poll' => 'infobox-adherent', 'pos' => 'infobox-bank_account', 'project' => 'infobox-project', 'projecttask' => 'infobox-project',
 				'propal' => 'infobox-propal', 'proposal' => 'infobox-propal','private' => 'infobox-project',
-				'reception' => 'flip', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
+				'reception' => 'flip infobox-order_supplier', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
 				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier', 'supplier_order' => 'infobox-order_supplier', 'supplier_proposal' => 'infobox-supplier_proposal',
@@ -4975,7 +5036,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'lock' => '#ddd', 'lot' => '#a69944',
 				'map-marker-alt' => '#aaa', 'mrp' => '#a69944', 'product' => '#a69944', 'service' => '#a69944', 'inventory' => '#a69944', 'stock' => '#a69944', 'movement' => '#a69944',
 				'other' => '#ddd', 'world' => '#986c6a',
-				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'reception' => '#a69944', 'resize' => '#444', 'rss' => '#cba',
+				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'resize' => '#444', 'rss' => '#cba',
 				//'shipment'=>'#a69944',
 				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
 				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
@@ -6064,7 +6125,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show
+ *	@param	string	$title				Title to show (HTML sanitized content)
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -6089,7 +6150,9 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
-	$return .= '<div class="titre inline-block">'.dol_escape_htmltag($title).'</div>';
+	$return .= '<div class="titre inline-block">';
+	$return .= $title;	// $title is already HTML sanitized content
+	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
 		$return .= '<td class="nobordernopadding center valignmiddle col-center">'.$morehtmlcenter.'</td>';
@@ -6529,7 +6592,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC', 'ZAR');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -7509,7 +7572,7 @@ function yn($yesno, $case = 1, $color = 0)
  *  @param	?CommonObject	$object		Object to use to get ref to forge the path.
  *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
  *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
- *  @see getMultiDirOuput()
+ *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
@@ -12044,7 +12107,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	// If $url is an array, we must build a dropdown button
+	// If $url is an array, we must build a dropdown button or recursively iterate over each value
 	if (is_array($url)) {
 		// Loop on $url array to remove entries of disabled modules
 		foreach ($url as $key => $subbutton) {
@@ -12054,6 +12117,24 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		}
 
 		$out = '';
+
+		if (isset($params["areDropdownButtons"]) && $params["areDropdownButtons"] === false) {
+			foreach ($url as $button) {
+				if (!empty($button['lang'])) {
+					$langs->load($button['lang']);
+				}
+				$label = $langs->trans($button['label']);
+				$text = $button['text'] ?? '';
+				$actionType = $button['actionType'] ?? '';
+				$tmpUrl = DOL_URL_ROOT.$button['url'].(empty($params['backtopage']) ? '' : '&amp;backtopage='.urlencode($params['backtopage']));
+				$id = $button['$id'] ?? '';
+				$userRight = $button['perm'] ?? 1;
+				$params = $button['$params'] ?? [];
+
+				$out .= dolGetButtonAction($label, $text, $actionType, $tmpUrl, $id, $userRight, $params);
+			}
+			return $out;
+		}
 
 		if (count($url) > 1) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
@@ -12347,7 +12428,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
  * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
- * @see fetchObjectByElement(), getMultiDirOutput()
+ * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
 {
@@ -12390,7 +12471,7 @@ function getElementProperties($elementType)
 		}
 	}
 	// For compatibility and to work with non standard path
-	if ($elementType == "action") {
+	if ($elementType == "action" || $elementType == "actioncomm") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
@@ -12713,6 +12794,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+	//var_dump('element_type='.$element_type);
+	//var_dump($element_prop);
+	//var_dump($element_prop['module'].' '.$ismodenabled);
 
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
@@ -13287,8 +13371,10 @@ function dolForgeCriteriaCallback($matches)
 		$operator = $realOperator[$operator];
 	}
 
-
 	$tmpescaped = $tmp[2];
+
+	//print "Case: ".$operator." ".$operand." ".$tmpescaped."\n";
+
 	$regbis = array();
 
 	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
@@ -13309,7 +13395,7 @@ function dolForgeCriteriaCallback($matches)
 
 		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		if (preg_match('/^\'([^\']*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
 		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
