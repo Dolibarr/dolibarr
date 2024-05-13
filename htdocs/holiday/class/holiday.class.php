@@ -1658,17 +1658,19 @@ class Holiday extends CommonObject
 			$now = dol_now();
 
 			// Get month of last update
-			$lastUpdate = strtotime($this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S')));
+			$lastUpdate = dol_stringtotime($this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S')));
 			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
+			$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
+			$yearMonthNow = dol_print_date($now, '%Y%m');
 
 			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user,
 			// catching up to the current month if a gap is detected
-			while (date('Ym', $lastUpdate) < date('Ym', $now)) {
+			while ($yearMonthLastUpdate < $yearMonthNow) {
 				$this->db->begin();
 
-				$year = date('Y', $lastUpdate);
-				$month = date('m', $lastUpdate);
+				$year = dol_print_date($lastUpdate, '%Y');
+				$month = dol_print_date($lastUpdate, '%m');
 
 				$users = $this->fetchUsers(false, false, ' AND u.statut > 0');
 				$nbUser = count($users);
@@ -1703,8 +1705,8 @@ class Holiday extends CommonObject
 
 					// We fetch a user's holiday in the current month and then calculate the number of days to deduct if he has at least one registered
 					$filter = " AND cp.statut = ".((int) self::STATUS_APPROVED);
-					$filter .= " AND cp.date_fin >= '".$this->db->idate(strtotime(date('Y-m-01', $lastUpdate)))."'";
-					$filter .= " AND cp.date_debut <= '".$this->db->idate(strtotime(date('Y-m-t', $lastUpdate)))."'";
+					$filter .= " AND cp.date_fin >= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-01')))."'";
+					$filter .= " AND cp.date_debut <= '".$this->db->idate(dol_stringtotime(dol_print_date($lastUpdate, '%Y-%m-t')))."'";
 					$filter .= " AND cp.fk_type = ".((int) $userCounter['type']);
 					$this->fetchByUser($userCounter['id'], '', $filter);
 
@@ -1713,7 +1715,7 @@ class Holiday extends CommonObject
 					}
 
 					$startOfMonth = dol_mktime(0, 0, 0, $month, '01', $year, 1);
-					$endOfMonth = dol_mktime(0, 0, 0, $month, date('t', $lastUpdate), $year, 1);
+					$endOfMonth = dol_mktime(0, 0, 0, $month, dol_print_date($lastUpdate, 't'), $year, 1);
 
 					foreach ($this->holiday as $obj) {
 						$startDate = $obj['date_debut_gmt'];
@@ -1748,7 +1750,8 @@ class Holiday extends CommonObject
 				}
 
 				//updating the date of the last monthly balance update
-				$lastUpdate = strtotime('+1 month', strtotime(date('Ym01His', $lastUpdate)));
+				$newMonth = dol_get_next_month(intval(dol_print_date($lastUpdate, '%m')), intval(dol_print_date($lastUpdate, '%Y')));
+				$lastUpdate = dol_mktime(0, 0, 0, $newMonth['month'], 1, $newMonth['year']);
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 				$sql .= " value = '".$this->db->escape(dol_print_date($lastUpdate, '%Y%m%d%H%M%S'))."'";
 				$sql .= " WHERE name = 'lastUpdate'";
@@ -1760,6 +1763,8 @@ class Holiday extends CommonObject
 				}
 
 				$this->db->commit();
+
+				$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			}
 
 			if (!$error) {
