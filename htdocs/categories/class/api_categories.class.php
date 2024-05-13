@@ -400,28 +400,24 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		if (!empty($object)) {
-			$result = $object->fetch($object_id);
-			if ($result > 0) {
-				$result = $this->category->add_type($object, $type);
-				if ($result < 0) {
-					if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
-					}
+		$result = $object->fetch($object_id);
+		if ($result > 0) {
+			$result = $this->category->add_type($object, $type);
+			if ($result < 0) {
+				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
-			} else {
-				throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 			}
-
-			return array(
-				'success' => array(
-					'code' => 200,
-					'message' => 'Objects successfully linked to the category'
-				)
-			);
+		} else {
+			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
 
-		throw new RestException(403);
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Objects successfully linked to the category'
+			)
+		);
 	}
 
 	/**
@@ -480,28 +476,24 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		if (!empty($object)) {
-			$result = $object->fetch('', $object_ref);
-			if ($result > 0) {
-				$result = $this->category->add_type($object, $type);
-				if ($result < 0) {
-					if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
-					}
+		$result = $object->fetch('', $object_ref);
+		if ($result > 0) {
+			$result = $this->category->add_type($object, $type);
+			if ($result < 0) {
+				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					throw new RestException(500, 'Error when linking object', array_merge(array($this->category->error), $this->category->errors));
 				}
-			} else {
-				throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 			}
-
-			return array(
-				'success' => array(
-					'code' => 200,
-					'message' => 'Objects successfully linked to the category'
-				)
-			);
+		} else {
+			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
 
-		throw new RestException(403);
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Objects successfully linked to the category'
+			)
+		);
 	}
 
 	/**
@@ -560,26 +552,22 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		if (!empty($object)) {
-			$result = $object->fetch((int) $object_id);
-			if ($result > 0) {
-				$result = $this->category->del_type($object, $type);
-				if ($result < 0) {
-					throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
-				}
-			} else {
-				throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+		$result = $object->fetch((int) $object_id);
+		if ($result > 0) {
+			$result = $this->category->del_type($object, $type);
+			if ($result < 0) {
+				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
-
-			return array(
-				'success' => array(
-					'code' => 200,
-					'message' => 'Objects successfully unlinked from the category'
-				)
-			);
+		} else {
+			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
 
-		throw new RestException(403);
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Objects successfully unlinked from the category'
+			)
+		);
 	}
 
 	/**
@@ -638,26 +626,22 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		if (!empty($object)) {
-			$result = $object->fetch('', (string) $object_ref);
-			if ($result > 0) {
-				$result = $this->category->del_type($object, $type);
-				if ($result < 0) {
-					throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
-				}
-			} else {
-				throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
+		$result = $object->fetch('', (string) $object_ref);
+		if ($result > 0) {
+			$result = $this->category->del_type($object, $type);
+			if ($result < 0) {
+				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
 			}
-
-			return array(
-				'success' => array(
-					'code' => 200,
-					'message' => 'Objects successfully unlinked from the category'
-				)
-			);
+		} else {
+			throw new RestException(500, 'Error when fetching object', array_merge(array($object->error), $object->errors));
 		}
 
-		throw new RestException(403);
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Objects successfully unlinked from the category'
+			)
+		);
 	}
 
 
