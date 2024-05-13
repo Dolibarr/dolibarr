@@ -5325,6 +5325,8 @@ class Form
 					$output .= '>';
 					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 					$output .= '</option>';
+
+					$cate_arbo[$key]['data-html'] = $labeltoshow;
 				}
 			}
 		}
