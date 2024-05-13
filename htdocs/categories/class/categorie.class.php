@@ -271,7 +271,7 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
 	 */
 	public $multilangs;
 
