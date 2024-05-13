@@ -2756,6 +2756,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// Company / Contact
+			/* Disabled, this is already on field "External user ?"
 			if (isModEnabled("societe")) {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
@@ -2775,6 +2776,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print "</tr>\n";
 			}
+			*/
 
 			// Module Adherent
 			if (isModEnabled('member')) {
