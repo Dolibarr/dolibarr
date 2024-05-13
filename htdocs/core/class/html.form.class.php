@@ -2184,7 +2184,7 @@ class Form
 		$userissuperadminentityone = isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && empty($user->entity);
 
 		// Forge request to select users
-		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.gender, u.photo";
 		if ($showlabelofentity) {
 			$sql .= ", e.label";
 		}
@@ -2276,6 +2276,7 @@ class Form
 					$userstatic->status = $obj->status;
 					$userstatic->entity = $obj->entity;
 					$userstatic->admin = $obj->admin;
+					$userstatic->gender = $obj->gender;
 
 					$disableline = '';
 					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) {
@@ -2345,6 +2346,7 @@ class Form
 						$out .= ' selected';
 					}
 					$out .= ' data-html="';
+
 					$outhtml = $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1) . ' ';
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '<strike class="opacitymediumxxx">';
@@ -2353,6 +2355,8 @@ class Form
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '</strike>';
 					}
+					$labeltoshowhtml = $outhtml;
+
 					$out .= dol_escape_htmltag($outhtml);
 					$out .= '">';
 					$out .= $labeltoshow;
