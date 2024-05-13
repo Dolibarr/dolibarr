@@ -50,6 +50,11 @@ function payment_prepare_head(Paiement $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'documents';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
 
 	return $head;
