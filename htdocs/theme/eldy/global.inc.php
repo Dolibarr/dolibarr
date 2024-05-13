@@ -1781,6 +1781,7 @@ maxscreenheightless200 {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
