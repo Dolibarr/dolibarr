@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -541,9 +542,9 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 		}
 	}
 
-	// Now we update the object file to set $isextrafieldmanaged to 1
+	// Now we update the object file to set $this->isextrafieldmanaged to 1
 	$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
-	$arrayreplacement = array('/\$isextrafieldmanaged = 0;/' => '$isextrafieldmanaged = 1;');
+	$arrayreplacement = array('/\$this->isextrafieldmanaged = 0;/' => '$this->isextrafieldmanaged = 1;');
 	dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 }
 
@@ -4154,6 +4155,7 @@ if ($module == 'initmodule') {
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 
+						$tmpobject = $tmpobject ?? null;
 						if (is_object($tmpobject) && property_exists($tmpobject, 'picto')) {
 							$pathtopicto = $tmpobject->picto;
 							$realpathtopicto = '';

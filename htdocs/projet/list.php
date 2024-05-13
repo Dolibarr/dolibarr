@@ -260,6 +260,7 @@ if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.usage_organize_event']['visible'] = 1;
 	$arrayfields['p.usage_organize_event']['checked'] = 1;
 }
+$arrayfields['p.fk_project']['enabled'] = 0;
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1111,7 +1112,8 @@ $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisContact');
-$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->select_contact(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -1133,16 +1135,6 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
-	/*$moreforfilter .= '<div class="divsearchfield">';
-	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
-	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
-	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300im minwidth300 widthcentpercentminusx', 0, 0, '', 'category', $tmptitle);
-	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
-	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
-	$moreforfilter .= '</div>';
-	*/
 }
 
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -1535,6 +1527,20 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
+	// Thirdparty
+	$companystatic->id = $obj->socid;
+	$companystatic->name = $obj->name;
+	$companystatic->name_alias = $obj->alias;
+	$companystatic->client = $obj->client;
+	$companystatic->code_client = $obj->code_client;
+	$companystatic->email = $obj->email;
+	$companystatic->phone = $obj->phone;
+	$companystatic->address = $obj->address;
+	$companystatic->zip = $obj->zip;
+	$companystatic->town = $obj->town;
+	$companystatic->country_code = $obj->country_code;
+
+	// Project
 	$object->id = $obj->id;
 	$object->ref = $obj->ref;
 	$object->title = $obj->title;
@@ -1558,24 +1564,9 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
-
+	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
-
-	// Thirdparty
-	$companystatic->id = $obj->socid;
-	$companystatic->name = $obj->name;
-	$companystatic->name_alias = $obj->alias;
-	$companystatic->client = $obj->client;
-	$companystatic->code_client = $obj->code_client;
-	$companystatic->email = $obj->email;
-	$companystatic->phone = $obj->phone;
-	$companystatic->address = $obj->address;
-	$companystatic->zip = $obj->zip;
-	$companystatic->town = $obj->town;
-	$companystatic->country_code = $obj->country_code;
-
-	$object->thirdparty = $companystatic;
 
 	$stringassignedusers = '';
 
@@ -1588,25 +1579,27 @@ while ($i < $imaxinloop) {
 				foreach ($tab as $contactproject) {
 					//var_dump($contacttask);
 					if ($source == 'internal') {
-						$c = new User($db);
+						if (!empty($conf->cache['user'][$contactproject['id']])) {
+							$c = $conf->cache['user'][$contactproject['id']];
+						} else {
+							$c = new User($db);
+							$c->fetch($contactproject['id']);
+							$conf->cache['user'][$contactproject['id']] = $c;
+						}
 					} else {
-						$c = new Contact($db);
+						if (!empty($conf->cache['contact'][$contactproject['id']])) {
+							$c = $conf->cache['contact'][$contactproject['id']];
+						} else {
+							$c = new Contact($db);
+							$c->fetch($contactproject['id']);
+							$conf->cache['contact'][$contactproject['id']] = $c;
+						}
 					}
-					$c->fetch($contactproject['id']);
-					//var_dump($c->photo);
-					//if (!empty($c->photo)) {
 					if (get_class($c) == 'User') {
 						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
 						$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
-					/*} else {
-						if (get_class($c) == 'User') {
-							$stringassignedusers .= $c->getNomUrl(2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						} else {
-							$stringassignedusers .= $c->getNomUrl(2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						}
-					}*/
 					$ifisrt = 0;
 				}
 			}
@@ -1618,12 +1611,17 @@ while ($i < $imaxinloop) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-
-		$selected = in_array($object->id, $arrayofselected);
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
-
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1799,10 +1797,14 @@ while ($i < $imaxinloop) {
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
-			print '<td class="center">';
 			if ($obj->opp_status_code) {
-				print $langs->trans("OppStatus".$obj->opp_status_code);
+				$s = $langs->trans("OppStatus".$obj->opp_status_code);
+				if (empty($arrayfields['p.opp_percent']['checked']) && $obj->opp_percent) {
+					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
+				}
 			}
+			print '<td class="center tdoverflowmax150" title="'.$s.'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1973,8 +1975,6 @@ while ($i < $imaxinloop) {
 			print '<td class="center tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
-			} else {
-				print '&nbsp;';
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -2074,6 +2074,26 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	$hidegeneratedfilelistifempty = 1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+		$hidegeneratedfilelistifempty = 0;
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+	$formfile = new FormFile($db);
+
+	// Show list of available documents
+	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
+
+	$filedir = $diroutputmassaction;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
+
+	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+}
 
 // End of page
 llxFooter();

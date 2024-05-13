@@ -89,7 +89,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';

@@ -2,7 +2,6 @@
 StandingOrderToProcess=Procesar
 WithdrawalsReceipts=Órdenes de domiciliación bancaria
 WithdrawalReceipt=Orden de domiciliación bancaria
-Rejects=Rechazos
 StatusPaid=Pagado
 StatusRefused=Rechazado
 StatusMotif4=Pedidos

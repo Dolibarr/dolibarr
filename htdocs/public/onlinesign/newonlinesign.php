@@ -54,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "stripe", "propal", "commercial"));
@@ -122,7 +123,6 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 $creditor = $mysoc->name;
 
 $type = $source;
-
 if (!$action) {
 	if ($source && !$ref) {
 		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
@@ -159,6 +159,10 @@ if ($source == 'proposal') {
 } elseif ($source == 'societe_rib') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 	$object = new CompanyBankAccount($db);
+	$result = $object->fetch(0, $ref);
+} elseif ($source == 'expedition') {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+	$object = new Expedition($db);
 	$result = $object->fetch(0, $ref);
 } else {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
@@ -319,6 +323,9 @@ if (empty($text)) {
 	} elseif ($source == 'fichinter') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageFichinter", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
+	} elseif ($source == 'expedition') {
+		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageExpedition", $mysoc->name).'</strong></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromExpedition", $creditor).'<br><br></td></tr>'."\n";
 	} else {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage".dol_ucfirst($source), $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom".dol_ucfirst($source), $creditor).'<br><br></td></tr>'."\n";
@@ -335,6 +342,8 @@ if ($source == 'proposal') {
 	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").' :</td></tr>'."\n";
 } elseif ($source == 'fichinter') {
 	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").' :</td></tr>'."\n";
+} elseif ($source == 'expedition') {
+	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignExpedition").' :</td></tr>'."\n";
 } else {
 	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign".dol_ucfirst($source)).' :</td></tr>'."\n";
 }
@@ -590,6 +599,53 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
+} elseif ($source == 'expedition') {
+	// Signature on expedition
+	$found = true;
+	$langs->load("fichinter");
+
+	$result = $object->fetch_thirdparty($object->socid);
+
+	// Proposer
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Proposer");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Target
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$object->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("SignatureFichinterRef", $object->ref).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+		// It seems document has never been generated, or was generated and then deleted.
+		// So we try to regenerate it with its default template.
+		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+		$object->generateDocument($defaulttemplate, $langs);
+	}
+	$directdownloadlink = $object->getLastMainDocLink('', 0, 0);
+	if ($directdownloadlink) {
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($object->last_main_doc, '');
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
+	}
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+	print '</td></tr>'."\n";
 } else {
 	$found = true;
 	$langs->load('companies');
@@ -768,6 +824,12 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<span class="ok">'.$langs->trans("FichinterSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
+		}
+	} elseif ($source == 'expedition') {
+		if ($message == 'signed' || $object->signed_status == Expedition::STATUS_SIGNED) {
+			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
+		} else {
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignExpedition").'">';
 		}
 	} else {
 		if ($message == 'signed') {

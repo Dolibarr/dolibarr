@@ -980,7 +980,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   string	$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
@@ -1130,7 +1130,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		}
 
 		if (empty($newmask)) {
-			$newmask = !getDolGlobalString('MAIN_UMASK') ? '0755' : $conf->global->MAIN_UMASK;
+			$newmask = getDolGlobalString('MAIN_UMASK', '0755');
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -2128,7 +2128,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 		// Use a convertisser Doc to Text
 		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
-		$useFullTextIndexation = 1;
+		//$useFullTextIndexation = 1;
 		if ($useFullTextIndexation) {
 			$ecmfile->filepath = $rel_dir;
 			$ecmfile->filename = $filename;
@@ -2445,8 +2445,12 @@ function dol_uncompress($inputfile, $outputdir)
 			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
 			dol_mkdir(dol_sanitizePathName($outputdir));
 
-			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			try {
+				// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+				$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			} catch (Exception $e) {
+				return array('error' => $e->getMessage());
+			}
 
 			if (!is_array($result) && $result <= 0) {
 				return array('error' => $archive->errorInfo(true));
@@ -3684,4 +3688,74 @@ function dragAndDropFileUpload($htmlname)
 	';
 	$out .= "</script>\n";
 	return $out;
+}
+
+/**
+ * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
+ *
+ * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
+ * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
+ * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
+ * @param	string	$moveorcopy			'move' or 'copy'
+ * @return 	bool                    	Returns true if successful, false otherwise.
+ */
+function manageFileBackups($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+{
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
+	$files_in_directory = glob($base_file_pattern . "*");
+
+	// Extract the modification timestamps for each file
+	$files_with_timestamps = [];
+	foreach ($files_in_directory as $file) {
+		$files_with_timestamps[] = [
+			'file' => $file,
+			'timestamp' => filemtime($file)
+		];
+	}
+
+	// Sort the files by modification date
+	$sorted_files = [];
+	while (count($files_with_timestamps) > 0) {
+		$latest_file = null;
+		$latest_index = null;
+
+		// Find the latest file by timestamp
+		foreach ($files_with_timestamps as $index => $file_info) {
+			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
+				$latest_file = $file_info;
+				$latest_index = $index;
+			}
+		}
+
+		// Add the latest file to the sorted list and remove it from the original list
+		if ($latest_file !== null) {
+			$sorted_files[] = $latest_file['file'];
+			unset($files_with_timestamps[$latest_index]);
+		}
+	}
+
+	// Delete the oldest files to keep only the allowed number of versions
+	if (count($sorted_files) >= $max_versions) {
+		$oldest_files = array_slice($sorted_files, $max_versions - 1);
+		foreach ($oldest_files as $oldest_file) {
+			dol_delete_file($oldest_file);
+		}
+	}
+
+	$timestamp = dol_now('gmt');
+	$new_backup = $filetpl . ".v" . $timestamp;
+
+	// Move or copy the original file to the new backup with the timestamp
+	if ($moveorcopy == 'move') {
+		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+	} else {
+		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+	}
+
+	if (!$result) {
+		return false;
+	}
+
+	return true;
 }

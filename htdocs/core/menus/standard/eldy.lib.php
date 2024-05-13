@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2022	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *

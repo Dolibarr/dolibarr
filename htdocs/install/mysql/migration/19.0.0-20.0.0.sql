@@ -243,6 +243,14 @@ UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_C
 
 ALTER TABLE llx_fichinter ADD COLUMN signed_status smallint DEFAULT NULL AFTER duree;
 ALTER TABLE llx_contrat ADD COLUMN signed_status smallint DEFAULT NULL AFTER date_contrat;
+ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT NULL AFTER billed;
+
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_name varchar(64);
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
@@ -332,3 +340,24 @@ ALTER TABLE llx_element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL
 ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT 0 AFTER billed;
 
 ALTER TABLE llx_ecm_files DROP column keyword;
+
+ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
+UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
+--UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
+UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
+
+UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
+
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'service');
+
+
+-- knowledgemanagement module
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledgerecord modified','Executed when a knowledgerecord is modified','knowledgemanagement',57002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_VALIDATE','Knowledgerecord Evaluation validated','Executed when an evaluation is validated','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_REOPEN','Knowledgerecord reopen','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_UNVALIDATE','Knowledgerecord unvalidated','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledgerecord cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from knowledgerecord file','knowledgerecord when you send email from knowledgerecord file','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledgerecord deleted','Executed when a knowledgerecord is deleted','knowledgemanagement',57006);

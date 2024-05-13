@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,14 +38,9 @@ class WebPortalMember extends Adherent
 	public $module = 'webportal';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Status list (short label)
 	 */
-	const STATUS_SHORT_LIST = array(
+	const ARRAY_STATUS_LABEL = array(
 		Adherent::STATUS_DRAFT => 'Draft',
 		Adherent::STATUS_VALIDATED => 'Validated',
 		Adherent::STATUS_RESILIATED => 'MemberStatusResiliatedShort',
@@ -144,7 +140,7 @@ class WebPortalMember extends Adherent
 
 		'datefin' => array('type' => 'date', 'label' => 'SubscriptionEndDate', 'enabled' => 1, 'visible' => 5, 'position' => 400,),
 
-		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::STATUS_SHORT_LIST, 'showonheader' => 1,),
+		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL, 'showonheader' => 1,),
 	);
 	public $rowid;
 	//public $ref;
@@ -198,6 +194,8 @@ class WebPortalMember extends Adherent
 
 		$this->db = $db;
 
+		$this->isextrafieldmanaged = 0;
+
 		$this->getMemberStatic();
 
 		// Translate some data of arrayofkeyval
@@ -221,7 +219,7 @@ class WebPortalMember extends Adherent
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -252,7 +250,7 @@ class WebPortalMember extends Adherent
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;

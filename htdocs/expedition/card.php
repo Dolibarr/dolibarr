@@ -2743,6 +2743,14 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		// Show online signature link
+		$useonlinesignature = getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN');
+
+		if ($object->statut != Expedition::STATUS_DRAFT && $useonlinesignature) {
+			print '<br><!-- Link to sign -->';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+			print showOnlineSignatureUrl('expedition', $object->ref, $object).'<br>';
+		}
 
 		print '</div><div class="fichehalfright">';
 

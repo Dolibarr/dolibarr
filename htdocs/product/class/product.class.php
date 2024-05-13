@@ -90,17 +90,6 @@ class Product extends CommonObject
 	);
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'product';
@@ -628,6 +617,10 @@ class Product extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		$this->canvas = '';
 	}
 
@@ -5469,7 +5462,7 @@ class Product extends CommonObject
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
-			$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/product/price_suppliers.php?id='.$this->id;
 		} elseif ($option == 'stock') {
 			$url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
 		} elseif ($option == 'composition') {

@@ -47,10 +47,11 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$mode = GETPOST('mode', 'alpha');
 
-$facid = GETPOSTINT('facid');
-$socid = GETPOSTINT('socid');
-$userid = GETPOSTINT('userid');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
+$userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -69,7 +70,7 @@ $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be 
 $search_status = GETPOST('search_status', 'intcomma');
 $search_sale = GETPOSTINT('search_sale');
 
-$mode = GETPOST('mode', 'alpha');
+
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
