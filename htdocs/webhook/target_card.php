@@ -173,6 +173,8 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
+$object->initListOfTriggers();
+
 $title = $langs->trans("Target");
 $help_url = '';
 llxHeader('', $title, $help_url);
@@ -385,6 +387,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	// TODO Remove this part of code
 	$arraytriggercodes = explode(",", $object->trigger_codes);
 	foreach ($arraytriggercodes as $key => $value) {
 		if (isset($object->fields["trigger_codes"]['arrayofkeyval'][$value])) {
