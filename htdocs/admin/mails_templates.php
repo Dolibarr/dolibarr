@@ -890,7 +890,7 @@ $param = '&id='.((int) $id);
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
-if ($search_lang > 0) {
+if (!empty($search_lang) && $search_lang != '-1') {
 	$param .= '&search_lang='.urlencode($search_lang);
 }
 if ($search_type_template != '-1') {
@@ -1197,7 +1197,7 @@ if ($num) {
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
