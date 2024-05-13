@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/rapport.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Payment reports page
  */
 

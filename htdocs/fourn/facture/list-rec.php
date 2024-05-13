@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/list-rec.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 

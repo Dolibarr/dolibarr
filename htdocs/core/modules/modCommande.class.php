@@ -27,7 +27,7 @@
  *		\defgroup   commande     Module orders
  *		\brief      Module pour gerer le suivi des commandes
  *		\file       htdocs/core/modules/modCommande.class.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Description and activation file for the module command
  */
 

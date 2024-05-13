@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/compta/facture/stats/index.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      Page des stats factures
  */
 

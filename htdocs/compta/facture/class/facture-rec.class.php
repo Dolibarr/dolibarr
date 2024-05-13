@@ -26,7 +26,7 @@
 
 /**
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage recurring invoices
  */
 

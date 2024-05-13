@@ -31,7 +31,7 @@
 
 /**
  *  \file       htdocs/commande/class/commande.class.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      class for orders
  */
 

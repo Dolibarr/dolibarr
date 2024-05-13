@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/commande/index.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      Home page of sales order module
  */
 

@@ -28,7 +28,7 @@
 
 /**
  *	\file       htdocs/admin/order.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      Setup page of module Order
  */
 

@@ -19,7 +19,7 @@
 
 /**
  *   	\file       htdocs/compta/paiement/info.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Onglet info d'un paiement
  */
 
