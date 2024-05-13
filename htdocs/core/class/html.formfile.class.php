@@ -1299,7 +1299,7 @@ class FormFile
 				print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="renamefile">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="id" value="'.(is_object($object) ? $object->id : '').'">';
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
 
