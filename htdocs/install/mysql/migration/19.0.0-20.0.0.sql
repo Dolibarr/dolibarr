@@ -189,7 +189,8 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) A
 ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
-
+ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
+ALTER TABLE llx_fichinter_rec CHANGE COLUMN titre title varchar(50) NOT NULL;
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -230,6 +231,8 @@ ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
+
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
@@ -240,6 +243,14 @@ UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_C
 
 ALTER TABLE llx_fichinter ADD COLUMN signed_status smallint DEFAULT NULL AFTER duree;
 ALTER TABLE llx_contrat ADD COLUMN signed_status smallint DEFAULT NULL AFTER date_contrat;
+ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT NULL AFTER billed;
+
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_name varchar(64);
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
@@ -310,7 +321,41 @@ ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
 
+insert into llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+
+ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
+
+-- VMYSQL4.1 DROP INDEX uk_societe_commerciaux ON llx_societe_commerciaux;
+-- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
+ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
+
+
 -- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
 
-ALTER TABLE element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+ALTER TABLE llx_element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
 
+ALTER TABLE llx_ecm_files DROP column keyword;
+
+ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
+UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
+--UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
+UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
+
+UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
+
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'service');
+
+
+-- knowledgemanagement module
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledgerecord modified','Executed when a knowledgerecord is modified','knowledgemanagement',57002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_VALIDATE','Knowledgerecord Evaluation validated','Executed when an evaluation is validated','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_REOPEN','Knowledgerecord reopen','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_UNVALIDATE','Knowledgerecord unvalidated','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledgerecord cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from knowledgerecord file','knowledgerecord when you send email from knowledgerecord file','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledgerecord deleted','Executed when a knowledgerecord is deleted','knowledgemanagement',57006);

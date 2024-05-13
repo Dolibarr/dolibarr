@@ -69,17 +69,6 @@ class EmailCollector extends CommonObject
 	public $table_element = 'emailcollector_emailcollector';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
 	public $picto = 'email';
@@ -246,6 +235,9 @@ class EmailCollector extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1694,6 +1686,7 @@ class EmailCollector extends CommonObject
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
 				}
 				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+
 				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
@@ -1715,7 +1708,7 @@ class EmailCollector extends CommonObject
 					if (empty($trackidfoundintorecipienttype)) {
 						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 							$nbemailprocessed++;
-							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching signature of application so with a trackid");
+							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
 							continue; // Exclude email
 						}
 					}
@@ -2035,6 +2028,7 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'proj') {   // Project
 								$objectemail = new Project($this->db);
+								$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'tas') {   // Task
 								$objectemail = new Task($this->db);
@@ -2047,23 +2041,26 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'tic') {   // Ticket
 								$objectemail = new Ticket($this->db);
+								$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
 								$objectemail = new RecruitmentCandidature($this->db);
+								$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'mem') {   // Member
 								$objectemail = new Adherent($this->db);
 							}
 							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-							 $objectemail = new Holiday($db);
-							 }
-							 if ($reg[1] == 'exp') {   // ExpenseReport
-							 $objectemail = new ExpenseReport($db);
-							 }*/
+								$objectemail = new Holiday($db);
+							}
+							if ($reg[1] == 'exp') {   // ExpenseReport
+								$objectemail = new ExpenseReport($db);
+							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
-							if (!is_object($objectemail)) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
+							if (!is_object($objectemail) && isModEnabled('ticket')) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
+								$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
@@ -2077,7 +2074,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('project')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -2092,7 +2089,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('recruitment')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -2272,7 +2269,7 @@ class EmailCollector extends CommonObject
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
-
+						$ticketalreadyexists = 0;
 						if ($errorforactions) {
 							break;
 						}
@@ -2306,6 +2303,31 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+
+						if ($operation['type'] == 'ticket') {
+							// Verify if ticket already exists to fall back on the right operation
+							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
+							$alreadycreated1 = 0;
+							if (!empty($trackid)) {
+								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							}
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket)) {
+								if ($alreadycreated == 0) {
+									$ticketalreadyexists = 0;
+								} else {
+									$ticketalreadyexists = 1;
+									$operation['type'] = 'recordevent';
+								}
+							} else {
+								$ticketalreadyexists = -1;
+							}
 						}
 
 						// Search and create thirdparty
@@ -3062,15 +3084,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
-							$errorfetchticket = 0;
-
-							$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
-							}
-							if (empty($errorfetchticket) && $alreadycreated == 0) {
+							if ($ticketalreadyexists == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;

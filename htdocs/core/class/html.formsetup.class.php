@@ -603,19 +603,23 @@ class FormSetupItem
 	/** @var Form */
 	public $form;
 
+
 	/** @var string $confKey the conf key used in database */
 	public $confKey;
 
-	/** @var string|false $nameText  */
+	/** @var string|false $nameText */
 	public $nameText = false;
 
-	/** @var string $helpText  */
+	/** @var string $helpText */
 	public $helpText = '';
 
-	/** @var string $fieldValue  */
+	/** @var string $picto */
+	public $picto = '';
+
+	/** @var string $fieldValue */
 	public $fieldValue;
 
-	/** @var string $defaultFieldValue  */
+	/** @var string $defaultFieldValue */
 	public $defaultFieldValue = null;
 
 	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
@@ -1098,7 +1102,13 @@ class FormSetupItem
 	 */
 	public function generateInputFieldSelect()
 	{
-		return $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+
+		return $s;
 	}
 
 	/**

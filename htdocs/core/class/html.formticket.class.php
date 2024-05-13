@@ -662,7 +662,8 @@ class FormTicket
 					$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 					print img_picto('', 'contact', 'class="paddingright"');
 					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-					print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+					print $form->select_contact($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 1, 'maxwidth300 widthcentpercentminusx', true);
+
 					print ' ';
 					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
 					print '</td></tr>';
@@ -701,6 +702,7 @@ class FormTicket
 
 		if ($subelement != 'contract') {
 			if (isModEnabled('contract') && !$this->ispublic) {
+				$langs->load('contracts');
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');

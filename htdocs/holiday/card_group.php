@@ -529,7 +529,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 		}
 
-		print img_picto('', 'users') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'users', 'class="pictofixedwidth"') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td>';
 
 		// Type

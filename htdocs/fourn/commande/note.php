@@ -21,7 +21,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/note.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      page for notes on supplier orders
  */
 

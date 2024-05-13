@@ -897,8 +897,8 @@ class ExtraFields
 			$sql .= " ".$pos.",";
 			$sql .= " '".$this->db->escape($alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
-			$sql .= " '".$this->db->escape($list)."', ";
-			$sql .= " '".$this->db->escape($printable)."', ";
+			$sql .= " '".$this->db->escape($list)."',";
+			$sql .= " ".((int) $printable).",";
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
@@ -1081,6 +1081,9 @@ class ExtraFields
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+
+		//var_dump('key='.$key.' '.$value.' '.$moreparam.' '.$keysuffix.' '.$keyprefix.' '.$objectid.' '.$extrafieldsobjectkey.' '.$mode);
+		//var_dump('label='.$label.' type='.$type.' param='.var_export($param, 1));
 
 		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) {
@@ -1691,10 +1694,10 @@ class ExtraFields
 				}
 			}
 		} elseif ($type == 'link') {
-			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			$param_list = array_keys($param['options']); // $param_list[0] = 'ObjectName:classPath' but can also be 'ObjectName:classPath:1:(status:=:1)'
 			/* Removed.
-			The selectForForms is called with parameter $objectfield defined, so that the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
-			filter was used to pass SQL requests leading to serious SQL injection problems. This should not be possible. Also the call of the ajax was broken by some WAF.
+			The selectForForms is called with parameter $objectfield defined, so the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
+			filter was used to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
 			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
 				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
 			}*/
@@ -1709,8 +1712,11 @@ class ExtraFields
 				$element = 'project';
 			}
 
-			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
-			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
+			//$objectdesc = $param_list[0];				// Example: 'ObjectName:classPath:1:(status:=:1)'	Replaced by next line: this was propagated also a filter by ajax call that was blocked by some WAF
+			$objectdesc = $tmparray[0];					// Example: 'ObjectName:classPath'					To not propagate any filter (selectForForms do ajax call and propagating SQL filter is blocked by some WAF). Also we should use the one into the definition in the ->fields of $elem if found.
+			$objectfield = $element.':options_'.$key;	// Example: 'actioncomm:options_fff'				To be used in priority to know object linked with all its definition (including filters)
+
+			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);
 		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 			$dolgeophp = new DolGeoPHP($this->db);
@@ -2562,6 +2568,34 @@ class ExtraFields
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return array with all possible types and labels of extrafields
+	 *
+	 * @return string[]
+	 */
+	public static function getListOfTypesLabels()
+	{
+		global $langs;
+
+		$tmptype2label = ExtraFields::$type2label;
+		$type2label = array('');
+		foreach ($tmptype2label as $key => $val) {
+			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+		}
+
+		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
+			unset($type2label['icon']);
+		}
+		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
+			unset($type2label['point']);
+			unset($type2label['multipts']);
+			unset($type2label['linestrg']);
+			unset($type2label['polygon']);
+		}
+
+		return $type2label;
 	}
 
 	/**

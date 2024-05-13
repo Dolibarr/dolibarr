@@ -351,7 +351,7 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: var(--textbutaction);
-	border-radius: 3px;
+	border-radius: 4px;
 	border-collapse: collapse;
 	border: none;
 }
@@ -1406,7 +1406,7 @@ select.flat.selectlimit {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-.selectlimit, .marginrightonly {
+.marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
@@ -1781,6 +1781,7 @@ maxscreenheightless200 {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -4121,12 +4122,12 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 7px 10px 7px 12px;			/* t r b l */
+	padding: 6px 10px 6px 12px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 8px 10px 8px 12px;			/* t r b l */
+	padding: 6px 10px 6px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
-	height: 22px;
+	height: 28px;
 }
 table.liste tr.trkanban td {
 	padding: 10px 12px 10px 12px;			/* t r b l */
@@ -4227,7 +4228,7 @@ div.pagination li {
   padding-left: 0px;
   padding-right: 0px;
   /* padding-top: 10px; */
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
   font-size: 1.1em;
 }
 .pagination {
@@ -6809,25 +6810,33 @@ select.multiselectononeline {
 	/* width: 1px !important; */
 }
 
-@media only screen and (min-width: 767px)
+@media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
-		min-width: 220px !important;
+		min-width: 230px !important;
 	}
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 220px !important;
+		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above{
 		min-width: 140px !important;
+	}
+	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 300px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
 	}
+}
+
+/* must be after the other .select2-container.select2-container--open .select2-dropdown.ui-dialog */
+.limit.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+	min-width: 100px !important;
 }
 
 

@@ -271,7 +271,7 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
 	 */
 	public $multilangs;
 
@@ -1132,15 +1132,15 @@ class Categorie extends CommonObject
 	 *                fullpath = Full path built with the id's
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
-	 * @param   int|string|array	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                                                  $markafterid can be an :
+	 * @param   int|string|array	$fromid        		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
 	 *                                                  - int (id of category)
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $markafterid = 0, $include = 0)
+	public function get_full_arbo($type, $fromid = 0, $include = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1153,16 +1153,16 @@ class Categorie extends CommonObject
 			return -1;
 		}
 
-		if (is_string($markafterid)) {
-			$markafterid = explode(',', $markafterid);
-		} elseif (is_numeric($markafterid)) {
-			if ($markafterid > 0) {
-				$markafterid = array($markafterid);
+		if (is_string($fromid)) {
+			$fromid = explode(',', $fromid);
+		} elseif (is_numeric($fromid)) {
+			if ($fromid > 0) {
+				$fromid = array($fromid);
 			} else {
-				$markafterid = array();
+				$fromid = array();
 			}
-		} elseif (!is_array($markafterid)) {
-			$markafterid = array();
+		} elseif (!is_array($fromid)) {
+			$fromid = array();
 		}
 
 		$this->cats = array();
@@ -1218,11 +1218,11 @@ class Categorie extends CommonObject
 			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
 		}
 
-		// Include or exclude leaf including $markafterid from tree
-		if (count($markafterid) > 0) {
-			$keyfiltercatid = '('.implode('|', $markafterid).')';
+		// Include or exclude leaf (including $fromid) from tree
+		if (count($fromid) > 0) {
+			$keyfiltercatid = '('.implode('|', $fromid).')';
 
-			//print "Look to discard category ".$markafterid."\n";
+			//print "Look to discard category ".$fromid."\n";
 			$keyfilter1 = '^'.$keyfiltercatid.'$';
 			$keyfilter2 = '_'.$keyfiltercatid.'$';
 			$keyfilter3 = '^'.$keyfiltercatid.'_';

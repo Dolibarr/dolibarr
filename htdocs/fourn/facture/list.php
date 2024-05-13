@@ -1068,7 +1068,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1752,7 +1753,7 @@ while ($i < $imaxinloop) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
@@ -1901,7 +1902,7 @@ while ($i < $imaxinloop) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdoverflowmax100">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -1913,6 +1914,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Dynamic amount paid
 		if (!empty($arrayfields['dynamount_payed']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
@@ -1925,6 +1927,7 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['totalam'] += $totalpay;
 		}
 
+		// Remain to pay
 		if (!empty($arrayfields['rtp']['checked'])) {
 			print '<td class="right nowrap">'.(!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 			if (!$i) {
@@ -1972,6 +1975,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Dynamic amount paid
 		if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {

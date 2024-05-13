@@ -286,6 +286,8 @@ class FormListWebPortal
 			$sortorder = 'DESC';
 		}
 
+		$socid = (int) $context->logged_thirdparty->id;
+
 		// Build and execute select
 		// --------------------------------------------------------------------
 		$sql = "SELECT ";
@@ -310,7 +312,10 @@ class FormListWebPortal
 			$sql .= " WHERE 1 = 1";
 		}
 		// filter on logged third-party
-		$sql .= " AND t.fk_soc = " . (int) $context->logged_thirdparty->id;
+		$sql .= " AND t.fk_soc = " . ((int) $socid);
+		// discard record with status draft
+		$sql .= " AND t.fk_statut <> 0";
+
 		foreach ($search as $key => $val) {
 			if (array_key_exists($key, $object->fields)) {
 				if (($key == 'status' || $key == 'fk_statut') && $search[$key] == $emptyValueKey) {
@@ -562,6 +567,16 @@ class FormListWebPortal
 		$html .= '</thead>';
 
 		$html .= '<tbody>';
+
+		// Store company
+		$idCompany = (int) $socid;
+		if (!isset($this->companyStaticList[$socid])) {
+			$companyStatic = new Societe($this->db);
+			$companyStatic->fetch($idCompany);
+			$this->companyStaticList[$idCompany] = $companyStatic;
+		}
+		$companyStatic = $this->companyStaticList[$socid];
+
 		// Loop on record
 		// --------------------------------------------------------------------
 		$i = 0;
@@ -580,15 +595,6 @@ class FormListWebPortal
 			// specific to get invoice status (depends on payment)
 			$payment = -1;
 			if ($elementEn == 'invoice') {
-				// store company
-				$idCompany = (int) $obj->fk_soc;
-				if (!isset($this->companyStaticList[$obj->fk_soc])) {
-					$companyStatic = new Societe($this->db);
-					$companyStatic->fetch($idCompany);
-					$this->companyStaticList[$idCompany] = $companyStatic;
-				}
-				$companyStatic = $this->companyStaticList[$obj->fk_soc];
-
 				// paid sum
 				$payment = $object->getSommePaiement();
 				$totalcreditnotes = $object->getSumCreditNotesUsed();
@@ -748,6 +754,11 @@ class FormListWebPortal
 	public static function generatePageListNav(string $url, int $nbPages, int $currentPage)
 	{
 		global $langs;
+
+		// Return nothing (no navigation bar), if there is only 1 page.
+		if ($nbPages <= 1) {
+			return '';
+		}
 
 		$pSep = strpos($url, '?') === false ? '?' : '&amp;';
 

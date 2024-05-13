@@ -50,17 +50,6 @@ class Partnership extends CommonObject
 	public $table_element = 'partnership';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for partnership. Must be the part after the 'object_' into object_partnership.png
 	 */
 	public $picto = 'partnership';
@@ -165,6 +154,9 @@ class Partnership extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$this->fields['fk_member'] = array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'member', 'csslist' => 'tdoverflowmax150');
@@ -1375,10 +1367,6 @@ class PartnershipLine extends CommonObjectLine
 	// To complete with content of an object PartnershipLine
 	// We should have a field rowid, fk_partnership and position
 
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Constructor
@@ -1388,5 +1376,7 @@ class PartnershipLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

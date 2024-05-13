@@ -370,7 +370,7 @@ class FormCardWebPortal
 				}
 
 				$object->$key = $value;
-				if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+				if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 					$error++;
 					$context->setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 				}
@@ -454,19 +454,27 @@ class FormCardWebPortal
 		//    }
 		//}
 
+		$html .= '<!-- html.formcardwebportal.class.php -->';
 		$html .= '<header>';
 
 		// Left block - begin
-		$html .= '<div class="header-card-left-block" style="width: 75%;">';
+		$html .= '<div class="header-card-left-block inline-block" style="width: 75%;">';
 		$html .= '<div>';
 
 		// logo or photo
-		$html .= '<div></div>';
+		$form = new Form($this->db);
+		$html .= '<div class="inline-block floatleft valignmiddle">';
+		$html .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+		$html .= $form->showphoto('memberphoto', $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+		//include DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+		//$html .= getImagePublicURLOfObject($object, 1, '_small');
+		$html .= '</div>';
+		$html .= '</div>';
 
 		// main information - begin
-		$html .= '<div class="header-card-main-information">';
+		$html .= '<div class="header-card-main-information inline-block valignmiddle">';
 		// ref
-		$html .= '<div><strong>' . $object->ref . '</strong></div>';
+		$html .= '<div><strong>' . $langs->trans("Ref").' : '.dol_escape_htmltag($object->ref) . '</strong></div>';
 		// full name
 		$fullname = '';
 		if (method_exists($object, 'getFullName')) {
@@ -504,7 +512,7 @@ class FormCardWebPortal
 		// Left block - end
 
 		// Right block - begin
-		$html .= '<div class="grid header-card-right-block">';
+		$html .= '<div class="header-card-right-block inline-block" style="width: 24%;">';
 		// show status
 		$htmlStatus = $object->getLibStatut(6);
 		if (empty($htmlStatus) || $htmlStatus == $object->getLibStatut(3)) {
@@ -737,7 +745,7 @@ class FormCardWebPortal
 	{
 		global $hookmanager, $langs;
 
-		$html = '';
+		$html = '<!-- elementCard -->';
 
 		// initialize
 		$action = $this->action;

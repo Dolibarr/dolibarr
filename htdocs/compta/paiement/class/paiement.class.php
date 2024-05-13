@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage payments of customers invoices
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';

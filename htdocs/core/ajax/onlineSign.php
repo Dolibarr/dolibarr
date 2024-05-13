@@ -678,6 +678,152 @@ if ($action == "importSignature") {
 					$db->rollback();
 				}
 			}
+		} elseif ($mode == 'expedition') {
+			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+
+			$object = new Expedition($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = $conf->expedition->dir_output."/sending/";
+			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
+
+			$langs->loadLangs(array("main", "companies"));
+
+			$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
+			$default_font = pdf_getPDFFont($langs);	// Must be
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/" . $date . "_signature.png";
+			if (!is_dir($upload_dir . "signatures/")) {
+				if (!dol_mkdir($upload_dir . "signatures/")) {
+					$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir . $filename, $data);
+				if ($return == false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				}
+			}
+
+			if (!$error) {
+				$last_main_doc_file = $object->last_main_doc;
+				// Defined modele of doc
+				if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+					// It seems document has never been generated, or was generated and then deleted.
+					// So we try to regenerate it with its default template.
+					$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+					$object->generateDocument($defaulttemplate, $langs);
+				}
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
+					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref . ".pdf";
+
+
+					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
+						$pdf = pdf_getInstance();
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
+
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
+						}
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+						$param = array();
+						$param['online_sign_name'] = $online_sign_name;
+						$param['pathtoimage'] = $upload_dir . $filename;
+
+						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+						for ($i = 1; $i < ($pagecount + 1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+
+								if (getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
+									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+									// TODO Get position of box from PDF template
+
+									$param['xforimgstart'] = 111;
+									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+									dolPrintSignatureImage($pdf, $langs, $param);
+								}
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						if (!getDolGlobalString("SHIPMENT_SIGNATURE_ON_ALL_PAGES")) {
+							// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+							// TODO Get position of box from PDF template
+
+							$param['xforimgstart'] = 111;
+							$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+							$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+
+							dolPrintSignatureImage($pdf, $langs, $param);
+						}
+
+						//$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+					if (!$error) {
+						$response = "success";
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+			}
+
+			if (!$error) {
+				$db->begin();
+
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition";
+				$sql .= " SET signed_status = " . ((int) $object::STATUS_SIGNED) ;
+				$sql .= " WHERE rowid = " . ((int) $object->id);
+
+				dol_syslog(__FILE__, LOG_DEBUG);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				} else {
+					$num = $db->affected_rows($resql);
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("ExpeditionSigned", null, 'warnings');
+				} else {
+					$db->rollback();
+				}
+			}
 		}
 	} else {
 		$error++;

@@ -50,17 +50,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $table_element = 'eventorganization_conferenceorboothattendee';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 'fk_project@projet';
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for conferenceorboothattendee. Must be the part after the 'object_' into object_conferenceorboothattendee.png
 	 */
 	public $picto = 'contact';
@@ -197,6 +186,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_project@projet';
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1121,11 +1113,6 @@ class ConferenceOrBoothAttendeeLine extends CommonObjectLine
 	// We should have a field rowid, fk_conferenceorboothattendee and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1133,5 +1120,7 @@ class ConferenceOrBoothAttendeeLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

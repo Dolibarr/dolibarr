@@ -95,7 +95,7 @@ nolimitbyEX_YEA=by year (no limitation)
 NoTripsToExportCSV=No expense report to export for this period.
 NOT_AUTHOR=You are not the author of this expense report. Operation canceled.
 OnExpense=Expense line
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Pay an expense report
 REFUSEUR=Denied by
 RangeIk=Mileage range
@@ -120,7 +120,7 @@ ValideTrip=Approve expense report
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements with draft status can be deleted in mass action
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Breakfast

@@ -1254,11 +1254,9 @@ if ($resql) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				print '<td class="center">';
+				print '<td class="tdoverflowmax125">';
 				if ($userstatic->id > 0) {
 					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
-				} else {
-					print '&nbsp;';
 				}
 				print "</td>\n";
 				if (!$i) {

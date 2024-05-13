@@ -20,7 +20,7 @@
 
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Widget for latest sale orders
  */
 

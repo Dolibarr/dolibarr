@@ -480,6 +480,13 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $html
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 
+// Allow OnLine Sign
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
+print '<td class="center">';
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
 print '</table>';
 
 print $form->buttonsSaveCancel("Modify", '');

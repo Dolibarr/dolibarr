@@ -26,9 +26,9 @@
 
 
 /**
- * Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajax/ajaxcompanies.php).
+ * Generic function that return javascript to add to transform a common input text or select field into an autocomplete field by calling an Ajax page (ex: /societe/ajax/ajaxcompanies.php).
  * The HTML field must be an input text with id=search_$htmlname.
- * This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
+ * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
  * @param string	$selected 			Preselected value
  * @param string	$htmlname 			HTML name of input field
@@ -119,6 +119,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						    }
                     });
 
+					// Activate the autocomplete to execute the GET
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
@@ -162,18 +163,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
-		';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
-												multicurrency_code: item.multicurrency_code,
-												multicurrency_unitprice: item.multicurrency_unitprice,
-		';
-	}
-	$script .= '
+												 multicurrency_code: item.multicurrency_code,
+												 multicurrency_unitprice: item.multicurrency_unitprice,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
-												 default_vat_code: item.default_vat_code
+												 default_vat_code: item.default_vat_code,
+												 supplier_ref: item.supplier_ref
 										}
 									}));
 								} else {
@@ -183,11 +179,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						},
 						dataType: "json",
     					minLength: '.((int) $minLength).',
-    					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
+    					select: function( event, ui ) {		// Function ran once a new value has been selected into the javascript combo
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties retrieved by ajax into data-xxx properties of #'.$htmlnamejquery.' component");
+							console.log("Before, we propagate some properties, retrieved by the ajax of the get, into the data-xxx properties of the component #'.$htmlnamejquery.'");
 							//console.log(ui.item);
 
 							// For supplier price and customer when price by quantity is off
@@ -200,18 +196,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
-	';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
+							$("#'.$htmlnamejquery.'").attr("data-supplier-ref", ui.item.supplier_ref);	// supplier_ref of price
+
 							// For multi-currency values
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
 		';
-	}
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
-							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
+							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, so we propagate also prices by quantity into data-pbqxxx properties");
 							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -221,7 +215,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	}
 	$script .= '
 							// A new value has been selected, we trigger the handlers on #htmlnamejquery
-							console.log("Trigger changes on #'.$htmlnamejquery.'");
+							console.log("Now, we trigger changes on #'.$htmlnamejquery.'");
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
 
 							// Complementary actions
@@ -243,13 +237,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						}
 
     						if (options.disabled) {
-    							console.log("Make action disabled on each "+options.option_disabled)
+    							console.log("Make action \'disabled\' on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
 									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
-    							console.log("Make action show on each "+options.show)
+    							console.log("Make action \'show\' on each "+options.show)
     							$.each(options.show, function(key, value) {
     								$("#" + value).show().trigger("show");
     							});
@@ -257,7 +251,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     						// Update an input
     						if (ui.item.update) {
-    							console.log("Make action update on each ui.item.update (if there is)")
+    							console.log("Make action \'update\' on each ui.item.update (if there is)")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
 									console.log("Set value "+value+" into #"+key);
@@ -265,7 +259,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							});
     						}
     						if (ui.item.textarea) {
-    							console.log("Make action textarea on each ui.item.textarea (if there is)")
+    							console.log("Make action \'textarea\' on each ui.item.textarea (if there is)")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -295,7 +289,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 }
 
 /**
- *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
+ *	Generic function that return javascript to add to a page to transform a common input text field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
  *  The Ajax page can also returns several values (json format) to fill several input fields.
  *  The HTML field must be an input text with id=$htmlname.
  *  This use the jQuery "autocomplete" function.
@@ -318,6 +312,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 					var autoselect = '.$autoselect.';
 					//alert(fields + " " + nboffields);
 
+					// Activate the autocomplete to execute the GET
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
     					minLength: '.$minLength.',
@@ -417,8 +412,6 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
  */
 function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
-	global $langs;
-
 	$newtitle = dol_textishtml($title) ? dol_string_nohtmltag($title, 1) : $title;
 	$msg = '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg .= $message;
@@ -604,9 +597,11 @@ function ajax_event($htmlname, $events)
 									}
 								}
 							});
+
+							console.log("Replace HTML content of select#"+htmlname);
 							$("select#" + htmlname).html(response.value);
 							if (response.num) {
-								var selecthtml_str = response.value;
+								var selecthtml_str = response.value;	/* response.value is the HTML string with list of options */
 								var selecthtml_dom=$.parseHTML(selecthtml_str);
 								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
 									$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);

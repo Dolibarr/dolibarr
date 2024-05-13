@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/admin/payment.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoices payments
  */
 

@@ -90,17 +90,6 @@ class Product extends CommonObject
 	);
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'product';
@@ -628,6 +617,10 @@ class Product extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		$this->canvas = '';
 	}
 
@@ -3022,7 +3015,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats OF pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return int                     Array of stats in $this->stats_bom, <0 if ko or >0 if ok
+	 * @return int        Array of stats in $this->stats_bom, <0 if ko or >0 if ok
 	 */
 	public function load_stats_bom($socid = 0)
 	{
@@ -3091,7 +3084,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return int                     Array of stats in $this->stats_propale, <0 if ko or >0 if ok
+	 * @return int        Array of stats in $this->stats_propale, <0 if ko or >0 if ok
 	 */
 	public function load_stats_propale($socid = 0)
 	{
@@ -3166,7 +3159,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 * @param  int $socid Id thirdparty
-	 * @return int                     Array of stats in $this->stats_proposal_supplier, <0 if ko or >0 if ok
+	 * @return int        Array of stats in $this->stats_proposal_supplier, <0 if ko or >0 if ok
 	 */
 	public function load_stats_proposal_supplier($socid = 0)
 	{
@@ -3219,8 +3212,8 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats commande client pour le produit/service
 	 *
-	 * @param  int    $socid           Id societe pour filtrer sur une societe
-	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
+	 * @param  int    $socid           Id thirdparty to filter on a thirdparty
+	 * @param  string $filtrestatut    Id status to filter on a status
 	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation. Set when load_stats_commande is used for virtual stock calculation.
 	 * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
@@ -3346,7 +3339,7 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats commande fournisseur pour le produit/service
 	 *
-	 * @param	int		$socid				Id societe pour filtrer sur une societe
+	 * @param	int		$socid				Id thirdparty to filter on a thirdparty
 	 * @param	string	$filtrestatut		Id of status to filter on status
 	 * @param	int		$forVirtualStock	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
@@ -3407,7 +3400,7 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats expedition client pour le produit/service
 	 *
-	 * @param   int         $socid                  Id societe pour filtrer sur une societe
+	 * @param   int         $socid                  Id thirdparty to filter on a thirdparty
 	 * @param   string      $filtrestatut           [=''] Ids order status separated by comma
 	 * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
 	 * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
@@ -3493,8 +3486,8 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 * @param  int    	$socid           	Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param  int    	$socid           	Id thirdparty to filter on a thirdparty
+	 * @param  string 	$filtrestatut    	Id status to filter on a status
 	 * @param  int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @return int                     		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
@@ -3554,11 +3547,11 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats production pour le produit/service
 	 *
-	 * @param	int    	$socid           	Id societe pour filtrer sur une societe
-	 * @param	string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param	int    	$socid           	Id thirdparty to filter on a thirdparty
+	 * @param	string 	$filtrestatut    	Id status to filter on a status
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehous is set, it is not possible to calculate an accurate virtual stock because we can't knnow in which warehouse will be done virtual stock changes.
+	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehouse is set, it is not possible to calculate an accurate virtual stock because we can't know in which warehouse will be done virtual stock changes.
 	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
@@ -5469,7 +5462,7 @@ class Product extends CommonObject
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
-			$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/product/price_suppliers.php?id='.$this->id;
 		} elseif ($option == 'stock') {
 			$url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
 		} elseif ($option == 'composition') {

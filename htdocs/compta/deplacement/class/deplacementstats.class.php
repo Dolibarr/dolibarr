@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/compta/deplacement/class/deplacementstats.class.php
- *       \ingroup    factures
+ *       \ingroup    invoices
  *       \brief      File for class managaging the statistics of travel and expense notes
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
