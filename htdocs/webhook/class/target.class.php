@@ -220,7 +220,7 @@ class Target extends CommonObject
 				$arraytrigger = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					$arraytrigger[$obj->code]=$obj->label;
+					$arraytrigger[$obj->code] = $obj->label.' ('.$obj->code.')';
 					$i++;
 				}
 				$this->fields["trigger_codes"]['arrayofkeyval'] = $arraytrigger;
