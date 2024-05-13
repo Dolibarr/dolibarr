@@ -120,6 +120,9 @@ class Target extends CommonObject
 	public $import_key;
 	public $status;
 	public $url;
+	/**
+	 * @var string	List of trigger codes separated by a comma. Example: 'BILL_VALIDATE,PROPAL_DELETE,...'
+	 */
 	public $trigger_codes;
 	// END MODULEBUILDER PROPERTIES
 
