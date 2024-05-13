@@ -57,7 +57,8 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 
 // Description
 print '<th class="linecoldescription">'.$langs->trans('Description');
-if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
+$constant = get_class($object)."::STATUS_DRAFT";
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && defined($constant) && $object->status == constant($constant)) {
 	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'servicedateforalllines') {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=servicedateforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 	}
