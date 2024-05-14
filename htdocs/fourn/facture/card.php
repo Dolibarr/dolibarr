@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/card.php
- *	\ingroup    facture, fournisseur
+ *	\ingroup    invoice, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
  */
 

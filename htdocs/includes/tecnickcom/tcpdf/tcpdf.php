@@ -10031,6 +10031,11 @@ class TCPDF
 				$out .= ' >> >>';
 			}
 			$font = $this->getFontBuffer('helvetica');
+			// @DOLCHANGE LDR Fix PHP warning
+			if (empty($font['i'])) {
+				//var_dump($this->fonts['helvetica']['i']);exit;
+				$font['i'] = '';
+			}
 			$out .= ' /DA (/F'.$font['i'].' 0 Tf 0 g)';
 			$out .= ' /Q '.(($this->rtl)?'2':'0');
 			//$out .= ' /XFA ';

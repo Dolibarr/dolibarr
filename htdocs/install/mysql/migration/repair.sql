@@ -169,6 +169,9 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
+-- Fix: delete orphelins in llx_societe_commerciaux
+DELETE FROM llx_societe_commericaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+
 -- Fix: delete orphelins in product_association
 delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
 delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
@@ -674,5 +677,3 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
-
-

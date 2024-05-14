@@ -24,7 +24,7 @@
 
 /**
  *       \file       htdocs/fourn/facture/document.php
- *       \ingroup    facture, fournisseur
+ *       \ingroup    invoice, fournisseur
  *       \brief      Page to manage documents joined to vendor invoices
  */
 

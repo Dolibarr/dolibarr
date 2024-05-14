@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/compta/facture/document.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page for attached files on invoices
  */
 

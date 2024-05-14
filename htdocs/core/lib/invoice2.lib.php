@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/lib/invoice2.lib.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      Function to rebuild PDF and merge PDF files into one
  */
 

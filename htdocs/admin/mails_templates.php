@@ -890,7 +890,7 @@ $param = '&id='.((int) $id);
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
-if ($search_lang > 0) {
+if (!empty($search_lang) && $search_lang != '-1') {
 	$param .= '&search_lang='.urlencode($search_lang);
 }
 if ($search_type_template != '-1') {
@@ -1197,7 +1197,7 @@ if ($num) {
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -1261,7 +1261,7 @@ if ($num) {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(1);
+								$valuetoshow = $fuser->getNomUrl(-1);
 								$class .= ' tdoverflowmax100';
 							}
 						}
@@ -1382,13 +1382,13 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
-					print $user->getNomUrl(1); // Me
+					print $user->getNomUrl(-1); // Me
 					$forcedvalue = $user->id;
 				} else {
 					if ($obj && !empty($obj->$value) && $obj->$value > 0) {
 						$fuser = new User($db);
 						$fuser->fetch($obj->$value);
-						print $fuser->getNomUrl(1);
+						print $fuser->getNomUrl(-1);
 						$forcedvalue = $fuser->id;
 					} else {
 						$forcedvalue = $obj->$value;

@@ -17,7 +17,7 @@
 
 /**
  *  \file       htdocs/commande/agenda.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      Tab of events on Sale Orders
  */
 require '../main.inc.php';

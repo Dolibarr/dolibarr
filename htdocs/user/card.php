@@ -785,6 +785,19 @@ if (isModEnabled('stock')) {
 	$formproduct = new FormProduct($db);
 }
 
+// Count nb of users
+$nbofusers = 1;
+$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.'user WHERE entity IN ('.getEntity('user').')';
+$resql = $db->query($sql);
+if ($resql) {
+	$obj = $db->fetch_object($resql);
+	if ($obj) {
+		$nbofusers = $obj->nb;
+	}
+} else {
+	dol_print_error($db);
+}
+
 if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
@@ -1269,7 +1282,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Categories
 	if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
-		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
+		$cate_arbo = $form->select_all_categories('user', '', 'parent', 0, 0, 3);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
 		print "</td></tr>";
 	}
@@ -1591,54 +1604,55 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>'."\n";
 
 			// TODO This is also available into the tab RH
-
-			// Hierarchy
-			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
-			print '<td>';
-			if (empty($object->fk_user)) {
-				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-			} else {
-				$huser = new User($db);
-				if ($object->fk_user > 0) {
-					$huser->fetch($object->fk_user);
-					print $huser->getNomUrl(-1);
-				} else {
+			if ($nbofusers > 1) {
+				// Hierarchy
+				print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
+				print '<td>';
+				if (empty($object->fk_user)) {
 					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-				}
-			}
-			print '</td>';
-			print "</tr>\n";
-
-			// Expense report validator
-			if (isModEnabled('expensereport')) {
-				print '<tr><td>';
-				$text = $langs->trans("ForceUserExpenseValidator");
-				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-				print '</td>';
-				print '<td>';
-				if (!empty($object->fk_user_expense_validator)) {
-					$evuser = new User($db);
-					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(-1);
+				} else {
+					$huser = new User($db);
+					if ($object->fk_user > 0) {
+						$huser->fetch($object->fk_user);
+						print $huser->getNomUrl(-1);
+					} else {
+						print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+					}
 				}
 				print '</td>';
 				print "</tr>\n";
-			}
 
-			// Holiday request validator
-			if (isModEnabled('holiday')) {
-				print '<tr><td>';
-				$text = $langs->trans("ForceUserHolidayValidator");
-				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-				print '</td>';
-				print '<td>';
-				if (!empty($object->fk_user_holiday_validator)) {
-					$hvuser = new User($db);
-					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(-1);
+				// Expense report validator
+				if (isModEnabled('expensereport')) {
+					print '<tr><td>';
+					$text = $langs->trans("ForceUserExpenseValidator");
+					print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+					print '</td>';
+					print '<td>';
+					if (!empty($object->fk_user_expense_validator)) {
+						$evuser = new User($db);
+						$evuser->fetch($object->fk_user_expense_validator);
+						print $evuser->getNomUrl(-1);
+					}
+					print '</td>';
+					print "</tr>\n";
 				}
-				print '</td>';
-				print "</tr>\n";
+
+				// Holiday request validator
+				if (isModEnabled('holiday')) {
+					print '<tr><td>';
+					$text = $langs->trans("ForceUserHolidayValidator");
+					print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+					print '</td>';
+					print '<td>';
+					if (!empty($object->fk_user_holiday_validator)) {
+						$hvuser = new User($db);
+						$hvuser->fetch($object->fk_user_holiday_validator);
+						print $hvuser->getNomUrl(-1);
+					}
+					print '</td>';
+					print "</tr>\n";
+				}
 			}
 
 			// Position/Job
@@ -2343,56 +2357,58 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-			// Hierarchy
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
-			print '<td>';
-			if ($caneditfield) {
-				print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
-			} else {
-				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
-				$huser = new User($db);
-				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(-1);
-			}
-			print '</td>';
-			print "</tr>\n";
-
-			// Expense report validator
-			if (isModEnabled('expensereport')) {
-				print '<tr><td class="titlefieldcreate">';
-				$text = $langs->trans("ForceUserExpenseValidator");
-				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-				print '</td>';
+			if ($nbofusers > 1) {
+				// Hierarchy
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
-					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
-					$evuser = new User($db);
-					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(-1);
+					print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
+					$huser = new User($db);
+					$huser->fetch($object->fk_user);
+					print $huser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
-			}
 
-			// Holiday request validator
-			if (isModEnabled('holiday')) {
-				print '<tr><td class="titlefieldcreate">';
-				$text = $langs->trans("ForceUserHolidayValidator");
-				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-				print '</td>';
-				print '<td>';
-				if ($caneditfield) {
-					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
-				} else {
-					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
-					$hvuser = new User($db);
-					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(-1);
+				// Expense report validator
+				if (isModEnabled('expensereport')) {
+					print '<tr><td class="titlefieldcreate">';
+					$text = $langs->trans("ForceUserExpenseValidator");
+					print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+					print '</td>';
+					print '<td>';
+					if ($caneditfield) {
+						print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					} else {
+						print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
+						$evuser = new User($db);
+						$evuser->fetch($object->fk_user_expense_validator);
+						print $evuser->getNomUrl(-1);
+					}
+					print '</td>';
+					print "</tr>\n";
 				}
-				print '</td>';
-				print "</tr>\n";
+
+				// Holiday request validator
+				if (isModEnabled('holiday')) {
+					print '<tr><td class="titlefieldcreate">';
+					$text = $langs->trans("ForceUserHolidayValidator");
+					print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+					print '</td>';
+					print '<td>';
+					if ($caneditfield) {
+						print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					} else {
+						print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
+						$hvuser = new User($db);
+						$hvuser->fetch($object->fk_user_holiday_validator);
+						print $hvuser->getNomUrl(-1);
+					}
+					print '</td>';
+					print "</tr>\n";
+				}
 			}
 
 			// External user ?
@@ -2418,29 +2434,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300');
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print img_picto('', 'contact');
+					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print img_picto('', 'contact');
+					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print img_picto('', 'contact');
+					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print img_picto('', 'contact');
+					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 				}
 			}
 			print '</td></tr>';
-
 
 			print '</table>';
 
@@ -2733,6 +2756,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// Company / Contact
+			/* Disabled, this is already on field "External user ?"
 			if (isModEnabled("societe")) {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
@@ -2752,6 +2776,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print "</tr>\n";
 			}
+			*/
 
 			// Module Adherent
 			if (isModEnabled('member')) {
