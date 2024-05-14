@@ -1697,7 +1697,7 @@ class Website extends CommonObject
 					return -1;
 				}
 				// if path start with / (absolute path)
-				if (strpos($exportPath, '/') === 0) {
+				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
 					if (!is_dir($exportPath)) {
 						setEventMessages("The specified absolute path does not exist.", null, 'errors');
 						return -1;
@@ -1707,6 +1707,8 @@ class Website extends CommonObject
 						setEventMessages("The specified absolute path is not writable.", null, 'errors');
 						return -1;
 					}
+					$destdirrel = $exportPath;
+					$destdir = $exportPath;
 				} else {
 					// relatif path
 					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
