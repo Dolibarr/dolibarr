@@ -996,8 +996,8 @@ class pdf_espadon extends ModelePdfExpedition
 
 			$encoding = 'QRCODE';
 			$module = new modTcpdfbarcode();
-			$result = 0;
 			$barcode_path = '';
+			$result = 0;
 			if ($module->encodingIsSupported($encoding)) {
 				$result = $module->writeBarCode($object->ref, $encoding);
 

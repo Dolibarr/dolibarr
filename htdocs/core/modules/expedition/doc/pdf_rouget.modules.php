@@ -929,8 +929,8 @@ class pdf_rouget extends ModelePdfExpedition
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 			$encoding = 'QRCODE';
-			$result = 0;
 			$barcode_path = '';
+			$result = 0;
 			$module = new modTcpdfbarcode();
 			if ($module->encodingIsSupported($encoding)) {
 				$result = $module->writeBarCode($object->ref, $encoding);
