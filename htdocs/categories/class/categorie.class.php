@@ -1985,7 +1985,7 @@ class Categorie extends CommonObject
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
 					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
-				} else {
+				} elseif (isset($this->multilangs[$key])) {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
 					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
