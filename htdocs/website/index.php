@@ -4806,7 +4806,7 @@ if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimg
 
 
 	$module = 'medias';
-	$formalreadyopen = 2;	// So the form to submit a new file will not be opened another time inside the core/tpl/filemanager.tpl.php
+	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php
 	if (empty($url)) {
 		$url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
 	}

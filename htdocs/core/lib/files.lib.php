@@ -3700,7 +3700,7 @@ function dragAndDropFileUpload($htmlname)
  * @param	string	$moveorcopy			'move' or 'copy'
  * @return 	bool                    	Returns true if successful, false otherwise.
  */
-function manageFileBackups($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
 	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
 	$files_in_directory = glob($base_file_pattern . "*");

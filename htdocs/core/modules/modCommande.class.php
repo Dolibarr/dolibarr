@@ -308,7 +308,7 @@ class modCommande extends DolibarrModules
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
+		$import_sample = array('c.facture' => '0 or 1');
 		$this->import_fields_array[$r] = array(
 			'c.ref'               => 'Ref*',
 			'c.ref_client'        => 'RefCustomer',
@@ -324,7 +324,7 @@ class modCommande extends DolibarrModules
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
 			'c.note_public'       => 'Note',
-			'c.facture'           => 'Invoice(1/0)',
+			'c.facture'           => 'Billed',
 			'c.date_livraison'    => 'DeliveryDate',
 			'c.fk_cond_reglement' => 'Payment Condition',
 			'c.fk_mode_reglement' => 'Payment Mode',

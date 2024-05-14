@@ -3769,20 +3769,22 @@ if (!function_exists("llxFooter")) {
 				<script>
 				jQuery(document).ready(function () {
 					$('a.documentpreview').click(function() {
+						console.log("Call /blockedlog/ajax/block-add on a.documentpreview");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_PREVIEW'
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
 					$('a.documentdownload').click(function() {
+						console.log("Call /blockedlog/ajax/block-add a.documentdownload");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_DOWNLOAD'
 									, token: '<?php echo currentToken(); ?>'
 								}
