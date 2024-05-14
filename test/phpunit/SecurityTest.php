@@ -1246,8 +1246,8 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
-		$sav1 = $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML;
-		$sav2 = $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
+		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
 
 		// Test with an emoji
 		$test = 'abc ✅ def';
