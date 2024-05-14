@@ -321,7 +321,16 @@ ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
 
 
-insert into llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+-- VMYSQL4.3 ALTER TABLE llx_element_contact DROP CONSTRAINT fk_element_contact_fk_c_type_contact;
+-- VMYSQL4.3 ALTER TABLE llx_societe_contacts DROP CONSTRAINT fk_societe_contacts_fk_c_type_contact;
+-- VMYSQL4.3 ALTER TABLE llx_c_type_contact CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- VMYSQL4.3 ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
+-- VMYSQL4.3 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+
+
+DELETE FROM llx_societe_commericaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
