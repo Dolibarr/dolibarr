@@ -313,6 +313,8 @@ class FormListWebPortal
 		}
 		// filter on logged third-party
 		$sql .= " AND t.fk_soc = " . ((int) $socid);
+		// discard record with status draft
+		$sql .= " AND t.fk_statut <> 0";
 
 		foreach ($search as $key => $val) {
 			if (array_key_exists($key, $object->fields)) {

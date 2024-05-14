@@ -87,7 +87,7 @@ if (empty($dolibarr_nocache)) {
 	--form-element-spacing-vertical: 0.3em;
 	--form-element-spacing-horizontal: 0.5em;
 	--nav-element-spacing-vertical: 1rem;
-	--nav-element-spacing-horizontal: 0.5rem;
+	--nav-element-spacing-horizontal: 1rem;
 	--nav-link-spacing-vertical: 0.5rem;
 	--nav-link-spacing-horizontal: 0.5rem;
 	--form-label-font-weight: var(--font-weight);
@@ -120,7 +120,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 2.5);
+		--block-spacing-vertical: calc(var(--spacing) * 2);
 	}
 }
 @media (min-width: 768px) {
@@ -128,7 +128,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 2.8);
+		--block-spacing-vertical: calc(var(--spacing) * 2.2);
 	}
 }
 @media (min-width: 992px) {
@@ -136,7 +136,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 3.2);
+		--block-spacing-vertical: calc(var(--spacing) * 2.3);
 	}
 }
 @media (min-width: 1200px) {
@@ -144,7 +144,7 @@ if (empty($dolibarr_nocache)) {
 	body > main,
 	body > footer,
 	section {
-		--block-spacing-vertical: calc(var(--spacing) * 3.5);
+		--block-spacing-vertical: calc(var(--spacing) * 2.5);
 	}
 }
 
@@ -2250,6 +2250,7 @@ dialog:not([open]), dialog[open=false] {
 nav,
 nav > ul {
 	display: flex;
+	flex-wrap: wrap;
 }
 
 nav {

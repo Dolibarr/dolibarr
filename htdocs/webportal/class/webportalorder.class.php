@@ -40,7 +40,7 @@ class WebPortalOrder extends Commande
 	/**
 	 * Status list (short label)
 	 */
-	const STATUS_SHORT_LIST = array(
+	const ARRAY_STATUS_LABEL = array(
 		Commande::STATUS_DRAFT => 'StatusOrderDraftShort',
 		Commande::STATUS_VALIDATED => 'StatusOrderValidated',
 		Commande::STATUS_SHIPMENTONPROCESS => 'StatusOrderSentShort',
@@ -108,7 +108,7 @@ class WebPortalOrder extends Commande
 		'multicurrency_total_ht' => array('type' => 'price', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 255, 'isameasure' => 1,),
 		'multicurrency_total_tva' => array('type' => 'price', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 260, 'isameasure' => 1,),
 		'multicurrency_total_ttc' => array('type' => 'price', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 265, 'isameasure' => 1,),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 500, 'notnull' => -5, 'arrayofkeyval' => self::STATUS_SHORT_LIST,),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 500, 'notnull' => -5, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL,),
 	);
 	//public $rowid;
 	//public $ref;

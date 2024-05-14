@@ -662,7 +662,8 @@ class FormTicket
 					$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 					print img_picto('', 'contact', 'class="paddingright"');
 					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-					print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+					print $form->select_contact($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 1, 'maxwidth300 widthcentpercentminusx', true);
+
 					print ' ';
 					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
 					print '</td></tr>';

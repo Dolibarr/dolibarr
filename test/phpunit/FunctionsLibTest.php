@@ -216,6 +216,11 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		global $conf, $langs, $db;
 
+		// Test using like
+		$filter = "(lastname:like:'%aaa%') OR (firstname:like:'%bbb%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((lastname LIKE '%aaa%') OR (firstname LIKE '%bbb%'))", $sql);
+
 		// Test on NOW
 		$filter = "(client:!=:8) AND (datefin:>=:'__NOW__')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
@@ -240,7 +245,6 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fieldstring:=:'aaa ttt')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
-
 
 		// Check that parenthesis are NOT allowed inside the last operand. Very important.
 		$filter = "(t.fieldint:=:(1,2))";

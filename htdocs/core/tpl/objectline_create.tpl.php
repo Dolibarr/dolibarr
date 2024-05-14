@@ -230,22 +230,12 @@ if ($nolinesbefore) {
 			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
-				if (empty($senderissupplier)) {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
-						$labelforradio = $langs->trans('PredefinedServicesToSell');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
-					}
+				if (isModEnabled("product") && !isModEnabled('service')) {
+					$labelforradio = $langs->trans('PredefinedProducts');
+				} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
+					$labelforradio = $langs->trans('PredefinedServices');
 				} else {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (!isModEnabled('product') && isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
-					}
+					$labelforradio = $langs->trans('PredefinedProductsAndServices');
 				}
 			} else {
 				$labelforradio = $langs->trans('PredefinedItem');

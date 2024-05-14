@@ -103,8 +103,10 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
+$result = restrictedArea($user, 'stock');
 
 $object = new Product($db);
+
 
 /*
  * Actions
