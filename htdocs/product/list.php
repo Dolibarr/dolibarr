@@ -280,10 +280,10 @@ $arrayfields = array(
 	'p.import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'checked' => -1, 'position' => 1100),
 );
 
-if(! empty($conf->stock->enabled)) {
+if (! empty($conf->stock->enabled)) {
 	// service
-	if($type == 1) {
-		if(! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	if ($type == 1) {
+		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
 		}
 	}
@@ -856,7 +856,7 @@ if ($search_accountancy_code_buy_export) {
 if ($search_finished) {
 	$param .= "&search_finished=".urlencode($search_finished);
 }
-if($search_stockable_product != '') {
+if ($search_stockable_product != '') {
 	$param .= "&search_stockable_product=".urlencode($search_stockable_product);
 }
 // Add $param from extra fields
@@ -1200,7 +1200,7 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 }
 // Managed_in_stock
 $array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
-if (!empty($arrayfields['p.stockable_product']['checked'])){
+if (!empty($arrayfields['p.stockable_product']['checked'])) {
 	print '<td class="liste_titre center">'.Form::selectarray('search_stockable_product', $array, $search_stockable_product).'</td>';
 }
 // Desired stock
@@ -2113,7 +2113,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// not managed in stock
-		if(! empty($arrayfields['p.stockable_product']['checked'])) {
+		if (! empty($arrayfields['p.stockable_product']['checked'])) {
 			print '<td class="nowrap center">';
 			print ($product_static->stockable_product == '1') ? $langs->trans('Yes') : $langs->trans('No');
 			print '</td>';

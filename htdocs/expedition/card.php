@@ -1809,7 +1809,7 @@ if ($action == 'create') {
 									print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 								} else {
 									if ($line->fk_product) {
-										if($product->stockable_product == Product::ENABLED_STOCK) {
+										if ($product->stockable_product == Product::ENABLED_STOCK) {
 											print img_warning().' '.$langs->trans('StockTooLow');
 										} else {
 											print img_warning().' '.$langs->trans('StockDisabled');

@@ -815,7 +815,7 @@ if (empty($reshook)) {
 				} else {
 					$object->fk_default_bom = 0;
 				}
-			
+
 				// managed_in_stock
 				$object->stockable_product   = GETPOSTISSET('stockable_product');
 
@@ -2042,7 +2042,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 0){
+										if ($("#status_batch")[0].value == 0) {
 											$("#statusBatchMouvToGlobal").show()
 										} else {
 											$("#statusBatchMouvToGlobal").hide()
@@ -2056,7 +2056,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 2){
+										if ($("#status_batch")[0].value == 2) {
 											$("#statusBatchWarning").show()
 										} else {
 											$("#statusBatchWarning").hide()
