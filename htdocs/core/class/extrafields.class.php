@@ -243,12 +243,15 @@ class ExtraFields
 	 */
 	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
+		global $hookmanager, $action;
+
 		if (empty($attrname)) {
 			return -1;
 		}
 		if (empty($label)) {
 			return -1;
 		}
+
 
 		if ($type == 'separate') {
 			$unique = 0;
@@ -265,6 +268,39 @@ class ExtraFields
 		if ($type != 'separate') {
 			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help);
 		}
+
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('extrafieldsdao'));
+			$parameters = array(
+				'elementtype' => $elementtype,
+				'attr_name' => $attrname,
+				'label' => $label,
+				'type' => $type,
+				'pos' => $pos,
+				'size' => $size,
+				'unique' => $unique,
+				'required' => $required,
+				'default_value' => $default_value,
+				'param' => $param,
+				'alwayseditable' => $alwayseditable,
+				'perms' => $perms,
+				'list' => $list,
+				'help' => $help,
+				'computed' => $computed,
+				'entity' => $entity,
+				'langfile' => $langfile,
+				'enabled' => $enabled,
+				'totalizable' => $totalizable,
+				'printable' => $printable
+			);
+			$reshook = $hookmanager->executeHooks('createExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+			if ($reshook < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
@@ -514,6 +550,8 @@ class ExtraFields
 	 */
 	public function delete($attrname, $elementtype = 'member')
 	{
+		global $hookmanager, $action;
+
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
 		}
@@ -524,6 +562,20 @@ class ExtraFields
 		$table = $elementtype.'_extrafields';
 		if ($elementtype == 'categorie') {
 			$table = 'categories_extrafields';
+		}
+
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('extrafieldsdao'));
+			$parameters = array(
+				'elementtype' => $elementtype,
+				'attr_name' => $attrname
+			);
+			$reshook = $hookmanager->executeHooks('deleteExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+			if ($reshook < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		}
 
 		$error = 0;
@@ -674,11 +726,16 @@ class ExtraFields
 				$typedb = $type;
 				$lengthdb = $length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
+
+			$field_desc = array('type' => $typedb, 'value' => $lengthdb, 'null' => ($required ? 'NOT NULL' : 'NULL'), 'default' => $default);
+
+			if ($type != 'separate') { // No table update when separate type
+				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX . $table, $attrname, $field_desc);
+			}
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc'=>&$field_desc, 'table'=>$table, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
+				$parameters = array('field_desc'=>&$field_desc, 'elementtype' => $elementtype, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -687,9 +744,6 @@ class ExtraFields
 				}
 			}
 
-			if ($type != 'separate') { // No table update when separate type
-				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
-			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
