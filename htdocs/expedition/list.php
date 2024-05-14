@@ -644,6 +644,55 @@ $objecttmp = new Expedition($db);
 $trackid = 'shi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($massaction == 'createbills') {
+	print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+	print '<table class="noborder" width="100%" >';
+	print '<tr>';
+	print '<td class="titlefield">';
+	print $langs->trans('DateInvoice');
+	print '</td>';
+	print '<td>';
+	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print '</td>';
+	print '</tr>';
+	print '<tr>';
+	print '<td>';
+	print $langs->trans('CreateOneBillByThird');
+	print '</td>';
+	print '<td>';
+	print $form->selectyesno('createbills_onebythird', '', 1);
+	print '</td>';
+	print '</tr>';
+	print '<tr>';
+	print '<td>';
+	print $langs->trans('ValidateInvoices');
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+		print $form->selectyesno('validate_invoices', 0, 1, 1);
+		$langs->load("errors");
+		print ' ('.$langs->trans("WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal").')';
+	} else {
+		print $form->selectyesno('validate_invoices', 0, 1);
+	}
+	if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
+	} else {
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
+	}
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+
+	print '<br>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
+	print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+	print '<br>';
+}
+
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
