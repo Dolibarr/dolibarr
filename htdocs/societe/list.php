@@ -122,6 +122,7 @@ $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_price_level = GETPOST('search_price_level', 'int');
 $search_staff = GETPOST("search_staff", 'int');
+$search_legalform = GETPOST("search_legalform", 'int');
 $search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
@@ -289,7 +290,8 @@ $arrayfields = array(
 	's.fax' => array('label' => "Fax", 'position' => 28, 'checked' => 0),
 	'typent.code' => array('label' => "ThirdPartyType", 'position' => 29, 'checked' => $checkedtypetiers),
 	'staff.code' => array('label' => "Workforce", 'position' => 31, 'checked' => 0),
-	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 32, 'checked' => 0),
+	'legalform.code' => array('label' => 'JuridicalStatus', 'position'=>32, 'checked' => 0),
+	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 35, 'checked' => 0),
 	's.siren' => array('label' => "ProfId1Short", 'position' => 40, 'checked' => $checkedprofid1),
 	's.siret' => array('label' => "ProfId2Short", 'position' => 41, 'checked' => $checkedprofid2),
 	's.ape' => array('label' => "ProfId3Short", 'position' => 42, 'checked' => $checkedprofid3),
@@ -426,6 +428,7 @@ if (empty($reshook)) {
 		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
+		$search_legalform = '';
 		$search_date_creation_startmonth = "";
 		$search_date_creation_startyear = "";
 		$search_date_creation_startday = "";
@@ -549,6 +552,7 @@ $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.pric
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
+$sql .= " s.fk_forme_juridique as legalform_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
@@ -576,6 +580,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_forme_juridique as legalform on (legalform.rowid = s.fk_forme_juridique)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
@@ -766,6 +771,9 @@ if ($search_type_thirdparty && $search_type_thirdparty > 0) {
 }
 if (!empty($search_staff) && $search_staff != '-1') {
 	$sql .= natural_search("s.fk_effectif", $search_staff, 2);
+}
+if (!empty($search_legalform) && $search_legalform != '-1') {
+	$sql .= natural_search("s.fk_forme_juridique", $search_legalform, 2);
 }
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
@@ -1378,6 +1386,12 @@ if (!empty($arrayfields['staff.code']['checked'])) {
 	print $form->selectarray("search_staff", $formcompany->effectif_array(0), $search_staff, 0, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100', 1);
 	print '</td>';
 }
+// Legal form
+if (!empty($arrayfields['legalform.code']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	//print $form->selectarray("search_legalform", $formcompany->effectif_array(0), $search_legalform, 0, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100', 1);
+	print '</td>';
+}
 if (!empty($arrayfields['s.email']['checked'])) {
 	// Email
 	print '<td class="liste_titre">';
@@ -1609,6 +1623,10 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 }
 if (!empty($arrayfields['staff.code']['checked'])) {
 	print_liste_field_titre($arrayfields['staff.code']['label'], $_SERVER["PHP_SELF"], "staff.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['legalform.code']['checked'])) {
+	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform.code", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.price_level']['checked'])) {
@@ -1971,6 +1989,23 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Legal form
+		if (!empty($arrayfields['legalform.code']['checked'])) {
+			$labeltoshow = '';
+			if (!empty($obj->legalform_code)) {
+				if (empty($conf->cache['legalformArray'][$obj->legalform_code])) {
+					$conf->cache['legalformArray'][$obj->legalform_code] = getFormeJuridiqueLabel($obj->legalform_code);
+				}
+				$labeltoshow = $conf->cache['legalformArray'][$obj->legalform_code];
+			}
+			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($labeltoshow).'">';
+			print dol_escape_htmltag($labeltoshow);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
 			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {

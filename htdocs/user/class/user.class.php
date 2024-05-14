@@ -66,17 +66,6 @@ class User extends CommonObject
 	public $fk_element = 'fk_user';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'user';
@@ -421,6 +410,8 @@ class User extends CommonObject
 	{
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// User preference
 		$this->clicktodial_loaded = 0;
 
@@ -848,8 +839,17 @@ class User extends CommonObject
 
 		// Special case for external user
 		if (!empty($this->socid)) {
-			if ($module = 'societe' && $permlevel1 = 'client' && $permlevel2 == 'voir') {
+			if ($module == 'societe' && ($permlevel1 == 'creer' || $permlevel1 == 'write')) {
+				return 0;	// An external user never has the permission ->societe->write to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && $permlevel1 == 'client' && $permlevel2 == 'voir') {
 				return 0;	// An external user never has the permission ->societe->client->voir to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && $permlevel1 == 'export') {
+				return 0;	// An external user never has the permission ->societe->export to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && ($permlevel1 == 'supprimer' || $permlevel1 == 'delete')) {
+				return 0;	// An external user never has the permission ->societe->delete to see all thirdparties (always restricted to himself)
 			}
 		}
 
@@ -1059,12 +1059,12 @@ class User extends CommonObject
 	/**
 	 *  Remove a right to the user
 	 *
-	 *  @param	int		$rid        Id du droit a retirer
-	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
-	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
-	 *  @param	int		$entity		Entity to use
-	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *  @return int         		> 0 if OK, < 0 if OK
+	 *  @param	int			$rid        Id of permission to remove (or 0 when using the other filters)
+	 *  @param  string		$allmodule  Retirer tous les droits du module allmodule
+	 *  @param  string		$allperms   Retirer tous les droits du module allmodule, perms allperms
+	 *  @param	int|string	$entity		Entity to use. Example: '1', or '0,1', or '2,3'
+	 *  @param  int	    	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *  @return int         			> 0 if OK, < 0 if OK
 	 *  @see	clearrights(), addrights(), getrights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
@@ -1085,7 +1085,7 @@ class User extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".((int) $entity);
+			$sql .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -1126,17 +1126,17 @@ class User extends CommonObject
 			}
 		}
 
-		// Suppression des droits selon critere defini dans wherefordel
+		// Delete permission according to a criteria set into $wherefordel
 		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
-			$sql .= " WHERE entity = ".((int) $entity);
+			$sql .= " WHERE entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
 				$sql .= " AND (".$wherefordel.")";	// Note: parenthesis are important because wherefordel can contains OR. Also note that $wherefordel is already sanitized
 			}
 
-			// avoid admin can remove his own important rights
+			// avoid admin to remove his own important rights
 			if ($this->admin == 1) {
 				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)"; // other users rights
 				$sql .= " AND id NOT IN (341, 342, 343, 344)"; // own rights
@@ -1148,7 +1148,7 @@ class User extends CommonObject
 			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
 			$sqldelete .= $sql;
 			$sqldelete .= ")";
-			$sqldelete .= " AND entity = ".((int) $entity);
+			$sqldelete .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$resql = $this->db->query($sqldelete);
 			if (!$resql) {
@@ -1221,12 +1221,12 @@ class User extends CommonObject
 			}
 		}
 
-		// For avoid error
+		// More init to avoid warnings/errors
 		if (!isset($this->rights) || !is_object($this->rights)) {
-			$this->rights = new stdClass(); // For avoid error
+			$this->rights = new stdClass();
 		}
 		if (!isset($this->rights->user) || !is_object($this->rights->user)) {
-			$this->rights->user = new stdClass(); // For avoid error
+			$this->rights->user = new stdClass();
 		}
 
 		// Get permission of users + Get permissions of groups
@@ -1294,12 +1294,12 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = gr.fk_id";
-			// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
+			// @FIXME Very strange business rules. Must be alays the same than into user->getrights() user/perms.php and user/group/perms.php
 			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
@@ -1308,9 +1308,9 @@ class User extends CommonObject
 				}
 			} else {
 				$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-				// The entity on the table usergroup_user should be useless and should never be used because it is already into gr and r.
-				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-				// other entities, so we are forced to add a filter here
+				// The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
+				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
+				// other entities, so we are forced to add a filter on gu here
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 				$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 			}
@@ -1343,12 +1343,12 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {
+									if (empty($this->rights->$module->$perms->$subperms)) {	// already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {
+									if (empty($this->rights->$module->$perms)) {			// already counted
 										$this->nb_rights++;
 									}
 									// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group

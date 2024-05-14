@@ -111,11 +111,6 @@ class Delivery extends CommonObject
 	public $commande_id;
 
 	/**
-	 * @var array 	Status labels
-	 */
-	public $labelStatus;
-
-	/**
 	 * @var DeliveryLine[] lines
 	 */
 	public $lines = array();

@@ -134,6 +134,8 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+//var_dump($modulepart);var_dump($upload_dir);
+
 // List of document
 $formfile->list_of_documents(
 	$filearray,

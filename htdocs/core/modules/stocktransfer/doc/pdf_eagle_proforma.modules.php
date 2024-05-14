@@ -28,7 +28,7 @@
 
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eagle_proforma.modules.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File of Class to generate PDF orders with template Eagle
  */
 

@@ -60,17 +60,6 @@ class Adherent extends CommonObject
 	public $table_element = 'adherent';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'member';
@@ -394,6 +383,8 @@ class Adherent extends CommonObject
 		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par default
 		$this->public = 0;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
 	}

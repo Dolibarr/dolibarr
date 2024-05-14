@@ -71,7 +71,7 @@ if (empty($datatoimport)) {
 }
 
 
-$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, $datatoimport);

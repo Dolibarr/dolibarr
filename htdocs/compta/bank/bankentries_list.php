@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -75,9 +75,9 @@ $dateop = dol_mktime(12, 0, 0, GETPOSTINT("opmonth"), GETPOSTINT("opday"), GETPO
 $search_debit = GETPOST("search_debit", 'alpha');
 $search_credit = GETPOST("search_credit", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
-$search_account = GETPOST("search_account", 'int') ? GETPOSTINT("search_account", 'int') : GETPOST("account", 'int');
+$search_account = GETPOST("search_account", 'int') ? GETPOST("search_account", 'int') : GETPOST("account", 'int');
 $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha') ? GETPOST('search_accountancy_code', 'alpha') : GETPOST('accountancy_code', 'alpha');
-$search_bid = GETPOST("search_bid", 'int') ? GETPOST("search_bid", 'int') : GETPOST("bid", 'int');
+$search_bid = GETPOST("search_bid", 'int') ? GETPOST("search_bid", 'int') : GETPOST("bid", 'int');		// Category id
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_description = GETPOST("search_description", 'alpha');
 $search_dt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_start_dtmonth'), GETPOSTINT('search_start_dtday'), GETPOSTINT('search_start_dtyear'));
@@ -473,7 +473,7 @@ if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
 if ($search_account > 0) {
-	$param .= '&search_account='.urlencode((string) ($search_account));
+	$param .= '&search_account='.((int) $search_account);
 }
 if (!empty($search_num_releve)) {
 	$param .= '&search_num_releve='.urlencode($search_num_releve);
@@ -484,8 +484,8 @@ if ($search_conciliated != '' && $search_conciliated != '-1') {
 if ($search_fk_bordereau > 0) {
 	$param .= '$&search_fk_bordereau='.urlencode((string) ($search_fk_bordereau));
 }
-if ($search_bid > 0) {
-	$param .= '&search_bid='.urlencode((string) ($search_bid));
+if ($search_bid > 0) {	// Category id
+	$param .= '&search_bid='.((int) $search_bid);
 }
 if (dol_strlen($search_dt_start) > 0) {
 	$param .= '&search_start_dtmonth='.GETPOSTINT('search_start_dtmonth').'&search_start_dtday='.GETPOSTINT('search_start_dtday').'&search_start_dtyear='.GETPOSTINT('search_start_dtyear');
@@ -1699,7 +1699,7 @@ if ($resql) {
 					$tmpuser->fetch($userlinked_id);
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
-				print $tmpuser->getNomUrl(1);
+				print $tmpuser->getNomUrl(-1);
 			} else {
 				print '&nbsp;';
 			}

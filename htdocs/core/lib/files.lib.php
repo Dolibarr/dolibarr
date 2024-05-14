@@ -980,7 +980,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   string	$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
@@ -1130,7 +1130,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		}
 
 		if (empty($newmask)) {
-			$newmask = !getDolGlobalString('MAIN_UMASK') ? '0755' : $conf->global->MAIN_UMASK;
+			$newmask = getDolGlobalString('MAIN_UMASK', '0755');
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -1829,7 +1829,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	int		$updatesessionordb		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
@@ -1839,14 +1839,14 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @return	int                             Return integer <=0 if KO, >0 if OK
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
 		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
@@ -1939,7 +1939,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update session
-					if (empty($donotupdatesession)) {
+					if (empty($updatesessionordb)) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
@@ -1947,7 +1947,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					}
 
 					// Update index table of files (llx_ecm_files)
-					if ($donotupdatesession == 1) {
+					if ($updatesessionordb == 1) {
 						$sharefile = 0;
 						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
 							$sharefile = 1;
@@ -2124,6 +2124,47 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		if ($setsharekey) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$ecmfile->share = getRandomPassword(true);
+		}
+
+		// Use a convertisser Doc to Text
+		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		//$useFullTextIndexation = 1;
+		if ($useFullTextIndexation) {
+			$ecmfile->filepath = $rel_dir;
+			$ecmfile->filename = $filename;
+
+			$filetoprocess = $dir.'/'.$ecmfile->filename;
+
+			$textforfulltextindex = '';
+			$keywords = '';
+			if (preg_match('/\.pdf/i', $filename)) {
+				// TODO Move this into external submodule files
+
+				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($db);
+				$outputfile = $conf->admin->dir_temp.'/tmppdttotext.'.$user->id.'.out'; // File used with popen method
+
+				// We also exclude '/temp/' dir and 'documents/admin/documents'
+				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+				if (!$result['error']) {
+					$txt = $result['output'];
+					$matches = array();
+					if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+						$keywords = $matches[1];
+					}
+					if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+						$textforfulltextindex = dol_string_nospecial($matches[1]);
+					}
+				}
+			}
+
+			$ecmfile->description = $textforfulltextindex;
+			$ecmfile->keywords = $keywords;
 		}
 
 		$result = $ecmfile->create($user);
@@ -2404,8 +2445,12 @@ function dol_uncompress($inputfile, $outputdir)
 			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
 			dol_mkdir(dol_sanitizePathName($outputdir));
 
-			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			try {
+				// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+				$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			} catch (Exception $e) {
+				return array('error' => $e->getMessage());
+			}
 
 			if (!is_array($result) && $result <= 0) {
 				return array('error' => $archive->errorInfo(true));
@@ -3643,4 +3688,74 @@ function dragAndDropFileUpload($htmlname)
 	';
 	$out .= "</script>\n";
 	return $out;
+}
+
+/**
+ * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
+ *
+ * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
+ * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
+ * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
+ * @param	string	$moveorcopy			'move' or 'copy'
+ * @return 	bool                    	Returns true if successful, false otherwise.
+ */
+function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+{
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
+	$files_in_directory = glob($base_file_pattern . "*");
+
+	// Extract the modification timestamps for each file
+	$files_with_timestamps = [];
+	foreach ($files_in_directory as $file) {
+		$files_with_timestamps[] = [
+			'file' => $file,
+			'timestamp' => filemtime($file)
+		];
+	}
+
+	// Sort the files by modification date
+	$sorted_files = [];
+	while (count($files_with_timestamps) > 0) {
+		$latest_file = null;
+		$latest_index = null;
+
+		// Find the latest file by timestamp
+		foreach ($files_with_timestamps as $index => $file_info) {
+			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
+				$latest_file = $file_info;
+				$latest_index = $index;
+			}
+		}
+
+		// Add the latest file to the sorted list and remove it from the original list
+		if ($latest_file !== null) {
+			$sorted_files[] = $latest_file['file'];
+			unset($files_with_timestamps[$latest_index]);
+		}
+	}
+
+	// Delete the oldest files to keep only the allowed number of versions
+	if (count($sorted_files) >= $max_versions) {
+		$oldest_files = array_slice($sorted_files, $max_versions - 1);
+		foreach ($oldest_files as $oldest_file) {
+			dol_delete_file($oldest_file);
+		}
+	}
+
+	$timestamp = dol_now('gmt');
+	$new_backup = $filetpl . ".v" . $timestamp;
+
+	// Move or copy the original file to the new backup with the timestamp
+	if ($moveorcopy == 'move') {
+		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+	} else {
+		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+	}
+
+	if (!$result) {
+		return false;
+	}
+
+	return true;
 }

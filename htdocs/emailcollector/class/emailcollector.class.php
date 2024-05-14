@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
@@ -67,17 +68,6 @@ class EmailCollector extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'emailcollector_emailcollector';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
@@ -246,6 +236,9 @@ class EmailCollector extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1793,7 +1786,7 @@ class EmailCollector extends CommonObject
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
-					$overview['subject'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview['subject']);
+					$overview['subject'] = removeEmoji($overview['subject'], getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
@@ -1802,7 +1795,7 @@ class EmailCollector extends CommonObject
 					$overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
 
 					// Removed emojis
-					$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
+					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1833,8 +1826,7 @@ class EmailCollector extends CommonObject
 				// Removed emojis
 
 				if (utf8_valid($messagetext)) {
-					//$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
-					$messagetext = $this->removeEmoji($messagetext);
+					$messagetext = removeEmoji($messagetext, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					$operationslog .= '<br>Discarded - Email body is not valid utf8';
 					dol_syslog(" Discarded - Email body is not valid utf8");
@@ -2277,7 +2269,7 @@ class EmailCollector extends CommonObject
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
-
+						$ticketalreadyexists = 0;
 						if ($errorforactions) {
 							break;
 						}
@@ -2311,6 +2303,31 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+
+						if ($operation['type'] == 'ticket') {
+							// Verify if ticket already exists to fall back on the right operation
+							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
+							$alreadycreated1 = 0;
+							if (!empty($trackid)) {
+								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							}
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket)) {
+								if ($alreadycreated == 0) {
+									$ticketalreadyexists = 0;
+								} else {
+									$ticketalreadyexists = 1;
+									$operation['type'] = 'recordevent';
+								}
+							} else {
+								$ticketalreadyexists = -1;
+							}
 						}
 
 						// Search and create thirdparty
@@ -3067,15 +3084,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
-							$errorfetchticket = 0;
-
-							$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
-							}
-							if (empty($errorfetchticket) && $alreadycreated == 0) {
+							if ($ticketalreadyexists == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;
@@ -3703,26 +3712,6 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
-	}
-
-	/**
-	 * Remove EMoji from email content
-	 *
-	 * @param string	$text		String to sanitize
-	 * @return string				Sanitized string
-	 */
-	protected function removeEmoji($text)
-	{
-		// Supprimer les caractères emoji en utilisant une expression régulière
-		$text = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $text);
-		$text = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
-
-		return $text;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman			<info@almoman.com>
  *
@@ -1111,7 +1111,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 			// Bank account
 			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-			print img_picto('', 'bank_account');
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2, '', 0, 'minwidth200');
 			print "</td></tr>\n";
 

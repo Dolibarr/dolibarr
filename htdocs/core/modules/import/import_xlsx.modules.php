@@ -832,22 +832,25 @@ class ImportXlsx extends ModeleImports
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
-						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) {
+						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
 							continue; // Not a field of current table
 						}
-						if ($val == 'user->id') {
-							$listfields[] = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+
+						if (in_array($keyfield, $listfields)) {	// avoid duplicates in insert
+							continue;
+						} elseif ($val == 'user->id') {
+							$listfields[] = $keyfield;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
 							$listfields[] = $keyfield;
 							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
-							$listfields[] = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
+							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;

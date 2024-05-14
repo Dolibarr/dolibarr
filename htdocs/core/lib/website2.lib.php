@@ -147,8 +147,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	if (dol_is_file($filetpl)) {
 		if ($backupold) {
-			dol_delete_file($filetpl.'.old');
-			$result = dol_move($filetpl, $filetpl.'.old', 0, 1, 0, 0);
+			$result = archiveOrBackupFile($filetpl);
 			if (! $result) {
 				return false;
 			}
@@ -681,49 +680,55 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		return 0;
 	}
 
-	// First check forbidden commands
-	$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
-	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
-		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
-	}
-	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
-		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
-	}
-	foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
-		if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
-			$error++;
-			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
-			break;
-		}
-	}
-	// This char can be used to execute RCE for example using with echo `ls`
-	$forbiddenphpchars = array();
-	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
-		$forbiddenphpchars = array("`");
-	}
-	foreach ($forbiddenphpchars as $forbiddenphpchar) {
-		if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
-			$error++;
-			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
-			break;
-		}
-	}
-	// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
-	if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
-		$error++;
-		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
-	}
-	// Deny dynamic functions $xxx(
-	if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
-		$error++;
-		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
-	}
-
+	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
 		}
+	}
+
+	// Then check forbidden commands
+	if (!$error) {
+		$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
+		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
+			$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
+		}
+		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
+			$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+		}
+		foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
+			if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+				break;
+			}
+		}
+		// This char can be used to execute RCE for example using with echo `ls`
+		$forbiddenphpchars = array();
+		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
+			$forbiddenphpchars = array("`");
+		}
+		foreach ($forbiddenphpchars as $forbiddenphpchar) {
+			if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
+				break;
+			}
+		}
+		// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+			$error++;
+			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
+		}
+		// Deny dynamic functions $xxx(
+		if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
+			$error++;
+			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
+		}
+	}
+
+	if ($phpfullcodestringold != $phpfullcodestring) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;

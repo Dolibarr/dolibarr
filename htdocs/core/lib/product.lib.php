@@ -75,7 +75,7 @@ function product_prepare_head($object)
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 		) {
 		if ($usercancreadprice) {
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
 			$head[$h][2] = 'suppliers';
 			$h++;
@@ -218,7 +218,7 @@ function product_prepare_head($object)
 	$h++;
 
 	// Log
-	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/messaging.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';

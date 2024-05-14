@@ -36,7 +36,7 @@
 
 /**
  *	\file       htdocs/compta/facture/list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      List of customer invoices
  */
 

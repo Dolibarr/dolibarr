@@ -39,7 +39,7 @@
 
 /**
  *	\file       htdocs/compta/facture/class/facture.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage invoices
  */
 
@@ -86,17 +86,6 @@ class Facture extends CommonInvoice
 	 * @var string String with name of icon for myobject.
 	 */
 	public $picto = 'bill';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -435,6 +424,9 @@ class Facture extends CommonInvoice
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors', 'admin'));
+$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
 
 // Security check
 $result = restrictedArea($user, 'import');
@@ -141,7 +141,7 @@ $importmodelid = GETPOSTINT('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$separator			= (GETPOST('separator', 'alphanohtml') ? GETPOST('separator', 'alphanohtml', 3) : '');
+$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
@@ -469,7 +469,7 @@ if ($step == 2 && $datatoimport) {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
+		$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
 		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
 		print img_picto('', 'download', 'class="paddingright opacitymedium"');
 		print $langs->trans("DownloadEmptyExampleShort");
@@ -562,7 +562,7 @@ if ($step == 3 && $datatoimport) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+	$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
 	print img_picto('', 'download', 'class="paddingright opacitymedium"');
 	print $langs->trans("DownloadEmptyExampleShort");

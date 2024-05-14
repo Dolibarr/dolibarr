@@ -264,7 +264,7 @@ if (isModEnabled('order')) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (isModEnabled('expedition'))
+//if (isModEnabled('shipping'))
 //{
 
 print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';

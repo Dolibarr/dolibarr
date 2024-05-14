@@ -230,22 +230,12 @@ if ($nolinesbefore) {
 			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
-				if (empty($senderissupplier)) {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
-						$labelforradio = $langs->trans('PredefinedServicesToSell');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
-					}
+				if (isModEnabled("product") && !isModEnabled('service')) {
+					$labelforradio = $langs->trans('PredefinedProducts');
+				} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
+					$labelforradio = $langs->trans('PredefinedServices');
 				} else {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (!isModEnabled('product') && isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
-					}
+					$labelforradio = $langs->trans('PredefinedProductsAndServices');
 				}
 			} else {
 				$labelforradio = $langs->trans('PredefinedItem');
@@ -1101,13 +1091,20 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
+			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
+			<?php if (($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') && !$seller->tva_assuj) { ?>
+				if (tva_tx != .0) {
+					tva_tx = .0;
+					default_vat_code = null;
+				}
+			<?php } ?>
+
 			var stringforvatrateselection = tva_tx;
 			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
-
-			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
-			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref');}	// When select is done from HTML input with ajax autocomplete
 
 			var has_multicurrency_up = false;
 			<?php
@@ -1192,13 +1189,19 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
+			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
 			var stringforvatrateselection = tva_tx;
 			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
-			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
 
+			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", supplier_ref = "+supplier_ref+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
+
+			// Set supplier_ref
+			$('#fourn_ref').val(supplier_ref);
 			// Set vat rate if field is an input box
 			$('#tva_tx').val(tva_tx);
 			// Set vat rate by selecting the combo

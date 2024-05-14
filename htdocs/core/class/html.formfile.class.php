@@ -890,7 +890,11 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
-					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					$out .= '<a class="documentdownload paddingright" ';
+					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						$out .= 'target="_blank" ';
+					}
+					$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
@@ -1081,8 +1085,8 @@ class FormFile
 		$out .= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (!empty($file_list)) {
 			$out = '<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
-    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
+				<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
+				<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -1129,7 +1133,11 @@ class FormFile
 				}
 
 				// Download
-				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
+				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						$tmpout .= 'target="_blank" ';
+				}
+				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -1141,7 +1149,7 @@ class FormFile
 			}
 			$out .= $tmpout;
 			$out .= '</ul></div></dd>
-    			</dl>';
+				</dl>';
 
 			if (!$found) {
 				$out = '';
@@ -1227,6 +1235,7 @@ class FormFile
 		}
 		// For example here $upload_dir = '/pathtodocuments/commande/SO2001-123/'
 		// For example here $upload_dir = '/pathtodocuments/tax/vat/1'
+		// For example here $upload_dir = '/home/ldestailleur/git/dolibarr_dev/documents/fournisseur/facture/6/1/SI2210-0013' and relativedir='fournisseur/facture/6/1/SI2210-0013'
 
 		$hookmanager->initHooks(array('formfile'));
 		$parameters = array(
@@ -1290,7 +1299,7 @@ class FormFile
 				print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="renamefile">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="id" value="'.(is_object($object) ? $object->id : '').'">';
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
 
@@ -1349,15 +1358,25 @@ class FormFile
 			$nboflines = 0;
 			$lastrowid = 0;
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
-				if ($file['name'] != '.'
-						&& $file['name'] != '..'
-						&& !preg_match('/\.meta$/i', $file['name'])) {
+				if ($file['name'] != '.' && $file['name'] != '..' && !preg_match('/\.meta$/i', $file['name'])) {
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
-					$filepath = $file['level1name'].'/'.$file['name'];
-					$modulepart = basename(dirname($file['path']));
-					$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					//var_dump($filearray[$key]);
+
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+
+					if (empty($relativepath) || empty($modulepart)) {
+						$filepath = $file['level1name'].'/'.$file['name'];
+					} else {
+						$filepath = $relativepath.$file['name'];
+					}
+					if (empty($modulepart)) {
+						$modulepart = basename(dirname($file['path']));
+					}
+					if (empty($relativepath)) {
+						$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					}
 
 					$editline = 0;
 					$nboflines++;
@@ -1373,7 +1392,11 @@ class FormFile
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
-					print '<a class="paddingright valignmiddle" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print '<a class="paddingright valignmiddle" ';
+					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						print 'target="_blank" ';
+					}
+					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) {
 						print '&attachment=1';
 					}
@@ -1387,7 +1410,10 @@ class FormFile
 						print $relativepath;
 					}
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha')) && $file['level1name'] == dirname(GETPOST('urlfile', 'alpha'))) {
+
+					//var_dump(dirname($filepath).' - '.dirname(GETPOST('urlfile', 'alpha')));
+
+					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha')) && dirname($filepath) == dirname(GETPOST('urlfile', 'alpha'))) {
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
 						if (!preg_match('/\/$/', $section_dir)) {
@@ -1593,7 +1619,7 @@ class FormFile
 						}
 					} else {
 						print '<td class="right">';
-						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
+						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
 						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
@@ -1949,7 +1975,11 @@ class FormFile
 				// Check if document source has external module part, if it the case use it for module part on document.php
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
+				print '<a ';
+				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+					print 'target="_blank" ';
+				}
+				print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}

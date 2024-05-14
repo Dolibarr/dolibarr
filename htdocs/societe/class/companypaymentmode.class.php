@@ -44,17 +44,6 @@ class CompanyPaymentMode extends CommonObject
 	public $table_element = 'societe_rib';
 
 	/**
-	 * @var string  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_soc@societe';
-
-	/**
-	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
 	public $picto = 'generic';
@@ -213,6 +202,9 @@ class CompanyPaymentMode extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_soc@societe';
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

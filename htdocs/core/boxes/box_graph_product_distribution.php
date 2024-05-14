@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_product_distribution.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';

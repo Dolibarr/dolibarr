@@ -22,7 +22,7 @@
 
 /**
  *      \file       htdocs/fourn/facture/note.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      Fiche de notes sur une facture fournisseur
  */
 
