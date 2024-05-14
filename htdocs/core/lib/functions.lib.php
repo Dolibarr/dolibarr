@@ -8118,6 +8118,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
+					// TODO Must accept emoji with MAIN_RESTRICTHTML_ONLY_VALID_HTML...
+
 					if (dol_textishtml($out)) {
 						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
 					} else {
