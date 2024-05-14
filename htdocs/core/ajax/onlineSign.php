@@ -174,9 +174,21 @@ if ($action == "importSignature") {
 									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 									// TODO Get position of box from PDF template
 
-									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
-									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+									if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
+										$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+									} else {
+										$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+									}
+									if (getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART")) {
+										$param['yforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_YFORIMGSTART");
+									} else {
+										$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+									}
+									if (getDolGlobalString("PROPAL_SIGNATURE_WFORIMG")) {
+										$param['wforimg'] = getDolGlobalString("PROPAL_SIGNATURE_WFORIMG");
+									} else {
+										$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+									}
 
 									dolPrintSignatureImage($pdf, $langs, $param);
 								}
@@ -331,9 +343,21 @@ if ($action == "importSignature") {
 									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 									// TODO Get position of box from PDF template
 
-									$param['xforimgstart'] = 10;
-									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
-									$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+									if (getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART")) {
+										$param['xforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_XFORIMGSTART");
+									} else {
+										$param['xforimgstart'] = 10;
+									}
+									if (getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART")) {
+										$param['yforimgstart'] = getDolGlobalString("CONTRACT_SIGNATURE_YFORIMGSTART");
+									} else {
+										$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 65);
+									}
+									if (getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG")) {
+										$param['wforimg'] = getDolGlobalString("CONTRACT_SIGNATURE_WFORIMG");
+									} else {
+										$param['wforimg'] = $s['w'] / 2 - $param['xforimgstart'];
+									}
 
 									dolPrintSignatureImage($pdf, $langs, $param);
 								}
@@ -444,9 +468,21 @@ if ($action == "importSignature") {
 									// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 									// TODO Get position of box from PDF template
 
-									$param['xforimgstart'] = 111;
-									$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-									$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+									if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
+										$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
+									} else {
+										$param['xforimgstart'] = 111;
+									}
+									if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
+										$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
+									} else {
+										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+									}
+									if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
+										$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
+									} else {
+										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
+									}
 
 									dolPrintSignatureImage($pdf, $langs, $param);
 								}
