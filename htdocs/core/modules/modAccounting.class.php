@@ -336,7 +336,7 @@ class modAccounting extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'b.code_journal'=>'FECFormatJournalCode*',
 			'b.journal_label'=>'FECFormatJournalLabel',
-			'b.piece_num'=>'FECFormatEntryNum', // not mandatory (keep empty to get next value of "piece_num" from "llx_accounting_bookkeeping table")
+			'b.piece_num'=>'FECFormatEntryNum', // not mandatory (keep empty to get next value of "piece_num" from "llx_accounting_bookkeeping" table)
 			'b.doc_date'=>'FECFormatEntryDate*',
 			'b.numero_compte'=>'FECFormatGeneralAccountNumber*',
 			'b.label_compte'=>'FECFormatGeneralAccountLabel*',
