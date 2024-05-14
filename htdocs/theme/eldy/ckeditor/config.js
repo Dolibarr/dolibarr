@@ -64,7 +64,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Link','Unlink','Image','Table','HorizontalRule','Smiley','SpecialChar'],
 	 	['Source']
 	 ];
 
