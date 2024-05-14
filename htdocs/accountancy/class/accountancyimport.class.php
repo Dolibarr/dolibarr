@@ -100,13 +100,12 @@ class AccountancyImport
 		if (isset($listfields['b.debit']) && isset($listfields['b.credit'])) {
 			$debit_index = $listfields['b.debit'];
 
-			$debit  = price2num($arrayrecord[$debit_index]['val']);
-			$debitFloat = (float) $debit;
+			$debitFloat = (float) price2num($arrayrecord[$debit_index]['val']);
 			if (!empty($debitFloat)) {
-				$amount = $debit;
+				$amount = $debitFloat;
 			} else {
 				$credit_index = $listfields['b.credit'];
-				$amount = price2num($arrayrecord[$credit_index]['val']);
+				$amount = (float) price2num($arrayrecord[$credit_index]['val']);
 			}
 
 			return "'" . $this->db->escape(abs($amount)) . "'";
@@ -129,7 +128,7 @@ class AccountancyImport
 		if (isset($listfields['b.debit'])) {
 			$debit_index = $listfields['b.debit'];
 
-			$debitFloat = (float) (price2num($arrayrecord[$debit_index]['val']));
+			$debitFloat = (float) price2num($arrayrecord[$debit_index]['val']);
 			if (!empty($debitFloat)) {
 				$sens = 'D';
 			} else {
