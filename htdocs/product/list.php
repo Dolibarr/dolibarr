@@ -286,8 +286,7 @@ if (! empty($conf->stock->enabled)) {
 		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
 		}
-	}
-	else {
+	} else {
 		//product
 		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
 	}
