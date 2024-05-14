@@ -2780,7 +2780,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 * @var boolean
 	 */
-	public $stockable_product = 1;
+	public $stockable_product = true;
 
 	// Invoicing
 	public $remise_percent;
