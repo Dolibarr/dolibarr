@@ -34,10 +34,10 @@ halfday        integer DEFAULT 0,				-- 0=start morning and end afternoon, -1=st
 nb_open_day    double(24,8) DEFAULT NULL,       -- denormalized number of open days of holiday. Not always set. More reliable when re-calculated with num_open_days(date_debut, date_fin, halfday).
 statut         integer NOT NULL DEFAULT 1,      -- status of leave request
 fk_validator   integer NOT NULL,				-- who should approve the leave
-date_valid     DATETIME DEFAULT NULL,			-- date approval (currently both date valid and date_approval)
-fk_user_valid  integer DEFAULT NULL,			-- user approval (currently both user valid and user that approved)
-date_approve   DATETIME DEFAULT NULL,			-- date approval (not used yet)
-fk_user_approve integer DEFAULT NULL,			-- user approval (not used yet)
+date_valid     DATETIME DEFAULT NULL,			-- date validation
+fk_user_valid  integer DEFAULT NULL,			-- user validation
+date_approval  DATETIME DEFAULT NULL,			-- date approval
+fk_user_approve integer DEFAULT NULL,			-- user approval
 date_refuse    DATETIME DEFAULT NULL,
 fk_user_refuse integer DEFAULT NULL,
 date_cancel    DATETIME DEFAULT NULL,

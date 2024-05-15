@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki suport
-EMailSupport=E-mail-uri suport
-RemoteControlSupport=Suport în timp real / remote
+CommunitySupport=Suport Forum/Wiki
+EMailSupport=Email-uri suport
+RemoteControlSupport=Suport online în timp real / la distanță
 OtherSupport=Alte tipuri de suport
-ToSeeListOfAvailableRessources=Pentru a contacta / vezi resurse disponibile:
-HelpCenter=Centrul de Ajutor
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+ToSeeListOfAvailableRessources=Pentru contacta/vezi resursele disponibile:
+HelpCenter=Centru de ajutor 
+DolibarrHelpCenter=Centrul de ajutor și asistență Dolibarr
+ToGoBackToDolibarr=Altfel, <a href="%s"> dați clic aici pentru a continua să utilizați Dolibarr </a>.
+TypeOfSupport=Tip de suport
 TypeSupportCommunauty=Comunitate (gratuit)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tip
-NeedHelpCenter=Aveți nevoie de ajutor sau sprijin?
-Efficiency=Eficienţa
-TypeHelpOnly=Numai Ajutor
-TypeHelpDev=Ajutor + Dezvoltare
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+NeedHelpCenter=Ai nevoie de suport?
+Efficiency=Eficienţă
+TypeHelpOnly=Doar ajutor
+TypeHelpDev=Ajutor+Dezvoltare
+TypeHelpDevForm=Ajutor+Dezvoltare+Training
+BackToHelpCenter=În caz contrar, <a href="%s"> mergeti înapoi la pagina centrului de ajutor </a>.
+LinkToGoldMember=Puteți apela unul dintre instructorii preselectați de Dolibarr pentru limba dvs. (%s) făcând clic pe Widget (statusul și prețul maxim sunt actualizate automat):
 PossibleLanguages=Limbi suportate
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Pentru suport oficial Dolibarr în limba dvs:  <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Ajutați proiectul Dolibarr, abonați-vă la fundație
+SeeOfficalSupport=Pentru suport oficial în limba ta : <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

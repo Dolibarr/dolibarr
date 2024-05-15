@@ -1,11 +1,14 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=使用批次/序號數字
+ManageLotSerial=使用批號/序號
 ProductStatusOnBatch=是(需要批號/序號)
 ProductStatusOnSerial=是（需要唯一的批號/序號）
 ProductStatusNotOnBatch=不是(不使用批次/序號)
 ProductStatusOnBatchShort=批號
 ProductStatusOnSerialShort=序號
 ProductStatusNotOnBatchShort=No
+BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryNone=無
+BatchSellOrEatByMandatoryAll=%s and %s
 Batch=批次/序號
 atleast1batchfield=有效日期或銷售日期或批次/序號
 batch_number=批次/序號
@@ -17,8 +20,9 @@ printBatch=批次/序號: %s
 printEatby=有效日: %s
 printSellby=銷售日: %s
 printQty=數量: %d
+printPlannedWarehouse=Warehouse: %s
 AddDispatchBatchLine=增加一行的保存期限
-WhenProductBatchModuleOnOptionAreForced=啟用“批次/序列”模塊時，自動減少庫存將強制為“驗證運輸時減少實際庫存”，自動增加模式將強制為“手動增加倉庫實際庫存”，且無法進行編輯。其他選項可以根據需要定義。
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to '%s' and automatic increase mode is forced to '%s'. Some choices may be not available. Other options can be defined as you want.
 ProductDoesNotUseBatchSerial=此產品不能使用批次/序號數字
 ProductLotSetup=批次/序號模組的設定
 ShowCurrentStockOfLot=顯示關聯產品/批次的目前庫存
@@ -43,3 +47,6 @@ HideLots=隱藏批號
 OutOfOrder=亂序
 InWorkingOrder=在生產訂單中
 ToReplace=更換
+CantMoveNonExistantSerial=錯誤。您要求對不再存在序號的記錄進行移動。可能是您在同一個發貨中多次在同一個倉庫使用相同的序號，或者它被另一批發貨使用。移除這批發貨並準備另一批發貨。
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Stock correction required because unique serial number.

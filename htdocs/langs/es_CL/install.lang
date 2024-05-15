@@ -63,7 +63,6 @@ GoToUpgradePage=Ir a la página de actualización de nuevo
 WithNoSlashAtTheEnd=Sin la barra "/" al final
 AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr &#39; <b>%s</b> &#39; ya existe. Vuelve si quieres crear otro.
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
-WarningRemoveInstallDir=Advertencia, por razones de seguridad, una vez que se complete la instalación o la actualización, debe agregar un archivo llamado <b>install.lock</b> en el directorio de documentos de Dolibarr para evitar nuevamente el uso accidental / malicioso de las herramientas de instalación.
 ChoosedMigrateScript=Elija script de migración
 DataMigration=Migración de base de datos (datos)
 DatabaseMigration=Migración de la base de datos (estructura + algunos datos)

@@ -13,8 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  *  \defgroup   zapier     Module Zapier
  *  \brief      Zapier module descriptor.
@@ -23,7 +24,8 @@
  *  \ingroup    zapier
  *  \brief      Description and activation file for the module Zapier
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module Zapier
@@ -115,7 +117,7 @@ class modZapier extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modApi');
 		// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->requiredby = array();
@@ -123,7 +125,7 @@ class modZapier extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("zapier");
 		// Minimum version of PHP required by module
-		//$this->phpmin = array(5, 6);
+		//$this->phpmin = array(7, 0);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(10, 0);
 		// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -168,9 +170,9 @@ class modZapier extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -227,7 +229,7 @@ class modZapier extends DolibarrModules
 		// Permission label
 		$this->rights[$r][1] = 'Read myobject of Zapier';
 		// Permission by default for new user (0/1)
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		// In php code, permission will be checked by test if ($user->rights->zapier->level1->level2)
 		$this->rights[$r][4] = 'read';
 		// In php code, permission will be checked by test if ($user->rights->zapier->level1->level2)
@@ -235,13 +237,13 @@ class modZapier extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;
 		$this->rights[$r][1] = 'Create/Update myobject of Zapier';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;
 		$this->rights[$r][1] = 'Delete myobject of Zapier';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
 

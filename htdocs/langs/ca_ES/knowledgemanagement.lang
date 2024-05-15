@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Gestioneu una base de Gestió del Coneixement (KM)
 # Admin page
 #
 KnowledgeManagementSetup = Configuració del sistema de gestió del coneixement
-Settings = Configuració
 KnowledgeManagementSetupPage = Pàgina de configuració del sistema de gestió del coneixement
 
 
 #
 # About page
 #
-About = Quant a
 KnowledgeManagementAbout = Sobre la gestió del coneixement
 KnowledgeManagementAboutPage = Gestió del coneixement sobre la pàgina
 
 KnowledgeManagementArea = Gestió del coneixement
 MenuKnowledgeRecord = Base de coneixements
+MenuKnowledgeRecordShort = Base de coneixements
 ListKnowledgeRecord = Llista d'articles
 NewKnowledgeRecord = Nou article
 ValidateReply = Validar la solució
@@ -47,8 +46,14 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Camps extra per a l'article
 GroupOfTicket=Grup de tiquets
 YouCanLinkArticleToATicketCategory=Pots enllaçar l'article a un grup de tiquets (de manera que l'article es destacarà a qualsevol tiquet d'aquest grup)
-SuggestedForTicketsInGroup=Suggerit per a entrades quan el grup està
+SuggestedForTicketsInGroup=Suggerit per a la creació de tiquets
 
 SetObsolete=S'estableix com a obsolet
 ConfirmCloseKM=Confirmeu el tancament d'aquest article com a obsolet?
 ConfirmReopenKM=Voleu restaurar aquest article a l'estat "Validat"?
+BoxLastKnowledgerecordDescription=Últims %s articles
+BoxLastKnowledgerecord=Últims articles
+BoxLastKnowledgerecordContent=Últims articles
+BoxLastKnowledgerecordModifiedContent=Últims articles modificats
+BoxLastModifiedKnowledgerecordDescription=Els últims %s articles modificats
+BoxLastModifiedKnowledgerecord=Últims articles modificats

@@ -16,6 +16,8 @@
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 
+
+// Load Dolibarr Environment
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
@@ -24,9 +26,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_partnership extends MailingTargets
 {
-	public $name = 'PartnershipThirdartiesOrMembers';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $name = 'PartnershipThirdpartiesOrMembers';
 	public $desc = "Thirdparties or members included into a partnership program";
+
 	public $require_admin = 0;
 
 	public $require_module = array('partnership'); // This module allows to select by categories must be also enabled if category module is not activated
@@ -36,12 +39,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $picto = 'partnership';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $enabled = '$conf->partnership->enabled';
+	public $enabled = 'isModEnabled("partnership")';
 
 
 	/**
@@ -52,7 +50,7 @@ class mailing_partnership extends MailingTargets
 	public function __construct($db)
 	{
 		global $conf, $langs;
-		$langs->load("companies");
+		$langs->load('companies');
 
 		$this->db = $db;
 	}
@@ -63,7 +61,7 @@ class mailing_partnership extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -80,8 +78,14 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
+		}
+		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
+			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		}
 
 		$sql .= " UNION ";
@@ -93,8 +97,14 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_member = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
+		}
+		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
+			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		}
 
 		$sql .= " ORDER BY email";
@@ -111,7 +121,7 @@ class mailing_partnership extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("PartnershipType").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -153,7 +163,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -177,6 +187,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = p.fk_soc AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$sql .= " UNION ";
 
@@ -184,6 +197,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."adherent as s";
 		$sql .= " WHERE s.rowid = p.fk_member AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('member').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		//print $sql;
 
@@ -199,13 +215,13 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$langs->load("companies");
 
 		$s = '<select id="filter_partnership" name="filter" class="flat">';
 
-		// Show categories
+		// Show type of partnership
 		$sql = "SELECT rowid, label, code, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_partnership_type";
 		$sql .= " WHERE active = 1";
@@ -218,7 +234,7 @@ class mailing_partnership extends MailingTargets
 			$num = $this->db->num_rows($resql);
 
 			if (empty($conf->partnership->enabled)) {
-				$num = 0; // Force empty list if category module is not enabled
+				$num = 0;   // Force empty list if category module is not enabled
 			}
 
 			if ($num) {
@@ -240,6 +256,13 @@ class mailing_partnership extends MailingTargets
 
 		$s .= '</select> ';
 
+		// filter_status_thirdparties
+		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+		$tmppartnership = new Partnership($this->db);
+		$dummy = $tmppartnership->getLibStatut(0);	// We call this only to have $tmppartnership->labelStatus loaded
+
+		$s .= $form->selectarray('filter_status_partnership', $tmppartnership->labelStatus, GETPOST('filter_status_partnership'), $langs->trans("Status"));
+
 		return $s;
 	}
 
@@ -253,7 +276,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function url($id, $sourcetype = 'thirdparty')
 	{
-		if ($sourcetype == 'thirparty') {
+		if ($sourcetype == 'thirdparty') {
 			return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.img_object('', "societe").'</a>';
 		}
 		if ($sourcetype == 'member') {

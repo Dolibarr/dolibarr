@@ -10,7 +10,7 @@ const subscribeHook = (z, bundle) => {
         action: bundle.inputData.action
     };
 
-    const url = bundle.authData.url + '/api/index.php/zapierapi/hook';
+    const url = bundle.authData.url + '/api/index.php/zapier/hook';
 
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapier/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -84,7 +84,7 @@ const getFallbackRealAction = (z, bundle) => {
 //     // For the test poll, you should get some real data, to aid the setup process.
 //     const module = bundle.inputData.module;
 //     const options = {
-//         url: bundle.authData.url  + '/api/index.php/zapierapi/getactionschoices/actions',
+//         url: bundle.authData.url  + '/api/index.php/zapier/getactionschoices/actions',
 //     };
 
 //     return z.request(options).then((response) => JSON.parse(response.content));

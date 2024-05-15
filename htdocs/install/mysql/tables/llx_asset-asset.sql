@@ -43,13 +43,13 @@ CREATE TABLE llx_asset(
     acquisition_type        smallint        DEFAULT 0 NOT NULL,
     asset_type              smallint        DEFAULT 0 NOT NULL,
 
-    not_depreciated         integer         DEFAULT 0,
+    not_depreciated         boolean         DEFAULT false,
 
     disposal_date           date,
     disposal_amount_ht      double(24,8),
     fk_disposal_type        integer,
-    disposal_depreciated    integer         DEFAULT 0,
-    disposal_subject_to_vat integer         DEFAULT 0,
+    disposal_depreciated    boolean         DEFAULT false,
+    disposal_subject_to_vat boolean         DEFAULT false,
 
     note_public             text,
     note_private            text,

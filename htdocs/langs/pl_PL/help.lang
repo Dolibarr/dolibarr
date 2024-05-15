@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Wsparcie Forum/Wiki
 EMailSupport=Wsparcie email
-RemoteControlSupport=Online w czasie rzeczywistym / zdalne wsparcie
+RemoteControlSupport=Wsparcie online w czasie rzeczywistym / zdalne
 OtherSupport=Inne wsparcie
 ToSeeListOfAvailableRessources=Aby skontaktować / patrz dostępne zasoby:
 HelpCenter=Centrum pomocy
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Centrum pomocy i wsparcia Dolibarr
+ToGoBackToDolibarr=W przeciwnym razie <a href="%s"> kliknij tutaj, aby nadal korzystać z Dolibarr </a>.
+TypeOfSupport=Rodzaj wsparcia
 TypeSupportCommunauty=Społeczność (za darmo)
 TypeSupportCommercial=Komercyjny
 TypeOfHelp=Typ
-NeedHelpCenter=Potrzebujesz pomocy lub wsparcia?
+NeedHelpCenter=Potrzebujesz wsparcia?
 Efficiency=Efektywność
 TypeHelpOnly=Tylko pomoc
 TypeHelpDev=Pomoc+Rozwoj
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Pomoc + Rozwój + Szkolenie
+BackToHelpCenter=W przeciwnym razie <a href="%s"> wróć do strony głównej Centrum pomocy </a>.
+LinkToGoldMember=Możesz zadzwonić do jednego z trenerów wybranych przez Dolibarr dla Twojego języka (%s), klikając ich widżet (status i maksymalna cena są aktualizowane automatycznie):
 PossibleLanguages=Obsługiwane języki
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Do oficjalnego wsparcia Dolibarr w Twoim języku: <br> <a href="%s" target="_blank"><b>% S</b></a>
+SubscribeToFoundation=Pomóż projektowi Dolibarr, zasubskrybuj fundację
+SeeOfficalSupport=Oficjalne wsparcie Dolibarr w Twoim języku: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

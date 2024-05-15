@@ -18,7 +18,6 @@ InterventionCardsAndInterventionLines=Interventions et lignes d'intervention
 InterventionClassifyBilled=Classer "facturé"
 InterventionClassifyUnBilled=Classer "Non facturé"
 InterventionClassifyDone=Classer "Terminé"
-StatusInterInvoiced=Facturées
 SendInterventionRef=Soumission de l'intervention %s
 InterventionClassifiedBilledInDolibarr=Intervention %s définie comme facturée
 InterventionClassifiedUnbilledInDolibarr=Intervention %s définie comme non facturée

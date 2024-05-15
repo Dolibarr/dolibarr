@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Request;
 
 use Sabre\DAV\Xml\Element\Sharee;
@@ -17,8 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ShareResource implements XmlDeserializable {
-
+class ShareResource implements XmlDeserializable
+{
     /**
      * The list of new people added or updated or removed from the share.
      *
@@ -27,14 +29,13 @@ class ShareResource implements XmlDeserializable {
     public $sharees = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Sharee[] $sharees
      */
-    function __construct(array $sharees) {
-
+    public function __construct(array $sharees)
+    {
         $this->sharees = $sharees;
-
     }
 
     /**
@@ -55,27 +56,25 @@ class ShareResource implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree([
-            '{DAV:}sharee'       => 'Sabre\DAV\Xml\Element\Sharee',
+            '{DAV:}sharee' => 'Sabre\DAV\Xml\Element\Sharee',
             '{DAV:}share-access' => 'Sabre\DAV\Xml\Property\ShareAccess',
-            '{DAV:}prop'         => 'Sabre\Xml\Deserializer\keyValue',
+            '{DAV:}prop' => 'Sabre\Xml\Deserializer\keyValue',
         ]);
 
         $sharees = [];
 
         foreach ($elems as $elem) {
-            if ($elem['name'] !== '{DAV:}sharee') continue;
+            if ('{DAV:}sharee' !== $elem['name']) {
+                continue;
+            }
             $sharees[] = $elem['value'];
-
         }
 
         return new self($sharees);
-
     }
-
 }

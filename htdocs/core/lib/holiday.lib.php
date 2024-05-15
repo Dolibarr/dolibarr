@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,11 @@
 
 /**
  *	    \file       htdocs/core/lib/holiday.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *		\brief      base functions for holiday
  */
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @param	Object	$object         Holiday
  *  @return array           		head
@@ -53,6 +54,8 @@ function holiday_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'add', 'core');
+
 	$head[$h][0] = DOL_URL_ROOT.'/holiday/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
@@ -62,7 +65,7 @@ function holiday_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
 
@@ -71,13 +74,16 @@ function holiday_prepare_head($object)
 
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return array           		head
  */
 function holiday_admin_prepare_head()
 {
 	global $db, $langs, $conf, $user;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('holiday');
 
 	$h = 0;
 	$head = array();
@@ -95,6 +101,10 @@ function holiday_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/holiday_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['holiday']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - blockedlog
 logBILL_VALIDATE=Rechnung freigegeben
 logMEMBER_SUBSCRIPTION_CREATE=Mitgliedsabonnement erstellt
-logMEMBER_SUBSCRIPTION_MODIFY=Mitgliedsabonnement geändert
 logMEMBER_SUBSCRIPTION_DELETE=Logische Löschung des Mitgliedsabonnements
+logMEMBER_SUBSCRIPTION_MODIFY=Mitgliedsabonnement geändert

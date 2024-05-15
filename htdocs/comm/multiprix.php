@@ -23,6 +23,7 @@
  *	\brief      Tab to set the price level of a thirdparty
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -33,15 +34,15 @@ $langs->loadLangs(array('orders', 'companies'));
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-$id = GETPOST('id', 'int');
-$_socid = GETPOST("id", 'int');
+$id = GETPOSTINT('id');
+$_socid = GETPOSTINT("id");
 // Security check
 if ($user->socid > 0) {
 	$_socid = $user->socid;
 }
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
@@ -53,7 +54,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-if ($action == 'setpricelevel' && $user->rights->societe->creer) {
+if ($action == 'setpricelevel' && $user->hasRight('societe', 'creer')) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->setPriceLevel(GETPOST("price_level"), $user);
@@ -109,8 +110,8 @@ if ($_socid > 0) {
 		}
 		print '>'.$i;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) {
-			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 		}
 		print '</option>';
 	}

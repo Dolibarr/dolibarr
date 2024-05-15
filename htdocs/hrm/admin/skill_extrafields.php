@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/skill_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/skill_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm skills
  */
 
 // Load Dolibarr environment
@@ -38,16 +38,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->transnoentitiesnoconv($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_skill'; //Must be the $table_element of the class that manage extrafield
 
+// Security check
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -84,14 +81,6 @@ print dol_get_fiche_head($head, 'skillsAttributes', $langs->trans($page_name), -
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

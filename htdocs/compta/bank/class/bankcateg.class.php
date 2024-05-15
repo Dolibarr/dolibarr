@@ -2,6 +2,7 @@
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,26 @@ class BankCateg // extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var DoliDB
+	 */
+	protected $db;
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var array errors
+	 */
+	public $errors;
+
+	/**
+	 * @var array context
+	 */
+	public $context;
+
 
 	/**
 	 * Constructor
@@ -62,7 +83,7 @@ class BankCateg // extends CommonObject
 	 *
 	 * @param  User $user User that create
 	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -80,7 +101,7 @@ class BankCateg // extends CommonObject
 		$sql .= "label";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'")."";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
@@ -116,7 +137,7 @@ class BankCateg // extends CommonObject
 	 * Load object in memory from database
 	 *
 	 * @param  int $id Id object
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -150,9 +171,9 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User $user User that modify
-	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param  User|null	$user 		User that modify
+	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int          	        Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -169,7 +190,7 @@ class BankCateg // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null")."";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
@@ -201,7 +222,7 @@ class BankCateg // extends CommonObject
 	 *
 	 * @param  User    $user       User that delete
 	 * @param  int     $notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -278,7 +299,7 @@ class BankCateg // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
+		// $object->statut = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -334,11 +355,13 @@ class BankCateg // extends CommonObject
 	 * Used to build previews or test instances.
 	 * id must be 0 if object instance is a specimen.
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->label = '';
+
+		return 1;
 	}
 }

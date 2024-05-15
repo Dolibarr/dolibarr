@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  * \file    hrm/lib/hrm.lib.php
- * \ingroup hr
+ * \ingroup hrm
  * \brief   Library files with common functions for Workstation
  */
 
@@ -32,9 +33,14 @@
  */
 function hrmAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
 
 	$langs->load("hrm");
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('hrm_evaluation');
+	$extrafields->fetch_name_optionals_label('hrm_job');
+	$extrafields->fetch_name_optionals_label('hrm_skill');
 
 	$h = 0;
 	$head = array();
@@ -43,37 +49,37 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/hrm/admin/admin_establishment.php';
-		$head[$h][1] = $langs->trans("Establishments");
-		$head[$h][2] = 'establishments';
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
-		$head[$h][1] = $langs->trans("EvaluationsExtraFields");
-		$head[$h][2] = 'evaluationsAttributes';
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
-		$head[$h][1] = $langs->trans("JobsExtraFields");
-		$head[$h][2] = 'jobsAttributes';
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
-		$head[$h][1] = $langs->trans("SkillsExtraFields");
-		$head[$h][2] = 'skillsAttributes';
-		$h++;
-
-	/*
-	$head[$h][0] = dol_buildpath("/workstation/admin/myobject_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
+	$head[$h][0] = DOL_URL_ROOT.'/hrm/admin/admin_establishment.php';
+	$head[$h][1] = $langs->trans("Establishments");
+	$head[$h][2] = 'establishments';
 	$h++;
-	*/
 
-	/*$head[$h][0] = require_once "/admin/about.php";
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;*/
+	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
+	$head[$h][1] = $langs->trans("SkillsExtraFields");
+	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'skillsAttributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
+	$head[$h][1] = $langs->trans("JobsExtraFields");
+	$nbExtrafields = $extrafields->attributes['hrm_job']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'jobsAttributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
+	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
+	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'evaluationsAttributes';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -85,7 +91,7 @@ function hrmAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin');
 
-		complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin', 'remove');
 
 	return $head;
 }

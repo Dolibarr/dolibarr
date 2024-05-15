@@ -1,0 +1,11 @@
+meta {
+  name: Update a line to a given invoice --
+  type: http
+  seq: 12
+}
+
+put {
+  url: {{base_url}}/invoices/{id}/lines/{lineid}
+  body: none
+  auth: none
+}
