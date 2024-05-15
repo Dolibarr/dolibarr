@@ -1270,7 +1270,7 @@ if ($source == 'invoice') {
 	print '</td></tr>'."\n";
 	if ($invoice->mode_reglement_id > 0 && $form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
 		print '<tr class="CTableRow2 center"><td class="CTableRow2" colspan="2">';
-		print '<div class="warning">';
+		print '<div class="warning maxwidth1000">';
 		print $langs->trans("PayOfBankTransferInvoice");
 		print '</div>';
 		print '</td></tr>'."\n";
