@@ -419,7 +419,7 @@ if ($action == 'confirm_generateinvoice') {
 		$tmpproduct = new Product($db);
 		$fuser = new User($db);
 		$remiseproject = GETPOST('remiseproject', 'int');
-		$condidproject = GETPOST('condidproject', 'int');		
+		$condidproject = GETPOST('condidproject', 'int');
 		$db->begin();
 		$idprod = GETPOSTINT('productid');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
@@ -1487,7 +1487,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans("PaymentConditions");
 				print '</td>';
 				print '<td>';
-				print $form->select_conditions_paiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
+				print $form->getSelectConditionsPaiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
 				print '</td>';
 				print '</tr>';                
 				/*print '<tr>';
