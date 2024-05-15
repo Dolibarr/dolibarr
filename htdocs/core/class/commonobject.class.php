@@ -6385,7 +6385,7 @@ abstract class CommonObject
 							}
 						}
 					}
-				}else{
+				} else {
 					/**
 					We are in a situation where the current object has no values in its extra fields.
 					We want to initialize all the values to empty so that the array_option is accessible in other contexts (especially in document generation).
