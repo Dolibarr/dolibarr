@@ -27,7 +27,7 @@ UserForApprovalLastname=የተፈቀደ ተጠቃሚ የመጨረሻ ስም
 UserForApprovalLogin=የፍቃድ ተጠቃሚ መግቢያ
 DescCP=መግለጫ
 SendRequestCP=የእረፍት ጥያቄ ፍጠር
-DelayToRequestCP=የመልቀቅ ጥያቄ ቢያንስ <b>%s ቀን(ዎች)<span class='notranslate'>b09a4b739f17f80 ከነሱ በፊት.
+DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.
 MenuConfCP=የእረፍት ጊዜ ሚዛን
 SoldeCPUser=ቀሪ ሂሳብን ይተው (በቀናት ውስጥ)፡ <b>%s</b>
 ErrorEndDateCP=ከመጀመሪያው ቀን የሚበልጥ የመጨረሻ ቀን መምረጥ አለብህ።
@@ -109,7 +109,6 @@ TypeWasDisabledOrRemoved=የመልቀቅ አይነት (id %s) ተሰናክሏል
 LastHolidays=የቅርብ ጊዜ %s የመልቀቂያ ጥያቄዎች
 AllHolidays=ሁሉም የመልቀቅ ጥያቄዎች
 HalfDay=ግማሽ ቀን
-NotTheAssignedApprover=እርስዎ የተመደቡት አጽዳቂ አይደሉም
 LEAVE_PAID=የሚከፈልበት የእረፍት ጊዜ
 LEAVE_SICK=የህመም ጊዜ የስራ ዕረፍት ፍቃድ
 LEAVE_OTHER=ሌላ ዕረፍት

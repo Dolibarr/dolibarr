@@ -80,7 +80,7 @@ if ($urlfrom) {
 	$url = DOL_URL_ROOT.$urlfrom;
 }
 if (getDolGlobalString('MAIN_LOGOUT_GOTO_URL')) {
-	$url = $conf->global->MAIN_LOGOUT_GOTO_URL;
+	$url = getDolGlobalString('MAIN_LOGOUT_GOTO_URL');
 }
 
 if (GETPOST('dol_hide_topmenu')) {

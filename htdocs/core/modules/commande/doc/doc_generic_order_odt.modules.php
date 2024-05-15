@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File of class to build ODT documents for third parties
  */
 
@@ -310,7 +310,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

@@ -335,7 +335,6 @@ CategoryDeleted=Kategorija za računovodski račun je bila odstranjena
 AccountingJournals=Računovodski dnevniki
 AccountingJournal=Računovodski dnevnik
 NewAccountingJournal=Nov računovodski dnevnik
-ShowAccountingJournal=Prikaži knjigovodski dnevnik
 NatureOfJournal=Narava časopisa
 AccountingJournalType1=Razne operacije
 AccountingJournalType2=Prodaja
@@ -361,7 +360,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Število črk pri generiranju črkovne kode (priv
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Nekateri računovodski programi sprejemajo samo dvočrkovno kodo. Ta parameter vam omogoča nastavitev tega vidika. Privzeto število črk je tri.
 OptionsAdvanced=Napredne možnosti
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivirajte upravljanje obrnjene davčne obveznosti pri dobaviteljih
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Ko je ta možnost omogočena, lahko določite, da mora biti dobaviteljev ali dani račun dobavitelja drugače prenesen v računovodstvo: Dodatna obremenitev in kreditna linija bosta generirani v računovodstvu na 2 podanih kontih iz kontnega načrta, definiranega v "< stran za nastavitev span class='notranslate'>%s</span>".
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Pri ustvarjanju datoteke ne izvažajte črk

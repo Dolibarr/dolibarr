@@ -9,13 +9,21 @@ aploha->alpha
 aplohanothtml->alphanohtml
 aplphanothtml->alphanohtml
 choosed->chosen
+cumuled->cumulative
+dokument->document
 dolibar->dolibarr
+dolibarrr->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
+extrafeild->extrafield
+thoose->those
 # fiche->card
+nempty->an empty, empty, not empty,
 mot de passe->password
 not de passe->password
 nothtml->nohtml
+shippin->shipping
 tableau de bord->state board
 tagret->target
 thridparty->thirdparty
+wysiwig->wysiwyg

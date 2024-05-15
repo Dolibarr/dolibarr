@@ -1,5 +1,6 @@
 <?php
 /* Copyright (c) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -90,7 +91,7 @@ if ($resql) {
 			$foundmor++;
 		}
 
-		$data[$obj->code] = array('label'=>$obj->code, 'nb'=>$obj->nb, 'nbsubscriptions'=>$obj->nbsubscriptions, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
+		$data[$obj->code] = array('label' => $obj->code, 'nb' => $obj->nb, 'nbsubscriptions' => $obj->nbsubscriptions, 'lastdate' => $db->jdate($obj->lastdate), 'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate));
 
 		$i++;
 	}
@@ -150,7 +151,7 @@ if (!count($data)) {
 }
 
 // Print array
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("MemberNature").'</td>';
@@ -162,10 +163,10 @@ print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
 if (!$foundphy) {
-	$data[] = array('label'=>'phy', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+	$data[] = array('label' => 'phy', 'nb' => '0', 'nbactive' => '0', 'lastdate' => '', 'lastsubscriptiondate' => '');
 }
 if (!$foundmor) {
-	$data[] = array('label'=>'mor', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+	$data[] = array('label' => 'mor', 'nb' => '0', 'nbactive' => '0', 'lastdate' => '', 'lastsubscriptiondate' => '');
 }
 
 foreach ($data as $val) {

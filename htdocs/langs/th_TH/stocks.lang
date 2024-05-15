@@ -282,7 +282,7 @@ ModuleStockTransferName=การโอนหุ้นขั้นสูง
 ModuleStockTransferDesc=การจัดการขั้นสูงของการโอนสต็อคพร้อมการสร้างใบโอน
 StockTransferNew=โอนสต๊อกใหม่
 StockTransferList=รายการโอนสต๊อก
-ConfirmValidateStockTransfer=คุณแน่ใจหรือไม่ว่าต้องการตรวจสอบการโอนหุ้นนี้ด้วยข้อมูลอ้างอิง <b>%s</b><span class='notranslate'></b></ ช่วง> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=การลดลงของสต็อกพร้อมการโอน %s
 ConfirmDestockCancel=ยกเลิกการลดสต๊อกด้วยการโอน %s
 DestockAllProduct=การลดลงของหุ้น

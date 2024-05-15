@@ -15,14 +15,14 @@ ErrorGroupAlreadyExists=組%s 已經存在。
 ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=找不到記錄。
 ErrorRecordNotFoundShort=Not found
-ErrorFailToCopyFile=無法複製文件“<span class='notranslate'><b></span>”\n %s </b> ' 進入 ' <b> %s </b> '。
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
-ErrorFailToRenameFile=無法重命名文件“<span class='notranslate'><b></span>”\n %s </b> ' 進入 ' <b> %s </b> '。
-ErrorFailToDeleteFile=無法刪除文件“<span class='notranslate'><b></span>”\n %s </b> '。
-ErrorFailToCreateFile=無法創建文件“<span class='notranslate'><b></span>”\n %s </b> '。
-ErrorFailToRenameDir=無法重命名目錄“<span class='notranslate'><b></span>”\n %s </b> ' 進入 ' <b> %s </b> '。
-ErrorFailToCreateDir=無法創建目錄“<span class='notranslate'><b></span>”\n %s </b> '。
-ErrorFailToDeleteDir=無法刪除目錄“<span class='notranslate'><b></span>”\n %s </b> '。
+ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
+ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.
+ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToCreateDir=Failed to create directory '<b>%s</b>'.
+ErrorFailToDeleteDir=Failed to delete directory '<b>%s</b>'.
 ErrorFailToMakeReplacementInto=Failed to make replacement into file '<b>%s</b>'.
 ErrorFailToGenerateFile=Failed to generate file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=該聯繫人已被定義為該類型的聯繫人。
@@ -51,7 +51,7 @@ ErrorBadDateFormat=值 '%s' 日期格式錯誤
 ErrorWrongDate=日期不正確！
 ErrorFailedToWriteInDir=無法寫入目錄 %s
 ErrorFailedToBuildArchive=Failed to build archive file %s
-ErrorFoundBadEmailInFile=發現 <span class='notranslate'>%s</span> 的電子郵件語法不正確\n 文件中的行（示例行 %s 電子郵件=%s）
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=用戶無法刪除。也許它與 Dolibarr 實體有關。
 ErrorFieldsRequired=一些必填字段已留空。
 ErrorSubjectIsRequired=The email subject is required
@@ -85,7 +85,7 @@ ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=沒有激活會計模塊
 ErrorExportDuplicateProfil=該導出集的配置文件名稱已存在。
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP 匹配不完整。
-ErrorLDAPMakeManualTest=目錄 <span class='notranslate'>%s</span> 中已生成 .ldif 文件\n。嘗試從命令行手動加載它以獲得有關錯誤的更多信息。
+ErrorLDAPMakeManualTest=A .ldif file has been generated in directory %s. Try to load it manually from command line to have more information on errors.
 ErrorCantSaveADoneUserWithZeroPercentage=如果字段“完成者”也已填寫，則無法保存“狀態未開始”的操作。
 ErrorPleaseTypeBankTransactionReportName=請輸入必須報告該條目的銀行對賬單名稱（格式 YYYYMM 或 YYYYMMDD）
 ErrorRecordHasChildren=無法刪除記錄，因為它有一些子記錄。
@@ -94,9 +94,9 @@ ErrorRecordIsUsedCantDelete=無法刪除記錄。它已被使用或包含到另�
 ErrorModuleRequireJavascript=JavaScript must not be disabled to have this feature working. To enable/disable JavaScript, go to menu Home->Setup->Display.
 ErrorPasswordsMustMatch=兩個輸入的密碼必須相互匹配
 ErrorContactEMail=A technical error occurred. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
-ErrorWrongValueForField=字段<b> %s </b> : ' <b> %s </b> ' 與正則表達式規則 <span class='notranslate'><b></span> 不匹配\n %s </b> 
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
-ErrorFieldValueNotIn=字段<b> %s </b> : ' <b> %s </b> ' 不是字段 <span class='notranslate'><b></span> 中找到的值\n %s </b>  <b> %s </b> 
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
 ErrorFieldRefNotIn=字段<b> %s </b> : ' <b> %s </b> ' 不是 <b> %s </b>  現有參考
 ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use.
 ErrorsOnXLines=%s 發現錯誤
@@ -118,14 +118,14 @@ ErrorProdIdAlreadyExist=%s 被分配給另外三分之一
 ErrorFailedToSendPassword=發送密碼失敗
 ErrorFailedToLoadRSSFile=無法獲取 RSS 源。如果錯誤消息未提供足夠的信息，請嘗試添加常量 MAIN_SIMPLEXMLLOAD_DEBUG。
 ErrorForbidden=拒絕訪問。 <br> 您嘗試訪問已禁用模塊的頁面、區域或功能，或者未處於經過身份驗證的會話中，或者您的用戶不允許訪問該頁面、區域或功能。
-ErrorForbidden2=您的 Dolibarr 管理員可以從菜單 <span class='notranslate'>%s</span> 定義此登錄的權限\n->%s。
+ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
 ErrorForbidden3=看來 Dolibarr 不是通過經過身份驗證的會話使用的。查看 Dolibarr 設置文檔以了解如何管理身份驗證（htaccess、mod_auth 或其他...）。
 ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=在此 PHP 中未找到 Imagick 類。無法進行預覽。管理員可以從菜單“設置 - 顯示”禁用此選項卡。
 ErrorRecordAlreadyExists=記錄已存在
 ErrorLabelAlreadyExists=This label already exists
-ErrorCantReadFile=無法讀取文件“<span class='notranslate'>%s</span>”\n'
-ErrorCantReadDir=無法讀取目錄“<span class='notranslate'>%s</span>”\n'
+ErrorCantReadFile=Failed to read file '%s'
+ErrorCantReadDir=Failed to read directory '%s'
 ErrorBadLoginPassword=登錄名或密碼值錯誤
 ErrorLoginDisabled=您的帳戶已禁用
 ErrorFailedToRunExternalCommand=無法運行外部命令。檢查它是否可用並且可由您的 PHP 服務器用戶運行。還要檢查該命令是否在 shell 級別上不受 apparmor 等安全層的保護。
@@ -140,7 +140,7 @@ ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You wil
 ErrorQtyForCustomerInvoiceCantBeNegative=Quantity for line into customer invoices can't be negative
 ErrorWebServerUserHasNotPermission=用戶帳戶<b> %s </b>  用於執行 Web 服務器沒有權限
 ErrorNoActivatedBarcode=未激活條形碼類型
-ErrUnzipFails=解壓<span class='notranslate'>%s</span>失敗\n 與 ZipArchive
+ErrUnzipFails=Failed to unzip %s with ZipArchive
 ErrNoZipEngine=沒有引擎可壓縮/解壓縮 %s 這個 PHP 中的文件
 ErrorFileMustBeADolibarrPackage=文件%s 必須是 Dolibarr zip 包
 ErrorModuleFileRequired=You must select a Dolibarr module package file
@@ -341,9 +341,9 @@ WarningSafeModeOnCheckExecDir=警告，PHP 選項 <b> 安全模式 </b>  因此�
 WarningBookmarkAlreadyExists=具有此標題或此目標 (URL) 的書籤已存在。
 WarningPassIsEmpty=警告，數據庫密碼為空。這是一個安全漏洞。您應該向數據庫添加密碼並更改conf.php 文件以反映這一點。
 WarningConfFileMustBeReadOnly=警告，您的配置文件 ( <b> htdocs/conf/conf.php </b> ) 可以被網絡服務器覆蓋。這是一個嚴重的安全漏洞。將文件的權限修改為Web 服務器使用的操作系統用戶的只讀模式。如果你的磁盤使用Windows和FAT格式，你必須知道這個文件系統不允許給文件添加權限，所以不能完全安全。
-WarningsOnXLines=關於 <span class='notranslate'><b></span> 的警告\n %s </b>  源記錄
+WarningsOnXLines=Warnings on <b>%s</b> source record(s)
 WarningNoDocumentModelActivated=尚未激活用於文檔生成的模型。在您檢查模塊設置之前，將默認選擇一個模型。
-WarningLockFileDoesNotExists=警告，安裝完成後，您必須通過添加文件 <span class='notranslate'><b></span> 來禁用安裝/遷移工具\n install.lock </b>  進入目錄<b> %s </b> 。忽略創建此文件會帶來嚴重的安全風險。
+WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable the installation/migration tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Omitting the creation of this file is a grave security risk.
 WarningUntilDirRemoved=只要漏洞存在，此安全警告就會保持有效。
 WarningCloseAlways=警告，即使源元素和目標元素之間的金額不同，也會完成關閉。請謹慎啟用此功能。
 WarningUsingThisBoxSlowDown=警告，使用此框會嚴重減慢所有顯示該框的頁面。

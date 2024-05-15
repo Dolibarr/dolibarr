@@ -7,6 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,24 +141,39 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 			case 'config':
 				$conffile = $arg;
 				$conffiletoshow = $arg;
-			break;
+				break;
 			case 'h':
 			case 'help':
 				usage($argv[0], "Usage:");
-			exit(0);
+				exit(0);
 		}
 	}
 
 	// Parse the arguments to find the options.
-	$args_options = array_filter(array_slice($argv, 0, $rest_index), function ($arg) {
-		return strlen($arg) >= 2 && $arg[0] == '-';
-	});
-	$parsed_options = array_map(function ($arg) {
-		if (strlen($arg) > 1) {
-			return "--" . $arg;
+	$args_options = array_filter(
+		array_slice($argv, 0, $rest_index),
+		/**
+		 * @param string $arg
+		 * @return bool
+		 */
+		static function ($arg) {
+			return strlen($arg) >= 2 && $arg[0] == '-';
 		}
-		return "-" . $arg;
-	}, array_keys($opts));
+	);
+	$parsed_options = array_map(
+		/**
+		 * Previx option with '-' for single characters and -- for more than single characters
+		 * @param string $arg
+		 * @return string
+		 */
+		static function ($arg) {
+			if (strlen($arg) > 1) {
+				return "--" . $arg;
+			}
+			return "-" . $arg;
+		},
+		array_keys($opts)
+	);
 
 	// Find options (dash-prefixed) that were not parsed.
 	$unknown_options = array_diff($args_options, $parsed_options);
@@ -193,7 +209,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 
@@ -248,7 +264,7 @@ if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
 }
 define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
 
-define('DOL_CLASS_PATH', 'class/'); // Filsystem path to class dir
+define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
@@ -301,7 +317,7 @@ if (constant('DOL_DATA_ROOT') === null) {
 	$lockfile = '../../documents/install.lock';
 	$upgradeunlockfile = '../../documents/upgrade.unlock';
 }
-$islocked=false;
+$islocked = false;
 if (@file_exists($lockfile) || @file_exists($lockfile2)) {
 	if (!defined('ALLOWED_IF_UPGRADE_UNLOCK_FOUND') || (! @file_exists($upgradeunlockfile) && ! @file_exists($upgradeunlockfile2))) {
 		// If this is a dangerous install page (ALLOWED_IF_UPGRADE_UNLOCK_FOUND not defined) or
@@ -376,8 +392,8 @@ foreach ($handlers as $handler) {
 
 	require_once $file;
 	$loghandlerinstance = new $handler();
-	if (!$loghandlerinstance instanceof LogHandlerInterface) {
-		throw new Exception('Log handler does not extend LogHandlerInterface');
+	if (!$loghandlerinstance instanceof LogHandler) {
+		throw new Exception('Log handler does not extend LogHandler');
 	}
 
 	if (empty($conf->loghandlers[$handler])) {
@@ -409,6 +425,8 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_name;
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
+	global $dolibarr_main_db_collation;
+	global $dolibarr_main_db_character_set;
 	global $character_set_client;
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
@@ -489,8 +507,8 @@ function conf($dolibarr_main_document_root)
 
 		require_once $file;
 		$loghandlerinstance = new $handler();
-		if (!$loghandlerinstance instanceof LogHandlerInterface) {
-			throw new Exception('Log handler does not extend LogHandlerInterface');
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
 		}
 
 		if (empty($conf->loghandlers[$handler])) {

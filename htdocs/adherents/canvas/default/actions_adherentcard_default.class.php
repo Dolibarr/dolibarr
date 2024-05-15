@@ -33,7 +33,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB	$db				Handler acces data base
+	 *	@param	DoliDB	$db				Handler access data base
 	 *	@param	string	$dirmodule		Name of directory of module
 	 *	@param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *	@param	string	$canvas			Name of canvas

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcen
-MenuResourceAdd=neue Ressource
+MenuResourceAdd=Neue Ressource
 DeleteResource=Ressource löschen
 ConfirmDeleteResourceElement=Löschung der Ressource zu diesem Element bestätigen
 NoResourceInDatabase=Keine Ressource in der Datenbank
@@ -14,7 +14,7 @@ ResourceFormLabel_ref=Ressourcen-Name
 ResourceType=Ressourcen-Typ
 ResourceFormLabel_description=Ressourcen-Beschreibung
 
-ResourcesLinkedToElement=Mit Element verknüpfte Ressourcen 
+ResourcesLinkedToElement=Mit Element verknüpfte Ressourcen
 
 ShowResource=Ressource anzeigen
 
@@ -37,3 +37,5 @@ ImportDataset_resource_1=Ressourcen
 
 ErrorResourcesAlreadyInUse=Einige Ressourcen werden verwendet
 ErrorResourceUseInEvent=%s wird im Ereignis %s verwendet
+
+MaxUsers=Maximale Anzahl Benutzer (Plätze, Sitze, etc.)

@@ -308,7 +308,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a SHIPPING contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a SHIPPING contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

@@ -147,7 +147,7 @@ UseFormatFileEmailToTarget=Importovaný súbor musí mať formát <strong>email;
 UseFormatInputEmailToTarget=Zadajte reťazec vo formáte <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=Príjemcovia (rozšírený výber)
 AdvTgtTitle=Vyplnením vstupných polí vopred vyberte tretie strany alebo kontakty/adresy, na ktoré chcete zacieliť
-AdvTgtSearchTextHelp=Ako zástupné znaky použite %%. Ak chcete napríklad nájsť všetky položky ako <b>jean, joe, jim</b>, môžete zadať  <b>j%%</b>, môžete použiť aj ; ako oddeľovač hodnoty a použite ! okrem tejto hodnoty. Napríklad <b>jean;joe;jim%%;!jimo;!jimab07e63171f span><span class='notranslate'></b> sa zameria na všetkých jean, joe, začínajú s Jimom, ale nie na Jimo a nie na všetko, čo začína na jima
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
 AdvTgtSearchIntHelp=Použite interval na výber hodnoty int alebo float
 AdvTgtMinVal=Minimálna hodnota
 AdvTgtMaxVal=Maximálna hodnota

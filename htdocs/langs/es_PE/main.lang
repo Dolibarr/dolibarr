@@ -66,6 +66,7 @@ VATRate=Tasa Impuesto
 VATCode=Código de la Tasa del Impuesto
 List=Lista
 Opened=Abrir
+Reports=Reportes
 MenuAccountancy=Contabilizando
 SearchIntoMO=Órdenes de Fabricación
 SearchIntoCustomerInvoices=Facturas de Clientes

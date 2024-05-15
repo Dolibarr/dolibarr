@@ -42,7 +42,6 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
 global $dolibarr_main_url_root;
@@ -105,7 +104,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOST('afteroauthloginreturn', 'int') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -162,25 +161,13 @@ if (!GETPOST('code')) {
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
-	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
-	/*
-	if (!empty($_POST["tz"])) {
-		$_SESSION["tz"] = $_POST["tz"];
-	}
-	if (!empty($_POST["tz_string"])) {
-		$_SESSION["tz_string"] = $_POST["tz_string"];
-	}
-	if (!empty($_POST["dst_first"])) {
-		$_SESSION["dst_first"] = $_POST["dst_first"];
-	}
-	if (!empty($_POST["dst_second"])) {
-		$_SESSION["dst_second"] = $_POST["dst_second"];
-	}
-	*/
+	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
+	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
 	if ($forlogin) {
-		$apiService->setApprouvalPrompt('force');
+		// Set approval_prompt
+		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
+		$apiService->setApprouvalPrompt($approval_prompt);
 	}
 
 	// This may create record into oauth_state before the header redirect.
@@ -203,7 +190,7 @@ if (!GETPOST('code')) {
 			$url .= '&login_hint='.urlencode(GETPOST('username'));
 		}
 
-		// Check that the redirect_uri that wil be used is same than url of current domain
+		// Check that the redirect_uri that will be used is same than url of current domain
 
 		// Define $urlwithroot
 		global $dolibarr_main_url_root;
@@ -283,7 +270,7 @@ if (!GETPOST('code')) {
 
 				// Verify that email is a verified email
 				/*if (empty($userinfo['email_verified'])) {
-					setEventMessages($langs->trans('Bad value for email, emai lwas not verified by Google'), null, 'errors');
+					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
 					$errorincheck++;
 				}*/
 
@@ -343,7 +330,7 @@ if (!GETPOST('code')) {
 			} else {
 				// If call back to url for a OAUTH2 login
 				if ($forlogin) {
-					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data";
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retrieves a token with non valid data";
 					$errorincheck++;
 				}
 			}
@@ -364,7 +351,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

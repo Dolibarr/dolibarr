@@ -287,7 +287,7 @@ TotalVente=ከታክስ በፊት ጠቅላላ ገቢ
 TotalMarge=ጠቅላላ የሽያጭ ህዳግ
 
 DescVentilCustomer=ከመለያው ገበታ ወደ ምርት መለያ የታሰሩ (ወይም ያልሆኑ) የደንበኛ የክፍያ መጠየቂያ መስመሮችን ዝርዝር እዚህ ይመልከቱ
-DescVentilMore=በአብዛኛዎቹ ሁኔታዎች አስቀድሞ የተገለጹ ምርቶችን ወይም አገልግሎቶችን ከተጠቀሙ እና መለያውን (ከሂሳብ ሠንጠረዥ) በምርት/አገልግሎት ካርዱ ላይ ካስቀመጡት አፕሊኬሽኑ በሂሳብ መጠየቂያ መስመሮችዎ እና በገበታዎ የሂሳብ መዝገብ መካከል ያሉትን ሁሉንም ግንኙነቶች ማድረግ ይችላል። የመለያዎች፣ ልክ በአንድ ጠቅታ <strong>"%s"b0a65d071f6f6 >. መለያ በምርት/አገልግሎት ካርዶች ላይ ካልተዋቀረ ወይም አሁንም አንዳንድ ከመለያ ጋር ያልተያያዙ መስመሮች ካሉዎት ከ"<span class='notranslate'><strong><span" ምናሌ ውስጥ በእጅ ማሰር አለብዎት class='notranslate'>%s</span></strong>"።
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=የክፍያ መጠየቂያ ደረሰኞች ደንበኞችን ዝርዝር እና የምርት መለያቸውን ከመለያ ገበታ ይመልከቱ
 DescVentilTodoCustomer=የክፍያ መጠየቂያ መስመሮች አስቀድመው ከምርት መለያ ጋር ከመለያ ገበታ ላይ ያልታሰሩ
 ChangeAccount=ለተመረጡት መስመሮች የምርት/አገልግሎት መለያውን (ከሂሳብ ገበታ) በሚከተለው መለያ ይቀይሩ፡
@@ -335,7 +335,6 @@ CategoryDeleted=የሒሳብ መለያው ምድብ ተወግዷል
 AccountingJournals=የሂሳብ መጽሔቶች
 AccountingJournal=የሂሳብ መጽሔት
 NewAccountingJournal=አዲስ የሂሳብ ጆርናል
-ShowAccountingJournal=የሂሳብ መጽሔት አሳይ
 NatureOfJournal=የጆርናል ተፈጥሮ
 AccountingJournalType1=የተለያዩ ስራዎች
 AccountingJournalType2=ሽያጭ
@@ -346,14 +345,14 @@ AccountingJournalType8=ቆጠራ
 AccountingJournalType9=የተያዙ ገቢዎች
 GenerationOfAccountingEntries=የሂሳብ ግቤቶች ማመንጨት
 ErrorAccountingJournalIsAlreadyUse=ይህ መጽሔት አስቀድሞ ጥቅም ላይ ውሏል
-AccountingAccountForSalesTaxAreDefinedInto=ማስታወሻ፡ ለሽያጭ ታክስ የሂሳብ አያያዝ መለያ በምናሌ ውስጥ ይገለጻል <b>%s</b>9a4b739f17f8z0 - <span class='notranslate'><b>%s</b>
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=የመግቢያ ብዛት
 NumberOfAccountancyMovements=የእንቅስቃሴዎች ብዛት
 ACCOUNTING_DISABLE_BINDING_ON_SALES=በሽያጭ ላይ የሂሳብ አያያዝ እና ማስተላለፍን ያሰናክሉ (የደንበኛ ደረሰኞች በሂሳብ አያያዝ ውስጥ አይገቡም)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=በግዢዎች ላይ በሂሳብ አያያዝ ውስጥ ማሰር እና ማስተላለፍን ያሰናክሉ (የሻጭ ደረሰኞች በሂሳብ አያያዝ ውስጥ አይወሰዱም)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=በወጪ ሪፖርቶች ላይ የሂሳብ አያያዝ እና ማስተላለፍን ያሰናክሉ (የወጪ ሪፖርቶች በሂሳብ አያያዙም)
 ACCOUNTING_ENABLE_LETTERING=በሂሳብ አያያዝ ውስጥ የፊደል አጻጻፍ ተግባርን ያንቁ
-ACCOUNTING_ENABLE_LETTERING_DESC=እነዚህ አማራጮች ሲነቁ በእያንዳንዱ የሂሳብ መዝገብ ላይ የተለያዩ የሂሳብ እንቅስቃሴዎችን በአንድ ላይ ማቧደን እንዲችሉ ኮድ መግለፅ ይችላሉ። ቀደም ባሉት ጊዜያት, የተለያዩ መጽሔቶች በተናጥል ሲተዳደሩ, ይህ ባህሪ የተለያዩ መጽሔቶችን የመንቀሳቀስ መስመሮችን በአንድ ላይ ማቧደን አስፈላጊ ነበር. ነገር ግን፣ በዶሊባርር አካውንቲንግ፣ እንደዚህ ያለ የመከታተያ ኮድ፣ "<b>%s<span class='notranslate'>b09a4b78z09f17 span>" አስቀድሞ በራስ ሰር ተቀምጧል፣ ስለዚህ አውቶማቲክ ፊደላት አስቀድሞ ተከናውኗል፣ የስህተት ስጋት የለውም፣ ስለዚህ ይህ ባህሪ ለጋራ አጠቃቀም የማይጠቅም ሆኗል። በእጅ የፊደል አጻጻፍ ባህሪ በሂሳብ መዝገብ ውስጥ መረጃን ለማስተላለፍ የሚያደርገውን የኮምፒተር ሞተር ለማያምኑ ለዋና ተጠቃሚዎች ይሰጣል።
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=ይህንን ባህሪ ማንቃት ለጠንካራ የሂሳብ አያያዝ አስተዳደር አስፈላጊ አይሆንም።
 ACCOUNTING_ENABLE_AUTOLETTERING=ወደ አካውንቲንግ ሲተላለፉ አውቶማቲክ ፊደላትን አንቃ
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=የደብዳቤው ኮድ በራስ-ሰር ይፈልቃል እና ይጨምራል እናም በዋና ተጠቃሚ አልተመረጠም።
@@ -361,7 +360,7 @@ ACCOUNTING_LETTERING_NBLETTERS=የፊደል አጻጻፍ ኮድ በሚፈጥሩ�
 ACCOUNTING_LETTERING_NBLETTERS_DESC=አንዳንድ የሂሳብ ሶፍትዌሮች ባለ ሁለት ፊደል ኮድ ብቻ ነው የሚቀበሉት። ይህ ግቤት ይህንን ገጽታ እንዲያዘጋጁ ያስችልዎታል. የነባሪ ፊደሎች ቁጥር ሦስት ነው።
 OptionsAdvanced=የላቁ አማራጮች
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=በአቅራቢዎች ግዢ ላይ የተጨማሪ እሴት ታክስ አስተዳደርን ያግብሩ
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=ይህ አማራጭ ሲነቃ፣ አቅራቢው ወይም የተሰጠው የአቅራቢ ደረሰኝ ወደ ሂሳብ ሒሳብ በተለየ መንገድ መተላለፍ እንዳለበት መግለፅ ይችላሉ፡ ተጨማሪ ዴቢት እና ክሬዲት መስመር በሂሳብ መዝገብ ውስጥ በ2 የተሰጡ ሂሳቦች በ‹‹< ውስጥ ከተገለፀው የመለያ ገበታው ላይ ይወጣሉ። span class='notranslate'>%s</span>" ማዋቀር ገጽ።
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=ይህ አማራጭ ሲነቃ፣ አቅራቢው ወይም የተሰጠው የአቅራቢ ደረሰኝ ወደ ሂሳብ ሒሳብ በተለየ መንገድ መተላለፍ እንዳለበት መግለፅ ይችላሉ፡ ተጨማሪ ዴቢት እና ክሬዲት መስመር በሂሳብ መዝገብ ውስጥ በ2 የተሰጡ ሂሳቦች በ‹‹< ውስጥ ከተገለፀው የመለያ ገበታው ላይ ይወጣሉ። %s ማዋቀር ገጽ።
 
 ## Export
 NotExportLettering=ፋይሉን በሚፈጥሩበት ጊዜ ፊደሉን ወደ ውጭ አይላኩ
@@ -468,15 +467,15 @@ AccountancyClosureConfirmAccountingReversal=እርግጠኛ ነዎት ለ"የተ
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=አንዳንድ አስገዳጅ የማዋቀር ደረጃዎች አልተደረጉም፣ እባክዎ ያጠናቅቁዋቸው
-ErrorNoAccountingCategoryForThisCountry=ለአገር ምንም የሂሳብ አያያዝ ቡድን የለም %s (%s ይመልከቱ - b0ecb2ec87f49fez0s <span class='notranslate'>%s)
-ErrorInvoiceContainsLinesNotYetBounded=አንዳንድ የክፍያ መጠየቂያ መጠየቂያ ደረሰኞችን <strong>%s<span class='notranslate'>b0a65d071f6fc9 ግን ለመመዝገብ ይሞክራሉ። አንዳንድ ሌሎች መስመሮች በሂሳብ አያያዝ መለያ ላይ ገና አልተገደቡም። ለዚህ ደረሰኝ የሁሉም የክፍያ መጠየቂያ መስመሮች ጋዜጠኝነት ውድቅ ተደርጓል።
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=በክፍያ መጠየቂያ ላይ ያሉ አንዳንድ መስመሮች ከሂሳብ መዝገብ ጋር የተገናኙ አይደሉም።
 ExportNotSupported=የተቀናበረው ወደ ውጭ መላኪያ ቅርጸት በዚህ ገጽ ላይ አይደገፍም።
 BookeppingLineAlreayExists=በሂሳብ አያያዝ ውስጥ ቀድሞውኑ ያሉ መስመሮች
 NoJournalDefined=ምንም ጆርናል አልተገለጸም።
 Binded=መስመሮች ተያይዘዋል።
 ToBind=ለማሰር መስመሮች
-UseMenuToSetBindindManualy=መስመሮች ገና አልተጣመሩም ፣ ምናሌን ይጠቀሙ <a href="%s">%s<span class='notranslate'></a> binding> ለማድረግ በእጅ
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=ማስታወሻ፡ ይህ ሞጁል ወይም ገጽ ከሁኔታ ደረሰኞች የሙከራ ባህሪ ጋር ሙሉ ለሙሉ ተኳሃኝ አይደለም። አንዳንድ መረጃዎች የተሳሳቱ ሊሆኑ ይችላሉ።
 AccountancyErrorMismatchLetterCode=በማስታረቅ ኮድ ውስጥ አለመዛመድ
 AccountancyErrorMismatchBalanceAmount=ቀሪው (%s) ከ 0 ጋር እኩል አይደለም

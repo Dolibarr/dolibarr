@@ -125,7 +125,7 @@ function dol_print_cron_urls()
 
 	$pathtoscript = '/pathtoscript';
 	if (getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')) {
-		$pathtoscript = $conf->global->MAIN_DOL_SCRIPTS_ROOT;
+		$pathtoscript = getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT');
 	}
 
 	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(!getDolGlobalString('CRON_KEY') ? 'securitykey' : '' . getDolGlobalString('CRON_KEY')).' '.$logintouse.' [cronjobid]';

@@ -93,6 +93,9 @@ CodePaymentMode=Spôsob platby (kód)
 LabelPaymentMode=Spôsob platby (štítok)
 PaymentModeShort=Spôsob platby
 PaymentTerm=Lehota splatnosti
+IdPaymentTerm=Payment term (id)
+CodePaymentTerm=Payment term (code)
+LabelPaymentTerm=Payment term (label)
 PaymentConditions=Platobné podmienky
 PaymentConditionsShort=Platobné podmienky
 PaymentAmount=Suma platby
@@ -185,7 +188,7 @@ SuppliersDraftInvoices=Dodávateľské návrhy faktúr
 Unpaid=Nezaplatený
 ErrorNoPaymentDefined=Chyba Nie je definovaná žiadna platba
 ConfirmDeleteBill=Naozaj chcete odstrániť túto faktúru?
-ConfirmValidateBill=Naozaj chcete overiť túto faktúru pomocou odkazu <b>%s<span class='notranslate'></b> >?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
 ConfirmUnvalidateBill=Naozaj chcete zmeniť faktúru <b>%s</b> na stav konceptu ?
 ConfirmClassifyPaidBill=Naozaj chcete zmeniť faktúru <b>%s</b> na stav zaplatená ?
 ConfirmCancelBill=Naozaj chcete zrušiť faktúru <b>%s</b>?
@@ -207,7 +210,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=V niektorých krajinách môž
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Použite túto voľbu, ak všetky ostatné nesluší
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>Zlý zákazník</b> je zákazník, ktorý odmieta zaplatiť svoj dlh.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Táto voľba sa používa, keď platba nie je kompletná, pretože niektoré z výrobkov boli vrátené
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Nezaplatená suma je <b>poplatky sprostredkovateľskej banky</b>, ktoré sa odpočítavajú priamo z b0aee37336 >správna suma<span class='notranslate'></b> zaplatená zákazníkom.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Nezaplatená suma nebude nikdy vyplatená, keďže ide o zrážkovú daň
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Túto voľbu použite, ak všetky ostatné nevyhovujú, napríklad v nasledujúcej situácii:<br>- platba nie je dokončená, pretože niektoré produkty boli odoslané späť<br>- požadovaná suma je príliš dôležitá, pretože sa zabudlo na zľavu<br>Vo všetkých prípadoch musí byť nadmerne nárokovaná suma opravená v účtovnom systéme vytvorením dobropisu.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>zlý dodávateľ</b> je dodávateľ, ktorému odmietame zaplatiť.
@@ -374,7 +377,7 @@ DisabledBecauseReplacedInvoice=Akcia zakázané, pretože faktúra bola nahraden
 DescTaxAndDividendsArea=Táto oblasť predstavuje súhrn všetkých platieb uskutočnených na mimoriadne výdavky. Tu sú zahrnuté iba záznamy s platbami počas fixného roka.
 NbOfPayments=Počet platieb
 SplitDiscount=Rozdeliť zľavu v dvoch
-ConfirmSplitDiscount=Naozaj si chcete rozdeliť túto zľavu vo výške <b>%s</b> span class='notranslate'>%s</span> do dvoch menších zliav?
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
 TypeAmountOfEachNewDiscount=Vstupné množstvo pre každú z dvoch častí:
 TotalOfTwoDiscountMustEqualsOriginal=Súčet dvoch nových zliav sa musí rovnať pôvodnej výške zľavy.
 ConfirmRemoveDiscount=Naozaj chcete odstrániť túto zľavu?

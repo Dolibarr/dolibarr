@@ -46,7 +46,7 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested on ticket creation
+SuggestedForTicketsInGroup=Suggested on tickets creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?

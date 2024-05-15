@@ -9,6 +9,7 @@
 	<!-- info: 'relative' paths are relative to the examined file, so not ok. -->
 	<exclude-pattern>/build/(html|aps)/</exclude-pattern>
 	<exclude-pattern>/dev/tools/test/namespacemig/</exclude-pattern>
+	<exclude-pattern>/dev/tools/phan/stubs/</exclude-pattern>
 	<!-- <exclude-pattern>dev/initdata/dbf/includes</exclude-pattern> -->
 	<exclude-pattern>/documents/</exclude-pattern>
 	<exclude-pattern>/htdocs/core/class/lessc\.class\.php</exclude-pattern>

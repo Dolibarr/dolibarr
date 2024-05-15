@@ -71,7 +71,7 @@ if ($action == 'update') {
 	$error = 0;
 
 	// Tax mode
-	$tax_mode = GETPOST('tax_mode', 'int');
+	$tax_mode = GETPOSTINT('tax_mode');
 
 	$db->begin();
 
@@ -122,7 +122,7 @@ if ($action == 'update') {
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOST("deadline_day_vat", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
 
 	if (!$error) {
 		$db->commit();
@@ -197,7 +197,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<table class="noborder centpercent">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	// Case for the parameters TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";

@@ -91,8 +91,7 @@ CountLastUrlCheckError=Broj grešaka za posljednju provjeru URL-a
 LastCheckBacklink=Datum posljednje provjere URL-a
 
 NewPartnershipRequest=Novi zahtjev za partnerstvo
-NewPartnershipRequestDesc=Ovaj obrazac vam omogućava da zatražite da budete dio jednog od naših partnerskih programa. Ako vam je potrebna pomoć da ispunite ovaj obrazac, kontaktirajte putem e-pošte <b>%s</b><span class='notranslate'> span>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ova stranica mora sadržavati barem jedan link na jednu od sljedećih domena: %s
 
 IPOfApplicant=IP podnosioca zahtjeva
-

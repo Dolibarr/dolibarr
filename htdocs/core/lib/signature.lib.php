@@ -22,15 +22,15 @@
  *
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
- * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
  * @return	string						Url string
  */
 function showOnlineSignatureUrl($type, $ref, $obj = null)
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("payment", "paybox"));
+	$langs->loadLangs(array("payment", "paybox", "stripe"));
 
 	$servicename = 'Online';
 
@@ -52,16 +52,16 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 /**
  * Return string with full Url
  *
- * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   int				$mode				0=True url, 1=Url formatted with colors
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
- * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @param   int     		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
  * @return	string								Url string
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $conf, $dolibarr_main_url_root;
+	global $dolibarr_main_url_root;
 
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
@@ -74,7 +74,6 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	}
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot

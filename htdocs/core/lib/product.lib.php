@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 /**
  * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \brief      Ensemble de functions de base pour le module produit et service
  * \ingroup	product
  */
 
@@ -74,7 +75,7 @@ function product_prepare_head($object)
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 		) {
 		if ($usercancreadprice) {
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
 			$head[$h][2] = 'suppliers';
 			$h++;
@@ -217,7 +218,7 @@ function product_prepare_head($object)
 	$h++;
 
 	// Log
-	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/messaging.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
@@ -313,7 +314,7 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object informations.
+*  Return array head with list of tabs to view object information.
 *
 *  @return	array   	        head array with tabs
 */
@@ -374,7 +375,7 @@ function product_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return	array   	        head array with tabs
  */
@@ -424,7 +425,7 @@ function product_lot_admin_prepare_head()
  */
 function show_stats_for_company($product, $socid)
 {
-	global $conf, $langs, $user, $db, $hookmanager;
+	global $langs, $user, $db, $hookmanager;
 
 	$form = new Form($db);
 
@@ -476,7 +477,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Sales orders
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -514,7 +515,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -533,7 +534,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled("invoice") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -571,8 +572,48 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 
+	// Shipments
+	if (isModEnabled('shipping') && $user->hasRight('shipping', 'lire')) {
+		$nblines++;
+		$ret = $product->load_stats_sending($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("sendings");
+		print '<tr><td>';
+		print '<a href="expedition.php?id='.$product->id.'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_expedition['customers'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['nb'];
+		print '</td><td class="right">';
+		print $product->stats_expedition['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Receptions
+	if ((isModEnabled("reception") && $user->hasRight('reception', 'lire'))) {
+		$nblines++;
+		$ret = $product->load_stats_reception($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("receptions");
+		print '<tr><td>';
+		print '<a href="reception.php?id='.$product->id.'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_reception['suppliers'];
+		print '</td><td class="right">';
+		print $product->stats_reception['nb'];
+		print '</td><td class="right">';
+		print $product->stats_reception['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Contracts
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -679,7 +720,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
@@ -799,7 +840,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
- *	@return	string	   			         	Unit string
+ *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)

@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
+ALTER TABLE llx_resource_extrafields ADD UNIQUE INDEX uk_resource_extrafields (fk_object);
