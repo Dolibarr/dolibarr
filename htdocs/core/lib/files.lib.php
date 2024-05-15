@@ -877,7 +877,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
  * @param	string[]				$excludefileext			Exclude some file extensions
- * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp (0 by default)
+ * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp or d+timestamp (0 by default)
  * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
