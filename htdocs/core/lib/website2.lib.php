@@ -147,7 +147,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	if (dol_is_file($filetpl)) {
 		if ($backupold) {
-			$result = manageFileBackups($filetpl);
+			$result = archiveOrBackupFile($filetpl);
 			if (! $result) {
 				return false;
 			}
