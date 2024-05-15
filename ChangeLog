@@ -2389,7 +2389,7 @@ FIX: Button text on proposal card for create a invoice
 FIX: calculateCosts of BOM must not be included into fetch
 FIX: calculation of balance in conciliation page on desc sorting.
 FIX: card.php
-FIX: Change date format of the inventorycode to be equal as mass stock transfert
+FIX: Change date format of the inventorycode to be equal as mass stock transfer
 FIX: check if greater 0
 FIX: close cash with some terminals in TakePOS
 FIX: compatibility with Multicompany
@@ -7171,7 +7171,7 @@ FIX: #6253 Supplier invoice list filter does not respect "thirdparty" filter
 FIX: #6277
 FIX: project list and ajax completion return wrong list.
 FIX: bug margin calculation by user with multicompany
-FIX: Can make a stock transfert on product not on sale/purchase.
+FIX: Can make a stock transfer on product not on sale/purchase.
 FIX: extrafield input for varchar was not working with special char within (ie double quotes)
 FIX: javascript error
 FIX: link for not found photo when using gravatar. Must use external url.
@@ -7651,7 +7651,7 @@ FIX: Check of EAN13 barcode when mask was set to use 13 digits instead of 12
 FIX: correct display of minimum buying price
 FIX: Creation of thumb image for size "small" was not done.
 FIX: Damn, where was the project ref ?
-FIX: Default vat is not set correctly when an error occured and we use VAT identified by a code.
+FIX: Default vat is not set correctly when an error occurred and we use VAT identified by a code.
 FIX: dont retrieve new buying price on margin display
 FIX: Duplicate records into export
 FIX: Each time we edit a line, we loose the unit price.
@@ -10410,7 +10410,7 @@ For developers:
 - Can protect a module to not being enabled if javascript disabled.
 - If module numberwords is installed, code can use langs->getLabelFromNumber
   to get value of an amount in text.
-- A module can add subsitution keys in makesubsitutions() functions.
+- A module can add substitution keys in makesubsitutions() functions.
 - Add $conf->browser->phone defined to optimise code for smartphone browsers.
 - All external libs are now in same directory /includes.
 - All install files are now in same directory /install.
