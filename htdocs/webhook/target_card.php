@@ -99,7 +99,7 @@ $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) {
+if (!isModEnabled('webhook')) {
 	accessforbidden();
 }
 if (!$permissiontoread) {

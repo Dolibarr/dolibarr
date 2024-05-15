@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +57,7 @@ $triggercode = GETPOST('triggercode');
 
 // Security check
 if (empty($user->admin)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
