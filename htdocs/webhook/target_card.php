@@ -29,11 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array('other'));
+$langs->loadLangs(array('other','admin'));
 
 // Get parameters
 $id = GETPOSTINT('id');
@@ -153,6 +154,27 @@ if (empty($reshook)) {
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
+	}
+
+	if ($action == 'testsendtourl' && $permissiontoadd) {
+		$triggercode = GETPOST("triggercode");
+		$url = GETPOST("url");
+		$jsondata = GETPOST("jsondata");
+		if (empty($url)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Url")), null, 'errors');
+		}
+		if (empty($jsondata)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DataToSendTrigger")), null, 'errors');
+		}
+		$response = getURLContent($url, 'POST', $jsondata, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
+		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
+			setEventMessages($langs->trans("Success"), null);
+		} else {
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to get URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			setEventMessages($langs->trans($errormsg), null, 'errors');
+		}
 	}
 
 	// Actions to send emails
@@ -495,6 +517,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Clone
 			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 
+			// Webhook send test
+			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=test&token='.newToken(), '', $permissiontoadd);
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
@@ -517,6 +541,90 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</div>'."\n";
 	}
+}
+
+if ($action == "test") {
+	print '<div id="formtesttarget" name="formtesttarget"></div>';
+	print load_fiche_titre($langs->trans("TestWebhookTarget"));
+	print dol_get_fiche_head(array(), '', '', -1);
+
+	print "\n".'<!-- Begin form test target --><div id="targettestform"></div>'."\n";
+	print '<form method="POST" name="testtargetform" id="testtargetform" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testsendtourl">';
+
+	print '<table class="tableforemailform boxtablenotop centpercent">';
+
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("TriggerCodes");
+	print '</td><td class="valuefieldcreate">';
+	$arraytriggercodes = explode(",", $object->trigger_codes);
+	$idtriggercode = '';
+	if (in_array(GETPOST("triggercodes"), $arraytriggercodes)) {
+		$idtriggercode = array_search(GETPOST("triggercodes"), $arraytriggercodes);
+	}
+	print $form->selectarray("triggercode", $arraytriggercodes, $idtriggercode, 0, 0, 1);
+	print '</td></tr>';
+
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("Url");
+	print '</td><td class="valuefieldcreate">';
+	print '<input class="flat minwidth400" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'" />';
+	print '</td></tr>';
+
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("DataToSendTrigger");
+	print '</td><td>';
+	print '<textarea id="jsondatasendtarget" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
+	if (!$conf->use_javascript_ajax) {
+		$json = new stdClass();
+		$json->triggercode = "TEST_TRIGGER_CODE";
+		$json->object = new Target($db);
+		$json->object->initAsSpecimen();
+		unset($json->object->db);
+		unset($json->object->fields);
+		unset($json->object->error);
+		unset($json->object->errors);
+		$datatosend = json_encode($json);
+		print $datatosend;
+	}
+	print '</textarea>';
+	print '</td></tr>';
+	print '</table>';
+
+	print '<div class="center">';
+	print $form->buttonsSaveCancel("SendToUrl");
+	print '</div>';
+	print '</form>';
+
+	if ($conf->use_javascript_ajax) {
+		print '<script>
+		$("#triggercode").change(function(){
+			triggercode = $(this).val();
+			getDatatToSendTriggerCode(triggercode);
+		});
+
+		function getDatatToSendTriggerCode(triggercode){
+			$.ajax({
+				method: \'GET\',
+				url:  \''.DOL_URL_ROOT.'/webhook/ajax/webhook.php\',
+				data: { action: "getjsonformtrigger", triggercode: triggercode },
+				success: function(response) {
+					obj = JSON.stringify(response);
+					$("#jsondatasendtarget").val(obj);
+				}
+			})
+		};
+
+		$(document).ready(function () {
+			triggercode = $("#triggercode").val();
+			getDatatToSendTriggerCode(triggercode);
+		});
+		';
+		print '</script>';
+	}
+
+	print "\n".'<!-- END form test target -->';
 }
 
 // End of page
