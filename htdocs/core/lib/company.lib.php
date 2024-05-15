@@ -1566,17 +1566,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($addresstoshow)).'">';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}
 
 			// Note private
 			if (!empty($arrayfields['t.note_private']['checked'])) {
-				print '<td>';
-				if ($obj->note_private) {
-					print dol_string_nohtmltag($obj->note_private);
-				}
+				print '<td class="center">';
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 			}
 
