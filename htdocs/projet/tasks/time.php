@@ -1489,7 +1489,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td>';
 				print $form->getSelectConditionsPaiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
 				print '</td>';
-				print '</tr>';                
+				print '</tr>';
 				/*print '<tr>';
 				 print '<td>';
 				 print $langs->trans('ValidateInvoices');
