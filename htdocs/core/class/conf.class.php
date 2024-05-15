@@ -145,6 +145,7 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
+		$this->compta = new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
@@ -543,6 +544,11 @@ class Conf
 					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 				}
 			}
+
+			// Module compta
+			$this->compta->payment = new stdClass();
+			$this->compta->payment->dir_output				= $rootfordata."/compta/payment";
+			$this->compta->payment->dir_temp					= $rootfortemp."/compta/payment/temp";
 
 			// Module product/service
 			$this->product->multidir_output 		= array($this->entity => $rootfordata."/produit");

@@ -76,7 +76,7 @@ $object = new Paiement($db);
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->comptaisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->compta->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
 $permissiontoadd = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -98,8 +98,8 @@ $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
 
 if ($object->id > 0) {
-	$head = payment_supplier_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment');
+	$head = payment_prepare_head($object);
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment');
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -163,7 +163,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'supplier_payment';
+	$modulepart = 'payment';
 	// TODO: get the appropriate permission
 	$permissiontoadd = true;
 	$permtoedit = true;

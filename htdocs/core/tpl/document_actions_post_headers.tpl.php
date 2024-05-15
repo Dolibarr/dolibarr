@@ -85,13 +85,14 @@ if ($action == 'deletefile' || $action == 'deletelink') {
 if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
 	$savingdocmask = '';
 	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
-		//var_dump($modulepart);
+//		var_dump($modulepart);
 		if (in_array($modulepart, array(
 			'facture_fournisseur',
 			'commande_fournisseur',
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',
@@ -118,7 +119,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
-
+//var_dump($_POST);
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
@@ -132,6 +133,7 @@ $formfile->form_attach_new_file(
 	1,
 	$savingdocmask
 );
+
 
 // List of document
 $formfile->list_of_documents(
@@ -154,6 +156,8 @@ $formfile->list_of_documents(
 	$sortorder,
 	$disablemove
 );
+
+
 
 print "<br>";
 
