@@ -159,7 +159,7 @@ if (empty($reshook)) {
 	if ($action == 'testsendtourl' && $permissiontoadd) {
 		$triggercode = GETPOST("triggercode");
 		$url = GETPOST("url");
-		$jsondata = GETPOST("jsondata", "restrcithtml");
+		$jsondata = GETPOST("jsondata", "restricthtml");
 		if (empty($url)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Url")), null, 'errors');
@@ -210,22 +210,6 @@ $title = $langs->trans("Target");
 $help_url = '';
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
 
 // Part to create
 if ($action == 'create') {
