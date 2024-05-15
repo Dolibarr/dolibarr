@@ -986,7 +986,7 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
