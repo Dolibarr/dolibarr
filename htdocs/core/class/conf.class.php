@@ -318,6 +318,7 @@ class Conf extends stdClass
 		// First level object
 		// TODO Remove this part.
 		$this->fournisseur = new stdClass();
+		$this->compta = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
 		$this->contrat = new stdClass();
