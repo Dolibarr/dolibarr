@@ -418,7 +418,9 @@ if ($action == 'confirm_generateinvoice') {
 		$tmptimespent = new Task($db);
 		$tmpproduct = new Product($db);
 		$fuser = new User($db);
-
+		$remiseproject = GETPOST('remiseproject', 'int');
+        $condidproject = GETPOST('condidproject', 'int');
+		
 		$db->begin();
 		$idprod = GETPOSTINT('productid');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
@@ -458,7 +460,7 @@ if ($action == 'confirm_generateinvoice') {
 		$tmpinvoice->socid = $projectstatic->thirdparty->id;
 		$tmpinvoice->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinvoice->fk_project = $projectstatic->id;
-		$tmpinvoice->cond_reglement_id = $projectstatic->thirdparty->cond_reglement_id;
+		$tmpinvoice->cond_reglement_id = $condidproject;
 		$tmpinvoice->mode_reglement_id = $projectstatic->thirdparty->mode_reglement_id;
 		$tmpinvoice->fk_account = $projectstatic->thirdparty->fk_account;
 
@@ -549,7 +551,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 
 						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0),$remiseproject);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -648,7 +650,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 						$idprodline = $value['fk_product'];
 					}
-					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0),$remiseproject);
 					if ($lineid < 0) {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -746,7 +748,7 @@ if ($action == 'confirm_generateinvoice') {
 						$date_start = '';
 						$date_end = '';
 						$lineName = $ftask->ref . ' - ' . $ftask->label;
-						$lineid = $tmpinvoice->addline($lineName, $pu_ht_for_task, price2num($qtyhour / $prodDurationHours, 'MS'), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1, -1, 0, '', 0, 0, null, $pa_ht);
+						$lineid = $tmpinvoice->addline($lineName, $pu_ht_for_task, price2num($qtyhour / $prodDurationHours, 'MS'), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject, $date_start, $date_end, 0, 0, '', 'HT', 0, 1, -1, 0, '', 0, 0, null, $pa_ht);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
@@ -1474,6 +1476,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
+				
+                print '<tr>';
+                print '<td class="titlefield">';
+				print $langs->trans("CustomerRelativeDiscount");
+				print '</td>';
+                print '<td>';
+				print '<input type="text" size="5" name="remiseproject" value="'.$projectstatic->thirdparty->remise_percent.'">%';
+				print '</td>';
+                print '</tr>';
+                
+				print '<tr class="newinvoicedetail">';
+                print '<td class="titlefield">';
+				print $langs->trans("PaymentConditions");
+				print '</td>';
+                print '<td>';
+				print $form->select_conditions_paiements($projectstatic->thirdparty->cond_reglement_id,'condidproject');
+				print '</td>';
+                print '</tr>';
+                
 				/*print '<tr>';
 				 print '<td>';
 				 print $langs->trans('ValidateInvoices');
