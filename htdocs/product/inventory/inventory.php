@@ -97,11 +97,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //$result = restrictedArea($user, 'mymodule', $id);
 
 //Parameters Page
-$param = '&id='.$object->id;
+$paramwithsearch = '';
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$paramwithsearch .= '&limit='.((int) $limit);
 }
-$paramwithsearch = $param;
 
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
@@ -265,6 +264,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->order('id.rowid', 'ASC');
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
-				} else {
+				} elseif (GETPOSTISSET('id_' . $lineid)) {
 					// Delete record
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
@@ -415,7 +415,6 @@ if (empty($reshook)) {
 
 
 
-
 /*
  * View
  */
@@ -459,7 +458,7 @@ if ($action == 'clone') {
 
 // Confirmation to close
 if ($action == 'record') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Close'), $langs->trans('ConfirmFinish'), 'update', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&page='.$page.$paramwithsearch, $langs->trans('Close'), $langs->trans('ConfirmFinish'), 'update', '', 0, 1);
 	$action = 'view';
 }
 
@@ -494,7 +493,7 @@ $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled))
+if (isModEnabled('project'))
 {
 	$langs->load("projects");
 	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -583,13 +582,13 @@ if ($action != 'record') {
 		// Save
 		if ($object->status == $object::STATUS_VALIDATED) {
 			if ($permissiontoadd) {
-				print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+				print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&page='.$page.$paramwithsearch.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 			}
 
 			if ($permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_cancel&page='.$page.$paramwithsearch.'&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 			}
 		}
 	}
@@ -990,7 +989,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	if (!empty($limit != 0) || $num > $limit || $page) {
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], '&id='.$object->id.$paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
 	}
 
 	$i = 0;
@@ -1046,8 +1045,9 @@ if ($resql) {
 		// Expected quantity = Quantity in stock when we start inventory
 		print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
 		$valuetoshow = $obj->qty_stock;
+
 		// For inventory not yet close, we overwrite with the real value in stock now
-		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && !getDolGlobalString('DISABLE_QTY_OVERWRITE')) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 			} else {
@@ -1206,38 +1206,38 @@ print '<script type="text/javascript">
 
                         $(".paginationnext:last").click(function(e){
                             var form = $("#formrecord");
-   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page + 1).$paramwithsearch.'";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
     					});
 
 
                          $(".paginationprevious:last").click(function(e){
                             var form = $("#formrecord");
-   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
 						 });
 
                           $("#idbuttonmakemovementandclose").click(function(e){
                             var form = $("#formrecord");
-   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
        					 	}});
 						 });
 					});
