@@ -172,7 +172,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
 	$massaction = '';
 }
 
