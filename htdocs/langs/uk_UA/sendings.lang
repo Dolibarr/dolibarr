@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Підтверджений
 StatusSendingProcessedShort=Оброблений
 SendingSheet=Відвантажувальний лист
 ConfirmDeleteSending=Ви впевнені, що хочете видалити це відправлення?
-ConfirmValidateSending=Ви впевнені, що хочете підтвердити це відправлення з посиланням <b> %s </b>?
+ConfirmValidateSending=Ви впевнені, що хочете підтвердити це відправлення за посиланням <b>%s</b>?
 ConfirmCancelSending=Ви впевнені, що хочете скасувати цю відправку?
 DocumentModelMerou=Модель Merou A5
 WarningNoQtyLeftToSend=Попередження, немає продуктів, які очікують на відправку.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Запланована дата доставки
 RefDeliveryReceipt=Довідкова квитанція про вручення
 StatusReceipt=Квитанція про вручення стану
 DateReceived=Дата отримання
-ClassifyReception=Класифікувати прийом
+ClassifyReception=Класифікувати Отримано
 SendShippingByEMail=Відправити відправлення електронною поштою
 SendShippingRef=Подання відправлення %s
 ActionsOnShipping=Події на відправленні
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Кількість товару з 
 NoProductToShipFoundIntoStock=На складі не знайдено жодного товару для відправлення <b> %s </b>. Виправте запас або поверніться, щоб вибрати інший склад.
 WeightVolShort=Вага/об.
 ValidateOrderFirstBeforeShipment=Ви повинні спочатку підтвердити замовлення, перш ніж мати можливість здійснювати відправлення.
+NoLineGoOnTabToAddSome=Немає рядка, перейдіть на вкладку "%s", щоб додати
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Сума ваг продукту
 # warehouse details
 DetailWarehouseNumber= Деталі складу
 DetailWarehouseFormat= W:%s (кількість: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Відображення останньої дати надходження на склад під час створення відправлення для серійного номера або партії
+CreationOptions=Доступні опції під час створення відправлення
+
+ShipmentDistribution=Розподіл вантажів
+
+ErrorTooManyCombinationBatchcode=Немає відправлення для рядка %s, оскільки було знайдено забагато комбінацій складу, продукту, коду партії (%s).
+ErrorNoCombinationBatchcode=Не вдалося зберегти рядок %s як комбінацію warehouse-product-lot/serial (%s, %s, %s) не знайдено в наявності.
+
+ErrorTooMuchShipped=Кількість, що поставляється, не повинна перевищувати кількість, замовлену для лінії %s

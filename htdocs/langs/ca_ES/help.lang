@@ -3,21 +3,21 @@ CommunitySupport=Assistència Forums i Wiki
 EMailSupport=Assistència E-Mail
 RemoteControlSupport=Suport en línia en temps real / remot
 OtherSupport=Altres tipus d'assistència
-ToSeeListOfAvailableRessources=Per contactar/veure els recursos disponibles:
+ToSeeListOfAvailableRessources=Per a contactar/veure els recursos disponibles:
 HelpCenter=Centre d'ajuda
 DolibarrHelpCenter=Centre d'Ajuda i Suport de Dolibarr
-ToGoBackToDolibarr=En cas contrari, <a href="%s"> fes clic aquí per continuar utilitzant Dolibarr </a>.
+ToGoBackToDolibarr=En cas contrari, <a href="%s">feu clic aquí per a continuar utilitzant Dolibarr</a>.
 TypeOfSupport=Tipus de suport
 TypeSupportCommunauty=Comunitari (gratuït)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tipus
-NeedHelpCenter=Necessites ajuda o suport?
+NeedHelpCenter=Necessites suport?
 Efficiency=Eficàcia
 TypeHelpOnly=Només ajuda
 TypeHelpDev=Ajuda+Desenvolupament
 TypeHelpDevForm=Ajuda+Desenvolupament+Formació
-BackToHelpCenter=En cas contrari, <a href="%s"> torna a la pàgina d'inici del Centre d'ajuda </a>.
-LinkToGoldMember=Pots trucar a un dels formadors preseleccionats per Dolibarr pel teu idioma (%s) fent clic al seu Panell (l'estat i el preu màxim s'actualitzen automàticament):
+BackToHelpCenter=En cas contrari, <a href="%s">torneu a la pàgina d'inici del Centre d'ajuda</a>.
+LinkToGoldMember=Podeu trucar a un dels formadors preseleccionats per Dolibarr per al vostre idioma (%s) fent clic al seu Giny (l'estat i el preu màxim s'actualitzen automàticament):
 PossibleLanguages=Idiomes disponibles
 SubscribeToFoundation=Ajuda al projecte Dolibarr, adhereix-te a l'associació
-SeeOfficalSupport=Per a obtenir suport oficial de Dolibarr en el vostre idioma: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>
+SeeOfficalSupport=Per a obtenir suport oficial de Dolibarr en el vostre idioma: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

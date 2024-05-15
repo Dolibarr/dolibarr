@@ -4,7 +4,7 @@ StripeDesc=Offri ai tuoi clienti una pagina di pagamento online per i pagamenti 
 StripeOrCBDoPayment=Paga con carta di credito o Stripe
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
 PaymentForm=Forma di pagamento
-WelcomeOnPaymentPage=Benvenuto sul nostro sistema di pagamento online
+WelcomeOnPaymentPage=Benvenuto sulla nostra piattaforma per i pagamenti online
 ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online per %s.
 ThisIsInformationOnPayment=Informazioni sul pagamento da effettuare
 ToComplete=Per completare
@@ -41,14 +41,15 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Importa pagamenti Stripe
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
 BankAccountForBankTransfer=Conto bancario per il pagamento dei fondi
 StripeAccount=Stripe account
-StripeChargeList=Lista delle spese Stripe
-StripeTransactionList=Lista delle transazioni Stripe
+StripeChargeList=Elenco addebiti Stripe
+StripeTransactionList=Elenco transazioni Stripe
 StripeCustomerId=ID Cliente Stripe
 StripePaymentModes=Tipo di pagamento Stripe
 LocalID=Local ID
@@ -61,11 +62,17 @@ DeleteACard=Elimina Carta
 ConfirmDeleteCard=Sei sicuro che vuoi cancellare questa Carta di Credito/Debito?
 CreateCustomerOnStripe=Crea cliente su Stripe
 CreateCardOnStripe=Crea carta su Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Visualizza su Stripe
 StripeUserAccountForActions=Conto utente da utilizzare per le notifiche e-mail di alcuni eventi Stripe (pagamenti Stripe)
-StripePayoutList=Elenco di pagamenti Stripe
+StripePayoutList=Elenco pagamenti Stripe
 ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Clicca qui per riprovare...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa delle forti regole di autenticazione del cliente, la creazione di una carta deve essere effettuata dal backoffice di Stripe. È possibile fare clic qui per attivare il record cliente Stripe: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

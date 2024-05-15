@@ -1,9 +1,0 @@
-ExpenseReportPayments=Expense report payments
-#
-# error
-#
-
-TaxUndefinedForThisCategory = Taxe undefined for this category
-ErrorRecordNotFound=Record not found
-errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorBadValueForParameter=Error bad value for parameter %s

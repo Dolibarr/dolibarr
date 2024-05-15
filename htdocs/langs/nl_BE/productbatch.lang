@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ProductStatusNotOnBatch=Nee (lot / serial niet gebruikt)
+Batch=Lot / Serienummer
+atleast1batchfield=Vervaldatum of uiterste verkoopdatum of Lot / Serienummer
+batch_number=Lot / Serienummer
+BatchNumberShort=Lot / Serienummer
+EatByDate=Vervaldatum
+DetailBatchNumber=Lot / Serienummer informatie
+printBatch=Lot / Ser: %s
+printEatby=Verval: %s
+printSellby=Verkoop: %s

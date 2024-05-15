@@ -11,7 +11,7 @@ TypeOfSupport=Вид поддръжка
 TypeSupportCommunauty=Общностна (безплатна)
 TypeSupportCommercial=Комерсиална
 TypeOfHelp=Вид
-NeedHelpCenter=Нуждаете се от помощ или поддръжка?
+NeedHelpCenter=Need support?
 Efficiency=Ефективност
 TypeHelpOnly=Само помощ
 TypeHelpDev=Помощ + разработка
@@ -20,4 +20,4 @@ BackToHelpCenter=В противен случай <a href="%s">се върнет
 LinkToGoldMember=Може да се обадите на някой от обучаващите, предварително посочени от Dolibarr за вашия език (%s), като кликнете върху тяхната джаджа (статуса и максималната цена са автоматично актуализирани):
 PossibleLanguages=Поддържани езици
 SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията.
-SeeOfficalSupport=За официална поддръжка на Dolibarr на вашия език: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

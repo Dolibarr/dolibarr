@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
@@ -9,11 +11,10 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Version {
-
+class Version
+{
     /**
-     * Full version number
+     * Full version number.
      */
-    const VERSION = '3.2.2';
-
+    const VERSION = '4.6.0';
 }

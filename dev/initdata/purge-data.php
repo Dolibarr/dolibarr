@@ -148,8 +148,8 @@ $sqls=array(
 		"DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
 	),
 	'project'=>array(
-		// TODO set fk_project to null on object that refer to project
-		"DELETE FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_task IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
+		// TODO set fk_project to null on all objects/tables that refer to project
+		"DELETE FROM ".MAIN_DB_PREFIX."element_time WHERE elementtype = 'task' AND fk_element IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__')",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'",
 	),
@@ -218,7 +218,7 @@ if ($date == 'all') {
 }
 
 // Replace database handler
-if (! empty($argv[4])) {
+if (!empty($argv[4])) {
 	$db->close();
 	unset($db);
 	$db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);

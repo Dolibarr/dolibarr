@@ -1,11 +1,35 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
-} ?>
+<?php
+/*
+/* Copyright (C) 2004-2017	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/theme/eldy/global.inc.php
+ *		\brief      File for CSS style sheet Eldy
+ */
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by stylesheet');
+}
+?>
 /* <style type="text/css" > */
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -22,113 +46,6 @@ div.mainmenu.menu {
 	background-image: none;
 }
 
-div.mainmenu.menu::before {
-	content: "\f0c9";
-}
-
-
-div.mainmenu.home::before{
-	content: "\f015";
-}
-
-div.mainmenu.billing::before {
-	content: "\f51e";
-}
-
-div.mainmenu.accountancy::before {
-	/* content: "\f53d"; */
-	content: "\f688";
-	font-size: 1.2em;
-}
-
-div.mainmenu.agenda::before {
-	content: "\f073";
-}
-
-div.mainmenu.bank::before {
-	content: "\f19c";
-}
-
-<?php if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) { ?>
-/* TESTING USAGE OF SVG WITHOUT FONT */
-div.mainmenu.cashdesk {
-	line-height: 26px;
-}
-
-div.mainmenu.cashdesk .tmenuimage {
-	line-height: 26px;
-	display: inline-block;
-	vertical-align: middle;
-	height: <?php echo $topMenuFontSize; ?>;
-	background-color: #<?php echo $colortextbackhmenu; ?>;
-	width: 100%;
-	-webkit-mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%; /* for old webkit browser */
-	mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%;
-}
-
-<?php } else { ?>
-div.mainmenu.cashdesk::before {
-	content: "\f788";
-}
-
-<?php } ?>
-
-
-div.mainmenu.takepos::before {
-	content: "\f788";
-}
-
-div.mainmenu.companies::before {
-	content: "\f1ad";
-}
-
-div.mainmenu.commercial::before {
-	content: "\f0f2";
-}
-
-div.mainmenu.ecm::before {
-	content: "\f07c";
-}
-
-div.mainmenu.externalsite::before {
-	content: "\f360";
-}
-
-div.mainmenu.ftp::before {
-	content: "\f362";
-}
-
-div.mainmenu.hrm::before {
-	content: "\f508";
-}
-
-div.mainmenu.members::before {
-	content: "\f007";
-}
-
-div.mainmenu.products::before {
-	content: "\f1b2";
-}
-
-div.mainmenu.mrp::before {
-	content: "\f1b3";
-}
-
-div.mainmenu.project::before {
-	content: "\f542";
-}
-
-div.mainmenu.ticket::before {
-	content: "\f3ff";
-}
-
-div.mainmenu.tools::before {
-	content: "\f0ad";
-}
-
-div.mainmenu.website::before {
-	content: "\f57d";
-}
 
 div.mainmenu.generic1::before {
 	content: "\f249";
@@ -198,7 +115,15 @@ div.mainmenu.generic4::before {
 	border-bottom: solid 60px currentColor;
 	margin-left: 30px;
 }
-
+.tmenu span.fas, .tmenu span.far {
+	<?php
+	if (!getDolGlobalString('THEME_MENU_COLORLOGO')) {
+		echo "color: unset !important;";
+	}
+	?>;
+	line-height: 28px;
+	text-align: center;
+}
 
 .em092 {
 	font-size: 0.92em;

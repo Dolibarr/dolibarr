@@ -21,39 +21,28 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_departements dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
+
 /**
  *  Class to manage dictionary States (used by imports)
  */
-class Cstate // extends CommonObject
+class Cstate extends CommonDict
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var int         The ID of the state
 	 */
-	public $db;
+	public $rowid;
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string      The code of the state
+	 *                  (ex: LU0011, MA12, 07, 0801, etc.)
 	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	//var $element='cstate';			//!< Id that identify managed objects
-	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
 	public $code_departement;
-	public $code;
 
 	/**
-	 * @var string name
+	 * @var string      The name of the state
 	 */
 	public $name = '';
 
@@ -64,17 +53,11 @@ class Cstate // extends CommonObject
 	 */
 	public $nom = '';
 
-	public $label;
-
-	public $active;
-
-
-
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -87,7 +70,7 @@ class Cstate // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -101,7 +84,7 @@ class Cstate // extends CommonObject
 			$this->nom = trim($this->nom);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -117,7 +100,7 @@ class Cstate // extends CommonObject
 		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
 		$sql .= " ".(!isset($this->code_departement) ? 'NULL' : "'".$this->db->escape($this->code_departement)."'").",";
 		$sql .= " ".(!isset($this->nom) ? 'NULL' : "'".$this->db->escape($this->nom)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -151,9 +134,9 @@ class Cstate // extends CommonObject
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param      int		$id    	Id object
-	 *  @param		string	$code	Code
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @param      int		$id    	State ID
+	 *  @param		string	$code	State code
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
@@ -195,35 +178,35 @@ class Cstate // extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param      User	$user        User that modify
+	 *  @param      User	$user        User who updates
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 		if (isset($this->code_departement)) {
 			$this->code_departement = trim($this->code_departement);
 		}
-		if (isset($this->nom)) {
-			$this->nom = trim($this->nom);
+		if (isset($this->name)) {
+			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
-
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (empty($this->name) && !empty($this->nom)) {
+			$this->name = $this->nom;
+		}
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."c_departements SET";
 		$sql .= " code_departement=".(isset($this->code_departement) ? "'".$this->db->escape($this->code_departement)."'" : "null").",";
-		$sql .= " nom=".(isset($this->nom) ? "'".$this->db->escape($this->nom)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " nom=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "null").",";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -254,11 +237,10 @@ class Cstate // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_departements";
@@ -285,5 +267,21 @@ class Cstate // extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 *  Return a link to the object card (with optionally the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to ('nolink', ...)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $langs;
+		return $langs->trans($this->name);
 	}
 }

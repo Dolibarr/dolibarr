@@ -6,6 +6,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
+session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
 pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
@@ -322,7 +323,6 @@ if (!empty($force_install_noedit)) {
 					}
 
 					// Version min of database
-					$versionbasemin = explode('.', $class::VERSIONMIN);
 					$note = '('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 					// Switch to mysql if mysqli is not present
@@ -332,22 +332,28 @@ if (!empty($force_install_noedit)) {
 
 					// Show line into list
 					if ($type == 'mysql') {
-						$testfunction = 'mysql_connect'; $testclass = '';
+						$testfunction = 'mysql_connect';
+						$testclass = '';
 					}
 					if ($type == 'mysqli') {
-						$testfunction = 'mysqli_connect'; $testclass = '';
+						$testfunction = 'mysqli_connect';
+						$testclass = '';
 					}
 					if ($type == 'pgsql') {
-						$testfunction = 'pg_connect'; $testclass = '';
+						$testfunction = 'pg_connect';
+						$testclass = '';
 					}
 					if ($type == 'mssql') {
-						$testfunction = 'mssql_connect'; $testclass = '';
+						$testfunction = 'mssql_connect';
+						$testclass = '';
 					}
 					if ($type == 'sqlite') {
-						$testfunction = ''; $testclass = 'PDO';
+						$testfunction = '';
+						$testclass = 'PDO';
 					}
 					if ($type == 'sqlite3') {
-						$testfunction = ''; $testclass = 'SQLite3';
+						$testfunction = '';
+						$testclass = 'SQLite3';
 					}
 					$option .= '<option value="'.$type.'"'.($defaultype == $type ? ' selected' : '');
 					if ($testfunction && !function_exists($testfunction)) {
@@ -399,7 +405,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text"
 				   id="db_host"
 				   name="db_host"
-				   value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
+				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
 					print ' disabled';
 				} ?>
@@ -448,6 +454,7 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_database"
 				   name="db_create_database"
+				   value="on"
 				<?php
 				$checked = 0;
 				if ($force_install_createdatabase) {
@@ -482,11 +489,12 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password" class="text-security";
+			<input type="password" class="text-security"
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
 					// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
+					// @phan-suppress-next-line PhanParamSuspiciousOrder
 					$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
 					if (!empty($dolibarr_main_prod) && empty($_SESSION['dol_save_pass'])) {    // So value can't be found if install page still accessible
 						$autofill = '';
@@ -507,6 +515,7 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_user"
 				   name="db_create_user"
+				   value="on"
 				<?php
 				$checked = 0;
 				if (!empty($force_install_createuser)) {
@@ -569,14 +578,15 @@ if (!empty($force_install_noedit)) {
 				   class="needroot text-security"
 				   value="<?php
 					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
+					// @phan-suppress-next-line PhanParamSuspiciousOrder
 					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
 					if (!empty($dolibarr_main_prod)) {
 						$autofill = '';
 					}
 					// Do not autofill password if instance is a production instance
 					if (!empty($_SERVER["SERVER_NAME"]) && !in_array(
-						$_SERVER["SERVER_NAME"],
-						array('127.0.0.1', 'localhost', 'localhostgit')
+					$_SERVER["SERVER_NAME"],
+					array('127.0.0.1', 'localhost', 'localhostgit')
 					)
 					) {
 						$autofill = '';
@@ -596,49 +606,12 @@ if (!empty($force_install_noedit)) {
 </div>
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
-
-	var dbtype = jQuery("#db_type");
-
-	dbtype.change(function () {
-		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
-			jQuery(".hidesqlite").hide();
-		} else {
-			jQuery(".hidesqlite").show();
-		}
-
-		// Automatically set default database ports and admin user
-		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
-			jQuery("#db_port").val(3306);
-			jQuery("#db_user_root").val('root');
-		} else if (dbtype.val() == 'pgsql') {
-			jQuery("#db_port").val(5432);
-			jQuery("#db_user_root").val('postgres');
-		} else if (dbtype.val() == 'mssql') {
-			jQuery("#db_port").val(1433);
-			jQuery("#db_user_root").val('sa');
-		}
-
-	});
-
-	init_needroot();
-	jQuery("#db_create_database").click(function() {
-		console.log("click on db_create_database");
-		init_needroot();
-	});
-	jQuery("#db_create_user").click(function() {
-		console.log("click on db_create_user");
-		init_needroot();
-	});
-	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
-	jQuery("#db_pass").focus();
-	<?php } ?>
-});
-
 function init_needroot()
 {
 	console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
-	/*alert(jQuery("#db_create_database").prop("checked")); */
+	console.log(jQuery("#db_create_database").is(":checked"));
+	console.log(jQuery("#db_create_user").is(":checked"));
+
 	if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 	{
 		console.log("init_needroot show root section");
@@ -665,7 +638,7 @@ function jscheckparam()
 {
 	console.log("Click on jscheckparam");
 
-	ok=true;
+	var ok = true;
 
 	if (document.forminstall.main_dir.value == '')
 	{
@@ -695,7 +668,7 @@ function jscheckparam()
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
@@ -714,12 +687,53 @@ function jscheckparam()
 
 	return ok;
 }
+
+
+jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to see if the init_needroot work better after a back
+
+	var dbtype = jQuery("#db_type");
+
+	dbtype.change(function () {
+		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
+			jQuery(".hidesqlite").hide();
+		} else {
+			jQuery(".hidesqlite").show();
+		}
+
+		// Automatically set default database ports and admin user
+		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
+			jQuery("#db_port").val(3306);
+			jQuery("#db_user_root").val('root');
+		} else if (dbtype.val() == 'pgsql') {
+			jQuery("#db_port").val(5432);
+			jQuery("#db_user_root").val('postgres');
+		} else if (dbtype.val() == 'mssql') {
+			jQuery("#db_port").val(1433);
+			jQuery("#db_user_root").val('sa');
+		}
+
+	});
+
+	jQuery("#db_create_database").click(function() {
+		console.log("click on db_create_database");
+		init_needroot();
+	});
+	jQuery("#db_create_user").click(function() {
+		console.log("click on db_create_user");
+		init_needroot();
+	});
+	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
+	jQuery("#db_pass").focus();
+	<?php } ?>
+
+	init_needroot();
+});
 </script>
 
 
 <?php
 
-// $db->close();	Not database connexion yet
+// $db->close();	Not database connection yet
 
 dolibarr_install_syslog("- fileconf: end");
 pFooter($err, $setuplang, 'jscheckparam');

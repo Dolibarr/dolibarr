@@ -1,0 +1,18 @@
+meta {
+  name: Get properties of a product object by id --
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/products/{id}
+  body: none
+  auth: none
+}
+
+query {
+  ~includestockdata:
+  ~includesubproducts:
+  ~includeparentid:
+  ~includetrans:
+}

@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Bir Bilgi Yönetimi (BY) veya Yardım-Masası taba
 # Admin page
 #
 KnowledgeManagementSetup = Bilgi Yönetim Sistemi Kurulumu
-Settings = Ayarlar
 KnowledgeManagementSetupPage = Bilgi Yönetim Sistemi Kurulum Sayfası
 
 
 #
 # About page
 #
-About = Hakkında
 KnowledgeManagementAbout = About Knowledge Management
 KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution
@@ -46,9 +45,15 @@ KnowledgeRecords = Articles
 KnowledgeRecord = Mal
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

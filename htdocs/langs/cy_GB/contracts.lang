@@ -2,7 +2,7 @@
 ContractsArea=Maes contractau
 ListOfContracts=Rhestr o gontractau
 AllContracts=Pob contract
-ContractCard=Cerdyn contract
+ContractCard=Contract
 ContractStatusNotRunning=Ddim yn rhedeg
 ContractStatusDraft=Drafft
 ContractStatusValidated=Wedi'i ddilysu
@@ -80,7 +80,7 @@ ConfirmDeleteContractLine=Ydych chi'n siŵr eich bod am ddileu'r llinell gontrac
 MoveToAnotherContract=Symud gwasanaeth i gontract arall.
 ConfirmMoveToAnotherContract=Dewisais gontract targed newydd a chadarnhaf fy mod am symud y gwasanaeth hwn i'r contract hwn.
 ConfirmMoveToAnotherContractQuestion=Dewiswch i ba gontract presennol (o'r un trydydd parti), rydych chi am symud y gwasanaeth hwn iddo?
-PaymentRenewContractId=Adnewyddu'r llinell gontract (rhif %s)
+PaymentRenewContractId=Renew contract %s (service %s)
 ExpiredSince=Dyddiad dod i ben
 NoExpiredServices=Dim gwasanaethau gweithredol wedi dod i ben
 ListOfServicesToExpireWithDuration=Rhestr o Wasanaethau i ddod i ben mewn %s diwrnod

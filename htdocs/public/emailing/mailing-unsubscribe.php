@@ -23,7 +23,7 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
- *      \brief      Script use to update unsubcribe status of an email
+ *      \brief      Script use to update unsubscribe status of an email
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
@@ -45,25 +45,15 @@ if (!defined('NOIPCHECK')) {
 if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
-
-/**
- * Header empty
- *
- * @return	void
- */
-function llxHeader()
-{
+if (! defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
 }
-/**
- * Footer empty
- *
- * @return	void
- */
-function llxFooter()
-{
+if (! defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -73,7 +63,7 @@ $langs->loadLangs(array("main", "mails"));
 
 $mtid = GETPOST('mtid');
 $email = GETPOST('email');
-$tag = GETPOST('tag');
+$tag = GETPOST('tag');	// To retrieve the emailing, and recipient
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
 
@@ -82,106 +72,101 @@ $securitykey = GETPOST('securitykey');
  * Actions
  */
 
-dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
+dol_syslog("public/emailing/mailing-unsubscribe.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
 
-
-if (!empty($tag) && ($unsuscrib == '1')) {
-	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
-
-	$sql = "SELECT mc.rowid, mc.email, mc.statut, m.entity";
-	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
-
-	$obj = $db->fetch_object($resql);
-
-	if (empty($obj)) {
-		print 'Email target not valid. Operation canceled.';
-		exit;
-	}
-	if (empty($obj->email)) {
-		print 'Email target not valid. Operation canceled.';
-		exit;
-	}
-	if ($obj->statut == 3) {
-		print 'Email target already set to unsubscribe. Operation canceled.';
-		exit;
-	}
-	// TODO Test that mtid and email match also with the one found from $tag
-	/*
-	if ($obj->email != $email)
-	{
-		print 'Email does not match tagnot found. No need to unsubscribe.';
-		exit;
-	}
-	*/
-
-	// Update status of mail in recipient mailing list table
-	$statut = '3';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE tag = '".$db->escape($tag)."'";
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
-
-	/*
-	// Update status communication of thirdparty prospect (old usage)
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
-
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
-
-	// Update status communication of contact prospect (old usage)
-	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
-
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
-	*/
-
-	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
-
-	$resql = $db->query($sql);
-	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
-
-
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	// Security options
-	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	print "\n";
-	print "<html>\n";
-	print "<head>\n";
-	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,emailing">'."\n";
-	print '<meta name="description" content="Dolibarr EMailing unsubcribe page">'."\n";
-	print "<title>".$langs->trans("MailUnsubcribe")."</title>\n";
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
-	print '<style type="text/css">';
-	print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-	print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-	print '</style>';
-
-	print "</head>\n";
-	print '<body style="margin: 20px;">'."\n";
-	print '<table><tr><td style="text_align:center;">';
-	print $langs->trans("YourMailUnsubcribeOK", $obj->email)."<br>\n";
-	print '</td></tr></table>';
-	print "</body>\n";
-	print "</html>\n";
+if (empty($tag) || ($unsuscrib != '1')) {
+	print 'Bad parameters';
+	exit;
 }
+
+
+/*
+ * View
+ */
+
+$head = '';
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+
+llxHeader($head, $langs->trans("MailUnsubcribe"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+
+dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
+
+$sql = "SELECT mc.rowid, mc.email, mc.statut, m.entity";
+$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag = '".$db->escape($tag)."'";
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+}
+
+$obj = $db->fetch_object($resql);
+
+if (empty($obj)) {
+	print 'Emailing tag '.$tag.' not found in database. Operation canceled.';
+	llxFooter('', 'private');
+	exit;
+}
+if (empty($obj->email)) {
+	print 'Email for this tag is not valid. Operation canceled.';
+	llxFooter('', 'private');
+	exit;
+}
+
+if ($obj->statut == 3) {
+	print 'Email tag already set to unsubscribe. Operation canceled.';
+	llxFooter('', 'private');
+	exit;
+}
+// TODO Test that mtid and email match also with the one found from $tag
+/*
+if ($obj->email != $email)
+{
+	print 'Email does not match tagnot found. No need to unsubscribe.';
+	exit;
+}
+*/
+
+// Update status of mail in recipient mailing list table
+$statut = '3';
+$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE tag = '".$db->escape($tag)."'";
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+}
+
+/*
+// Update status communication of thirdparty prospect (old usage)
+$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
+
+$resql=$db->query($sql);
+if (! $resql) dol_print_error($db);
+
+// Update status communication of contact prospect (old usage)
+$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
+
+$resql=$db->query($sql);
+if (! $resql) dol_print_error($db);
+*/
+
+// Update status communication of email (new usage)
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
+
+$resql = $db->query($sql);
+//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
+
+
+print '<table><tr><td style="text_align:center;">';
+print $langs->trans("YourMailUnsubcribeOK", $obj->email)."<br>\n";
+print '</td></tr></table>';
+
+
+llxFooter('', 'public');
 
 $db->close();

@@ -24,6 +24,7 @@
  *		\brief      Home page for cheque receipts
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -31,119 +32,169 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
+$checkdepositstatic = new RemiseCheque($db);
+$accountstatic = new Account($db);
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'banque', '', '');
 
+$usercancreate = $user->hasRight('banque', 'cheque');
 
-$checkdepositstatic = new RemiseCheque($db);
-$accountstatic = new Account($db);
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("ChequesArea"));
+if (getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ') == 'CHQ') {
+	$title = $langs->trans("ChequesArea");
+} else {
+	$title = $langs->trans("DocumentsDepositArea");
+}
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', $checkdepositstatic->picto);
+llxHeader('', $title);
+
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
+}
+
+print load_fiche_titre($title, $newcardbutton, $checkdepositstatic->picto);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-$sql = "SELECT count(b.rowid)";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= " WHERE ba.rowid = b.fk_account";
-$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-$sql .= " AND b.fk_type = 'CHQ'";
-$sql .= " AND b.fk_bordereau = 0";
-$sql .= " AND b.amount > 0";
-
-$resql = $db->query($sql);
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
+print '<th colspan="2">'.$langs->trans("DocumentsForDeposit")."</th>\n";
 print "</tr>\n";
 
-if ($resql) {
-	if ($row = $db->fetch_row($resql)) {
-		$num = $row[0];
+foreach ($arrayofpaymentmodetomanage as $val) {
+	$sql = "SELECT count(b.rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql .= " WHERE ba.rowid = b.fk_account";
+	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+	$sql .= " AND b.fk_type = '".$db->escape($val)."'";
+	$sql .= " AND b.fk_bordereau = 0";
+	$sql .= " AND b.amount > 0";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = '';
+		if ($obj = $db->fetch_object($resql)) {
+			$num = $obj->nb;
+		}
+		print '<tr class="oddeven">';
+		print '<td>';
+		if ($val == 'CHQ') {
+			print $langs->trans("BankChecks");
+		} else {
+			print($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
+		}
+		print '</td>';
+		print '<td class="right">';
+		print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new&type='.urlencode($val).'">'.dol_escape_htmltag($num).'</a>';
+		print '</td></tr>';
+	} else {
+		dol_print_error($db);
 	}
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-	print '<td class="right">';
-	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-	print '</td></tr>';
-	print "</table>\n";
-} else {
-	dol_print_error($db);
 }
+
+print "</table></div>\n";
 
 
 print '</div><div class="fichetwothirdright">';
 
 $max = 10;
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
-$sql .= " bc.statut, bc.nbcheque,";
-$sql .= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
-$sql .= " aj.code";
-$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
-$sql .= " WHERE ba.rowid = bc.fk_bank_account";
-$sql .= " AND bc.entity = ".$conf->entity;
-$sql .= " ORDER BY bc.date_bordereau DESC, rowid DESC";
-$sql .= $db->plimit($max);
+foreach ($arrayofpaymentmodetomanage as $val) {
+	$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
+	$sql .= " bc.statut as status, bc.nbcheque, bc.type,";
+	$sql .= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+	$sql .= " aj.code";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
+	$sql .= " WHERE ba.rowid = bc.fk_bank_account";
+	$sql .= " AND bc.entity = ".((int) $conf->entity);
+	$sql .= " AND bc.type = '".$db->escape($val)."'";
+	$sql .= " ORDER BY bc.date_bordereau DESC, rowid DESC";
+	$sql .= $db->plimit($max);
 
-$resql = $db->query($sql);
-if ($resql) {
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
-	print '<th>'.$langs->trans("Date")."</th>";
-	print '<th>'.$langs->trans("Account").'</th>';
-	print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
-	print '<th class="right">'.$langs->trans("Amount").'</th>';
-	print '<th class="right">'.$langs->trans("Status").'</th>';
-	print "</tr>\n";
+	$resql = $db->query($sql);
+	if ($resql) {
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th>';
+		if ($val == 'CHQ') {
+			print $langs->trans("LastCheckReceiptShort", $max);
+		} else {
+			$labelpaymentmode = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+			print $langs->trans("LastPaymentForDepositShort", $max, $labelpaymentmode);
+		}
+		print '</th>';
+		print '<th>'.$langs->trans("Date")."</th>";
+		print '<th>'.$langs->trans("BankAccount").'</th>';
+		print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
+		print '<th class="right">'.$langs->trans("Amount").'</th>';
+		print '<th class="right">'.$langs->trans("Status").'</th>';
+		print "</tr>\n";
 
-	while ($objp = $db->fetch_object($resql)) {
-		$checkdepositstatic->id = $objp->rowid;
-		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-		$checkdepositstatic->statut = $objp->statut;
+		$i = 0;
+		while ($objp = $db->fetch_object($resql)) {
+			$i++;
 
-		$accountstatic->id = $objp->bid;
-		$accountstatic->ref = $objp->bref;
-		$accountstatic->label = $objp->label;
-		$accountstatic->number = $objp->number;
-		$accountstatic->currency_code = $objp->currency_code;
-		$accountstatic->account_number = $objp->account_number;
-		$accountstatic->accountancy_journal = $objp->code;
-		$accountstatic->fk_accountancy_journal = $objp->fk_accountancy_journal;
+			$checkdepositstatic->id = $objp->rowid;
+			$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+			$checkdepositstatic->statut = $objp->status;
+			$checkdepositstatic->status = $objp->status;
 
-		print '<tr class="oddeven">'."\n";
+			$accountstatic->id = $objp->bid;
+			$accountstatic->ref = $objp->bref;
+			$accountstatic->label = $objp->label;
+			$accountstatic->number = $objp->number;
+			$accountstatic->currency_code = $objp->currency_code;
+			$accountstatic->account_number = $objp->account_number;
+			$accountstatic->accountancy_journal = $objp->code;
+			$accountstatic->fk_accountancy_journal = $objp->fk_accountancy_journal;
 
-		print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
-		print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
-		print '<td class="right">'.$objp->nbcheque.'</td>';
-		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
+			print '<tr class="oddeven">'."\n";
 
-		print '</tr>';
+			print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
+			print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
+			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
+			print '<td class="right">'.dol_escape_htmltag($objp->nbcheque).'</td>';
+			print '<td class="right"><span class="amount nowraponall">'.price($objp->amount).'</span></td>';
+			print '<td class="right">'.$checkdepositstatic->LibStatut($objp->status, 3).'</td>';
+
+			print '</tr>';
+		}
+		if ($i == 0) {
+			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		}
+
+		print "</table>";
+		print '</div>';
+
+		$db->free($resql);
+	} else {
+		dol_print_error($db);
 	}
-	print "</table>";
-	print '</div>';
-
-	$db->free($resql);
-} else {
-	dol_print_error($db);
 }
-
 
 print '</div></div>';
 

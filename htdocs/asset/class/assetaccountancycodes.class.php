@@ -47,7 +47,7 @@ class AssetAccountancyCodes extends CommonObject
 				'receivable_on_assignment' => array('label' => 'AssetAccountancyCodeReceivableOnAssignment'),
 				'proceeds_from_sales' => array('label' => 'AssetAccountancyCodeProceedsFromSales'),
 				'vat_collected' => array('label' => 'AssetAccountancyCodeVatCollected'),
-				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible'),
+				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible','column_break' => true),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -71,7 +71,7 @@ class AssetAccountancyCodes extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -90,10 +90,13 @@ class AssetAccountancyCodes extends CommonObject
 			$this->accountancy_codes[$mode_key] = array();
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				$accountancy_code = GETPOST($mode_key . '_' . $field_key, 'aZ09');
-				if (empty($accountancy_code) || $accountancy_code == '-1') $accountancy_code = '';
+				if (empty($accountancy_code) || $accountancy_code == '-1') {
+					$accountancy_code = '';
+				}
 				$this->accountancy_codes[$mode_key][$field_key] = $accountancy_code;
 			}
 		}
+		return $this->accountancy_codes;
 	}
 
 	/**
@@ -101,7 +104,7 @@ class AssetAccountancyCodes extends CommonObject
 	 *
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAccountancyCodes($asset_id = 0, $asset_model_id = 0)
 	{
@@ -115,11 +118,6 @@ class AssetAccountancyCodes extends CommonObject
 		// Clean parameters
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
-
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$hookmanager->initHooks(array('assetaccountancycodesdao'));
 		$parameters = array('asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);
@@ -174,12 +172,12 @@ class AssetAccountancyCodes extends CommonObject
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
 	 * @param	int		$notrigger			1=disable trigger UPDATE (when called by create)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAccountancyCodes($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
 		global $langs, $hookmanager;
-		dol_syslog(__METHOD__ . " user_id={$user->id}, asset_id=$asset_id, asset_model_id=$asset_model_id, notrigger=$notrigger");
+		dol_syslog(__METHOD__ . " user_id=".$user->id.", asset_id=".$asset_id.", asset_model_id=".$asset_model_id.", notrigger=".$notrigger);
 
 		$error = 0;
 		$this->errors = array();
@@ -187,11 +185,6 @@ class AssetAccountancyCodes extends CommonObject
 		// Clean parameters
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
-
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$hookmanager->initHooks(array('assetaccountancycodesdao'));
 		$parameters = array('user' => $user, 'asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);
@@ -251,7 +244,9 @@ class AssetAccountancyCodes extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 			$asset = new Asset($this->db);
 			$result = $asset->fetch($asset_id);
-			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result > 0) {
+				$result = $asset->calculationDepreciation();
+			}
 			if ($result < 0) {
 				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
 				$this->errors[] = $asset->errorsToString();

@@ -16,77 +16,82 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Menaxhimi i partneritetit
+PartnershipDescription=Moduli i Menaxhimit të Partneritetit
+PartnershipDescriptionLong= Moduli i Menaxhimit të Partneritetit
+Partnership=Partneriteti
+Partnerships=Partneritetet
+AddPartnership=Shto partneritet
+CancelPartnershipForExpiredMembers=Partneriteti: Anuloni partneritetin e anëtarëve me abonime të skaduara
+PartnershipCheckBacklink=Partneriteti: Kontrolloni lidhjen referuese
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Partneritet i Ri
+NewPartnershipbyWeb=Kërkesa juaj për partneritet është shtuar me sukses. Mund t'ju kontaktojmë së shpejti...
+ListOfPartnerships=Lista e partneritetit
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Konfigurimi i partneritetit
+PartnershipAbout=Rreth Partneritetit
+PartnershipAboutPage=Partneriteti rreth faqes
+partnershipforthirdpartyormember=Statusi i partnerit duhet të vendoset në një "palë të tretë" ose një "anëtar"
+PARTNERSHIP_IS_MANAGED_FOR=Partneriteti i menaxhuar për
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks për të kontrolluar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ditë përpara anulimit të statusit të një partneriteti kur një abonim ka skaduar
+ReferingWebsiteCheck=Kontrolli i referencës së faqes në internet
+ReferingWebsiteCheckDesc=Mund të aktivizoni një veçori për të kontrolluar nëse partnerët tuaj kanë shtuar një lidhje prapa në domenet e faqes suaj të internetit në faqen e tyre të internetit.
+PublicFormRegistrationPartnerDesc=Dolibarr mund t'ju ofrojë një URL/faqe të internetit publike për të lejuar vizitorët e jashtëm të kërkojnë të jenë pjesë e programit të partneritetit.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=Fshi një partneritet
+PartnershipDedicatedToThisThirdParty=Partneritet kushtuar kësaj pale të tretë
+PartnershipDedicatedToThisMember=Partneritet kushtuar këtij anëtari
+DatePartnershipStart=Data e fillimit
+DatePartnershipEnd=Data e përfundimit
+ReasonDecline=Refuzoni arsyen
+ReasonDeclineOrCancel=Arsyeja e refuzimit ose anulimit
+PartnershipAlreadyExist=Partneriteti tashmë ekziston
+ManagePartnership=Menaxhoni partneritetin
+BacklinkNotFoundOnPartnerWebsite=Lidhja e pasme nuk u gjet në faqen e internetit të partnerit
+ConfirmClosePartnershipAsk=Je i sigurt që dëshiron ta anulosh këtë partneritet?
+PartnershipType=Lloji i partneritetit
+PartnershipRefApproved=Partneriteti %s u miratua
+KeywordToCheckInWebsite=Nëse dëshironi të kontrolloni nëse një fjalë kyçe e dhënë është e pranishme në faqen e internetit të secilit partner, përcaktoni këtë fjalë kyçe këtu
+PartnershipDraft=Draft
+PartnershipAccepted=Pranuar
+PartnershipRefused=Refuzuar
+PartnershipCanceled=Anulluar
+PartnershipManagedFor=Partnerët janë
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Partneriteti do të anulohet së shpejti
+SendingEmailOnPartnershipRefused=Partneriteti refuzoi
+SendingEmailOnPartnershipAccepted=Partneriteti i pranuar
+SendingEmailOnPartnershipCanceled=Partneriteti u anulua
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Partneriteti do të anulohet së shpejti
+YourPartnershipRefusedTopic=Partneriteti refuzoi
+YourPartnershipAcceptedTopic=Partneriteti i pranuar
+YourPartnershipCanceledTopic=Partneriteti u anulua
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Dëshirojmë t'ju informojmë se partneriteti ynë së shpejti do të anulohet (nuk kemi marrë rinovim ose një parakusht për partneritetin tonë nuk është përmbushur). Ju lutemi na kontaktoni nëse e keni marrë këtë për shkak të një gabimi.
+YourPartnershipRefusedContent=Ne dëshirojmë t'ju informojmë se kërkesa juaj për partneritet është refuzuar. Nuk janë plotësuar kushtet paraprake. Ju lutemi na kontaktoni nëse keni nevojë për më shumë informacion.
+YourPartnershipAcceptedContent=Ju informojmë se kërkesa juaj për partneritet është pranuar.
+YourPartnershipCanceledContent=Ju informojmë se partneriteti ynë është anuluar. Ju lutemi na kontaktoni nëse keni nevojë për më shumë informacion.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Numri i gabimeve për kontrollin e fundit të URL-së
+LastCheckBacklink=Data e kontrollit të fundit të URL-së
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refuzuar
-PartnershipCanceled=Anulluar
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Kërkesë e re për partneritet
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Kjo faqe duhet të përmbajë të paktën një lidhje me një nga domenet e mëposhtme: %s
+
+IPOfApplicant=IP e aplikantit

@@ -6,6 +6,7 @@ TotalMargin=إجمالي الهامش
 MarginOnProducts=الهامش / المنتجات
 MarginOnServices=الهامش / الخدمات
 MarginRate=معدل الهامش
+ModifyMarginRates=تعديل معدلات الهامش
 MarkRate=معدل العلامة
 DisplayMarginRates=معدلات هامش العرض
 DisplayMarkRates=معدلات علامة العرض
@@ -22,7 +23,7 @@ ProductService=المنتج أو الخدمة
 AllProducts=جميع المنتجات والخدمات
 ChooseProduct/Service=اختيار المنتج أو الخدمة
 ForceBuyingPriceIfNull=فرض سعر  شراء / تكلفة إلى سعر البيع إذا لم يتم تحديدها
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=إذا لم يتم توفير سعر الشراء / التكلفة عند إضافة سطر جديد ، وكان هذا الخيار "تشغيل" ، فسيكون الهامش 0%% في السطر الجديد (سعر الشراء / سعر التكلفة = سعر البيع). إذا كان هذا الخيار "إيقاف التشغيل" (مستحسن) ، فسيكون الهامش مساويًا للقيمة المقترحة افتراضيًا (وقد يكون 100%% إذا لم يتم العثور على قيمة افتراضية).
 MARGIN_METHODE_FOR_DISCOUNT=طريقة الهامش للخصومات العالمية
 UseDiscountAsProduct=كمنتج
 UseDiscountAsService=كخدمة
@@ -32,14 +33,14 @@ MARGIN_TYPE=سعر الشراء / التكلفة المقترحة افتراضي
 MargeType1=الهامش على سعر المورد الافضل
 MargeType2=الهامش على متوسط ​​السعر المرجح (واب)
 MargeType3=هامش على سعر التكلفة
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* الهامش على أفضل سعر شراء = سعر البيع - أفضل سعر للبائع المحدد في بطاقة المنتج <br> * الهامش على متوسط السعر المرجح (WAP) = سعر البيع - متوسط السعر المرجح للمنتج (WAP) أو أفضل سعر للبائع إذا لم يتم تحديد WAP بعد <br> * الهامش بسعر التكلفة = سعر البيع - سعر التكلفة المحدد على بطاقة المنتج أو WAP إذا لم يتم تحديد سعر التكلفة ، أو أفضل سعر للبائع إذا لم يتم تحديد WAP بعد
 CostPrice=سعر الكلفة
 UnitCharges=رسوم الوحدة
 Charges=الرسوم
 AgentContactType=نوع اتصال الوكيل التجاري 
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=حدد نوع جهة الاتصال (المرتبط بالفواتير) الذي سيتم استخدامه لتقرير الهامش لكل جهة اتصال/عنوان. لاحظ أن قراءة الإحصائيات الخاصة بجهة اتصال غير موثوقة لأنه في معظم الحالات قد لا يتم تعريف جهة الاتصال بشكل صريح في الفواتير.
 rateMustBeNumeric=يجب أن يكون السعر قيمة رقمية
 markRateShouldBeLesserThan100=يجب أن يكون معدل العلامة أقل من 100
 ShowMarginInfos=إظهار معلومات الهامش
 CheckMargins=تفاصيل الهوامش
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=يستخدم تقرير الهامش لكل مستخدم الرابط بين الأطراف الثالثة وممثلي البيع لحساب هامش كل مندوب بيع. نظرًا لأن بعض الأطراف الثالثة قد لا يكون لديها أي ممثل بيع مخصص وقد يتم ربط بعض الأطراف الثالثة بعدة مبالغ ، فقد لا يتم تضمين بعض المبالغ في هذا التقرير (إذا لم يكن هناك ممثل بيع) وقد يظهر البعض في سطور مختلفة (لكل مندوب بيع) .

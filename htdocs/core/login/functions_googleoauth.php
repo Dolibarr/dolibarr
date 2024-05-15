@@ -25,8 +25,6 @@
 
 
 
-
-
 //include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
 
 
@@ -41,34 +39,88 @@
  */
 function check_user_password_googleoauth($usertotest, $passwordtotest, $entitytotest)
 {
-	global $_POST, $db, $conf, $langs;
+	global $conf;
 
-	dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest);
+	dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest." GETPOST('actionlogin')=".GETPOST('actionlogin'));
 
 	$login = '';
 
 	// Get identity from user and redirect browser to Google OAuth Server
-	if (GETPOSTISSET('username')) {
-		/*$openid = new SimpleOpenID();
-		$openid->SetIdentity(GETPOST('username'));
-		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
-		$openid->SetTrustRoot($protocol . $_SERVER["HTTP_HOST"]);
-		$openid->SetRequiredFields(array('email','fullname'));
-		$_SESSION['dol_entity'] = $_POST["entity"];
-		//$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-		if ($openid->sendDiscoveryRequestToGetXRDS())
-		{
-			$openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
-			$openid->Redirect();     // This will redirect user to OpenID Server
-		}
-		else
-		{
-			$error = $openid->GetError();
-			return false;
-		}
-		return false;*/
-	}
+	if (GETPOST('actionlogin') == 'login') {
+		if (GETPOST('beforeoauthloginredirect')) {
+			// We post the form on the login page by clicking on the link to login using Google.
+			dol_syslog("We post the form on the login page by clicking on the link to login using Google. We save _SESSION['datafromloginform']");
 
+			// We save data of form into a variable
+			$_SESSION['datafromloginform'] = array(
+				'entity'=>GETPOSTINT('entity'),
+				'backtopage'=>GETPOST('backtopage'),
+				'tz'=>GETPOST('tz'),
+				'tz_string'=>GETPOST('tz_string'),
+				'dst_observed'=>GETPOST('dst_observed'),
+				'dst_first'=>GETPOST('dst_first'),
+				'dst_second'=>GETPOST('dst_second'),
+				'dol_screenwidth'=>GETPOST('screenwidth'),
+				'dol_screenheight'=>GETPOST('screenheight'),
+				'dol_hide_topmenu'=>GETPOST('dol_hide_topmenu'),
+				'dol_hide_leftmenu'=>GETPOST('dol_hide_leftmenu'),
+				'dol_optimize_smallscreen'=>GETPOST('dol_optimize_smallscreen'),
+				'dol_no_mouse_hover'=>GETPOST('dol_no_mouse_hover'),
+				'dol_use_jmobile'=>GETPOST('dol_use_jmobile')
+			);
+
+			// Make the redirect to the google_authcallback.php page to start the redirect to Google OAUTH.
+
+			// Define $urlwithroot
+			//global $dolibarr_main_url_root;
+			//$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+			//$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+			$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+			//$shortscope = 'userinfo_email,userinfo_profile';
+			$shortscope = 'openid,email,profile';	// For openid connect
+
+			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+
+			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest);
+
+			// we go on oauth provider authorization page
+			header('Location: '.$url);
+			exit();
+		}
+
+		if (GETPOST('afteroauthloginreturn')) {
+			// We reach this code after a call of a redirect to the targeted page from the callback url page of Google OAUTH2
+			dol_syslog("We reach the code after a call of a redirect to the targeted page from the callback url page of Google OAUTH2");
+
+			$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
+
+			if (!empty($tmparray)) {
+				$_POST['entity'] = $tmparray['entity'];
+				$_POST['backtopage'] = $tmparray['backtopage'];
+				$_POST['tz'] = $tmparray['tz'];
+				$_POST['tz_string'] = $tmparray['tz_string'];
+				$_POST['dst_observed'] = $tmparray['dst_observed'];
+				$_POST['dst_first'] = $tmparray['dst_first'];
+				$_POST['dst_second'] = $tmparray['dst_second'];
+				$_POST['screenwidth'] = $tmparray['dol_screenwidth'];
+				$_POST['screenheight'] = $tmparray['dol_screenheight'];
+				$_POST['dol_hide_topmenu'] = $tmparray['dol_hide_topmenu'];
+				$_POST['dol_hide_leftmenu'] = $tmparray['dol_hide_leftmenu'];
+				$_POST['dol_optimize_smallscreen'] = $tmparray['dol_optimize_smallscreen'];
+				$_POST['dol_no_mouse_hover'] = $tmparray['dol_no_mouse_hover'];
+				$_POST['dol_use_jmobile'] = $tmparray['dol_use_jmobile'];
+			}
+
+			// If googleoauth_login has been set (by google_oauthcallback after a successful OAUTH2 request on openid scope
+			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
+				dol_syslog("Login received by Google OAuth was validated by callback page and saved crypted into session. This login is ".$usertotest);
+				unset($_SESSION['googleoauth_receivedlogin']);
+				$login = $usertotest;
+			}
+		}
+	}
 
 	return $login;
 }

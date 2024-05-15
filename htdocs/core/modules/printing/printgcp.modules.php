@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
 
 /**
  *     Class to provide printing with Google Cloud Print
@@ -91,7 +90,7 @@ class printing_printgcp extends PrintingDriver
 	const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
 	const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
 	const PRINT_URL = 'https://www.google.com/cloudprint/submit';
-	const LANGFILE = 'printgcp';
+
 
 	/**
 	 *  Constructor
@@ -116,10 +115,12 @@ class printing_printgcp extends PrintingDriver
 				'type'=>'info',
 			);
 		} else {
+			$keyforprovider = '';	// @FIXME
+
 			$this->google_id = getDolGlobalString('OAUTH_GOOGLE_ID');
 			$this->google_secret = getDolGlobalString('OAUTH_GOOGLE_SECRET');
 			// Token storage
-			$storage = new DoliStorage($this->db, $this->conf);
+			$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 			//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
 			// Setup the credentials for the requests
 			$credentials = new Credentials(
@@ -137,7 +138,6 @@ class printing_printgcp extends PrintingDriver
 				$this->errors[] = $e->getMessage();
 				$token_ok = false;
 			}
-			//var_dump($this->errors);exit;
 
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds
@@ -232,7 +232,7 @@ class printing_printgcp extends PrintingDriver
 			$html .= '<td>'.$printer_det['status'].'</td>';
 			$html .= '<td>'.$langs->trans('STATE_'.$printer_det['connectionStatus']).'</td>';
 			$html .= '<td>'.$langs->trans('TYPE_'.$printer_det['type']).'</td>';
-			// Defaut
+			// Default
 			$html .= '<td class="center">';
 			if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id']) {
 				$html .= img_picto($langs->trans("Default"), 'on');
@@ -254,9 +254,13 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public function getlistAvailablePrinters()
 	{
+		global $conf;
 		$ret = array();
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -303,7 +307,7 @@ class printing_printgcp extends PrintingDriver
 		$printers = $responsedata['printers'];
 		// Check if we have printers?
 		if (is_array($printers) && count($printers) == 0) {
-			// We dont have printers so return blank array
+			// We don't have printers so return blank array
 			$ret['available'] = array();
 		} else {
 			// We have printers so returns printers as array
@@ -333,6 +337,7 @@ class printing_printgcp extends PrintingDriver
 		}
 		$fileprint .= '/'.$file;
 		$mimetype = dol_mimetype($fileprint);
+		$printer_id = '';
 		// select printer uri for module order, propal,...
 		$sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".((int) $user->id);
 		$result = $this->db->query($sql);
@@ -341,8 +346,8 @@ class printing_printgcp extends PrintingDriver
 			if ($obj) {
 				$printer_id = $obj->printer_id;
 			} else {
-				if (!empty($conf->global->PRINTING_GCP_DEFAULT)) {
-					$printer_id = $conf->global->PRINTING_GCP_DEFAULT;
+				if (getDolGlobalString('PRINTING_GCP_DEFAULT')) {
+					$printer_id = getDolGlobalString('PRINTING_GCP_DEFAULT');
 				} else {
 					$this->errors[] = 'NoDefaultPrinterDefined';
 					$error++;
@@ -372,6 +377,7 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
 	{
+		global $conf;
 		// Check if printer id
 		if (empty($printerid)) {
 			return array('status' =>0, 'errorcode' =>'', 'errormessage'=>'No provided printer ID');
@@ -392,8 +398,11 @@ class printing_printgcp extends PrintingDriver
 			'content' => base64_encode($contents), // encode file content as base64
 			'contentType' => $contenttype,
 		);
+
+		$keyforprovider = '';	// @FIXME
+
 		// Dolibarr Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -441,8 +450,11 @@ class printing_printgcp extends PrintingDriver
 
 		$error = 0;
 		$html = '';
+
+		$keyforprovider = '';	// @FIXME
+
 		// Token storage
-		$storage = new DoliStorage($this->db, $this->conf);
+		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
 		// Setup the credentials for the requests
 		$credentials = new Credentials(
 			$this->google_id,
@@ -517,9 +529,9 @@ class printing_printgcp extends PrintingDriver
 				$html .= '</tr>';
 			}
 		} else {
-				$html .= '<tr class="oddeven">';
-				$html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
-				$html .= '</tr>';
+			$html .= '<tr class="oddeven">';
+			$html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
+			$html .= '</tr>';
 		}
 		$html .= '</table>';
 		$html .= '</div>';

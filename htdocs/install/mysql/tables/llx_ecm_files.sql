@@ -22,10 +22,11 @@ CREATE TABLE llx_ecm_files
   ref				varchar(128),					-- contains hash from filename+filepath
   label				varchar(128) NOT NULL,			-- contains hash of file content
   share				varchar(128) NULL,				-- contains hash for file sharing
+  share_pass		varchar(32) NULL,				-- password to access the file (encoded with dolEncrypt)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filepath    		varchar(255) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
-  src_object_type   varchar(64),	         		-- Source object type ('proposal', 'invoice', ...)
+  src_object_type   varchar(64),	         		-- Source object type ('proposal', 'invoice', ...) - object->table_element
   src_object_id     integer,		             	-- Source object id
   fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
   description		text,

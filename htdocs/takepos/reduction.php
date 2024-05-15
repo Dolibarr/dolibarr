@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2023  	Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +26,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -41,14 +39,15 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -74,6 +73,7 @@ if ($invoiceid > 0) {
 	}
 }
 
+$head = '';
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 
@@ -81,7 +81,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $langs->loadLangs(array('main', 'bills', 'cashdesk'));
 
-if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
 	$htmlReductionPercent = '<span class="fa fa-2x fa-percent"></span>';
 	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span><br>'.$langs->trans('Amount');
 } else {
@@ -91,6 +91,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
 </head>
+
 <body>
 
 <script>
@@ -151,6 +152,8 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 			jQuery('#reduction_type_percent').html(htmlReductionPercent);
 			jQuery('#reduction_type_amount').html(htmlReductionAmount);
 		}
+
+		$("#reduction_total").focus();
 	}
 
 	/**
@@ -172,6 +175,9 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 	function ValidateReduction()
 	{
 		console.log('ValidateReduction');
+		reductionTotal = jQuery('#reduction_total').val();
+
+		reductionTotal = $("#reduction_total").val();
 
 		if (reductionTotal.length <= 0) {
 			console.error('Error no reduction');
@@ -181,31 +187,50 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 		var reductionNumber = parseFloat(reductionTotal);
 		if (isNaN(reductionNumber)) {
 			console.error('Error not a valid number :', reductionNumber);
-			return;
+			return false;
 		}
 
 		if (reductionType === 'percent') {
-			var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
-			parent.$("#poslines").load("invoice.php?action=update_reduction_global&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
+			var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+			parent.$("#poslines").load("invoice.php?action=update_reduction_global&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
 				Reset();
 				parent.$.colorbox.close();
 			});
 		} else if (reductionType === 'amount') {
 			var desc = "<?php echo dol_escape_js($langs->transnoentities('Reduction')); ?>";
-			parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
+			parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number=-"+reductionNumber+"&desc="+desc, function() {
 				Reset();
 				parent.$.colorbox.close();
 			});
 		} else {
 			console.error('Error bad reduction type :', reductionType);
+			return false
 		}
+
+		return true;
 	}
+
+	// manual input validation
+	function formvalid(type) {
+		reductionType = type;
+		if (reductionType != "") {
+			return ValidateReduction();
+		}
+		return false;
+	}
+
+	// console.log("Set initial focus");
+	// $("#reduction_total").focus();
 </script>
 
 <div style="position:absolute; top:2%; left:5%; width:91%;">
 <center>
 <?php
-	print '<input type="text" class="takepospay" id="reduction_total" name="reduction_total" style="width: 50%;" placeholder="'.$langs->trans('Reduction').'">';
+print '<input type="text" class="takepospay width125" id="reduction_total" name="reduction_total" placeholder="'.$langs->trans('Reduction').'" autofocus>';
+if (getDolGlobalString('TAKEPOS_ADD_BUTTON_TO_ENTER_DISCOUNT_WITH_KEYBOARD')) {
+	print '<input type="button" class="butAction" value="'.$langs->trans('AmountTTC').'" onclick="return formvalid(\'amount\');">';
+	print '<input type="button" class="butAction" value="'.$langs->trans('Percentage').'" onclick="return formvalid(\'percent\');">';
+}
 ?>
 </center>
 </div>
@@ -213,19 +238,19 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 <div style="position:absolute; top:33%; left:5%; height:52%; width:92%;">
 <?php
 
-print '<button type="button" class="calcbutton" onclick="AddReduction(7);">7</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(8);">8</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(9);">9</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'7\');">7</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'8\');">8</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'9\');">9</button>';
 print '<button type="button" class="calcbutton2" id="reduction_type_percent" onclick="Edit(\'p\');">'.$htmlReductionPercent.'</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(4);">4</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(5);">5</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(6);">6</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'4\');">4</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'5\');">5</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'6\');">6</button>';
 print '<button type="button" class="calcbutton2" id="reduction_type_amount" onclick="Edit(\'a\');">'.$htmlReductionAmount.'</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(1);">1</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(2);">2</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(3);">3</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'1\');">1</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'2\');">2</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'3\');">3</button>';
 print '<button type="button" class="calcbutton3 poscolorblue" onclick="Reset();"><span id="printtext" style="font-weight: bold; font-size: 18pt;">C</span></button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(0);">0</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'0\');">0</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(\'.\');">.</button>';
 print '<button type="button" class="calcbutton">&nbsp;</button>';
 print '<button type="button" class="calcbutton3 poscolordelete" onclick="parent.$.colorbox.close();"><span id="printtext" style="font-weight: bold; font-size: 18pt;">X</span></button>';

@@ -1,3 +1,5 @@
-# Force use of gzip compression by dpkg-buildpackage
+# Force use of gzip compression by dpkg-buildpackage for the tarball *.debian.tar.gz
+# See also option --compression from command line of dpkg-buildpackage
+# Format for the control files are defined into the rules file in override_dh_builddeb section
 compression = "gzip"
 #compression-level = 9

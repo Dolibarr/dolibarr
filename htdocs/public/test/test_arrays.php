@@ -9,12 +9,6 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOSTYLECHECK')) {
 	define('NOSTYLECHECK', '1'); // Do not check style html tag into posted data
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
-}
 //if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 //if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 //if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
@@ -22,6 +16,7 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security
@@ -58,7 +53,7 @@ if (empty($usedolheader)) {
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
-	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
+	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo (GETPOST("dol_use_jmobile") == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
 	<!-- Includes JS for JQuery -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<!-- migration fixes for removed Jquery functions -->
@@ -112,7 +107,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 </div>
 
 
-<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0a : Table with div+div+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<div class="tagtr">
@@ -125,7 +120,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</div>
 </div>
 
-<br><hr><br>Example 0b: Table with div+form+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0b: Table with div+form+div containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<form action="xxx" method="POST" class="tagtr">
@@ -138,7 +133,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 	</form>
 </div>
 
-<br><hr><br>Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<br><hr><br>Example 0c: Table with table+tr+td containing a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <table class="centpercent">
 	<tr>
@@ -185,6 +180,9 @@ $sortfield = 'aaa';
 $sortorder = 'ASC';
 $tasksarray = array(1, 2, 3); // To force having several lines
 $tagidfortablednd = 'tablelines3';
+if (!isset($moreforfilter)) {
+	$moreforfilter = '';
+}
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 }
@@ -206,10 +204,10 @@ if ($filtert) {
 if ($socid) {
 	$nav .= '<input type="hidden" name="socid" value="'.$socid.'">';
 }
-if ($showbirthday) {
+if (isset($showbirthday) && $showbirthday) {
 	$nav .= '<input type="hidden" name="showbirthday" value="1">';
 }
-if ($pid) {
+if (isset($pid) && $pid) {
 	$nav .= '<input type="hidden" name="projectid" value="'.$pid.'">';
 }
 if ($type) {
@@ -218,7 +216,7 @@ if ($type) {
 if ($usergroup) {
 	$nav .= '<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 }
-$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav .= $form->selectDate($dateselect ?? '', 'dateselect', 0, 0, 1, '', 1, 0);
 $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav .= '</form>';
 
@@ -227,25 +225,25 @@ print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Tex
 
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('This is a select list for a filter A (no combo forced)').': ';
-$cate_arbo = array('field1'=>'value1a into the select list A', 'field2'=>'value2a');
+$cate_arbo = array('field1' => 'value1a into the select list A', 'field2' => 'value2a');
 $moreforfilter .= $form->selectarray('search_aaa', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 0); // List with no js combo
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('This is a select list for a filter B (auto combo)').': ';
-$cate_arbo = array('field1'=>'value1b into the select list B', 'field2'=>'value2b');
+$cate_arbo = array('field1' => 'value1b into the select list B', 'field2' => 'value2b');
 $moreforfilter .= $form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', -1); // List with js combo auto
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('This is a select list for a filter C (combo forced)').': ';
-$cate_arbo = array('field1'=>'value1c into the select list C', 'field2'=>'value2c');
+$cate_arbo = array('field1' => 'value1c into the select list C', 'field2' => 'value2c');
 $moreforfilter .= $form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 1); // List with js combo forced
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('This is a select list for a filter D (combo forced)').': ';
-$cate_arbo = array('field1'=>'value1d into the select list D', 'field2'=>'value2d');
+$cate_arbo = array('field1' => 'value1d into the select list D', 'field2' => 'value2d');
 $moreforfilter .= $form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 1); // List with js combo forced
 $moreforfilter .= '</div>';
 
@@ -333,7 +331,7 @@ $(document).ready(function(){
 
 <?php
 	$tasksarray = array(1, 2, 3); // To force having several lines
-	$tagidfortablednd = 'tablelines';
+$tagidfortablednd = 'tablelines';
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 }

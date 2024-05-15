@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -29,11 +30,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->transnoentitiesnoconv($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
@@ -74,13 +71,6 @@ require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 // Creation of an optional field
 if ($action == 'create') {

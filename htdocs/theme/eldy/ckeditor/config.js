@@ -46,8 +46,8 @@ CKEDITOR.editorConfig = function( config )
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
-	    ['Link','Unlink','Anchor'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
+	    ['Link','Unlink'],
+	    ['Image','Table','HorizontalRule','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -64,7 +64,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	 ];
 
@@ -100,6 +100,28 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['Find'],
+	 	['Image'],
 	 	['Source']
+		['SpecialChar'],
 	];
 };
+
+
+/* Code to make links into CKEditor, in readonly, mode clickable */
+CKEDITOR.on('instanceReady', function(event) {
+    var editor = event.editor;
+	if (editor.readOnly) {
+	  var editable = editor.editable();
+	  editable.attachListener(editable, 'click', function(evt) {
+	    console.log("We click on a link in CKEditor in readonly mode");
+	    var target = evt.data.getTarget();
+	    var anchor = target.getAscendant('a', true);
+	    if (anchor) {
+	      var href = anchor.getAttribute('href');
+	      if (href) {
+	        window.open(href, '_blank'); // Open link in a new tab/window
+	      }
+	    }
+	  });
+	}
+});

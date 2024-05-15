@@ -61,20 +61,15 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public function getObject($id)
 	{
-		//$ret = $this->getInstanceDao();
+		$object = new Adherent($this->db);
 
-		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
-		{
-			if (! empty($id)) $this->object->fetch($id);
-		}
-		else
-		{*/
-			$object = new Adherent($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -83,7 +78,7 @@ abstract class ActionsAdherentCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -153,7 +148,7 @@ abstract class ActionsAdherentCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if ($this->object->country_id == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -173,13 +168,13 @@ abstract class ActionsAdherentCardCommon
 			}
 
 			// Physical or Moral
-			$selectarray = array('0'=>$langs->trans("Physical"), '1'=>$langs->trans("Moral"));
+			$selectarray = array('0' => $langs->trans("Physical"), '1' => $langs->trans("Moral"));
 			$this->tpl['select_morphy'] = $form->selectarray('morphy', $selectarray, $this->object->morphy, 0);
 		}
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
@@ -221,7 +216,7 @@ abstract class ActionsAdherentCardCommon
 
 			$this->tpl['visibility'] = $this->object->getmorphylib($this->object->morphy);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -246,7 +241,7 @@ abstract class ActionsAdherentCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{
@@ -256,19 +251,20 @@ abstract class ActionsAdherentCardCommon
 		$this->object->old_name = GETPOST("old_name");
 		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->fk_soc = GETPOST("fk_soc");
+		$this->object->fk_soc = GETPOSTINT("fk_soc");
+		$this->object->socid = GETPOSTINT("fk_soc");
 		$this->object->lastname			= GETPOST("lastname");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town = GETPOST("town");
-		$this->object->country_id = GETPOST("country_id", 'int') ? GETPOST("country_id", 'int') : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id", 'int');
+		$this->object->country_id = GETPOSTINT("country_id") ? GETPOSTINT("country_id") : $mysoc->country_id;
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
-		$this->object->email			= GETPOST("email", 'alphawithlgt');
-		$this->object->note				= GETPOST("note", 'restricthtml');
+		$this->object->email = GETPOST("email", 'alphawithlgt');
+		$this->object->note_private = GETPOST("note", 'restricthtml');
 		$this->object->canvas = GETPOST("canvas");
 
 		// We set country_id, and country_code label of the chosen country
@@ -279,7 +275,7 @@ abstract class ActionsAdherentCardCommon
 				$obj = $this->db->fetch_object($resql);
 
 				$this->object->country_code = $obj->code;
-				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->libelle;
+				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
 			} else {
 				dol_print_error($this->db);
 			}

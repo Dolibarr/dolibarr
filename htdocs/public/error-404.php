@@ -21,6 +21,10 @@
 	You requested a website or a page that does not exists.
 
 	<br>
+	<br>
+	la pagina o el recurso solicitado no existe.
+
+	<br>
 	<?php print isset($_SERVER["HTTP_REFERER"]) ? 'You come from '.htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8').'.' : ''; ?>
 
 	<hr>
