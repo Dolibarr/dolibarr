@@ -58,7 +58,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	array<int:string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
  * @return	string									New value
  */
 function realCharForNumericEntities($matches)
