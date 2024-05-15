@@ -99,7 +99,7 @@ $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) {
+if (!isModEnabled('webhook')) {
 	accessforbidden();
 }
 if (!$permissiontoread) {
@@ -159,7 +159,7 @@ if (empty($reshook)) {
 	if ($action == 'testsendtourl' && $permissiontoadd) {
 		$triggercode = GETPOST("triggercode");
 		$url = GETPOST("url");
-		$jsondata = GETPOST("jsondata");
+		$jsondata = GETPOST("jsondata", "restricthtml");
 		if (empty($url)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Url")), null, 'errors');
@@ -197,25 +197,19 @@ $formproject = new FormProjets($db);
 
 $object->initListOfTriggers();
 
+$arrayofjs = array(
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
+	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
+);
+$arrayofcss = array();
+
 $title = $langs->trans("Target");
 $help_url = '';
-llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 // Part to create
 if ($action == 'create') {
@@ -572,23 +566,30 @@ if ($action == "test") {
 	print '<input class="flat minwidth400" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'" />';
 	print '</td></tr>';
 
+	// Json sample to send
 	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
 	print $langs->trans("DataToSendTrigger");
 	print '</td><td>';
+
+	$json = new stdClass();
+	$json->triggercode = "TEST_TRIGGER_CODE";
+	$json->object = new stdClass();
+	$json->object->field1 = 'field1';
+	$json->object->field2 = 'field2';
+	$json->object->field3 = 'field3';
+
+	$datatosend = json_encode($json);
+	//$datatosend = preg_replace('/\,/', ",\n", $datatosend);
+
+	/*
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor("jsondata", $datatosend, 0, 200, 'dolibarr_details', 'In', true, true, 'ace');
+	print $doleditor->Create(0, '', true, '', 'json');
+	*/
 	print '<textarea id="jsondatasendtarget" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
-	if (!$conf->use_javascript_ajax) {
-		$json = new stdClass();
-		$json->triggercode = "TEST_TRIGGER_CODE";
-		$json->object = new Target($db);
-		$json->object->initAsSpecimen();
-		unset($json->object->db);
-		unset($json->object->fields);
-		unset($json->object->error);
-		unset($json->object->errors);
-		$datatosend = json_encode($json);
-		print $datatosend;
-	}
+	print $datatosend;
 	print '</textarea>';
+
 	print '</td></tr>';
 	print '</table>';
 
@@ -600,6 +601,7 @@ if ($action == "test") {
 	if ($conf->use_javascript_ajax) {
 		print '<script>
 		$("#triggercode").change(function(){
+			console.log("We change trigger code");
 			triggercode = $(this).val();
 			getDatatToSendTriggerCode(triggercode);
 		});
@@ -611,7 +613,7 @@ if ($action == "test") {
 				data: { action: "getjsonformtrigger", triggercode: triggercode },
 				success: function(response) {
 					obj = JSON.stringify(response);
-					$("#jsondatasendtarget").val(obj);
+					$("#jsondata").val(obj);
 				}
 			})
 		};
