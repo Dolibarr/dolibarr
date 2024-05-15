@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,8 +106,6 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $_GET;
-
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {
 			return -1;
@@ -145,7 +144,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	Save an image file on disk (with no output)
 	 *
 	 *	@param	   string	    $code		      Value to encode
-	 *	@param	   string	    $encoding	      Mode of encoding
+	 *	@param	   string	    $encoding	      Mode of encoding ('QRCODE', 'EAN13', ...)
 	 *	@param	   string	    $readable	      Code can be read
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
@@ -153,16 +152,33 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf, $langs, $_GET;
+		global $conf, $langs;
+
+		// Force value of temp directory because we may call this even if module barcode is disabled
+		if (empty($conf->barcode)) {
+			$conf->barcode = new stdClass();
+		}
+		if (empty($conf->barcode->dir_temp)) {
+			$conf->barcode->dir_temp = DOL_DATA_ROOT.'/barcode/temp';
+		}
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
-			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			if ($langs instanceof Translate) {
+				$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			} else {
+				$this->error = "ErrorFailedToWriteInTempDirectory ".$conf->barcode->dir_temp;
+			}
 			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
+		$newcode = $code;
+		if (!preg_match('/^\w+$/', $code) || dol_strlen($code) > 32) {
+			$newcode = dol_hash($newcode, 'md5');	// No need for security here, we can use md5
+		}
+
+		$file = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {
@@ -189,8 +205,9 @@ class modTcpdfbarcode extends ModeleBarCode
 				$barcodeobj = new TCPDFBarcode($code, $tcpdfEncoding);
 			}
 
-			dol_syslog("writeBarCode::TCPDF.getBarcodePngData");
-			if ($imageData = $barcodeobj->getBarcodePngData($width, $height, $color)) {
+			dol_syslog("writeBarCode::TCPDF.getBarcodePngData file=".$file);
+
+			if ($imageData = (string) $barcodeobj->getBarcodePngData($width, $height, $color)) {
 				if (function_exists('imagecreate')) {
 					$imageData = imagecreatefromstring($imageData);
 				}
@@ -208,7 +225,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *	get available output_modes for tcpdf class wth its translated description
+	 *	get available output_modes for tcpdf class with its translated description
 	 *
 	 * @param	string $dolEncodingType dolibarr barcode encoding type
 	 * @return	string tcpdf encoding type

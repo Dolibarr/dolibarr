@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "empty";
 
+	/**
+	 * @var Menu
+	 */
 	public $menu;
 	public $menu_array_after;
 
@@ -74,7 +78,7 @@ class MenuManager
 	 *
 	 *	@param	string	$mode			'top', 'left', 'jmobile'
 	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *  @return int|string				0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -134,8 +138,7 @@ class MenuManager
 				}
 			}
 
-			$showmode = 1;
-			if (empty($noout)) {
+			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			}
 			if (empty($noout)) {
@@ -187,7 +190,7 @@ class MenuManager
 					print $val['titre'];
 					print '</a>'."\n";
 
-					// Search submenu fot this mainmenu entry
+					// Search submenu for this mainmenu entry
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
@@ -284,6 +287,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
@@ -309,13 +313,7 @@ class MenuManager
 							}
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {
-									// Allowed
-									print '</a>';
-								} else {
-									// Not allowed
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}
@@ -372,12 +370,14 @@ class MenuManager
 				return 0;
 			}
 
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> $menu_array';
+
 			if (empty($noout)) {
 				$alt = 0;
 				$altok = 0;
 				$blockvmenuopened = false;
 				$num = count($menu_array);
-				for ($i = 0; $i < $num; $i++) {
+				foreach (array_keys($menu_array) as $i) {
 					$alt++;
 					if (empty($menu_array[$i]['level'])) {
 						$altok++;
@@ -477,10 +477,8 @@ class MenuManager
  */
 function print_start_menu_array_empty()
 {
-	global $conf;
-
 	print '<div class="tmenudiv">';
-	print '<ul role="navigation" class="tmenu"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' title="Top menu"' : '').'>';
 }
 
 /**

@@ -10,6 +10,7 @@
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2023		Waël Almoman		<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +115,7 @@ if ($action == 'set_default') {
 	$res8 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', GETPOST('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res9 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_AFTER', GETPOST('MEMBER_SUBSCRIPTION_START_AFTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (isModEnabled("product") || isModEnabled("service")) {
@@ -286,6 +287,7 @@ foreach ($dirModMember as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -320,11 +322,158 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 print '</table>';
 print '</div>';
 
+
+
 print "<br>";
+
+
+
+// Document templates for documents generated from member record
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// Defined model definition table
+$def = array();
+$sql = "SELECT nom as name";
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = '".$db->escape($type)."'";
+$sql .= " AND entity = ".$conf->entity;
+$resql = $db->query($sql);
+if ($resql) {
+	$i = 0;
+	$num_rows = $db->num_rows($resql);
+	while ($i < $num_rows) {
+		$obj = $db->fetch_object($resql);
+		array_push($def, $obj->name);
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+
+print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir) {
+	foreach (array('', '/doc') as $valdir) {
+		$dir = dol_buildpath($reldir."core/modules/member".$valdir);
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				$filelist = array();
+				while (($file = readdir($handle)) !== false) {
+					$filelist[] = $file;
+				}
+				closedir($handle);
+				arsort($filelist);
+				foreach ($filelist as $file) {
+					if (preg_match('/\.class\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
+							$name = substr($file, 4, dol_strlen($file) - 14);
+							$classname = substr($file, 0, dol_strlen($file) - 10);
+
+							require_once $dir.'/'.$file;
+							$module = new $classname($db);
+
+							$modulequalified = 1;
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								$modulequalified = 0;
+							}
+
+							if ($modulequalified) {
+								print '<tr class="oddeven"><td width="100">';
+								print(empty($module->name) ? $name : $module->name);
+								print "</td><td>\n";
+								if (method_exists($module, 'info')) {
+									print $module->info($langs);
+								} else {
+									print $module->description;
+								}
+								print '</td>';
+
+								// Active
+								if (in_array($name, $def)) {
+									print '<td class="center">'."\n";
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&token='.newToken().'&value='.$name.'">';
+									print img_picto($langs->trans("Enabled"), 'switch_on');
+									print '</a>';
+									print '</td>';
+								} else {
+									print '<td class="center">'."\n";
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print "</td>";
+								}
+
+								// Default
+								print '<td class="center">';
+								if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == $name) {
+									print img_picto($langs->trans("Default"), 'on');
+								} else {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+								}
+								print '</td>';
+
+								// Info
+								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+								if ($module->type == 'pdf') {
+									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+								}
+								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn(!empty($module->option_logo) ? $module->option_logo : 0, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn(!empty($module->option_multilang) ? $module->option_multilang : 0, 1, 1);
+
+
+								print '<td class="center">';
+								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print '</td>';
+
+								// Preview
+								print '<td class="center">';
+								if ($module->type == 'pdf') {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+								} else {
+									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								}
+								print '</td>';
+
+								print "</tr>\n";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+print '</table>';
+print '</div>';
+
+
+print '<br>';
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatemainoptions">';
+print '<input type="hidden" name="page_y" value="">';
 
 
 // Main options
@@ -335,10 +484,11 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td class="soixantepercent">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Start date of new membership
+$startpoint = array();
 $startpoint[0] = $langs->trans("SubscriptionPayment");
 $startpoint["m"] = $langs->trans("Month");
 $startpoint["Y"] = $langs->trans("Year");
@@ -393,14 +543,14 @@ print "</td></tr>\n";
 
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
-$arraychoices = array('0'=>$langs->trans("None"));
-if (isModEnabled("banque")) {
+$arraychoices = array('0' => $langs->trans("None"));
+if (isModEnabled("bank")) {
 	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
 }
-if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+if (isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
 	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
 }
-if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+if (isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
 	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
 }
 print '<td>';
@@ -412,11 +562,11 @@ print '</td>';
 print "</tr>\n";
 
 // Use vat for invoice creation
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
 		print '</td>';
 	} else {
 		print '<td class="right">';
@@ -440,7 +590,7 @@ print '</table>';
 print '</div>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
 print '</div>';
 
 print '</form>';
@@ -449,151 +599,13 @@ print '</form>';
 print '<br>';
 
 
-// Document templates for documents generated from member record
-
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// Defined model definition table
-$def = array();
-$sql = "SELECT nom as name";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$obj = $db->fetch_object($resql);
-		array_push($def, $obj->name);
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-
-print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$dir = dol_buildpath($reldir."core/modules/member".$valdir);
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
-				foreach ($filelist as $file) {
-					if (preg_match('/\.class\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 14);
-							$classname = substr($file, 0, dol_strlen($file) - 10);
-
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
-
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);
-								} else {
-									print $module->description;
-								}
-								print '</td>';
-
-								// Active
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&token='.newToken().'&value='.$name.'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
-									print '</td>';
-								} else {
-									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-									print "</td>";
-								}
-
-								// Defaut
-								print '<td class="center">';
-								if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn(!empty($module->option_logo) ? $module->option_logo : 0, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn(!empty($module->option_multilang) ? $module->option_multilang : 0, 1, 1);
-
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
-								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
-
-
-
 
 // Generation of cards for members
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatememberscards">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
@@ -606,7 +618,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print '<td class="soixantepercent">'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
 print "</tr>\n";
 
 // Format of cards page
@@ -649,7 +661,7 @@ print '</table>';
 print '</div>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
 print '</div>';
 
 print '</form>';
@@ -661,6 +673,7 @@ print '<br>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatememberstickets">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
@@ -673,7 +686,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print '<td class="soixantepercent">'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
 print "</tr>\n";
 
 // Format of labels page
@@ -699,7 +712,7 @@ print '</table>';
 print '</div>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
 print '</div>';
 
 print '</form>';

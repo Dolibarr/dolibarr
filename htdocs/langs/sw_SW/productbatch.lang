@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Hapana (sehemu/seria haijatumika)
 ProductStatusOnBatchShort=Mengi
 ProductStatusOnSerialShort=Msururu
 ProductStatusNotOnBatchShort=Hapana
+BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryNone=None
+BatchSellOrEatByMandatoryAll=%s and %s
 Batch=Mengi/Seri
 atleast1batchfield=Tarehe ya Kula au Tarehe ya Kuuza au Nambari ya Mengi/Siri
 batch_number=Mengi/Nambari ya serial
@@ -45,3 +48,5 @@ OutOfOrder=Nje ya utaratibu
 InWorkingOrder=Katika utaratibu wa kufanya kazi
 ToReplace=Badilisha
 CantMoveNonExistantSerial=Hitilafu. Unauliza hoja kwenye rekodi kwa mfululizo ambao haupo tena. Labda unaweza kuchukua mfululizo sawa kwenye ghala moja mara kadhaa katika usafirishaji sawa au ilitumiwa na usafirishaji mwingine. Ondoa usafirishaji huu na uandae nyingine.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Stock correction required because unique serial number.

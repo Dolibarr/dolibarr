@@ -127,7 +127,7 @@ ValidateProject=Valider prosjektet
 ConfirmValidateProject=Er du sikker på at du vil validere dette prosjektet?
 CloseAProject=Lukk prosjektet
 ConfirmCloseAProject=Er du sikker på at du vil lukke dette prosjektet?
-AlsoCloseAProject=Lukk prosjekt også 
+AlsoCloseAProject=Lukk prosjekt også
 AlsoCloseAProjectTooltip=Hold den åpen hvis du fortsatt trenger å følge produksjonsoppgaver på den
 ReOpenAProject=Åpne prosjekt
 ConfirmReOpenAProject=Er du sikker på at du vil gjenåpne dette prosjektet?
@@ -249,7 +249,7 @@ LatestProjects=Siste %s prosjekter
 LatestModifiedProjects=Siste %s endrede prosjekter
 OtherFilteredTasks=Andre filtrerte oppgaver
 NoAssignedTasks=Ingen tildelte oppgaver funnet (tilordne prosjekt/oppgaver til den nåværende brukeren fra den øverste valgboksen for å legge inn tid på den)
-ThirdPartyRequiredToGenerateInvoice=En tredjepart må defineres på prosjektet for å kunne fakturere det.
+ThirdPartyRequiredToGenerateIntervention=En tredjepart må være definert på prosjekt for å kunne skape intervensjon.
 ThirdPartyRequiredToGenerateInvoice=En tredjepart må defineres på prosjektet for å kunne fakturere det.
 ChooseANotYetAssignedTask=Velg en oppgave som du ennå ikke er tildelt
 # Comments trans

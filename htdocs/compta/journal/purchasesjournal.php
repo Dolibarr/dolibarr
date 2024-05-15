@@ -247,7 +247,8 @@ foreach ($tabfac as $key => $val) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+				print "<td>".$k."</td>";
+				print "<td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {
 					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";

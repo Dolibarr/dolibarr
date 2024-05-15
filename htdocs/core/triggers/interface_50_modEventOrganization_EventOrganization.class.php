@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2021		Florian Henry		<florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,12 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "eventorganization";
 		$this->description = "Triggers of this module to manage event organization triggers action";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'action';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
@@ -75,13 +75,13 @@ class InterfaceEventOrganization extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
-		$error=0;
+		$error = 0;
 
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
 			if (getDolGlobalString('EVENTORGANIZATION_TASK_LABEL') && !empty($object->usage_organize_event)) {
 				$taskToDo = explode("\n", getDolGlobalString('EVENTORGANIZATION_TASK_LABEL'));
-				if (is_array($taskToDo) && count($taskToDo)>0) {
+				if (is_array($taskToDo) && count($taskToDo) > 0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));
 
@@ -108,7 +108,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 
 						$result = $task->create($user);
 						if ($result < 0) {
-							$this->errors=array_merge($this->errors, $task->errors);
+							$this->errors = array_merge($this->errors, $task->errors);
 							$error++;
 						}
 					}

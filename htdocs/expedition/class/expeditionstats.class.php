@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/expedition/class/expeditionstats.class.php
  *  \ingroup    expedition
- *  \brief      File of class fo tmanage shipment statistics
+ *  \brief      File of class to manage shipment statistics
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
@@ -96,7 +96,7 @@ class ExpeditionStats extends Stats
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
@@ -120,7 +120,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -144,7 +144,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;
@@ -167,7 +167,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -191,7 +191,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -213,7 +213,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;

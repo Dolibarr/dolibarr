@@ -91,8 +91,7 @@ CountLastUrlCheckError=จำนวนข้อผิดพลาดสำหร
 LastCheckBacklink=วันที่ตรวจสอบ URL ล่าสุด
 
 NewPartnershipRequest=คำขอหุ้นส่วนใหม่
-NewPartnershipRequestDesc=แบบฟอร์มนี้ช่วยให้คุณสามารถขอเป็นส่วนหนึ่งของโปรแกรมพันธมิตรของเราได้ หากคุณต้องการความช่วยเหลือในการกรอกแบบฟอร์มนี้ โปรดติดต่อทางอีเมล <b>%s</b><span class='notranslate'></b></ ช่วง>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=หน้านี้ต้องมีอย่างน้อยหนึ่งลิงก์ไปยังหนึ่งในโดเมนต่อไปนี้: %s
 
 IPOfApplicant=IP ของผู้สมัคร
-

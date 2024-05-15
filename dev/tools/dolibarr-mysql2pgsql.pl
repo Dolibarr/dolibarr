@@ -159,7 +159,7 @@ foreach my $file (keys %filelist) {
     	}
     	if ($create_sql ne "") { 		# we are inside create table statement so lets process datatypes
 
-    		if (/\);/i) {	# end of create table squence
+    		if (/\);/i) {	# end of create table sequence
     			$create_sql =~ s/,$//g;	# strip last , inside create table
     			&output_create;
     			&reset_vars();

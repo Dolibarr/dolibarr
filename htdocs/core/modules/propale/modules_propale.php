@@ -23,8 +23,8 @@
 /**
  *  \file       htdocs/core/modules/propale/modules_propale.php
  *  \ingroup    propale
- *  \brief      Fichier contenant la classe mere de generation des propales en PDF
- *  			et la classe mere de numerotation des propales
+ *  \brief      Fichier contenant la class mere de generation des propales en PDF
+ *  			et la class mere de numerotation des propales
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis
 
 
 /**
- *	Classe mere des modeles de propale
+ *	Class mere des modeles de propale
  */
 abstract class ModelePDFPropales extends CommonDocGenerator
 {

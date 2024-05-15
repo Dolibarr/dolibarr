@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
-$entity = GETPOST('entity', 'int');
+$entity = GETPOSTINT('entity');
 $value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
 
 // Security check

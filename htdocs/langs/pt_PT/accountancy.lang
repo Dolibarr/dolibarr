@@ -95,7 +95,7 @@ AccountancyAreaDescClosePeriod=ETAPA %s: feche o período para que não possamos
 
 TheFiscalPeriodIsNotDefined=Uma etapa obrigatória na configuração não foi concluída (o período fiscal não está definido)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Uma etapa obrigatória na configuração não foi concluída (Contabilista Código diário não definido para todas as contas bancárias)
-Selectchartofaccounts=Selecione gráfico de contas ativo 
+Selectchartofaccounts=Selecione gráfico de contas ativo
 CurrentChartOfAccount=Gráfico ativo atual de conta
 ChangeAndLoad=Mudar e carregar
 Addanaccount=Adicione uma conta contabilística
@@ -397,7 +397,7 @@ ChartofaccountsId=ID de plano de contas
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidade
 InitAccountancyDesc=Essa página pode ser usada para inicializar uma conta contábil em produtos e serviços que não tenham uma conta contábil definida para vendas e compras.
-DefaultBindingDesc=Esta página pode ser usada para definir as contas padrão (do gráfico de conta) a serem usadas em objetos de negócios hiperligação, conexão com um conta, como pagamento de salários, doações, impostos e IVA, quando não há <span class='notranslate'>conta</span específico > já estavam definidos.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Esta página pode ser usada para definir parâmetros usados para fechamentos Contabilista.
 Options=Opções
 OptionModeProductSell=Modo de vendas
@@ -422,7 +422,7 @@ AccountRemovedFromGroup=conta removido do grupo
 SaleLocal=Venda local
 SaleExport=Venda de exportação
 SaleEEC=Venda em EEC
-SaleEECWithVAT=Venda em EEC com IVA não nulo, então supomos que esta NÃO seja uma venda intracomunitária e a <span class=' sugerida notranslate'>conta</span> é o produto padrão conta.
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Venda em EEC sem IVA, mas o IVA Id. de terceiros não está definido. Recorremos ao conta para vendas padrão. Você pode corrigir o IVA Id. do terceiro ou alterar o produto conta sugerido para vinculação, se necessário.
 ForbiddenTransactionAlreadyExported=Proibido: a transação foi validada e/ou exportada.
 ForbiddenTransactionAlreadyValidated=Proibido: A transação foi validada.

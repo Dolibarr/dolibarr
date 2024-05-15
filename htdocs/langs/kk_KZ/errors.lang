@@ -94,10 +94,10 @@ ErrorRecordIsUsedCantDelete=Жазбаны жою мүмкін емес. Ол қ
 ErrorModuleRequireJavascript=Бұл мүмкіндік жұмыс істеуі үшін JavaScript өшірілмеуі керек. JavaScript қосу/өшіру үшін Басты->Орнату->Дисплей мәзіріне өтіңіз.
 ErrorPasswordsMustMatch=Екі терілген пароль бір -біріне сәйкес келуі керек
 ErrorContactEMail=Техникалық қате орын алды. Келесі электрондық поштаға әкімшіге хабарласыңыз <b>%s</b> және қатені көрсетіңіз. Хабардағы <b>%s</b> кодын немесе экрандық көшірмесін қосыңыз осы бет.
-ErrorWrongValueForField=Өріс <b>%s</b>: '<spante class='no <b></span>%s</b>' регекс ережесіне сәйкес келмейді b0aee337 <span class='notranslate'>%s</b>
-ErrorHtmlInjectionForField=<b>%s</b> өрісі: '<span class='notranslate мәні '><b></span>%s</b>' рұқсат етілмеген зиянды деректерден тұрады
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=Өріс <b> %s </b>: «<b> %s </b>» мән <b> %s </b> <b> %s </b> саласында табылған жоқ
-ErrorFieldRefNotIn=Өріс <b>%s</b>: '<spante class='no <b></span>%s</b>' - b0aee8735z class='notranslate'>%s</b> бар сілтеме
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=<b>%s</b> сілтемесінен іздеу кезінде бірнеше жазба табылды. Қай идентификаторды пайдалану керектігін білу мүмкін емес.
 ErrorsOnXLines=%s қателері табылды
 ErrorFileIsInfectedWithAVirus=Антивирустық бағдарлама файлды тексере алмады (файл вирус жұқтырған болуы мүмкін)
@@ -263,7 +263,7 @@ ErrorReplaceStringEmpty=Қате, ауыстырылатын жол бос
 ErrorProductNeedBatchNumber=Қате, '<b> %s </b>' өніміне көп/сериялық нөмір қажет
 ErrorProductDoesNotNeedBatchNumber=Қате, '<b> %s </b>' өнімі көп/сериялық нөмірді қабылдамайды
 ErrorFailedToReadObject=Қате, <b> %s </b> түріндегі объект оқылмады
-ErrorParameterMustBeEnabledToAllwoThisFeature=Қате, <b>%s</b> параметрі <span class= қосулы болуы керек 'notranslate'><b></span>conf/conf.php<> пәрмен жолы интерфейсін ішкі жұмыс жоспарлаушысымен пайдалануға рұқсат беру үшін
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Қате, бұл кіру мерзімі жарамдылық мерзімінен тыс
 ErrorValueLength='<b> %s </b>' өрісінің ұзындығы '<b> %s </b>' жоғары болуы керек
 ErrorReservedKeyword='<b> %s </b>' сөзі сақталған кілт сөз
@@ -311,7 +311,7 @@ ErrorValueCantBeNull=<b>%s</b> мәні нөл болуы мүмкін емес
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Банк операциясының күні файлды жіберу күнінен төмен болмауы керек
 ErrorTooMuchFileInForm=Пішінде файлдар тым көп, максималды саны - %s файл(лар)
 ErrorSessionInvalidatedAfterPasswordChange=Сеанс құпия сөз, электрондық пошта, күй немесе жарамдылық мерзімі өзгергеннен кейін жарамсыз деп танылды. Қайта кіріңіз.
-ErrorExistingPermission = Рұқсат <b>%s</b> <span'>notranslate <b></span>%s</b> бұрыннан бар
+ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=<b>%s</b> мәні бұрыннан бар
 ErrorEqualModule=Модуль <b>%s</b> ішінде жарамсыз
 ErrorFieldValue=<b>%s</b> мәні дұрыс емес

@@ -23,7 +23,7 @@ AddLoan=Tengeneza mkopo
 FinancialCommitment=Ahadi ya kifedha
 InterestAmount=Hamu
 CapitalRemain=Mtaji unabaki
-TermPaidAllreadyPaid = Neno hili tayari limelipwa
+TermPaidAllreadyPaid = This term is already paid
 CantUseScheduleWithLoanStartedToPaid = Haiwezi kutengeneza rekodi ya matukio ya mkopo na malipo yameanza
 CantModifyInterestIfScheduleIsUsed = Huwezi kurekebisha maslahi ikiwa unatumia ratiba
 # Admin

@@ -43,7 +43,7 @@ ConfirmValidateSending=Haluatko varmasti vahvistaa tämän lähetyksen viitenume
 ConfirmCancelSending=Haluatko varmasti peruuttaa tämän toimituksen?
 DocumentModelMerou=Merou A5 malli
 WarningNoQtyLeftToSend=Varoitus, ei tuotteet odottavat lähettämistä.
-StatsOnShipmentsOnlyValidated=Tilastot koskevat vain hyväksyttyjä lähetyksiä. päiväys on päiväys lähetyksen validoinnissa (suunniteltu toimitus class='notranslate'>päiväys</span> ei ole aina tiedossa)
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
 DateDeliveryPlanned=Suunniteltu toimituspäivä
 RefDeliveryReceipt=Viite toimitus kuitti
 StatusReceipt=Tilan toimitus kuitti

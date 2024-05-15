@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,10 +43,10 @@ $socid = 0;
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,10 +65,10 @@ if (!$sortfield) {
 
 $startdate = $enddate = '';
 if (GETPOST('startdatemonth')) {
-	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
+	$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
 }
 if (GETPOST('enddatemonth')) {
-	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
+	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -121,7 +121,7 @@ print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id'
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 3);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
@@ -134,11 +134,11 @@ print '</tr>';
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -216,7 +216,7 @@ if (!empty($enddate)) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
@@ -230,15 +230,15 @@ $sql .= $db->order($sortfield, $sortorder);
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 $param = '&id='.((int) $id);
-if (GETPOST('startdatemonth', 'int')) {
-	$param .= '&startdateyear='.GETPOST('startdateyear', 'int');
-	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int');
-	$param .= '&startdateday='.GETPOST('startdateday', 'int');
+if (GETPOSTINT('startdatemonth')) {
+	$param .= '&startdateyear='.GETPOSTINT('startdateyear');
+	$param .= '&startdatemonth='.GETPOSTINT('startdatemonth');
+	$param .= '&startdateday='.GETPOSTINT('startdateday');
 }
-if (GETPOST('enddatemonth', 'int')) {
-	$param .= '&enddateyear='.GETPOST('enddateyear', 'int');
-	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int');
-	$param .= '&enddateday='.GETPOST('enddateday', 'int');
+if (GETPOSTINT('enddatemonth')) {
+	$param .= '&enddateyear='.GETPOSTINT('enddateyear');
+	$param .= '&enddatemonth='.GETPOSTINT('enddatemonth');
+	$param .= '&enddateday='.GETPOSTINT('enddateday');
 }
 $listofcateg = GETPOST('categories', 'array:int');
 if (is_array($listofcateg)) {
@@ -253,6 +253,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	//var_dump($conf->global->MARGIN_TYPE);

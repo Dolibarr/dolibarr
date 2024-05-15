@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 
-$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -66,7 +66,7 @@ if ($action == 'setremise') {
 	$object = new Societe($db);
 	$object->fetch($id);
 
-	$discount_type = GETPOST('discount_type', 'int');
+	$discount_type = GETPOSTINT('discount_type');
 
 	if (!empty($discount_type)) {
 		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
@@ -79,7 +79,7 @@ if ($action == 'setremise') {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: remise.php?id=".GETPOST("id", 'int'));
+			header("Location: remise.php?id=".GETPOSTINT("id"));
 			exit;
 		}
 	} else {
@@ -99,7 +99,7 @@ llxHeader();
 
 /*********************************************************************************
  *
- * Mode fiche
+ * Card mode
  *
  *********************************************************************************/
 if ($socid > 0) {
@@ -175,10 +175,10 @@ if ($socid > 0) {
 		// Discount type
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
 		if ($isCustomer) {
-			print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+			print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		}
 		if ($isSupplier) {
-			print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOST('discount_type', 'int') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 		}
 		print '</td></tr>';
 	}

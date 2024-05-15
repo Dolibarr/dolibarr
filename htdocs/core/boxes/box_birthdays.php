@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +38,7 @@ class box_birthdays extends ModeleBoxes
 	public $boxlabel = "BoxTitleUserBirthdaysOfMonth";
 	public $depends = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -127,10 +119,10 @@ class box_birthdays extends ModeleBoxes
 					$userstatic->firstname = $data[$j]->firstname;
 					$userstatic->lastname = $data[$j]->lastname;
 					$userstatic->email = $data[$j]->email;
-					$userstatic->statut = $data[$j]->status;
+					$userstatic->status = $data[$j]->status;
 
 					$dateb = $this->db->jdate($data[$j]->datea);
-					$age = date('Y', dol_now()) - date('Y', $dateb);
+					$age = idate('Y', dol_now()) - idate('Y', $dateb);
 
 					$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';

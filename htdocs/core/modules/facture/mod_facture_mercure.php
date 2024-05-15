@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2013		uanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 /**
  *	\file       htdocs/core/modules/facture/mod_facture_mercure.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File containing class for numbering module Mercure
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -134,7 +135,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * @param	Societe		$objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Value if OK, 0 if KO
+	 * @return  string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -164,8 +165,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Get entities
 		$entity = getEntity('invoicenumber', 1, $invoice);
-
-		$numFinal = get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, (empty($invoice) ? dol_now() : $invoice->date), $mode, false, null, $entity);
 		if (!preg_match('/([0-9])+/', $numFinal)) {
 			$this->error = $numFinal;
 		}
@@ -178,9 +178,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * Return next free value
 	 *
 	 * @param	Societe		$objsoc     	Object third party
-	 * @param	string		$objforref		Object for number to search
+	 * @param	Facture		$objforref		Object for number to search
 	 * @param   string		$mode       	'next' for next value or 'last' for last value
-	 * @return  string      				Next free value
+	 * @return  string|0      				Next free value, 0 if KO
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
