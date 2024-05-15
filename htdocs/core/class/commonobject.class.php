@@ -6388,7 +6388,7 @@ abstract class CommonObject
 				} else {
 					/**
 					We are in a situation where the current object has no values in its extra fields.
-					We want to initialize all the values to empty so that the array_option is accessible in other contexts (especially in document generation).
+					We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
