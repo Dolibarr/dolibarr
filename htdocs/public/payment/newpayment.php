@@ -1268,7 +1268,7 @@ if ($source == 'invoice') {
 	print '<input type="hidden" name="tag" value="'.(empty($tag) ? '' : $tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
-	if ($form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
+	if ($invoice->mode_reglement_id > 0 && $form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
 		print '<tr class="CTableRow2 center"><td class="CTableRow2" colspan="2">';
 		print '<div class="warning">';
 		print $langs->trans("PayOfBankTransferInvoice");
