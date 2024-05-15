@@ -55,7 +55,7 @@ $triggercode = GETPOST('triggercode');
 
 // Security check
 if (empty($user->admin)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
