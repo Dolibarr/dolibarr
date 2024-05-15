@@ -54,8 +54,8 @@ $action = GETPOST('action', 'aZ09');
 $triggercode = GETPOST('triggercode');
 
 // Security check
-if (!defined("NOLOGIN")) {	// No need of restrictedArea if not logged: Later the select will filter on public articles only if not logged.
-	restrictedArea($user, 'webhook', 0, '', 'webhook_target');
+if (empty($user->admin)) {
+	access_forbidden();
 }
 
 
