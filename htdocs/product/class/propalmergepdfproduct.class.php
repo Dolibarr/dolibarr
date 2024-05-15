@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 
 /**
@@ -262,7 +262,7 @@ class Propalmergepdfproduct extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$line = new PropalmergepdfproductLine();
+					$line = new PropalmergepdfproductLine($this->db);
 
 					$line->id = $obj->rowid;
 
@@ -569,7 +569,7 @@ class Propalmergepdfproduct extends CommonObject
 /**
  * Class to manage propal merge of product line
  */
-class PropalmergepdfproductLine
+class PropalmergepdfproductLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
@@ -602,14 +602,6 @@ class PropalmergepdfproductLine
 	public $fk_user_mod;
 
 	public $datec = '';
-	public $tms = '';
-	public $import_key;
 
-	/**
-	 *  Constructor
-	 */
-	public function __construct()
-	{
-		return;
-	}
+	public $import_key;
 }

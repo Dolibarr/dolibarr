@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_accountancy_last_manual_entries extends ModeleBoxes
 {
 	public $boxcode = "accountancy_last_manual_entries";
-	public $boximg = "accounting";
+	public $boximg = "accountancy";
 	public $boxlabel = "BoxLastManualEntries";
 	public $depends = array("accounting");
 

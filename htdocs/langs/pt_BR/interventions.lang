@@ -17,7 +17,6 @@ NameAndSignatureOfExternalContact=Nome e Assinatura do Cliente :
 InterventionClassifyBilled=Classificar "Faturado"
 InterventionClassifyUnBilled=Classificar "à faturar"
 InterventionClassifyDone=Classificar "Feito"
-StatusInterInvoiced=Faturado
 SendInterventionRef=Apresentação de intervenção %s
 SendInterventionByMail=Envio da intervenção por e-mail
 InterventionModifiedInDolibarr=Intervenção %s alterada

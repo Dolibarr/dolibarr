@@ -57,7 +57,6 @@ if (!getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog('ziptown call with MAIN_USE_ZIPTOWN_DICTIONNARY='.getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY'));
-//var_dump($_GET);
 
 // Generation of list of zip-town
 if (GETPOST('zipcode') || GETPOST('town')) {

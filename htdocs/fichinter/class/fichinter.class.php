@@ -192,25 +192,27 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
-	/*
+
+	/**
 	 * No signature
 	 */
 	const STATUS_NO_SIGNATURE    = 0;
 
-	/*
+	/**
 	 * Signed by sender
 	 */
-	CONST STATUS_SIGNED_SENDER   = 1;
+	const STATUS_SIGNED_SENDER   = 1;
 
-	/*
+	/**
 	 * Signed by receiver
 	 */
-	CONST STATUS_SIGNED_RECEIVER = 2;
+	const STATUS_SIGNED_RECEIVER = 2;
 
-	/*
+	/**
 	 * Signed by all
 	 */
-	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+
 
 	/**
 	 * Date delivery
@@ -783,7 +785,7 @@ class Fichinter extends CommonObject
 		$thm = $this->author->thm;
 
 		foreach ($this->lines as $line) {
-			$amount += ($line->duration / 60 / 60 * $thm);
+			$amount += ($line->duration / 60 / 60 * (float) $thm);
 		}
 
 		return (float) price2num($amount, 'MT');
@@ -1010,7 +1012,7 @@ class Fichinter extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1548,7 +1550,7 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);

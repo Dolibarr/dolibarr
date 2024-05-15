@@ -1145,17 +1145,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}	// If current month lower that month of return to zero, year is previous year
 
 		if ($yearlen == 4) {
-			$yearcomp = sprintf("%04d", (int) date("Y", $date) + $yearoffset);
+			$yearcomp = sprintf("%04d", idate("Y", $date) + $yearoffset);
 		} elseif ($yearlen == 2) {
-			$yearcomp = sprintf("%02d", (int) date("y", $date) + $yearoffset);
+			$yearcomp = sprintf("%02d", idate("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
+			$yearcomp = (int) substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {
-				$yearcomp1 = sprintf("%04d", (int) date("Y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%04d", idate("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
-				$yearcomp1 = sprintf("%02d", (int) date("y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%02d", idate("y", $date) + $yearoffset + 1);
 			}
 
 			$sqlwhere .= "(";
@@ -1385,7 +1385,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// yearoffsettype is - or +, so we don't want current year
 			$numFinal = preg_replace('/\{yyyy\}/i', (string) ((int) date("Y", $date) + $yearoffset), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', (string) ((int) date("y", $date) + $yearoffset), $numFinal);
-			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
+			$numFinal = preg_replace('/\{y\}/i', (string) ((int) substr((string) date("y", $date), 1, 1) + $yearoffset), $numFinal);
 		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
@@ -1424,6 +1424,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskuser_maskafter = $maskuser_value;
 			$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
 		}
+	} else {
+		$numFinal = "ErrorBadMode";
+		dol_syslog("functions2::get_next_value ErrorBadMode '$mode'", LOG_ERR);
 	}
 
 	dol_syslog("functions2::get_next_value return ".$numFinal, LOG_DEBUG);
@@ -2978,4 +2981,63 @@ function removeGlobalParenthesis($string)
 	}
 
 	return $string;
+}
+
+
+/**
+ * Return array of Emojis
+ *
+ * @return 	array			Array of Emojis in hexadecimal
+ */
+function getArrayOfEmoji()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
+
+/**
+ * Remove EMoji from email content
+ *
+ * @param 	string	$text			String to sanitize
+ * @param	int		$allowedemoji	Mode to allow emoji
+ * @return 	string					Sanitized string
+ */
+function removeEmoji($text, $allowedemoji = 1)
+{
+	// $allowedemoji can be
+	// 0=no emoji, 1=exclude the main known emojis (default), 2=keep only the main known (not implemented), 3=accept all
+	// Note that to accept emoji in database, you must use utf8mb4, utf8mb3 is not enough.
+
+	$arrayofcommonemoji = getArrayOfEmoji();
+
+	if ($allowedemoji == 0) {
+		// For a large removal:
+		$text = preg_replace('/[\x{2600}-\x{FFFF}]/u', '', $text);
+		$text = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $text);
+	}
+
+	// Delete emoji chars with a regex
+	// See https://www.unicode.org/emoji/charts/full-emoji-list.html
+	if ($allowedemoji == 1) {
+		foreach ($arrayofcommonemoji as $key => $valarray) {
+			$text = preg_replace('/[\x{'.$valarray[0].'}-\x{'.$valarray[1].'}]/u', '', $text);
+		}
+	}
+
+	if ($allowedemoji == 2) {
+		// TODO Not yet implemented
+	}
+
+	return $text;
 }

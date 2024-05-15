@@ -615,6 +615,15 @@ if ($mode == 'feature') {
 
 	$text .= '<br>';
 
+	$text .= '<br><strong>'.$langs->trans("AddWebsiteTemplates").':</strong> ';
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['websitetemplates']) && $objMod->module_parts['websitetemplates']) {
+		$text .= $langs->trans("Yes");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
+
+	$text .= '<br>';
+
 	$text .= '<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
 	$text .= '<span class="opacitymedium">'.$langs->trans("DetectionNotPossible").'</span>';
 }

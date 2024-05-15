@@ -75,7 +75,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 

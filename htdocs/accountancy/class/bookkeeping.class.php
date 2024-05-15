@@ -721,16 +721,6 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
-
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action to call a trigger.
-			//if (! $notrigger) {
-
-			// // Call triggers
-			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-			// if ($result < 0) $error++;
-			// // End call triggers
-			//}
 		}
 
 		// Commit or rollback
@@ -748,11 +738,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int 		$id 	Id object
+	 * @param string 	$ref 	Ref
+	 * @param string 	$mode 	Mode ('' or 'tmp_')
+	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -1433,7 +1422,7 @@ class BookKeeping extends CommonObject
 			$this->piece_num = (int) $this->piece_num;
 		}
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -1554,16 +1543,17 @@ class BookKeeping extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param User 		$user 		User that deletes
-	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
-	 * @param string 	$mode 		Mode
+	 * @param int 		$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @param string 	$mode 		Mode ('' or 'tmp_')
 	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -1849,7 +1839,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
-		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
 			$sql .= ", date_export";
@@ -1875,6 +1865,7 @@ class BookKeeping extends CommonObject
 				$this->date_export = $this->db->jdate($obj->date_export);
 			}
 			$this->date_validation = $this->db->jdate($obj->date_validation);
+			$this->import_key = $obj->import_key;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
@@ -2065,6 +2056,7 @@ class BookKeeping extends CommonObject
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
+
 		if (!isset($sql_filter)) {
 			return -1;
 		}
@@ -2354,10 +2346,11 @@ class BookKeeping extends CommonObject
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date AND ".$this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . $this->db->sanitize(implode(' OR ', $sql_list), 1, 1, 1) . ')' : '';
+			$sqlsanitized = implode(' OR ', $sql_list);
+			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? " AND (".$sqlsanitized.")" : "";
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
@@ -2367,9 +2360,10 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping can be modified or deleted ?
 	 *
 	 * @param 	int		$id		Bookkeeping ID
+	 * @param 	string 	$mode 	Mode ('' or 'tmp_')
 	 * @return 	int				Return integer <0 if KO, == 0 if No, == 1 if Yes
 	 */
-	public function canModifyBookkeeping($id)
+	public function canModifyBookkeeping($id, $mode = '')
 	{
 		global $conf;
 
@@ -2381,7 +2375,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
 			if ($result <= 0) {
 				return $result;
 			}
@@ -2402,14 +2396,14 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
+
 			if ($result <= 0) {
 				return $result;
 			}
-
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}
@@ -2453,7 +2447,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}
@@ -3157,6 +3151,9 @@ class BookKeepingLine extends CommonObjectLine
 	public $import_key;
 	public $code_journal;
 	public $journal_label;
+	/**
+	 * @var int accounting transaction id
+	 */
 	public $piece_num;
 
 	/**

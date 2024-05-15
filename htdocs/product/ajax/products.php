@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here, GETPOST is not yet defined
 	define('NOREQUIREHTML', '1');
 }
 
@@ -44,7 +45,8 @@ require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOSTINT('socid');
-$type = GETPOSTINT('type');
+// type can be empty string or 0 or 1
+$type = GETPOST('type', 'int');
 $mode = GETPOSTINT('mode');
 $status = ((GETPOSTINT('status') >= 0) ? GETPOSTINT('status') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
 $status_purchase = ((GETPOSTINT('status_purchase') >= 0) ? GETPOSTINT('status_purchase') : - 1);	// status purchase when mode = customer
@@ -67,7 +69,6 @@ restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&pro
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-// print_r($_GET);
 
 if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.

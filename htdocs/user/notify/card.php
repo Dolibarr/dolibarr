@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,7 @@ $result = $object->fetch($id, '', '', 1);
 $object->getrights();
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -217,8 +218,10 @@ if ($result > 0) {
 	// Help
 	print '<span class="opacitymedium">';
 	print '<br>'.$langs->trans("NotificationsDesc");
-	print '<br>'.$langs->trans("NotificationsDescUser");
-	print '<br>'.$langs->trans("NotificationsDescContact");
+	print '<br>'.$langs->trans("NotificationsDescUser").' - '.$langs->trans("YouAreHere");
+	if (isModEnabled('societe')) {
+		print '<br>'.$langs->trans("NotificationsDescContact");
+	}
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
 	print '</span>';
 
@@ -269,12 +272,11 @@ if ($result > 0) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-	$title = $langs->trans("ListOfActiveNotifications");
+	$titlelist = $langs->trans("ListOfActiveNotifications");
 
 	// List of active notifications
-	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';
@@ -339,7 +341,7 @@ if ($result > 0) {
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 
 				print '<tr class="oddeven">';
 				print '<td>'.$userstatic->getNomUrl(1);
@@ -498,7 +500,7 @@ if ($result > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 				$userstatic->email = $obj->email;
 				print $userstatic->getNomUrl(1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");

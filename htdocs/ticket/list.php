@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket", "companies", "other", "projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
 
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -107,9 +108,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
+/*if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
 	$_GET['search_fk_statut'][] = 'openall'; // For backward compatibility
-}
+}*/
 
 // Initialize array of search criteria
 $search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
@@ -197,7 +198,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }
@@ -335,7 +336,17 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('Tickets');
+
+$moretitle = '';
+if ($socid > 0) {
+	$socstatic->fetch($socid);
+	$moretitle = $langs->trans("ThirdParty") . ' - ';
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
+		$moretitle = $socstatic->name . ' - ';
+	}
+}
+
+$title = $moretitle . $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
@@ -397,7 +408,7 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
-	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
+	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
 			$sql .= natural_search($key, $search[$key], 2);
 		}
@@ -447,9 +458,9 @@ if ($search_dateclose_end) {
 	$sql .= " AND t.date_close <= '".$db->idate($search_dateclose_end)."'";
 }
 
-if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
+if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
 	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
-	if (!getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
+	if (!getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
@@ -498,7 +509,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
@@ -681,39 +692,39 @@ if ($contractid > 0) {
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
-	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_startday='.((int) $tmparray['mday']);
+	$param .= '&search_date_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_startyear='.((int) $tmparray['year']);
 }
 if ($search_date_end) {
 	$tmparray = dol_getdate($search_date_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_start) {
 	$tmparray = dol_getdate($search_dateread_start);
-	$param .= '&search_dateread_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_end) {
 	$tmparray = dol_getdate($search_dateread_end);
-	$param .= '&search_dateread_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_endday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_start) {
 	$tmparray = dol_getdate($search_dateclose_start);
-	$param .= '&search_dateclose_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateclose_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateclose_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateclose_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateclose_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateclose_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_end) {
 	$tmparray = dol_getdate($search_dateclose_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 // List of mass actions available
 $arrayofmassactions = array(
@@ -785,7 +796,7 @@ if ($massaction == 'presendonclose') {
 		"name" => "massaction",
 		"value" => "close"
 	]);
-	$selectedchoice = getDolGlobalInt('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
+	$selectedchoice = getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
 }
 
@@ -1145,13 +1156,13 @@ while ($i < $imaxinloop) {
 						$date_last_msg_sent = (int) $object->date_last_msg_sent;
 						$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
 
-						if (!empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE && $date_last_msg_sent == 0)) {
+						if (getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE') && $date_last_msg_sent == 0) {
 							$creation_date =  $object->datec;
 							$hour_diff_creation = ($now - $creation_date) / 3600 ;
-							if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
+							if ($hour_diff_creation > getDolGlobalInt('TICKET_DELAY_BEFORE_FIRST_RESPONSE')) {
 								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', false, 0, 0, '', '');
 							}
-						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > getDolGlobalInt('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')), 'warning');
 						}
 					}

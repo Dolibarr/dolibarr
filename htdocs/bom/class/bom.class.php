@@ -59,16 +59,6 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
-	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
 	public $picto = 'bom';
@@ -88,7 +78,7 @@ class BOM extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -111,7 +101,7 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -267,6 +257,9 @@ class BOM extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -580,7 +573,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int		$fk_product				Id of product
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -689,7 +682,7 @@ class BOM extends CommonObject
 	 *
 	 * @param 	int		$rowid					Id of line to update
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	float	$qty_frozen				Frozen quantity
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -701,7 +694,7 @@ class BOM extends CommonObject
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
-		global $mysoc, $conf, $langs, $user;
+		global $user;
 
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
 		$logtext .= ", import_key=$import_key";
@@ -781,8 +774,8 @@ class BOM extends CommonObject
 					$line->array_options[$key] = $array_options[$key];
 				}
 			}
-			if ($fk_default_workstation >= 0 && $line->fk_default_workstation != $fk_default_workstation) {
-				$line->fk_default_workstation = $fk_default_workstation;
+			if ($line->fk_default_workstation != $fk_default_workstation) {
+				$line->fk_default_workstation = ($fk_default_workstation > 0 ? $fk_default_workstation : 0);
 			}
 
 			$result = $line->update($user);
@@ -875,7 +868,7 @@ class BOM extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/bom/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1531,8 +1524,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param array<int,float|int>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float					$qty		qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1556,8 +1549,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param array<int,array{bom:BOM,parent_id:int,qty:float,level:int}> $TNetNeeds Array of ChildBom and infos linked to
+	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
@@ -1678,16 +1671,6 @@ class BOMLine extends CommonObjectLine
 	public $table_element = 'bom_bomline';
 
 	/**
-	 * @var int  Does bomline support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does bomline support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
 	 */
 	public $picto = 'bomline';
@@ -1714,7 +1697,7 @@ class BOMLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'LineID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -1763,7 +1746,7 @@ class BOMLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int qty frozen
+	 * @var float qty frozen
 	 */
 	public $qty_frozen;
 
@@ -1827,6 +1810,10 @@ class BOMLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

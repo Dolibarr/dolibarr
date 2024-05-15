@@ -70,17 +70,6 @@ class Contrat extends CommonObject
 	public $picto = 'contract';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -249,7 +238,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -311,6 +300,9 @@ class Contrat extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -337,7 +329,7 @@ class Contrat extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/contract/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -346,6 +338,7 @@ class Contrat extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force CommonNumRefGenerator $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1064,6 +1057,7 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
+				'@phan-var-force CommonNumRefGenerator $modCodeContrat';
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -1423,7 +1417,7 @@ class Contrat extends CommonObject
 		}
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-		// $this->oldcopy should have been set by the caller of update
+		// $this->oldcopy must have been set by the caller of update
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
@@ -1488,7 +1482,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	string		$desc            	Description of line
 	 *  @param  float		$pu_ht              Unit price net
-	 *  @param  int			$qty             	Quantity
+	 *  @param  float	 	$qty             	Quantity
 	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
@@ -1528,9 +1522,9 @@ class Contrat extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 			$txtva = price2num($txtva);
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -1721,7 +1715,7 @@ class Contrat extends CommonObject
 	 *  @param	int			$rowid            	Id de la ligne de facture
 	 *  @param  string		$desc             	Description de la ligne
 	 *  @param  float		$pu               	Prix unitaire
-	 *  @param  int			$qty              	Quantite
+	 *  @param  float		$qty              	Quantite
 	 *  @param  float		$remise_percent   	Percentage discount of the line
 	 *  @param  int			$date_start       	Date de debut prevue
 	 *  @param  int			$date_end         	Date de fin prevue
@@ -1746,7 +1740,7 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$qty = trim($qty);
+		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
 		$price = price2num($pu);
@@ -2092,7 +2086,7 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (empty($this->project) && $this->project instanceof Project) {
 					$res = $this->fetch_project();
 					if ($res > 0) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
@@ -2686,6 +2680,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
+		'@phan-var-force CommonNumRefGenerator $modContrat';
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2966,17 +2961,18 @@ class Contrat extends CommonObject
 		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
-			$return .= '<br><div class="info-box-label inline-block">'.$tmpthirdparty->getNomUrl(1).'</div>';
+			$return .= '<br><div class="info-box-label inline-block valignmiddle">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'date_contrat')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
+			$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(7).'</div>';
+			$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 
@@ -3148,7 +3144,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -3473,11 +3469,11 @@ class ContratLigne extends CommonObjectLine
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->vat_src_code = trim($this->vat_src_code);
-		$this->tva_tx = trim($this->tva_tx);
+		$this->tva_tx = trim((string) $this->tva_tx);
 		$this->localtax1_tx = trim($this->localtax1_tx);
 		$this->localtax2_tx = trim($this->localtax2_tx);
-		$this->qty = trim($this->qty);
-		$this->remise_percent = trim($this->remise_percent);
+		$this->qty = trim((string) $this->qty);
+		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
@@ -3539,7 +3535,8 @@ class ContratLigne extends CommonObjectLine
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$this->oldcopy = dol_clone($this);
+			dol_syslog("this->oldcopy should have been set by the caller of update (here properties were already modified)", LOG_WARNING);
+			$this->oldcopy = dol_clone($this, 2);
 		}
 
 		$this->db->begin();

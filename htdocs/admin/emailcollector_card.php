@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -401,6 +402,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 
 			if ($object->acces_type == 1) {
+				dol_syslog("Scan IMAP with authentication mode = OAUTH2");
+
 				// Mode OAUth2 with PHP-IMAP
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
@@ -459,6 +462,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
+
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 					if (is_object($tokenobj)) {
 						$token = $tokenobj->getAccessToken();
@@ -488,6 +492,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					'authentication' => "oauth",
 				]);
 			} else {
+				dol_syslog("Scan IMAP with authentication mode = PASS");
+
 				// Mode login/pass with PHP-IMAP
 				$cm = new ClientManager();
 				$client = $cm->make([
@@ -515,8 +521,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// See github.com/Webklex/php-imap/issues/81
 					$client->connect();
 
+					// Uncomment this to output debug info
+					//$client->getConnection()->enableDebug();	// Add debug
+
 					$f = $client->getFolders(false, $object->source_directory);
-					$nbemail = $f[0]->examine()["exists"];
+					if ($f) {	// $f is Webklex\PHPIMAP\Support\FolderCollection
+						$folder = $f[0];
+						if ($folder instanceof Webklex\PHPIMAP\Folder) {
+							$nbemail = $folder->examine()["exists"];
+						} else {
+							$nbemail = 0;
+						}
+					} else {
+						$nbemail = 0;
+					}
 					$morehtml .= $nbemail;
 				} catch (ConnectionFailedException $e) {
 					$morehtml .= 'ConnectionFailedException '.$e->getMessage();
@@ -534,8 +552,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-					$timeoutread = !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+					$timeoutconnect = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5);
+					$timeoutread = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 20);
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 
@@ -611,31 +629,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
-		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
-		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
-		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'replyto'=>array('label'=>'ReplyTo', 'data-placeholder'=>$langs->trans('SearchString')),
-		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
-		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
+		'from' => array('label' => 'MailFrom', 'data-placeholder' => $langs->trans('SearchString')),
+		'to' => array('label' => 'MailTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'cc' => array('label' => 'Cc', 'data-placeholder' => $langs->trans('SearchString')),
+		'bcc' => array('label' => 'Bcc', 'data-placeholder' => $langs->trans('SearchString')),
+		'replyto' => array('label' => 'ReplyTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'subject' => array('label' => 'Subject', 'data-placeholder' => $langs->trans('SearchString')),
+		'body' => array('label' => 'Body', 'data-placeholder' => $langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
 		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
 		//'X1'=>'---',
-		'X2'=>'---',
-		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
-		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
-		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
-		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-		'smaller'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'larger'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'X3'=>'---',
-		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
-		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
-		'withtrackingidinmsgid'=>array('label'=>'WithDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'withouttrackingidinmsgid'=>array('label'=>'WithoutDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'X4'=>'---',
-		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
-		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
+		'X2' => '---',
+		'seen' => array('label' => 'AlreadyRead', 'data-noparam' => 1),
+		'unseen' => array('label' => 'NotRead', 'data-noparam' => 1),
+		'unanswered' => array('label' => 'Unanswered', 'data-noparam' => 1),
+		'answered' => array('label' => 'Answered', 'data-noparam' => 1),
+		'smaller' => array('label' => $langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'larger' => array('label' => $langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'X3' => '---',
+		'withtrackingid' => array('label' => 'WithDolTrackingID', 'data-noparam' => 1),
+		'withouttrackingid' => array('label' => 'WithoutDolTrackingID', 'data-noparam' => 1),
+		'withtrackingidinmsgid' => array('label' => 'WithDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'withouttrackingidinmsgid' => array('label' => 'WithoutDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'X4' => '---',
+		'isnotanswer' => array('label' => 'IsNotAnAnswer', 'data-noparam' => 1),
+		'isanswer' => array('label' => 'IsAnAnswer', 'data-noparam' => 1)
 	);
 	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1, '', 2);
 

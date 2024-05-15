@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/target.class.php
+ * \file        htdocs/webhook/class/target.class.php
  * \ingroup     webhook
  * \brief       This file is a CRUD class file for Target (Create/Read/Update/Delete)
  */
@@ -48,17 +48,6 @@ class Target extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'webhook_target';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for target. Must be the part after the 'object_' into object_target.png
@@ -101,14 +90,14 @@ class Target extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'index' => 1, 'searchall' => 1, 'validate' => 1, 'comment' => "Reference of object"),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,),
-		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1,),
-		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo",),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist'=>'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1,),
+		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo", 'tdcss'=>'titlefieldmiddle', 'css' => 'minwidth400', 'arrayofkeyval' => array('defined_in_constructor' => 'defined_from_c_action_trigger'), 'multiinput' => 1,),
+		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1,),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
@@ -131,6 +120,9 @@ class Target extends CommonObject
 	public $import_key;
 	public $status;
 	public $url;
+	/**
+	 * @var string	List of trigger codes separated by a comma. Example: 'BILL_VALIDATE,PROPAL_DELETE,...'
+	 */
 	public $trigger_codes;
 	// END MODULEBUILDER PROPERTIES
 
@@ -178,9 +170,12 @@ class Target extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -206,6 +201,36 @@ class Target extends CommonObject
 				}
 			}
 		}
+	}
+
+	/**
+	 * Init the list of available triggers;
+	 *
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function initListOfTriggers()
+	{
+		// Define the array $arrayofkeyval for $this->fields["trigger_codes"]
+		if (!empty($this->fields["trigger_codes"]['arrayofkeyval']) && is_array($this->fields["trigger_codes"]['arrayofkeyval']) && !empty($this->fields["trigger_codes"]["multiinput"])) {
+			$sql = "SELECT c.code, c.label FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang DESC";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				$arraytrigger = array();
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$arraytrigger[$obj->code] = $obj->label.' ('.$obj->code.')';
+					$i++;
+				}
+				$this->fields["trigger_codes"]['arrayofkeyval'] = $arraytrigger;
+			} else {
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -370,8 +395,6 @@ class Target extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -478,7 +501,7 @@ class Target extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -547,7 +570,7 @@ class Target extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'target/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'target/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'target/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -805,7 +828,9 @@ class Target extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status6';
 		}
@@ -860,28 +885,6 @@ class Target extends CommonObject
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new TargetLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_target:=:'.((int) $this->id).')');
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -901,7 +904,7 @@ class Target extends CommonObject
 			$dir = dol_buildpath($reldir."core/modules/webhook/");
 
 			// Load file with numbering class (if found)
-			$mybool |= @include_once $dir.$file;
+			$mybool = ((bool) @include_once $dir.$file) || $mybool;
 		}
 
 		if ($mybool === false) {
@@ -939,8 +942,6 @@ class Target extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
-
 		$result = 0;
 		$includedocgeneration = 0;
 
@@ -972,7 +973,7 @@ class Target extends CommonObject
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
+		//global $conf, $langs;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
@@ -982,7 +983,7 @@ class Target extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
@@ -991,32 +992,5 @@ class Target extends CommonObject
 		$this->db->commit();
 
 		return $error;
-	}
-}
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
-/**
- * Class TargetLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class TargetLine extends CommonObjectLine
-{
-	// To complete with content of an object TargetLine
-	// We should have a field rowid, fk_target and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
 	}
 }

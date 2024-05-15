@@ -27,6 +27,9 @@ class FormSetup
 	 */
 	public $db;
 
+	/** @var int */
+	public $entity;
+
 	/** @var FormSetupItem[]  */
 	public $items = array();
 
@@ -92,7 +95,8 @@ class FormSetup
 	 */
 	public function __construct($db, $outputLangs = null)
 	{
-		global $langs;
+		global $conf, $langs;
+
 		$this->db = $db;
 
 		$this->form = new Form($this->db);
@@ -100,6 +104,8 @@ class FormSetup
 
 		$this->formHiddenInputs['token'] = newToken();
 		$this->formHiddenInputs['action'] = 'update';
+
+		$this->entity = (is_null($this->entity) ? $conf->entity : $this->entity);
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -461,6 +467,8 @@ class FormSetup
 	{
 		$item = new FormSetupItem($confKey);
 
+		$item->entity = $this->entity;
+
 		// set item rank if not defined as last item
 		if (empty($item->rank)) {
 			$item->rank = $this->getCurentItemMaxRank() + 1;
@@ -595,19 +603,23 @@ class FormSetupItem
 	/** @var Form */
 	public $form;
 
+
 	/** @var string $confKey the conf key used in database */
 	public $confKey;
 
-	/** @var string|false $nameText  */
+	/** @var string|false $nameText */
 	public $nameText = false;
 
-	/** @var string $helpText  */
+	/** @var string $helpText */
 	public $helpText = '';
 
-	/** @var string $fieldValue  */
+	/** @var string $picto */
+	public $picto = '';
+
+	/** @var string $fieldValue */
 	public $fieldValue;
 
-	/** @var string $defaultFieldValue  */
+	/** @var string $defaultFieldValue */
 	public $defaultFieldValue = null;
 
 	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
@@ -657,7 +669,7 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param string $confKey the conf key used in database
+	 * @param string	$confKey	the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
@@ -671,7 +683,7 @@ class FormSetupItem
 		}
 
 		$this->langs = $langs;
-		$this->entity = $conf->entity;
+		$this->entity = (is_null($this->entity) ? $conf->entity : ((int) $this->entity));
 
 		$this->confKey = $confKey;
 		$this->loadValueFromConf();
@@ -1090,7 +1102,13 @@ class FormSetupItem
 	 */
 	public function generateInputFieldSelect()
 	{
-		return $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+
+		return $s;
 	}
 
 	/**
@@ -1184,7 +1202,7 @@ class FormSetupItem
 			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out .= ajax_constantonoff($this->confKey);
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
 					$out .= $langs->trans('yes');

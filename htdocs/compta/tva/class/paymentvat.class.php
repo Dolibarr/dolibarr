@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/compta/sociales/class/paymentsocialcontribution.class.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      File of class to manage payment of social contributions
  */
 
@@ -170,8 +170,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function create($user, $closepaidvat = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();

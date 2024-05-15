@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -164,7 +165,7 @@ if (empty($conf->eventorganization->enabled)) {
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -510,6 +511,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
+			$outputlangs->loadLangs(array("eventorganization"));
+
 			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
 			$productforinvoicerow->id = 0;
@@ -629,7 +632,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 			// Load traductions files required by page
-			$outputlangs->loadLangs(array("main", "members"));
+			$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 			// Get email content from template
 			$arraydefaultmessage = null;
 
@@ -786,7 +789,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		//print '<span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
 		//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function () {
@@ -802,11 +805,15 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 		// Firstname
-		print '<tr><td><span class="fieldrequired">' . $langs->trans("Firstname") . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">';
+		print $langs->trans("Firstname") . '</span></td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
 		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required autofocus></td></tr>' . "\n";
 
 		// Lastname
-		print '<tr><td><span class="fieldrequired">' . $langs->trans("Lastname") . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">';
+		print $langs->trans("Lastname") . '</span></td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
 		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
 
 		// Email

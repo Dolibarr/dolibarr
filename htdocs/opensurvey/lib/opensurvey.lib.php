@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -174,9 +175,9 @@ function get_server_name()
 /**
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
  *
- * @param   string  $name       La clé à tester
- * @param   array   $tableau    Le tableau où rechercher la clé ($_POST par défaut)
- * @return  bool                Vrai si la clé existe et renvoie une valeur non vide
+ * @param   string  $name       Key to test
+ * @param   array   $tableau    Array in which searching key ($_POST by default)
+ * @return  bool                True if key exists and return a non empty value
  */
 function issetAndNoEmpty($name, $tableau = null)
 {
@@ -217,7 +218,7 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((float) microtime() * 1000000);
+	mt_srand((int) ((float) microtime() * 1000000));
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}

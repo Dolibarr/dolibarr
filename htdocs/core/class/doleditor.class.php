@@ -53,20 +53,21 @@ class DolEditor
 	/**
 	 *  Create an object to build an HTML area to edit a large string content
 	 *
-	 *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
-	 *  @param 	string	$content		        		Content of WYSIWIG field
-	 *  @param	int|string	$width						Width in pixel of edit area (auto by default)
-	 *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
-	 *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
-	 *  @param  string	$toolbarlocation       			Deprecated. Not used
-	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	boolean|int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
-	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
-	 *  @param  int		$rows                   		Size of rows for textarea tool
-	 *  @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
-	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
-	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
+	 *  @param 	string			$htmlname		        		HTML name of WYSIWYG field
+	 *  @param 	string			$content		        		Content of WYSIWYG field
+	 *  @param	int|string		$width							Width in pixel of edit area (auto by default)
+	 *  @param 	int				$height			       		 	Height in pixel of edit area (200px by default)
+	 *  @param 	string			$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+	 *  @param  string			$toolbarlocation       			Deprecated. Not used
+	 *  @param  boolean			$toolbarstartexpanded  			Bar is visible or not at start
+	 *  @param	boolean|int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param  boolean|string	$okforextendededitor    		True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *                                                  		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
+	 *  @param  int				$rows                   		Size of rows for textarea tool
+	 *  @param  string			$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
+	 *  @param	int				$readonly						0=Read/Edit, 1=Read only
+	 *  @param	array			$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y).
+	 *                                             				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
 	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
 	{
@@ -97,6 +98,19 @@ class DolEditor
 		}
 		//if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
 
+		if ( isset($poscursor['find']) ) {
+			$posy = 0;
+			$lines = explode("\n", $content);
+			$nblines = count($lines);
+			for ($i = 0 ; $i < $nblines ; $i++) {
+				if (preg_match('/'.$poscursor['find'].'/', $lines[$i])) {
+					$posy = $i;
+					break;
+				}
+			}
+			if ($posy != 0 ) $poscursor['y'] = $posy;
+		}
+
 		// Define some properties
 		if (in_array($this->tool, array('textarea', 'ckeditor', 'ace'))) {
 			if ($this->tool == 'ckeditor' && !dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
@@ -125,7 +139,7 @@ class DolEditor
 	 *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
 	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
 	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
-	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
+	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
 	 *  @param	string	$moreparam			 Add extra tags to the textarea
 	 *  @param	string	$morecss			 Add extra css to the textarea
 	 *  @return	void|string

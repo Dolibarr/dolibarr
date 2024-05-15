@@ -598,7 +598,7 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($backtopage)) {
-						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
 							$backtopage .= '&socid='.$object->id; // Old method
 						}
@@ -873,7 +873,7 @@ $title = $langs->trans("ThirdParty");
 if ($action == 'create') {
 	$title = $langs->trans("NewThirdParty");
 }
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
@@ -1213,7 +1213,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="code_auto" value="1">';
 		}
 
-		print dol_get_fiche_head(null, 'card', '', 0, '');
+		print dol_get_fiche_head(array(), 'card', '', 0, '');
 
 		// Call Hook tabContentCreateThirdparty
 		$parameters = array();
@@ -1539,9 +1539,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$i = 1;
 			$j = 0;
 			$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					$key = 'idprof'.$i;
 
 					if (($j % $NBCOLS) == 0) {
@@ -1697,13 +1699,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Customer
 				print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', 'parent', 64, 0, 3);
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 
 				if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 					print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', 'parent', 64, 0, 3);
 					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
@@ -1711,7 +1713,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Supplier
 				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 					print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', 'parent', 64, 0, 3);
 					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
@@ -1747,7 +1749,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : (!$user->hasRight('societe', 'client', 'voir') ? array($user->id) : array())));
+			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
 			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
@@ -2281,9 +2283,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$i = 1;
 				$j = 0;
 				$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-				while ($i <= 6) {
+				$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+				$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+				while ($i <= $NBPROFIDMAX) {
 					$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-					if ($idprof != '-') {
+					if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 						$key = 'idprof'.$i;
 
 						if (($j % $NBCOLS) == 0) {
@@ -2450,7 +2454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Customer
 					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
 					$arrayselected = array();
@@ -2464,7 +2468,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 						print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
 						print '<td colspan="3">';
-						$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+						$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', '', 64, 0, 3);
 						$c = new Categorie($db);
 						$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
 						$arrayselected = array();
@@ -2503,9 +2507,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Webservices url/key
 				if (isModEnabled('webservicesclient')) {
 					print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
+					print '<td><input type="text" name="webservices_url" id="webservices_url" value="'.$object->webservices_url.'"></td>';
 					print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
-					print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
+					print '<td><input type="text" name="webservices_key" id="webservices_key" value="'.$object->webservices_key.'"></td></tr>';
 				}
 
 				// Logo
@@ -2705,10 +2709,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Prof ids
 			$i = 1;
 			$j = 0;
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
-					//if (($j % 2) == 0) print '<tr>';
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					print '<tr>';
 					print '<td>'.$idprof.'</td><td>';
 					$key = 'idprof'.$i;
@@ -2723,13 +2728,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 					print '</td>';
-					//if (($j % 2) == 1) print '</tr>';
 					print '</tr>';
 					$j++;
 				}
 				$i++;
 			}
-			//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
 
 			// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
@@ -3102,8 +3105,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Webservices url/key
 			if (isModEnabled('webservicesclient')) {
-				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';
-				print '<td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
+				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td></tr>';
+				print '<tr><td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
 			}
 
 			print '</table>';

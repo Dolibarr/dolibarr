@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_factures_imp.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Widget to show remain to get on sale invoices
  */
 

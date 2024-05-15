@@ -53,55 +53,56 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
-		if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
-			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-			$nbContact = 0;
-			// Enable caching of thirdrparty count Contacts
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-			$cachekey = 'count_contacts_thirdparty_'.$object->id;
-			$dataretrieved = dol_getcache($cachekey);
 
-			if (!is_null($dataretrieved)) {
-				$nbContact = $dataretrieved;
-			} else {
-				$sql = "SELECT COUNT(p.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				// Add table from hooks
-				$parameters = array('contacttab' => true);
-				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
-				$sql .= $hookmanager->resPrint;
-				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-				$sql .= " AND p.entity IN (".getEntity($object->element).")";
-				// Add where from hooks
-				$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
-				$sql .= $hookmanager->resPrint;
-				$resql = $db->query($sql);
-				if ($resql) {
-					$obj = $db->fetch_object($resql);
-					$nbContact = $obj->nb;
-				}
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
+		//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = 0;
+		// Enable caching of thirdrparty count Contacts
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_contacts_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
 
-				dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		if (!is_null($dataretrieved)) {
+			$nbContact = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(p.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+			// Add table from hooks
+			$parameters = array('contacttab' => true);
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+			$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+			$sql .= " AND p.entity IN (".getEntity($object->element).")";
+			// Add where from hooks
+			$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbContact = $obj->nb;
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans('ContactsAddresses');
-			if ($nbContact > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
-			}
-			$head[$h][2] = 'contact';
-			$h++;
+			dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-	} else {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][1] = $langs->trans("ContactsAddresses");
+
+		$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		}
 		$head[$h][2] = 'contact';
+		$h++;
+	}
+	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		// Some features may be unstable with this option, like permissions rules, import contact, ...
+		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][1] = $langs->trans("ContactsAddressesExt");
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contactext';
 		$h++;
 	}
 
@@ -321,9 +322,14 @@ function societe_prepare_head(Societe $object)
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
 			} else {
+				// List of notifications enabled for contacts of the third party
 				$sql = "SELECT COUNT(n.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-				$sql .= " WHERE fk_soc = ".((int) $object->id);
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+				$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
+				$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
+				$sql .= " WHERE a.rowid = n.fk_action";
+				$sql .= " AND c.rowid = n.fk_contact";
+				$sql .= " AND c.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -386,7 +392,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -595,18 +601,18 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
  *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
  *    @param    int			$id         	id of state (province/departement)
- *    @param    string		$withcode   	'0'=Return label,
- *    										'1'=Return string code + label,
- *    						  				'2'=Return code,
- *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
- *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param    int			$withregion   	'0'=Ignores region,
+ *    @param    '0'|'1'|'2'|'all'	$withcode	'0'=Return label,
+ *                                              '1'=Return string code + label,
+ *                                              '2'=Return code,
+ *                                              'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param	?DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param    int<0,1>	$withregion   	'0'=Ignores region,
  *    										'1'=Add region name/code/id as needed to output,
  *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
- *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @return   string|array       			String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
+ *    @param    int<0,1>    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @return   string|array{id:int,code:string,label:string}|array{id:int,code:string,label:string,region_code:string,region:string}		String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id, $withcode = '', $dbtouse = null, $withregion = 0, $outputlangs = null, $entconv = 1)
+function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outputlangs = null, $entconv = 1)
 {
 	global $db, $langs;
 
@@ -717,17 +723,22 @@ function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 }
 
 /**
- *    Return the name translated of juridical status
+ *    Return the name translated of juridical status.
+ *    This method include a cache.
  *
  *    @param      string	$code       Code of juridical status
  *    @return     string     			Value of the juridical status
  */
 function getFormeJuridiqueLabel($code)
 {
-	global $db, $langs;
+	global $conf, $db, $langs;
 
 	if (!$code) {
 		return '';
+	}
+
+	if (!empty($conf->cache["legalform_".$langs->defaultlang.'_'.$code])) {
+		return $conf->cache["legalform_".$langs->defaultlang.'_'.$code];
 	}
 
 	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
@@ -742,6 +753,8 @@ function getFormeJuridiqueLabel($code)
 			$obj = $db->fetch_object($resql);
 
 			$label = ($obj->label != '-' ? $obj->label : '');
+
+			$conf->cache["legalform_".$langs->defaultlang.'_'.$code] = $label;
 
 			return $langs->trans($label);
 		} else {
@@ -870,7 +883,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="right">'.$langs->trans("Status").'</td>';
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="center">';
-				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				$selectedfields = (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 				print $selectedfields;
 				print '</td>';
 			}
@@ -1102,7 +1115,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOSTINT("search_rowid");
+	$search_rowid   = GETPOST("search_rowid", "intcomma");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -1165,7 +1178,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
 		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
 		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 45),
-		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
+		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
 	);
 
 	// Definition of fields for list
@@ -1248,7 +1261,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$mode = 'view';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1552,23 +1566,21 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($addresstoshow)).'">';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}
 
 			// Note private
 			if (!empty($arrayfields['t.note_private']['checked'])) {
-				print '<td>';
-				if ($obj->note_private) {
-					print dol_string_nohtmltag($obj->note_private);
-				}
+				print '<td class="center">';
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 			}
 
 			// Role
 			if (!empty($arrayfields['sc.role']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $formcompany->showRoles("roles", $contactstatic, 'view');
 				print '</td>';
 			}
@@ -1591,7 +1603,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
-					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+					print $tmpuser->getNomUrl(-1, '', 0, 0, 24, 1);
 				}
 				print '</td>';
 			}
@@ -2111,7 +2123,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, (!getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 0 : 1), 1, 'minwidth100 maxwidth150');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'combolargeelem minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';

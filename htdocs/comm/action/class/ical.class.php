@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,7 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
+		//$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], 2, 0);	// To test with any URL
 		$tmpresult = getURLContent($file, 'GET');
 		if ($tmpresult['http_code'] != 200) {
 			$file_text = null;
@@ -158,7 +160,7 @@ class ICal
 		}
 
 		// read FILE text
-		if (is_null($this->file_text)) {
+		if (empty($this->file_text)) {
 			$this->file_text = $this->read_file($uri);
 
 			if ($usecachefile && !is_null($this->file_text)) {
@@ -219,7 +221,7 @@ class ICal
 						$type = "VCALENDAR";
 						break;
 
-					// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
+						// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
 					case "BEGIN:VALARM":
 						$insidealarm = 1;
 						break;
@@ -378,6 +380,7 @@ class ICal
 
 		$ntime = 0;
 		// TIME LIMITED EVENT
+		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
 			$ntime = dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
 		}
@@ -391,23 +394,24 @@ class ICal
 	/**
 	 * Return unix date from iCal date format
 	 *
-	 * @param 	string 		$key			Key
-	 * @param 	string 		$value			Value
-	 * @return 	array
+	 * @param 	string 		$key			Key. Example: 'DTSTART', 'DTSTART;TZID=US-Eastern'
+	 * @param 	string 		$value			Value. Example: '19970714T133000', '19970714T173000Z', '19970714T133000'
+	 * @return 	array{0:string,1:int}|array{0:string,1:array<string,int|string>}
 	 */
 	public function ical_dt_date($key, $value)
 	{
 		// phpcs:enable
 		$return_value = array();
-		$value = $this->ical_date_to_unix($value);
 
 		// Analyse TZID
 		$temp = explode(";", $key);
 
-		if (empty($temp[1])) { // not TZID
-			$value = str_replace('T', '', $value);
+		if (empty($temp[1])) { // not TZID in key
+			$value = $this->ical_date_to_unix($value);
 			return array($key, $value);
 		}
+
+		$value = str_replace('T', '', $value);
 
 		$key = $temp[0];
 		$temp = explode("=", $temp[1]);

@@ -80,7 +80,7 @@ if ($action == 'update' || $action == 'add') {
 
 // Action to activate a submodule of the 'adherent' module
 if ($action == 'set') {
-	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, GETPOST("name", 'aZ09'), GETPOST("value"), '', 0, '', $conf->entity);
 	if ($result < 0) {
 		dol_print_error($db);
 	}
@@ -88,7 +88,7 @@ if ($action == 'set') {
 
 // Action to deactivate a submodule of the 'adherent' module
 if ($action == 'unset') {
-	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
+	$result = dolibarr_del_const($db, GETPOST("name", 'aZ09'), $conf->entity);
 	if ($result < 0) {
 		dol_print_error($db);
 	}

@@ -24,6 +24,7 @@
  * \brief File of class to manage predefined price products or services by customer
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  * File of class to manage predefined price products or services by customer
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class ProductCustomerPrice extends CommonObject
 {
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'showoncombobox' => 1, 'noteditable' => 1),
@@ -470,7 +471,7 @@ class ProductCustomerPrice extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new PriceByCustomerLine();
+				$line = new PriceByCustomerLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -581,7 +582,7 @@ class ProductCustomerPrice extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new PriceByCustomerLine();
+				$line = new PriceByCustomerLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1070,7 +1071,7 @@ class ProductCustomerPrice extends CommonObject
 /**
  * File of class to manage predefined price products or services by customer lines
  */
-class PriceByCustomerLine
+class PriceByCustomerLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
@@ -1083,7 +1084,6 @@ class PriceByCustomerLine
 	public $entity;
 
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int ID

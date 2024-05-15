@@ -9,7 +9,7 @@
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -191,6 +191,9 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
+}
+if (isModEnabled("societe") && $user->hasRight('societe', 'contact', 'lire')) {
+	$elementList['contact'] = img_picto('', 'contact', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToContact'));
 }
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
@@ -681,7 +684,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 
 // Confirm deletion of record
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&code='.urlencode($code).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
@@ -887,7 +890,7 @@ $param = '&id='.((int) $id);
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
-if ($search_lang > 0) {
+if (!empty($search_lang) && $search_lang != '-1') {
 	$param .= '&search_lang='.urlencode($search_lang);
 }
 if ($search_type_template != '-1') {
@@ -1041,7 +1044,7 @@ foreach ($fieldlist as $field => $value) {
 		}
 		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
 		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse .= 'type_template,lang,position,label';
+			$sortfieldtouse .= ',lang,position,label';
 		}
 		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
 	}
@@ -1101,7 +1104,7 @@ if ($num) {
 				}
 				print "</tr>\n";
 
-				print '<tr class="oddeven nohover'.(in_array($tmpfieldlist, array('topic', 'joinfiles')) ? ' nobottom' : '').'" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
+				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
 				print '<td colspan="10">';
 
 				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
@@ -1194,7 +1197,7 @@ if ($num) {
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -1258,7 +1261,7 @@ if ($num) {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(1);
+								$valuetoshow = $fuser->getNomUrl(-1);
 								$class .= ' tdoverflowmax100';
 							}
 						}
@@ -1379,13 +1382,13 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
-					print $user->getNomUrl(1); // Me
+					print $user->getNomUrl(-1); // Me
 					$forcedvalue = $user->id;
 				} else {
 					if ($obj && !empty($obj->$value) && $obj->$value > 0) {
 						$fuser = new User($db);
 						$fuser->fetch($obj->$value);
-						print $fuser->getNomUrl(1);
+						print $fuser->getNomUrl(-1);
 						$forcedvalue = $fuser->id;
 					} else {
 						$forcedvalue = $obj->$value;

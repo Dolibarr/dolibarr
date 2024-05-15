@@ -74,7 +74,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->shipment->fetchObjectLinked();
@@ -101,8 +101,6 @@ class Shipments extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
@@ -178,12 +176,12 @@ class Shipments extends DolibarrApi
 	 * Create shipment object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of shipment
+	 * @return  int     				ID of shipment created
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -191,16 +189,29 @@ class Shipments extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->shipment->context['caller'] = $request_data['caller'];
+				$this->shipment->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->shipment->$field = $value;
+			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$shipmentline = new ExpeditionLigne($this->db);
+
+				$shipmentline->entrepot_id = $line['entrepot_id'];
+				$shipmentline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: order id.  this->origin is 'commande'
+				$shipmentline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order id
+				$shipmentline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order line id
+				$shipmentline->origin_type = $line['element_type'] ?? $line['origin_type'];			// example 'commande' or 'order'
+				$shipmentline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'commande' or 'order'
+				$shipmentline->qty = $line['qty'];
+				$shipmentline->rang = $line['rang'];
+				$shipmentline->array_options = $line['array_options'];
+				$shipmentline->detail_batch = $line['detail_batch'];
+
+				$lines[] = $shipmentline;
 			}
 			$this->shipment->lines = $lines;
 		}
@@ -234,7 +245,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->shipment->getLinesArray();
 		$result = array();
@@ -268,7 +279,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -336,7 +347,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -386,7 +397,7 @@ class Shipments extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return array
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -403,14 +414,19 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// TODO Check the lineid $lineid is a line of object
 
 		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line ' .$lineid. ' deleted'
+				)
+			);
 		} else {
 			throw new RestException(405, $this->shipment->error);
 		}
@@ -435,7 +451,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -443,11 +459,11 @@ class Shipments extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->shipment->context['caller'] = $request_data['caller'];
+				$this->shipment->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->shipment->$field = $value;
+			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
 
 		if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {
@@ -475,7 +491,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->shipment->delete(DolibarrApiAccess::$user)) {
@@ -520,7 +536,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->shipment->valid(DolibarrApiAccess::$user, $notrigger);
@@ -643,7 +659,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->shipment->setClosed();
@@ -674,6 +690,8 @@ class Shipments extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->canvas);
+
 		unset($object->thirdparty); // id already returned
 
 		unset($object->note);
@@ -690,6 +708,8 @@ class Shipments extends DolibarrApi
 						unset($line->detail_batch[$keytmp2]->db);
 					}
 				}
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

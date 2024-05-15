@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2018-2020  Thibault FOUCART       <support@ptibogxiv.net>
- * Copyright (C) 2018       Fédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023       Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
+ * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -58,8 +59,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect'])) {
-	if (isset($_GET['test'])) {
+if (GETPOSTISSET('connect')) {
+	if (GETPOSTISSET('test')) {
 		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -69,7 +70,7 @@ if (isset($_GET['connect'])) {
 		$servicestatus = 1;
 	}
 } else {
-	if (isset($_GET['test'])) {
+	if (GETPOSTISSET('test')) {
 		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -243,7 +244,7 @@ if ($event->type == 'payout.created') {
 			$typeto = 'VIR';
 
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
@@ -329,15 +330,15 @@ if ($event->type == 'payout.created') {
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 	$invoice_id = "";
-	$paymentTypeId = "";			// payment type according to Stripe
-	$paymentTypeIdInDolibarr = "";	// payment type according to Dolibarr
+	$paymentTypeCode = "";			// payment type according to Stripe
+	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
 	$payment_amount = 0;
 	$payment_amountInDolibarr = 0;
 
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
-	$sql .= " FROM llx_prelevement_demande as pi";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
 
@@ -353,7 +354,7 @@ if ($event->type == 'payout.created') {
 					$invoice_id = $obj->fk_facture;
 					$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 					$payment_amountInDolibarr = $obj->amount;
-					$paymentTypeIdInDolibarr = $obj->type;
+					$paymentTypeCodeInDolibarr = $obj->type;
 
 					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
 				} else {
@@ -366,7 +367,7 @@ if ($event->type == 'payout.created') {
 					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
 					$payment_amountInDolibarr = $obj->amount;
-					$paymentTypeIdInDolibarr = empty($obj->type) ? 'card' : $obj->type;
+					$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1");
 				} else {
@@ -385,7 +386,7 @@ if ($event->type == 'payout.created') {
 		return -1;
 	}
 
-	if ($paymentTypeIdInDolibarr) {
+	if ($paymentTypeCodeInDolibarr) {
 		// Here, we need to do something. A $invoice_id has been found.
 
 		$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
@@ -395,11 +396,11 @@ if ($event->type == 'payout.created') {
 		$s = new \Stripe\StripeClient($stripeacc);
 
 		$paymentmethodstripe = $s->paymentMethods->retrieve($paymentmethodstripeid);
-		$paymentTypeId =  $paymentmethodstripe->type;
-		if ($paymentTypeId == "ban" || $paymentTypeId == "sepa_debit") {
-			$paymentTypeId = "PRE";
-		} elseif ($paymentTypeId == "card") {
-			$paymentTypeId = "CB";
+		$paymentTypeCode =  $paymentmethodstripe->type;
+		if ($paymentTypeCode == "ban" || $paymentTypeCode == "sepa_debit") {
+			$paymentTypeCode = "PRE";
+		} elseif ($paymentTypeCode == "card") {
+			$paymentTypeCode = "CB";
 		}
 
 		$payment_amount = $payment_amountInDolibarr;
@@ -407,13 +408,13 @@ if ($event->type == 'payout.created') {
 
 		$postactionmessages = array();
 
-		if ($paymentTypeId == "CB" && ($paymentTypeIdInDolibarr == 'card' || empty($paymentTypeIdInDolibarr))) {
+		if ($paymentTypeCode == "CB" && ($paymentTypeCodeInDolibarr == 'card' || empty($paymentTypeCodeInDolibarr))) {
 			// Case payment type in Stripe and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
 
 			// TODO Set traite to 1
 			dol_syslog("TODO update flag traite to 1");
-		} elseif ($paymentTypeId == "PRE" && $paymentTypeIdInDolibarr == 'ban') {
+		} elseif ($paymentTypeCode == "PRE" && $paymentTypeCodeInDolibarr == 'ban') {
 			// Case payment type in Stripe and into prelevement_demande are both BAN.
 			// For this case, payment on invoice (not yet recorded) must be done and direct debit order must be closed.
 
@@ -430,7 +431,7 @@ if ($event->type == 'payout.created') {
 				// Not yet supported, so error
 				$error++;
 			}
-			$paiement->paiementid = $paymentTypeId;
+			$paiement->paiementcode = $paymentTypeCode;
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
 			$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
@@ -438,7 +439,7 @@ if ($event->type == 'payout.created') {
 			$paiement->ext_payment_site = $service;
 
 			$ispaymentdone = 0;
-			$sql = "SELECT p.rowid FROM llx_paiement as p";
+			$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
 			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$result = $db->query($sql);
@@ -472,7 +473,7 @@ if ($event->type == 'payout.created') {
 			if (!$error && isModEnabled('bank')) {
 				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
-				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
+				$sql = "SELECT p.rowid, p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 				$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 				$sql .= " AND p.fk_bank <> 0";
@@ -576,7 +577,7 @@ if ($event->type == 'payout.created') {
 				return -1;
 			}
 		} else {
-			dol_syslog("The payment mode of this payment is ".$paymentTypeId." in Stripe and ".$paymentTypeIdInDolibarr." in Dolibarr. This case is not managed by the IPN");
+			dol_syslog("The payment mode of this payment is ".$paymentTypeCode." in Stripe and ".$paymentTypeCodeInDolibarr." in Dolibarr. This case is not managed by the IPN");
 		}
 	} else {
 		dol_syslog("Nothing to do in database because we don't know paymentTypeIdInDolibarr");

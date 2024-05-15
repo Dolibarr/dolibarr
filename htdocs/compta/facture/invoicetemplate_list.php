@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  * Copyright (C) 2023	   William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 /**
  *	\file       htdocs/compta/facture/invoicetemplate_list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 
@@ -161,6 +162,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if ($socid > 0) {
 	$tmpthirdparty = new Societe($db);
@@ -533,7 +535,8 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend' => $langs->trans("SendByMail"), 'builddoc' => $langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -604,19 +607,19 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+	print '<input class="flat width50" type="text"" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_tva']['checked'])) {
 	// Amount Vat
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+	print '<input class="flat width50" type="text" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	// Amount
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+	print '<input class="flat width50" type="text" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {

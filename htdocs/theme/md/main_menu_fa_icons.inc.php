@@ -98,7 +98,11 @@ div.mainmenu.generic4::before {
 }
 
 .tmenu span.fas, .tmenu span.far {
-	color: unset !important;
+	<?php
+	if (!getDolGlobalString('THEME_MENU_COLORLOGO')) {
+		echo "color: unset !important;";
+	}
+	?>;
 	line-height: 28px;
 	text-align: center;
 }

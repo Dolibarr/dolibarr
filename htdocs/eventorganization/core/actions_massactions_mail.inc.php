@@ -4,6 +4,7 @@
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +92,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 		}
 	}
+	'@phan-var-force CommonObject $objecttmp';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -107,7 +109,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
+	if (!trim(GETPOST('sendto', 'alphawithlgt')) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend_attendees';
@@ -140,7 +142,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				}
 			}
 			$tmparray = array();
-			if (trim($_POST['sendtocc'])) {
+			if (trim(GETPOST('sendtocc', 'alphawithlgt'))) {
 				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			$sendtocc = implode(',', $tmparray);
@@ -221,7 +223,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 					dol_syslog("Try to insert email event into agenda for objid=" . $attendees->id . " => objectobj=" . get_class($attendees));
 
-					$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
+					$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 					if ($message) {
 						if ($sendtocc) {
 							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);

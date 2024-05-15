@@ -703,8 +703,8 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', (string) $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
@@ -923,7 +923,7 @@ if (empty($reshook)) {
 				// We use native clone to keep this->db valid and allow to use later all the methods of object.
 				$clone = dol_clone($object, 1);
 
-				$clone->id = null;
+				$clone->id = 0;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
 				$clone->status = 0;
 				$clone->status_buy = 0;
@@ -1274,7 +1274,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	}
 }
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card');
 
 // Load object modBarCodeProduct
 $res = 0;
@@ -1364,7 +1364,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		// Call Hook tabContentCreateProduct
 		$parameters = array();
@@ -1685,7 +1685,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category')) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
 				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
@@ -2294,7 +2294,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Tags-Categories
 				if (isModEnabled('category')) {
 					print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
 					$arrayselected = array();
@@ -2429,7 +2429,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -2495,7 +2495,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 					}
 					print '</tr></table>';
-					print '</td><td>';
+					print '</td><td class="wordbreak">';
 					if ($action == 'editbarcode') {
 						$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 						if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
@@ -3032,7 +3032,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 
 		print load_fiche_titre($langs->trans("AddToDraft"), '', '');
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
 		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
@@ -3080,8 +3080,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
-
-	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/agenda.php?id='.$object->id);
+	$morehtmlcenter = '<div class="nowraponall">';
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/product/messaging.php?id='.$object->id);
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/agenda.php?id='.$object->id);
+	$morehtmlcenter .= '</div>';
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin = array(7, 0);
@@ -107,7 +108,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $defaultTitlesFieldsStyle = array();
 
 	/**
-	 * @var array of document table columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document tablecolumns
 	 */
 	public $cols = array();
 
@@ -204,10 +205,10 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
 		}
 
@@ -754,8 +755,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *   Show table for lines
 	 *
 	 *   @param		tcpdf		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -870,10 +871,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $object->label;
-		/*if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
-			$title .= ' - ';
-			$title .= $outputlangsbis->transnoentities("JobPosition");
-		}*/
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);

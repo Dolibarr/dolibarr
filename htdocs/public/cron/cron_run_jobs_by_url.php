@@ -50,6 +50,7 @@ if (!defined('USESUFFIXINLOG')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -150,7 +151,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 0);
 
 	// Loop over job
 	foreach ($object->lines as $line) {

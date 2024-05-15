@@ -508,9 +508,10 @@ function dolWebsiteSaveContent($content)
  * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
  * @param 	int		$containerid		Id of container.
  * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
+ * @param 	array	$parameters			Array of parameters to append to the URL.
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0)
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
 {
 	global $db, $website;
 
@@ -569,6 +570,10 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	}
 
 	if ($newurl) {
+		if (!empty($parameters)) {
+			$separator = (parse_url($newurl, PHP_URL_QUERY) == null) ? '?' : '&';
+			$newurl = $newurl . $separator . http_build_query($parameters);
+		}
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
@@ -618,7 +623,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
@@ -837,6 +842,8 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} else {
+		$ret = '';
 	}
 	return $ret;
 }
@@ -1093,7 +1100,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * WARNING: This function can be used by websites.
  *
  * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,sitefiles')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
@@ -1110,10 +1117,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
 
+	// Clean parameters
 	if (!is_object($weblangs)) {
 		$weblangs = $langs;
 	}
+	if (empty($algo)) {
+		$algo = 'content';
+	}
 
+	/*
 	if (empty($searchstring) && empty($type) && empty($langcode) && empty($otherfilters)) {
 		$error++;
 		$arrayresult['code'] = 'KO';
@@ -1124,6 +1136,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
+	*/
 		$tmparrayoftype = explode(',', $type);
 		/*foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
@@ -1133,7 +1146,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				break;
 			}
 		}*/
-	}
+	//}
 
 	$searchdone = 0;
 	$found = 0;

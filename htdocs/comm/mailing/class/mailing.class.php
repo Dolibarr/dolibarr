@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,11 +162,6 @@ class Mailing extends CommonObject
 	 * @var array statut dest
 	 */
 	public $statut_dest = array();
-
-	/**
-	 * @var array labelStatus
-	 */
-	public $labelStatus = array();
 
 	/**
 	 * @var array substitutionarray
@@ -762,10 +758,10 @@ class Mailing extends CommonObject
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->title)) {
-			$datas['title'] .= '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
+			$datas['title'] = '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
 		}
 		if (isset($this->sujet)) {
-			$datas['subject'] .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
+			$datas['subject'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
 		}
 
 		return $datas;

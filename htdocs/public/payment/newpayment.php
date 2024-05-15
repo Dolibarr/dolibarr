@@ -51,6 +51,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1))));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -95,6 +96,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
+$ws = GETPOSTINT("ws"); // Website reference where the newpayment page is embedded
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -211,6 +213,10 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
+}
+
+if ($ws) {
+	$FULLTAG .= ($FULLTAG ? '.' : '').'WS='.$ws;
 }
 
 if (!empty($suffix)) {
@@ -389,7 +395,6 @@ if ($action == 'dopayment') {
 			$action = '';
 		}
 
-		//var_dump($_POST);
 		if (empty($mesg)) {
 			dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
 
@@ -883,6 +888,7 @@ print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECURE
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
+print '<input type="hidden" name="ws" value="'.$ws.'">';
 print "\n";
 
 
@@ -909,7 +915,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 }
 
 // Output html code for logo
-if ($urllogo) {
+if ($urllogo && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
@@ -919,7 +925,7 @@ if ($urllogo) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
-} elseif ($creditor) {
+} elseif ($creditor && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print $creditor;
@@ -1166,6 +1172,7 @@ if ($source == 'order') {
 if ($source == 'invoice') {
 	$found = true;
 	$langs->load("bills");
+	$form->load_cache_types_paiements();
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -1261,6 +1268,15 @@ if ($source == 'invoice') {
 	print '<input type="hidden" name="tag" value="'.(empty($tag) ? '' : $tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add a warning if we try to pay an invoice set to be paid in credit transfer
+	if ($invoice->status == $invoice::STATUS_VALIDATED && $invoice->mode_reglement_id > 0 && $form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
+		print '<tr class="CTableRow2 center"><td class="CTableRow2" colspan="2">';
+		print '<div class="warning maxwidth1000">';
+		print $langs->trans("PayOfBankTransferInvoice");
+		print '</div>';
+		print '</td></tr>'."\n";
+	}
 
 	// Shipping address
 	$shipToName = $invoice->thirdparty->name;
@@ -2152,7 +2168,7 @@ if ($action != 'dopayment') {
 				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
 					print '<div style="line-height: 1em">&nbsp;</div>';
 				}
-				print '<span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
@@ -2382,13 +2398,18 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					$arrayforcheckout = array(
 						'payment_method_types' => array('card'),
 						'line_items' => array(array(
-							'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
-							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-							'amount' => $amountstripe,
-							'currency' => $currency,
-							//'images' => array($urllogofull),
+							'price_data' => array(
+								'currency' => $currency,
+								'unit_amount' => $amountstripe,
+								'product_data' => array(
+									'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
+									'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+									//'images' => array($urllogofull),
+								),
+							),
 							'quantity' => 1,
 						)),
+						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
 						'success_url' => $urlok,
 						'cancel_url' => $urlko,
@@ -2709,7 +2730,9 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	}
 }
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+if (!$ws) {
+	htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

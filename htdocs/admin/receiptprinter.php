@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Frederic France       <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -64,6 +64,7 @@ if (!function_exists('gzdecode')) {
 	 *
 	 * @param string    $data   data to deflate
 	 * @return string           data deflated
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function gzdecode($data)
 	{
@@ -461,28 +462,31 @@ if ($mode == 'template' && $user->admin) {
 		$max = count($printer->listprinterstemplates);
 		for ($line = 0; $line < $max; $line++) {
 			print '<tr class="oddeven">';
-			if ($action == 'edittemplate' && $printer->listprinterstemplates[$line]['rowid'] == $templateid) {
-				print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
-				print '<td><input type="text" class="minwidth200" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
+			if (!is_array($printer->listprinterstemplates[$line])) {
+				continue;
+			}
+			if ($action == 'edittemplate' && !empty($printer->listprinterstemplates[$line]) && !empty($printer->listprinterstemplates[$line]['rowid']) && $printer->listprinterstemplates[$line]['rowid'] == $templateid) {
+				print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
+				print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 				print '<td class="wordbreak">';
-				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
+				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
 				print '</td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
 				print '</td>';
 			} else {
-				print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
-				print '<td class="wordbreak">'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template']).'</td>';
+				print '<td>'.($printer->listprinterstemplates[$line]['name'] ?? '').'</td>';
+				print '<td class="wordbreak">'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template'] ?? '').'</td>';
 				// edit icon
-				print '<td class="center"><a class="editfielda paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=edittemplate&token='.newToken().'&templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
+				print '<td class="center"><a class="editfielda paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=edittemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print img_picto($langs->trans("Edit"), 'edit');
 				print '</a>';
 				// delete icon
-				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=deletetemplate&token='.newToken().'&templateid='.$printer->listprinterstemplates[$line]['rowid'].'&templatename='.urlencode($printer->listprinterstemplates[$line]['name']).'">';
+				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=deletetemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name'] ?? '').'">';
 				print img_picto($langs->trans("Delete"), 'delete');
 				print '</a>';
 				// test icon
-				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=testtemplate&token='.newToken().'&templateid='.$printer->listprinterstemplates[$line]['rowid'].'&templatename='.urlencode($printer->listprinterstemplates[$line]['name']).'">';
+				print '<a class="paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&action=testtemplate&token='.newToken().'&templateid='.($printer->listprinterstemplates[$line]['rowid'] ?? '').'&templatename='.urlencode($printer->listprinterstemplates[$line]['name'] ?? '').'">';
 				print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
 				print '</a></td>';
 			}
@@ -492,13 +496,13 @@ if ($mode == 'template' && $user->admin) {
 
 	if ($action != 'edittemplate') {
 		print '<tr>';
-		print '<td><input type="text" class="minwidth200" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
+		print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 		print '<td class="wordbreak">';
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
 		print '</textarea>';
 		print '</td>';
 		print '<td>';
-		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
+		print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print '</td>';
 		print '</tr>';

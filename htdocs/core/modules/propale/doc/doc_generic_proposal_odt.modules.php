@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -413,7 +413,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$companybankaccount = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				$companybankaccount->fetch(0, $object->thirdparty->id);
+				$companybankaccount->fetch(0, '', $object->thirdparty->id);
 				$array_objet['company_default_bank_iban'] = $companybankaccount->iban;
 				$array_objet['company_default_bank_bic'] = $companybankaccount->bic;
 

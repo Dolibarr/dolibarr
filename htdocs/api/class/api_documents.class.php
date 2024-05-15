@@ -33,13 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 class Documents extends DolibarrApi
 {
 	/**
-	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
-	 */
-	public static $DOCUMENT_FIELDS = array(
-		'modulepart'
-	);
-
-	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -497,7 +490,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRights('expensereport', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRight('expensereport', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -992,26 +985,5 @@ class Documents extends DolibarrApi
 		}
 
 		throw new RestException(403);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
-	 * @throws  RestException
-	 */
-	private function _validate_file($data)
-	{
-		// phpcs:enable
-		$result = array();
-		foreach (Documents::$DOCUMENT_FIELDS as $field) {
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$result[$field] = $data[$field];
-		}
-		return $result;
 	}
 }

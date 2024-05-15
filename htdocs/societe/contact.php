@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,8 +140,8 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 	if (!empty($id) && $socid > 0) {
 		$db->begin();
 
-		$sql = "DELETE t, et FROM llx_socpeople AS t";
-		$sql .= " LEFT JOIN llx_socpeople_extrafields AS et ON t.rowid = et.fk_object";
+		$sql = "DELETE t, et FROM ".MAIN_DB_PREFIX."socpeople AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS et ON t.rowid = et.fk_object";
 		$sql .= " WHERE t.fk_soc = ".((int) $socid);
 		$sql .= " AND t.rowid = ".((int) $id);
 		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
@@ -175,7 +176,7 @@ if ($socid > 0 && empty($object->id)) {
 }
 
 $title = $langs->trans("ThirdParty");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('ContactsAddresses');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';

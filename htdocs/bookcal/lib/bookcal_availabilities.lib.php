@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    lib/bookcal_availabilities.lib.php
+ * \file    htdocs/bookcal/lib/bookcal_availabilities.lib.php
  * \ingroup bookcal
  * \brief   Library files with common functions for Availabilities
  */

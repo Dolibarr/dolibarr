@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +187,8 @@ if ($objecttype) {
 		print 'Failed to load class for type '.$objecttype.'. Class path not found.';
 	}
 }
+
+'@phan-var-force CommonObject $object';
 
 // Security check
 $socid = 0;
@@ -603,7 +606,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 	if (!empty($object)) {
-		print '<div class="divadvancedsearchfield quatrevingtpercent">';
+		print '<div class="divadvancedsearchfield">';
 		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
 		print '</div>';
 	}

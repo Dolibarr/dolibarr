@@ -55,7 +55,7 @@ if ($action == 'update' && !$cancel) {
 
 	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_FROM", GETPOST("MAIN_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -192,16 +192,10 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+	print '<td><input class="flat" name="MAIN_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_SMS_FROM');
 	print '"></td></tr>';
 
-	// Autocopy to
-	/*
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-	print '"></td></tr>';
-	*/
 	print '</table>';
 
 	print '<br><div class="center">';
@@ -232,20 +226,12 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
-	if (getDolGlobalString('MAIN_MAIL_SMS_FROM') && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+	print '<td>'.getDolGlobalString('MAIN_SMS_FROM');
+	if (getDolGlobalString('MAIN_SMS_FROM') && !isValidPhone(getDolGlobalString('MAIN_SMS_FROM'))) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}
 	print '</td></tr>';
-
-	// Autocopy to
-	/*
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td>'.$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-	if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && ! isValidEmail($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print img_warning($langs->trans("ErrorBadEMail"));
-	print '</td></tr>';
-	*/
 
 	print '</table>';
 
@@ -273,7 +259,7 @@ if ($action == 'edit') {
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';
 		$formsms->fromid = $user->id;
-		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : getDolGlobalString('MAIN_SMS_FROM', $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;

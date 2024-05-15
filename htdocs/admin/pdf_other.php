@@ -6,6 +6,7 @@
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +84,12 @@ if ($action == 'update') {
 			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 		}
 	}
+	if (GETPOSTISSET('INVOICE_ADD_EPC_QR_CODE')) {
+		dolibarr_set_const($db, "INVOICE_ADD_EPC_QR_CODE", GETPOST("INVOICE_ADD_EPC_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		if (GETPOSTINT('INVOICE_ADD_EPC_QR_CODE') == 1) {
+			dolibarr_del_const($db, "INVOICE_ADD_EPC_QR_CODE", $conf->entity);
+		}
+	}
 	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (GETPOST('INVOICE_ADD_SWISS_QR_CODE', 'alpha') != '0') {
@@ -137,7 +144,7 @@ if (isModEnabled('propal')) {
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-
+	/* This feature seems not yet used into Dolibarr. So option is kept hidden and enabled by default
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING"), '');
 	print '</td><td>';
@@ -148,6 +155,7 @@ if (isModEnabled('propal')) {
 		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
 	}
 	print '</td></tr>';
+	*/
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), $langs->trans("RandomlySelectedIfSeveral"));
@@ -253,6 +261,17 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_ADD_EPC_QR_CODE"), $langs->trans("INVOICE_ADD_EPC_QR_CODEMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_ADD_EPC_QR_CODE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVOICE_ADD_EPC_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_EPC_QR_CODE'));
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
 	if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 		print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), $langs->trans("INVOICE_ADD_SWISS_QR_CODEMore"));
 	} else {
@@ -275,7 +294,7 @@ if (isModEnabled('invoice')) {
 		'1'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes1"),
 		'2'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes2")
 	);
-	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, getDolGlobalString('INVOICE_CATEGORY_OF_OPERATION'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';

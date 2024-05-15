@@ -69,6 +69,9 @@ class CSMSFile
 	public $priority;
 	public $class;
 	public $message;
+	/**
+	 * @var bool
+	 */
 	public $nostop;
 
 	public $socid;
@@ -242,7 +245,7 @@ class CSMSFile
 			fwrite($fp, "Priority: ".$this->priority."\n");
 			fwrite($fp, "Class: ".$this->class."\n");
 			fwrite($fp, "Deferred: ".$this->deferred."\n");
-			fwrite($fp, "DisableStop: ".$this->nostop."\n");
+			fwrite($fp, "DisableStop: ".((string) (int) $this->nostop)."\n");
 			fwrite($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fwrite($fp, "Message:\n".$this->message);
 

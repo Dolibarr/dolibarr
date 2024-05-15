@@ -9,6 +9,8 @@
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,7 +227,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -258,9 +260,11 @@ if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.usage_organize_event']['visible'] = 1;
 	$arrayfields['p.usage_organize_event']['checked'] = 1;
 }
+$arrayfields['p.fk_project']['enabled'] = 0;
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 /*
@@ -275,7 +279,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -502,6 +506,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+// FIXME Move the left join into the where exists
 if ($search_sale > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 }
@@ -1107,7 +1112,8 @@ $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisContact');
-$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+$moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$form->select_contact(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth300 widthcentpercentminusx');
+
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -1129,16 +1135,6 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
-	/*$moreforfilter .= '<div class="divsearchfield">';
-	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
-	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
-	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300im minwidth300 widthcentpercentminusx', 0, 0, '', 'category', $tmptitle);
-	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
-	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
-	$moreforfilter .= '</div>';
-	*/
 }
 
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -1156,7 +1152,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -1530,6 +1527,20 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
+	// Thirdparty
+	$companystatic->id = $obj->socid;
+	$companystatic->name = $obj->name;
+	$companystatic->name_alias = $obj->alias;
+	$companystatic->client = $obj->client;
+	$companystatic->code_client = $obj->code_client;
+	$companystatic->email = $obj->email;
+	$companystatic->phone = $obj->phone;
+	$companystatic->address = $obj->address;
+	$companystatic->zip = $obj->zip;
+	$companystatic->town = $obj->town;
+	$companystatic->country_code = $obj->country_code;
+
+	// Project
 	$object->id = $obj->id;
 	$object->ref = $obj->ref;
 	$object->title = $obj->title;
@@ -1553,24 +1564,9 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
-
+	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
-
-	// Thirdparty
-	$companystatic->id = $obj->socid;
-	$companystatic->name = $obj->name;
-	$companystatic->name_alias = $obj->alias;
-	$companystatic->client = $obj->client;
-	$companystatic->code_client = $obj->code_client;
-	$companystatic->email = $obj->email;
-	$companystatic->phone = $obj->phone;
-	$companystatic->address = $obj->address;
-	$companystatic->zip = $obj->zip;
-	$companystatic->town = $obj->town;
-	$companystatic->country_code = $obj->country_code;
-
-	$object->thirdparty = $companystatic;
 
 	$stringassignedusers = '';
 
@@ -1583,25 +1579,27 @@ while ($i < $imaxinloop) {
 				foreach ($tab as $contactproject) {
 					//var_dump($contacttask);
 					if ($source == 'internal') {
-						$c = new User($db);
+						if (!empty($conf->cache['user'][$contactproject['id']])) {
+							$c = $conf->cache['user'][$contactproject['id']];
+						} else {
+							$c = new User($db);
+							$c->fetch($contactproject['id']);
+							$conf->cache['user'][$contactproject['id']] = $c;
+						}
 					} else {
-						$c = new Contact($db);
+						if (!empty($conf->cache['contact'][$contactproject['id']])) {
+							$c = $conf->cache['contact'][$contactproject['id']];
+						} else {
+							$c = new Contact($db);
+							$c->fetch($contactproject['id']);
+							$conf->cache['contact'][$contactproject['id']] = $c;
+						}
 					}
-					$c->fetch($contactproject['id']);
-					//var_dump($c->photo);
-					//if (!empty($c->photo)) {
 					if (get_class($c) == 'User') {
 						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
 						$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
-					/*} else {
-						if (get_class($c) == 'User') {
-							$stringassignedusers .= $c->getNomUrl(2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						} else {
-							$stringassignedusers .= $c->getNomUrl(2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						}
-					}*/
 					$ifisrt = 0;
 				}
 			}
@@ -1613,12 +1611,17 @@ while ($i < $imaxinloop) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
-
-		$selected = in_array($object->id, $arrayofselected);
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
-
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1630,7 +1633,7 @@ while ($i < $imaxinloop) {
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->email = $obj->user_email;
-		$userstatic->statut = $obj->user_statut;
+		$userstatic->status = $obj->user_statut;
 		$userstatic->entity = $obj->entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;
@@ -1723,7 +1726,7 @@ while ($i < $imaxinloop) {
 						$userstatic->lastname = $val['lastname'];
 						$userstatic->firstname = $val['firstname'];
 						$userstatic->email = $val['email'];
-						$userstatic->statut = $val['statut'];
+						$userstatic->status = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
@@ -1794,10 +1797,14 @@ while ($i < $imaxinloop) {
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
-			print '<td class="center">';
 			if ($obj->opp_status_code) {
-				print $langs->trans("OppStatus".$obj->opp_status_code);
+				$s = $langs->trans("OppStatus".$obj->opp_status_code);
+				if (empty($arrayfields['p.opp_percent']['checked']) && $obj->opp_percent) {
+					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
+				}
 			}
+			print '<td class="center tdoverflowmax150" title="'.$s.'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1968,8 +1975,6 @@ while ($i < $imaxinloop) {
 			print '<td class="center tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
-			} else {
-				print '&nbsp;';
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -2069,6 +2074,26 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	$hidegeneratedfilelistifempty = 1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+		$hidegeneratedfilelistifempty = 0;
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+	$formfile = new FormFile($db);
+
+	// Show list of available documents
+	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
+
+	$filedir = $diroutputmassaction;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
+
+	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+}
 
 // End of page
 llxFooter();

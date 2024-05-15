@@ -45,6 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -111,7 +112,7 @@ if ($reshook < 0) {
 // Add file in email form
 if (empty($reshook)) {
 	if ($cancel) {
-		$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+		$backtopage = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
 		header("Location: ".$backtopage);
 		exit;
@@ -395,7 +396,7 @@ if (empty($reshook)) {
 						$message  = (getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') !== '' ? getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
-						$url_public_ticket = (getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+						$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
 						$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 						$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
@@ -508,7 +509,8 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
+
+$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -531,7 +533,7 @@ if ($action != "infos_success") {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-	if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')=='') {
+	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';

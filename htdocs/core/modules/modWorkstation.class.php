@@ -256,9 +256,9 @@ class modWorkstation extends DolibarrModules
 			'langs' => 'mrp',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->workstation->enabled',
+			'enabled' => 'isModEnabled("workstation")',
 			// Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->workstation->workstation->read',
+			'perms' => '$user->hasRight("workstation", "workstation", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -268,7 +268,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
 			// This is a Left menu entry
 			'type' => 'left',
-			'titre' => 'WorkstationCreate',
+			'titre' => 'NewWorkstation',
 			'mainmenu' => 'mrp',
 			'leftmenu' => 'workstation_workstation_left_create',
 			'url' => '/workstation/workstation_card.php?action=create',
@@ -276,9 +276,9 @@ class modWorkstation extends DolibarrModules
 			'langs' => 'mrp',
 			'position' => 1100 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->workstation->enabled',
+			'enabled' => 'isModEnabled("workstation")',
 			// Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->workstation->workstation->write',
+			'perms' => '$user->hasRight("workstation", "workstation", "write")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2
@@ -296,9 +296,9 @@ class modWorkstation extends DolibarrModules
 			'langs' => 'mrp',
 			'position' => 1101 + $r,
 			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => '$conf->workstation->enabled',
+			'enabled' => 'isModEnabled("workstation")',
 			// Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->workstation->workstation->read',
+			'perms' => '$user->hasRight("workstation", "workstation", "read")',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2

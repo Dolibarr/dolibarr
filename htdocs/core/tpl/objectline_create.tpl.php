@@ -216,7 +216,7 @@ if ($nolinesbefore) {
 					echo ' ';
 				}
 			}
-			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall, '');
 			echo '</span>';
 		}
 		// Predefined product/service
@@ -230,22 +230,12 @@ if ($nolinesbefore) {
 			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
-				if (empty($senderissupplier)) {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
-						$labelforradio = $langs->trans('PredefinedServicesToSell');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
-					}
+				if (isModEnabled("product") && !isModEnabled('service')) {
+					$labelforradio = $langs->trans('PredefinedProducts');
+				} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS'))) {
+					$labelforradio = $langs->trans('PredefinedServices');
 				} else {
-					if (isModEnabled("product") && !isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (!isModEnabled('product') && isModEnabled('service')) {
-						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
-					} else {
-						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
-					}
+					$labelforradio = $langs->trans('PredefinedProductsAndServices');
 				}
 			} else {
 				$labelforradio = $langs->trans('PredefinedItem');
@@ -265,9 +255,9 @@ if ($nolinesbefore) {
 				}
 				if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, $statuswarehouse, GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
@@ -461,21 +451,21 @@ if ($nolinesbefore) {
 	</td>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
-		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
+		<input type="text" name="price_ht" id="price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
 	<?php
 	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluht_currency right">
-			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
+			<input type="text" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
 		<?php
 	}
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluttc right">
-			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat right" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
+			<input type="text" name="price_ttc" id="price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
 			<?php
 	}
@@ -1101,13 +1091,20 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
+			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
+			<?php if (($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') && !$seller->tva_assuj) { ?>
+				if (tva_tx != .0) {
+					tva_tx = .0;
+					default_vat_code = null;
+				}
+			<?php } ?>
+
 			var stringforvatrateselection = tva_tx;
 			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
-
-			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
-			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref');}	// When select is done from HTML input with ajax autocomplete
 
 			var has_multicurrency_up = false;
 			<?php
@@ -1192,13 +1189,19 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
+			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
 			var stringforvatrateselection = tva_tx;
 			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
-			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
 
+			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", supplier_ref = "+supplier_ref+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
+
+			// Set supplier_ref
+			$('#fourn_ref').val(supplier_ref);
 			// Set vat rate if field is an input box
 			$('#tva_tx').val(tva_tx);
 			// Set vat rate by selecting the combo

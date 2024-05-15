@@ -104,7 +104,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 				$max = 0;
 			}
 		}
-		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $max)) {
+		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', (string) $max)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;

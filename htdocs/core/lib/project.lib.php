@@ -269,9 +269,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("ConferenceOrBooth")).'">'.$nbConfOrBooth.'</span>';
-			if ($nbConfOrBooth > 0 && $nbAttendees > 0) {
-				$head[$h][1] .= ' + ';
-			}
+			$head[$h][1] .= ' + ';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
 			$head[$h][1] .= '</span>';
 		}
@@ -553,14 +551,16 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
-	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		$head[$h][0] = DOL_URL_ROOT . '/projet/admin/project_task_extrafields.php';
+		$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+		$nbExtrafields = $extrafields->attributes['projet_task']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+		}
+		$head[$h][2] = 'attributes_task';
+		$h++;
 	}
-	$head[$h][2] = 'attributes_task';
-	$h++;
 
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$langs->load("members");
@@ -827,7 +827,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$shtml = '';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration_effective) {
 						if ($lines[$i]->planned_workload) {
-							$s = round(100 * $lines[$i]->duration_effective / $lines[$i]->planned_workload, 2).' %';
+							$s = round(100 * (float) $lines[$i]->duration_effective / (float) $lines[$i]->planned_workload, 2).' %';
 							$shtml = $s;
 						} else {
 							$s = $langs->trans('WorkloadNotDefined');
@@ -976,7 +976,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$total_projectlinesa_spent_if_planned += $lines[$i]->duration_effective;
 				}
 				if ($lines[$i]->planned_workload) {
-					$total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
+					$total_projectlinesa_declared_if_planned += (float) $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 				}
 			}
 		} else {
@@ -1097,7 +1097,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		// Budget task
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 			print '<td class="nowrap liste_total center">';
-			if (strcmp($total_budget_amount, '')) {
+			if (strcmp((string) $total_budget_amount, '')) {
 				print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td>';
@@ -2527,7 +2527,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$project_year_filter = 0;
 
 	$title = $langs->trans("Projects");
-	if (strcmp($status, '') && $status >= 0) {
+	if (strcmp((string) $status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->labelStatus[$status]);
 	}
 
@@ -2939,7 +2939,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
 	$out .= '</span>';
-	$out .= '    <div class="progress sm '.$spaced.'">';
+	$out .= '    <div class="progress sm'.($spaced ? $spaced : '').'">';
 	$diffval = (float) $task->progress - (float) $progressCalculated;
 	if ($diffval >= 0) {
 		// good

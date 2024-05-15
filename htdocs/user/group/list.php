@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
+ * Copyright (C) 2019-2021	Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,21 +93,16 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	}
 }
 
-// Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-	accessforbidden();
-}
-
 if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
 // Defini si peux lire/modifier utilisateurs et permissions
-$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
-$permissiontodelete = ($user->admin || $user->hasRight("user", "user", "write"));
+$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
+$permissiontodelete = $caneditperms;
 // Advanced permissions
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : ($user->admin || $user->hasRight("user", "group_advance", "write")));
 }
 
 
@@ -287,7 +282,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 
 if ($caneditperms) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=', '', $caneditperms);
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -329,7 +324,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage=empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';

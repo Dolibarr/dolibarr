@@ -6,6 +6,9 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,19 +62,19 @@ $search_shipping_method_ids = GETPOST('search_shipping_method_ids', 'array:int')
 $search_tracking = GETPOST("search_tracking", 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = GETPOST("search_state");
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
-$search_billed = GETPOSTINT("search_billed");
+$search_state = GETPOST("search_state", 'alpha');
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_billed = GETPOST("search_billed", 'intcomma');
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_startmonth'), GETPOSTINT('search_datedelivery_startday'), GETPOSTINT('search_datedelivery_startyear'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_endmonth'), GETPOSTINT('search_datedelivery_endday'), GETPOSTINT('search_datedelivery_endyear'));
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datereceipt_startmonth'), GETPOSTINT('search_datereceipt_startday'), GETPOSTINT('search_datereceipt_startyear'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_endmonth'), GETPOSTINT('search_datereceipt_endday'), GETPOSTINT('search_datereceipt_endyear'));
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
-$search_categ_cus = GETPOSTINT("search_categ_cus");
-$search_product_category = GETPOSTINT('search_product_category');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -137,7 +140,9 @@ $arrayfields = array(
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
+	'e.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
+	'e.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 );
 
 // Extra fields
@@ -145,6 +150,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $expeditionid = GETPOSTINT('id');
@@ -168,7 +174,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -271,7 +277,7 @@ if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " e.date_creation as date_creation, e.tms as date_modification,";
+$sql .= " e.date_creation as date_creation, e.tms as date_modification,e.note_public, e.note_private,";
 $sql .= " u.login";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -292,7 +298,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 }
 if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON e.rowid=ed.fk_expedition';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_elementdet';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -431,17 +437,17 @@ if (!empty($searchCategoryProductList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product)";
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_elementdet = cd.rowid AND cd.fk_product = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
 			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_elementdet = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_elementdet = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryProductOperator == 1) {
 		if (!empty($searchCategoryProductSqlList)) {
@@ -504,6 +510,14 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $expedition = new Expedition($db);
+
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
 
 $param = '';
 if (!empty($mode)) {
@@ -746,7 +760,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'maxwidth75', 1);
 	print '</td>';
 }
 // Weight
@@ -794,6 +808,16 @@ if (!empty($arrayfields['l.date_delivery']['checked'])) {
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datereceipt_end ? $search_datereceipt_end : -1, 'search_datereceipt_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
+	print '</td>';
+}
+// Note public
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Note private
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Extra fields
@@ -901,6 +925,13 @@ if (!empty($arrayfields['l.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_public']['label'], $_SERVER["PHP_SELF"], "e.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_private']['label'], $_SERVER["PHP_SELF"], "e.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1107,7 +1138,7 @@ while ($i < $imaxinloop) {
 		// Tracking number
 		if (!empty($arrayfields['e.tracking_number']['checked'])) {
 			$shipment->getUrlTrackingStatus($obj->tracking_number);
-			print '<td class="center">'.$shipment->tracking_url."</td>\n";
+			print '<td class="center" title="'.dol_escape_htmltag($shipment->tracking_url).'">'.dol_escape_htmltag($shipment->tracking_url)."</td>\n";
 			//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1123,7 +1154,7 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['l.ref']['checked'])) {
 				// Ref
-				print '<td>';
+				print '<td class="nowraponall">';
 				print !empty($receiving) ? $receiving->getNomUrl($db) : '';
 				print '</td>';
 			}
@@ -1135,7 +1166,24 @@ while ($i < $imaxinloop) {
 				print '</td>'."\n";
 			}
 		}
-
+		// Note public
+		if (!empty($arrayfields['e.note_public']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['e.note_private']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

@@ -85,7 +85,7 @@ export SKIP=no-commit-to-branch   # In your .bashrc or session.
 There is much more you can do with pre-commit, check out its
 [documentation](https://pre-commit.com).
 
-Now your commit is less likely to fail in the Continuous Intagration (CI) run
+Now your commit is less likely to fail in the Continuous Integration (CI) run
 on github.\
 CI also runs pre-commit to help maintain code quality.
 

@@ -211,7 +211,7 @@ class SupplierInvoices extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -258,10 +258,15 @@ class SupplierInvoices extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 

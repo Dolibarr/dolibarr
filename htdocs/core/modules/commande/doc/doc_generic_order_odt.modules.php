@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File of class to build ODT documents for third parties
  */
 

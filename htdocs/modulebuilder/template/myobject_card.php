@@ -87,9 +87,9 @@ dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 $langs->loadLangs(array("mymodule@mymodule", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -163,6 +163,8 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -175,8 +177,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
@@ -282,8 +282,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 

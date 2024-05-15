@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
 * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
 * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
@@ -106,6 +107,7 @@ if ($action == 'specimen') {  // For orders
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
@@ -340,7 +342,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {

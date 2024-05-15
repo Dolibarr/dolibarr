@@ -47,17 +47,6 @@ class Asset extends CommonObject
 	public $table_element = 'asset';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
 	 */
 	public $picto = 'asset';
@@ -70,7 +59,7 @@ class Asset extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -94,7 +83,7 @@ class Asset extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -158,7 +147,7 @@ class Asset extends CommonObject
 	public $status;
 
 	/**
-	 * @var Asset object oldcopy
+	 * @var static object oldcopy
 	 */
 	public $oldcopy;
 
@@ -183,6 +172,9 @@ class Asset extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1001,8 +993,8 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_YEAR') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
-				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
+				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 365);
+				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
 				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				// TODO fix declaration of $begin_period
@@ -1548,7 +1540,7 @@ class Asset extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/asset/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1576,43 +1568,4 @@ class Asset extends CommonObject
 			return "";
 		}
 	}
-
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
-	 */
-	//  public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	//  {
-	//      global $conf, $langs;
-	//
-	//      $result = 0;
-	//      $includedocgeneration = 1;
-	//
-	//      $langs->load("assets");
-	//
-	//      if (!dol_strlen($modele)) {
-	//          $modele = 'standard_asset';
-	//
-	//          if (!empty($this->model_pdf)) {
-	//              $modele = $this->model_pdf;
-	//          } elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
-	//              $modele = $conf->global->ASSET_ADDON_PDF;
-	//          }
-	//      }
-	//
-	//      $modelpath = "core/modules/asset/doc/";
-	//
-	//      if ($includedocgeneration && !empty($modele)) {
-	//          $result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-	//      }
-	//
-	//      return $result;
-	//  }
 }

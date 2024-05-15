@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,7 @@ if (is_resource($handle)) {
 				$classname = "mailing_".$modulename;
 				require_once $file;
 				$mailmodule = new $classname($db);
+				'@phan-var-force MailingTargets $mailmodule';
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {

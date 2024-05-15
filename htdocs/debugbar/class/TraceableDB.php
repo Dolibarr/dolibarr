@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +41,11 @@ class TraceableDB extends DoliDB
 	 */
 	public $queries;
 	/**
-	 * @var int Request start time
+	 * @var float 	Request start time in second + microseconds as decimal part (Example: 1712305485.1104)
 	 */
 	protected $startTime;
 	/**
-	 * @var int Request start memory
+	 * @var int 	Request start memory
 	 */
 	protected $startMemory;
 	/**
@@ -292,7 +294,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return $this->db->escapeforlike($stringtoencode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -494,7 +496,7 @@ class TraceableDB extends DoliDB
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array 	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Nom du champ qui sera la clef primaire
 	 * @param        string $type 			Type de la table
 	 * @param        array 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -533,7 +535,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to add
-	 * @param    string $field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
+	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
@@ -559,7 +561,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    string 	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -631,7 +633,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false)
 	{

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,6 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -177,7 +177,7 @@ if ($action == 'switch') {
 		$newsecond = $objfrom->box_order;
 		if ($newfirst == $newsecond) {
 			$newsecondchar = preg_replace('/[0-9]+/', '', $newsecond);
-			$newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
+			$newsecondnum = (int) preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			$newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
 
@@ -446,15 +446,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("MaxNbOfLinesForBoxes");
-print '</td>'."\n";
-print '<td>';
-print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.(getDolGlobalString('MAIN_BOXES_MAXLINES')).'">';
-print '</td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -145,7 +145,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$this->posxweightvol = $this->posxqty;
 		}
 
-		$this->posxpicture = $this->posxweightvol - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxweightvol - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 		//var_dump($this->posxpicture, $this->posxweightvol);exit;
 
 		// To work with US executive format
@@ -249,7 +249,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		if (!empty($this->atLeastOneBatch)) {
 			$this->posxpicture = $this->posxlot;
 			if (getDolGlobalString('MAIN_GENERATE_STOCKTRANSFER_WITH_PICTURE')) {
-				$this->posxpicture -= (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);
+				$this->posxpicture -= getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20);
 			} // width of images
 		}
 
@@ -467,7 +467,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					if (isset($imglinesize['width']) && isset($imglinesize['height'])) {
 						$curX = $this->posxpicture - 1;
 						$pdf->Image($realpatharray[$i], $curX + (($this->posxqty - $this->posxweightvol - $imglinesize['width']
-									+ (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_WEIGHT_AND_VOLUME') ? (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) : 0)) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+									+ (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_WEIGHT_AND_VOLUME') ? getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20) : 0)) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 						// $pdf->Image does not increase value return by getY, so we save it manually
 						$posYAfterImage = $curY + $imglinesize['height'];
 					}
@@ -825,8 +825,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -1008,12 +1008,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
-		}
-
 
 		$posx = $this->page_largeur - $w - $this->marge_droite;
 		$posy = $this->marge_haute;

@@ -584,6 +584,9 @@ class AdvanceTargetingMailing extends CommonObject
 			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 				$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
 			}
+			if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+				$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
+			}
 			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
 			}
@@ -824,6 +827,12 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
 						$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
+					}
+					//if (!empty($arrayquery['cust_state'])) {
+					//	$sqlwhere[] = $this->transformToSQL('tsd.nom', $arrayquery['cust_state']);
+					//}
+					if (!empty($arrayquery['cust_state']) && count($arrayquery['cust_state']) > 0) {
+						$sqlwhere[] = " (t.fk_departement IN (".$this->db->sanitize(implode(',', $arrayquery['cust_state']))."))";
 					}
 					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
 						$sqlwhere[] = " (ts.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";

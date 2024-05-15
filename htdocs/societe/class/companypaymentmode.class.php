@@ -44,17 +44,6 @@ class CompanyPaymentMode extends CommonObject
 	public $table_element = 'societe_rib';
 
 	/**
-	 * @var string  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_soc@societe';
-
-	/**
-	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
 	public $picto = 'generic';
@@ -83,7 +72,7 @@ class CompanyPaymentMode extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'Rowid', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
@@ -213,6 +202,9 @@ class CompanyPaymentMode extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_soc@societe';
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

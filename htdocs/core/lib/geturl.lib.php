@@ -304,8 +304,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function isIPAllowed($iptocheck, $localurl)
 {
-	global $conf;
-
 	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...

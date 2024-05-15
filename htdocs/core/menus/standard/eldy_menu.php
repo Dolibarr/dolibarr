@@ -185,16 +185,24 @@ class MenuManager
 					$substitarray['__USERID__'] = $user->id; // For backward compatibility
 					$val['url'] = make_substitutions($val['url'], $substitarray);
 
-					$relurl = dol_buildpath($val['url'], 1);
+					if (!preg_match('/^http/', $val['url'])) {
+						$relurl = dol_buildpath($val['url'], 1);
+					} else {
+						$relurl = $val['url'];
+					}
+
 					$canonurl = preg_replace('/\?.*$/', '', $val['url']);
 
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $val['prefix'])) {
+							print '<span class="fas '.$val['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						}
 					}
-
 					print $val['titre'];
 					print '</a>'."\n";
 

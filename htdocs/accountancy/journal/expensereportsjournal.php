@@ -67,7 +67,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -110,7 +110,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
+$sql = "SELECT er.rowid, er.ref, er.date_debut as de, er.date_fin as df,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -162,7 +162,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$account_salary = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT', 'NotDefined');
+	$account_salary = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT', 'NotDefined');
 	$account_vat = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined');
 
 	$i = 0;
@@ -183,7 +183,11 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->df);
+		} else {
+			$taber[$obj->rowid]["date"] = $db->jdate($obj->de);
+		}
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
 		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
@@ -247,7 +251,7 @@ if ($action == 'writebookkeeping' && !$error) {
 	$error = 0;
 
 	$accountingaccountexpense = new AccountingAccount($db);
-	$accountingaccountexpense->fetch(null, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
+	$accountingaccountexpense->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
 
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
@@ -279,7 +283,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 
-					$bookkeeping->numero_compte = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
+					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
 					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
@@ -590,7 +594,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	// Button to write into Ledger
-	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == '-1') {
 		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -602,7 +606,7 @@ if (empty($action) || $action == 'view') {
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
-	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
 		if ($in_bookkeeping == 'notyet') {
@@ -726,7 +730,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'));
+			$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'));
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			} else {

@@ -123,7 +123,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = '';

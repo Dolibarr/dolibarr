@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global e
 
 /**
  *	Stripe class
+ *  @TODO No reason to extends CommonObject
  */
 class Stripe extends CommonObject
 {
@@ -62,9 +63,13 @@ class Stripe extends CommonObject
 
 	/**
 	 * @var string
+	 * @deprecated Was used by createPaymentStripe only that is deprecated
 	 */
-	public $statut;
+	public $result;
 
+	/**
+	 * @var string
+	 */
 	public $type;
 
 	/**
@@ -165,13 +170,13 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
+	 * @param	CommonObject	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\Customer|null 					Stripe Customer or null if not found
 	 */
-	public function customerStripe(Societe $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
+	public function customerStripe(CommonObject $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -668,7 +673,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getSetupIntent description=".$description.' confirmnow='.$confirmnow, LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
 
@@ -1141,7 +1146,7 @@ class Stripe extends CommonObject
 
 	/**
 	 * Create charge.
-	 * This is called by page htdocs/stripe/payment.php and may be deprecated.
+	 * This was called by page htdocs/stripe/payment.php and may be deprecated.
 	 *
 	 * @param	int 	$amount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
@@ -1154,6 +1159,7 @@ class Stripe extends CommonObject
 	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
 	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
+	 * @deprecated
 	 */
 	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status = 0, $usethirdpartyemailforreceiptemail = 0, $capture = true)
 	{
@@ -1351,7 +1357,7 @@ class Stripe extends CommonObject
 			if (isset($charge->id)) {
 			}
 
-			$return->statut = 'success';
+			$return->result = 'success';
 			$return->id = $charge->id;
 
 			if (preg_match('/pm_/i', $source)) {
@@ -1375,7 +1381,7 @@ class Stripe extends CommonObject
 			$body = $e->getJsonBody();
 			$err = $body['error'];
 
-			$return->statut = 'error';
+			$return->result = 'error';
 			$return->id = $err['charge'];
 			$return->type = $err['type'];
 			$return->code = $err['code'];
