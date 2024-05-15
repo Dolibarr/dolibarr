@@ -6392,7 +6392,7 @@ abstract class CommonObject
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-							$this->array_options['options_' . $key] = '';
+							$this->array_options['options_' . $key] = null;
 						}
 					}
 				}
