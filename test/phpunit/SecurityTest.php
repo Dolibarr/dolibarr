@@ -1111,44 +1111,6 @@ class SecurityTest extends CommonClassTest
 	}
 
 	/**
-	 * testDolHtmlWithNoJs()
-	 *
-	 * @return int
-	 */
-	public function testDolHtmlWithNoJs()
-	{
-		global $conf;
-
-		$sav1 = $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML;
-		$sav2 = $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
-
-		// Test with an emoji
-		$test = 'abc ✅ def';
-
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-		$result = dol_htmlwithnojs($test);
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
-
-		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=0 with emoji = ".$result."\n";
-		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=0');
-
-		/*
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-		$result = dol_htmlwithnojs($test);
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
-
-		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=1 with emoji = ".$result."\n";
-		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=1');
-		*/
-
-		return 0;
-	}
-
-	/**
 	 * testDolPrintHTML.
 	 * This method include calls to dol_htmlwithnojs()
 	 *
@@ -1245,5 +1207,71 @@ class SecurityTest extends CommonClassTest
 		$login = checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
 		print __METHOD__." login=".$login."\n";
 		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
+	}
+
+
+	/**
+	 * testRealCharforNumericEntities()
+	 *
+	 * @return int
+	 */
+	public function testRealCharforNumericEntities()
+	{
+		global $conf;
+
+		// Test that testRealCharforNumericEntities return an ascii char when code is inside Ascii range
+		$arraytmp = array(0 => '&#97;', 1 => '97;');
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('a', $result);
+
+		// Test that testRealCharforNumericEntities return an emoji utf8 char when code is inside Emoji range
+		$arraytmp = array(0 => '&#9989;', 1 => '9989;');	// Encoded as decimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		$arraytmp = array(0 => '&#x2705;', 1 => 'x2705;');	// Encoded as hexadecimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		return 0;
+	}
+
+
+	/**
+	 * testDolHtmlWithNoJs()
+	 *
+	 * @return int
+	 */
+	public function testDolHtmlWithNoJs()
+	{
+		global $conf;
+
+		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
+
+		// Test with an emoji
+		$test = 'abc ✅ def';
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=0 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=0');
+
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=1 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=1');
+
+
+		return 0;
 	}
 }
