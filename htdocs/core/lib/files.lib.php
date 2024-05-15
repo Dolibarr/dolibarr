@@ -945,7 +945,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 
 					if ($excludearchivefiles == 1) {
 						$extension = pathinfo($file, PATHINFO_EXTENSION);
-						if (preg_match('/^v\d+$/', $extension)) {
+						if (preg_match('/^[v|d]\d+$/', $extension)) {
 							continue;
 						}
 					}
