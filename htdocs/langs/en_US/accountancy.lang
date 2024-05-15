@@ -330,7 +330,7 @@ WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger ac
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
-BindingOptions=Options for the tool to bind lines with products
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
