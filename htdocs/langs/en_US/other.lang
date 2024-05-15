@@ -349,3 +349,4 @@ EmailContent=Email content
 Pre-Prompt=Pre-prompt
 Post-Prompt=Post-prompt
 AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
+PayOfBankTransferInvoice=This invoice has Bank Transfer as payment method.<br>Please verify that a payment isn't already done or is pending.
