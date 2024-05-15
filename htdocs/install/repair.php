@@ -1401,7 +1401,7 @@ if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
 		}
 
 		foreach ($listoftables as $table) {
-			// do not convert llx_const if mysql encrypt/decrypt is used
+			// do not convert collation on llx_const if mysql encrypt/decrypt is used
 			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
 				continue;
 			}
