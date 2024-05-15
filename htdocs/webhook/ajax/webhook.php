@@ -75,13 +75,17 @@ top_httphead('application/json');
 if ($action == "getjsonformtrigger") {
 	$response = '';
 	$objnotfound = 0;
+
 	$json = new stdClass();
+
 	if (!empty($triggercode)) {
 		// Clean triggercode to removes keep only Object trigger name
 		$objecttriggername = array();
 		preg_match('#\((.*?)\)#', $triggercode, $objecttriggername);
-		$json->triggercode = !empty($objecttriggername[1]) ? $objecttriggername[1] : $triggercode;
-		if ($objecttriggername[1]) {
+
+		$json->triggercode = empty($objecttriggername[1]) ? $triggercode : $objecttriggername[1];
+
+		if (!empty($objecttriggername[1])) {
 			$objtype = explode("_", $objecttriggername[1])[0];
 			$obj = findobjecttosend($objtype);
 			if (is_object($obj)) {
@@ -94,12 +98,11 @@ if ($action == "getjsonformtrigger") {
 		}
 
 		if ($objnotfound) {
-			$json->object = new Target($db);
-			$json->object->initAsSpecimen();
-			unset($json->object->db);
-			unset($json->object->fields);
-			unset($json->object->error);
-			unset($json->object->errors);
+			$json->object = new stdClass();
+			//$json->object->initAsSpecimen();
+			$json->object->field1 = 'field1';
+			$json->object->field2 = 'field2';
+			$json->object->field3 = 'field3';
 		}
 	}
 
@@ -116,5 +119,8 @@ if ($action == "getjsonformtrigger") {
 function findobjecttosend($objecttype)
 {
 	// TODO: Find right object from objecttype and initAsSpecimen
+
+	// You can use fetchObjectByElement()
+
 	return false;
 }
