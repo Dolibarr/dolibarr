@@ -227,7 +227,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
+<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 		$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
