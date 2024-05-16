@@ -970,7 +970,6 @@ $arrayofmassactions = array(
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->rights->facture->creer) {
-	$langs->load('orders');
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
 }
 if (in_array($massaction, array('presend', 'createbills'))) {
@@ -1042,9 +1041,9 @@ if ($massaction == 'createbills') {
 		print $form->selectyesno('validate_invoices', 0, 1);
 	}
 	if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
-		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoSendingStayUnbilled").'</span>';
 	} else {
-		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetSendingBilledNotEnabled").'</span>';
 	}
 	print '</td>';
 	print '</tr>';
