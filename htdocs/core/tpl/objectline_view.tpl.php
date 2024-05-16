@@ -139,6 +139,9 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0) {
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+			if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
+				print $form->textwithpicto('', $description);
+			}
 		} else {
 			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		}
