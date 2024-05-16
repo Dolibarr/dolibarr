@@ -418,7 +418,7 @@ if ($action == 'confirm_generateinvoice') {
 		$tmptimespent = new Task($db);
 		$tmpproduct = new Product($db);
 		$fuser = new User($db);
-		$remiseproject = price2num(GETPOST('remiseproject', 'int'));
+		$remiseproject = price2num(GETPOST('remiseprojet', 'alphanohtml'));
 		$condidproject = GETPOSTINT('condidproject');
 		$db->begin();
 		$idprod = GETPOSTINT('productid');
