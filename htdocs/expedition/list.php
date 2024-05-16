@@ -301,6 +301,20 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				$expd->fetchObjectLinked();
+				foreach ($expd->linkedObjectsIds as $sourcetype => $TIds) {
+					if ($sourcetype == 'facture') {
+						continue;
+					}
+
+					$res = $objecttmp->add_object_linked($sourcetype, current($TIds));
+
+					if ($res == 0) {
+						$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+						$error++;
+					}
+				}
+
 				if (!$error) {
 					$lines = $expd->lines;
 					if (empty($lines) && method_exists($expd, 'fetch_lines')) {
