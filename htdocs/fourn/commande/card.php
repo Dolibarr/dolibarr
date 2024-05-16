@@ -149,7 +149,7 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($u
 $usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
 $usercanapprovesecond	= $user->hasRight("fournisseur", "commande", "approve2");
 $usercanorder			= $user->hasRight("fournisseur", "commande", "commander");
-if (empty($conf->reception->enabled)) {
+if (!isModEnabled('reception')) {
 	$usercanreceive = $user->hasRight("fournisseur", "commande", "receptionner");
 } else {
 	$usercanreceive = $user->hasRight("reception", "creer");
@@ -2637,7 +2637,7 @@ if ($action == 'create') {
 				$hasreception = 0;
 				if (isModEnabled('stock') && (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE'))) {
 					$labelofbutton = $langs->trans('ReceiveProducts');
-					if ($conf->reception->enabled) {
+					if (isModEnabled('reception')) {
 						$labelofbutton = $langs->trans("CreateReception");
 						if (!empty($object->linkedObjects['reception'])) {
 							foreach ($object->linkedObjects['reception'] as $element) {
