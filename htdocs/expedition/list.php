@@ -248,7 +248,7 @@ if (empty($reshook)) {
 			$expd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
 				$objecttmp = $TFactThird[$expd->socid];
 			} else {
@@ -327,7 +327,7 @@ if (empty($reshook)) {
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-						// If we build one invoice for several orders, we must put the ref of order on the invoice line
+						// If we build one invoice for several sendings, we must put the ref of order on the invoice line
 						if (!empty($createbills_onebythird)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$expd->ref.' - '.dol_print_date($expd->date, 'day'));
 						}
@@ -444,9 +444,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
-
-			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
+			if (!empty($createbills_onebythird) && empty($TFactThird[$expd->socid])) {
 				$TFactThird[$expd->socid] = $objecttmp;
 			} else {
 				$TFact[$objecttmp->id] = $objecttmp;
