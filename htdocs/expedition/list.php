@@ -8,6 +8,7 @@
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,9 @@ $arrayfields = array(
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
+	'e.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
+	'e.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 );
 
 // Extra fields
@@ -274,7 +277,7 @@ if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " e.date_creation as date_creation, e.tms as date_modification,";
+$sql .= " e.date_creation as date_creation, e.tms as date_modification,e.note_public, e.note_private,";
 $sql .= " u.login";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -807,6 +810,16 @@ if (!empty($arrayfields['l.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Note public
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Note private
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -912,6 +925,13 @@ if (!empty($arrayfields['l.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_public']['label'], $_SERVER["PHP_SELF"], "e.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_private']['label'], $_SERVER["PHP_SELF"], "e.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1146,7 +1166,24 @@ while ($i < $imaxinloop) {
 				print '</td>'."\n";
 			}
 		}
-
+		// Note public
+		if (!empty($arrayfields['e.note_public']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['e.note_private']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

@@ -1172,6 +1172,7 @@ if ($source == 'order') {
 if ($source == 'invoice') {
 	$found = true;
 	$langs->load("bills");
+	$form->load_cache_types_paiements();
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -1267,6 +1268,15 @@ if ($source == 'invoice') {
 	print '<input type="hidden" name="tag" value="'.(empty($tag) ? '' : $tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add a warning if we try to pay an invoice set to be paid in credit transfer
+	if ($invoice->status == $invoice::STATUS_VALIDATED && $invoice->mode_reglement_id > 0 && $form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
+		print '<tr class="CTableRow2 center"><td class="CTableRow2" colspan="2">';
+		print '<div class="warning maxwidth1000">';
+		print $langs->trans("PayOfBankTransferInvoice");
+		print '</div>';
+		print '</td></tr>'."\n";
+	}
 
 	// Shipping address
 	$shipToName = $invoice->thirdparty->name;

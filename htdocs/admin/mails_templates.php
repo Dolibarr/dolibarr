@@ -808,7 +808,7 @@ if ($action == 'create') {
 	print '</td>';
 	print "</tr>";
 
-	print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
+	print '<tr class="oddeven nodrag nodrop nohover"><td colspan="9">';
 
 	// Show fields for topic, join files and body
 	$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
@@ -864,7 +864,8 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '</form>';
-	print '<br><br>';
+
+	print '<br><br><br>';
 }
 
 // List of available record in database

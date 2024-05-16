@@ -60,6 +60,7 @@ $lineid = GETPOSTINT('lineid');
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
+$hookmanager->initHooks(array('contactticketcard', 'globalcard'));
 $object = new Ticket($db);
 
 // Security check
@@ -84,6 +85,11 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);

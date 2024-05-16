@@ -876,7 +876,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -897,7 +897,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function decrypt($value)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
