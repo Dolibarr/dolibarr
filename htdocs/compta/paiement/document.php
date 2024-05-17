@@ -78,7 +78,7 @@ if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
 	$upload_dir = $conf->compta->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-}else{
+} else {
 	$upload_dir = '';
 }
 
@@ -111,7 +111,7 @@ if ($object->id > 0) {
 	$morehtmlref = '<div class="refidno">';
 
 	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', '', 3).': ';
+	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', 0, 3).': ';
 	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 
 	// Payment mode
@@ -123,7 +123,7 @@ if ($object->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 
 	// Amount
-	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, '', $langs, 0, 0, -1, $conf->currency);
+	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
 
 	$allow_delete = 1;
 	// Bank account
