@@ -51,6 +51,7 @@ TicketCategoryShortOTHER=Other
 
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
+MenuTicketAssignToMe=Tickets assigned to me
 MenuTicketMyAssignNonClosed=My open tickets
 MenuListNonClosed=Open tickets
 
