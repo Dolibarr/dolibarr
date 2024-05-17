@@ -250,7 +250,7 @@ Required=Required
 UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Security
 Passwords=Passwords
-DoNotStoreClearPassword=Encrypt passwords stored in database (NOT as plain-text). It is strongly recommended to activate this option.
+DoNotStoreClearPassword=Encrypt passwords stored in database.
 MainDbPasswordFileConfEncrypted=Encrypt database password stored in conf.php. It is strongly recommended to activate this option.
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
@@ -2484,3 +2484,7 @@ ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
 ZapierDescription=Interface with Zapier
 ZapierAbout=About the module Zapier
 ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+TestWebhookTarget=Test triggerable event
+DataToSendTrigger=Data sent to Url
+SendToUrl=Send to Url
+WebsiteTemplateWasCopied=The website template(s) "%s" provided by this module has been saved into the directory of website templates (/doctemplates/websites) and is ready to be imported as a new web site.

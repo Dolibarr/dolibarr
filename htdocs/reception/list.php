@@ -112,6 +112,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'e.ref' => "Ref",
+	'e.ref_supplier'=>"RefSupplier",
 	's.nom' => "ThirdParty",
 	'e.note_public' => 'NotePublic',
 );

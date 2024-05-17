@@ -428,10 +428,10 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 }
 
 /**
- * Get list of existing objects from directory
+ * Get list of existing objects from a directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    Return integer <=0 if KO, array if OK
+ * @return 	array|int                   Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {

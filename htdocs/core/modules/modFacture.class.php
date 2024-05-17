@@ -487,6 +487,9 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
+
 		$r = 0;
 
 		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));

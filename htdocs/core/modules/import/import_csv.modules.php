@@ -672,7 +672,7 @@ class ImportCsv extends ModeleImports
 
 							// Test regexp
 							if (!empty($objimport->array_import_regex[0][$val]) && ($newval != '')) {
-								// If test is "Must exist in a field@table or field@table:..."
+								// If test regex string is "field@table" or "field@table:..." (means must exists into table ...)
 								$reg = array();
 								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg)) {
 									$field = $reg[1];
