@@ -387,7 +387,7 @@ if (empty($reshook)) {
 								$array_options = $lines[$i]->array_options;
 							}
 
-							$objecttmp->context['createfromclone'];
+							$objecttmp->context['createfromclone'] = 'createfromclone';
 
 							$rang = ($nbSendings > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous sendings
@@ -503,40 +503,16 @@ if (empty($reshook)) {
 				$param .= '&limit='.urlencode($limit);
 			}
 			if ($sall) {
-				$param .= '&sall='.urlencode($sall);
+				$param .= "&sall=".urlencode($sall);
 			}
-			if ($socid > 0) {
-				$param .= '&socid='.urlencode($socid);
+			if ($search_ref_exp) {
+				$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 			}
-			if ($search_status != '') {
-				$param .= '&search_status='.urlencode($search_status);
-			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
-			}
-			if ($search_ref) {
-				$param .= '&search_ref='.urlencode($search_ref);
-			}
-			if ($search_company) {
-				$param .= '&search_company='.urlencode($search_company);
+			if ($search_ref_liv) {
+				$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 			}
 			if ($search_ref_customer) {
-				$param .= '&search_ref_customer='.urlencode($search_ref_customer);
+				$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 			}
 			if ($search_user > 0) {
 				$param .= '&search_user='.urlencode($search_user);
@@ -544,26 +520,50 @@ if (empty($reshook)) {
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
 			}
-			if ($search_total_ht != '') {
-				$param .= '&search_total_ht='.urlencode($search_total_ht);
+			if ($search_company) {
+				$param .= "&search_company=".urlencode($search_company);
 			}
-			if ($search_total_vat != '') {
-				$param .= '&search_total_vat='.urlencode($search_total_vat);
+			if ($search_shipping_method_id) {
+				$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
 			}
-			if ($search_total_ttc != '') {
-				$param .= '&search_total_ttc='.urlencode($search_total_ttc);
+			if ($search_tracking) {
+				$param .= "&search_tracking=".urlencode($search_tracking);
 			}
-			if ($search_project_ref >= 0) {
-				$param .= "&search_project_ref=".urlencode($search_project_ref);
+			if ($search_town) {
+				$param .= '&search_town='.urlencode($search_town);
 			}
-			if ($show_files) {
-				$param .= '&show_files='.urlencode($show_files);
+			if ($search_zip) {
+				$param .= '&search_zip='.urlencode($search_zip);
+			}
+			if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+				$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+			}
+			if ($search_datedelivery_start)	{
+				$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+			}
+			if ($search_datedelivery_end) {
+				$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
+			}
+			if ($search_datereceipt_start) {
+				$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start, '%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start, '%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start, '%Y'));
+			}
+			if ($search_datereceipt_end) {
+				$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
+			}
+			if ($search_product_category != '') {
+				$param .= '&search_product_category='.urlencode($search_product_category);
+			}
+			if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
+				$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+			}
+			if ($search_status != '') {
+				$param .= '&search_status='.urlencode($search_status);
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
 			}
-			if ($billed != '') {
-				$param .= '&billed='.urlencode($billed);
+			if ($search_billed != '') {
+				$param .= '&billed='.urlencode($search_billed);
 			}
 
 			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
