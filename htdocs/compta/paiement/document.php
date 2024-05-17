@@ -51,8 +51,9 @@ $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, $object->element, $object->id, 'paiementcompta', '');
-
+if ($object !== null) {
+	$result = restrictedArea($user, $object->element, $object->id, 'payment', '');
+}
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -77,9 +78,12 @@ if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
 	$upload_dir = $conf->compta->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+}else{
+	$upload_dir = '';
 }
 
-$permissiontoadd = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
+
+$permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
@@ -107,8 +111,8 @@ if ($object->id > 0) {
 	$morehtmlref = '<div class="refidno">';
 
 	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->comptaisseur->facture->creer || $user->rights->supplier_invoice->creer), 'datehourpicker', '', null, 3).': ';
-	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->comptaisseur->facture->creer || $user->rights->supplier_invoice->creer), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', '', 3).': ';
+	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 
 	// Payment mode
 	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
