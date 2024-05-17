@@ -248,6 +248,11 @@ if (empty($reshook)) {
 			$expd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
+
+			dol_include_once('/commande/class/commande.class.php');
+			$expdCmdSrc = new Commande($db);
+			$expdCmdSrc->fetch($expd->origin_id);
+
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
 				$objecttmp = $TFactThird[$expd->socid];
@@ -257,11 +262,11 @@ if (empty($reshook)) {
 				$objecttmp->thirdparty = $expd->thirdparty;
 
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id = !empty($expd->cond_reglement_id) ? $expd->cond_reglement_id : $expd->thirdparty->cond_reglement_id;
-				$objecttmp->mode_reglement_id = !empty($expd->mode_reglement_id) ? $expd->mode_reglement_id : $expd->thirdparty->mode_reglement_id;
+				$objecttmp->cond_reglement_id = !empty($expdCmdSrc->cond_reglement_id) ? $expdCmdSrc->cond_reglement_id : (!empty($objecttmp->thirdparty->cond_reglement_id) ? $objecttmp->thirdparty->cond_reglement_id : 1);
+				$objecttmp->mode_reglement_id = !empty($expdCmdSrc->mode_reglement_id) ? $expdCmdSrc->mode_reglement_id : (!empty($objecttmp->thirdparty->mode_reglement_id) ? $objecttmp->thirdparty->mode_reglement_id : 0);
 
 				$objecttmp->fk_project = $expd->fk_project;
-				$objecttmp->multicurrency_code = $expd->multicurrency_code;
+				$objecttmp->multicurrency_code = !empty($expdCmdSrc->multicurrency_code) ? $expdCmdSrc->multicurrency_code : (!empty($objecttmp->thirdparty->multicurrency_code) ? $objecttmp->thirdparty->multicurrency_code : $expd->multicurrency_code);
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $expd->ref_client;
 				}
