@@ -907,23 +907,16 @@ class Notify
 				// content will be sent.
 				$mailTemplateLabel = isset($conf->global->{$notifcode.'_TEMPLATE'}) ? $conf->global->{$notifcode.'_TEMPLATE'} : '';
 				$emailTemplate = null;
-				// Set output language
-				$outputlangs = $langs;
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $langs, 0, 1, $labeltouse);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
-					if ($obj->default_lang && $obj->default_lang != $langs->defaultlang) {
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang($obj->default_lang);
-						$outputlangs->loadLangs(array('main', 'other'));
-					}
-					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
-					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
+					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $langs, $object);
+					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $langs);
+					$message = make_substitutions($emailTemplate->content, $substitutionarray, $langs);
 				} else {
 					$message = '';
 					$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
