@@ -2184,6 +2184,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql .= " WHERE module = '".$this->db->escape($module)."'";
+		$sql .= " AND menu_handler = 'all'";	// We delete only lines that were added manually or by the module activation. We keep entry added by menuhandler like 'auguria'
 		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);
@@ -2522,7 +2523,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public function getKanbanView($codeenabledisable = '', $codetoconfig = '')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Define imginfo
 		$imginfo = "info";

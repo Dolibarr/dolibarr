@@ -8892,13 +8892,15 @@ abstract class CommonObject
 
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
-
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER') && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
+							if ($extrafields->attributes[$this->table_element]['type'][$key] == 'text') {
+								$out .= ' tdtop';
+							}
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
@@ -8932,10 +8934,13 @@ abstract class CommonObject
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
 
+						// Second column
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 						if ($display_type == 'card') {
 							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
-							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key;
+							$out .= '" '.($colspan ? ' colspan="'.$colspan.'"' : '');
+							$out .= '>';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.' extra_inline_'.$extrafields->attributes[$this->table_element]['type'][$key].'">';
 						}
@@ -8945,7 +8950,8 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key]) . $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 								break;
 							case "edit":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);

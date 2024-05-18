@@ -4704,9 +4704,10 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  * Return the picto for a data type
  *
  * @param 	string		$key		Key
+ * @param	string		$morecss	Add more css to the object
  * @return 	string					Pïcto for the key
  */
-function getPictoForType($key)
+function getPictoForType($key, $morecss = '')
 {
 	// Set array with type -> picto
 	$type2picto = array(
@@ -4740,10 +4741,10 @@ function getPictoForType($key)
 	);
 
 	if (!empty($type2picto[$key])) {
-		return img_picto('', $type2picto[$key], 'class="pictofixedwidth"');
+		return img_picto('', $type2picto[$key], 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 	}
 
-	return img_picto('', 'generic', 'class="pictofixedwidth"');
+	return img_picto('', 'generic', 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 }
 
 
@@ -9627,10 +9628,10 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string|null		$mesg		Message string
- *	@param	string[]|null	$mesgs		Message array
- *  @param  string			$style     	Which style to use ('mesgs' by default, 'warnings', 'errors')
- *  @param	string			$messagekey	A key to be used to allow the feature "Never show this message again"
+ *	@param	string|null		$mesg			Message string
+ *	@param	string[]|null	$mesgs			Message array
+ *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
