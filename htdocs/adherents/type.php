@@ -177,7 +177,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($id > 0) {
 			$backurlforlist = $_SERVER["PHP_SELF"];
 
-			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $id, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
 
 			header("Location: " . $urltogo);
