@@ -60,7 +60,6 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
 
-
 $title = $langs->trans("Projects");
 
 // Security check
@@ -265,6 +264,24 @@ $arrayfields['p.fk_project']['enabled'] = 0;
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+
+// Add a breakon field
+if ($mode == 'kanban') {
+	$breakonold = null;
+	$breakon = GETPOST('breakon', 'aZ09');	// Example: $breakon = 'p.fk_opp_status' or $breakon = 'p.fk_statut'
+	$breakonfield = preg_replace('/[a-z]\./', '', $breakon);
+	if (!empty($object->fields[$breakonfield]['alias'])) {
+		$breakonfield = $object->fields[$breakonfield]['alias'];
+	}
+	if (!in_array(preg_replace('/[a-z]\./', '', $breakon), array_keys($object->fields))) {
+		$breakon = '';
+	}
+	if ($breakon) {
+		//var_dump($arrayfields);
+		$sortfield = $db->sanitize($breakon).($sortfield ? ",".$sortfield : "");
+		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
+	}
+}
 
 
 /*
@@ -776,6 +793,7 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -1609,8 +1627,24 @@ while ($i < $imaxinloop) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+		}
+
+		if (!empty($breakon)) {
+			if (is_null($breakonold)) {
+				print '<div class="box-flex-container-columns kanban">';
+			}
+			// Start kanban column
+			if ($breakonold !== $obj->$breakonfield) {
+				if (!is_null($breakonold)) {
+					print '</div>';	// end box-flex-container
+				}
+				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$breakonfield).'">';
+			}
+			$breakonold = $obj->$breakonfield;
+		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
+
 		// Output Kanban
 		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1622,8 +1656,17 @@ while ($i < $imaxinloop) {
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
+
+		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {
-			print '</div>';
+			// Close kanban column
+			if (!empty($breakon)) {
+				print '</div>';	// end box-flex-container
+				print '</div>';	// end box-flex-container-columns
+			} else {
+				print '</div>';	// end box-flex-container
+			}
+
 			print '</td></tr>';
 		}
 	} else {
