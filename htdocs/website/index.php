@@ -4358,6 +4358,12 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					} else {
 						jQuery(".trpublicauthor").hide();
 					}
+					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'service\' || jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'library\') {
+						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+						jQuery(".spanprefix").show();
+					} else {
+						jQuery(".spanprefix").hide();
+					}
 				});
 			});
 			</script>
@@ -4374,8 +4380,29 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<span class="opacitymedium spanprefix hidden"></span> ';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag(substr($pageurl, strlen('_'.$type_container.'_page_'))).'">';
 	print '</td></tr>';
+
+	print '<script type="text/javascript">
+			$(document).ready(function() {
+				if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
+					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+					$(".spanprefix").show();
+				}
+				$(".websiteformtoolbar").on("submit", function(event) {
+					if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
+						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_";
+						var userInput = $("#WEBSITE_PAGENAME").val();
+						var $inputField = $("#WEBSITE_PAGENAME");
+						if (userInput.indexOf(prefix) !== 0) {
+							$inputField.val(prefix + userInput);
+						}
+					}
+				});
+			});
+		</script>
+	';
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp = $langs->trans("WEBSITE_ALIASALTDesc");
