@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_clients.php
- *	\ingroup    Facture
+ *	\ingroup    invoice
  *	\brief      Module d'affichage pour les encours dépassés
  */
 

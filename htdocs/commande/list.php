@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/commande/list.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      Page to list orders
  */
 

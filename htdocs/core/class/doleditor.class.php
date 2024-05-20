@@ -139,7 +139,7 @@ class DolEditor
 	 *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
 	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
 	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
-	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
+	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
 	 *  @param	string	$moreparam			 Add extra tags to the textarea
 	 *  @param	string	$morecss			 Add extra css to the textarea
 	 *  @return	void|string

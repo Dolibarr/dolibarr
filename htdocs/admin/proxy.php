@@ -123,7 +123,7 @@ if ($conf->use_javascript_ajax) {
 
 // Timeout
 
-print '<table width="100%" class="noborder">';
+print '<table class="centpercent noborder">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
@@ -197,9 +197,9 @@ print '</tr>';
 
 print '</table>';
 
-print dol_get_fiche_end();
-
 print $form->buttonsSaveCancel("Modify", '');
+
+print dol_get_fiche_end();
 
 print '</form>';
 

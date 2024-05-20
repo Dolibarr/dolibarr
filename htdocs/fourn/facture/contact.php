@@ -22,7 +22,7 @@
 
 /**
  *      \file       htdocs/fourn/facture/contact.php
- *      \ingroup    facture, fournisseur
+ *      \ingroup    invoice, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
  */
 

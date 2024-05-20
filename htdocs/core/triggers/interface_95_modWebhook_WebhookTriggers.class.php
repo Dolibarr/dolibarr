@@ -55,8 +55,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 	/**
 	 * Function called when a Dolibarr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * All functions "runTrigger" are triggered if file of function is inside directory core/triggers.
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object

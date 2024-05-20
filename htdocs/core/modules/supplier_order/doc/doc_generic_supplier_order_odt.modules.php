@@ -24,7 +24,7 @@
 
 /**
  *	\file       htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File of class to build ODT documents for supplier orders
  */
 

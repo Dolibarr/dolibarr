@@ -269,7 +269,8 @@ if ($action == 'install' && $allowonlineinstall) {
 	}
 
 	if (!$error) {
-		setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
+		$message = $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
+		setEventMessages($message, null, 'warnings');
 	}
 } elseif ($action == 'install' && !$allowonlineinstall) {
 	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
@@ -1222,13 +1223,13 @@ if ($mode == 'deploy') {
 		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
 			// Show clean message
 			if (!is_numeric(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US'))) {
-				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')));
+				$message = info_admin($langs->trans(getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')), 0, 0, 'warning');
 			} else {
-				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+				$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'), 0, 0, 'warning');
 			}
 		} else {
 			// Show technical message
-			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'), 0, 0, 'warning');
 		}
 		$allowfromweb = 0;
 	}
@@ -1354,7 +1355,7 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
-			print $langs->trans("SetupIsReadyForUse").'<br>';
+			print $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")).'<br>';
 		}
 	}
 

@@ -26,7 +26,7 @@
 
 /**
  *      \file       htdocs/admin/invoice.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 

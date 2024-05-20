@@ -28,7 +28,7 @@
 
 /**
  *    \file       htdocs/fourn/facture/card-rec.php
- *    \ingroup    facture fournisseurs
+ *    \ingroup    invoice fournisseurs
  *    \brief      Page to show predefined invoice
  */
 

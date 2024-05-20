@@ -346,7 +346,7 @@ class modMrp extends DolibarrModules
 			'm.fk_user_valid'=>'ValidatedById',
 			'm.fk_user_modif'=>'ModifiedById',
 			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValid',
+			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
 			'm.fk_soc'=>'Tiers',

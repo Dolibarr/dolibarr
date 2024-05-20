@@ -27,8 +27,8 @@
  */
 
 /**
- *	\file       htdocs/admin/commande.php
- *	\ingroup    commande
+ *	\file       htdocs/admin/order.php
+ *	\ingroup    order
  *	\brief      Setup page of module Order
  */
 
@@ -64,6 +64,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
 	$maskorder = GETPOST('maskorder', 'alpha');
+
+	$res = 0;
 
 	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);

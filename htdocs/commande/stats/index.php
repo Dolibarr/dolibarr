@@ -22,7 +22,7 @@
 
 /**
  *	    \file       htdocs/commande/stats/index.php
- *      \ingroup    commande
+ *      \ingroup    order
  *		\brief      Page with customers or suppliers orders statistics
  */
 

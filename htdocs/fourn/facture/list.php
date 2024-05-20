@@ -1706,7 +1706,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['f.label']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="nowrap tdoverflowmax125" title="'.dol_escape_htmltag($obj->label).'">';
 			print dol_escape_htmltag($obj->label);
 			print '</td>';
 			if (!$i) {
