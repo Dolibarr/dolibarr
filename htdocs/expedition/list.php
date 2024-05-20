@@ -41,7 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
 
@@ -312,9 +311,7 @@ if (empty($reshook)) {
 						continue;
 					}
 					if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
-						var_dump($objecttmp->linkedObjectsIds);
-						$objecttmp->fetchObjectLinked(1);
-						var_dump($objecttmp->linkedObjectsIds);
+						$objecttmp->fetchObjectLinked($object->id, 'commande');
 						foreach ($objecttmp->linkedObjectsIds as $tmpSourcetype => $tmpTIds) {
 							if ($tmpSourcetype == $sourcetype){
 								if (!empty(array_intersect($TIds, $tmpTIds))){
