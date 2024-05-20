@@ -311,6 +311,18 @@ if (empty($reshook)) {
 					if ($sourcetype == 'facture') {
 						continue;
 					}
+					if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
+						var_dump($objecttmp->linkedObjectsIds);
+						$objecttmp->fetchObjectLinked(1);
+						var_dump($objecttmp->linkedObjectsIds);
+						foreach ($objecttmp->linkedObjectsIds as $tmpSourcetype => $tmpTIds) {
+							if ($tmpSourcetype == $sourcetype){
+								if (!empty(array_intersect($TIds, $tmpTIds))){
+									continue 2;
+								}
+							}
+						}
+					}
 
 					$res = $objecttmp->add_object_linked($sourcetype, current($TIds));
 
