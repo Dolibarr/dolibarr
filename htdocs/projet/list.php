@@ -265,20 +265,20 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Add a breakon field
+// Add a groupby field
 if ($mode == 'kanban') {
-	$breakonold = null;
-	$breakon = GETPOST('breakon', 'aZ09');	// Example: $breakon = 'p.fk_opp_status' or $breakon = 'p.fk_statut'
-	$breakonfield = preg_replace('/[a-z]\./', '', $breakon);
-	if (!empty($object->fields[$breakonfield]['alias'])) {
-		$breakonfield = $object->fields[$breakonfield]['alias'];
+	$groupbyold = null;
+	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
+	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
+	if (!empty($object->fields[$groupbyfield]['alias'])) {
+		$groupbyfield = $object->fields[$groupbyfield]['alias'];
 	}
-	if (!in_array(preg_replace('/[a-z]\./', '', $breakon), array_keys($object->fields))) {
-		$breakon = '';
+	if (!in_array(preg_replace('/[a-z]\./', '', $groupby), array_keys($object->fields))) {
+		$groupby = '';
 	}
-	if ($breakon) {
+	if ($groupby) {
 		//var_dump($arrayfields);
-		$sortfield = $db->sanitize($breakon).($sortfield ? ",".$sortfield : "");
+		$sortfield = $db->sanitize($groupby).($sortfield ? ",".$sortfield : "");
 		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
 	}
 }
@@ -1629,18 +1629,18 @@ while ($i < $imaxinloop) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 		}
 
-		if (!empty($breakon)) {
-			if (is_null($breakonold)) {
+		if (!empty($groupby)) {
+			if (is_null($groupbyold)) {
 				print '<div class="box-flex-container-columns kanban">';
 			}
 			// Start kanban column
-			if ($breakonold !== $obj->$breakonfield) {
-				if (!is_null($breakonold)) {
+			if ($groupbyold !== $obj->$groupbyfield) {
+				if (!is_null($groupbyold)) {
 					print '</div>';	// end box-flex-container
 				}
-				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$breakonfield).'">';
+				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';
 			}
-			$breakonold = $obj->$breakonfield;
+			$groupbyold = $obj->$groupbyfield;
 		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
@@ -1660,7 +1660,7 @@ while ($i < $imaxinloop) {
 		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {
 			// Close kanban column
-			if (!empty($breakon)) {
+			if (!empty($groupby)) {
 				print '</div>';	// end box-flex-container
 				print '</div>';	// end box-flex-container-columns
 			} else {
@@ -1840,6 +1840,7 @@ while ($i < $imaxinloop) {
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
+			$s = '';
 			if ($obj->opp_status_code) {
 				$s = $langs->trans("OppStatus".$obj->opp_status_code);
 				if (empty($arrayfields['p.opp_percent']['checked']) && $obj->opp_percent) {
