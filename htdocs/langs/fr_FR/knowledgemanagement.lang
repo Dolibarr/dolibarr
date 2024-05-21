@@ -43,10 +43,10 @@ NewKnowledgeRecord = Nouvel article
 ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Atribut supplémentaires (articles)
+KnowledgeRecordExtraFields = Attributs supplémentaires pour les articles
 GroupOfTicket=Catégorisation de tickets
 YouCanLinkArticleToATicketCategory=Vous pouvez lier l'article à un groupe de tickets (ainsi l'article sera mis en évidence sur tous les tickets de ce groupe)
-SuggestedForTicketsInGroup=Suggéré à la création du ticket
+SuggestedForTicketsInGroup=Suggéré lors de la création de tickets
 
 SetObsolete=Définir comme obsolète
 ConfirmCloseKM=Confirmez-vous la fermeture de cet article comme obsolète ?

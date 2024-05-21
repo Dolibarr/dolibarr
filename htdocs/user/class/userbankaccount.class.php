@@ -257,10 +257,11 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *  @param	User|null	$user	User deleting
-	 *  @return int             	Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user		User deleting
+	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		$error = 0;
 
