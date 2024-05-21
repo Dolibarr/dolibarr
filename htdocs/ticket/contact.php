@@ -62,7 +62,9 @@ $url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
 $hookmanager->initHooks(array('contactticketcard', 'globalcard'));
 $object = new Ticket($db);
-$result = $object->fetch($id, $ref, $track_id);
+if ($id > 0 || $ref || $track_id) {
+	$result = $object->fetch($id, $ref, $track_id);
+}
 
 // Security check
 $id = GETPOSTINT("id");
