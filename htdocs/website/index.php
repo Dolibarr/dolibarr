@@ -4381,7 +4381,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
 	print '<span class="opacitymedium spanprefix hidden"></span> ';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag(substr($pageurl, strlen('_'.$type_container.'_page_'))).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag(substr((string) $pageurl, strlen('_'.$type_container.'_page_'))).'">';
 	print '</td></tr>';
 
 	print '<script type="text/javascript">
