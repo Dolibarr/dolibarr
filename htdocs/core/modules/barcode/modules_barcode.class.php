@@ -82,8 +82,6 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$s = '';
