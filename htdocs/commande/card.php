@@ -2917,7 +2917,7 @@ if ($action == 'create' && $usercancreate) {
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
-				$numlines = !empty($numlines) ? $numlines : count($object->lines);
+				$numlines = count($object->lines);
 
 				// Reopen a closed order
 				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
