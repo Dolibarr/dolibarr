@@ -9,6 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +177,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($id > 0) {
 			$backurlforlist = $_SERVER["PHP_SELF"];
 
-			$urltogo = $backtopage ? str_replace('__ID__', $id, $backtopage) : $backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $id, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
 
 			header("Location: " . $urltogo);
@@ -271,7 +272,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$param = '';
 		if (!empty($mode)) {
-			$param .= '&mode'.urlencode($mode);
+			$param .= '&mode='.urlencode($mode);
 		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
