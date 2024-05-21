@@ -21,7 +21,7 @@
 
 /**
  *    \file       htdocs/fourn/paiement/card.php
- *    \ingroup    facture, fournisseur
+ *    \ingroup    invoice, fournisseur
  *    \brief      Tab to show a payment of a supplier invoice
  *    \remarks    Fichier presque identique a compta/paiement/card.php
  */

@@ -174,7 +174,12 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			$backurlforlist = $_SERVER["PHP_SELF"];
+
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
+
+			header("Location: " . $urltogo);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -432,6 +437,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 

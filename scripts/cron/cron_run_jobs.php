@@ -92,7 +92,7 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 
 // Check module cron is activated
 if (!isModEnabled('cron')) {
@@ -293,10 +293,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 $db->close();
 
+print "***** ".$script_file." end - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
 if ($nbofjobslaunchedko) {
 	exit(1);
 }
 exit(0);
+
 
 /**
  * script cron usage

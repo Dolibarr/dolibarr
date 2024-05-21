@@ -26,7 +26,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/class/fournisseur.facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File for class to manage invoice templates
  */
 

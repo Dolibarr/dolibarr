@@ -22,7 +22,7 @@
 
 /**
  *	    \file       htdocs/compta/paiement/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */

@@ -24,7 +24,7 @@
 
 /**
  *	\file       htdocs/compta/facture/prelevement.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Management of direct debit order or credit transfer of invoices
  */
 

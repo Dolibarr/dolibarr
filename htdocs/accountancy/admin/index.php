@@ -365,7 +365,7 @@ print '</td>';
 
 if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_COMBO_FOR_AUX&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated").' - '.$langs->trans("NotRecommended"), 'switch_on', 'class="warning"');
 	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_COMBO_FOR_AUX&value=1">';

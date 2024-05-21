@@ -130,9 +130,9 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {
 			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')."<br>\n";
 		}
-		// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
-			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
+		// If value is not unique (if COMPANY_DIGITARIA_UNIQUE_CODE is set to 0), we show this
+		if (!getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
+			$texte .= $langs->trans('DuplicateForbidden').' = '.yn(0)."<br>\n";
 		}
 		$texte .= '</td>';
 		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
@@ -235,7 +235,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
+			if (getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
 				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
 				while ($disponibility != 0 && $i < 1000) {

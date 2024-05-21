@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_factures.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Module de generation de l'affichage de la box factures
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';

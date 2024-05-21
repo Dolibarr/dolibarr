@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/compta/facture/invoicetemplate_list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 

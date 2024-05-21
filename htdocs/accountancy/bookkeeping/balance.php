@@ -293,6 +293,7 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	$url_param = '';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
