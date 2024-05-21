@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Parent class for barcode document models
+ *	Parent class for barcode document generators (image)
  */
 abstract class ModeleBarCode
 {
