@@ -253,7 +253,7 @@ if (empty($reshook)) {
 			$expdCmdSrc->fetch($expd->origin_id);
 
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
-				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$objecttmp = $TFactThird[$expd->socid];
 			} else {
 				// If we want one invoice per sending or if there is no first invoice yet for this thirdparty.
@@ -502,7 +502,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode(strval($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -514,7 +514,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.urlencode(strval($limit));
 			}
 			if ($sall) {
 				$param .= "&sall=".urlencode($sall);
