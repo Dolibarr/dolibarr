@@ -93,9 +93,9 @@ CodePaymentMode=Mode de règlement (code)
 LabelPaymentMode=Mode de règlement (libellé)
 PaymentModeShort=Mode règlement
 PaymentTerm=Condition de règlement
-IdPaymentTerm=Terme de paiement (id)
-CodePaymentTerm=Terme de paiement (code)
-LabelPaymentTerm=Terme de paiement (étiquette)
+IdPaymentTerm=Condition de paiement (id)
+CodePaymentTerm=Condition de paiement (code)
+LabelPaymentTerm=Condition de paiement (libellé)
 PaymentConditions=Conditions de règlement
 PaymentConditionsShort=Conditions de règlement
 PaymentAmount=Montant règlement
@@ -649,11 +649,10 @@ MentionCategoryOfOperations0=Livraison de marchandises
 MentionCategoryOfOperations1=Prestation de services
 MentionCategoryOfOperations2=Mixte - Livraison de biens & prestation de services
 Salaries=Salaires
-InvoiceSubtype=Sous-type de facture
 SalaryInvoice=Salaire
 BillsAndSalaries=Factures et salaires
 CreateCreditNoteWhenClientInvoiceExists=Cette option est activée uniquement lorsqu'une ou plusieurs factures validées existent pour un client ou lorsque la constante INVOICE_CREDIT_NOTE_STANDALONE est utilisée (utile pour certains pays)
-SearchUnpaidSupplierInvoicesWithDueDate=Rechercher les factures fournisseur impayées avec date d'échéance = %s
-SearchValidatedSupplierInvoicesWithDate=Rechercher les factures fournisseur impayées avec une date de validation = %s
-SupplierInvoiceUnpaidContent=La facture fournisseur __REF__ n'a pas encore été payé :
+SearchUnpaidSupplierInvoicesWithDueDate=Rechercher les factures impayées des fournisseurs avec une date d'échéance = %s
+SearchValidatedSupplierInvoicesWithDate=Rechercher les factures impayées des fournisseurs avec une date de validation = %s
 SendEmailsRemindersOnSupplierInvoiceDueDate=Envoyer un rappel par email pour les factures fournisseur validées et impayées
+PaymentMadeForSeveralInvoices=Paiement effectué pour plusieurs factures

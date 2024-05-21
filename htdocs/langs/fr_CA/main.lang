@@ -110,7 +110,6 @@ ShowTransaction=Afficher l'entrée sur le compte bancaire
 DeleteLine=Suppression de ligne
 ConfirmDeleteLine=Êtes-vous sûr de vouloir supprimer cette ligne?
 NoPDFAvailableForDocGenAmongChecked=Aucun document PDF n'était disponible pour la génération du document parmi les enregistrements vérifiés
-NoRecordSelected=Aucun enregistrement sélectionné
 MassFilesArea=Domaine pour les fichiers construits par des actions de masse
 ShowTempMassFilesArea=Afficher la zone des fichiers construits par des actions de masse
 RelatedObjects=Objets associés
