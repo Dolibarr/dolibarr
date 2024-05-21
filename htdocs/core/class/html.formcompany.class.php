@@ -1134,7 +1134,7 @@ class FormCompany extends Form
 		} else {
 			if ($selected > 0) {
 				$arr = $this->typent_array(0);
-				$typent = $arr[$selected];
+				$typent = empty($arr[$selected]) ? '' : $arr[$selected];
 				$out .= $typent;
 			} else {
 				$out .= "&nbsp;";
