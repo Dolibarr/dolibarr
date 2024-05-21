@@ -355,7 +355,6 @@ UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
 UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
 
 UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
-UPDATE llx_c_type_container SET typecontainer  = 'library' WHERE code = 'service';
 
 INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'library');
 INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('library', 1, 'Library (functions)', 1, 'system', 400, 'library');
