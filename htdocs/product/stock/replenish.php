@@ -273,6 +273,7 @@ if ($action == 'order' && GETPOST('valid')) {
 				} else {
 					$id = $result;
 				}
+				$i++;
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
