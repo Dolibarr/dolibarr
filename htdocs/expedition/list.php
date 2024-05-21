@@ -596,7 +596,6 @@ if (empty($reshook)) {
 			$error++;
 		}
 	}
-}
 
 	// If massaction is close
 	if ($massaction == 'classifyclose') {
