@@ -564,6 +564,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 0 0 0 -15px;
 	/*justify-content: space-between;*/
 }
+.box-flex-container-columns {
+	display: flex; /* or inline-flex */
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+.box-flex-container-column {
+	flex-grow: 1;
+	}
+.box-flex-container-column:not(:last-of-type) {
+	border-right: 1px solid #AAA;
+}
 
 .box-flex-grow-zero{
 	flex-grow: 0 !important;
