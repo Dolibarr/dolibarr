@@ -1455,9 +1455,9 @@ class Reception extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
 
-		if (isModEnabled('incoterms')) {
-			$this->fk_incoterms = 1;
-		}
+		$this->tracking_number = 'TRACKID-ABC123';
+
+		$this->fk_incoterms = 1;
 
 		$nbp = 5;
 		$xnbp = 0;
