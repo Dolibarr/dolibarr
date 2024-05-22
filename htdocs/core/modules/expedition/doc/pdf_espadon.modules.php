@@ -289,7 +289,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;
+				$tab_top = 90 + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 20 : 0);
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
@@ -720,7 +720,10 @@ class pdf_espadon extends ModelePdfExpedition
 						}
 					}
 				}
-
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
+					$tab_top = $tab_top;
+					$heightforfooter = $heightforfooter - 5;
+				}
 				// Show square
 				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);

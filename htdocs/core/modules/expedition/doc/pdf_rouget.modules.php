@@ -340,7 +340,7 @@ class pdf_rouget extends ModelePdfExpedition
 				}
 
 				if (!empty($object->note_public) || !empty($object->tracking_number)) {
-					$tab_top = 88 + $height_incoterms;
+					$tab_top = 88 + $height_incoterms + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 20 : 0);
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -393,9 +393,9 @@ class pdf_rouget extends ModelePdfExpedition
 				} else {
 					$height_note = 0;
 				}
-				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
-				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
-				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
+				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 10 : 7);
+				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 10 : 7);
+				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 10 : 7);
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
@@ -616,7 +616,7 @@ class pdf_rouget extends ModelePdfExpedition
 				// }
 
 				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
-					$tab_top = $tab_top +18;
+					$tab_top = $tab_top;
 					$heightforfooter = $heightforfooter - 5;
 				}
 				// Show square
