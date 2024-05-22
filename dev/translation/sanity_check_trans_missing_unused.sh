@@ -189,6 +189,8 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 		| sort -t: -k 4 \
 		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @'
 
+	cat "${MISSING_FILE}.grep"
+
 	echo "##[endgroup]"
 fi
 
