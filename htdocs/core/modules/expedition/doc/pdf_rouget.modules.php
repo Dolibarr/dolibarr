@@ -191,6 +191,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
+		$this->atleastonephoto = false;
 		if (getDolGlobalString('MAIN_GENERATE_SHIPMENT_WITH_PICTURE')) {
 			$objphoto = new Product($this->db);
 
@@ -224,6 +225,7 @@ class pdf_rouget extends ModelePdfExpedition
 					}
 
 					$realpath = $dir.$filename;
+					$this->atleastonephoto = true;
 					break;
 				}
 
@@ -238,7 +240,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 
 		if ($conf->expedition->dir_output) {
-			// Definition de $dir et $file
+			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $conf->expedition->dir_output."/sending";
 				$file = $dir."/SPECIMEN.pdf";
@@ -316,13 +318,13 @@ class pdf_rouget extends ModelePdfExpedition
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;	// position of top tab
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift: 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -653,10 +655,10 @@ class pdf_rouget extends ModelePdfExpedition
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				// Affiche zone totaux
+				// Display total area
 				$posy = $this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
-				// Pied de page
+				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
@@ -696,12 +698,12 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           	Object PDF
-	 *	@param  Expedition	$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Expedition	$object         Object expedition
+	 *	@param  int			$deja_regle     Amount already paid
+	 *	@param	int         $posy           Start Position
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position pour suite
+	 *	@return int							Position for suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -716,7 +718,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$tab2_hl = 4;
 		$pdf->SetFont('', 'B', $default_font_size - 1);
 
-		// Tableau total
+		// Total table
 		$col1x = $this->posxweightvol - 50;
 		$col2x = $this->posxweightvol;
 		/*if ($this->page_largeur < 210) // To work with US executive format
@@ -909,7 +911,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		//Prepare la suite
+		//Prepare next
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -1031,7 +1033,7 @@ class pdf_rouget extends ModelePdfExpedition
 			if (!empty($origin) && is_object($object->origin_object)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
 			}
-			if (count($arrayidcontact) > 0) {
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
