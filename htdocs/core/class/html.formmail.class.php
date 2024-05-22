@@ -1480,7 +1480,7 @@ class FormMail extends Form
 
 								// Clear the input field
 								$('#ai_instructions').val('');
-	
+
 								apicallfinished = 1;
 								if (timeoutfinished) {
 									$('#ai_status_message').hide();
