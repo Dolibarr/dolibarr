@@ -100,7 +100,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = $langs->trans("StockTransferSheet");
@@ -344,7 +344,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top = 88;
@@ -721,10 +721,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
-
-		$sign = 1;
-
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$tab2_top = $posy;
@@ -747,13 +743,17 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$useborder = 0;
 		$index = 0;
 
+		$totalWeight = '';
+		$totalVolume = '';
 		$totalWeighttoshow = '';
 		$totalVolumetoshow = '';
 
 		// Load dim data
 		$tmparray = $object->getTotalWeightVolume();
-		$totalWeight = $tmparray['weight'];
-		$totalVolume = $tmparray['volume'];
+		if (!empty($tmparray)) {
+			$totalWeight = $tmparray['weight'];
+			$totalVolume = $tmparray['volume'];
+		}
 		$totalQty = 0;
 		if (!empty($object->lines)) {
 			foreach ($object->lines as $line) {
@@ -923,17 +923,17 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 */
 	public function atLeastOneBatch($object)
 	{
-		global $conf;
-
-		$atLeastOneBatch = false;
+		//$atLeastOneBatch = false;
 
 		if (!isModEnabled('productbatch')) {
 			return false;
 		}
 
-		foreach ($object->lines as $line) {
-			if (!empty($line->batch)) {
-				return true;
+		if (!empty($object->lines)) {
+			foreach ($object->lines as $line) {
+				if (!empty($line->batch)) {
+					return true;
+				}
 			}
 		}
 
@@ -1190,6 +1190,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$thirdparty = $object->thirdparty;
 			}
 
+			$carac_client_name = '';
 			if (!empty($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 			}

@@ -4960,6 +4960,10 @@ abstract class CommonObject
 		// defined for shipment only
 		$totalToShip = '';
 
+		if (empty($this->lines)) {
+			return array();
+		}
+
 		foreach ($this->lines as $line) {
 			if (isset($line->qty_asked)) {
 				if (empty($totalOrdered)) {
