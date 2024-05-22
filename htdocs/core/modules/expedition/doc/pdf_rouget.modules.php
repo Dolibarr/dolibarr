@@ -393,9 +393,9 @@ class pdf_rouget extends ModelePdfExpedition
 				} else {
 					$height_note = 0;
 				}
-				$iniY = $tab_top + (ismodEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
-				$curY = $tab_top + (ismodEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
-				$nexY = $tab_top + (ismodEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
+				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
+				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
+				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_RECEPTION_INVOICE") ? 30 : 7);
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
