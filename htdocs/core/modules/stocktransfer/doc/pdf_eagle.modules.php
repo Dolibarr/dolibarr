@@ -364,7 +364,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				}
 
 				if (!empty($object->note_public) || !empty($object->tracking_number)) {
-					$tab_top = 88 + $height_incoterms;
+					$tab_top = 88 + $height_incoterms + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_STOCKTRANSFER_PDF") ? 20 : 0);
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -418,9 +418,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$height_note = 0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_STOCKTRANSFER_PDF") ? 9 : 7);
+				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_STOCKTRANSFER_PDF") ? 9 : 7);
+				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_STOCKTRANSFER_PDF") ? 9 : 7);
 
 				$TCacheEntrepots = array();
 				// Loop on each lines
@@ -658,7 +658,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 						}
 					}
 				}
-
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_STOCKTRANSFER_PDF')) {
+					$heightforfooter = $heightforfooter - 5;
+				}
 				// Show square
 				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
