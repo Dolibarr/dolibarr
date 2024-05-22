@@ -79,10 +79,10 @@ for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->
 	JOIN_STR="|"
 done
 
-echo "MATCH_STR=$MATCH_STR"
-echo "EXTRACT_STR=$EXTRACT_STR"
+#echo "MATCH_STR=$MATCH_STR"
+#echo "EXTRACT_STR=$EXTRACT_STR"
+#echo "Generate the file EXPECTED_FILE=${EXPECTED_FILE} (contains autodetected dynamic trans and declared dynamic trans)"
 
-echo "Generate the file EXPECTED_FILE=${EXPECTED_FILE} (contains autodetected dynamic trans and declared dynamic trans)"
 {
 	# Find static strings that are translated in the sources (comments stripped)
 	# shellcheck disable=2086
@@ -158,7 +158,7 @@ if [ -s "${UNUSED_FILE}.grep" ] ; then
 	# Report unused translation in recognizable format
 
 	echo
-	echo "##[group]List Apparently Unused Translations (found into a lang file but not into code)"
+	echo "##[group]List Apparently Unused Translations (found into a lang file but not into code) - Does NOT generate CTI errors, only warnings"
 	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
 	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
 	echo "##   so that they are ignored for this report."
@@ -180,7 +180,7 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 
 	# Report missing translation in recognizable format
 
-	echo "##[group]List missing translations (used by code but not found into lang files)"
+	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
 
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
 		| sort -t: -k 4 \
@@ -199,7 +199,7 @@ diff "${AVAILABLE_FILE_NODEDUP}" "${AVAILABLE_FILE}" \
 if [ -s "${DUPLICATE_KEYS_FILE}" ] ; then
 	exit_code=1
 	echo
-	echo "##[group]List Duplicate Keys"
+	echo "##[group]List Duplicate Keys - Generate CTI errors"
 	echo "## :warning:"
 	echo "##   Duplicate keys may be expected across language files."
 	echo "##   You may want to avoid them or they could be a copy/paste mistake."
