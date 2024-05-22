@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,6 @@ const PREFIXES = [
  * @param $fileType string Filetype identification for the file
  * @param $name     string Name of developer to add in header
  * @param $email    string Email for the developer
- *
  * @return          bool   True if license was updated
  */
 function updateCopyrightNotice($filename, $fileType, $name, $email)
@@ -75,6 +74,7 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	$pattern = "~(?:{$r_prefix0}|{$r_prefix1})Copyright \(C\)\s+(?:(?:\d{4}-)?(?<year>\d{4}))\s+{$r_name}\s*\<{$r_email}>~";
 
 	// Check if the lines match the pattern
+	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
 		$existingYear = $matches['year'];
 
