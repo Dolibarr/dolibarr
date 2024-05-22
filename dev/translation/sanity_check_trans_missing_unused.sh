@@ -171,7 +171,7 @@ if [ -s "${UNUSED_FILE}.grep" ] ; then
 
 	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Not used, translated; @'
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@Warning Not used, translated; @'
 
 	echo "##[endgroup]"
 	echo
@@ -179,17 +179,18 @@ fi
 
 
 if [ -s "${MISSING_FILE}.grep" ] ; then
-	exit_code=1
-
 	# Report missing translation in recognizable format
 
 	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
 
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @'
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
 
-	cat "${MISSING_FILE}.grep"
+	if [ -s "${MISSING_FILE}.result" ] ; then
+		exit_code=1
+		cat "${MISSING_FILE}.result"
+	fi
 
 	echo "##[endgroup]"
 fi
