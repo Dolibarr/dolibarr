@@ -9775,7 +9775,7 @@ For developers:
 - New: Can add a link on title field of added dictionary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and
-       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.
+       ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER.
 - New: A module can add several css and js.
 - New: removed deprecated methods
        ldap::connect, formadmin::select_lang,
