@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
  *	\ingroup    expedition
- *	\brief      Class file allowing Espadons shipping template generation
+ *	\brief      Class file allowing Espadon shipping template generation
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
- *	Class to build sending documents with model espadon
+ *	Class to build sending documents with model Espadon
  */
 class pdf_espadon extends ModelePdfExpedition
 {
@@ -63,15 +63,15 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	public $type;
 
-	public $posxweightvol;
-	public $posxqtytoship;
-	public $posxqtyordered;
-
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
+
+	public $posxweightvol;
+	public $posxqtytoship;
+	public $posxqtyordered;
 
 
 	/**
@@ -115,7 +115,7 @@ class pdf_espadon extends ModelePdfExpedition
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Expedition	$object			    Object expedition to generate (or id if old method)
+	 *	@param		Expedition	$object			    Object shipping to generate (or id if old method)
 	 *	@param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -180,7 +180,8 @@ class pdf_espadon extends ModelePdfExpedition
 				$realpath = '';
 
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {
+						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -289,7 +290,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;
+				$tab_top = 90;	// position of top tab
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
@@ -317,7 +318,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
-				// display note
+				// Public note and Tracking code
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
 				// Extrafields in note
@@ -336,8 +337,8 @@ class pdf_espadon extends ModelePdfExpedition
 
 						$pdf->SetFont('', 'B', $default_font_size - 2);
 						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
-
 						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
@@ -361,7 +362,6 @@ class pdf_espadon extends ModelePdfExpedition
 						}
 						$tab_top = $pdf->GetY();
 					}
-
 
 					// Notes
 					$pagenb = $pdf->getPage();
@@ -503,6 +503,40 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
+				// Show barcode
+				$height_barcode = 0;
+				//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
+
+					$encoding = 'QRCODE';
+					$module = new modTcpdfbarcode();
+					$barcode_path = '';
+					$result = 0;
+					if ($module->encodingIsSupported($encoding)) {
+						$result = $module->writeBarCode($object->ref, $encoding);
+
+						// get path of qrcode image
+						$newcode = $object->ref;
+						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+							$newcode = dol_hash($newcode, 'md5');
+						}
+						$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+					}
+
+					if ($result > 0) {
+						$tab_top -= 2;
+
+						$pdf->Image($barcode_path, $this->marge_gauche, $tab_top, 20, 20);
+
+						$nexY = $pdf->GetY();
+						$height_barcode = 20;
+
+						$tab_top += 22;
+					} else {
+						$this->error = 'Failed to generate barcode';
+					}
+				}
 
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -982,38 +1016,6 @@ class pdf_espadon extends ModelePdfExpedition
 		} else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
-		}
-
-		// Show barcode
-		if (isModEnabled('barcode')) {
-			$posx = 105;
-		} else {
-			$posx = $this->marge_gauche + 3;
-		}
-		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
-
-			$encoding = 'QRCODE';
-			$module = new modTcpdfbarcode();
-			$barcode_path = '';
-			$result = 0;
-			if ($module->encodingIsSupported($encoding)) {
-				$result = $module->writeBarCode($object->ref, $encoding);
-
-				// get path of qrcode image
-				$newcode = $object->ref;
-				if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
-					$newcode = dol_hash($newcode, 'md5');
-				}
-				$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
-			}
-
-			if ($result > 0) {
-				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute +80 -5, 20, 20);
-			} else {
-				$this->error = 'Failed to generate barcode';
-			}
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);

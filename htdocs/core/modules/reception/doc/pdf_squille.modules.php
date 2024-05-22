@@ -110,7 +110,8 @@ class pdf_squille extends ModelePdfReception
 
 		$this->posxpicture = $this->posxweightvol - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 
-		if ($this->page_largeur < 210) { // To work with US executive format
+		// To work with US executive format
+		if ($this->page_largeur < 210) {
 			$this->posxweightvol -= 20;
 			$this->posxpicture -= 20;
 			$this->posxqtyordered -= 20;
@@ -321,14 +322,14 @@ class pdf_squille extends ModelePdfReception
 				if (!empty($object->note_public) || !empty($object->tracking_number)) {
 					$tab_top_alt = $tab_top;
 
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
-
-					$tab_top_alt = $pdf->GetY();
 					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
+						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->reception_method_id > 0) {
@@ -398,7 +399,7 @@ class pdf_squille extends ModelePdfReception
 						$pdf->Image($barcode_path, $this->marge_gauche, $tab_top, 20, 20);
 
 						$nexY = $pdf->GetY();
-						$height_barcode = $nexY - $tab_top;
+						$height_barcode = 20;
 
 						$tab_top += 22;
 					} else {
@@ -549,8 +550,10 @@ class pdf_squille extends ModelePdfReception
 						$voltxt = round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units ? $object->lines[$i]->product->volume_units : 0, 1);
 					}
 
-					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, 0, 0, false, true, 'C');
-					//$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
+					if (!getDolGlobalString('RECEPTION_PDF_HIDE_WEIGHT_AND_VOLUME')) {
+						$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, 0, 0, false, true, 'C');
+						//$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
+					}
 
 					// Qty ordered
 					if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
@@ -658,6 +661,8 @@ class pdf_squille extends ModelePdfReception
 
 				dolChmod($file);
 
+				$this->result = array('fullpath' => $file);
+
 				return 1; // No error
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
@@ -721,11 +726,10 @@ class pdf_squille extends ModelePdfReception
 		$totalVolume = $tmparray['volume'];
 		$totalToShip = $tmparray['toship'];
 
-
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
-			$object->volume_units = $object->size_units * 3;
+			$object->trueVolume = price(((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth), 0, $outputlangs, 0, 0);
+			$object->volume_units = (float) $object->size_units * 3;
 		}
 
 		if ($totalWeight != '') {
@@ -914,8 +918,16 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo) {
+			$logodir = $conf->mycompany->dir_output;
+			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			}
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
+				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$this->emetteur->logo;
+			}
 			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
@@ -997,6 +1009,8 @@ class pdf_squille extends ModelePdfReception
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
 			}
 		}
+
+		$top_shift = 0;
 
 		if ($showaddress) {
 			// Sender properties
@@ -1110,7 +1124,7 @@ class pdf_squille extends ModelePdfReception
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		return 0;
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
