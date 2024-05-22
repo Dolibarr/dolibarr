@@ -268,17 +268,15 @@ if ($object->id) {
 
 	$formmail = new FormMail($db);
 	$formmail->withaiprompt = 'text';
-	$formmail->withfckeditor = 1;
-
 	$out = '';
 
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
-	$showlinktoailabel = $langs->trans("Generate Image");
+	$showlinktoailabel = $langs->trans("GenerateImage");
 
 	$formatforouput = 'image';
 	$htmlname = 'bodyemail';
 
-	print load_fiche_titre($langs->trans('Generate with AI'), null, null);
+	print load_fiche_titre($langs->trans('GeneratewithAI'), null, null);
 	print '<table class="border centpercent">';
 
 	// Fill $out
