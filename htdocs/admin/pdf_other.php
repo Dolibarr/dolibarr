@@ -358,7 +358,7 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('RECEPTION_PDF_HIDE_ORDERED');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("RECEPTION_PDF_HIDE_ORDERED", $arrval, $conf->global->RECEPTION_PDF_HIDE_ORDERED);
+		print $form->selectarray("RECEPTION_PDF_HIDE_ORDERED", $arrval, getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED'));
 	}
 	print '</td></tr>';
 
@@ -369,7 +369,7 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, $conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT);
+		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT'));
 	}
 	print '</td></tr>';
 

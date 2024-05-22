@@ -393,9 +393,9 @@ class pdf_rouget extends ModelePdfExpedition
 				} else {
 					$height_note = 0;
 				}
-				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
-				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
-				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
+				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
+				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
+				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 30 : 7);
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
@@ -592,7 +592,7 @@ class pdf_rouget extends ModelePdfExpedition
 						}
 					}
 				}
-				// if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+				// if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
 				// 	require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 				//  $encoding = 'QRCODE';
@@ -615,7 +615,7 @@ class pdf_rouget extends ModelePdfExpedition
 				// 	}
 				// }
 
-				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
 					$tab_top = $tab_top +18;
 					$heightforfooter = $heightforfooter - 5;
 				}
@@ -925,7 +925,7 @@ class pdf_rouget extends ModelePdfExpedition
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 			$encoding = 'QRCODE';
