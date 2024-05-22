@@ -276,7 +276,7 @@ if ($object->id) {
 	$formatforouput = 'image';
 	$htmlname = 'bodyemail';
 
-	print load_fiche_titre($langs->trans('GeneratewithAI'), null, null);
+	print load_fiche_titre($langs->trans('GeneratewithAI'), '', '');
 	print '<table class="border centpercent">';
 
 	// Fill $out
