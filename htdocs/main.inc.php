@@ -56,7 +56,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 /**
  * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
  *
- * @return 	array			Array of Emojis in hexadecimal
+ * @return 	array<string:array>			Array of Emojis in hexadecimal
  * @see getArrayOfEmojiBis()
  */
 function getArrayOfEmoji()
