@@ -181,7 +181,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
 					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {
-						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -236,7 +236,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);

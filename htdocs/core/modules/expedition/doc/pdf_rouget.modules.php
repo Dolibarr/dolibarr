@@ -187,7 +187,7 @@ class pdf_rouget extends ModelePdfExpedition
 			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		}
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
@@ -269,7 +269,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -824,6 +824,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
+		// phpcs:enable
 		global $conf;
 
 		// Force to disable hidetop and hidebottom
@@ -903,6 +904,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
+		// phpcs:enable
 		global $conf, $langs, $mysoc;
 
 		$langs->load("orders");
