@@ -339,6 +339,8 @@ if (isModEnabled('shipping')) {
 		print $form->selectarray("BARCODE_ON_SHIPPING_PDF", $arrval, getDolGlobalString('BARCODE_ON_SHIPPING_PDF'));
 	}
 	print '</td></tr>';
+	print '</table>';
+	print '</div>';
 }
 
 
@@ -381,6 +383,8 @@ if (isModEnabled('reception')) {
 		print $form->selectarray("BARCODE_ON_RECEPTION_PDF", $arrval, getDolGlobalString('BARCODE_ON_RECEPTION_PDF'));
 	}
 	print '</td></tr>';
+	print '</table>';
+	print '</div>';
 }
 
 if (isModEnabled('stocktransfer')) {
