@@ -169,6 +169,12 @@ if ($object->id > 0) {
 
 
 	$newcardbutton = '';
+
+	$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+
 	if (isModEnabled('agenda')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).($object->id > 0 ? '?id='.$object->id : '').'&origin=member&originid='.$id);
 	}
@@ -184,7 +190,7 @@ if ($object->id > 0) {
 			$param .= '&limit='.$limit;
 		}
 
-		print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

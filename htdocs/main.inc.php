@@ -53,6 +53,28 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+/**
+ * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
+ *
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmojiBis()
+ */
+function getArrayOfEmoji()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
 
 /**
  * Return the real char for a numeric entities.
@@ -72,13 +94,12 @@ function realCharForNumericEntities($matches)
 		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
-	// The numeric value we want in UTF8 instead of entities because it is emoji
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	// The numeric values we want in UTF8 instead of entities because it is emoji
 	$arrayofemojis = getArrayOfEmoji();
 	foreach ($arrayofemojis as $valarray) {
 		if ($newstringnumentity >= hexdec($valarray[0]) && $newstringnumentity <= hexdec($valarray[1])) {

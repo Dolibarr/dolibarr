@@ -170,7 +170,7 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 
 
 -- Fix: delete orphelins in llx_societe_commerciaux
-DELETE FROM llx_societe_commericaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
 
 -- Fix: delete orphelins in product_association
 delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);

@@ -224,7 +224,7 @@ if ($action == 'order' && GETPOST('valid')) {
 		$i = 0;
 		$fail = 0;
 		$orders = array();
-		$suppliersid = array_keys($suppliers);
+		$suppliersid = array_keys($suppliers);	// array of ids of suppliers
 		foreach ($suppliers as $supplier) {
 			$order = new CommandeFournisseur($db);
 

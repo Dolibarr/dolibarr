@@ -685,6 +685,15 @@ print ajax_constantonoff('ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0
 print '</td></tr>';
 print '</form>';
 
+// Disallow to classify billed an order without invoice, only if module invoice is enable
+if (isModEnabled('invoice')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoice"). '&nbsp;' ;
+	print $form->textwithpicto('', $langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER');
+	print '</td></tr>';
+}
+
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 // TODO Must be implemented by PDF templates
