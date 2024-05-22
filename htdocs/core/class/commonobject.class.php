@@ -4949,7 +4949,7 @@ abstract class CommonObject
 	 * Return into unit=0, the calculated total of weight and volume of all lines * qty
 	 * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
 	 *
-	 * @return	array{weight:int|float,volume:int|float,ordered:int|float,toship:int|float}		array('weight'=>...,'volume'=>...)
+	 * @return	array{weight:int|float,volume:int|float,ordered:int|float,toship:int|float}|array{}		array('weight'=>...,'volume'=>...)
 	 */
 	public function getTotalWeightVolume()
 	{
