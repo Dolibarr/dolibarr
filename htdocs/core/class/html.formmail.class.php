@@ -1474,11 +1474,10 @@ class FormMail extends Form
 							}),
 							success: function(response) {
 								console.log('Received image URL: '+response);
-	
 								// Assuming response is the URL of the generated image
 								var imageUrl = response;
 								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
-	
+
 								// Clear the input field
 								$('#ai_instructions').val('');
 	
@@ -1499,7 +1498,6 @@ class FormMail extends Form
 						if (CKEDITOR.instances.".$htmlContent.") {
 							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 						}
-
 
 						$.ajax({
 							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
@@ -1541,7 +1539,6 @@ class FormMail extends Form
 								console.error('error ajax', status, error);
 								$('#ai_status_message').hide();
 							}
-
 						});
 					}
 				});
