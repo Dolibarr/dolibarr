@@ -154,7 +154,7 @@ class pdf_squille extends ModelePdfReception
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "deliveries", "receptions", "productbatch", "sendings"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
@@ -316,8 +316,11 @@ class pdf_squille extends ModelePdfReception
 					}
 				}
 
+				// Barcode
+				$height_barcode = (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 20 : 0);
+
 				if (!empty($object->note_public) || !empty($object->tracking_number)) {
-					$tab_top = 88 + $height_incoterms + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 20 : 0);
+					$tab_top = 88 + $height_incoterms + $height_barcode;
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -370,9 +373,9 @@ class pdf_squille extends ModelePdfReception
 					$height_note = 0;
 				}
 
-				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 9 : 7);
-				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 9 : 7);
-				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_SHIPPING_PDF") ? 9 : 7);
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 				$fk_commandefourndet = 0;
 				$totalOrdered = 0;
 				$totalAmount = 0;
@@ -922,7 +925,7 @@ class pdf_squille extends ModelePdfReception
 			}
 
 			if ($result > 0) {
-				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute +80 -5, 20, 20);
+				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute + 80 -5, 20, 20);
 			} else {
 				$this->error = 'Failed to generate barcode';
 			}

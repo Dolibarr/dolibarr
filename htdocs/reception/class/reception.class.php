@@ -1438,6 +1438,7 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
+		$this->status               = 1;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1453,6 +1454,10 @@ class Reception extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
+
+		if (isModEnabled('incoterms')) {
+			$this->fk_incoterms = 1;
+		}
 
 		$nbp = 5;
 		$xnbp = 0;
