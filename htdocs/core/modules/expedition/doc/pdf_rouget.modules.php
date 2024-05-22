@@ -77,13 +77,13 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB			Database handler
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct(DoliDB )
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
-		$this->db = ;
+		$this->db = $db;
 		$this->name = "rouget";
 		$this->description = $langs->trans("DocumentModelStandardPDF").' ('.$langs->trans("OldImplementation").')';
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
