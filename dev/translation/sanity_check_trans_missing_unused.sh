@@ -123,12 +123,14 @@ fi
 # > yyy
 # Some output is already compatible with message extraction for github annotation (logToCs.py)
 #
+
 diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	| grep -E "^[<>]" \
 	| grep -v -P "^< ${EXPECTED_REGEX}$" \
 	| sort \
 	> "${MISSING_AND_UNUSED_FILE}"
 
+rm -f "${UNUSED_FILE}.grep" >/dev/null 2>&1
 sed -n 's@< \(.*\)@^\1\\s*=@p' \
 	< "${MISSING_AND_UNUSED_FILE}" \
 	> "${UNUSED_FILE}.grep"
@@ -137,13 +139,14 @@ sed -n 's@< \(.*\)@^\1\\s*=@p' \
 # Prepare file with exact matches for use with `git grep`, supposing " quotes
 #
 REPL_STR=""
-for t in trans transnoentities transnoentitiesnoconv ; do
+for t in trans transnoentities transnoentitiesnoconv newItem buttonsSaveCancel; do
    REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
    REPL_STR="${REPL_STR}\n->${t}('\\1',"
    REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
    REPL_STR="${REPL_STR}\n->${t}('\\1')"
 done
 
+rm -f "${MISSING_FILE}.grep" >/dev/null 2>&1
 sed -n 's@> \(.*\)'"@${REPL_STR}@p" \
 	< "${MISSING_AND_UNUSED_FILE}" \
 	| grep -v -E '^$' \
