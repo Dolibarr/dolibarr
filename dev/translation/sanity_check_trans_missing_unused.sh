@@ -50,9 +50,11 @@ GREP_OPTS="${GREP_OPTS} --exclude=*.sw? --exclude=*.json"
 # Note: using 'git grep' to restrict to version controlled files
 #       and more flexible globbing.
 
-# TODO/to ignore:
-#        transnoentities(), transnoentitiesnoconv(),
-#        formSetup->newItem()
+if [ "$1" == "--help" ]; then
+	echo "----- sanity_check_trans_missing_unused.sh -----"
+	echo "Usage: sanity_check_trans_missing_unused.sh (--help) (--showunused)"
+	exit;
+fi
 
 exit_code=0
 
@@ -127,33 +129,10 @@ diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	| sort \
 	> "${MISSING_AND_UNUSED_FILE}"
 
-if [ -s "${MISSING_AND_UNUSED_FILE}" ] ; then
-	echo
-	echo "##[group] Output is"
-	echo "< List Apparently Unused Translations (found into a lang file but not into code)"
-	echo "> Missing Translations (used by code but not found into lang files)"
-	echo
-	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
-	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
-	echo "##   so that they are ignored for this report."
-	echo "## :warning: Unused Translations may also be commented in the code"
-	echo "##   You can add such 'disabled' keys to $(basename "$EXCLUDE_KEYS_SRC_FILE")"
-	echo "##   so that they are ignored for this report."
-	echo
-	cat "${MISSING_AND_UNUSED_FILE}"
-	echo "##[endgroup]"
-	echo
-fi
-
 sed -n 's@< \(.*\)@^\1\\s*=@p' \
 	< "${MISSING_AND_UNUSED_FILE}" \
 	> "${UNUSED_FILE}.grep"
 
-# Too many results, git grep is slow
-#sed -n 's@> \(.*\)@trans.["'"'"']\1["'"'"'].@p' \
-#	< "${MISSING_AND_UNUSED_FILE}" \
-#	> "${MISSING_FILE}.grep"
-#
 
 # Prepare file with exact matches for use with `git grep`, supposing " quotes
 #
@@ -177,18 +156,37 @@ if [ -s "${UNUSED_FILE}.grep" ] ; then
     exit_code=0     # We do not consider adding new entries for future use as an error (even if ignore_translation_keys.lst not filled).
 
 	# Report unused translation in recognizable format
+
+	echo
+	echo "##[group]List Apparently Unused Translations (found into a lang file but not into code)"
+	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
+	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
+	echo "##   so that they are ignored for this report."
+	echo "## :warning: Unused Translations may also be commented in the code"
+	echo "##   You can add such 'disabled' keys to $(basename "$EXCLUDE_KEYS_SRC_FILE")"
+	echo "##   so that they are ignored for this report."
+
 	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \
 		| sort -t: -k 4 \
 		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Not used, translated; @'
+
+	echo "##[endgroup]"
+	echo
 fi
+
 
 if [ -s "${MISSING_FILE}.grep" ] ; then
 	exit_code=1
 
 	# Report missing translation in recognizable format
+
+	echo "##[group]List missing translations (used by code but not found into lang files)"
+
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
 		| sort -t: -k 4 \
 		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @'
+
+	echo "##[endgroup]"
 fi
 
 
