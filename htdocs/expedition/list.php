@@ -434,7 +434,7 @@ if (empty($reshook)) {
 								$lines[$i]->fk_fournprice,
 								$lines[$i]->pa_ht,
 								$lines[$i]->label,
-								$array_options,
+								!empty($array_options) ? $array_options : '',
 								100,
 								0,
 								$lines[$i]->fk_unit
