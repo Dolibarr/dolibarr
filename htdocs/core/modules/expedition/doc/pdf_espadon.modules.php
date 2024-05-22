@@ -721,7 +721,6 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
-					$tab_top = $tab_top;
 					$heightforfooter = $heightforfooter - 5;
 				}
 				// Show square
