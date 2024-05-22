@@ -2985,11 +2985,12 @@ function removeGlobalParenthesis($string)
 
 
 /**
- * Return array of Emojis
+ * Return array of Emojis for miscellaneous use.
  *
  * @return 	array			Array of Emojis in hexadecimal
+ * @see getArrayOfEmoji()
  */
-function getArrayOfEmoji()
+function getArrayOfEmojiBis()
 {
 	$arrayofcommonemoji = array(
 		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
@@ -3019,8 +3020,6 @@ function removeEmoji($text, $allowedemoji = 1)
 	// 0=no emoji, 1=exclude the main known emojis (default), 2=keep only the main known (not implemented), 3=accept all
 	// Note that to accept emoji in database, you must use utf8mb4, utf8mb3 is not enough.
 
-	$arrayofcommonemoji = getArrayOfEmoji();
-
 	if ($allowedemoji == 0) {
 		// For a large removal:
 		$text = preg_replace('/[\x{2600}-\x{FFFF}]/u', '', $text);
@@ -3030,6 +3029,8 @@ function removeEmoji($text, $allowedemoji = 1)
 	// Delete emoji chars with a regex
 	// See https://www.unicode.org/emoji/charts/full-emoji-list.html
 	if ($allowedemoji == 1) {
+		$arrayofcommonemoji = getArrayOfEmojiBis();
+
 		foreach ($arrayofcommonemoji as $key => $valarray) {
 			$text = preg_replace('/[\x{'.$valarray[0].'}-\x{'.$valarray[1].'}]/u', '', $text);
 		}

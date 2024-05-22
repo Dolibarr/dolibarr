@@ -499,6 +499,7 @@ script:
     echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
     cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
   - |
