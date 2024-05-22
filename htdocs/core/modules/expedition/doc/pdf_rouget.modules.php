@@ -393,11 +393,9 @@ class pdf_rouget extends ModelePdfExpedition
 				} else {
 					$height_note = 0;
 				}
-
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
-
+				$iniY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
+				$curY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
+				$nexY = $tab_top + (isModEnabled("barcode") && getDolGlobalInt("BARCODE_ON_RECEPTION_PDF") ? 30 : 7);
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
@@ -594,7 +592,33 @@ class pdf_rouget extends ModelePdfExpedition
 						}
 					}
 				}
+				// if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+				// 	require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
+				//  $encoding = 'QRCODE';
+				// 	$module = new modTcpdfbarcode($this->db);
+				// 	if ($module->encodingIsSupported($encoding)) {
+				// 		$result = $module->writeBarCode($object->ref, $encoding);
+
+				// 		// get path of qrcode image
+				// 		$newcode = $object->ref;
+				// 		if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+				// 			$newcode = dol_hash($newcode, 'md5');
+				// 		}
+				// 		$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+				// 	}
+
+				// 	if ($result > 0) {
+				// 		$pdf->Image($barcode_path, $this->marge_gauche,  $tab_top -5,20,20);
+				// 	} else {
+				// 		$this->error = 'Failed to generate barcode';
+				// 	}
+				// }
+
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+					$tab_top = $tab_top +18;
+					$heightforfooter = $heightforfooter - 5;
+				}
 				// Show square
 				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
@@ -901,12 +925,30 @@ class pdf_rouget extends ModelePdfExpedition
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
-		}
+		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
+			$encoding = 'QRCODE';
+			$result = 0;
+			$barcode_path = '';
+			$module = new modTcpdfbarcode();
+			if ($module->encodingIsSupported($encoding)) {
+				$result = $module->writeBarCode($object->ref, $encoding);
+
+				// get path of qrcode image
+				$newcode = $object->ref;
+				if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+					$newcode = dol_hash($newcode, 'md5');
+				}
+				$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+			}
+
+			if ($result > 0) {
+				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute +80 -5, 20, 20);
+			} else {
+				$this->error = 'Failed to generate barcode';
+			}
+		}
 		$pdf->SetDrawColor(128, 128, 128);
 
 		$posx = $this->page_largeur - $w - $this->marge_droite;
