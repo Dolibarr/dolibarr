@@ -71,12 +71,16 @@ sort -u \
 #
 EXTRACT_STR=""
 JOIN_STR=""
-for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' 'formSetup->newItem' ; do
+for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel'; do
 	MATCH_STR="$MATCH_STR$JOIN_STR$t"
 	EXTRACT_STR="$EXTRACT_STR$JOIN_STR(?<=${t}\\([\"'])([^\"']+)(?=[\"']\$)"
 	JOIN_STR="|"
 done
 
+echo "MATCH_STR=$MATCH_STR"
+echo "EXTRACT_STR=$EXTRACT_STR"
+
+echo "Generate the file EXPECTED_FILE=${EXPECTED_FILE} (contains autodetected dynamic trans and declared dynamic trans)"
 {
 	# Find static strings that are translated in the sources (comments stripped)
 	# shellcheck disable=2086
@@ -124,7 +128,10 @@ diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	> "${MISSING_AND_UNUSED_FILE}"
 
 if [ -s "${MISSING_AND_UNUSED_FILE}" ] ; then
-	echo "##[group]List Apparently Unused Translations (<) and Missing Translations (>)"
+	echo
+	echo "##[group] Output is"
+	echo "< List Apparently Unused Translations (found into a lang file but not into code)"
+	echo "> Missing Translations (used by code but not found into lang files)"
 	echo
 	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
 	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"

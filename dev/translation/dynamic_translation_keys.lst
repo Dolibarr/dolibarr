@@ -2996,6 +2996,7 @@ UserLogged
 UserLoginFailed
 UserLogoff
 UserMargins
+UserModif
 UserModification
 UserModificationShort
 UserNeedPermissionToEditStockToUsePos
@@ -3326,6 +3327,7 @@ ModelTemplate
 ModuleWebPortalDesc
 ModuleWebPortalName
 Reports
+SecurityEvent
 SendEmailsRemindersOnSupplierInvoiceDueDate
 TXTLINKDATAPOLICYACCEPT
 TXTLINKDATAPOLICYREFUSE
@@ -3338,6 +3340,7 @@ WebPortalOrderListNothing
 WebPortalPropalListNothing
 WebPortalSetup
 WebPortalSetupPage
+WebsiteTemplateWasCopied
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
