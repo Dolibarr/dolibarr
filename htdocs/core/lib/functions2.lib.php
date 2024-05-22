@@ -2987,7 +2987,7 @@ function removeGlobalParenthesis($string)
 /**
  * Return array of Emojis for miscellaneous use.
  *
- * @return 	array<string:array>			Array of Emojis in hexadecimal
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
  * @see getArrayOfEmoji()
  */
 function getArrayOfEmojiBis()
