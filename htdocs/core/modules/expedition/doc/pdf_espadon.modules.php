@@ -991,7 +991,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_RECEPTION_INVOICE')) {
+		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 			$encoding = 'QRCODE';
