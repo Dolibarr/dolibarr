@@ -20,13 +20,10 @@
 ModuleEventOrganizationName = Organisation d'événements
 EventOrganizationDescription = Organisation d’événements par le biais du module Projet
 EventOrganizationDescriptionLong= Gérer l'organisation d'un événement (spectacle, conférences, participants ou intervenants, avec des pages publiques pour suggestion, vote ou inscription)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Événements organisés
 EventOrganizationConferenceOrBoothMenuLeft = Conférence ou stand
-
 PaymentEvent=Paiement de l'événement
+EventFee=Frais d'événement
 
 #
 # Admin page
@@ -92,7 +89,7 @@ EventOrganizationICSLinkProject=Lien ICS pour l'événement
 EventOrganizationICSLink=Lien ICS pour les conférences
 ConferenceOrBoothInformation=Informations sur la conférence ou sur le stand
 Attendees=Participants
-ListOfAttendeesOfEvent=Liste des participant à l'événement
+ListOfAttendeesOfEvent=Liste des participants à l'événement
 DownloadICSLink = Télécharger le lien ICS
 EVENTORGANIZATION_SECUREKEY = Graine pour sécuriser la clé de la page d'inscription publique pour suggérer une conférence
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
@@ -175,6 +172,7 @@ DateEndEvent=Date de fin de l'événement
 ModifyStatus=Modifier le statut
 ConfirmModifyStatus=Confirmer la modification du statut
 ConfirmModifyStatusQuestion=Êtes-vous sûr de vouloir modifier le %s enregistrement(s) sélectionné(s) ?
-RecordsUpdated = %s enregistrement(s) mis à jour
-RecordUpdated = Enregistrement mis à jour
-NoRecordUpdated = Aucun enregistrement mis à jour
+RecordsUpdated=%s enregistrement(s) mis à jour
+RecordUpdated=Enregistrement mis à jour
+NoRecordUpdated=Aucun enregistrement mis à jour
+ProfitPerValidatedAttendee=Bénéfice par participant
