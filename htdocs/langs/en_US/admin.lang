@@ -2486,3 +2486,4 @@ TestWebhookTarget=Test triggerable event
 DataToSendTrigger=Data sent to Url
 SendToUrl=Send to Url
 WebsiteTemplateWasCopied=The website template(s) "%s" provided by this module has been saved into the directory of website templates (/doctemplates/websites) and is ready to be imported as a new web site.
+EnabledByDefaultAtInstall=Enabled by default at install
