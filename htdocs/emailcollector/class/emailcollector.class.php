@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
@@ -1785,7 +1786,7 @@ class EmailCollector extends CommonObject
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
-					$overview['subject'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview['subject']);
+					$overview['subject'] = removeEmoji($overview['subject'], getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
@@ -1794,7 +1795,7 @@ class EmailCollector extends CommonObject
 					$overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
 
 					// Removed emojis
-					$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
+					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1825,8 +1826,7 @@ class EmailCollector extends CommonObject
 				// Removed emojis
 
 				if (utf8_valid($messagetext)) {
-					//$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
-					$messagetext = $this->removeEmoji($messagetext);
+					$messagetext = removeEmoji($messagetext, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					$operationslog .= '<br>Discarded - Email body is not valid utf8';
 					dol_syslog(" Discarded - Email body is not valid utf8");
@@ -3712,26 +3712,6 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
-	}
-
-	/**
-	 * Remove EMoji from email content
-	 *
-	 * @param string	$text		String to sanitize
-	 * @return string				Sanitized string
-	 */
-	protected function removeEmoji($text)
-	{
-		// Supprimer les caractères emoji en utilisant une expression régulière
-		$text = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $text);
-		$text = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
-
-		return $text;
 	}
 
 	/**

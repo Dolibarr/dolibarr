@@ -28,7 +28,7 @@
 
 /**
  *	\file       htdocs/compta/facture/card-rec.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show predefined invoice
  */
 

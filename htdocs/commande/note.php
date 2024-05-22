@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/commande/note.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      Fiche de notes sur une commande
  */
 

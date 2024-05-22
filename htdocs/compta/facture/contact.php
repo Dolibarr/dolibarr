@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/compta/facture/contact.php
- *       \ingroup    facture
+ *       \ingroup    invoice
  *       \brief      Onglet de gestion des contacts des factures
  */
 

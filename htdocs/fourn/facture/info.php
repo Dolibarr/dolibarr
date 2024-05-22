@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/fourn/facture/info.php
- *      \ingroup    facture, fournisseur
+ *      \ingroup    invoice, fournisseur
  *		\brief      Page des information d'une facture fournisseur
  */
 

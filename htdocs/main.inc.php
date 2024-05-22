@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -58,21 +58,33 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	string		$matches			String of numeric entity
- * @return	string							New value
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @return	string									New value
  */
 function realCharForNumericEntities($matches)
 {
 	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
 	//print  ' $newstringnumentity='.$newstringnumentity;
 
-	if (preg_match('/^x/i', $newstringnumentity)) {
+	if (preg_match('/^x/i', $newstringnumentity)) {		// if numeric is hexadecimal
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	} else {
+		$newstringnumentity = (int) $newstringnumentity;
 	}
 
 	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
+	}
+
+	// The numeric value we want in UTF8 instead of entities because it is emoji
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$arrayofemojis = getArrayOfEmoji();
+	foreach ($arrayofemojis as $valarray) {
+		if ($newstringnumentity >= hexdec($valarray[0]) && $newstringnumentity <= hexdec($valarray[1])) {
+			// This is a known emoji
+			return html_entity_decode($matches[0], ENT_COMPAT | ENT_HTML5, 'UTF-8');
+		}
 	}
 
 	return '&#'.$matches[1]; // Value will be unchanged because regex was /&#(  )/
@@ -3769,20 +3781,22 @@ if (!function_exists("llxFooter")) {
 				<script>
 				jQuery(document).ready(function () {
 					$('a.documentpreview').click(function() {
+						console.log("Call /blockedlog/ajax/block-add on a.documentpreview");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_PREVIEW'
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
 					$('a.documentdownload').click(function() {
+						console.log("Call /blockedlog/ajax/block-add a.documentdownload");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_DOWNLOAD'
 									, token: '<?php echo currentToken(); ?>'
 								}

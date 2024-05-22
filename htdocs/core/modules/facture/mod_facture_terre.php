@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/modules/facture/mod_facture_terre.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      File containing class for numbering module Terre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';

@@ -30,7 +30,7 @@
 
 /**
  *	\file       htdocs/compta/paiement.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Payment page for customers invoices
  */
 

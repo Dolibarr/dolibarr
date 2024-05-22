@@ -1005,7 +1005,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 			$encoding = 'QRCODE';
-			$module = new modTcpdfbarcode($this->db);
+			$module = new modTcpdfbarcode();
 			if ($module->encodingIsSupported($encoding)) {
 				$result = $module->writeBarCode($object->ref, $encoding);
 
