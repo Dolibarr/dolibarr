@@ -1299,7 +1299,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				
+
 				if (!isModEnabled("multicompany") || in_array($ent->entity, $visibleWarehouseEntities)) {
 					// Display only warehouses from our entity and entities sharing stock with actual entity
 					print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
