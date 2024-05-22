@@ -991,10 +991,29 @@ class pdf_espadon extends ModelePdfExpedition
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
+		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
+
+			$encoding = 'QRCODE';
+			$module = new modTcpdfbarcode();
+			$barcode_path = '';
+			$result = 0;
+			if ($module->encodingIsSupported($encoding)) {
+				$result = $module->writeBarCode($object->ref, $encoding);
+
+				// get path of qrcode image
+				$newcode = $object->ref;
+				if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+					$newcode = dol_hash($newcode, 'md5');
+				}
+				$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+			}
+
+			if ($result > 0) {
+				$pdf->Image($barcode_path, $this->marge_gauche,  $this->marge_haute +80 -5, 20, 20);
+			} else {
+				$this->error = 'Failed to generate barcode';
+			}
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);

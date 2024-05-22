@@ -2480,6 +2480,7 @@ AIPromptForFeatures=AI custom prompts for features
 EnterAnIP=Enter an IP address
 ConvertInto=Convert into
 YouAreHere=You are here
+BARCODE_RECEPTION_INVOICE=Show the barcode on the reception invoices
 Unstable=Unstable
 ModuleZapierForDolibarrName=Zapier for Dolibarr
 ModuleZapierForDolibarrDesc=Zapier for Dolibarr module
