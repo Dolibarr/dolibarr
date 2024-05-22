@@ -1,7 +1,9 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com> 
+ * Copyright (C) 2024		Abbes Bahfir		<contact@ab1consult.com><bafbes@gmail.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,6 +635,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $mysoc, $langs, $user;
 		global $hookmanager;
+		$hookmanager->initHooks(array('receiptPrinter', 'globalcard'));
 
 		$langs->load('bills');
 
