@@ -651,7 +651,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
 						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
 					}
-				} elseif ($targetcompany->tva_intra) {
+				} elseif (!empty($targetcompany->tva_intra)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
 			}
