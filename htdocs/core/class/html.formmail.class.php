@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		Éric Seigne				<eric.seigne@cap-rel.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
