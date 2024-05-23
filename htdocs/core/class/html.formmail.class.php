@@ -1079,6 +1079,7 @@ class FormMail extends Form
 				$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			}
 		} else {
+			// print "<p>" . json_encode($this) . "</p>";exit;
 			// The free input of email
 			if (!empty($this->withtofree)) {
 				$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
@@ -1099,6 +1100,24 @@ class FormMail extends Form
 				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
+					}
+				}
+
+				//if empty, search if one of them is default contact for that type of document ?
+				//first step: default role on thirdpart, next (an priority) will be on document
+				$element = substr($this->param["models"],0,strpos($this->param["models"],'_'));
+				if(empty($withtoselected)) {
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+					$contact = new Contact($this->db);
+					foreach($this->withto as $key => $value) {
+						if($contact->fetch($key,null,'','',1)) {
+							foreach($contact->roles as $roleid => $role) {
+								//TODO: how to find current needed role for that mail ? && $role['code'] == 'BILLING') {
+								if($role['element'] == $element) {
+									$withtoselected[] = $key;
+								}
+							}
+						}
 					}
 				}
 
