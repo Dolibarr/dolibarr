@@ -12104,13 +12104,13 @@ function getElementProperties($element_type)
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
 	} elseif ($element_type == 'ccountry') {
-        $module = '';
-        $classpath = 'core/class';
-        $classfile = 'ccountry';
-        $classname = 'Ccountry';
-        $table_element = 'c_country';
-        $subelement = '';
-    }
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
+		$subelement = '';
+	}
 
 	if (empty($classfile)) {
 		$classfile = strtolower($subelement);
