@@ -62,7 +62,7 @@ if ((substr($accountancyexport->getFormatCode($formatexportset), 0, 3) == 'fec')
 	}
 
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
-
+	$siren = str_replace(" ", "", $siren);
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
 } elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && getDolGlobalString('ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME')) {
 	$completefilename = "XIMPORT.TXT";
