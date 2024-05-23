@@ -1292,18 +1292,24 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 		$pse = new ProductStockEntrepot($db);
 		$lines = $pse->fetchAll($id);
 
+		$visibleWarehouseEntities = explode(',', getEntity('stock')); 	// For MultiCompany compatibility
+
 		if (!empty($lines)) {
 			$var = false;
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
-				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
-				print '<td class="right">'.$line['desiredstock'].'</td>';
-				if ($user->hasRight('produit', 'creer')) {
-					print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+
+				if (!isModEnabled("multicompany") || in_array($ent->entity, $visibleWarehouseEntities)) {
+					// Display only warehouses from our entity and entities sharing stock with actual entity
+					print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
+					print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
+					print '<td class="right">'.$line['desiredstock'].'</td>';
+					if ($user->hasRight('produit', 'creer')) {
+						print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+					}
+					print '</tr>';
 				}
-				print '</tr>';
 			}
 		}
 

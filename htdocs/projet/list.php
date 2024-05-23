@@ -60,7 +60,6 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
 
-
 $title = $langs->trans("Projects");
 
 // Security check
@@ -265,6 +264,24 @@ $arrayfields['p.fk_project']['enabled'] = 0;
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+
+// Add a groupby field
+if ($mode == 'kanban') {
+	$groupbyold = null;
+	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
+	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
+	if (!empty($object->fields[$groupbyfield]['alias'])) {
+		$groupbyfield = $object->fields[$groupbyfield]['alias'];
+	}
+	if (!in_array(preg_replace('/[a-z]\./', '', $groupby), array_keys($object->fields))) {
+		$groupby = '';
+	}
+	if ($groupby) {
+		//var_dump($arrayfields);
+		$sortfield = $db->sanitize($groupby).($sortfield ? ",".$sortfield : "");
+		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
+	}
+}
 
 
 /*
@@ -776,6 +793,7 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -809,6 +827,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($socid) {
+	$param .= '&socid='.urlencode((string) $socid);
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
@@ -927,9 +951,6 @@ if ($search_date_modif_endday) {
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
-if ($socid) {
-	$param .= '&socid='.urlencode((string) ($socid));
-}
 if (!empty($search_category_array)) {
 	foreach ($search_category_array as $tmpval) {
 		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
@@ -1001,9 +1022,6 @@ if ($search_login) {
 if ($search_import_key) {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
 }
@@ -1011,7 +1029,7 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1213,10 +1231,10 @@ if (!empty($arrayfields['commercial']['checked'])) {
 if (!empty($arrayfields['p.dateo']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
 	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
-	}
-	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
+	 }
+	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
+	 print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1229,10 +1247,10 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 if (!empty($arrayfields['p.datee']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
 	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
-	}
-	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
+	 }
+	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
+	 print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1609,8 +1627,24 @@ while ($i < $imaxinloop) {
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+		}
+
+		if (!empty($groupby)) {
+			if (is_null($groupbyold)) {
+				print '<div class="box-flex-container-columns kanban">';
+			}
+			// Start kanban column
+			if ($groupbyold !== $obj->$groupbyfield) {
+				if (!is_null($groupbyold)) {
+					print '</div>';	// end box-flex-container
+				}
+				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';
+			}
+			$groupbyold = $obj->$groupbyfield;
+		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
+
 		// Output Kanban
 		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1622,8 +1656,17 @@ while ($i < $imaxinloop) {
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
+
+		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {
-			print '</div>';
+			// Close kanban column
+			if (!empty($groupby)) {
+				print '</div>';	// end box-flex-container
+				print '</div>';	// end box-flex-container-columns
+			} else {
+				print '</div>';	// end box-flex-container
+			}
+
 			print '</td></tr>';
 		}
 	} else {
@@ -1797,6 +1840,7 @@ while ($i < $imaxinloop) {
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
+			$s = '';
 			if ($obj->opp_status_code) {
 				$s = $langs->trans("OppStatus".$obj->opp_status_code);
 				if (empty($arrayfields['p.opp_percent']['checked']) && $obj->opp_percent) {

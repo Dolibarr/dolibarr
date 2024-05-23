@@ -1076,6 +1076,7 @@ SearchIntoSupplierProposals=Vendor proposals
 SearchIntoInterventions=Interventions
 SearchIntoContracts=Contracts
 SearchIntoCustomerShipments=Customer shipments
+SearchIntoSupplierReceptions=Vendor receptions
 SearchIntoExpenseReports=Expense reports
 SearchIntoLeaves=Leave
 SearchIntoKM=Knowledge base

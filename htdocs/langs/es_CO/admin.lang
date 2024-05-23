@@ -1493,7 +1493,6 @@ SetToYesIfGroupIsComputationOfOtherGroups=Establézcalo en sí si este grupo es 
 EnterCalculationRuleIfPreviousFieldIsYes=Ingrese la regla de cálculo si el campo anterior se estableció en Sí. <br>Por ejemplo:<br> CODEGRP1+CODEGRP2
 RemoveSpecialChars=Quitar caracteres especiales
 COMPANY_AQUARIUM_CLEAN_REGEX=Filtro de expresiones regulares para limpiar el valor (COMPANY_AQUARIUM_CLEAN_REGEX)
-COMPANY_DIGITARIA_UNIQUE_CODE=No se permite duplicar
 RemoveSpecialWordsHelp=Especifique las palabras que se limpiarán antes de calcular la cuenta del cliente o proveedor. Usar una ";" entre cada palabra
 GDPRContact=Oficial de protección de datos (DPO, privacidad de datos o contacto GDPR)
 HelpOnTooltip=Texto de ayuda para mostrar en información sobre herramientas

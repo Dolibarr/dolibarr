@@ -330,6 +330,10 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// Warning: we may replace twice if href="..." was inside an include (dolWebsiteOutput called by include and the by final page), that's why
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
+		// Replace occurrence like _service_page_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_service_page_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_page_\2\1', $content, -1, $nbrep);
+		// Replace occurrence like _library_page_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_library_page_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_page_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 

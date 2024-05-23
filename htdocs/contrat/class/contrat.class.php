@@ -3202,9 +3202,10 @@ class ContratLigne extends CommonObjectLine
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
 	 *  @param	string	$moreatt	More attribute
+	 *  @param	string	$morelabel	More label
 	 *  @return string      		Label of status
 	 */
-	public static function LibStatut($status, $mode, $expired = -1, $moreatt = '')
+	public static function LibStatut($status, $mode, $expired = -1, $moreatt = '', $morelabel = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -3240,7 +3241,7 @@ class ContratLigne extends CommonObjectLine
 		if (preg_match('/class="(.*)"/', $moreatt, $reg)) {
 			$params = array('badgeParams' => array('css' => $reg[1]));
 		}
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
+		return dolGetStatus($labelStatus.($morelabel ? ' '.$morelabel : ''), $labelStatusShort.($morelabel ? ' '.$morelabel : ''), '', $statusType, $mode, '', $params);
 	}
 
 	/**

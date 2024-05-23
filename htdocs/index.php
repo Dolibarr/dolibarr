@@ -59,7 +59,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
-if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
+if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only autoenabled modules (property ->enabled_bydefault in modules) are activated
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
