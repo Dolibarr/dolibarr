@@ -387,7 +387,7 @@ if (empty($reshook)) {
 		$search_date_signature_endday = '';
 		$search_date_signature_endmonth = '';
 		$search_date_signature_endyear = '';
-		$search_date_signature_end = '';	
+		$search_date_signature_end = '';
 		$search_date_signature_start = '';
 		$toselect = array();
 		$search_array_options = array();
