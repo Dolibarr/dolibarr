@@ -438,8 +438,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[22] = $result[6];
 		$result[23] = $result[7];
 		$result[24] = $result[8];
-		$result[25] = $result[9];   // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
-		$result[26] = $result[10];  // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
+		$result[25] = $result[9];
+		$result[26] = $result[10];
 	}
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.getDolGlobalString('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
