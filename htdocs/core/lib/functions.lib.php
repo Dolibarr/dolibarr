@@ -12697,6 +12697,13 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+	} elseif ($elementType == 'ccountry') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
@@ -12806,7 +12813,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
-
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
 			&& !empty($globalCacheForGetObjectFromCache[$element_type])
