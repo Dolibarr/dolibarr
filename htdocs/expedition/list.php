@@ -485,7 +485,7 @@ if (empty($reshook)) {
 				// Builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissiontoadd = $user->rights->facture->creer;
+				$permissiontoadd = $user->hasRight('facture', 'creer');
 
 				// Call action to build doc
 				$savobject = $object;
@@ -982,7 +982,7 @@ $arrayofmassactions = array(
 	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if ($user->rights->facture->creer) {
+if ($user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
 }
 if (in_array($massaction, array('presend', 'createbills'))) {
