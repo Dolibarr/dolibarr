@@ -145,7 +145,7 @@ abstract class CommonObject
 
 	/**
 	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
-	 * Note: call fetchValuesForExtraLanguages() before using this
+	 * 											Note: call fetchValuesForExtraLanguages() before using this
 	 */
 	public $array_languages = null; // Value is array() when load already tried
 
