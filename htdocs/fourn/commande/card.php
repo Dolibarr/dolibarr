@@ -2685,7 +2685,7 @@ if ($action == 'create') {
 					if (!isModEnabled('invoice')) {
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 					} else {
-						if (!empty($object->linkedObjectsIds['invoice_supplier'])) {
+						if (!empty($object->linkedObjectsIds['invoice_supplier']) || (empty($object->linkedObjectsIds['invoice_supplier']) && !getDolGlobalInt('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER'))) {
 							if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
 								print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 							}
