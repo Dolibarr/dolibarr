@@ -313,8 +313,8 @@ if (empty($reshook)) {
 					if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
 						$objecttmp->fetchObjectLinked($object->id, 'commande');
 						foreach ($objecttmp->linkedObjectsIds as $tmpSourcetype => $tmpTIds) {
-							if ($tmpSourcetype == $sourcetype){
-								if (!empty(array_intersect($TIds, $tmpTIds))){
+							if ($tmpSourcetype == $sourcetype) {
+								if (!empty(array_intersect($TIds, $tmpTIds))) {
 									continue 2;
 								}
 							}
