@@ -632,7 +632,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					//$pdf->MultiCell(($this->posxwarehousesource - $this->posxqty), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
 
 					// Warehouse source
-					$wh_source = new Entrepot($db);
+					$wh_source = new Entrepot($this->db);
 					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_source])) {
 						$wh_source = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_source];
 					} else {
@@ -643,7 +643,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$pdf->MultiCell(($this->posxwarehousedestination - $this->posxwarehousesource), 3, $wh_source->ref.(!empty($wh_source->lieu) ? ' - '.$wh_source->lieu : ''), '', 'C');
 
 					// Warehouse destination
-					$wh_destination = new Entrepot($db);
+					$wh_destination = new Entrepot($this->db);
 					if (!empty($TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination])) {
 						$wh_destination = $TCacheEntrepots[$object->lines[$i]->fk_warehouse_destination];
 					} else {
