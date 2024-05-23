@@ -142,7 +142,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	private function initEventData($key_text, $object)
 	{
 		$this->event_date = dol_now();
-		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
+
+		$this->event_label = $this->event_desc = $key_text;
+		if (property_exists($object, 'login')) {
+			$this->event_label .= ' : ' . $object->login;
+		}
 		if ($key_text == InterfaceLogevents::EVENT_ACTION_DICT['USER_ENABLEDISABLE']) { // TODO should be refactored using an object property for event data.
 			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
 		}
