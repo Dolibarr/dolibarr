@@ -2049,10 +2049,12 @@ tr.nobottom td {
 select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 
 /* Force values for small screen 768 */
@@ -2086,6 +2088,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 		width: calc(100% - 70px) !important;
 		display: inline-block;
+		min-width: 100px;
 	}
 
 	input.maxwidthinputfileonsmartphone {
