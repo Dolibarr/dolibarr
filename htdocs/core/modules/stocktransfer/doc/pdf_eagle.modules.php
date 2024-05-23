@@ -23,12 +23,12 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_eagle.modules.php
+ *	\file       htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
  *	\ingroup    expedition
  *	\brief      Class file used to generate the dispatch slips for the Eagle model
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/stocktransfer/modules_stocktransfer.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
