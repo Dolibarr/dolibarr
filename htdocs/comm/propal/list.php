@@ -387,10 +387,10 @@ if (empty($reshook)) {
 		$search_date_signature_endday = '';
 		$search_date_signature_endmonth = '';
 		$search_date_signature_endyear = '';
+		$search_date_signature_end = '';	
 		$search_date_signature_start = '';
-		$search_date_signature_end = '';																											
 		$toselect = array();
-		$search_array_options = array();																										
+		$search_array_options = array();
 	}
 
 	// Mass actions
