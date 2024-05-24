@@ -1490,9 +1490,9 @@ if ($action == 'create') {
 										if ($deliverableQty < 0) $deliverableQty = 0;
 
 										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 										} else {
 											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
 										}
