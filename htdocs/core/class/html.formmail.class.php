@@ -1048,7 +1048,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTo()
 	{
-		global $langs, $form;
+		global $langs, $form, $object;
 		$out = '<tr><td class="fieldrequired">';
 		if ($this->withtofree) {
 			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
@@ -1104,9 +1104,16 @@ class FormMail extends Form
 					}
 
 					//if empty, search if one of them is default contact for that type of document ?
-					//first step: default role on thirdpart, next (an priority) will be on document
-					$element = substr($this->param["models"],0,strpos($this->param["models"],'_'));
+					//first step: default role on object
 					if(empty($withtoselected)) {
+						$withtoselected = $object->getIdContact('external',null);
+					}
+					//then default role on thirdpart
+					if(empty($withtoselected)) {
+						$element = $object->element;
+						if(empty($element)) {
+							$element = substr($this->param["models"],0,strpos($this->param["models"],'_'));
+						}
 						require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 						$contact = new Contact($this->db);
 						foreach($this->withto as $key => $value) {
