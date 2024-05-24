@@ -829,7 +829,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_clone' && $confirm != 'yes') {
 		$action = '';
 	}
-	//clone company with minimun info
+	//clone company essential info
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		if ($object->id > 0) {
 			$error = 0;
