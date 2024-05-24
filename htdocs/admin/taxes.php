@@ -169,7 +169,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
+	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATPaymentFrequency").'</label></td>';
 	if (!$conf->use_javascript_ajax) {
 		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
@@ -182,7 +182,7 @@ if (empty($mysoc->tva_assuj)) {
 			'2'=>$langs->trans("Quarterly"),
 			'3'=>$langs->trans("Annual"),
 		);
-		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, $conf->global->MAIN_INFO_VAT_RETURN);
+		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, getDolGlobalString('MAIN_INFO_VAT_RETURN'));
 		print "</td>";
 	}
 	print '</tr>';
