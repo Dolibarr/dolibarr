@@ -69,7 +69,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $form = new Form($db);
 
-$page_name = "ZapierAbout";
+$page_name = "ZapierForDolibarrSetup";
 $help_url = 'EN:Module_Zapier';
 llxHeader('', $langs->trans($page_name), $help_url);
 

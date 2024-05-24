@@ -6930,7 +6930,7 @@ class Form
 	 *
 	 * @param integer|string 		$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string 				$prefix 		Prefix for fields name
-	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 or 4 (4=hours on a new line)=Show hour always empty
 	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 * @param int 					$empty 			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 * @param string 				$form_name 		Not used
@@ -7022,7 +7022,7 @@ class Form
 			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
 			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
-		if ($h == 3) {
+		if ($h == 3 || $h == 4) {
 			$shour = '';
 		}
 		if ($m == 3) {
@@ -7174,7 +7174,7 @@ class Form
 		}
 
 		if ($d && $h) {
-			$retstring .= ($h == 2 ? '<br>' : ' ');
+			$retstring .= (($h == 2 || $h == 4) ? '<br>' : ' ');
 			$retstring .= '<span class="nowraponall">';
 		}
 

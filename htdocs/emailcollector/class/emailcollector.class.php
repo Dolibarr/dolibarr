@@ -778,8 +778,6 @@ class EmailCollector extends CommonObject
 	 */
 	public function getConnectStringIMAP()
 	{
-		global $conf;
-
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
 		if (getDolGlobalString('IMAP_FORCE_TLS')) {
