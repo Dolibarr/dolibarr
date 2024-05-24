@@ -33,6 +33,10 @@
 // $withmaindocfilemail
 '@phan-var-force CommonObject $objecttmp';
 
+if (!empty($socid)) {
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
+}
+
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
 
