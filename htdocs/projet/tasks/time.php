@@ -2117,16 +2117,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
-						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
-							print '&nbsp;';
-							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
-							print img_split('', 'class="pictofixedwidth"');
-							print '</a>';
-						}
-
 						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 						print '</a>';
+
+						if (getDolGlobalString('PROJECT_ALLOW_SPLIT_TIMESPENT')) {
+							print '<a class="reposition editfielda paddingleft" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
+							print img_split('', 'class="pictofixedwidth paddingleft"');
+							print '</a>';
+						}
 
 						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_delete('default', 'class="pictodelete paddingleft"');
@@ -2147,6 +2146,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$totalarray['nbfield']++;
 				}
 			}
+
 			// Date
 			if (!empty($arrayfields['t.element_date']['checked'])) {
 				print '<td class="nowrap">';
@@ -2454,21 +2454,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOSTINT('lineid').'">';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save small" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print '<br>';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
-						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
-							print '&nbsp;';
-							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
-							print img_split('', 'class="pictofixedwidth"');
-							print '</a>';
-						}
-
 						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 						print '</a>';
+
+						if (getDolGlobalString('PROJECT_ALLOW_SPLIT_TIMESPENT')) {
+							print '<a class="reposition editfielda paddingleft" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
+							print img_split('', 'class="pictofixedwidth paddingleft"');
+							print '</a>';
+						}
 
 						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_delete('default', 'class="pictodelete paddingleft"');
@@ -2493,11 +2492,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print "</tr>\n";
 
 
-			// Add line to split
+			// Add the lines for the split feature
 
 			if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 				print '<!-- first line -->';
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td></td>';
+				}
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2645,8 +2649,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $hookmanager->resPrint;
 
 				// Action column
-				print '<td class="center nowraponall">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 
@@ -2654,6 +2660,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Line for second dispatching
 
 				print '<!-- second line --><tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2803,8 +2815,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $hookmanager->resPrint;
 
 				// Action column
-				print '<td class="center nowraponall">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 			}

@@ -1211,12 +1211,6 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
-.nomarginleft {
-	margin-<?php print $left; ?>: unset;
-}
-.nomarginright {
-	margin-<?php print $right; ?>: unset;
-}
 .nowidthimp {
 	width: unset !important;
 }
@@ -1596,6 +1590,9 @@ select.flat.selectlimit {
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
+}
+.nomarginright {
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
