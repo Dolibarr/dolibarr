@@ -6057,9 +6057,11 @@ if ($action == 'create') {
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
-
 		// Show online payment link
-		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+		// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$validpaymentmethod = getValidOnlinePaymentMethods('');
+		$useonlinepayment = count($validpaymentmethod);
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
