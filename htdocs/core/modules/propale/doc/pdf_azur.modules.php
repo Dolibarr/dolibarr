@@ -88,7 +88,7 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
