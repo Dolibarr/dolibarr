@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouvé dans 
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
 NoLineGoOnTabToAddSome=Aucune ligne, allez sur l'onglet "%s" pour en ajouter
+CreateInvoiceForThisCustomerFromSendings=Facturer expeditions
+IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de facture est à "Non", l'expedition restera au statut "Non facturé" jusqu'à ce que la facture soit validée.
+OptionToSetSendingBilledNotEnabled=L'option issue du module Workflow, pour définir automatiquement les expeditions à 'Facturé' quand une facture est validée, n'est pas activée, aussi vous devrez donc définir le statut de l'expedition sur 'Facturé' manuellement après que la facture ait été généré.
 
 # Sending methods
 # ModelDocument

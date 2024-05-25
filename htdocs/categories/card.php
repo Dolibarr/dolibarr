@@ -244,7 +244,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		print dol_get_fiche_head();
 
-		print '<table width="100%" class="border">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr>';
@@ -265,7 +265,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Position
 		print '<tr>';
-		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" class="minwidth100" name="position" value="'.$position.'">';
+		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" type="number" class="minwidth50 maxwidth50" name="position" value="'.$position.'">';
 		print'</td></tr>';
 
 		// Parent category

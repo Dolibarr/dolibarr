@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
@@ -170,7 +171,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
 	$massaction = '';
 }
 
@@ -218,6 +219,383 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->hasRight('expedition', 'supprimer');
 	$uploaddir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($massaction == 'confirm_createbills') {   // Create bills from sendings.
+		$sendings = GETPOST('toselect', 'array');
+		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
+		$validate_invoices = GETPOST('validate_invoices', 'int');
+
+		$errors = array();
+
+		$TFact = array();
+		$TFactThird = array();
+		$TFactThirdNbLines = array();
+
+		$nb_bills_created = 0;
+		$lastid= 0;
+		$lastref = '';
+
+		$db->begin();
+
+		$nbSendings = is_array($sendings) ? count($sendings) : 1;
+
+		foreach ($sendings as $id_sending) {
+			$expd = new Expedition($db);
+			if ($expd->fetch($id_sending) <= 0) {
+				continue;
+			}
+			$expd->fetch_thirdparty();
+
+			$objecttmp = new Facture($db);
+
+			dol_include_once('/commande/class/commande.class.php');
+			$expdCmdSrc = new Commande($db);
+			$expdCmdSrc->fetch($expd->origin_id);
+
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
+				$objecttmp = $TFactThird[$expd->socid];
+			} else {
+				// If we want one invoice per sending or if there is no first invoice yet for this thirdparty.
+				$objecttmp->socid = $expd->socid;
+				$objecttmp->thirdparty = $expd->thirdparty;
+
+				$objecttmp->type = $objecttmp::TYPE_STANDARD;
+				$objecttmp->cond_reglement_id = !empty($expdCmdSrc->cond_reglement_id) ? $expdCmdSrc->cond_reglement_id : (!empty($objecttmp->thirdparty->cond_reglement_id) ? $objecttmp->thirdparty->cond_reglement_id : 1);
+				$objecttmp->mode_reglement_id = !empty($expdCmdSrc->mode_reglement_id) ? $expdCmdSrc->mode_reglement_id : (!empty($objecttmp->thirdparty->mode_reglement_id) ? $objecttmp->thirdparty->mode_reglement_id : 0);
+
+				$objecttmp->fk_project = $expd->fk_project;
+				$objecttmp->multicurrency_code = !empty($expdCmdSrc->multicurrency_code) ? $expdCmdSrc->multicurrency_code : (!empty($objecttmp->thirdparty->multicurrency_code) ? $objecttmp->thirdparty->multicurrency_code : $expd->multicurrency_code);
+				if (empty($createbills_onebythird)) {
+					$objecttmp->ref_client = $expd->ref_client;
+				}
+
+				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				if (empty($datefacture)) {
+					$datefacture = dol_now();
+				}
+
+				$objecttmp->date = $datefacture;
+				$objecttmp->origin    = 'shipping';
+				$objecttmp->origin_id = $id_sending;
+
+				$objecttmp->array_options = $expd->array_options; // Copy extrafields
+
+				$res = $objecttmp->create($user);
+
+				if ($res > 0) {
+					$nb_bills_created++;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+
+					$TFactThird[$expd->socid] = $objecttmp;
+					$TFactThirdNbLines[$expd->socid] = 0; //init nblines to have lines ordered by expedition and rang
+				} else {
+					$langs->load("errors");
+					$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+					$error++;
+				}
+			}
+
+			if ($objecttmp->id > 0) {
+				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_sending);
+
+				if ($res == 0) {
+					$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+					$error++;
+				}
+
+				$expd->fetchObjectLinked();
+				foreach ($expd->linkedObjectsIds as $sourcetype => $TIds) {
+					if ($sourcetype == 'facture') {
+						continue;
+					}
+					if (!empty($createbills_onebythird) && !empty($TFactThird[$expd->socid])) {
+						$objecttmp->fetchObjectLinked($object->id, 'commande');
+						foreach ($objecttmp->linkedObjectsIds as $tmpSourcetype => $tmpTIds) {
+							if ($tmpSourcetype == $sourcetype) {
+								if (!empty(array_intersect($TIds, $tmpTIds))) {
+									continue 2;
+								}
+							}
+						}
+					}
+
+					$res = $objecttmp->add_object_linked($sourcetype, current($TIds));
+
+					if ($res == 0) {
+						$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+						$error++;
+					}
+				}
+
+				if (!$error) {
+					$lines = $expd->lines;
+					if (empty($lines) && method_exists($expd, 'fetch_lines')) {
+						$expd->fetch_lines();
+						$lines = $expd->lines;
+					}
+
+					$fk_parent_line = 0;
+					$num = count($lines);
+
+					for ($i = 0; $i < $num; $i++) {
+						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
+						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
+						if (!empty($createbills_onebythird)) {
+							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$expd->ref.' - '.dol_print_date($expd->date, 'day'));
+						}
+
+						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
+							// Negative line, we create a discount line
+							$discount = new DiscountAbsolute($db);
+							$discount->fk_soc = $objecttmp->socid;
+							$discount->amount_ht = abs($lines[$i]->total_ht);
+							$discount->amount_tva = abs($lines[$i]->total_tva);
+							$discount->amount_ttc = abs($lines[$i]->total_ttc);
+							$discount->tva_tx = $lines[$i]->tva_tx;
+							$discount->fk_user = $user->id;
+							$discount->description = $desc;
+							$discountid = $discount->create($user);
+							if ($discountid > 0) {
+								$result = $objecttmp->insert_discount($discountid);
+								//$result=$discount->link_to_invoice($lineid,$id);
+							} else {
+								setEventMessages($discount->error, $discount->errors, 'errors');
+								$error++;
+								break;
+							}
+						} else {
+							// Positive line
+							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+							// Date start
+							$date_start = false;
+							if ($lines[$i]->date_debut_prevue) {
+								$date_start = $lines[$i]->date_debut_prevue;
+							}
+							if ($lines[$i]->date_debut_reel) {
+								$date_start = $lines[$i]->date_debut_reel;
+							}
+							if ($lines[$i]->date_start) {
+								$date_start = $lines[$i]->date_start;
+							}
+							//Date end
+							$date_end = false;
+							if ($lines[$i]->date_fin_prevue) {
+								$date_end = $lines[$i]->date_fin_prevue;
+							}
+							if ($lines[$i]->date_fin_reel) {
+								$date_end = $lines[$i]->date_fin_reel;
+							}
+							if ($lines[$i]->date_end) {
+								$date_end = $lines[$i]->date_end;
+							}
+							// Reset fk_parent_line for no child products and special product
+							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+								$fk_parent_line = 0;
+							}
+
+							// Extrafields
+							if (method_exists($lines[$i], 'fetch_optionals')) {
+								$lines[$i]->fetch_optionals();
+								$array_options = $lines[$i]->array_options;
+							}
+
+							$objecttmp->context['createfromclone'] = 'createfromclone';
+
+							$rang = ($nbSendings > 1) ? -1 : $lines[$i]->rang;
+							//there may already be rows from previous sendings
+							if (!empty($createbills_onebythird)) {
+								$rang = $TFactThirdNbLines[$expd->socid];
+							}
+
+							$result = $objecttmp->addline(
+								$desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->localtax1_tx,
+								$lines[$i]->localtax2_tx,
+								$lines[$i]->fk_product,
+								$lines[$i]->remise_percent,
+								$date_start,
+								$date_end,
+								0,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except,
+								'HT',
+								0,
+								$product_type,
+								$rang,
+								$lines[$i]->special_code,
+								$objecttmp->origin,
+								$lines[$i]->rowid,
+								$fk_parent_line,
+								$lines[$i]->fk_fournprice,
+								$lines[$i]->pa_ht,
+								$lines[$i]->label,
+								!empty($array_options) ? $array_options : '',
+								100,
+								0,
+								$lines[$i]->fk_unit
+							);
+							if ($result > 0) {
+								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep sending
+									$TFactThirdNbLines[$expd->socid]++;
+							} else {
+								$lineid = 0;
+								$error++;
+								$errors[] = $objecttmp->error;
+								break;
+							}
+							// Defined the new fk_parent_line
+							if ($result > 0 && $lines[$i]->product_type == 9) {
+								$fk_parent_line = $result;
+							}
+						}
+					}
+				}
+			}
+
+			if (!empty($createbills_onebythird) && empty($TFactThird[$expd->socid])) {
+				$TFactThird[$expd->socid] = $objecttmp;
+			} else {
+				$TFact[$objecttmp->id] = $objecttmp;
+			}
+		}
+
+		// Build doc with all invoices
+		$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
+		$toselect = array();
+
+		if (!$error && $validate_invoices) {
+			$massaction = $action = 'builddoc';
+
+			foreach ($TAllFact as &$objecttmp) {
+				$result = $objecttmp->validate($user);
+				if ($result <= 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					break;
+				}
+
+				$id = $objecttmp->id; // For builddoc action
+
+				// Builddoc
+				$donotredirect = 1;
+				$upload_dir = $conf->facture->dir_output;
+				$permissiontoadd = $user->hasRight('facture', 'creer');
+
+				// Call action to build doc
+				$savobject = $object;
+				$object = $objecttmp;
+				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+				$object = $savobject;
+			}
+
+			$massaction = $action = 'confirm_createbills';
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode(strval($lastid)).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
+
+			// Make a redirect to avoid to bill twice if we make a refresh or back
+			$param = '';
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+				$param .= '&contextpage='.urlencode($contextpage);
+			}
+			if ($limit > 0 && $limit != $conf->liste_limit) {
+				$param .= '&limit='.urlencode(strval($limit));
+			}
+			if ($sall) {
+				$param .= "&sall=".urlencode($sall);
+			}
+			if ($search_ref_exp) {
+				$param .= "&search_ref_exp=".urlencode($search_ref_exp);
+			}
+			if ($search_ref_liv) {
+				$param .= "&search_ref_liv=".urlencode($search_ref_liv);
+			}
+			if ($search_ref_customer) {
+				$param .= "&search_ref_customer=".urlencode($search_ref_customer);
+			}
+			if ($search_user > 0) {
+				$param .= '&search_user='.urlencode($search_user);
+			}
+			if ($search_sale > 0) {
+				$param .= '&search_sale='.urlencode($search_sale);
+			}
+			if ($search_company) {
+				$param .= "&search_company=".urlencode($search_company);
+			}
+			if ($search_shipping_method_id) {
+				$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
+			}
+			if ($search_tracking) {
+				$param .= "&search_tracking=".urlencode($search_tracking);
+			}
+			if ($search_town) {
+				$param .= '&search_town='.urlencode($search_town);
+			}
+			if ($search_zip) {
+				$param .= '&search_zip='.urlencode($search_zip);
+			}
+			if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+				$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+			}
+			if ($search_datedelivery_start)	{
+				$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+			}
+			if ($search_datedelivery_end) {
+				$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
+			}
+			if ($search_datereceipt_start) {
+				$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start, '%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start, '%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start, '%Y'));
+			}
+			if ($search_datereceipt_end) {
+				$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
+			}
+			if ($search_product_category != '') {
+				$param .= '&search_product_category='.urlencode($search_product_category);
+			}
+			if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
+				$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+			}
+			if ($search_status != '') {
+				$param .= '&search_status='.urlencode($search_status);
+			}
+			if ($optioncss != '') {
+				$param .= '&optioncss='.urlencode($optioncss);
+			}
+			if ($search_billed != '') {
+				$param .= '&billed='.urlencode($search_billed);
+			}
+
+			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
+			exit;
+		} else {
+			$db->rollback();
+
+			$action = 'create';
+			$_GET["origin"] = $_POST["origin"];
+			$_GET["originid"] = $_POST["originid"];
+			if (!empty($errors)) {
+				setEventMessages(null, $errors, 'errors');
+			} else {
+				setEventMessages("Error", null, 'errors');
+			}
+			$error++;
+		}
+	}
 
 	// If massaction is close
 	if ($massaction == 'classifyclose') {
@@ -604,7 +982,10 @@ $arrayofmassactions = array(
 	'classifyclose' => img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if (in_array($massaction, array('presend'))) {
+if ($user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomerFromSendings");
+}
+if (in_array($massaction, array('presend', 'createbills'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -639,6 +1020,55 @@ $modelmail = "shipping_send";
 $objecttmp = new Expedition($db);
 $trackid = 'shi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($massaction == 'createbills') {
+	print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+	print '<table class="noborder" width="100%" >';
+	print '<tr>';
+	print '<td class="titlefield">';
+	print $langs->trans('DateInvoice');
+	print '</td>';
+	print '<td>';
+	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print '</td>';
+	print '</tr>';
+	print '<tr>';
+	print '<td>';
+	print $langs->trans('CreateOneBillByThird');
+	print '</td>';
+	print '<td>';
+	print $form->selectyesno('createbills_onebythird', '', 1);
+	print '</td>';
+	print '</tr>';
+	print '<tr>';
+	print '<td>';
+	print $langs->trans('ValidateInvoices');
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+		print $form->selectyesno('validate_invoices', 0, 1, 1);
+		$langs->load("errors");
+		print ' ('.$langs->trans("WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal").')';
+	} else {
+		print $form->selectyesno('validate_invoices', 0, 1);
+	}
+	if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoSendingStayUnbilled").'</span>';
+	} else {
+		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetSendingBilledNotEnabled").'</span>';
+	}
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+
+	print '<br>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomerFromSendings').'">  ';
+	print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+	print '<br>';
+}
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
