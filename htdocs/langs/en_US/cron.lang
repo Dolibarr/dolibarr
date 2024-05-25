@@ -49,8 +49,8 @@ CronEach=Every
 JobFinished=Job launched and finished
 Scheduled=Scheduled
 #Page card
-CronAdd= Add jobs
-CronEvery=Execute job each
+CronAdd=Add jobs
+CronEvery=Run job every
 CronObject=Instance/Object to create
 CronArgs=Parameters
 CronSaveSucess=Save successfully
