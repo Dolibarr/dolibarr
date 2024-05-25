@@ -1001,7 +1001,7 @@ if (empty($reshook)) {
 			$line->subprice = $subprice;
 			$line->multicurrency_subprice = $multicurrency_subprice;
 		}
-	} elseif ($action == 'addline' && $usercancreate) {		// Add line
+	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');

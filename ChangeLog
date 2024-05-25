@@ -17,10 +17,11 @@ NEW: Module Bookcal is now experimental (TimeZone not yet supported)
 NEW: #24031 add option MAIN_GRANDTOTAL_LIST_SHOW to always show grand total to lists (#27247)
 NEW: #28070 Adding mobile phone to thirdparty
 NEW: Accept the __NOW__ and __USER_ID__key into filters
-NEW: Accountancy - Add possibility for specific format FEC to sort with the fec name (#29722)
+NEW: Accountancy - Add possibility for specific format FEC to sort with the FEC name (#29722)
 NEW: Accountancy - Expense report - Add an option to use end period for transfer (#26706)
 NEW: Accountancy - Show accounting result on balance
 NEW: Accountancy - Show import key if exist (#29265)
+NEW: Add option to change all service dates at once
 NEW: Add a default limit in nb to agenda export
 NEW: Add a Feedback-ID into email headers
 NEW: Add a link "Fill with layout"
