@@ -3494,10 +3494,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 function dol_filecache($directory, $filename, $object)
 {
 	if (!dol_is_dir($directory)) {
-		dol_mkdir($directory);
+		$result = dol_mkdir($directory);
+		if ($result < -1) {
+			dol_syslog("Failed to create the cache directory ".$directory, LOG_WARNING);
+		}
 	}
 	$cachefile = $directory.$filename;
+
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
+
 	dolChmod($cachefile, '0644');
 }
 

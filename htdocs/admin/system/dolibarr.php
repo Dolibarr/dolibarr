@@ -43,7 +43,6 @@ $sfurl = '';
 $version = '0.0';
 
 
-
 /*
  *	Actions
  */

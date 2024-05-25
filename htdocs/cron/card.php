@@ -721,7 +721,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (!empty($object->datenextrun)) {
 		print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		print '<span class="opacitymedium">'.$langs->trans('CronNone').'</span>';
 	}
 	if ($object->status == Cronjob::STATUS_ENABLED) {
 		if ($object->maxrun && $object->nbrun >= $object->maxrun) {
@@ -746,7 +746,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datelastrun)) {
 		print $form->textwithpicto(dol_print_date($object->datelastrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		print '<span class="opacitymedium">'.$langs->trans('CronNotYetRan').'</span>';
 	}
 	print "</td></tr>";
 
@@ -756,7 +756,7 @@ if (($action == "create") || ($action == "edit")) {
 		print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
 		if (empty($object->datelastrun)) {
-			print $langs->trans('CronNone');
+			print '<span class="opacitymedium">'.$langs->trans('CronNotYetRan').'</span>';
 		} else {
 			// In progress
 		}
