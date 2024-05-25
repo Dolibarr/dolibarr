@@ -71,9 +71,10 @@ ToOfferALinkForTestWebhook=Link til opsætning Stripe WebHook for at ringe til I
 ToOfferALinkForLiveWebhook=Link til opsætning Stripe WebHook for at ringe til IPN (live tilstand)
 PaymentWillBeRecordedForNextPeriod=Betaling registreres for den næste periode.
 ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af stærke kunde autentificerings regler skal oprettelse af et kort foretages fra Stripe backoffice. Du kan klikke her for at tænde for Stripe-kundepost:%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af Strong Customer Authentication-regler skal oprettelsen af et kort ske fra Stripe back office. Du kan klikke her for at slå Stripe kunderegistrering til: %s
 STRIPE_CARD_PRESENT=Kort til stede til Stripe-terminaler
 TERMINAL_LOCATION=Placering (adresse) for Stripe Terminals
 RequestDirectDebitWithStripe=Anmod om direkte debitering med Stripe
+RequesCreditTransferWithStripe=Anmod om kreditoverførsel med Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Aktiver direkte debitering via Stripe
-
+StripeConnect_Mode=Stripe Connect-tilstand

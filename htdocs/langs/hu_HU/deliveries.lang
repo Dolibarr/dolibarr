@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Kézbesítés
 DeliveryRef=Szállító ref.
-DeliveryCard=Stock receipt
+DeliveryCard=Készlet nyugta
 DeliveryOrder=Szállítási nyugta
 DeliveryDate=Kézbesítés dátuma
 CreateDeliveryOrder=Szállítási nyugta generálása

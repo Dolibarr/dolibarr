@@ -165,7 +165,6 @@ BarcodeDescDATAMATRIX=Codebarre de type Datamatrix
 BarcodeDescQRCODE=Codebarre de type QRcode
 FixedEmailTarget=Bénéficiaire
 SendingsAbility=Fiches d'expédition de soutien pour les livraisons aux clients
-FCKeditorForMail=Création / édition WYSIWIG pour tous les courriers (sauf Outils-> eMailing)
 NotTopTreeMenuPersonalized=Menus personnalisés non liés à une entrée de menu supérieure
 ConfirmDeleteMenu=Êtes-vous sûr de vouloir supprimer l'entrée du menu <b>%s</b>?
 FailedToInitializeMenu=Impossible d'initialiser le menu

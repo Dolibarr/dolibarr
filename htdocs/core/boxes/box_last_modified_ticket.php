@@ -30,20 +30,10 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_last_modified_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_last_modified_ticket";
 	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor
@@ -183,7 +173,10 @@ class box_last_modified_ticket extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => '', 'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>');
+					$this->info_box_contents[$i][0] = array(
+						'td' => '',
+						'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>'
+					);
 				}
 			} else {
 				dol_print_error($this->db);

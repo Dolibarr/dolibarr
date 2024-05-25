@@ -37,7 +37,7 @@ if (!$user->hasRight('categorie', 'lire')) {
 $langs->loadLangs(array('categories', 'sendings'));
 
 $socid = 0;
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $label = GETPOST('label', 'alpha');
 
 // Security check
@@ -49,7 +49,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;

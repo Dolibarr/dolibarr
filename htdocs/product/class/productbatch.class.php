@@ -1,6 +1,9 @@
 <?php
 /* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +46,6 @@ class Productbatch extends CommonObject
 
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
-	public $tms = '';
 	public $fk_product_stock;
 
 	public $batch = '';
@@ -73,7 +75,7 @@ class Productbatch extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -86,7 +88,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -120,7 +122,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().self::$_table_element);
@@ -141,7 +144,7 @@ class Productbatch extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id		Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -194,7 +197,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -222,7 +225,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -244,7 +248,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -259,7 +263,8 @@ class Productbatch extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -333,22 +338,24 @@ class Productbatch extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->fk_product_stock = '';
 		$this->sellby = '';
 		$this->eatby = '';
 		$this->batch = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 
 	/**
-	 *  Clean fields (triming)
+	 *  Clean fields (trimming)
 	 *
 	 *  @return	void
 	 */
@@ -361,7 +368,7 @@ class Productbatch extends CommonObject
 			$this->batch = trim($this->batch);
 		}
 		if (isset($this->qty)) {
-			$this->qty = (float) trim($this->qty);
+			$this->qty = (float) trim((string) $this->qty);
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
@@ -369,18 +376,19 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
+	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
 	 *
-	 *  @param	int			$fk_product_stock   id product_stock for objet
+	 *  @param	int			$fk_product_stock   id product_stock for object
 	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
 	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
-	 *  @return int          					<0 if KO, >0 if OK
+	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
 	{
 		$where = array();
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
@@ -409,7 +417,7 @@ class Productbatch extends CommonObject
 		}
 
 		if (!empty($where)) {
-			$sql .= " AND (".implode(" OR ", $where).")";
+			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -440,10 +448,10 @@ class Productbatch extends CommonObject
 	 * Return all batch detail records for a given product and warehouse
 	 *
 	 * @param	DoliDB		$dbs    			database object
-	 * @param	int			$fk_product_stock	id product_stock for objet
+	 * @param	int			$fk_product_stock	id product_stock for object
 	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 * @return 	array|int         				<0 if KO, array of batch
+	 * @return 	array|int         				Return integer <0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
@@ -459,7 +467,9 @@ class Productbatch extends CommonObject
 		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
-		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) $sql .= " MAX(sm.datem) as date_entree,";
+		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+			$sql .= " MAX(sm.datem) as date_entree,";
+		}
 		$sql .= " t.import_key";
 		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
@@ -472,14 +482,13 @@ class Productbatch extends CommonObject
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock AS ps ON (ps.rowid = fk_product_stock)';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot)';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot AND sm.type_mouvement IN (0,3))';
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-			$sql .= ' AND sm.type_mouvement IN (0,3)';
 			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
 			if ($fk_product > 0) {
 				$sql .= ', pl.rowid, pl.eatby, pl.sellby';
@@ -490,9 +499,11 @@ class Productbatch extends CommonObject
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= 'date_entree ASC,t.batch ASC,';
 		}
-		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+		if ($fk_product > 0) {
+			$sql .= "pl.eatby ASC, pl.sellby ASC, ";
+		}
 		$sql .= "t.eatby ASC, t.sellby ASC ";
-		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE')?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'ASC' : 'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 		$sql .= ", t.batch ASC";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
@@ -513,13 +524,15 @@ class Productbatch extends CommonObject
 				$tmp->import_key = $obj->import_key;
 
 				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-					$tmp->context['stock_date_entry'] = $obj->date_entree;
+					$tmp->context['stock_entry_date'] = $dbs->jdate($obj->date_entree);
 				}
 
-				// Some properties of the lot
-				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
-				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				if ($fk_product > 0) {
+					// Some properties of the lot
+					$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
+					$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+					$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				}
 
 				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
@@ -541,7 +554,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$qty_min            [=NULL] Minimum quantity
 	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
-	 * @return  int|array   <0 if KO, array of batch
+	 * @return  int|array   Return integer <0 if KO, array of batch
 	 *
 	 * @throws  Exception
 	 */

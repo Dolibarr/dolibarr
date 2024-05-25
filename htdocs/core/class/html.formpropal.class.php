@@ -50,7 +50,7 @@ class FormPropal
 	}
 
 	/**
-	 *    Return combo list of differents status of a proposal
+	 *    Return combo list of different statuses of a proposal
 	 *    Values are id of table c_propalst
 	 *
 	 *    @param	string	$selected   	Preselected value
@@ -140,7 +140,7 @@ class FormPropal
 			} else {
 				print '<option value="2,4">';
 			}
-			print ($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
+			print($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
 			print '</option>';
 		}
 		print '</select>';

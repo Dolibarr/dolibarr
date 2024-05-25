@@ -75,7 +75,8 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 $form = new Form($db);
 
 $year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$pastmonth = strftime("%m", dol_now()) - 1;
+//$pastmonth = strftime("%m", dol_now()) - 1;
+$pastmonth = dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
@@ -104,7 +105,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 $idpays = $p[0];
 
 
@@ -137,7 +138,7 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
+	$cptfour = ((getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 
 	$tabfac = array();
@@ -246,14 +247,15 @@ foreach ($tabfac as $key => $val) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td><td>".$line['label']."</td>";
+				print "<td>".$k."</td>";
+				print "<td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
 				} else {
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				}
 
 				print "</tr>";

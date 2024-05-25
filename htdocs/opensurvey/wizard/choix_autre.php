@@ -105,7 +105,7 @@ $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss);
 
 if (empty($_SESSION['title'])) {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+	dol_print_error(null, $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	llxFooter();
 	exit;
 }
@@ -153,7 +153,7 @@ print '</tr></table>'."\n";
 print '</form>'."\n";
 
 
-print '<a name=bas></a>'."\n";
+print '<a name="bas"></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 

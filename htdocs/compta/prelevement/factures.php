@@ -21,7 +21,7 @@
 /**
  *     \file       htdocs/compta/prelevement/factures.php
  *     \ingroup    prelevement
- *     \brief      Page list of invoice paied by direct debit or credit transfer
+ *     \brief      Page list of invoice paid by direct debit or credit transfer
  */
 
 // Load Dolibarr environment
@@ -35,20 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'suppliers'));
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
 
 // Get supervariables
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
+$socid = GETPOSTINT('socid');
+$userid = GETPOSTINT('userid');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -96,6 +96,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref) {
 	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
+
 		print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -273,10 +274,10 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$param = "&id=".((int) $id);
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.((int) $limit);
+		$param .= '&limit='.((int) $limit);
 	}
-	$param = "&id=".urlencode($id);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -293,11 +294,12 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
+	$title = ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices")));
 
-	print_barre_liste(($salaryBonPl ? $langs->trans("Salaries") : $langs->trans("Invoices")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print"\n<!-- debut table -->\n";
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre(($salaryBonPl ? "Salary" : "Bill"), $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
@@ -305,10 +307,9 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary": "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre('');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
@@ -324,10 +325,14 @@ if ($resql) {
 
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
-		if ($salaryBonPl) {
+		$itemurl = '';
+		$partyurl = '';
+		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($user instanceof User)) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
-		} else {
+			$itemurl = $salarytmp->getNomUrl(1);
+			$partyurl = $usertmp->getNomUrl(1);
+		} elseif ($invoicetmp instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
 			} else {
@@ -336,27 +341,28 @@ if ($resql) {
 			$invoicetmp->fetch($obj->facid);
 
 			$thirdpartytmp->fetch($obj->socid);
+			$itemurl = $invoicetmp->getNomUrl(1);
+			$partyurl = $thirdpartytmp->getNomUrl(1);
 		}
 
 		print '<tr class="oddeven">';
 
-
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print $itemurl;
 		print "</td>\n";
 
-		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+		if ($object->type == 'bank-transfer' && !$salaryBonPl && $invoicetmp instanceof Facture) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
 			print dol_escape_htmltag($invoicetmp->ref_supplier);
 			print "</td>\n";
 		}
 
 		print '<td class="tdoverflowmax125">';
-		print ($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
+		print $partyurl;
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount :$obj->total_ttc))."</span></td>\n";
+		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount : $obj->total_ttc))."</span></td>\n";
 
 		// Amount requested
 		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";
@@ -375,8 +381,6 @@ if ($resql) {
 			print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 		}
 		print "</td>";
-
-		print "<td></td>";
 
 		print "</tr>\n";
 
@@ -402,7 +406,6 @@ if ($resql) {
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
-		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 	}

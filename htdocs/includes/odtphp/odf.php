@@ -253,23 +253,23 @@ class Odf
 						break;
 					case 'strong':
 					case 'b':
-						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'i':
 					case 'em':
-						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'u':
-						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 's':
-						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sub':
-						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'sup':
-						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+						$odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 						break;
 					case 'span':
 						if (isset($tag['attributes']['style'])) {
@@ -304,14 +304,14 @@ class Odf
 							}
 							if (strlen($odtStyles) > 0) {
 								// Generate a unique id for the style (using microtime and random because some CPUs are really fast...)
-								$key = floatval(str_replace('.', '', microtime(true))) + rand(0, 10);
+								$key = str_replace('.', '', (string) microtime(true)) . uniqid(mt_rand());
 								$customStyles[$key] = $odtStyles;
-								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 							}
 						}
 						break;
 					default:
-						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations);
+						$odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode);
 						break;
 				}
 			}
@@ -330,7 +330,7 @@ class Odf
 	private function encode_chars($text, $encode = false, $charset = '')
 	{
 		$newtext = $encode ? htmlspecialchars($text, ENT_QUOTES | ENT_XML1) : $text;
-		$newtext = ($charset == 'ISO-8859') ? utf8_encode($newtext) : $newtext;
+		$newtext = ($charset == 'ISO-8859') ? mb_convert_encoding($newtext, 'UTF-8', 'ISO-8859-1') : $newtext;
 		return $newtext;
 	}
 
@@ -556,10 +556,15 @@ IMG;
 	 */
 	private function _parse($type = 'content')
 	{
+		if ($type == 'content') $xml = &$this->contentXml;
+		elseif ($type == 'styles') $xml = &$this->stylesXml;
+		elseif ($type == 'meta') $xml = &$this->metaXml;
+		else return;
+
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
 		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
-		preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
 		//var_dump($this->vars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
@@ -575,13 +580,13 @@ IMG;
 			// If value is true (not 0 nor false nor null nor empty string)
 			if ($value) {
 				//dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
-				//$sav=$this->contentXml;
+				//$sav=$xml;
 				// Remove the IF tag
-				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
+				$xml = str_replace('[!-- IF '.$key.' --]', '', $xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
 				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
-				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				/*if ($sav != $this->contentXml)
+				$xml = preg_replace($reg, '', $xml);
+				/*if ($sav != $xml)
 				 {
 				 dol_syslog("We found a IF and it was processed");
 				 //var_dump($sav);exit;
@@ -590,16 +595,16 @@ IMG;
 				// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
 
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
-				//$sav=$this->contentXml;
+				//$sav=$xml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
 				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
-				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+				preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
-					if (!empty($match[3])) $this->contentXml = str_replace($match[0], $match[3], $this->contentXml);
+					if (!empty($match[3])) $xml = str_replace($match[0], $match[3], $xml);
 				}
 				// Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
-				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				/*if ($sav != $this->contentXml)
+				$xml = preg_replace($reg, '', $xml);
+				/*if ($sav != $xml)
 				 {
 				 dol_syslog("We found a IF and it was processed");
 				 //var_dump($sav);exit;
@@ -608,9 +613,7 @@ IMG;
 		}
 
 		// Static substitution
-		if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
-		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
-		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
+		$xml = str_replace(array_keys($this->vars), array_values($this->vars), $xml);
 	}
 
 	/**
@@ -1022,6 +1025,9 @@ IMG;
 		$matches = array();
 		preg_match($searchreg, $this->contentXml, $matches);
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
-		return  $matches[1];
+		if ($matches) {
+			return  $matches[1];
+		}
+		return "";
 	}
 }

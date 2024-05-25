@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=ຈັດການການຈັດການຄ�
 # Admin page
 #
 KnowledgeManagementSetup = ການຕັ້ງຄ່າລະບົບການຈັດການຄວາມຮູ້
-Settings = ການຕັ້ງຄ່າ
 KnowledgeManagementSetupPage = ໜ້າ ຕິດຕັ້ງລະບົບການຈັດການຄວາມຮູ້
 
 
 #
 # About page
 #
-About = ກ່ຽວກັບ
 KnowledgeManagementAbout = ກ່ຽວກັບການຈັດການຄວາມຮູ້
 KnowledgeManagementAboutPage = ການຈັດການຄວາມຮູ້ກ່ຽວກັບ ໜ້າ
 
 KnowledgeManagementArea = ການຈັດການຄວາມຮູ້
 MenuKnowledgeRecord = ພື້ນຖານຄວາມຮູ້
+MenuKnowledgeRecordShort = ພື້ນຖານຄວາມຮູ້
 ListKnowledgeRecord = ລາຍການບົດຄວາມ
 NewKnowledgeRecord = ບົດຄວາມໃ່
 ValidateReply = ກວດສອບການແກ້ໄຂ
@@ -46,9 +45,15 @@ KnowledgeRecords = ບົດຄວາມ
 KnowledgeRecord = ມາດຕາ
 KnowledgeRecordExtraFields = Extrafields ສໍາລັບບົດຄວາມ
 GroupOfTicket=ກຸ່ມຂອງປີ້
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=ທ່ານ​ສາ​ມາດ​ເຊື່ອມ​ຕໍ່​ບົດ​ຄວາມ​ກັບ​ກຸ່ມ​ປີ້ (ສະ​ນັ້ນ​ບົດ​ຄວາມ​ຈະ​ໄດ້​ຮັບ​ການ​ເນັ້ນ​ໃສ່​ໃນ​ປີ້​ໃດ​ຫນຶ່ງ​ໃນ​ກຸ່ມ​ນີ້​)
+SuggestedForTicketsInGroup=ແນະນຳໃນການສ້າງປີ້
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=ຕັ້ງເປັນລ້າສະໄຫມ
+ConfirmCloseKM=ເຈົ້າຢືນຢັນການປິດບົດຄວາມນີ້ວ່າລ້າສະໄໝບໍ?
+ConfirmReopenKM=ທ່ານ​ຕ້ອງ​ການ​ທີ່​ຈະ​ຟື້ນ​ຟູ​ບົດ​ຄວາມ​ນີ້​ກັບ​ສະ​ຖາ​ນະ "Validated​"​?
+BoxLastKnowledgerecordDescription=%s ບົດຄວາມຫຼ້າສຸດ
+BoxLastKnowledgerecord=ບົດຄວາມທີ່ຜ່ານມາ
+BoxLastKnowledgerecordContent=ບົດຄວາມທີ່ຜ່ານມາ
+BoxLastKnowledgerecordModifiedContent=ບົດຄວາມດັດແກ້ຫຼ້າສຸດ
+BoxLastModifiedKnowledgerecordDescription=%s ບົດຄວາມດັດແກ້ຫຼ້າສຸດ
+BoxLastModifiedKnowledgerecord=ບົດຄວາມດັດແກ້ຫຼ້າສຸດ

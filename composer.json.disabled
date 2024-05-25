@@ -33,16 +33,9 @@
 		"tecnickcom/tcpdf" : "6.3.2",
 		"nnnick/chartjs" : "^3.7.1",
 		"stripe/stripe-php" : "10.7.0",
-		"maximebf/debugbar" : "1.18.2",
-		"symfony/var-dumper" : ">=3.2"
+		"maximebf/debugbar" : "1.18.2"
 	},
 	"require-dev" : {
-		"php-parallel-lint/php-parallel-lint" : "^0",
-		"php-parallel-lint/php-console-highlighter" : "^0",
-		"phpunit/phpunit" : "^4",
-		"squizlabs/php_codesniffer" : "^2",
-		"phpunit/phpunit-selenium" : "^2",
-		"rector/rector" : "^0.16.0"
 	},
 	"suggest" : {
 		"ext-mysqlnd" : "To use with MySQL or MariaDB",
@@ -50,7 +43,7 @@
 		"ext-pgsql" : "To use with PostgreSQL",
 		"ext-gd" : "Image manipulation (Required but maybe built-in PHP)",
 		"ext-imagick" : "Generation of thumbs from PDF",
-		"ext-mcrypt" : "(Required but maybe built-in PHP)",
+		"ext-intl" : "Intl",
 		"ext-openssl" : "Secure connections (Emails, SOAP\u2026)",
 		"ext-mbstring" : "Handle non UTF-8 characters",
 		"ext-soap" : "Native SOAP",

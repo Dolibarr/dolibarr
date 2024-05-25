@@ -38,7 +38,7 @@ ListOfPartnerships=Liste der Partnerschaften
 PartnershipSetup=Partnerschaft einrichten
 PartnershipAbout=Über die Partschnerschaft
 PartnershipAboutPage=Partnerschaft "Über uns"-Seite
-partnershipforthirdpartyormember=Der Partnerstatus muss bei einem "Geschäftspartner" oder "Mitglied" gesetzt sein
+partnershipforthirdpartyormember=Der Partnerstatus muss bei einen 'Geschäftspartner' oder einem 'Mitglied' festgelegt werden
 PARTNERSHIP_IS_MANAGED_FOR=Partnerschaft verwaltet für
 PARTNERSHIP_BACKLINKS_TO_CHECK=zu überprüfende Backlinks
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Anzahl Tage bis zur Kündigung des Status einer Partnerschaft, wenn ein Abonnement abgelaufen ist
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerschaft mit diesem Mitglied
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Ende
 ReasonDecline=Ablehnungsgrund
-ReasonDeclineOrCancel=Ablehnungsgrund
+ReasonDeclineOrCancel=Grund für die Beendigung oder Stornierung
 PartnershipAlreadyExist=Partnerschaft besteht bereits
 ManagePartnership=Partnerschaft verwalten
 BacklinkNotFoundOnPartnerWebsite=Backlink auf Partner-Website nicht gefunden
@@ -66,7 +66,7 @@ KeywordToCheckInWebsite=Wenn Sie überprüfen möchten, ob ein bestimmtes Schlü
 PartnershipDraft=Entwurf
 PartnershipAccepted=Bestätigt
 PartnershipRefused=Abgelehnt
-PartnershipCanceled=storniert
+PartnershipCanceled=Storniert
 PartnershipManagedFor=Partner sind
 
 #
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Partnerschaft abgelehnt
 YourPartnershipAcceptedTopic=Partnerschaft akzeptiert
 YourPartnershipCanceledTopic=Partnerschaft beendet
 
-YourPartnershipWillSoonBeCanceledContent=Wir informieren Sie darüber, dass Ihre Partnerschaft bald beendet wird (Backlink nicht gefunden)
-YourPartnershipRefusedContent=Wir informieren Sie darüber, dass Ihre Partnerschaftsanfrage abgelehnt wurde.
-YourPartnershipAcceptedContent=Wir informieren Sie darüber, dass Ihre Partnerschaftsanfrage angenommen wurde.
-YourPartnershipCanceledContent=Wir informieren Sie darüber, dass Ihre Partnerschaft gekündigt wurde.
+YourPartnershipWillSoonBeCanceledContent=Wir möchten Sie darüber informieren, dass unsere Partnerschaft bald beendet wird (wir haben keine Verlängerung erhalten oder eine Voraussetzung für unsere Partnerschaft wurde nicht erfüllt). Bitte kontaktieren Sie uns, wenn Sie diese Mitteilung aufgrund eines Fehlers erhalten haben.
+YourPartnershipRefusedContent=Wir möchten Sie darüber informieren, dass Ihre Partnerschaftsanfrage abgelehnt wurde. Die Voraussetzungen sind nicht erfüllt. Bitte kontaktieren Sie uns, wenn Sie weitere Informationen benötigen.
+YourPartnershipAcceptedContent=Wir möchten Sie darüber informieren, dass Ihre Partnerschaftsanfrage angenommen wurde.
+YourPartnershipCanceledContent=Wir möchten Sie darüber informieren, dass unsere Partnerschaft beendet wurde. Bitte kontaktieren Sie uns, wenn Sie weitere Informationen benötigen.
 
 CountLastUrlCheckError=Anzahl der Fehler bei der letzten URL-Überprüfung
 LastCheckBacklink=Datum der letzten URL-Überprüfung
-ReasonDeclineOrCancel=Ablehnungsgrund
 
 NewPartnershipRequest=Neue Partnerschaftsanfrage
 NewPartnershipRequestDesc=Mit diesem Formular können Sie die Teilnahme an einem unserer Partnerprogramme beantragen. Wenn Sie Hilfe beim Ausfüllen dieses Formulars benötigen, wenden Sie sich bitte per E-Mail an <b>%s</b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Diese Seite muss mindestens einen Link zu einer der folgenden Domains enthalten: %s
+
+IPOfApplicant=IP des Antragstellers
 

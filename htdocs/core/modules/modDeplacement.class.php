@@ -17,7 +17,7 @@
  */
 
 /**
- *	\defgroup   deplacement     Module trips
+ *	\defgroup   deplacement     Module traves
  *	\brief      Module pour gerer les deplacements et notes de frais
  *	\file       htdocs/core/modules/modDeplacement.class.php
  *	\ingroup    deplacement
@@ -31,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDeplacement extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -63,7 +62,7 @@ class modDeplacement extends DolibarrModules
 		$this->config_page_url = array();
 		$this->langfiles = array("companies", "trips");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 
@@ -78,7 +77,7 @@ class modDeplacement extends DolibarrModules
 		$this->rights_class = 'deplacement';
 
 		$this->rights[1][0] = 171;
-		$this->rights[1][1] = 'Lire ses notes de frais et deplacements et celles de sa hierarchy';
+		$this->rights[1][1] = 'View own expense and travel reports, and its hierarchy';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
@@ -143,7 +142,7 @@ class modDeplacement extends DolibarrModules
 			$childids[] = $user->id;
 
 			if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
-				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
+				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
 			}
 		}
 	}

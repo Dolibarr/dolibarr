@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ abstract class CommonOrder extends CommonObject
 			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -132,7 +133,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product description
 	 * @var string
 	 */
-	 public $product_desc;
+	public $product_desc;
 
 	/**
 	 * Product use lot
@@ -218,6 +219,9 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	public $fk_multicurrency;

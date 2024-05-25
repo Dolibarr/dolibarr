@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Санҷида шуд
 StatusSendingProcessedShort=Коркард
 SendingSheet=Варақаи интиқол
 ConfirmDeleteSending=Шумо мутмаин ҳастед, ки ин интиқолро нест кардан мехоҳед?
-ConfirmValidateSending=Шумо мутмаин ҳастед, ки ин интиқолро бо истинод <b> %s </b> тасдиқ кардан мехоҳед?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Шумо мутмаин ҳастед, ки ин интиқолро бекор кардан мехоҳед?
 DocumentModelMerou=Модели Merou A5
 WarningNoQtyLeftToSend=Огоҳӣ, ягон маҳсулот интизори интиқол нест.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Миқдори маҳсулот а�
 NoProductToShipFoundIntoStock=Дар анбор <b> %s </b> ягон маҳсулот барои фиристодан ёфт нашуд. Ҳиссаи дуруст ё баргаштан барои интихоби анбори дигар.
 WeightVolShort=Вазн/ҷ.
 ValidateOrderFirstBeforeShipment=Пеш аз он ки шумо интиқол диҳед, шумо бояд аввал фармоишро тасдиқ кунед.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Миқдори вазнҳои маҳсулот
 # warehouse details
 DetailWarehouseNumber= Тафсилоти анбор
 DetailWarehouseFormat= W: %s (Миқдор: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=Shipment distribution
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

@@ -7460,7 +7460,7 @@ class TCPDF
 						$color = imagecolorat($img, $xpx, $ypx);
 						// get and correct gamma color
 						$alpha = $this->getGDgamma($img, $color);
-						imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+						imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
 					}
 				}
 				imagepng($imgalpha, $tempfile_alpha);
@@ -10031,6 +10031,11 @@ class TCPDF
 				$out .= ' >> >>';
 			}
 			$font = $this->getFontBuffer('helvetica');
+			// @DOLCHANGE LDR Fix PHP warning
+			if (empty($font['i'])) {
+				//var_dump($this->fonts['helvetica']['i']);exit;
+				$font['i'] = '';
+			}
 			$out .= ' /DA (/F'.$font['i'].' 0 Tf 0 g)';
 			$out .= ' /Q '.(($this->rtl)?'2':'0');
 			//$out .= ' /XFA ';
@@ -10516,9 +10521,9 @@ class TCPDF
 	/**
 	 * Output a string to the document.
 	 * @param $s (string) string to output.
-	 * @protected
+	 * @public
 	 */
-	protected function _out($s)
+	public function _out($s)
 	{
 		if ($this->state == 2) {
 			if ($this->inxobj) {

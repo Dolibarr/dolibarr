@@ -13,8 +13,8 @@ KeyForCronAccess=مفتاح أمان للURL لإطلاق كرون الوظائ�
 FileToLaunchCronJobs=سطر الأوامر للتحقق من وظائف cron المؤهلة وإطلاقها
 CronExplainHowToRunUnix=على بيئة يونكس يجب عليك استخدام دخول كرونتاب التالي لتشغيل سطر الأوامر كل 5 دقائق
 CronExplainHowToRunWin=في بيئة Microsoft (tm) Windows ، يمكنك استخدام أدوات المهام المجدولة لتشغيل سطر الأوامر كل 5 دقائق
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=الطريقة %s للفئة %s موجودة في القائمة السوداء للطرق المحظورة
+CronMethodDoesNotExists=الفئة %s لا تحتوي على أي طريقة %s
+CronMethodNotAllowed=الطريقة %s من الفئة %s موجودة في القائمة المحظورة للطرق المحظورة
 CronJobDefDesc=يتم تعريف ملفات تعريف وظائف Cron في ملف واصف الوحدة. عند تنشيط الوحدة النمطية ، يتم تحميلها وإتاحتها حتى تتمكن من إدارة الوظائف من قائمة أدوات المسؤول %s.
 CronJobProfiles=قائمة ملفات تعريف وظائف كرون المحددة مسبقًا
 # Menu
@@ -26,7 +26,7 @@ CronCommand=أمر
 CronList=المهام المجدولة
 CronDelete=حذف المهام المجدولة
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch now
+CronExecute=تنطلق الان
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=وظيفة
@@ -58,7 +58,7 @@ CronNote=التعليق
 CronFieldMandatory=الحقول%s إلزامي
 CronErrEndDateStartDt=تاريخ نهاية لا يمكن أن يكون قبل تاريخ البدء
 StatusAtInstall=الحالة عند تثبيت الوحدة
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=تمكين الجدولة
 CronStatusInactiveBtn=يعطل
 CronTaskInactive=هذه الوظيفة معطلة (غير مجدولة)
 CronId=هوية شخصية
@@ -67,7 +67,7 @@ CronModuleHelp=اسم دليل وحدة Dolibarr (يعمل أيضًا مع وح�
 CronClassFileHelp=المسار النسبي واسم الملف المراد تحميله (المسار مرتبط بالدليل الجذر لخادم الويب). <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن منتج Dolibarr htdocs / product / class / <u> product.class.php </u> ، قيمة اسم ملف الفئة هي <br> a049271e8181
 CronObjectHelp=اسم الكائن المراد تحميله. <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن Dolibarr Product /htdocs/product/class/product.class.php ، قيمة اسم ملف الفئة هي <br> <i> المنتج </i>
 CronMethodHelp=طريقة الكائن لبدء. <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن منتج Dolibarr /htdocs/product/class/product.class.php ، قيمة الطريقة هي <br> <i> fetch </i>
-CronArgsHelp=حجج الطريقة. <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن Dolibarr Product /htdocs/product/class/product.class.php ، يمكن أن تكون قيمة المعلمات <br> <i> 0 ، ProductRef </i>
+CronArgsHelp=حجج الطريقة. <BR> على سبيل المثال، لاستدعاء طريقة الجلب لكائن منتج Dolibarr /htdocs/product/class/product.class.php، يمكن أن تكون قيمة المعلمات<br><i>0, ProductRef</i>
 CronCommandHelp=سطر الأوامر لتنفيذ النظام.
 CronCreateJob=إنشاء مهمة مجدولة جديدة
 CronFrom=من عند
@@ -84,17 +84,18 @@ MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=إنشاء تفريغ قاعدة بيانات محلية. المعلمات هي: الضغط ("gz" أو "bz" أو "لا شيء") ، نوع النسخ الاحتياطي ("mysql" ، "pgsql" ، "تلقائي") ، 1 ، "تلقائي" أو اسم الملف المراد إنشاؤه ، عدد ملفات النسخ الاحتياطي المطلوب الاحتفاظ بها
 MakeSendLocalDatabaseDumpShort=إرسال نسخة احتياطية من قاعدة البيانات المحلية
 MakeSendLocalDatabaseDump=إرسال نسخة احتياطية لقاعدة البيانات المحلية عن طريق البريد الإلكتروني. المعلمات هي: إلى ، من ، الموضوع ، الرسالة ، اسم الملف (اسم الملف المرسل) ، عامل التصفية ('sql' للنسخ الاحتياطي لقاعدة البيانات فقط)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+BackupIsTooLargeSend=عذرًا، ملف النسخ الاحتياطي الأخير كبير جدًا بحيث لا يمكن إرساله عبر البريد الإلكتروني
+CleanUnfinishedCronjobShort=تنظيف cronjob غير المكتمل
+CleanUnfinishedCronjob=عالقة cronjob النظيفة في المعالجة عندما لم تعد العملية قيد التشغيل
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=منظف البيانات ومجهول الهوية
 JobXMustBeEnabled=يجب تفعيل الوظيفة %s
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+EmailIfError=البريد الإلكتروني للتحذير من الخطأ
+JobNotFound=لم يتم العثور على الوظيفة %s في قائمة المهام (حاول تعطيل/تمكين نموذج)
+ErrorInBatch=حدث خطأ أثناء تشغيل المهمة %s
 
 # Cron Boxes
 LastExecutedScheduledJob=آخر وظيفة مجدولة تم تنفيذها
 NextScheduledJobExecute=المهمة التالية المجدولة للتنفيذ
 NumberScheduledJobError=عدد الوظائف المجدولة بالخطأ
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+NumberScheduledJobNeverFinished=عدد المهام المجدولة لم تنتهي أبدًا

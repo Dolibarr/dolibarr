@@ -14,5 +14,4 @@ CurrenciesUsed=Divisas utilizadas
 CurrenciesUsed_help_to_add=Agregue las diferentes divisas y tasas que necesita usar en sus propuestas <b> </b>, <b> pedidos </b> etc.
 MulticurrencyReceived=Recibido, divisa original
 MulticurrencyRemainderToTake=Importe restante, divisa original
-MulticurrencyPaymentAmount=Monto del pago, divisa original
 AmountToOthercurrency=Importe para (en la divisa de la cuenta receptora)

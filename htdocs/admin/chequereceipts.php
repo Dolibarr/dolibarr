@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2018  Philippe Grand             <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$name = substr($file, 4, dol_strlen($file) - 16);
 					$classname = preg_replace('/\.php$/', '', $file);
@@ -151,6 +152,7 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
+						'@phan-var-force ModeleNumRefChequeReceipts $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -162,7 +164,7 @@ foreach ($dirmodels as $reldir) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
-							print (empty($module->name) ? $name : $module->name);
+							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 
 							print $module->info($langs);

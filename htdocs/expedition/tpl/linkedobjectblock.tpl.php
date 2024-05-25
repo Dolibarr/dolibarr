@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -42,8 +42,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Shipment"); ?></td>
 		<td><?php echo $objectlink->getNomUrl(1); ?></td>
@@ -61,14 +60,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			if ($object->element != 'commande') {
 				?>
 			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>				<?php
-			}
-			?>
+			} ?>
 	</tr>
 	<?php
 }
 if (count($linkedObjectBlock) > 1) {
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
 		<td class="center"></td>

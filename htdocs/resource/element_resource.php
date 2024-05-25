@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,20 +54,20 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                     = GETPOST('id', 'int'); // resource id
-$element_id             = GETPOST('element_id', 'int'); // element_id
+$id                     = GETPOSTINT('id'); // resource id
+$element_id             = GETPOSTINT('element_id'); // element_id
 $element_ref            = GETPOST('ref', 'alpha'); // element ref
 $element                = GETPOST('element', 'alpha'); // element_type
 $action                 = GETPOST('action', 'alpha');
 $mode                   = GETPOST('mode', 'alpha');
-$lineid                 = GETPOST('lineid', 'int');
-$resource_id            = GETPOST('fk_resource', 'int');
+$lineid                 = GETPOSTINT('lineid');
+$resource_id            = GETPOSTINT('fk_resource');
 $resource_type          = GETPOST('resource_type', 'alpha');
-$busy                   = GETPOST('busy', 'int');
-$mandatory              = GETPOST('mandatory', 'int');
+$busy                   = GETPOSTINT('busy');
+$mandatory              = GETPOSTINT('mandatory');
 $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
-$socid                  = GETPOST('socid', 'int');
+$socid                  = GETPOSTINT('socid');
 
 if (empty($mandatory)) {
 	$mandatory = 0;
@@ -192,9 +193,9 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Update ressource
+	// Update resource
 	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
-		$res = $object->fetch_element_resource($lineid);
+		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
@@ -255,7 +256,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->update_element_resource($user);
+				$result = $object->updateElementResource($user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -333,19 +334,33 @@ if (!$ret) {
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+			$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
+			$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
+			$linkback .= '</a>';
 
 			// Link to other agenda views
 			$out = '';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewCal").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewWeek").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewDay").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
+			$out .= '</a>';
 
 			// Add more views from hooks
 			$parameters = array();
@@ -447,7 +462,8 @@ if (!$ret) {
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
-					$tmplist1 = $act->userassigned; $tmplist2 = array();
+					$tmplist1 = $act->userassigned;
+					$tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {
 							$listofuserid[$val['id']] = $val;
@@ -585,7 +601,7 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);

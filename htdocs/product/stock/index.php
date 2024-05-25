@@ -201,7 +201,7 @@ if ($resql) {
 		$tmplotstatic->eatby = $objp->eatby;
 
 		print '<tr class="oddeven">';
-		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement',  'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax150">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";

@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Dhibiti Usimamizi wa Maarifa (KM) au msingi wa Daw
 # Admin page
 #
 KnowledgeManagementSetup = Usanidi wa Mfumo wa Usimamizi wa Maarifa
-Settings = Mipangilio
 KnowledgeManagementSetupPage = Ukurasa wa kuanzisha Mfumo wa Usimamizi wa Maarifa
 
 
 #
 # About page
 #
-About = Kuhusu
 KnowledgeManagementAbout = Kuhusu Usimamizi wa Maarifa
 KnowledgeManagementAboutPage = Usimamizi wa Maarifa kuhusu ukurasa
 
 KnowledgeManagementArea = Usimamizi wa Maarifa
 MenuKnowledgeRecord = Msingi wa maarifa
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = Orodha ya makala
 NewKnowledgeRecord = Makala mpya
 ValidateReply = Thibitisha suluhisho

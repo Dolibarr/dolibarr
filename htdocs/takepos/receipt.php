@@ -53,10 +53,10 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
-$gift = GETPOST('gift', 'int');
+$gift = GETPOSTINT('gift');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -175,7 +175,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	<tbody>
 	<?php
 	if ($action == 'without_details') {
-		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		$qty = GETPOSTINT('qty') > 0 ? GETPOSTINT('qty') : 1;
 		print '<tr>';
 		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
 		print '<td class="right">' . $qty . '</td>';
@@ -206,8 +206,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 							echo price($line->total_ht, 1);
 										  } ?></td>
 				<?php
-			}
-			?>
+			} ?>
 			<td class="right"><?php if ($gift != 1) {
 				echo price($line->total_ttc, 1);
 							  } ?></td>
@@ -228,23 +227,23 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
-	$vat_groups = array();
+<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
+		$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
 			$vat_groups[$line->tva_tx] = 0;
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
-	// Loop on each VAT group
+		// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) {
-			echo $langs->trans("VAT").' '.vatrate($key, 1);
+				echo $langs->trans("VAT").' '.vatrate($key, 1);
 						  } ?></th>
 		<td align="right"><?php if ($gift != 1) {
-			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+				echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 						  } ?></td>
 	</tr>
 		<?php
@@ -376,7 +375,9 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 
 <script type="text/javascript">
 	<?php
-	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	if ($facid) {
+		print 'window.print();';
+	} //Avoid print when is specimen
 	?>
 </script>
 

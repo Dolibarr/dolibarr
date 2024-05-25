@@ -135,7 +135,7 @@ class modMrp extends DolibarrModules
 		//                             2 => array('MRP_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
+			//1=>array('MRP_MO_ADDON_PDF', 'chaine', 'vinci', 'Name of default PDF model of MO', 0),
 			2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
 			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
 		);
@@ -166,7 +166,7 @@ class modMrp extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -346,7 +346,7 @@ class modMrp extends DolibarrModules
 			'm.fk_user_valid'=>'ValidatedById',
 			'm.fk_user_modif'=>'ModifiedById',
 			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValid',
+			'm.date_valid'=>'DateValidation',
 			'm.note_private'=>'NotePrivate',
 			'm.note_public'=>'Note',
 			'm.fk_soc'=>'Tiers',
@@ -454,8 +454,8 @@ class modMrp extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".((int) $conf->entity),
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('vinci')."' AND type = 'mrp' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('vinci')."','mrp',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

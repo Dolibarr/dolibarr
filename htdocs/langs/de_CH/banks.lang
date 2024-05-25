@@ -33,6 +33,7 @@ BankTransaction=Transaktion
 ListTransactions=Zeige Transaktionen
 ListTransactionsByCategory=Zeige Transaktionen nach Kategorie
 TransactionsToConciliate=Auszugleichende Transaktionen
+TransactionsToConciliateShort=Auszugleichen
 Conciliable=Ausgleichsfähig
 Conciliate=Ausgleichen
 Conciliation=Ausgleich

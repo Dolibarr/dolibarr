@@ -49,7 +49,7 @@ BoxOldestActions=Vecākie notikumi
 BoxLastExpiredServices=Jaunākie %s vecākie kontakti ar aktīviem derīguma termiņa beigām
 BoxTitleLastActionsToDo=Jaunākās %s darbības, ko darīt
 BoxTitleOldestActionsToDo=Vecākie veicamie %s notikumi, kas nav pabeigti
-BoxTitleFutureActions=The next %s upcoming events
+BoxTitleFutureActions=Nākamie %s gaidāmie pasākumi
 BoxTitleLastContracts=Jaunākie %s līgumi, kas tika mainīti
 BoxTitleLastModifiedDonations=Jaunākie %s ziedojumi, kas tika mainīti
 BoxTitleLastModifiedExpenses=Jaunākie %s izdevumu pārskati, kas tika mainīti
@@ -115,7 +115,7 @@ BoxLastCustomerShipments=Pēdējo klientu sūtījumi
 BoxTitleLastCustomerShipments=Jaunākie %s klientu sūtījumi
 BoxTitleLastLeaveRequests=Jaunākie %s labotie atvaļinājumu pieprasījumi
 NoRecordedShipments=Nav reģistrēts klienta sūtījums
-BoxCustomersOutstandingBillReached=Ir sasniegti klienti ar ierobežojumu
+BoxCustomersOutstandingBillReached=Klienti ar neapmaksātu limitu ir sasniegti
 # Pages
 UsersHome=Mājas lietotāji un grupas
 MembersHome=Dalība mājās

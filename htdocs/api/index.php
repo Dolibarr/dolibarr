@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,11 +92,16 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
-call_user_func(function () {
-	$loader = Luracast\Restler\AutoLoader::instance();
-	spl_autoload_register($loader);
-	return $loader;
-});
+call_user_func(
+	/**
+	 * @return Luracast\Restler\AutoLoader
+	 */
+	static function () {
+		$loader = Luracast\Restler\AutoLoader::instance();
+		spl_autoload_register($loader);
+		return $loader;
+	}
+);
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
@@ -112,7 +118,7 @@ if (getDolGlobalString('MAIN_NGINX_FIX')) {
 }
 
 // Enable and test if module Api is enabled
-if (!isModEnabled('api') ) {
+if (!isModEnabled('api')) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -131,7 +137,7 @@ if (preg_match('/api\/index\.php\/explorer/', $url) && getDolGlobalString('API_E
 }
 
 
-// This 2 lines are usefull only if we want to exclude some Urls from the explorer
+// This 2 lines are useful only if we want to exclude some Urls from the explorer
 //use Luracast\Restler\Explorer;
 //Explorer::$excludedPaths = array('/categories');
 
@@ -150,15 +156,18 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
+$hookmanager->initHooks(array('api'));
+
 // When in production mode, a file api/temp/routes.php is created with the API available of current call.
 // But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
 // using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
 // So we force refresh to each call.
-$refreshcache = (!getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? true : false);
+$refreshcache = (getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? false : true);
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		print 'Erreur temp dir api/temp not writable';
+		header('HTTP/1.1 500 temp dir api/temp not writable');
 		exit(0);
 	}
 }
@@ -170,7 +179,7 @@ $api = new DolibarrApi($db, '', $refreshcache);
 if (getDolGlobalString('MAIN_API_DEBUG')) {
 	$r = $api->r;
 	$r->onCall(function () use ($r) {
-		// Don't log Luracast Restler Explorer recources calls
+		// Don't log Luracast Restler Explorer resources calls
 		//if (!preg_match('/^explorer/', $r->url)) {
 		//	'method'  => $api->r->requestMethod,
 		//	'url'     => $api->r->url,
@@ -198,7 +207,7 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 // Restrict API to some IPs
 if (getDolGlobalString('API_RESTRICT_ON_IP')) {
-	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$allowedip = explode(' ', getDolGlobalString('API_RESTRICT_ON_IP'));
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
@@ -231,12 +240,10 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 					$modulenameforenabled = $module;
 					if ($module == 'propale') {
 						$modulenameforenabled = 'propal';
-					}
-					if ($module == 'supplierproposal') {
+					} elseif ($module == 'supplierproposal') {
 						$modulenameforenabled = 'supplier_proposal';
-					}
-					if ($module == 'ficheinter') {
-						$modulenameforenabled = 'ficheinter';
+					} elseif ($module == 'ficheinter') {
+						$modulenameforenabled = 'intervention';
 					}
 
 					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
@@ -343,7 +350,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
 	if (getDolGlobalString('API_ENDPOINT_RULES')) {
-		$listofendpoints = explode(',', $conf->global->API_ENDPOINT_RULES);
+		$listofendpoints = explode(',', getDolGlobalString('API_ENDPOINT_RULES'));
 		$endpointisallowed = false;
 
 		foreach ($listofendpoints as $endpointrule) {
@@ -405,25 +412,25 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algoithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
-$result = $api->r->handle();
+$responsedata = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
-		$result = brotli_compress($result, 11, constant('BROTLI_TEXT'));
+		$result = brotli_compress($responsedata, 11, constant('BROTLI_TEXT'));
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
-		$result = bzcompress($result, 9);
+		$result = bzcompress($responsedata, 9);
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		header('Content-Encoding: gzip');
-		$result = gzencode($result, 9);
+		$result = gzencode($responsedata, 9);
 	} else {
 		header('Content-Encoding: text/html');
 		print "No compression method found. Try to disable compression by adding API_DISABLE_COMPRESSION=1";
@@ -432,6 +439,68 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 
 	// Restler did not output data yet, we return it now
 	echo $result;
+}
+
+if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
+	$error = 0;
+	$db->begin();
+	$userid = DolibarrApiAccess::$user->id;
+
+	$sql = "SELECT up.value";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user_param as up";
+	$sql .= " WHERE up.param = 'API_COUNT_CALL'";
+	$sql .= " AND up.fk_user = ".((int) $userid);
+	$sql .= " AND up.entity = ".((int) $conf->entity);
+
+	$result = $db->query($sql);
+	if ($result) {
+		$updateapi = false;
+		$nbrows = $db->num_rows($result);
+		if ($nbrows == 0) {
+			$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."user_param";
+			$sql2 .= " (fk_user, entity, param, value)";
+			$sql2 .= " VALUES (".((int) $userid).", ".((int) $conf->entity).", 'API_COUNT_CALL', 1)";
+		} else {
+			$updateapi = true;
+			$sql2 = "UPDATE ".MAIN_DB_PREFIX."user_param as up";
+			$sql2 .= " SET up.value = up.value + 1";
+			$sql2 .= " WHERE up.param = 'API_COUNT_CALL'";
+			$sql2 .= " AND up.fk_user = ".((int) $userid);
+			$sql2 .= " AND up.entity = ".((int) $conf->entity);
+		}
+
+		$result2 = $db->query($sql2);
+		if (!$result2) {
+			$modeapicall = $updateapi ? 'updating' : 'inserting';
+			dol_syslog('Error while '.$modeapicall. ' API_COUNT_CALL for user '.$userid, LOG_ERR);
+			$error++;
+		}
+	} else {
+		dol_syslog('Error on select API_COUNT_CALL for user '.$userid, LOG_ERR);
+		$error++;
+	}
+
+	if ($error) {
+		$db->rollback();
+	} else {
+		$db->commit();
+	}
+}
+
+// Call API termination method
+$apiMethodInfo = &$api->r->apiMethodInfo;
+$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+if (method_exists($apiMethodInfo->className, $terminateCall)) {
+	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+	ob_end_flush();
+
+	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+	if (function_exists('fastcgi_finish_request')) {
+		fastcgi_finish_request();
+	}
+
+	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
+	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();

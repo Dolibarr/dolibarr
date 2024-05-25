@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Fiók (a Számlatáblából) alapértelmezés szerint a „felhasználói” harmadik felek számára használatos
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A felhasználói kártyán meghatározott dedikált számla csak alkönyvi könyvelésre szolgál. Ez lesz a főkönyvhöz és az alkönyvi könyvelés alapértelmezett értékeként használatos, ha a felhasználónál nincs dedikált felhasználói fiók.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Alapértelmezés szerint könyvelési számla a bérfizetéshez
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=A fizetés létrehozásakor alapértelmezés szerint hagyja üresen az "Összfizetés automatikus létrehozása" lehetőséget
 Salary=Fizetés
@@ -24,4 +24,10 @@ SalariesStatistics=Bérstatisztika
 SalariesAndPayments=Bérek és kifizetések
 ConfirmDeleteSalaryPayment=Törölni szeretné ezt a fizetési kifizetést?
 FillFieldFirst=Először töltse ki az alkalmazott mezőt
-UpdateAmountWithLastSalary=Set amount of last salary
+UpdateAmountWithLastSalary=Állítsa be az utolsó fizetés összegét
+MakeTransferRequest=Indítsa el az átviteli kérelmet
+VirementOrder=Hitelátutalási kérelem
+BankTransferAmount=Az átutalás összege
+WithdrawalReceipt=Átutalási megbízás
+OrderWaiting=Függőben megrendelés
+FillEndOfMonth=Töltse ki a hónap végével

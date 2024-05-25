@@ -20,7 +20,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
@@ -61,19 +61,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 .info-box:not(.info-box-kanban) .progress .progress-bar {
-		float: left;
-		width: 0;
-		height: 100%;
-		font-size: 12px;
-		line-height: 20px;
-		color: #fff;
-		text-align: center;
-		background-color: #337ab7;
-		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-		-webkit-transition: width .6s ease;
-		-o-transition: width .6s ease;
-		transition: width .6s ease;
+	float: left;
+	width: 0;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	color: #fff;
+	text-align: center;
+	background-color: #337ab7;
+	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	-webkit-transition: width .6s ease;
+	-o-transition: width .6s ease;
+	transition: width .6s ease;
 }
 .info-box-icon {
 	border-top-left-radius: 2px;
@@ -83,11 +83,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	height: 90px;
+	line-height: 94px;	/* must be same height as min-height of .info-box */
+	height: 94px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
-	line-height: 90px;
 	background: var(--colorbacktitle1) !important;
 }
 
@@ -147,8 +147,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 88px);
-	max-width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 
@@ -240,7 +240,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -285,6 +288,16 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-text{
 	font-size: 0.92em;
 }
+/* Force values for small screen 480 */
+@media only screen and (max-width: 480px)
+{
+	.info-box-text {
+		font-size: 0.82em;
+	}
+	.info-box-line {
+		line-height: 1.25em;
+	}
+}
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
 
@@ -313,7 +326,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -502,6 +515,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
 }
+.box-flex-container-columns {
+	display: flex; /* or inline-flex */
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+.box-flex-container-column {
+	flex-grow: 1;
+	}
+.box-flex-container-column:not(:last-of-type) {
+	border-right: 1px solid #AAA;
+}
 
 .box-flex-grow-zero {
 	flex-grow: 0 !important;
@@ -511,7 +536,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-	width: 280px;
+	width: 290px;
 }
 .box-flex-item.filler {
 	height: 0;
@@ -537,11 +562,26 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
+	.box-flex-item {
+		width: 280px;
+	}
 }
+
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}
+
+
+
 
 .info-box-module .info-box-content {
 	height: 98px;
@@ -552,7 +592,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 */
 
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.box-flex-container {
 		margin: 0 0 0 0px !important;
@@ -575,5 +615,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.info-box {
 		border: 1px solid #e0e0e0;
+	}
+
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 98px);
+		max-width: calc(100% - 88px);
 	}
 }

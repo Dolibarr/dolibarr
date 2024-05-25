@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
@@ -24,38 +20,29 @@ Partnerships=Partnerships
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
 # Menu
-#
 NewPartnership=New Partnership
 NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=List of partnership
-
-#
 # Admin page
-#
 PartnershipSetup=Partnership setup
 PartnershipAbout=About Partnership
 PartnershipAboutPage=Partnership about page
 partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Check of website referring
 ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
 PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
-
-#
 # Object
-#
 DeletePartnership=Delete a partnership
 PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
 PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnership already exist
 ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
@@ -68,32 +55,22 @@ PartnershipAccepted=Accepted
 PartnershipRefused=Refused
 PartnershipCanceled=Canceled
 PartnershipManagedFor=Partners are
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
 SendingEmailOnPartnershipRefused=Partnership refused
 SendingEmailOnPartnershipAccepted=Partnership accepted
 SendingEmailOnPartnershipCanceled=Partnership canceled
-
 YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
 YourPartnershipRefusedTopic=Partnership refused
 YourPartnershipAcceptedTopic=Partnership accepted
 YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We would like to inform you that your partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership is missing). Contact us by email if this is an error.
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused. May be a prerequisite is missing. Contact us if you need more information.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled. May be a prerequisite is missing. Contact us if you need more information.
-
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
 CountLastUrlCheckError=Number of errors for last URL check
 LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Reason for declining or canceling
-
 NewPartnershipRequest=New partnership request
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
-ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s 
-
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
 IPOfApplicant=IP of applicant
-

@@ -43,8 +43,8 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
@@ -60,10 +60,10 @@ $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endda
 // Quarter
 $q = '';
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -120,14 +120,14 @@ if (empty($min)) {
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = !getDolGlobalString('TAX_MODE') ? 0 : $conf->global->TAX_MODE;
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -159,8 +159,8 @@ foreach ($listofparams as $param) {
 
 llxHeader('', $langs->trans("TurnoverReport"), '', '', 0, 0, '', '', $morequerystring);
 
-$exportlink="";
-$namelink="";
+$exportlink = "";
+$namelink = "";
 //print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
@@ -265,7 +265,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
 	$description .= $langs->trans("RulesCAIn");
@@ -300,11 +300,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 		$i++;
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("TotalHT").'</b></td></tr>';
@@ -314,7 +314,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -350,11 +350,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
 			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
-				$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+				$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) {
 					$j -= 12;
 				}
-				$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
+				$monthj = 'month'.str_pad((string) $j, 2, '0', STR_PAD_LEFT);
 				print '<td class="right" width="6%">'.price($obj->$monthj).'</td>';
 				$totalpermonth[$j] = (empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j]) + $obj->$monthj;
 			}
@@ -369,14 +369,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="left"></td>';
 		print '<td></td>';
 		for ($i = 0; $i < 12; $i++) {
-			$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+			$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) {
 				$j -= 12;
 			}
-			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">'.price($totalpermonth[$j]).'</td>';
+			$monthj = 'month'.str_pad((string) $j, 2, '0', STR_PAD_LEFT);
+			print '<td class="right" width="6%">'.price((empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j])).'</td>';
 		}
-		print '<td class="right" width="6%"><b>'.price($totalpermonth['total']).'</b></td>';
+		print '<td class="right" width="6%"><b>'.price((empty($totalpermonth['total']) ? 0 : $totalpermonth['total'])).'</b></td>';
 		print '</tr>';
 	} else {
 		print $db->lasterror(); // Show last sql error
@@ -387,11 +387,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 		$i++;
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("TotalHT").'</b></td></tr>';
@@ -401,7 +401,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
+		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql2 .= "  SUM(ffd.total_ht) as total";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -437,11 +437,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
 			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
-				$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+				$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) {
 					$j -= 12;
 				}
-				$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
+				$monthj = 'month'.str_pad((string) $j, 2, '0', STR_PAD_LEFT);
 				print '<td class="right" width="6%">'.price($obj->$monthj).'</td>';
 				$totalpermonth[$j] = (empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j]) + $obj->$monthj;
 			}
@@ -456,11 +456,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="left"></td>';
 		print '<td></td>';
 		for ($i = 0; $i < 12; $i++) {
-			$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+			$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) {
 				$j -= 12;
 			}
-			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
+			$monthj = 'month'.str_pad((string) $j, 2, '0', STR_PAD_LEFT);
 			print '<td class="right" width="6%">'.price(empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j]).'</td>';
 		}
 		print '<td class="right" width="6%"><b>'.price(empty($totalpermonth['total']) ? 0 : $totalpermonth['total']).'</b></td>';

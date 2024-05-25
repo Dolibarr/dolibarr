@@ -39,17 +39,6 @@ class box_produits extends ModeleBoxes
 	public $depends = array("produit");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -57,7 +46,7 @@ class box_produits extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -150,9 +139,9 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 					$productstatic->date_modification = $datem;
 
-					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 					if ($productstatic->isService()) {
-						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -170,7 +159,7 @@ class box_produits extends ModeleBoxes
 					if ($usercancreadprice) {
 						if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 							$price_base_type = $langs->trans($objp->price_base_type);
-							$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+							$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 						} else {
 							//Parse the dynamic price
 							$productstatic->fetch($objp->rowid, '', '', 1);
@@ -235,8 +224,8 @@ class box_produits extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

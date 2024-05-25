@@ -20,13 +20,10 @@
 ModuleEventOrganizationName = Organisation d'événements
 EventOrganizationDescription = Organisation d’événements par le biais du module Projet
 EventOrganizationDescriptionLong= Gérer l'organisation d'un événement (spectacle, conférences, participants ou intervenants, avec des pages publiques pour suggestion, vote ou inscription)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Événements organisés
 EventOrganizationConferenceOrBoothMenuLeft = Conférence ou stand
-
 PaymentEvent=Paiement de l'événement
+EventFee=Frais d'événement
 
 #
 # Admin page
@@ -34,7 +31,6 @@ PaymentEvent=Paiement de l'événement
 NewRegistration=Inscription
 EventOrganizationSetup=Configuration de l’Organisation d’événements
 EventOrganization=Organisation d'événements
-Settings=Paramètres
 EventOrganizationSetupPage = Page de configuration de l’Organisation d’événements
 EVENTORGANIZATION_TASK_LABEL = Libellé des tâches à créer automatiquement lors de la validation du projet
 EVENTORGANIZATION_TASK_LABELTooltip = Lorsque vous validez un événement à organiser, certaines tâches peuvent être créées automatiquement dans le projet <br><br> Par exemple: <br> Envoyer Appel à conférences <br> Envoyer Appel à Kiosques <br> Valider les suggestions des conférences <br> Valider les demandes de stand <br> Ouvrir les inscriptions aux participants <br> Envoyer un rappel de l'événement aux conférenciers <br> Envoyer un rappel de l'événement aux hôtes de stands<br> Envoyer un rappel de l'événement aux participants
@@ -89,10 +85,11 @@ PriceOfRegistration=Prix de l'inscription
 PriceOfRegistrationHelp=Montant à payer pour l'enregistrement d'un participant à l'événement
 PriceOfBooth=Prix d’inscription pour un stand
 PriceOfBoothHelp=Prix d’inscription pour un stand
+EventOrganizationICSLinkProject=Lien ICS pour l'événement
 EventOrganizationICSLink=Lien ICS pour les conférences
-ConferenceOrBoothInformation=Renseignements sur la conférence ou le stand
+ConferenceOrBoothInformation=Informations sur la conférence ou sur le stand
 Attendees=Participants
-ListOfAttendeesOfEvent=Liste des participant à l'événement
+ListOfAttendeesOfEvent=Liste des participants à l'événement
 DownloadICSLink = Télécharger le lien ICS
 EVENTORGANIZATION_SECUREKEY = Graine pour sécuriser la clé de la page d'inscription publique pour suggérer une conférence
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
@@ -175,6 +172,7 @@ DateEndEvent=Date de fin de l'événement
 ModifyStatus=Modifier le statut
 ConfirmModifyStatus=Confirmer la modification du statut
 ConfirmModifyStatusQuestion=Êtes-vous sûr de vouloir modifier le %s enregistrement(s) sélectionné(s) ?
-RecordsUpdated = %s enregistrement(s) mis à jour
-RecordUpdated = Enregistrement mis à jour
-NoRecordUpdated = Aucun enregistrement mis à jour
+RecordsUpdated=%s enregistrement(s) mis à jour
+RecordUpdated=Enregistrement mis à jour
+NoRecordUpdated=Aucun enregistrement mis à jour
+ProfitPerValidatedAttendee=Bénéfice par participant

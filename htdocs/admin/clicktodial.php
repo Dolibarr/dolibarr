@@ -89,7 +89,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
@@ -129,7 +129,6 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Url for CIDLookup
 //print '<div class="div-table-responsive-no-min">';
-//print $langs->trans("URLToLaunchCronJobs").':<br>';
 $url = $urlwithroot.'/public/clicktodial/cidlookup.php?securitykey='.getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP', 'ValueToDefine').'&phone=...';
 //print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 //print '</div>';

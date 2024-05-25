@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
- * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
+ * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,8 +248,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)) . '-' . $newfiletmp;
 					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -259,6 +259,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				$file = $dir . '/' . $filename;
 				$object->builddoc_filename = $filename; // For triggers
+				$object->context['builddoc_filename'] = $filename; // For triggers
 				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
@@ -317,28 +318,39 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
 					try {
-						$listlines = $odfHandler->setSegment('companycontacts');
-
-						foreach ($contact_arrray as $array_key => $contact_id) {
-							$res_contact = $contactstatic->fetch($contact_id);
-							if ((int) $res_contact > 0) {
-								$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-								foreach ($tmparray as $key => $val) {
-									try {
-										$listlines->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
-									} catch (SegmentException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
-									}
-								}
-								$listlines->merge();
-							} else {
-								$this->error = $contactstatic->error;
-								dol_syslog($this->error, LOG_WARNING);
-							}
+						$foundtagforlines = 1;
+						try {
+							$listlines = $odfHandler->setSegment('companycontacts');
+						} catch (OdfExceptionSegmentNotFound $e) {
+							// We may arrive here if tags for lines not present into template
+							$foundtagforlines = 0;
+							dol_syslog($e->getMessage(), LOG_INFO);
+						} catch (OdfException $e) {
+							$foundtagforlines = 0;
+							dol_syslog($e->getMessage(), LOG_INFO);
 						}
-						$odfHandler->mergeSegment($listlines);
+						if ($foundtagforlines) {
+							foreach ($contact_arrray as $array_key => $contact_id) {
+								$res_contact = $contactstatic->fetch($contact_id);
+								if ((int) $res_contact > 0) {
+									$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+									foreach ($tmparray as $key => $val) {
+										try {
+											$listlines->setVars($key, $val, true, 'UTF-8');
+										} catch (OdfException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										} catch (SegmentException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										}
+									}
+									$listlines->merge();
+								} else {
+									$this->error = $contactstatic->error;
+									dol_syslog($this->error, LOG_WARNING);
+								}
+							}
+							$odfHandler->mergeSegment($listlines);
+						}
 					} catch (OdfException $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
@@ -369,8 +381,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {

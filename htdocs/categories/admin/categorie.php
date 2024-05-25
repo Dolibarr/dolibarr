@@ -58,7 +58,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
-		 setEventMessages($db->lasterror(), null, 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 

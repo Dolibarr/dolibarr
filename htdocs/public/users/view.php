@@ -49,7 +49,7 @@ $mode     = GETPOST('mode', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $backtopage = '';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekey = GETPOST('securekey', 'alpha');
 $suffix = GETPOST('suffix');
 
@@ -146,13 +146,14 @@ if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$object->user_mobile = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
-	$object->birth = '';
-}
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
-	$object->socialnetworks = '';
+	$object->socialnetworks = [];
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+// By default, personal address not visible
+if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+	$object->birth = null;
+}
+if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 	$object->address = '';
 	$object->town = '';
 	$object->zip = '';
@@ -317,6 +318,18 @@ if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $o
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
 	$usersection .= '</div>';
 }
+if (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) && !is_null($object->birth)) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'calendar', 'class="pictofixedwidth"');
+	$usersection .= dol_print_date($object->birth);
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'state', 'class="pictofixedwidth"');
+	$usersection .= dol_print_address(dol_format_address($object, 0, "\n", $langs), 'map', 'user', $object->id, 1);
+	$usersection .= '</div>';
+}
 
 // Social networks
 if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
@@ -402,10 +415,10 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$logosmall = $mysoc->logo_squarred_small ? $mysoc->logo_squarred_small : $mysoc->logo_small;
 	$logo = $mysoc->logo_squarred ? $mysoc->logo_squarred : $mysoc->logo;
 	$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
-		$logosmall = $conf->global->$paramlogo;
+	if (getDolGlobalString($paramlogo)) {
+		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_USER_LOGO')) {
-		$logosmall = $conf->global->ONLINE_USER_LOGO;
+		$logosmall = getDolGlobalString('ONLINE_USER_LOGO');
 	}
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo

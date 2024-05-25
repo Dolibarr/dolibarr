@@ -13,15 +13,18 @@ Install rector with composer
 composer install
 ```
 
+
 #### Usage
 
 ##### To make changes (Add --dry-run for test mode only)
 ```shell
+cd dev/tools/rector
 ./vendor/bin/rector process --dry-run
 ```
 
 ##### To make changes on a given directory
 
 ```shell
+cd dev/tools/rector
 ./vendor/bin/rector process [--dry-run] [--clear-cache] ../../../htdocs/core/
 ```

@@ -26,9 +26,9 @@
 // $object must be defined
 // $permissiondellink must be defined
 
-$dellinkid = GETPOST('dellinkid', 'int');
+$dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOST('idtolinkto', 'int');
+$addlinkid = GETPOSTINT('idtolinkto');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
@@ -51,7 +51,9 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			$object->fetch($id);
 			$object->fetch_thirdparty();
 			$result = $object->add_object_linked($addlink, $objecttmp->id);
-			if (isset($_POST['reftolinkto'])) unset($_POST['reftolinkto']);
+			if (isset($_POST['reftolinkto'])) {
+				unset($_POST['reftolinkto']);
+			}
 		} elseif ($ret < 0) {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 		} else {

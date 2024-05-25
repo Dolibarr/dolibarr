@@ -30,21 +30,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_supplier_orders extends ModeleBoxes
 {
-
 	public $boxcode = "latestsupplierorders";
 	public $boximg = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrders";
 	public $depends = array("fournisseur");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -92,12 +81,12 @@ class box_supplier_orders extends ModeleBoxes
 			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -170,7 +159,7 @@ class box_supplier_orders extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
-						'text' => $langs->trans("NoSupplierOrder"),
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</span>',
 					);
 				}
 

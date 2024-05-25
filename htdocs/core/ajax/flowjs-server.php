@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +74,6 @@ if (!empty($conf->$module->dir_temp)) {
 
 top_httphead();
 
-dol_syslog(join(',', $_GET));
-
 $result = false;
 
 if (!empty($upload_dir)) {
@@ -93,7 +92,7 @@ if ($module != "test" && !isModEnabled($module)) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	$chunk_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 	if (file_exists($chunk_file)) {
-		 header("HTTP/1.0 200 Ok");
+		header("HTTP/1.0 200 Ok");
 	} else {
 		header("HTTP/1.0 404 Not Found");
 	}
@@ -103,28 +102,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		echo json_encode('File '.$flowIdentifier.' was already uploaded');
 		header("HTTP/1.0 200 Ok");
 		die();
-	} elseif (!empty($_FILES)) foreach ($_FILES as $file) {
-		// check the error status
-		if ($file['error'] != 0) {
-			dol_syslog('error '.$file['error'].' in file '.$flowFilename);
-			continue;
-		}
+	} elseif (!empty($_FILES)) {
+		foreach ($_FILES as $file) {
+			// check the error status
+			if ($file['error'] != 0) {
+				dol_syslog('error '.$file['error'].' in file '.$flowFilename);
+				continue;
+			}
 
-		// init the destination file (format <filename.ext>.part<#chunk>
-		// the file is stored in a temporary directory
-		$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
+			// init the destination file (format <filename.ext>.part<#chunk>
+			// the file is stored in a temporary directory
+			$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 
-		// create the temporary directory
-		if (!dol_is_dir($temp_dir)) {
-			dol_mkdir($temp_dir);
-		}
+			// create the temporary directory
+			if (!dol_is_dir($temp_dir)) {
+				dol_mkdir($temp_dir);
+			}
 
-		// move the temporary file
-		if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
-			dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
-		} else {
-			// check if all the parts present, and create the final destination file
-			$result = createFileFromChunks($temp_dir, $upload_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
+			// move the temporary file
+			if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
+				dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
+			} else {
+				// check if all the parts present, and create the final destination file
+				$result = createFileFromChunks($temp_dir, $upload_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
+			}
 		}
 	}
 }
@@ -160,10 +161,10 @@ function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $to
 
 	// check that all the parts are present
 	// the size of the last part is between chunkSize and 2*$chunkSize
-	if ($total_files * $chunkSize >=  ($totalSize - $chunkSize + 1)) {
+	if ($total_files * (float) $chunkSize >=  ((float) $totalSize - (float) $chunkSize + 1)) {
 		// create the final destination file
 		if (($fp = fopen($upload_dir.'/'.$fileName, 'w')) !== false) {
-			for ($i=1; $i<=$total_files; $i++) {
+			for ($i = 1; $i <= $total_files; $i++) {
 				fwrite($fp, file_get_contents($temp_dir.'/'.$fileName.'.part'.$i));
 				dol_syslog('writing chunk '.$i);
 			}

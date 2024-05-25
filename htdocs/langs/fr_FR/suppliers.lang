@@ -8,7 +8,6 @@ NewSupplierInvoice = Nouvelle facture du vendeur
 History=Historique
 ListOfSuppliers=Liste des fournisseurs
 ShowSupplier=Afficher fournisseur
-OrderDate=Date de commande
 BuyingPriceMin=Meilleur prix d'achat
 BuyingPriceMinShort=Meilleur prix d'achat
 TotalBuyingPriceMinShort=Total des prix d'achat des sous-produits

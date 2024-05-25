@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Non (non é preciso lote/serie)
 ProductStatusOnBatchShort=Lote
 ProductStatusOnSerialShort=Serie
 ProductStatusNotOnBatchShort=Non
+BatchSellOrEatByMandatoryList=Facer %s ou %s obrigatorio
+BatchSellOrEatByMandatoryNone=Nada
+BatchSellOrEatByMandatoryAll=%s e %s
 Batch=Lote/Serie
 atleast1batchfield=Data de caducidade ou data de venda ou número de Lote/Serie
 batch_number=Número Lote/Serie
@@ -45,3 +48,5 @@ OutOfOrder=Fora de servizo
 InWorkingOrder=En funcionamento
 ToReplace=Substituir
 CantMoveNonExistantSerial=Erro. Solicita un movemento nun rexistro para unha serie que xa non existe. Pode levar o mesmo número de serie no mesmo almacén varias veces no mesmo envío ou que foi usado por outro envío. Elimine este envío e prepare outro.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparación de execución incompleta da táboa de lote co parámetro '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Requírese corrección de stock porque o número de serie é único.
