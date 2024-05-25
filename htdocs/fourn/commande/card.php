@@ -2065,6 +2065,12 @@ if ($action == 'create') {
 				'morecss' => 'minwidth300'
 			)
 		);
+		if (!empty($conf->notification->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new	Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('ORDER_SUPPLIER_CANCEL', $object->socid, $object);
+		}
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("Cancel"), $langs->trans("ConfirmCancelThisOrder", $object->ref), "confirm_cancel", $formquestion, 0, 1);
 	}
 
