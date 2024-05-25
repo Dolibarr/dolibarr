@@ -719,9 +719,8 @@ if ($search_date_signature_start) {
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
 }
-
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($search_note_public)."%'";
+	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 // Search on user
 if ($search_user > 0) {
