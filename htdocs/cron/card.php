@@ -481,9 +481,22 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		$input .= ' />';
 	}
-	$input .= "<label for=\"frequency_month\">".$langs->trans('Months')."</label>";
+	$input .= '<label for="frequency_month">'.$langs->trans('Months')."</label>";
 	print $input;
 
+	print "</td>";
+	print "<td>";
+	print "</td>";
+	print "</tr>\n";
+
+	// Priority
+	print "<tr><td>";
+	print $langs->trans('CronPriority')."</td>";
+	$priority = 0;
+	if (!empty($object->priority)) {
+		$priority = $object->priority;
+	}
+	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -508,18 +521,6 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
-	print "</td>";
-	print "<td>";
-	print "</td>";
-	print "</tr>\n";
-
-	print "<tr><td>";
-	print $langs->trans('CronPriority')."</td>";
-	$priority = 0;
-	if (!empty($object->priority)) {
-		$priority = $object->priority;
-	}
-	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -680,6 +681,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
+	// Priority
+	print "<tr><td>";
+	print $langs->trans('CronPriority')."</td>";
+	print "<td>".$object->priority;
+	print "</td></tr>";
+
 	print '<tr><td>';
 	print $langs->trans('CronDtStart')."</td><td>";
 	if (!empty($object->datestart)) {
@@ -692,11 +699,6 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->textwithpicto(dol_print_date($object->dateend, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	}
-	print "</td></tr>";
-
-	print "<tr><td>";
-	print $langs->trans('CronPriority')."</td>";
-	print "<td>".$object->priority;
 	print "</td></tr>";
 
 	print "<tr><td>";
