@@ -184,12 +184,11 @@ if (isModEnabled('category')) {
 	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
-if (GETPOSTISARRAY('search_status')) {
+if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
-
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Project($db);
@@ -488,8 +487,7 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-$distinct = 'DISTINCT'; // We add distinct until filter on contact of project or task is implemented with AND EXISTS
-$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
+$sql = "SELECT p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
@@ -517,22 +515,12 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-// FIXME Move the left join into the where exists
-if ($search_sale > 0) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-}
-if ($search_project_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
-}
-if ($search_project_contact > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
-}
 
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -628,20 +616,21 @@ if ($search_opp_status) {
 if ($search_public != '') {
 	$sql .= " AND p.public = ".((int) $search_public);
 }
-// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
-//if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);
-if ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".((int) $search_sale);
-}
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 if ($search_project_user > 0) {
-	// TODO Replace this with a EXISTS and remove the link to table + DISTINCT
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
+	$sql .= " AND EXISTS (SELECT ecp.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecp WHERE ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user).")";
 }
 if ($search_project_contact > 0) {
-	// TODO Replace this with a EXISTS and remove the link to table + DISTINCT
-	$sql .= " AND ecp_contact.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttypeexternal))).") AND ecp_contact.element_id = p.rowid AND ecp_contact.fk_socpeople = ".((int) $search_project_contact);
+	$sql .= " AND EXISTS (SELECT ecp_contact.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecp_contact WHERE ecp_contact.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttypeexternal))).") AND ecp_contact.element_id = p.rowid AND ecp_contact.fk_socpeople = ".((int) $search_project_contact).")";
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
