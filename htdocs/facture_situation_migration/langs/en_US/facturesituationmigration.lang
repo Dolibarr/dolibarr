@@ -1,0 +1,54 @@
+# Copyright (C) 2023 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleFactureSituationMigrationName'
+ModuleFactureSituationMigrationName = FactureSituationMigration
+# Module description 'ModuleFactureSituationMigrationDesc'
+ModuleFactureSituationMigrationDesc = FactureSituationMigration description
+
+#
+# Admin page
+#
+FactureSituationMigrationSetup = FactureSituationMigration setup
+Settings = Settings
+FactureSituationMigrationSetupPage = FactureSituationMigration setup page
+FACTURESITUATIONMIGRATION_MYPARAM1 = My param 1
+FACTURESITUATIONMIGRATION_MYPARAM1Tooltip = My param 1 tooltip
+FACTURESITUATIONMIGRATION_MYPARAM2=My param 2
+FACTURESITUATIONMIGRATION_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+FactureSituationMigrationAbout = About FactureSituationMigration
+FactureSituationMigrationAboutPage = FactureSituationMigration about page
+
+#
+# Sample page
+#
+FactureSituationMigrationArea = Home FactureSituationMigration
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description

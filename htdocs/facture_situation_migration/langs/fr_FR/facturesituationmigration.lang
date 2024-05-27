@@ -1,0 +1,63 @@
+# Copyright (C) 2023 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleFactureSituationMigrationName'
+ModuleFactureSituationMigrationName = FactureSituationMigration
+# Module description 'ModuleFactureSituationMigrationDesc'
+ModuleFactureSituationMigrationDesc = FactureSituationMigration description
+
+#
+# Admin page
+#
+FactureSituationMigrationSetup = FactureSituationMigration setup
+Settings = Settings
+FactureSituationMigrationSetupPage = Cette page permet de migrer les données des factures de situation de la table llx_facturedet. Il est vivement recommandé de ne pas créer de nouvelles factures durant le processus.<br> Il est également conseillé de mettre la constante MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL à 1 le temps de réaliser les manipulations.
+
+FactureSituationMigrationStep1Desc = Sauvegarde de la table llx_facturedet dans la table llx_facture_situation_migration_backup
+FactureSituationMigrationStep2Desc = Préparation d'une table (llx_facture_situation_migration) pour checker ce qui est fait ou non
+FactureSituationMigrationStep3Desc = Conversion des données de la table llx_facturedet
+FactureSituationMigrationStep4Desc = Rollback / Confirmation
+FactureSituationMigrationCyclesDone = Cycles de facture traités
+
+
+#
+# About page
+#
+About = About
+FactureSituationMigrationAbout = About FactureSituationMigration
+FactureSituationMigrationAboutPage = FactureSituationMigration about page
+
+#
+# Sample page
+#
+FactureSituationMigrationArea = Home FactureSituationMigration
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
+RetryAllIsNotDone = Quelques factures n'ont pas été migrées:
+FACTURESITUATIONMIGRATION_CURRENT_YEAR = Migrer uniquement les séries de factures de situations dont le cycle n'est pas terminé
+FACTURESITUATIONMIGRATION_CURRENT_YEARTooltip = En bref on ne touche pas aux vieille factures de situations dont le cycle a été terminé dans les exercices précédents. ATTENTION: si vous activez cette option la visualiation des vieilles factures de situation sera incorrecte (pourcentages cumulés)...
+FACTURESITUATIONMIGRATION_PERCENT_MORE_100_ERROR = Marquer comme erreur les lignes dont le pourcentage est > 100 pourcent durant la migration
+FACTURESITUATIONMIGRATION_PERCENT_MORE_100_FIX = "Corriger" les lignes > 100 pourcent en les forçant à 100 pourcent
+FACTURESITUATIONMIGRATION_PERCENT_LESS_0_ERROR = Marquer comme erreur les lignes dont le pourcentage est < 0 pourcent durant la migration
+FACTURESITUATIONMIGRATION_PERCENT_LESS_0_FIX = "Corriger" les lignes < 0 pourcent en les forçant à 0 pourcent
