@@ -758,6 +758,37 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight("user", "user", "write")) {
+		if (!GETPOST('clone_name')) {
+			setEventMessages($langs->trans('NoCloneWithoutName'), null, 'errors');
+		} else {
+			if ($object->id > 0) {
+				$error = 0;
+				$clone = dol_clone($object, 1);
+
+				$clone->id = 0;
+				$clone->email = '';
+				$clone->entity = 1;
+
+				$parts = explode(' ', GETPOST('clone_name'), 2);
+				$clone->firstname = $parts[0];
+				$clone->lastname = isset($parts[1]) ? $parts[1] : '';
+
+				$clone->login = substr($parts[0], 0, 1).$parts[1];
+
+				$db->begin();
+				$clone->context['createfromclone'] = 'createfromclone';
+				$id = $clone->create($user);
+				var_dump($id);exit;
+				if ($id > 0) {
+				}
+			}
+		}
+	}
+
 	// Actions to send emails
 	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
@@ -1529,6 +1560,23 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
+		/**
+		 * Confirmation clone
+		 */
+		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
+			// Define confirmation messages
+			$formquestionclone = array(
+			'text' => $langs->trans("ConfirmClone"),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'value' => $tmpcode, 'morecss' => 'width200'),
+			1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
+			2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
+			3 => array('type' => 'checkbox', 'name' => 'clone_tags', 'label' => $langs->trans('CloneUserTags'), 'value' => 0)
+			);
+
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmUserClone', $object->firstname.' '.$object->lastname), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+		}
+
 		/*
 		 * View mode
 		 */
@@ -2032,6 +2080,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 						'class' => 'classfortooltip'
 					)
 				);
+				//clone user
+				if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
+					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+						$cloneUserUrl = '';
+						$cloneButtonId = 'action-clone';
+					}
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+				}
+
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
