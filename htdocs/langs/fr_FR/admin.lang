@@ -1471,7 +1471,6 @@ PaymentsNumberingModule=Modèle de numérotation des paiements
 SuppliersPayment=Règlements fournisseurs
 SupplierPaymentSetup=Configuration des règlements fournisseurs
 InvoiceCheckPosteriorDate=Vérifier la facture avant validation
-InvoiceNoTruncateIBANForPDFInvoices = Ne pas tronquer l'IBAN lors de la génération du PDF des factures avec ordre de prélèvement
 InvoiceCheckPosteriorDateHelp=Valider une facture est interdit si sa date est antérieur à la date de la dernière facture du même type
 InvoiceOptionCategoryOfOperations=Afficher la mention "catégorie d'opérations" sur la facture.
 InvoiceOptionCategoryOfOperationsHelp=Selon les cas, la mention apparaîtra sous la forme : <br> - Catégorie d'opérations : Livraison de biens <br> - Catégorie d'opérations : Prestation de services <br> - Catégorie d'opérations : Mixte - Livraison de biens & prestation de services

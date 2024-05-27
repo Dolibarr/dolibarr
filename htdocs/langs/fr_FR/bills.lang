@@ -466,7 +466,6 @@ PaymentTypeVIR=Virement bancaire
 PaymentTypeShortVIR=Virement bancaire
 PaymentTypePRE=Ordre de prélèvement
 PaymentTypePREdetails=(sur compte %s...)
-PaymentTypePREfulldetails=(sur compte %s)
 PaymentTypeShortPRE=Ordre de prélèvement
 PaymentTypeLIQ=Espèce
 PaymentTypeShortLIQ=Espèce

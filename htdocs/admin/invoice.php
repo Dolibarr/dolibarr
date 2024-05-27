@@ -832,14 +832,6 @@ print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
-
-// Don't Truncate the IBAN when generating the PDF of invoices with direct debit order
-print '<tr class="oddeven">';
-print '<td>' . $langs->trans("InvoiceNoTruncateIBANForPDFInvoices") . '</td>';
-print '<td class="left" colspan="2">';
-print ajax_constantonoff('INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES', array(), null, 0, 0, 0, 2, 0, 1);
-print '</td></tr>';
-
 print '</table>';
 print '</div>';
 
