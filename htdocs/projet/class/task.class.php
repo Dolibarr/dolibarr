@@ -1505,6 +1505,14 @@ class Task extends CommonObjectLine
 				$this->error = $this->db->lasterror();
 				$ret = -2;
 			}
+
+			// update note in table
+			$nsql = "UPDATE ".MAIN_DB_PREFIX."element_time SET note = '".$this->db->escape($timespent->note)."'";
+			$nsql .= " WHERE rowid = ".((int) $ret);
+			if (!$this->db->query($nsql)) {
+				$this->error = $this->db->lasterror();
+				$ret = -2;
+			}
 		}
 
 		if ($ret > 0) {
@@ -1899,6 +1907,12 @@ class Task extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 		if ($timespent->update($user) > 0) {
+			// update note in table
+			$nsql = "UPDATE ".MAIN_DB_PREFIX."element_time SET note = '".$this->db->escape($timespent->note)."'";
+			$nsql .= " WHERE rowid = ".((int) $this->timespent_id);
+			if (!$this->db->query($nsql)) {
+				$this->error = $this->db->lasterror();
+			}
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_TIMESPENT_MODIFY', $user);
