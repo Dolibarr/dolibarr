@@ -1431,7 +1431,6 @@ SetToYesIfGroupIsComputationOfOtherGroups=Defina isto como yes se este grupo for
 EnterCalculationRuleIfPreviousFieldIsYes=Insira a regra de cálculo se o campo anterior foi definido como Sim. <br> Por exemplo: <br> CODEGRP1 + CODEGRP2
 SeveralLangugeVariatFound=Várias variantes de idioma encontradas
 COMPANY_DIGITARIA_CLEAN_REGEX=Filtro Regex para valor limpo (COMPANY_DIGITARIA_CLEAN_REGEX)
-COMPANY_DIGITARIA_UNIQUE_CODE=Duplicação não permitida
 GDPRContactDesc=Caso guarde dados pessoais no seu Sistema de Informação, pode indicar aqui o contato responsável pelo Regulamento Geral de Proteção de Dados
 HelpOnTooltipDesc=Coloque texto ou uma chave de conversão aqui para o texto ser exibido em uma dica de ferramenta quando esse campo aparecer em um formulário
 YouCanDeleteFileOnServerWith=Você pode excluir este arquivo no servidor com a linha de comando: <br> %s

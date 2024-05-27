@@ -826,6 +826,7 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 print '</td></tr>';
 
+
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';

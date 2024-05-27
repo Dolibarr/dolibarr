@@ -1024,12 +1024,6 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
-.nomarginleft {
-	margin-<?php print $left; ?>: unset;
-}
-.nomarginright {
-	margin-<?php print $right; ?>: unset;
-}
 .nowidthimp {
 	width: unset !important;
 }
@@ -1417,6 +1411,9 @@ select.flat.selectlimit {
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
+}
+.nomarginright {
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
@@ -1884,10 +1881,12 @@ maxscreenheightless200 {
 select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 
 
@@ -1928,6 +1927,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 		width: calc(100% - 70px) !important;
 		display: inline-block;
+		min-width: 100px;
 	}
 
 	input.maxwidthinputfileonsmartphone {
@@ -3931,7 +3931,7 @@ div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
-	padding-top: 5px !important;
+	padding-top: 7px !important;
 	padding-bottom: 0px !important;
 }
 

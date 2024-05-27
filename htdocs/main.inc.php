@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -53,26 +53,59 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+/**
+ * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
+ *
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmojiBis()
+ */
+function getArrayOfEmoji()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
 
 /**
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	string		$matches			String of numeric entity
- * @return	string							New value
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @return	string									New value
  */
 function realCharForNumericEntities($matches)
 {
 	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
 	//print  ' $newstringnumentity='.$newstringnumentity;
 
-	if (preg_match('/^x/i', $newstringnumentity)) {
+	if (preg_match('/^x/i', $newstringnumentity)) {		// if numeric is hexadecimal
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	} else {
+		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
+	}
+
+	// The numeric values we want in UTF8 instead of entities because it is emoji
+	$arrayofemojis = getArrayOfEmoji();
+	foreach ($arrayofemojis as $valarray) {
+		if ($newstringnumentity >= hexdec($valarray[0]) && $newstringnumentity <= hexdec($valarray[1])) {
+			// This is a known emoji
+			return html_entity_decode($matches[0], ENT_COMPAT | ENT_HTML5, 'UTF-8');
+		}
 	}
 
 	return '&#'.$matches[1]; // Value will be unchanged because regex was /&#(  )/
@@ -2594,7 +2627,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a valignmiddle" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	            '.$userImage.(empty($user->photo) ? '<!-- no photo so show also the login --><span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2638,7 +2671,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	        </div>
 	    </div>';
 	} else {
-		$btnUser = '<!-- div for user link -->
+		$btnUser = '<!-- div for user link text browser -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="valignmiddle" alt="'.$langs->trans("MyUserCard").'">
 	    	'.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'

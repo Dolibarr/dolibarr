@@ -547,6 +547,14 @@ if (isModEnabled('reception')) {
 print "</td>\n";
 print "</tr>\n";
 
+
+// Disallow to classify billed a supplier order without invoice
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderClassifyBilledWithoutInvoice"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("SupplierOrderClassifyBilledWithoutInvoiceHelp"), 1, 'help') . '</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
+print '</td></tr>';
+
 print '</table></div><br>';
 
 print '</form>';
