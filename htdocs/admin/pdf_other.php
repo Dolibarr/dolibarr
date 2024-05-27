@@ -324,7 +324,6 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 
-
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES"), $langs->trans("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICESMore"));
 	print '</td><td>';
@@ -360,7 +359,6 @@ if (isModEnabled('shipping')) {
 	print '</table>';
 	print '</div>';
 }
-
 
 
 if (isModEnabled('reception')) {
