@@ -817,7 +817,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
