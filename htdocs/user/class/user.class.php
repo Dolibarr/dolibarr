@@ -4205,8 +4205,8 @@ class User extends CommonObject
 
 	/**
 	 * Clone permissions of user
-	 * @param   $fromId   integer    User id
-	 * @param   $toId     integer    User id
+	 * @param int  $fromId   User ID from whom to clone rights
+	 * @param int  $toId     User ID
 	 * @return  integer   Return integer<0 if KO, >0 if OK
 	 */
 	public function clone_rights($fromId, $toId)
