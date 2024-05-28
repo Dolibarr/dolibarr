@@ -787,7 +787,7 @@ if (empty($reshook)) {
 				$id = $clone->create($user);
 				if ($id > 0) {
 					if (GETPOST('clone_rights')) {
-						$result = $clone->clone_rights($object->id, $id);
+						$result = $clone->cloneRights($object->id, $id);
 					}
 
 					if (GETPOST('clone_categories')) {
@@ -2122,13 +2122,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 					)
 				);
 				//clone user
-				if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
-					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						$cloneUserUrl = '';
-						$cloneButtonId = 'action-clone';
-					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+					$cloneUserUrl = '';
+					$cloneButtonId = 'action-clone';
 				}
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
 
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {

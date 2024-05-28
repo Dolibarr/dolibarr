@@ -4205,11 +4205,11 @@ class User extends CommonObject
 
 	/**
 	 * Clone permissions of user
-	 * @param int  $fromId   User ID from whom to clone rights
-	 * @param int  $toId     User ID
-	 * @return  integer   Return integer<0 if KO, >0 if OK
+	 * @param   int  $fromId   User ID from whom to clone rights
+	 * @param   int  $toId     User ID
+	 * @return  int   Return integer<0 if KO, >0 if OK
 	 */
-	public function clone_rights($fromId, $toId)
+	public function cloneRights($fromId, $toId)
 	{
 		if (empty($fromId) || empty($toId)) {
 			return -1;
