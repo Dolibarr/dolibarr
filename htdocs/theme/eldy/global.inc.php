@@ -1,6 +1,6 @@
 <?php
 /*
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -5986,7 +5986,7 @@ a.cke_dialog_ui_button_ok span {
 	color: #333 !important;
 }
 a.cke_button, a.cke_combo_button {
-    height: 18px !important;
+	height: 18px !important;
 }
 
 /* ============================================================================== */
