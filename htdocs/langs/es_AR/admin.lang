@@ -210,7 +210,6 @@ MAIN_MAIL_EMAIL_DKIM_ENABLED=Usa DKIM para generar firma de correo electrónico
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=Dominio de correo electrónico para usar con dkim
 MAIN_DISABLE_ALL_SMS=Deshabilitar todo el envío de SMS (para propósitos de prueba o demostraciones)
 MAIN_SMS_SENDMODE=Método a utilizar para enviar SMS.
-MAIN_MAIL_SMS_FROM=Número de teléfono del remitente predeterminado para el envío de SMS
 UserEmail=Email del usuario
 CompanyEmail=Email de la empresa
 FeatureNotAvailableOnLinux=Característica no disponible en Unix como sistemas. Prueba tu programa de sendmail localmente.

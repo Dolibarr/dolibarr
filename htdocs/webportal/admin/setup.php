@@ -77,33 +77,43 @@ require_once __DIR__ . '/../class/context.class.php';
 $formSetup->newItem('WEBPORTAL_TITLE')->defaultFieldValue = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 
 
-// Enable access for the membership record
-$access_list = array(
-	'hidden' => $langs->trans('WebPortalAccessHidden'),
-	'visible' => $langs->trans('WebPortalAccessVisible'),
-	'edit' => $langs->trans('WebPortalAccessEdit'),
-);
-$item = $formSetup->newItem('WEBPORTAL_MEMBER_CARD_ACCESS');
-$item->setAsSelect($access_list);
-$item->helpText = $langs->transnoentities('WebPortalMemberCardAccessHelp');
-
-// Enable access for the partnership record
-$access_list = array(
-	'hidden' => $langs->trans('WebPortalAccessHidden'),
-	'visible' => $langs->trans('WebPortalAccessVisible'),
-);
-$item = $formSetup->newItem('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
-$item->setAsSelect($access_list);
-$item->helpText = $langs->transnoentities('WebPortalPartnerShipCardAccessHelp');
-
 // Enable access for the proposals
-$formSetup->newItem('WEBPORTAL_PROPAL_LIST_ACCESS')->setAsYesNo();
+if (isModEnabled('propal')) {
+	$formSetup->newItem('WEBPORTAL_PROPAL_LIST_ACCESS')->setAsYesNo();
+}
 
 // Enable access for the orders
-$formSetup->newItem('WEBPORTAL_ORDER_LIST_ACCESS')->setAsYesNo();
+if (isModEnabled('order')) {
+	$formSetup->newItem('WEBPORTAL_ORDER_LIST_ACCESS')->setAsYesNo();
+}
 
 // Enable access for the invoices
-$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+if (isModEnabled('invoice')) {
+	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the partnership record
+if (isModEnabled('partnership')) {
+	$access_list = array(
+		'hidden' => $langs->trans('WebPortalAccessHidden'),
+		'visible' => $langs->trans('WebPortalAccessVisible'),
+	);
+	$item = $formSetup->newItem('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
+	$item->setAsSelect($access_list);
+	$item->helpText = $langs->transnoentities('WebPortalPartnerShipCardAccessHelp');
+}
+
+// Enable access for the membership record
+if (isModEnabled('member')) {
+	$access_list = array(
+		'hidden' => $langs->trans('WebPortalAccessHidden'),
+		'visible' => $langs->trans('WebPortalAccessVisible'),
+		'edit' => $langs->trans('WebPortalAccessEdit'),
+	);
+	$item = $formSetup->newItem('WEBPORTAL_MEMBER_CARD_ACCESS');
+	$item->setAsSelect($access_list);
+	$item->helpText = $langs->transnoentities('WebPortalMemberCardAccessHelp');
+}
 
 // Add logged user
 //$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();

@@ -870,17 +870,18 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 /**
  * Copy a dir to another dir. This include recursive subdirectories.
  *
- * @param	string					$srcfile			Source file (a directory)
- * @param	string					$destfile			Destination file (a directory)
- * @param	string					$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
- * @param 	int						$overwriteifexists	Overwrite file if exists (1 by default)
- * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
- * @param	int						$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]				$excludefileext		Exclude some file extensions
- * @return	int											Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
+ * @param	string					$srcfile				Source file (a directory)
+ * @param	string					$destfile				Destination file (a directory)
+ * @param	string					$newmask				Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
+ * @param 	int						$overwriteifexists		Overwrite file if exists (1 by default)
+ * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	string[]				$excludefileext			Exclude some file extensions
+ * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp or d+timestamp (0 by default)
+ * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null, $excludearchivefiles = 0)
 {
 	$result = 0;
 
@@ -929,7 +930,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 							}
 						}
 						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext);
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext, $excludearchivefiles);
 					}
 				} else {
 					$newfile = $file;
@@ -938,6 +939,13 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 						$extension = pathinfo($file, PATHINFO_EXTENSION);
 						if (in_array($extension, $excludefileext)) {
 							//print "We exclude the file ".$file." because its extension is inside list ".join(', ', $excludefileext); exit;
+							continue;
+						}
+					}
+
+					if ($excludearchivefiles == 1) {
+						$extension = pathinfo($file, PATHINFO_EXTENSION);
+						if (preg_match('/^[v|d]\d+$/', $extension)) {
 							continue;
 						}
 					}
@@ -980,7 +988,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string	$newmask            Mask in octal string for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   string	$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
@@ -1130,7 +1138,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 		}
 
 		if (empty($newmask)) {
-			$newmask = !getDolGlobalString('MAIN_UMASK') ? '0755' : $conf->global->MAIN_UMASK;
+			$newmask = getDolGlobalString('MAIN_UMASK', '0755');
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -2445,8 +2453,12 @@ function dol_uncompress($inputfile, $outputdir)
 			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
 			dol_mkdir(dol_sanitizePathName($outputdir));
 
-			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			try {
+				// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+				$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			} catch (Exception $e) {
+				return array('error' => $e->getMessage());
+			}
 
 			if (!is_array($result) && $result <= 0) {
 				return array('error' => $archive->errorInfo(true));
@@ -3201,6 +3213,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	} elseif ($modulepart == 'payment') {
+			// Wrapping pour les rapport de paiements
+		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->invoice->dir_output)) {
 		// Wrapping pour les rapport de paiements
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3476,10 +3494,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 function dol_filecache($directory, $filename, $object)
 {
 	if (!dol_is_dir($directory)) {
-		dol_mkdir($directory);
+		$result = dol_mkdir($directory);
+		if ($result < -1) {
+			dol_syslog("Failed to create the cache directory ".$directory, LOG_WARNING);
+		}
 	}
 	$cachefile = $directory.$filename;
+
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
+
 	dolChmod($cachefile, '0644');
 }
 
@@ -3684,4 +3707,74 @@ function dragAndDropFileUpload($htmlname)
 	';
 	$out .= "</script>\n";
 	return $out;
+}
+
+/**
+ * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
+ *
+ * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
+ * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
+ * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
+ * @param	string	$moveorcopy			'move' or 'copy'
+ * @return 	bool                    	Returns true if successful, false otherwise.
+ */
+function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+{
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
+	$files_in_directory = glob($base_file_pattern . "*");
+
+	// Extract the modification timestamps for each file
+	$files_with_timestamps = [];
+	foreach ($files_in_directory as $file) {
+		$files_with_timestamps[] = [
+			'file' => $file,
+			'timestamp' => filemtime($file)
+		];
+	}
+
+	// Sort the files by modification date
+	$sorted_files = [];
+	while (count($files_with_timestamps) > 0) {
+		$latest_file = null;
+		$latest_index = null;
+
+		// Find the latest file by timestamp
+		foreach ($files_with_timestamps as $index => $file_info) {
+			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
+				$latest_file = $file_info;
+				$latest_index = $index;
+			}
+		}
+
+		// Add the latest file to the sorted list and remove it from the original list
+		if ($latest_file !== null) {
+			$sorted_files[] = $latest_file['file'];
+			unset($files_with_timestamps[$latest_index]);
+		}
+	}
+
+	// Delete the oldest files to keep only the allowed number of versions
+	if (count($sorted_files) >= $max_versions) {
+		$oldest_files = array_slice($sorted_files, $max_versions - 1);
+		foreach ($oldest_files as $oldest_file) {
+			dol_delete_file($oldest_file);
+		}
+	}
+
+	$timestamp = dol_now('gmt');
+	$new_backup = $filetpl . ".v" . $timestamp;
+
+	// Move or copy the original file to the new backup with the timestamp
+	if ($moveorcopy == 'move') {
+		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+	} else {
+		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+	}
+
+	if (!$result) {
+		return false;
+	}
+
+	return true;
 }

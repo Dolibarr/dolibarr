@@ -26,7 +26,7 @@
 
 /**
  *      \file       htdocs/admin/invoice.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 
@@ -825,6 +825,7 @@ print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 print '</td></tr>';
+
 
 // Allow external download
 print '<tr class="oddeven">';

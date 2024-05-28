@@ -26,7 +26,7 @@
  * 		\defgroup   facture     Module customer invoices
  *      \brief      Module to manage customer invoices
  *      \file       htdocs/core/modules/modFacture.class.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Description and activation file for the module customer invoices
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -487,6 +487,9 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
+
 		$r = 0;
 
 		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));

@@ -36,7 +36,7 @@
 
 /**
  *	\file       htdocs/compta/facture/list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      List of customer invoices
  */
 
@@ -1197,7 +1197,7 @@ if (!empty($search_fac_rec_source_title)) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -2676,8 +2676,8 @@ if ($num > 0) {
 			}
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_public);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_public);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2686,7 +2686,7 @@ if ($num > 0) {
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
 				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_private);
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

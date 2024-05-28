@@ -876,7 +876,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -897,7 +897,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function decrypt($value)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -1019,8 +1019,7 @@ class DoliDBPgsql extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des information des champs de la table
-	 *
+	 *	@return	array				Array with information on table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -1028,22 +1027,21 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as \"Column\",";
+		$sql .= "	infcol.column_name as 'Column',";
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as \"Type\",";
-		$sql .= "	infcol.collation_name as \"Collation\",";
-		$sql .= "	infcol.is_nullable as \"Null\",";
-		$sql .= "	'' as \"Key\",";
-		$sql .= "	infcol.column_default as \"Default\",";
-		$sql .= "	'' as \"Extra\",";
-		$sql .= "	'' as \"Privileges\"";
+		$sql .= "	END as 'Type',";
+		$sql .= "	infcol.collation_name as 'Collation',";
+		$sql .= "	infcol.is_nullable as 'Null',";
+		$sql .= "	'' as 'Key',";
+		$sql .= "	infcol.column_default as 'Default',";
+		$sql .= "	'' as 'Extra',";
+		$sql .= "	'' as 'Privileges'";
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
-		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {

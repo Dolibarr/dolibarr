@@ -25,7 +25,6 @@ SupplierProposalStatusClosedShort=Cerrada
 SupplierProposalStatusSignedShort=Aceptada
 SupplierProposalStatusNotSignedShort=Devuelta
 CreateEmptyAsk=Crear solicitud en blanco
-ConfirmCloneAsk=¿Seguro que deseas clonar la solicitud de precio <b>%s</b>?
 ConfirmReOpenAsk=¿Seguro que desea abrir otra vez la solicitud de precio <b>%s</b>?
 SendAskByMail=Enviar solicitud de precio por email
 SendAskRef=Enviando la solicitud de precio %s

@@ -40,7 +40,7 @@ class WebPortalPropal extends Propal
 	/**
 	 * Status list (short label)
 	 */
-	const STATUS_SHORT_LIST = array(
+	const ARRAY_STATUS_LABEL = array(
 		Propal::STATUS_DRAFT => 'PropalStatusDraftShort',
 		Propal::STATUS_VALIDATED => 'PropalStatusValidatedShort',
 		Propal::STATUS_SIGNED => 'PropalStatusSignedShort',
@@ -108,7 +108,7 @@ class WebPortalPropal extends Propal
 		'multicurrency_total_ht' => array('type' => 'price', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 245, 'isameasure' => 1,),
 		'multicurrency_total_tva' => array('type' => 'price', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 250, 'isameasure' => 1,),
 		'multicurrency_total_ttc' => array('type' => 'price', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 255, 'isameasure' => 1,),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::STATUS_SHORT_LIST,),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL,),
 	);
 	//public $rowid;
 	//public $ref;

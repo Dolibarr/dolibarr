@@ -33,6 +33,8 @@ LabelPaymentTerm
 Message
 Map
 Reservation
+CompletePage
+PortionOfPage
 
 # Others
 ACCOUNTING_ACCOUNT_CUSTOMER
@@ -666,7 +668,6 @@ DATAPOLICY_CONTACT_FOURNISSEUR
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT
 DATAPOLICY_CONTACT_PROSPECT
 DATAPOLICY_CONTACT_PROSPECT_CLIENT
-DATAPOLICY_PORTABILITE
 DATAPOLICY_TIERS_CLIENT
 DATAPOLICY_TIERS_FOURNISSEUR
 DATAPOLICY_TIERS_NIPROSPECT_NICLIENT
@@ -2994,6 +2995,7 @@ UserLogged
 UserLoginFailed
 UserLogoff
 UserMargins
+UserModif
 UserModification
 UserModificationShort
 UserNeedPermissionToEditStockToUsePos
@@ -3305,11 +3307,7 @@ WEBPORTAL_USER_LOGGED
 # The following exceptions are added to have Continuous Integrations pass.
 # They may not be valid exceptions - this list needs to be cleaned
 #
-ANONYMISER_AT
 AiCustomPrompt
-DATAPOLICYSUBSITUTION
-DATAPOLICY_PORTABILITE_CONFIRMATION
-DATAPOLICY_PORTABILITE_TITLE
 DisplayGrandTotalInList
 EditWithEditor
 ElementId
@@ -3324,6 +3322,7 @@ ModelTemplate
 ModuleWebPortalDesc
 ModuleWebPortalName
 Reports
+SecurityEvent
 SendEmailsRemindersOnSupplierInvoiceDueDate
 TXTLINKDATAPOLICYACCEPT
 TXTLINKDATAPOLICYREFUSE
@@ -3336,6 +3335,7 @@ WebPortalOrderListNothing
 WebPortalPropalListNothing
 WebPortalSetup
 WebPortalSetupPage
+WebsiteTemplateWasCopied
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
