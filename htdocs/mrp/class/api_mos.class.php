@@ -395,7 +395,6 @@ class Mos extends DolibarrApi
 		$arrayofarrayname = array("arraytoconsume","arraytoproduce");
 		foreach ($arrayofarrayname as $arrayname) {
 			foreach (${$arrayname} as $value) {
-
 				if (empty($value["objectid"])) {
 					$error++;
 					throw new RestException(500, "Field objectid required in " . $arrayname);
@@ -491,12 +490,10 @@ class Mos extends DolibarrApi
 		}
 
 		if (!$error) {
-
 			$consumptioncomplete = true;
 			$productioncomplete = true;
 
 			if ($autoclose > 0) {
-
 				// Refresh Lines after consumptions.
 				$this->mo->fetchLines();
 
