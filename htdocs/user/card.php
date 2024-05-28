@@ -763,15 +763,18 @@ if (empty($reshook)) {
 	}
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight("user", "user", "write")) {
 		if (!GETPOST('clone_name')) {
-			setEventMessages($langs->trans('NoCloneWithoutName'), null, 'errors');
+			setEventMessages($langs->trans('ErrorNoCloneWithoutName'), null, 'errors');
+		} elseif (getDolGlobalString('USER_MAIL_REQUIRED') && !GETPOST('new_email')) {
+			setEventMessages($langs->trans('ErrorNoCloneWithoutEmail'), null, 'errors');
 		} else {
 			if ($object->id > 0) {
 				$error = 0;
 				$clone = dol_clone($object, 1);
 
 				$clone->id = 0;
-				$clone->email = '';
+				$clone->email = (getDolGlobalString('USER_MAIL_REQUIRED') ? GETPOST('new_email', 'alphanohtml') : '');
 				$clone->entity = 1;
+				$clone->api_key = '';
 
 				$parts = explode(' ', GETPOST('clone_name'), 2);
 				$clone->firstname = $parts[0];
@@ -782,11 +785,47 @@ if (empty($reshook)) {
 				$db->begin();
 				$clone->context['createfromclone'] = 'createfromclone';
 				$id = $clone->create($user);
-				var_dump($id);exit;
 				if ($id > 0) {
+					if (GETPOST('clone_rights')) {
+						$result = $clone->clone_rights($object->id, $id);
+					}
+
+					if (GETPOST('clone_categories')) {
+						$result = $clone->cloneCategories($object->id, $id);
+						if ($result < 1) {
+							setEventMessages($langs->trans('ErrorUserClone'), null, 'errors');
+							setEventMessages($clone->error, $clone->errors, 'errors');
+							$error++;
+						}
+					}
+				} else {
+					if ($clone->error == 'ErrorProductAlreadyExists') {
+						$refalreadyexists++;
+						$action = "";
+
+						$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
+						$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
+						setEventMessages($mesg, null, 'errors');
+					} else {
+						setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
+					}
+					$error++;
 				}
+				unset($clone->context['createfromclone']);
+
+				if ($error) {
+					$db->rollback();
+				} else {
+					$db->commit();
+					$db->close();
+					header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+					exit;
+				}
+			} else {
+				dol_print_error($db, $object->error, $object->errors);
 			}
 		}
+		$action = 'clone';
 	}
 
 	// Actions to send emails
@@ -1568,12 +1607,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Define confirmation messages
 			$formquestionclone = array(
 			'text' => $langs->trans("ConfirmClone"),
-			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'value' => $tmpcode, 'morecss' => 'width200'),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
 			1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
 			2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
-			3 => array('type' => 'checkbox', 'name' => 'clone_tags', 'label' => $langs->trans('CloneUserTags'), 'value' => 0)
 			);
-
+			if (getDolGlobalString('USER_MAIL_REQUIRED')) {
+				$newElement = array('type' => 'text', 'name' => 'new_email', 'label' => $langs->trans("NewEmailUserClone"), 'morecss' => 'width200');
+				array_splice($formquestionclone, 2, 0, array($newElement));
+			}
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmUserClone', $object->firstname.' '.$object->lastname), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 		}
 

@@ -4202,4 +4202,87 @@ class User extends CommonObject
 
 		return $this->findUserIdByEmailCache[$email];
 	}
+
+	/**
+	 * Clone permissions of user
+	 * @param   $fromId   integer    User id
+	 * @param   $toId     integer    User id
+	 * @return  integer   Return integer<0 if KO, >0 if OK
+	 */
+	public function clone_rights($fromId, $toId)
+	{
+		if (empty($fromId) || empty($toId)) {
+			return -1;
+		}
+
+		$this->db->begin();
+
+		// delete default rights for UserTo
+		$sqlDelete = "DELETE FROM ".$this->db->prefix()."user_rights";
+		$sqlDelete .= " WHERE fk_user = ".((int) $toId);
+
+		dol_syslog(get_class($this)."::clone_rights (delete default permissions)", LOG_DEBUG);
+
+		if (!$this->db->query($sqlDelete)) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		// Construction de la requête d'insertion
+		$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id)";
+		$sql .= " SELECT entity, ".$this->db->escape($toId).", fk_id";
+		$sql .= " FROM ".$this->db->prefix()."user_rights src";
+		$sql .= " WHERE fk_user = ".((int) $fromId);
+		$sql .= " AND NOT EXISTS (";
+		$sql .= "   SELECT 1";
+		$sql .= "   FROM ".$this->db->prefix()."user_rights dest";
+		$sql .= "   WHERE dest.entity = src.entity";
+		$sql .= "   AND dest.fk_user = ".$this->db->escape($toId);
+		$sql .= "   AND dest.fk_id = src.fk_id";
+		$sql .= " )";
+
+		dol_syslog(get_class($this)."::clone_rights", LOG_DEBUG);
+
+		// Exécution de la requête
+		if (!$this->db->query($sql)) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
+
+	/**
+	 * Copy related categories to another object
+	 *
+	 * @param  int		$fromId	Id user source
+	 * @param  int		$toId	Id user cible
+	 * @param  string	$type	Type of category ('user', ...)
+	 * @return int      Return integer < 0 if error, > 0 if ok
+	 */
+	public function cloneCategories($fromId, $toId, $type = 'user')
+	{
+		$this->db->begin();
+
+		if (empty($type)) {
+			$type = $this->table_element;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categorystatic = new Categorie($this->db);
+
+		$sql = "INSERT INTO ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_user)";
+		$sql .= " SELECT fk_categorie, $toId FROM ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
+		$sql .= " WHERE fk_user = ".((int) $fromId);
+
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
 }
