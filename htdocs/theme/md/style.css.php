@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5951,6 +5952,9 @@ a.cke_dialog_ui_button
 a.cke_dialog_ui_button_ok span {
 	text-shadow: none !important;
 	color: #333 !important;
+}
+a.cke_button, a.cke_combo_button {
+	height: 18px !important;
 }
 
 

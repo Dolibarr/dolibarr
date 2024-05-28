@@ -752,6 +752,7 @@ return [
         'htdocs/core/modules/oauth/github_oauthcallback.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/google_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeArraySuspiciousNullable', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/microsoft_oauthcallback.php' => ['PhanUndeclaredMethod'],
+        'htdocs/core/modules/oauth/microsoft2_oauthcallback.php' => ['PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/stripelive_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/modules/oauth/stripetest_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/modules/payment/mod_payment_ant.php' => ['PhanTypeMismatchArgumentProbablyReal'],
