@@ -12941,7 +12941,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
-	print $langs->trans($header);
+	print '<span class="valignmiddle">'.$langs->trans($header).'</span>';
 
 	if (!empty($link)) {
 		if (!empty($arguments)) {
