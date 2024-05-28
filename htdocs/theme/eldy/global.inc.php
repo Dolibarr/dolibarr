@@ -1,6 +1,6 @@
 <?php
 /*
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1923,6 +1923,12 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: calc(100% - 40px) !important;
 		min-width: 100px;
 		display: inline-block;
+	}
+
+	select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
+		width: calc(100% - 52px) !important;
+		display: inline-block;
+		min-width: 100px;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 		width: calc(100% - 70px) !important;
@@ -5986,7 +5992,7 @@ a.cke_dialog_ui_button_ok span {
 	color: #333 !important;
 }
 a.cke_button, a.cke_combo_button {
-    height: 18px !important;
+	height: 18px !important;
 }
 
 /* ============================================================================== */

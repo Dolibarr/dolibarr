@@ -495,12 +495,12 @@ if ($id > 0 || !empty($ref)) {
 
 		// Project
 		if (empty($withproject)) {
-			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
 
 			// Third party
-			print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
 			if ($projectstatic->thirdparty->id) {
 				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
@@ -511,7 +511,8 @@ if ($id > 0 || !empty($ref)) {
 
 		// Task parent
 		print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
-		$formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin ? 0 : 1), 0, 0, 0, $object->id);
+		print img_picto('', 'projecttask');
+		$formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin ? 0 : 1), 0, 0, 0, $object->id, '', 'minwidth100 widthcentpercentminusxx maxwidth500');
 		print '</td></tr>';
 
 		// Date start
@@ -535,19 +536,21 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 
 		// Description
+
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 
 		// WYSIWYG editor
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 		$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 0);
-		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), $nbrows, '90%');
 		print $doleditor->Create();
+
 		print '</td></tr>';
 
+
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '<td><input class="with75" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
 		print '</tr>';
 
 		// Other options
