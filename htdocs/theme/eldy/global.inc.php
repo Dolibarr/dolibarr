@@ -5984,7 +5984,9 @@ a.cke_dialog_ui_button_ok span {
 	text-shadow: none !important;
 	color: #333 !important;
 }
-
+a.cke_button, a.cke_combo_button {
+    height: 18px !important;
+}
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
