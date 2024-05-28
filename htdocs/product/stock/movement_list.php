@@ -59,13 +59,14 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$show_files = GETPOST('show_files', 'aZ');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOSTINT('msid');
-$idproduct = GETPOSTINT('idproduct');
-$product_id = GETPOSTINT("product_id");
+$idproduct = GETPOST('idproduct', 'intcomma');
+$product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -86,8 +87,8 @@ $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
-$search_type_mouvement = GETPOSTINT('search_type_mouvement');
-$search_fk_project = GETPOSTINT("search_fk_project");
+$search_type_mouvement = GETPOST('search_type_mouvement');
+$search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
 
@@ -324,7 +325,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras') {
-	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
@@ -1060,7 +1061,7 @@ if ($search_fk_project != '' && $search_fk_project != '-1') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1147,7 +1148,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

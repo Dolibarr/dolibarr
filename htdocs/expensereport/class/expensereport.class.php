@@ -248,16 +248,6 @@ class ExpenseReport extends CommonObject
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
 	/**
-	 * @var array<int,string>
-	 */
-	public $labelStatus = array();
-
-	/**
-	 * @var array<int,string>
-	 */
-	public $labelStatusShort = array();
-
-	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -1765,7 +1755,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('expensereport');
+		$langs->load('trips');
 
 		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';

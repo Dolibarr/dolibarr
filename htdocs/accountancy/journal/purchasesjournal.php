@@ -69,7 +69,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -441,7 +441,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		}
 
 		// Error if some lines are not binded/ready to be journalized
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			$error++;
 			$errorforline++;
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
@@ -598,7 +598,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						if ($numtax == 2) {
 							$arrayofvat = $tabrclocaltax2;
 						}
-						if (!is_array($arrayofvat[$key])) {
+						if (!isset($arrayofvat[$key]) || !is_array($arrayofvat[$key])) {
 							$arrayofvat[$key] = array();
 						}
 					}
@@ -659,7 +659,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Counterpart of VAT for VAT NPR
 		// var_dump($tabother);
-		if (!$errorforline && is_array($tabother[$key])) {
+		if (!$errorforline && isset($tabother[$key]) && is_array($tabother[$key])) {
 			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
@@ -871,7 +871,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					if ($numtax == 2) {
 						$arrayofvat = $tabrclocaltax2;
 					}
-					if (!is_array($arrayofvat[$key])) {
+					if (!isset($arrayofvat[$key]) || !is_array($arrayofvat[$key])) {
 						$arrayofvat[$key] = array();
 					}
 				}
@@ -896,7 +896,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			}
 
 			// VAT counterpart for NPR
-			if (is_array($tabother[$key])) {
+			if (isset($tabother[$key]) && is_array($tabother[$key])) {
 				foreach ($tabother[$key] as $k => $mt) {
 					if ($mt) {
 						print '"'.$key.'"'.$sep;
@@ -1073,7 +1073,7 @@ if (empty($action) || $action == 'view') {
 			$i++;
 			continue;
 		}
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			print '<tr class="oddeven">';
 			print "<!-- Some lines are not bound -->";
 			print "<td>".$date."</td>";
@@ -1192,7 +1192,7 @@ if (empty($action) || $action == 'view') {
 					if ($numtax == 2) {
 						$arrayofvat = $tabrclocaltax2;
 					}
-					if (!is_array($arrayofvat[$key])) {
+					if (!isset($arrayofvat[$key]) || !is_array($arrayofvat[$key])) {
 						$arrayofvat[$key] = array();
 					}
 				}
@@ -1229,7 +1229,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// VAT counterpart for NPR
-		if (is_array($tabother[$key])) {
+		if (isset($tabother[$key]) && is_array($tabother[$key])) {
 			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';

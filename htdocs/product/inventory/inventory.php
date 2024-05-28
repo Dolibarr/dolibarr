@@ -412,7 +412,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Clear var
-				$_POST['batch'] = '';
+				$_POST['batch'] = '';		// TODO Replace this with a var
 				$_POST['qtytoadd'] = '';
 			}
 		}

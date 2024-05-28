@@ -123,6 +123,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $className($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -474,7 +475,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {

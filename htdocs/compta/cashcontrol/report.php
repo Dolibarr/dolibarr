@@ -37,7 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1'); // Disable browser notification
 }
 
-$_GET['optioncss'] = "print";
+$optioncss = "print";
 
 // Load Dolibarr environment
 require '../../main.inc.php';

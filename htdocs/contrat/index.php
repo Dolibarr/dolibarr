@@ -44,6 +44,8 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTI
 
 $statut = GETPOST('statut') ? GETPOST('statut') : 1;
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
 // Security check
 $socid = 0;
 $id = GETPOSTINT('id');
@@ -56,6 +58,7 @@ $staticcompany = new Societe($db);
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
 $productstatic = new Product($db);
+
 
 
 /*
@@ -315,7 +318,6 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Last modified contracts
-$max = 5;
 $sql = 'SELECT ';
 $sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
 $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
@@ -353,7 +355,7 @@ if ($result) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", $max).'</th>';
 	print '<th class="center">'.$langs->trans("DateModification").'</th>';
 	//print '<th class="left">'.$langs->trans("Status").'</th>';
 	print '<th class="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';

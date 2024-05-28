@@ -213,6 +213,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'LINEBILL_UPDATE':
 			//case 'LINEBILL_DELETE':
 
+			// Recurring Bills
+			//case 'BILLREC_MODIFY':
+			//case 'BILLREC_DELETE':
+			//case 'BILLREC_AUTOCREATEBILL':
+			//case 'LINEBILLREC_MODIFY':
+			//case 'LINEBILLREC_DELETE':
+
 			//Supplier Bill
 			//case 'BILL_SUPPLIER_CREATE':
 			//case 'BILL_SUPPLIER_UPDATE':

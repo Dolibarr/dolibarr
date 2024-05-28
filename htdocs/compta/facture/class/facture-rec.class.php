@@ -26,10 +26,11 @@
 
 /**
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage recurring invoices
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -129,6 +130,10 @@ class FactureRec extends CommonInvoice
 	public $unit_frequency;
 
 	public $rang;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	public $usenewprice = 0;
@@ -1386,16 +1391,6 @@ class FactureRec extends CommonInvoice
 							$this->error = $facture->error;
 							$error++;
 						}
-					}
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $facturerec->call_trigger('BILLREC_CREATEBILL', $user);
-						if ($result < 0) {
-							$this->errors = $facturerec->errors;
-							$this->error = $facturerec->error;
-							$error++;
-						}
-						// End call triggers
 					}
 				} else {
 					$error++;

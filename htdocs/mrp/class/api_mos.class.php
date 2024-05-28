@@ -187,11 +187,11 @@ class Mos extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->mo->context['caller'] = $request_data['caller'];
+				$this->mo->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->mo->$field = $value;
+			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 
 		$this->checkRefNumbering();
@@ -221,7 +221,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -230,11 +230,11 @@ class Mos extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->mo->context['caller'] = $request_data['caller'];
+				$this->mo->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->mo->$field = $value;
+			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 
 		$this->checkRefNumbering();
@@ -305,7 +305,7 @@ class Mos extends DolibarrApi
 		$error = 0;
 
 		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
-			throw new RestException(401, 'Not enough permission');
+			throw new RestException(403, 'Not enough permission');
 		}
 		$result = $this->mo->fetch($id);
 		if (!$result) {
@@ -313,7 +313,7 @@ class Mos extends DolibarrApi
 		}
 
 		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {
-			throw new RestException(401, 'Error bad status of MO');
+			throw new RestException(405, 'Error bad status of MO');
 		}
 
 		// Code for consume and produce...
@@ -347,7 +347,7 @@ class Mos extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$stockmove->context['caller'] = $request_data['caller'];
+				$stockmove->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 		}

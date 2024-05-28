@@ -144,7 +144,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactEvents");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }

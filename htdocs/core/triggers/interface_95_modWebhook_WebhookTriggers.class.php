@@ -55,8 +55,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 	/**
 	 * Function called when a Dolibarr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * All functions "runTrigger" are triggered if file of function is inside directory core/triggers.
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object
@@ -97,7 +96,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$jsonstr = json_encode($resobject);
 
-				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array(), array('http', 'https'), 0, -1);
+				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {

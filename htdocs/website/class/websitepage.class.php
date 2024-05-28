@@ -133,6 +133,12 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_object;
 
+	/**
+	 * @var int			Another ID that is the $id but with an offset so that ID of pages of the website start at 1
+	 */
+	public $newid;
+
+
 	const STATUS_DRAFT = 0;			// offline
 	const STATUS_VALIDATED = 1;		// online
 

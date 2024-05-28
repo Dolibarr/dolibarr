@@ -8,6 +8,7 @@
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,7 +555,9 @@ if (empty($reshook)) {
 
 				$trackid = 'leav'.$object->id;
 
-				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+				$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+
+				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
 
 				// Sending the email
 				$result = $mail->sendfile();
@@ -677,7 +680,9 @@ if (empty($reshook)) {
 
 					$trackid = 'leav'.$object->id;
 
-					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+					$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+
+					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
 
 					// Sending email
 					$result = $mail->sendfile();
@@ -760,7 +765,9 @@ if (empty($reshook)) {
 
 						$trackid = 'leav'.$object->id;
 
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+						$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+
+						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
 
 						// sending email
 						$result = $mail->sendfile();
@@ -907,7 +914,9 @@ if (empty($reshook)) {
 
 				$trackid = 'leav'.$object->id;
 
-				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+				$sendtobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_HOLIDAY_TO');
+
+				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', $sendtobcc, 0, 1, '', '', $trackid);
 
 				// sending email
 				$result = $mail->sendfile();
@@ -1557,7 +1566,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 					if ($object->status == Holiday::STATUS_VALIDATED) {	// If validated
 						// Button Approve / Refuse
-						if ($user->id == $object->fk_validator) {
+						if (($user->id == $object->fk_validator && $user->hasRight('holiday', 'approve')) || ($user->hasRight('holiday', 'writeall') && $user->hasRight('holiday', 'approve'))) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'" class="butAction">'.$langs->trans("Approve").'</a>';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {

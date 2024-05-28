@@ -63,17 +63,6 @@ class Project extends CommonObject
 	public $fk_element = 'fk_projet';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'project';
@@ -204,9 +193,6 @@ class Project extends CommonObject
 	 */
 	public $max_attendees;
 
-	public $labelStatusShort;
-	public $labelStatus;
-
 	public $statut; // 0=draft, 1=opened, 2=closed
 
 	public $opp_status; // opportunity status, into table llx_c_lead_status
@@ -302,10 +288,10 @@ class Project extends CommonObject
 		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer', 'label' => 'Thirdparty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
-		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 30),
+		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'searchall' => 1),
-		'public' => array('type' => 'integer', 'label' => 'Visibility', 'enabled' => 1, 'visible' => 1, 'position' => 65),
+		'public' => array('type' => 'integer', 'label' => 'Visibility', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'fk_opp_status' => array('type' => 'integer', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75),
 		'opp_percent' => array('type' => 'double(5,2)', 'label' => 'OpportunityProbabilityShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 80),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 85, 'searchall' => 1),
@@ -335,7 +321,7 @@ class Project extends CommonObject
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModification', 'enabled' => 1, 'visible' => 0, 'position' => 415),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 420),
 		'email_msgid' => array('type' => 'varchar(255)', 'label' => 'EmailMsgID', 'enabled' => 1, 'visible' => -1, 'position' => 450, 'help' => 'EmailMsgIDWhenSourceisEmail', 'csslist' => 'tdoverflowmax125'),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'alias' => 'status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -365,6 +351,9 @@ class Project extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		$this->labelStatusShort = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 		$this->labelStatus = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
@@ -406,8 +395,6 @@ class Project extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 		$ret = 0;
 
@@ -1327,7 +1314,7 @@ class Project extends CommonObject
 
 		$langs->load('projects');
 		$option = $params['option'] ?? '';
-		$moreinpopup = $params['morinpopup'] ?? '';
+		$moreinpopup = $params['moreinpopup'] ?? '';
 
 		$datas = [];
 		if ($option != 'nolink') {

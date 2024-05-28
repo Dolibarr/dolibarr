@@ -170,7 +170,7 @@ echo "Setting up Dolibarr '$INSTALL_FORCED_FILE' to test installation"
 # Ensure we catch errors
 set +e
 {
-	echo '<?php '
+	echo '<?php'
 	echo 'error_reporting(E_ALL);'
 	echo '$'force_install_noedit=2';'
 	if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then

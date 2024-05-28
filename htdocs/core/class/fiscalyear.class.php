@@ -57,12 +57,6 @@ class Fiscalyear extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var int ID
 	 */
 	public $rowid;
@@ -124,6 +118,7 @@ class Fiscalyear extends CommonObject
 	{
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
 		$this->labelStatusShort = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 		$this->labelStatus = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 	}
@@ -360,7 +355,7 @@ class Fiscalyear extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("FiscalYear");
+				$label = $langs->trans("FiscalPeriod");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

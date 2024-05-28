@@ -39,7 +39,7 @@
 
 /**
  *	\file       htdocs/compta/facture/class/facture.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage invoices
  */
 
@@ -86,17 +86,6 @@ class Facture extends CommonInvoice
 	 * @var string String with name of icon for myobject.
 	 */
 	public $picto = 'bill';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -177,7 +166,7 @@ class Facture extends CommonInvoice
 	public $fk_bank;
 
 	/**
-	 * @var FactureLigne[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 
@@ -221,7 +210,7 @@ class Facture extends CommonInvoice
 	public $tab_next_situation_invoice = array();
 
 	/**
-	 * @var Facture object oldcopy
+	 * @var static object oldcopy
 	 */
 	public $oldcopy;
 
@@ -352,7 +341,7 @@ class Facture extends CommonInvoice
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 506),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'notnull' => -1, 'position' => 508),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModification', 'enabled' => 1, 'visible' => -1, 'notnull' => -1, 'position' => 508),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 510),
 		'fk_user_closing' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosing', 'enabled' => 1, 'visible' => -1, 'position' => 512),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
@@ -435,6 +424,9 @@ class Facture extends CommonInvoice
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -1090,7 +1082,6 @@ class Facture extends CommonInvoice
 						if ($result < 0) {
 							$error++;
 						}
-						// End call triggers
 					}
 
 					if (!$error) {
@@ -1127,8 +1118,6 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromCurrent(User $user, $invertdetail = 0)
 	{
-		global $conf;
-
 		// Source invoice load
 		$facture = new Facture($this->db);
 
@@ -1153,6 +1142,7 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
+		$facture->ref_customer      = $this->ref_customer;
 		$facture->model_pdf         = $this->model_pdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
@@ -1174,6 +1164,7 @@ class Facture extends CommonInvoice
 		$facture->retained_warranty_date_limit = $this->retained_warranty_date_limit;
 
 		$facture->fk_user_author = $user->id;
+		$facture->user_creation_id = $user->id;
 
 
 		// Loop on each line of new invoice
@@ -3152,7 +3143,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
-	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
+	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decrease on stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
 	 * @return	int						Return integer <0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
@@ -3367,6 +3358,10 @@ class Facture extends CommonInvoice
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
 							$mouvP->setOrigin($this->element, $this->id);
+
+							// TODO If warehouseid has been set into invoice line, we should use this value in priority
+							// $idwarehouse = $this->lines[$i]->fk_warehouse;
+
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) {
 								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
@@ -3952,8 +3947,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
-			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
@@ -4212,8 +4207,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
-			$this->line->localtax1_type		= empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
-			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+			$this->line->localtax1_type		= empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
+			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -4635,6 +4630,7 @@ class Facture extends CommonInvoice
 			}
 
 			$obj = new $classname();
+			'@phan-var-force CommonNumRefGenerator $obj';
 
 			$numref = $obj->getNextValue($soc, $this, $mode);
 
@@ -5240,13 +5236,18 @@ class Facture extends CommonInvoice
 	 */
 	public function newCycle()
 	{
-		$sql = 'SELECT max(situation_cycle_ref) FROM '.MAIN_DB_PREFIX.'facture as f';
+		$sql = "SELECT max(situation_cycle_ref) as maxsituationref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).")";
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-				$ref = $res['max(situation_cycle_ref)'];
+				$ref = 0;
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$ref = $obj->maxsituationref;
+				}
 				$ref++;
 			} else {
 				$ref = 1;
@@ -5367,8 +5368,7 @@ class Facture extends CommonInvoice
 			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
+			if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 				$last = $res['max(situation_counter)'];
 				return ($last == $this->situation_counter);
 			} else {
@@ -6059,15 +6059,6 @@ class FactureLigne extends CommonInvoiceLine
 	public $remise_percent;
 
 	/**
-	 * List of special options to define line:
-	 * 1: shipment cost lines
-	 * 2: ecotaxe
-	 * 3: ??
-	 * idofmodule: a meaning for the module
-	 */
-	public $special_code;
-
-	/**
 	 * @var string		To store the batch to consume in stock when using a POS module
 	 */
 	public $batch;
@@ -6562,7 +6553,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", product_type=".$this->product_type;
 		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
-		$sql .= ", special_code='".$this->db->escape($this->special_code)."'";
+		$sql .= ", special_code=" . (int) $this->special_code;
 		if (empty($this->skip_update_total)) {
 			$sql .= ", total_ht=".price2num($this->total_ht);
 			$sql .= ", total_tva=".price2num($this->total_tva);
@@ -6753,12 +6744,18 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
-			$resql = $this->db->query($sql);
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
+			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet";
+			$sql .= " WHERE rowid = ".((int) $this->fk_prev_id);
 
-				$returnPercent = (float) $res['situation_percent'];
+			$resql = $this->db->query($sql);
+
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				$returnPercent = 0;
+
+				$obj = $this->db->fetch_ojbect($resql);
+				if ($obj) {
+					$returnPercent = (float) $obj->situation_percent;
+				}
 
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';

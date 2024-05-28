@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ class ExportExcel2007 extends ModeleExports
 	public function open_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs;
+		global $user, $langs;
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
@@ -303,7 +304,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Output record line into file
 	 *
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
-	 *  @param      resource	$objp                       A record from a fetch with all fields from select
+	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										Return integer <0 if KO, >0 if OK
@@ -326,7 +327,8 @@ class ExportExcel2007 extends ModeleExports
 			if (empty($alias)) {
 				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
-			$newvalue = $objp->$alias;
+
+			$newvalue = !empty($objp->$alias) ? $objp->$alias : '';
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';

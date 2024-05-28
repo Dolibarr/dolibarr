@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_orchidee.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File for class for 'orchidee' type numbering the supplier orders
  */
 

@@ -211,7 +211,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-									; // Short text ($langs->transnoentities('MailSentBy')...);
+									; // Short text ($langs->transnoentities('MailSentByTo')...);
 									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
@@ -434,7 +434,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-											; // Short text ($langs->transnoentities('MailSentBy')...);
+											; // Short text ($langs->transnoentities('MailSentByTo')...);
 											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}

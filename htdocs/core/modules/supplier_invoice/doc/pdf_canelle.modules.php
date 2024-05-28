@@ -770,7 +770,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$depositsamount = $object->getSumDepositsUsed((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? 1 : 0);
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
-		if (!empty($object->paye)) {
+		if (!empty($object->paid)) {
 			$resteapayer = 0;
 		}
 

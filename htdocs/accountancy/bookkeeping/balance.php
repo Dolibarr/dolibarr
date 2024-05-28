@@ -293,6 +293,7 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	$url_param = '';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -478,8 +479,12 @@ if ($action != 'export_csv') {
 			$nrows = $db->num_rows($resql);
 			for ($i = 0; $i < $nrows; $i++) {
 				$arr = $db->fetch_array($resql);
-				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				if (is_array($arr)) {
+					$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				}
 			}
+		} else {
+			dol_print_error($db);
 		}
 	}
 

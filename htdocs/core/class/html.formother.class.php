@@ -469,7 +469,7 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string		$selected     		Preselected value
+	 *  @param	int|string	$selected     		Preselected value
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
@@ -579,7 +579,7 @@ class FormOther
 				$userstatic->lastname = $obj_usr->lastname;
 				$userstatic->firstname = $obj_usr->firstname;
 				$userstatic->photo = $obj_usr->photo;
-				$userstatic->statut = $obj_usr->status;
+				$userstatic->status = $obj_usr->status;
 				$userstatic->entity = $obj_usr->entity;
 				$userstatic->admin = $obj_usr->admin;
 
@@ -1373,10 +1373,7 @@ class FormOther
 			$boxlista .= "\n<!-- Box left container -->\n";
 
 			// Define $box_max_lines
-			$box_max_lines = 5;
-			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
-			}
+			$box_max_lines = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 			$ii = 0;
 			foreach ($boxactivated as $key => $box) {

@@ -51,12 +51,6 @@ class UserGroup extends CommonObject
 	public $table_element = 'usergroup';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'group';
@@ -79,6 +73,12 @@ class UserGroup extends CommonObject
 	public $name; // Name of group
 
 	public $globalgroup; // Global group
+
+	/**
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
+	 */
+	public $usergroup_entity;
 
 	/**
 	 * Date creation record (datec)
@@ -145,6 +145,8 @@ class UserGroup extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->nb_rights = 0;
 	}
 
@@ -217,8 +219,11 @@ class UserGroup extends CommonObject
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
 				}
-
-				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
+				// $ret[$obj->rowid] is instance of UserGroup
+				$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -293,7 +298,11 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
-					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+					// $ret[$obj->rowid] is instance of User
+					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+						$ret[$obj->rowid]->usergroup_entity = array();
+					}
+					$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 				}
 			}
 

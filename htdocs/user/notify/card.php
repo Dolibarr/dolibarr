@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -340,7 +341,7 @@ if ($result > 0) {
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 
 				print '<tr class="oddeven">';
 				print '<td>'.$userstatic->getNomUrl(1);
@@ -499,7 +500,7 @@ if ($result > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 				$userstatic->email = $obj->email;
 				print $userstatic->getNomUrl(1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");

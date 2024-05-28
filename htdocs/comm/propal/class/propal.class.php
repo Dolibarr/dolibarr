@@ -86,12 +86,6 @@ class Propal extends CommonObject
 	public $picto = 'propal';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -130,7 +124,7 @@ class Propal extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var Propal oldcopy with propal properties
+	 * @var static oldcopy with propal properties
 	 */
 	public $oldcopy;
 
@@ -400,6 +394,7 @@ class Propal extends CommonObject
 	{
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
 		$this->socid = $socid;
 		$this->id = $propalid;
 
@@ -4012,10 +4007,13 @@ class PropaleLigne extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * 1: frais de port
+	 * 2: ecotaxe
+	 * 3: option line (when qty = 0)
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Some other info:
 	// Bit 0: 	0 si TVA normal - 1 if TVA NPR

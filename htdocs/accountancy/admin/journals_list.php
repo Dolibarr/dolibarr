@@ -80,7 +80,7 @@ if (empty($sortorder)) {
 
 $error = 0;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
@@ -275,13 +275,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
-
-//if (GETPOST('actioncancel', 'alpha'))
-//{
-//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	if ($tabrowid[$id]) {

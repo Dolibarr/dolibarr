@@ -999,7 +999,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 			}
 
-			if (empty($hidetop)) {
+			if (empty($hidetop) && array_key_exists('title', $colDef) && array_key_exists('width', $colDef)) {
 				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
@@ -1400,7 +1400,7 @@ class pdf_vinci extends ModelePDFMo
 		$rank = $rank + 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',

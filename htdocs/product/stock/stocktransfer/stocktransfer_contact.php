@@ -78,7 +78,7 @@ $result = restrictedArea($user, 'stocktransfer', $id, '', 'stocktransfer');
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 	if ($object->id > 0) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
-		$result = $object->add_contact($contactid, !empty($_POST["typecontact"]) ? $_POST["typecontact"] : $_POST["type"], $_POST["source"]);
+		$result = $object->add_contact($contactid, GETPOST("typecontact") ? GETPOST("typecontact") : GETPOST("type"), GETPOST("source"));
 	}
 
 	if ($result >= 0) {
@@ -106,12 +106,6 @@ if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer',
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->stocktransfer->stocktransfer->write)
-{
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*

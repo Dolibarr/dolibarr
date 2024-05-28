@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,6 @@ class Subscription extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'subscription';
-
-	/**
-	 * Does this object supports the multicompany module ?
-	 *
-	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -130,6 +124,8 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 

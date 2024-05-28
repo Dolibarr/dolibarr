@@ -9,6 +9,7 @@
  * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,14 +163,14 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companybankaccount->socid           = $object->id;
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
-			$companybankaccount->clos            = GETPOSTINT('clos');
+			$companybankaccount->status          = GETPOSTINT('clos');
+			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -177,10 +178,11 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
-			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->domiciliation   = $companybankaccount->address;
 
-			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
+			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
@@ -239,7 +241,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -301,7 +303,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
 			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
@@ -894,7 +895,7 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('fo
 // Load Bank account
 if (!$id) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$companybankaccount->fetch(0, $object->id);
+	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 } else {
@@ -2031,7 +2032,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->proprio.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->owner_name.'"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';

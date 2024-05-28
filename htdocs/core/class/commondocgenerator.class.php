@@ -390,6 +390,7 @@ abstract class CommonDocGenerator
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
 			'company_capital' => $object->capital,
+			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
 			'company_idprof1' => $object->idprof1,
 			'company_idprof2' => $object->idprof2,
 			'company_idprof3' => $object->idprof3,
@@ -744,8 +745,8 @@ abstract class CommonDocGenerator
 			'line_localtax2_rate' => vatrate($line->localtax1_tx),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
-			'line_total_up' => price2num($line->subprice * $line->qty),
-			'line_total_up_locale' => price($line->subprice * $line->qty, 0, $outputlangs),
+			'line_total_up' => price2num($line->subprice * (float) $line->qty),
+			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
@@ -821,14 +822,17 @@ abstract class CommonDocGenerator
 		if (isset($line->fk_product) && $line->fk_product > 0) {
 			$tmpproduct = new Product($this->db);
 			$result = $tmpproduct->fetch($line->fk_product);
-			foreach ($tmpproduct->array_options as $key => $label) {
-				$resarray["line_product_".$key] = $label;
+			if (!empty($tmpproduct->array_options) && is_array($tmpproduct->array_options)) {
+				foreach ($tmpproduct->array_options as $key => $label) {
+					$resarray["line_product_".$key] = $label;
+				}
 			}
 		} else {
 			// Set unused placeholders as blank
 			$extrafields->fetch_name_optionals_label("product");
 			if ($extrafields->attributes["product"]['count'] > 0) {
 				$extralabels = $extrafields->attributes["product"]['label'];
+
 				foreach ($extralabels as $key => $label) {
 					$resarray['line_product_options_'.$key] = '';
 				}
@@ -930,13 +934,17 @@ abstract class CommonDocGenerator
 						$array_other['object_'.$key] = $value;
 					} elseif (is_array($value) && $recursive) {
 						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
-						foreach ($tmparray as $key2 => $value2) {
-							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						if (!empty($tmparray) && is_array($tmparray)) {
+							foreach ($tmparray as $key2 => $value2) {
+								$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+							}
 						}
 					} elseif (is_object($value) && $recursive) {
 						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
-						foreach ($tmparray as $key2 => $value2) {
-							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						if (!empty($tmparray) && is_array($tmparray)) {
+							foreach ($tmparray as $key2 => $value2) {
+								$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+							}
 						}
 					}
 				}
@@ -1369,7 +1377,7 @@ abstract class CommonDocGenerator
 
 		$extrafieldOutputContent = '';
 		if (isset($object->array_options[$extrafieldOptionsKey])) {
-			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element, $outputlangs);
 		}
 
 		// TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...

@@ -546,9 +546,9 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 
 			$result .= '<tr class="liste_titre">';
 			$result .= '<th colspan="3">';
-			$result .= $langs->trans("CustomersDraftInvoices").' ';
+			$result .= $langs->trans("CustomersDraftInvoices");
 			$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_DRAFT.'">';
-			$result .= '<span class="badge marginleftonlyshort">'.$num.'</span>';
+			$result .= '<span class="badge marginleftonly">'.$num.'</span>';
 			$result .= '</a>';
 			$result .= '</th>';
 			$result .= '</tr>';
@@ -679,9 +679,9 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 
 			$result .= '<tr class="liste_titre">';
 			$result .= '<th colspan="3">';
-			$result .= $langs->trans("SuppliersDraftInvoices").' ';
+			$result .= $langs->trans("SuppliersDraftInvoices");
 			$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_DRAFT.'">';
-			$result .= '<span class="badge marginleftonlyshort">'.$num.'</span>';
+			$result .= '<span class="badge marginleftonly">'.$num.'</span>';
 			$result .= '</a>';
 			$result .= '</th>';
 			$result .= '</tr>';
@@ -710,7 +710,9 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$facturesupplierstatic->ref_supplier = $obj->ref_supplier;
 					$facturesupplierstatic->type = $obj->type;
 					$facturesupplierstatic->statut = $obj->status;
+					$facturesupplierstatic->statusi = $obj->status;
 					$facturesupplierstatic->paye = $obj->paye;
+					$facturesupplierstatic->paid = $obj->paye;
 
 					$companystatic->id = $obj->socid;
 					$companystatic->name = $obj->name;
@@ -931,7 +933,9 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
+		$objectstatic->paid = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->status = $obj->status;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
@@ -1260,6 +1264,8 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					$facstatic->total_tva = $obj->total_tva;
 					$facstatic->total_ttc = $obj->total_ttc;
 					$facstatic->statut = $obj->status;
+					$facstatic->status = $obj->status;
+					$facstatic->paid = $obj->paye;
 					$facstatic->paye = $obj->paye;
 
 					$societestatic->id = $obj->socid;

@@ -37,7 +37,6 @@
 function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 {
 	global $db, $conf, $langs;
-	global $_POST;
 	global $dolibarr_main_auth_ldap_host, $dolibarr_main_auth_ldap_port;
 	global $dolibarr_main_auth_ldap_version, $dolibarr_main_auth_ldap_servertype;
 	global $dolibarr_main_auth_ldap_login_attribute, $dolibarr_main_auth_ldap_dn;

@@ -40,11 +40,13 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
+
+'@phan-var-force CommonObject $object';
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -94,6 +96,12 @@ if (empty($paymentmethod)) {
 	dol_syslog("paymentmethod=".$paymentmethod);
 }
 
+// Detect $ws
+$ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
+if ($ws) {
+	dol_syslog("Paymentko.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
+}
+
 
 $validpaymentmethod = array();
 if (isModEnabled('paypal')) {
@@ -128,8 +136,10 @@ $object = new stdClass(); // For triggers
  * View
  */
 
-// TODO check if we have redirtodomain to do.
-$doactionsthenrediret = 0;
+// Check if we have redirtodomain to do.
+if ($ws) {
+	$doactionsthenredirect = 1;
+}
 
 
 dol_syslog("Callback url when an online payment is refused or canceled. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : $_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
@@ -176,9 +186,9 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
-		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -211,7 +221,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 }
 
 // Show answer page
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	$head = '';
 	if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
 		$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
@@ -302,7 +312,9 @@ $db->close();
 
 
 // If option to do a redirect somewhere else is defined.
-if (empty($doactionsthenrediret)) {
-	// Do the redirect to an error page
-	// TODO
+if (!empty($doactionsthenredirect)) {
+	// Redirect to an error page
+	// Paymentko page must be created for the specific website
+	$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+	print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024  MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
@@ -67,16 +68,6 @@ class EmailCollector extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'emailcollector_emailcollector';
-
-	/**
-	 * @var int  Does emailcollector support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
@@ -126,14 +117,14 @@ class EmailCollector extends CommonObject
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => 2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'index' => 1, 'position' => 20),
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'help' => 'Example: MyCollector1', 'csslist' => 'tdoverflowmax200'),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150'),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150', 'tdcss'=>'titlefieldmiddle'),
 		'description'   => array('type' => 'text', 'label' => 'Description', 'visible' => -1, 'enabled' => 1, 'position' => 60, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'small tdoverflowmax200'),
 		'host'          => array('type' => 'varchar(255)', 'label' => 'EMailHost', 'visible' => 1, 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'searchall' => 1, 'comment' => "IMAP server", 'help' => 'Example: imap.gmail.com', 'csslist' => 'tdoverflowmax125'),
 		'port'          => array('type' => 'varchar(10)', 'label' => 'EMailHostPort', 'visible' => 1, 'enabled' => 1, 'position' => 91, 'notnull' => 1, 'searchall' => 0, 'comment' => "IMAP server port", 'help' => 'Example: 993', 'csslist' => 'tdoverflowmax50', 'default' => '993'),
-		'hostcharset'   => array('type' => 'varchar(16)', 'label' => 'HostCharset', 'visible' => -1, 'enabled' => 1, 'position' => 92, 'notnull' => 0, 'searchall' => 0, 'comment' => "IMAP server charset", 'help' => 'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default' => 'UTF-8'),
-		'imap_encryption'  => array('type' => 'varchar(16)', 'label' => 'ImapEncryption', 'visible' => -1, 'enabled' => 1, 'position' => 93, 'searchall' => 0, 'comment' => "IMAP encryption", 'help' => 'ImapEncryptionHelp', 'arrayofkeyval' => array('ssl' => 'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default' => 'ssl'),
+		'imap_encryption'  => array('type' => 'varchar(16)', 'label' => 'ImapEncryption', 'visible' => -1, 'enabled' => 1, 'position' => 92, 'searchall' => 0, 'comment' => "IMAP encryption", 'help' => 'ImapEncryptionHelp', 'arrayofkeyval' => array('ssl' => 'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default' => 'ssl'),
+		'hostcharset'   => array('type' => 'varchar(16)', 'label' => 'HostCharset', 'visible' => -1, 'enabled' => 1, 'position' => 93, 'notnull' => 0, 'searchall' => 0, 'comment' => "IMAP server charset", 'help' => 'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default' => 'UTF-8'),
 		'norsh'  => array('type' => 'integer', 'label' => 'NoRSH', 'visible' => -1, 'enabled' => "!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 94, 'searchall' => 0, 'help' => 'NoRSHHelp', 'arrayofkeyval' => array(0 => 'No', 1 => 'Yes'), 'default' => 0),
-		'acces_type'     => array('type' => 'integer', 'label' => 'accessType', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 101, 'notnull' => 1, 'index' => 1, 'comment' => "IMAP login type", 'arrayofkeyval' => array('0' => 'loginPassword', '1' => 'oauthToken'), 'default' => '0', 'help' => ''),
+		'acces_type'     => array('type' => 'integer', 'label' => 'AuthenticationMethod', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 101, 'notnull' => 1, 'index' => 1, 'comment' => "IMAP login type", 'arrayofkeyval' => array('0' => 'loginPassword', '1' => 'oauthToken'), 'default' => '0', 'help' => ''),
 		'login'         => array('type' => 'varchar(128)', 'label' => 'Login', 'visible' => -1, 'enabled' => 1, 'position' => 102, 'notnull' => -1, 'index' => 1, 'comment' => "IMAP login", 'help' => 'Example: myaccount@gmail.com'),
 		'password'      => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => "1", 'position' => 103, 'notnull' => -1, 'comment' => "IMAP password", 'help' => 'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type' => 'varchar(128)', 'label' => 'oauthService', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 104, 'notnull' => 0, 'index' => 1, 'comment' => "IMAP login oauthService", 'arrayofkeyval' => array(), 'help' => 'TokenMustHaveBeenCreated'),
@@ -245,6 +236,9 @@ class EmailCollector extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -784,8 +778,6 @@ class EmailCollector extends CommonObject
 	 */
 	public function getConnectStringIMAP()
 	{
-		global $conf;
-
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
 		if (getDolGlobalString('IMAP_FORCE_TLS')) {
@@ -1174,6 +1166,7 @@ class EmailCollector extends CommonObject
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
 					$expire = true;
+					// TODO
 					// Is token expired or will token expire in the next 30 seconds
 					// if (is_object($tokenobj)) {
 					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
@@ -1461,17 +1454,17 @@ class EmailCollector extends CommonObject
 					$search .= ($search ? ' ' : '').$not.'CC';
 				}
 				if ($rule['type'] == 'subject') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
 						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'body') {
-					if (strpos($rule['rulevalue'], '!') === 0) {
+					if ($not) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
@@ -1566,8 +1559,12 @@ class EmailCollector extends CommonObject
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
+
+				// Uncomment this to output debug info
+				//$client->getConnection()->enableDebug();
+
 				$f = $client->getFolders(false, $sourcedir);
-				if ($f->total() >= 1) {
+				if ($f) {
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria);
@@ -1688,6 +1685,7 @@ class EmailCollector extends CommonObject
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
 				}
 				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+
 				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
@@ -1709,7 +1707,7 @@ class EmailCollector extends CommonObject
 					if (empty($trackidfoundintorecipienttype)) {
 						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 							$nbemailprocessed++;
-							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching signature of application so with a trackid");
+							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
 							continue; // Exclude email
 						}
 					}
@@ -1786,7 +1784,7 @@ class EmailCollector extends CommonObject
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
-					$overview['subject'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview['subject']);
+					$overview['subject'] = removeEmoji($overview['subject'], getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
@@ -1795,7 +1793,7 @@ class EmailCollector extends CommonObject
 					$overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
 
 					// Removed emojis
-					$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
+					$overview[0]->subject = removeEmoji($overview[0]->subject, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				}
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1826,8 +1824,7 @@ class EmailCollector extends CommonObject
 				// Removed emojis
 
 				if (utf8_valid($messagetext)) {
-					//$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
-					$messagetext = $this->removeEmoji($messagetext);
+					$messagetext = removeEmoji($messagetext, getDolGlobalInt('MAIN_EMAIL_COLLECTOR_ACCEPT_EMOJIS', 1));
 				} else {
 					$operationslog .= '<br>Discarded - Email body is not valid utf8';
 					dol_syslog(" Discarded - Email body is not valid utf8");
@@ -2029,6 +2026,7 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'proj') {   // Project
 								$objectemail = new Project($this->db);
+								$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'tas') {   // Task
 								$objectemail = new Task($this->db);
@@ -2041,23 +2039,26 @@ class EmailCollector extends CommonObject
 							}
 							if ($reg[1] == 'tic') {   // Ticket
 								$objectemail = new Ticket($this->db);
+								$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
 								$objectemail = new RecruitmentCandidature($this->db);
+								$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
 							}
 							if ($reg[1] == 'mem') {   // Member
 								$objectemail = new Adherent($this->db);
 							}
 							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-							 $objectemail = new Holiday($db);
-							 }
-							 if ($reg[1] == 'exp') {   // ExpenseReport
-							 $objectemail = new ExpenseReport($db);
-							 }*/
+								$objectemail = new Holiday($db);
+							}
+							if ($reg[1] == 'exp') {   // ExpenseReport
+								$objectemail = new ExpenseReport($db);
+							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
-							if (!is_object($objectemail)) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."'";
+							if (!is_object($objectemail) && isModEnabled('ticket')) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
+								$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
@@ -2071,7 +2072,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('project')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -2086,7 +2087,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!is_object($objectemail)) {
+							if (!is_object($objectemail) && isModEnabled('recruitment')) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -2129,6 +2130,27 @@ class EmailCollector extends CommonObject
 									$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
 								} else {
 									$projectid = $objectemail->id;
+								}
+
+								if (get_class($objectemail) == 'Ticket') {
+									$changeonticket_references = false;
+									if (empty($trackid)) {
+										$trackid = $objectemail->track_id;
+									}
+									if (empty($objectemail->origin_references)) {
+										$objectemail->origin_references = $headers['References'];
+										$changeonticket_references = true;
+									} else {
+										foreach ($arrayofreferences as $key => $referencetmp) {
+											if (!str_contains($objectemail->origin_references, $referencetmp)) {
+												$objectemail->origin_references.= " ".$referencetmp;
+												$changeonticket_references = true;
+											}
+										}
+									}
+									if ($changeonticket_references) {
+										$objectemail->update($user);
+									}
 								}
 							}
 						}
@@ -2245,7 +2267,7 @@ class EmailCollector extends CommonObject
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 					foreach ($this->actions as $operation) {
 						$errorforthisaction = 0;
-
+						$ticketalreadyexists = 0;
 						if ($errorforactions) {
 							break;
 						}
@@ -2268,7 +2290,6 @@ class EmailCollector extends CommonObject
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
-						//TODO: Reply-to
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
@@ -2280,6 +2301,31 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+
+						if ($operation['type'] == 'ticket') {
+							// Verify if ticket already exists to fall back on the right operation
+							$tickettocreate = new Ticket($this->db);
+							$errorfetchticket = 0;
+							$alreadycreated1 = 0;
+							if (!empty($trackid)) {
+								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+							}
+							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $alreadycreated1 + $alreadycreated2;
+							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
+								$errorfetchticket ++;
+							}
+							if (empty($errorfetchticket)) {
+								if ($alreadycreated == 0) {
+									$ticketalreadyexists = 0;
+								} else {
+									$ticketalreadyexists = 1;
+									$operation['type'] = 'recordevent';
+								}
+							} else {
+								$ticketalreadyexists = -1;
+							}
 						}
 
 						// Search and create thirdparty
@@ -2852,10 +2898,10 @@ class EmailCollector extends CommonObject
 
 								foreach ($arrayobject as $key => $objectdesc) {
 									$sql = 'SELECT DISTINCT t.rowid ';
-									$sql .= ' FROM ' . MAIN_DB_PREFIX . $objectdesc['table'] . ' AS t';
+									$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->db->sanitize($objectdesc['table']) . ' AS t';
 									$sql .= ' WHERE ';
 									foreach ($objectdesc['fields'] as $field) {
-										$sql .= "'" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') OR ";
+										$sql .= "('" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $this->db->sanitize($field) . ", '%') AND t." . $this->db->sanitize($field) . " <> '') OR ";
 									}
 									$sql = substr($sql, 0, -4);
 
@@ -3036,9 +3082,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'ticket') {
 							// Create ticket
 							$tickettocreate = new Ticket($this->db);
-
-							$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
-							if ($alreadycreated == 0) {
+							if ($ticketalreadyexists == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$tickettocreate->socid = $thirdpartystatic->id;
 									$tickettocreate->fk_soc = $thirdpartystatic->id;
@@ -3666,26 +3710,6 @@ class EmailCollector extends CommonObject
 		}
 
 		return $subject;
-	}
-
-	/**
-	 * Remove EMoji from email content
-	 *
-	 * @param string	$text		String to sanitize
-	 * @return string				Sanitized string
-	 */
-	protected function removeEmoji($text)
-	{
-		// Supprimer les caractères emoji en utilisant une expression régulière
-		$text = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $text);
-		$text = preg_replace('/[\x{1F300}-\x{1F5FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F680}-\x{1F6FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2600}-\x{26FF}]/u', '', $text);
-		$text = preg_replace('/[\x{2700}-\x{27BF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F900}-\x{1F9FF}]/u', '', $text);
-		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
-
-		return $text;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,7 @@ if (!$accessallowed) {
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $file));
 	exit;
 }
 
@@ -155,7 +156,7 @@ $original_file_osencoded = dol_osencode($original_file); // New file name encode
 if (!file_exists($original_file_osencoded)) {
 	$langs->load("website");
 	print $langs->trans("RequestedPageHasNoContentYet", $pageid);
-	//dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	//dol_print_error(null,$langs->trans("ErrorFileDoesNotExists",$original_file));
 	exit;
 }
 

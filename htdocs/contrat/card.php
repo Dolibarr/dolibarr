@@ -289,8 +289,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$id = $object->create($user);
@@ -707,7 +707,7 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');
+			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 
@@ -719,7 +719,7 @@ if (empty($reshook)) {
 			}
 			$objectline->fetch_optionals();
 
-			$objectline->oldcopy = dol_clone($objectline);
+			$objectline->oldcopy = dol_clone($objectline, 2);
 		}
 
 		$db->begin();
@@ -1780,7 +1780,7 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Price
-					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 
 					// Price multicurrency
 					/*if (isModEnabled("multicurrency")) {
@@ -1805,7 +1805,7 @@ if ($action == 'create') {
 						if ($objp->fk_product) {
 							print '<select id="fournprice" name="fournprice"></select>';
 						}
-						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
+						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';

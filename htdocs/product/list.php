@@ -15,6 +15,7 @@
  * Copyright (C) 2022		Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,9 +70,13 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+
+$fourn_id = GETPOSTINT("fourn_id");
 
 // Search Criteria
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
@@ -94,9 +99,8 @@ if (!empty($catid) && empty($searchCategoryProductList)) {
 
 $search_tosell = GETPOST("search_tosell");
 $search_tobuy = GETPOST("search_tobuy");
-$search_country = GETPOSTINT("search_country");
-$search_state = GETPOSTINT("state_id");
-$fourn_id = GETPOSTINT("fourn_id");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_state = GETPOST("state_id", 'intcomma');
 $search_tobatch = GETPOST("search_tobatch");
 $search_stockable_product = GETPOST('search_stockable_product', 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
@@ -106,10 +110,8 @@ $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
 $search_finished = GETPOST("search_finished");
-$search_units = GETPOSTINT('search_units');
-$optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOSTINT("type");
-$mode = GETPOST('mode', 'alpha');
+$search_units = GETPOST('search_units', 'alpha');
+$type = GETPOST("type", 'alpha');
 
 // Show/hide child product variants
 $show_childproducts = 0;
@@ -345,7 +347,7 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -362,7 +364,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		$sall = "";
+		$search_all = "";
 		$search_id = '';
 		$search_ref = "";
 		$search_ref_supplier = "";
@@ -520,20 +522,20 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-if ($sall) {
+if ($search_all) {
 	// Clean $fieldstosearchall
 	$newfieldstosearchall = $fieldstosearchall;
 	unset($newfieldstosearchall['pfp.ref_fourn']);
 	unset($newfieldstosearchall['pfp.barcode']);
 
 	$sql .= ' AND (';
-	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
+	$sql .= natural_search(array_keys($newfieldstosearchall), $search_all, 0, 1);
 	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
 	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
-	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
+	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $search_all, 0, 1);
 	if (isModEnabled('barcode')) {
 		// Search also into a supplier barcode 'pfp.barcode'='GencodBuyPrice';
-		$sql .= ' OR '.natural_search('pfp.barcode', $sall, 0, 1);
+		$sql .= ' OR '.natural_search('pfp.barcode', $search_all, 0, 1);
 	}
 	$sql .= ')))';
 }
@@ -721,7 +723,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/product/card.php?id='.$id);
@@ -769,8 +771,8 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($sall) {
-	$param .= "&sall=".urlencode($sall);
+if ($search_all) {
+	$param .= "&search_all=".urlencode($search_all);
 }
 if ($searchCategoryProductOperator == 1) {
 	$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
@@ -851,7 +853,7 @@ if ($search_stockable_product != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -895,11 +897,11 @@ if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
 $newcardbutton .= dolGetButtonTitleSeparator();
-if ($type === "" || $type == Product::TYPE_PRODUCT) {
+if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
 }
-if ($type === "" || $type == Product::TYPE_SERVICE) {
+if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
 }
@@ -943,14 +945,14 @@ if (!empty($catid)) {
 	print "</div><br>";
 }
 
-if ($sall) {
+if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if PRODUCT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 // Filter on categories
@@ -983,7 +985,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1336,12 +1339,12 @@ if (!empty($arrayfields['p.duration']['checked'])) {
 }
 if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
 	print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, '', empty($arrayfields['pac.fk_product_parent']['help']) ? '' : $arrayfields['pac.fk_product_parent']['help']);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.finished']['checked'])) {
 	print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-
 if (!empty($arrayfields['p.weight']['checked'])) {
 	print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER['PHP_SELF'], 'p.weight', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -1739,7 +1742,7 @@ while ($i < $imaxinloop) {
 
 		// Barcode
 		if (!empty($arrayfields['p.barcode']['checked'])) {
-			print '<td>'.$product_static->barcode.'</td>';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($product_static->barcode).'">'.dol_escape_htmltag($product_static->barcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2047,6 +2050,9 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// VAT or Sell Tax Rate
@@ -2066,6 +2072,9 @@ while ($i < $imaxinloop) {
 				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
@@ -2075,6 +2084,9 @@ while ($i < $imaxinloop) {
 				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Limit alert

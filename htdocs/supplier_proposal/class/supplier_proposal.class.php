@@ -78,12 +78,6 @@ class SupplierProposal extends CommonObject
 	public $picto = 'supplier_proposal';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -235,6 +229,7 @@ class SupplierProposal extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
 		$this->socid = $socid;
 		$this->id = $supplier_proposalid;
 	}
@@ -2879,6 +2874,9 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe

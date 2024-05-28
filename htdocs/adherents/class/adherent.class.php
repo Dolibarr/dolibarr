@@ -60,17 +60,6 @@ class Adherent extends CommonObject
 	public $table_element = 'adherent';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'member';
@@ -394,6 +383,8 @@ class Adherent extends CommonObject
 		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par default
 		$this->public = 0;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
 	}
@@ -674,6 +665,7 @@ class Adherent extends CommonObject
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
+						'@phan-var-force ModeleNumRefMembers $modCodeMember';
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -856,7 +848,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
+					$isencrypted = getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 1 : 0;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -1836,8 +1828,8 @@ class Adherent extends CommonObject
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
-				if (!empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects'])) {
-					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$invoice->linked_objects = array_merge($invoice->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$result = $invoice->create($user);
@@ -3138,7 +3130,7 @@ class Adherent extends CommonObject
 								$extraparams = '';
 
 								$actionmsg = '';
-								$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 								if ($message) {
 									$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));

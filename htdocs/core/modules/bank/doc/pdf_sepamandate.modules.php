@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Function to create pdf of company bank account sepa mandate
 	 *
-	 *	@param	CompanyBankAccount	$object   		    Object bank account to generate document for
+	 *	@param	Account				$object				CompanyBankAccount bank account to generate document for
 	 *	@param	Translate			$outputlangs	    Lang output object
 	 *  @param	string				$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param	int					$hidedetails		Do not show line details (not used for this template)
@@ -128,6 +129,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
+
+		if (!$object instanceof CompanyBankAccount) {
+			dol_syslog(get_class($this)."::write_file object is of type ".get_class($object)." which is not expected", LOG_ERR);
+			return -1;
+		}
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;

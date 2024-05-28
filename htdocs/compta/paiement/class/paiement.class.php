@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage payments of customers invoices
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -471,6 +471,7 @@ class Paiement extends CommonObject
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
+										$discount->socid = $invoice->socid;
 										$discount->fk_facture_source = $invoice->id;
 
 										// Loop on each vat rate

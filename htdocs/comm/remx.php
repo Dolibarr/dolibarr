@@ -118,7 +118,9 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
 		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
 		$newdiscount1->discount_type = $discount->discount_type;
 		$newdiscount2->discount_type = $discount->discount_type;
 		$newdiscount1->datec = $discount->datec;
@@ -376,7 +378,7 @@ if ($socid > 0) {
 			// VAT
 			print '<tr><td>'.$langs->trans("VAT").'</td>';
 			print '<td>';
-			print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
+			print $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', 0, 1);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
 			print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';

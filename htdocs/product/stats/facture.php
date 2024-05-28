@@ -75,6 +75,8 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$option = '';
+
 $search_date_startday = GETPOSTINT('search_date_startday');
 if (!empty($search_date_startday)) {
 	$option .= '&search_date_startday='.$search_date_startday;
@@ -164,7 +166,7 @@ if ($id > 0 || !empty($ref)) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
 		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -176,7 +178,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -239,6 +241,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			// Add where from extra fields
+			$extrafieldsobjectkey = 'facture';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 			// Add where from hooks
 			$parameters = array();
@@ -274,17 +277,11 @@ if ($id > 0 || !empty($ref)) {
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
 				}
-				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
-				}
-				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode((string) ($search_year));
-				}
 
 				// Add $param from extra fields
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 				// Add $param from hooks
-				$parameters = array();
+				$parameters = array('param' => &$param);
 				$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				$option .= $hookmanager->resPrint;
 
@@ -373,10 +370,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';

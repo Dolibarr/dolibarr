@@ -52,10 +52,10 @@ $optioncss          = GETPOST('optioncss', 'aZ'); // Option for the css output (
 $search_id          = GETPOST('search_id', 'alphanohtml');
 $search_month       = GETPOSTINT('search_month');
 $search_year        = GETPOSTINT('search_year');
-$search_employee    = GETPOSTINT('search_employee');
-$search_validator   = GETPOSTINT('search_validator');
+$search_employee    = GETPOST('search_employee', "intcomma");
+$search_validator   = GETPOST('search_validator', "intcomma");
 $search_description = GETPOST('search_description', 'alphanohtml');
-$search_type        = GETPOSTINT('search_type');
+$search_type        = GETPOST('search_type', "intcomma");
 $search_prev_solde  = GETPOST('search_prev_solde', 'alphanohtml');
 $search_new_solde   = GETPOST('search_new_solde', 'alphanohtml');
 
@@ -311,7 +311,8 @@ $disabled = 0;
 $include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';

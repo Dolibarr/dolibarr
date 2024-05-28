@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/actioncommreminder.class.php
+ * \file        htdocs/comm/action/class/actioncommreminder.class.php
  * \ingroup     agenda
  * \brief       This file is a CRUD class file for ActionCommReminder (Create/Read/Update/Delete)
  */
@@ -41,11 +41,6 @@ class ActionCommReminder extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'actioncomm_reminder';
-
-	/**
-	 * @var int  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var string String with name of icon for actioncommreminder. Must be the part after the 'object_' into object_actioncommreminder.png
@@ -155,6 +150,8 @@ class ActionCommReminder extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;

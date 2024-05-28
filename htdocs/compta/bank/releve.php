@@ -125,6 +125,7 @@ $foundnext = '';
 $sql = "SELECT b.num_releve as num";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+$sql .= " AND b.num_releve <> ''";
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " ORDER BY b.num_releve DESC";
 $sql .= $db->plimit(1);
@@ -273,6 +274,7 @@ if (empty($numref)) {
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.fk_account = ".((int) $object->id);
+	$sql .= " AND b.num_releve IS NOT NULL";
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
@@ -284,9 +286,9 @@ if (empty($numref)) {
 
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
-	$result = $db->query($sql);
-	if ($result) {
-		$numrows = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
 		$i = 0;
 
 		// Onglets
@@ -359,7 +361,7 @@ if (empty($numref)) {
 		$content = array();
 
 		while ($i < min($numrows, $conf->liste_limit)) {
-			$objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($resql);
 
 			if (!isset($objp->numr)) {
 				//
@@ -380,6 +382,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
+				$sql .= " AND b.num_releve <> ''";
 				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -412,6 +415,11 @@ if (empty($numref)) {
 			}
 			$i++;
 		}
+
+		if (empty($numrows)) {
+			print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		}
+
 		print "</table>\n";
 		print '</form>';
 
@@ -464,6 +472,7 @@ if (empty($numref)) {
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql .= " AND b.num_releve <> ''";
 	$sql .= " AND b.fk_account = ".((int) $object->id);
 
 	$resql = $db->query($sql);
@@ -478,9 +487,9 @@ if (empty($numref)) {
 	// Recherche les ecritures pour le releve
 	$sql = $sqlrequestforbankline;
 
-	$result = $db->query($sql);
-	if ($result) {
-		$numrows = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
 		$i = 0;
 
 		// Ligne Solde debut releve
@@ -490,7 +499,7 @@ if (empty($numref)) {
 		print "</tr>\n";
 
 		while ($i < $numrows) {
-			$objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($resql);
 			$total = $total + $objp->amount;
 
 			print '<tr class="oddeven">';
@@ -693,7 +702,7 @@ if (empty($numref)) {
 			print "</tr>";
 			$i++;
 		}
-		$db->free($result);
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}

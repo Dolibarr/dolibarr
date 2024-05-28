@@ -175,9 +175,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
+		// Get barcode type configuration for products if $type not set
 		if (empty($type)) {
 			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
-		} //get barcode type configuration for products if $type not set
+		}
 
 		// Get Mask value
 		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');

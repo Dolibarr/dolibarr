@@ -210,7 +210,7 @@ class Context
 	 */
 	public function initController()
 	{
-		global $db, $conf, $langs;
+		global $db;
 
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 

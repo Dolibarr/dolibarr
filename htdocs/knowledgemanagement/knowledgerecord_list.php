@@ -423,7 +423,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -497,7 +497,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	/*
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);
+	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 3);
 	$categoriesKnowledgeArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 	$moreforfilter .= Form::multiselectarray('search_category_knowledgemanagement_list', $categoriesKnowledgeArr, $searchCategoryKnowledgemanagementList, 0, 0, 'minwidth300');
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_knowledgemanagement_operator" name="search_category_knowledgemanagement_operator" value="1"'.($searchCategoryKnowledgemanagementOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_knowledgemanagement_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
@@ -568,7 +568,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}

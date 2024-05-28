@@ -73,7 +73,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_country = GETPOST('search_country', 'alpha');
+$search_country = GETPOST('search_country', 'aZ09');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
@@ -113,7 +113,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -452,8 +452,8 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
-		,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate"),
+		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
@@ -690,8 +690,8 @@ if ($result) {
 		print '</td>';
 
 		// Description of line
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
 		print '</td>';

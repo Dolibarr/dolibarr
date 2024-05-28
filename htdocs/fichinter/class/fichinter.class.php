@@ -192,25 +192,27 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
-	/*
+
+	/**
 	 * No signature
 	 */
 	const STATUS_NO_SIGNATURE    = 0;
 
-	/*
+	/**
 	 * Signed by sender
 	 */
 	const STATUS_SIGNED_SENDER   = 1;
 
-	/*
+	/**
 	 * Signed by receiver
 	 */
 	const STATUS_SIGNED_RECEIVER = 2;
 
-	/*
+	/**
 	 * Signed by all
 	 */
 	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+
 
 	/**
 	 * Date delivery
@@ -1548,7 +1550,7 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);

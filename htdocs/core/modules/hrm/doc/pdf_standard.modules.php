@@ -590,6 +590,7 @@ class pdf_standard extends ModelePDFEvaluation
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('Employee').' : '.$outputlangs->convToOutputCharset(ucfirst($employee->firstname) . ' ' . strtoupper($employee->lastname));
 
 			// Position
+			include_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 			$job = new Job($db);
 			$job->fetch($object->fk_job);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('JobProfile').' : '.$outputlangs->convToOutputCharset($job->label);

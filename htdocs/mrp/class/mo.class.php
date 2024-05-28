@@ -45,16 +45,6 @@ class Mo extends CommonObject
 	public $table_element = 'mrp_mo';
 
 	/**
-	 * @var int  Does mo support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does mo support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for mo. Must be the part after the 'object_' into object_mo.png
 	 */
 	public $picto = 'mrp';
@@ -246,7 +236,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 * @var array tpl
+	 * @var array<string,int|string> tpl
 	 */
 	public $tpl = array();
 
@@ -261,6 +251,9 @@ class Mo extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -377,12 +370,19 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// We make $object->lines empty to sort it without produced and consumed lines
+		$TLines = $object->lines;
+		$object->lines = array();
+
 		// Remove produced and consumed lines
-		foreach ($object->lines as $key => $line) {
+		foreach ($TLines as $key => $line) {
 			if (in_array($line->role, array('consumed', 'produced'))) {
 				unset($object->lines[$key]);
+			} else {
+				$object->lines[] = $line;
 			}
 		}
+
 
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
@@ -1997,16 +1997,6 @@ class MoLine extends CommonObjectLine
 	 */
 	public $table_element = 'mrp_production';
 
-	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does moline support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_mo' => array('type' => 'integer', 'label' => 'Mo', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -2068,6 +2058,9 @@ class MoLine extends CommonObjectLine
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

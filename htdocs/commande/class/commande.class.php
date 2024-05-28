@@ -11,9 +11,9 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
 /**
  *  \file       htdocs/commande/class/commande.class.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      class for orders
  */
 
@@ -77,17 +77,6 @@ class Commande extends CommonOrder
 	 * @var string String with name of icon for commande class. Here is object_order.png
 	 */
 	public $picto = 'order';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -390,6 +379,9 @@ class Commande extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -2231,7 +2223,7 @@ class Commande extends CommonOrder
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
 		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' WHERE';
-		$sql .= ' ed.fk_origin_line = cd.rowid';
+		$sql .= ' ed.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		//print $sql;
 
@@ -2274,7 +2266,7 @@ class Commande extends CommonOrder
 		if ($filtre_statut >= 0) {
 			$sql .= ' ed.fk_expedition = e.rowid AND';
 		}
-		$sql .= ' ed.fk_origin_line = cd.rowid';
+		$sql .= ' ed.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		if ($fk_product > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $fk_product);
@@ -3353,7 +3345,7 @@ class Commande extends CommonOrder
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
@@ -4389,7 +4381,7 @@ class OrderLine extends CommonOrderLine
 		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
 		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
+		$sqlCheckShipmentLine .= " WHERE ed.fk_elementdet = " . ((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
@@ -4428,7 +4420,7 @@ class OrderLine extends CommonOrderLine
 
 			dol_syslog("OrderLine::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql) {
+			if (!$resql) {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}

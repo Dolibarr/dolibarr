@@ -52,12 +52,6 @@ class Productlot extends CommonObject
 	 */
 	public $picto = 'lot';
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
 	public $stats_propale;
 	public $stats_commande;
 	public $stats_contrat;
@@ -173,6 +167,8 @@ class Productlot extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -560,7 +556,7 @@ class Productlot extends CommonObject
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 		}
 
 		if (!$error) {
