@@ -305,8 +305,16 @@ class Mos extends DolibarrApi
 	 *   "inventorylabel": "Produce and consume using API",
 	 *   "inventorycode": "PRODUCEAPI-YY-MM-DD",
 	 *   "autoclose": 1,
-	 *   "arraytoconsume": [],
-	 *   "arraytoproduce": []
+	 *   "arraytoconsume": [
+	 *       "objectid": 123, -- ID_of_product
+	 *       "qty": "2",
+	 *       "fk_warehouse": "789"
+	 *   ],
+	 *   "arraytoproduce": [
+	 *       "objectid": 456, -- ID_of_product
+ 	 *       "qty": "1",
+	 *       "fk_warehouse": "789"
+	 *   ]
 	 * }
 	 *
 	 * @param int       $id				ID of state
@@ -671,17 +679,17 @@ class Mos extends DolibarrApi
 	 *   "autoclose": 1,
 	 *   "arraytoconsume": [
 	 *     {
-	 *       "objectid": "167", <-- rowid of MoLine
+	 *       "objectid": "123",  -- rowid of MoLine
 	 *       "qty": "2",
-	 *       "fk_warehouse": "261"
+	 *       "fk_warehouse": "789"
 	 *     }
 	 *   ],
 	 *   "arraytoproduce": [
 	 *     {
-	 *       "objectid": "162", <-- rowid of MoLine
+	 *       "objectid": "456",  -- rowid of MoLine
 	 *       "qty": "1",
-	 *       "fk_warehouse": "942",
-	 *       "pricetoproduce": "12.5" <-- optional
+	 *       "fk_warehouse": "789",
+	 *       "pricetoproduce": "12.3"  -- optional
 	 *     }
 	 *   ]
 	 * }
