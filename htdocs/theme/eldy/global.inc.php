@@ -1079,6 +1079,14 @@ div.urllink {
 div.urllink, div.urllink a {
 	color: #339 !important;
 }
+.divsection {
+	padding: 10px;
+	border: 1px solid #DFDFDF;
+	border-radius: 10px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+	/* background-color: rgba(0, 0, 0, 0.02); */
+}
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
