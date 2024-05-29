@@ -296,6 +296,7 @@ class Mos extends DolibarrApi
 
 	/**
 	 * Produce and consume all
+	 *
 	 * - If arraytoconsume and arraytoproduce are both filled, this fill an empty MO with the lines to consume and produce and record the consumption and production.
 	 * - If arraytoconsume and arraytoproduce are not provided, it consumes and produces all existing lines.
 	 *
