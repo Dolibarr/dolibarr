@@ -312,7 +312,7 @@ class Mos extends DolibarrApi
 	 *   ],
 	 *   "arraytoproduce": [
 	 *       "objectid": 456, -- ID_of_product
- 	 *       "qty": "1",
+	 *       "qty": "1",
 	 *       "fk_warehouse": "789"
 	 *   ]
 	 * }
