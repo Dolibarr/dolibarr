@@ -7032,7 +7032,7 @@ abstract class CommonObject
 			if ($table_element == 'categorie') {
 				$table_element = 'categories'; // For compatibility
 			}
-			
+
 			$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
