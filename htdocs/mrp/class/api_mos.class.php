@@ -296,6 +296,8 @@ class Mos extends DolibarrApi
 
 	/**
 	 * Produce and consume
+	 * - If arraytoconsume and arraytoproduce are both filled, this fill an empty MO with the lines to consume and produce and record the consumption and production.
+	 * - If arraytoconsume and arraytoproduce are not provided, it consumes and produces all existing lines.
 	 *
 	 * Example:
 	 * {
@@ -404,12 +406,12 @@ class Mos extends DolibarrApi
 						}
 						$idstockmove = 0;
 						if (!$error && $value["fk_warehouse"] > 0) {
-							// Record stock movement
+							// Record consumption to do and stock movement
 							$id_product_batch = 0;
 
 							$stockmove->setOrigin($this->mo->element, $this->mo->id);
 
-							if ($qtytoprocess >= 0) {
+							if ($arrayname == 'arraytoconsume') {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
 								$moline->position = $pos;
@@ -454,7 +456,7 @@ class Mos extends DolibarrApi
 							}
 						}
 						if (!$error) {
-							// Record consumption
+							// Record consumption done
 							$moline = new MoLine($this->db);
 							$moline->fk_mo = $this->mo->id;
 							$moline->position = $pos;
@@ -575,9 +577,9 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
-							} else {
 								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+							} else {
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
