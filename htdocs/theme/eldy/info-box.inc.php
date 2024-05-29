@@ -547,7 +547,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
 }
-
+.kanban .box-flex-item {
+	line-height: 1.4em;
+}
 
 .info-box-title {
 	width: calc(100% - 20px);

@@ -562,7 +562,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-wrap: wrap;
 	width: 100%;
 	margin: 0 0 0 -10px;
-	justify-content: space-between;
+	/* justify-content: space-between; Do not use this: If there is 3 elements on last line and previous has 4, then the 3 are centered */
 }
 .box-flex-container-columns {
 	display: flex; /* or inline-flex */
@@ -597,6 +597,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
 }
+.kanban .box-flex-item {
+	line-height: 1.4em;
+}
+
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
