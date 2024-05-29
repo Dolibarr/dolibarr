@@ -366,10 +366,16 @@ if ($mode == 'desc') {
 			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
 		}
 		$text .= $textexternal;
-		$text .= '<br>';
 	} else {
-		$text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core").'<br>';
+		$text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core");
+		if (empty($objMod->numero)) {
+			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("AlwaysEnabled").')</span>';
+		} elseif (!empty($objMod->enabled_bydefault)) {
+			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("EnabledByDefaultAtInstall").')</span>';
+		}
+		$text .= '<br>';
 	}
+	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();
 	if ($moduledesclong) {

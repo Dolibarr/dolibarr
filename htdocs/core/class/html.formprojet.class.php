@@ -426,7 +426,7 @@ class FormProjets extends Form
 						}
 
 						$labeltoshow = '';
-						$titletoshow = '';
+						$labeltoshowhtml = '';
 
 						$disabled = 0;
 						if ($obj->fk_statut == Project::STATUS_DRAFT) {
@@ -444,44 +444,44 @@ class FormProjets extends Form
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
 							$labeltoshow .= ' ' . dol_trunc($obj->title, $maxlength);
-							$titletoshow = $labeltoshow;
+							$labeltoshowhtml = $labeltoshow;
 
 							if ($obj->name) {
 								$labeltoshow .= ' (' . $obj->name . ')';
-								$titletoshow .= ' <span class="opacitymedium">(' . $obj->name . ')</span>';
+								$labeltoshowhtml .= ' <span class="opacitymedium">(' . $obj->name . ')</span>';
 							}
 
 							$disabled = 0;
 							if ($obj->fk_statut == Project::STATUS_DRAFT) {
 								$disabled = 1;
 								$labeltoshow .= ' - ' . $langs->trans("Draft");
-								$titletoshow .= ' -  <span class="opacitymedium">' . $langs->trans("Draft") . '</span>';
+								$labeltoshowhtml .= ' -  <span class="opacitymedium">' . $langs->trans("Draft") . '</span>';
 							} elseif ($obj->fk_statut == Project::STATUS_CLOSED) {
 								if ($discard_closed == 2) {
 									$disabled = 1;
 								}
 								$labeltoshow .= ' - ' . $langs->trans("Closed");
-								$titletoshow .= ' - <span class="opacitymedium">' . $langs->trans("Closed") . '</span>';
+								$labeltoshowhtml .= ' - <span class="opacitymedium">' . $langs->trans("Closed") . '</span>';
 							} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
 								$labeltoshow .= ' - ' . $langs->trans("LinkedToAnotherCompany");
-								$titletoshow .= ' - <span class="opacitymedium">' . $langs->trans("LinkedToAnotherCompany") . '</span>';
+								$labeltoshowhtml .= ' - <span class="opacitymedium">' . $langs->trans("LinkedToAnotherCompany") . '</span>';
 							}
 							$labeltoshow .= ' - ';
-							$titletoshow .= ' - ';
+							$labeltoshowhtml .= ' - ';
 						}
 
 						// Label for task
 						$labeltoshow .= $obj->tref . ' ' . dol_trunc($obj->tlabel, $maxlength);
-						$titletoshow .= $obj->tref . ' ' . dol_trunc($obj->tlabel, $maxlength);
+						$labeltoshowhtml .= $obj->tref . ' - ' . dol_trunc($obj->tlabel, $maxlength);
 						if ($obj->usage_task && preg_match('/progress/', $showmore)) {
 							$labeltoshow .= ' <span class="opacitymedium">(' . $obj->progress . '%)</span>';
-							$titletoshow .= ' <span class="opacitymedium">(' . $obj->progress . '%)</span>';
+							$labeltoshowhtml .= ' <span class="opacitymedium">(' . $obj->progress . '%)</span>';
 						}
 
 						if (!empty($selected) && $selected == $obj->rowid) {
 							$out .= '<option value="' . $obj->rowid . '" selected';
-							$out .= ' data-html="' . dol_escape_htmltag($titletoshow) . '"';
+							$out .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
 							$out .= '>' . $labeltoshow . '</option>';
 						} else {
@@ -494,7 +494,7 @@ class FormProjets extends Form
 								}
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat .= ' data-html="' . dol_escape_htmltag($titletoshow) . '"';
+								$resultat .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 								$resultat .= '>';
 								$resultat .= $labeltoshow;
 								$resultat .= '</option>';

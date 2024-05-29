@@ -870,17 +870,18 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 /**
  * Copy a dir to another dir. This include recursive subdirectories.
  *
- * @param	string					$srcfile			Source file (a directory)
- * @param	string					$destfile			Destination file (a directory)
- * @param	string					$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
- * @param 	int						$overwriteifexists	Overwrite file if exists (1 by default)
- * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
- * @param	int						$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]				$excludefileext		Exclude some file extensions
- * @return	int											Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
+ * @param	string					$srcfile				Source file (a directory)
+ * @param	string					$destfile				Destination file (a directory)
+ * @param	string					$newmask				Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
+ * @param 	int						$overwriteifexists		Overwrite file if exists (1 by default)
+ * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	string[]				$excludefileext			Exclude some file extensions
+ * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp or d+timestamp (0 by default)
+ * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null, $excludearchivefiles = 0)
 {
 	$result = 0;
 
@@ -929,7 +930,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 							}
 						}
 						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext);
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext, $excludearchivefiles);
 					}
 				} else {
 					$newfile = $file;
@@ -938,6 +939,13 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 						$extension = pathinfo($file, PATHINFO_EXTENSION);
 						if (in_array($extension, $excludefileext)) {
 							//print "We exclude the file ".$file." because its extension is inside list ".join(', ', $excludefileext); exit;
+							continue;
+						}
+					}
+
+					if ($excludearchivefiles == 1) {
+						$extension = pathinfo($file, PATHINFO_EXTENSION);
+						if (preg_match('/^[v|d]\d+$/', $extension)) {
 							continue;
 						}
 					}
@@ -3205,6 +3213,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	} elseif ($modulepart == 'payment') {
+			// Wrapping pour les rapport de paiements
+		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->invoice->dir_output)) {
 		// Wrapping pour les rapport de paiements
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3480,10 +3494,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 function dol_filecache($directory, $filename, $object)
 {
 	if (!dol_is_dir($directory)) {
-		dol_mkdir($directory);
+		$result = dol_mkdir($directory);
+		if ($result < -1) {
+			dol_syslog("Failed to create the cache directory ".$directory, LOG_WARNING);
+		}
 	}
 	$cachefile = $directory.$filename;
+
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
+
 	dolChmod($cachefile, '0644');
 }
 

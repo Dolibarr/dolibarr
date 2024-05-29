@@ -29,7 +29,7 @@
  */
 function payment_prepare_head(Paiement $object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
 
 	$h = 0;
 	$head = array();
@@ -48,6 +48,19 @@ function payment_prepare_head(Paiement $object)
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
+	$h++;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->compta->payment->dir_output.'/'.$object->ref;
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
+	$head[$h][2] = 'documents';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
@@ -141,7 +154,7 @@ function payment_supplier_prepare_head(Paiement $object)
 /**
  * Return array of valid payment mode
  *
- * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
  * @return	array						Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
@@ -164,7 +177,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 	}
 
 	// This hook is used to complete the $validpaymentmethod array so an external payment modules
-	// can add its own key (ie 'payzen' for Payzen, ...)
+	// can add its own key (ie 'payzen' for Payzen, 'helloasso' for HelloAsso...)
 	$parameters = [
 		'paymentmethod' => $paymentmethod,
 		'validpaymentmethod' => &$validpaymentmethod

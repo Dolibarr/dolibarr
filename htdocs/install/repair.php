@@ -128,7 +128,7 @@ $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
 // For encryption
-$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
+$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
@@ -1401,7 +1401,7 @@ if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
 		}
 
 		foreach ($listoftables as $table) {
-			// do not convert llx_const if mysql encrypt/decrypt is used
+			// do not convert collation on llx_const if mysql encrypt/decrypt is used
 			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
 				continue;
 			}

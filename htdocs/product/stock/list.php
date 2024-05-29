@@ -392,7 +392,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/product/stock/card.php?id='.$id);
@@ -438,7 +438,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

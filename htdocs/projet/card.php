@@ -876,7 +876,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -1008,7 +1008,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Ref
 		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="25" name="ref" value="'.$suggestedref.'">';
+		print '<td><input class="width200" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 		print '</td></tr>';
 
@@ -1267,7 +1267,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 

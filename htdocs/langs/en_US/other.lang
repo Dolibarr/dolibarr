@@ -44,6 +44,7 @@ Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_CLOSE=Sales order delivered
 Notify_ORDER_CANCEL=Sales order canceled
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
+Notify_ORDER_SUPPLIER_CANCEL=Purchase order canceled
 Notify_ORDER_SUPPLIER_VALIDATE=Purchase order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Purchase order approved
 Notify_ORDER_SUPPLIER_SUBMIT=Purchase order submitted
@@ -218,6 +219,7 @@ EMailTextOrderValidated=Order %s has been validated.
 EMailTextOrderClose=Order %s has been delivered.
 EMailTextOrderCanceled=Order %s has been canceled.
 EMailTextSupplierOrderApprovedBy=Purchase order %s has been approved by %s.
+EMailTextSupplierOrderCanceledBy=Purchase order %s has been canceled by %s.
 EMailTextSupplierOrderValidatedBy=Purchase order %s has been recorded by %s.
 EMailTextSupplierOrderSubmittedBy=Purchase order %s has been submitted by %s.
 EMailTextSupplierOrderRefusedBy=Purchase order %s has been refused by %s.
@@ -297,7 +299,6 @@ WEBSITE_IMAGE=Image
 WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
-
 MemoryUsage=Memory usage
 RequestDuration=Duration of request
 ProductsServicesPerPopularity=Products|Services by popularity
@@ -308,19 +309,16 @@ PopuCom=Products|Services by popularity in Orders
 ProductStatistics=Products|Services Statistics
 NbOfQtyInOrders=Qty in orders
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
-
 ConfirmBtnCommonContent = Are you sure you want to "%s" ?
 ConfirmBtnCommonTitle = Confirm your action
 CloseDialog = Close
 Autofill = Autofill
 OrPasteAnURL=or Paste an URL
-
 # externalsite
 ExternalSiteSetup=Setup link to external website
 ExternalSiteURL=External Site URL of HTML iframe content
 ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
 ExampleMyMenuEntry=My menu entry
-
 # ftp
 FTPClientSetup=FTP or SFTP Client module setup
 NewFTPClient=New FTP/SFTP connection setup
@@ -342,10 +340,10 @@ FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
 AddFolder=Create folder
 FileWasCreateFolder=Folder <b>%s</b> has been created
 FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.
-
 SelectADay=Select a day in calendar
 SelectANewDate=Select a new date
 EmailContent=Email content
 Pre-Prompt=Pre-prompt
 Post-Prompt=Post-prompt
 AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
+PayOfBankTransferInvoice=You are going to make an online payment for this invoice. However, this invoice has been set up to be paid in "Credit Transfer" mode, so to avoid paying twice, please verify that no current bank transfer has already been initiated before continuing.

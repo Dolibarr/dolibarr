@@ -767,7 +767,7 @@ class Reception extends CommonObject
 				// qty wished in origin (purchase order, ...)
 				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
+					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
 						continue;
 					}
 
@@ -1438,6 +1438,7 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
+		$this->status               = 1;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1453,6 +1454,10 @@ class Reception extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
+
+		$this->tracking_number = 'TRACKID-ABC123';
+
+		$this->fk_incoterms = 1;
 
 		$nbp = 5;
 		$xnbp = 0;

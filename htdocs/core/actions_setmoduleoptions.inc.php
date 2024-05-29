@@ -23,7 +23,7 @@
 
 // $error must have been initialized to 0
 // $action must be defined
-// $arrayofparameters must be set for action 'update'
+// $arrayofparameters must be set to list of parameters to update for action 'update' on constants
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
@@ -35,7 +35,7 @@ if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty
 }
 
 
-if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin)) {
+if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {

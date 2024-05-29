@@ -1040,7 +1040,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Code for search criteria persistence.
-	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	// Save data into session if key start with 'search_'
 	if (empty($method) || $method == 3 || $method == 4) {
 		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield'))) {
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
@@ -4704,9 +4704,10 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  * Return the picto for a data type
  *
  * @param 	string		$key		Key
+ * @param	string		$morecss	Add more css to the object
  * @return 	string					Pïcto for the key
  */
-function getPictoForType($key)
+function getPictoForType($key, $morecss = '')
 {
 	// Set array with type -> picto
 	$type2picto = array(
@@ -4740,10 +4741,10 @@ function getPictoForType($key)
 	);
 
 	if (!empty($type2picto[$key])) {
-		return img_picto('', $type2picto[$key], 'class="pictofixedwidth"');
+		return img_picto('', $type2picto[$key], 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 	}
 
-	return img_picto('', 'generic', 'class="pictofixedwidth"');
+	return img_picto('', 'generic', 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 }
 
 
@@ -9627,10 +9628,10 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string|null		$mesg		Message string
- *	@param	string[]|null	$mesgs		Message array
- *  @param  string			$style     	Which style to use ('mesgs' by default, 'warnings', 'errors')
- *  @param	string			$messagekey	A key to be used to allow the feature "Never show this message again"
+ *	@param	string|null		$mesg			Message string
+ *	@param	string[]|null	$mesgs			Message array
+ *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
@@ -11914,18 +11915,23 @@ function roundUpToNextMultiple($n, $x = 5)
 /**
  * Function dolGetBadge
  *
- * @param   string  $label      label of badge no html : use in alt attribute for accessibility
- * @param   string  $html       optional : label of badge with html
- * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param   ''|'pill'|'dot'	$mode	Default '' , 'pill', 'dot'
- * @param   string  $url        the url for link
+ * @param   string  			$label      label of badge no html : use in alt attribute for accessibility
+ * @param   string  			$html       optional : label of badge with html
+ * @param   string  			$type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
+ * @param   ''|'pill'|'dot'		$mode		Default '' , 'pill', 'dot'
+ * @param   string  			$url        the url for link
  * @param   array<string,mixed>	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
- * @return  string              Html badge
+ * @return  string              			Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
+	$csstouse = 'badge';
+	$csstouse .= (!empty($mode) ? ' badge-'.$mode : '');
+	$csstouse .= (!empty($type) ? ' badge-'.$type : '');
+	$csstouse .= (empty($params['css']) ? '' : ' '.$params['css']);
+
 	$attr = array(
-		'class' => 'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
+		'class' => $csstouse
 	);
 
 	if (empty($html)) {
@@ -12691,6 +12697,13 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+	} elseif ($elementType == 'ccountry') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
@@ -12800,7 +12813,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
-
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
 			&& !empty($globalCacheForGetObjectFromCache[$element_type])
@@ -12929,7 +12941,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
-	print $langs->trans($header);
+	print '<span class="valignmiddle">'.$langs->trans($header).'</span>';
 
 	if (!empty($link)) {
 		if (!empty($arguments)) {
