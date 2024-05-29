@@ -153,6 +153,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
+print '<br>';
+
 form_constantes($constantes, 3, '');
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
