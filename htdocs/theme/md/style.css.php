@@ -7845,10 +7845,6 @@ table.jPicker {
 
 	td.widthpictotitle { width: 30px; }
 
-	.box-flex-container {
-		margin: 0 0 0 -8px !important;
-	}
-
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
 	}

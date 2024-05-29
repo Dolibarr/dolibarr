@@ -541,9 +541,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-item.filler {
 	height: 0;
 }
-.box-flex-item, .box-flex-item.filler {
-	margin: 5px 10px 0px 10px;
+.box-flex-item {
+	margin-top: 5px;
+	margin-<?php echo $right; ?>: 20px;
+	margin-bottom: 0px;
+	margin-<?php echo $left; ?>: 10px;
 }
+
 
 .info-box-title {
 	width: calc(100% - 20px);

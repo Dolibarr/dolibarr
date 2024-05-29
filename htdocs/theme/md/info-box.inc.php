@@ -561,8 +561,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
-	margin: 0 0 0 -15px;
-	/*justify-content: space-between;*/
+	margin: 0 0 0 -10px;
+	justify-content: space-between;
 }
 .box-flex-container-columns {
 	display: flex; /* or inline-flex */
@@ -581,17 +581,27 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 
-	width: 290px;
-	margin: 5px 0px 0px 15px;
+	width: 300px;
 }
 .box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
 	height: 0;
+}
+.box-flex-item {
+	margin-top: 5px;
+	margin-<?php echo $right; ?>: 10px;
+	margin-bottom: 0px;
+	margin-<?php echo $left; ?>: 10px;
+}
+@media only screen and (max-width: 767px)
+{
+	.box-flex-container {
+		margin: 0 0 0 -8px !important;
+	}
 }
 
 .info-box-title {
