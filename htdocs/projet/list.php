@@ -1660,8 +1660,8 @@ while ($i < $imaxinloop) {
 				}
 				// TODO Create kanban column for all values into $groupbyvalues, until we reach the new $obj->$groupbyfield
 				//
-				var_dump($groupbyvalues);
-				var_dump($obj->$groupbyfield);
+				//var_dump($groupbyvalues);
+				//var_dump($obj->$groupbyfield);
 				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';	// Start new column
 			}
 			$groupbyold = $obj->$groupbyfield;
