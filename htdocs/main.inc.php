@@ -587,7 +587,11 @@ if ($checkifupgraderequired) {
 		if (!getDolGlobalString('MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE') || $rescomp < 3) {
 			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
 			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
-			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			if (php_sapi_name() === "cli") {
+				print "main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Try to run upgrade process.\n";
+			} else {
+				header("Location: ".DOL_URL_ROOT."/install/index.php");
+			}
 			exit;
 		}
 	}
