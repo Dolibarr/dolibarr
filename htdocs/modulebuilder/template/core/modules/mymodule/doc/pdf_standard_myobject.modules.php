@@ -105,7 +105,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
