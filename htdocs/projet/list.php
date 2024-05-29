@@ -264,9 +264,11 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Add a groupby field
+// Add a groupby field. Set $groupby and $groupbyvalues.
+// TODO Move this into a inc file
 if ($mode == 'kanban') {
 	$groupbyold = null;
+	$groupbyvalues = array();
 	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
@@ -274,6 +276,35 @@ if ($mode == 'kanban') {
 	}
 	if (!in_array(preg_replace('/[a-z]\./', '', $groupby), array_keys($object->fields))) {
 		$groupby = '';
+	} else {
+		if (!empty($object->fields[$groupby]['arrayofkeyval'])) {
+			$groupbyvalues = $object->fields[$groupby]['arrayofkeyval'];
+		} elseif (!empty($object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'])) {
+			$groupbyvalues = $object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'];
+		} else {
+			// If type is 'integer:Object:classpath'
+			// TODO
+			// $groupbyvalues = ...
+
+			$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+			$sql .= " WHERE active = 1";
+			//$sql .= " AND cls.code <> 'LOST'";
+			//$sql .= " AND cls.code <> 'WON'";
+			$sql .= $db->order('cls.rowid', 'ASC');
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+
+				while ($i < $num) {
+					$objp = $db->fetch_object($resql);
+					$groupbyvalues[$objp->rowid] = $objp->label;
+					$i++;
+				}
+			}
+		}
+		//var_dump($groupbyvalues);
 	}
 	if ($groupby) {
 		//var_dump($arrayfields);
@@ -1620,14 +1651,18 @@ while ($i < $imaxinloop) {
 
 		if (!empty($groupby)) {
 			if (is_null($groupbyold)) {
-				print '<div class="box-flex-container-columns kanban">';
+				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns
 			}
 			// Start kanban column
 			if ($groupbyold !== $obj->$groupbyfield) {
 				if (!is_null($groupbyold)) {
-					print '</div>';	// end box-flex-container
+					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
-				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';
+				// TODO Create kanban column for all values into $groupbyvalues, until we reach the new $obj->$groupbyfield
+				//
+				var_dump($groupbyvalues);
+				var_dump($obj->$groupbyfield);
+				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';	// Start new column
 			}
 			$groupbyold = $obj->$groupbyfield;
 		} elseif ($i == 0) {
