@@ -311,11 +311,11 @@ class Mos extends DolibarrApi
 	 * @param int       $id				ID of state
 	 * @param array		$request_data   Request datas
 	 *
-	 * @url     POST {id}/produceandconsume
+	 * @url     POST {id}/produceandconsumeall
 	 *
 	 * @return int  ID of MO
 	 */
-	public function produceAndConsume($id, $request_data = null)
+	public function produceAndConsumeAll($id, $request_data = null)
 	{
 		global $langs;
 
