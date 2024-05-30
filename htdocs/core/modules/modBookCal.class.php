@@ -494,7 +494,7 @@ class modBookCal extends DolibarrModules
 
 		// Imports profiles provided by this module
 
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
 		/*
 		$langs->load("agenda");

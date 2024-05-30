@@ -279,7 +279,7 @@ class modWebPortal extends DolibarrModules
 
 		// Main menu entries to add
 		$this->menu = array();
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		// Add here entries to declare new menus
 		/*
 		$this->menu[$r++] = array(

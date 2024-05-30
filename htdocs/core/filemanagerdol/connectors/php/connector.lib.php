@@ -263,7 +263,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$sErrorNumber = '0';
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':

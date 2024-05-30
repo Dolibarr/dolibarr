@@ -765,7 +765,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 
 				// Replace tags of lines for contacts
-				$sourcearray = array('internal', 'external');  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$sourcearray = array('internal', 'external');
 				$contact_arrray = array();
 				foreach ($sourcearray as $source) {
 					$contact_temp = $project->liste_contact(-1, $source);

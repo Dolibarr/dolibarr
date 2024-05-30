@@ -560,7 +560,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	if ($error == 0) {
 		$ok = 1;
 	} else {
-		$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$ok = 0;
 	}
 
 	return $ok;
