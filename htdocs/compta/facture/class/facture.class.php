@@ -510,7 +510,7 @@ class Facture extends CommonInvoice
 			$this->fk_fac_rec_source = $this->fac_rec;
 
 			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
-				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : ($user->id > 0 ? (int)$user->id : "null"));
+				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : ($user->id > 0 ? (int) $user->id : "null"));
 			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
