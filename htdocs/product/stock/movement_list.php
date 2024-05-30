@@ -588,7 +588,7 @@ if ($action == "transfert_stock" && !$cancel) {
 }
 
 // reverse mouvement of stock
-if ($action == 'confirm_reverse') {
+if ($action == 'confirm_reverse' && $confirm == "yes") {
 	$listMouvement = array();
 	$toselect = array_map('intval', $toselect);
 
