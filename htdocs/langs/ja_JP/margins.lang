@@ -6,6 +6,7 @@ TotalMargin=総利益
 MarginOnProducts=利益/製品
 MarginOnServices=利益/サービス
 MarginRate=利益率
+ModifyMarginRates=証拠金率の変更
 MarkRate=マーク率
 DisplayMarginRates=利益率を表示する
 DisplayMarkRates=マーク率を表示する

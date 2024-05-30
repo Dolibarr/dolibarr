@@ -40,17 +40,41 @@ function jobPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/hrm/job_card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("JobPosition");
+	$head[$h][1] = $langs->trans("JobProfile");
 	$head[$h][2] = 'job_card';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/hrm/skill_tab.php?id=".$object->id.'&objecttype=job';
 	$head[$h][1] = $langs->trans("RequiredSkills");
+	$nbResources = 0;
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_skillrank WHERE objecttype = 'job' AND fk_object = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nbResources = $obj->nb;
+		}
+	}
+	if ($nbResources > 0) {
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+	}
 	$head[$h][2] = 'skill_tab';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?fk_job=".$object->id;
-	$head[$h][1] = $langs->trans("EmployeesInThisPosition");
+	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("PositionsWithThisProfile");
+	$nbResources = 0;
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_job_user WHERE fk_job = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nbResources = $obj->nb;
+		}
+	}
+	if ($nbResources > 0) {
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+	}
 	$head[$h][2] = 'position';
 	$h++;
 
@@ -66,7 +90,7 @@ function jobPrepareHead($object)
 		$head[$h][0] = dol_buildpath('/hrm/job_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

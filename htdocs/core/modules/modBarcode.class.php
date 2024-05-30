@@ -77,18 +77,28 @@ class modBarcode extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'barcode';
+		$r = 0;
 
-		$this->rights[1][0] = 301; // id de la permission
-		$this->rights[1][1] = 'Read barcodes'; // libelle de la permission
-		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire_advance';
+		$this->rights[$r][0] = 301; // id de la permission
+		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'read';
+		$r++;
 
-		$this->rights[2][0] = 302; // id de la permission
-		$this->rights[2][1] = 'Create/modify barcodes'; // libelle de la permission
-		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer_advance';
+		$this->rights[$r][0] = 304; // id de la permission
+		$this->rights[$r][1] = 'Read barcodes'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'lire_advance';
+		$r++;
+
+		$this->rights[$r][0] = 305; // id de la permission
+		$this->rights[$r][1] = 'Create/modify barcodes'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'creer_advance';
+		$r++;
 
 		// Main menu entries
 		$r = 0;
@@ -104,8 +114,8 @@ class modBarcode extends DolibarrModules
 			'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
 			'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>200,
-			'enabled'=>'$conf->barcode->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->lire_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled("barcode")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->hasRight("barcode", "read")',
 			'target'=>'',
 			'user'=>0, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -119,8 +129,8 @@ class modBarcode extends DolibarrModules
 			'url'=>'/barcode/codeinit.php?mainmenu=home&leftmenu=admintools',
 			'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>300,
-			'enabled'=>'$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->creer_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled("barcode") && preg_match(\'/^(admintools|all)/\',$leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->admin',
 			'target'=>'',
 			'user'=>0, // 0=Menu for internal users, 1=external users, 2=both
 		);

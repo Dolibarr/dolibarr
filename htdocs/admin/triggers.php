@@ -20,6 +20,7 @@
  *       \brief      Page to view triggers
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
@@ -57,7 +58,8 @@ print "<br>\n";
 
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
-$param = ''; $align = '';
+$param = '';
+$align = '';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
@@ -77,6 +79,7 @@ foreach ($triggers as $trigger) {
 	$text = $trigger['info'];
 	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto('', $text);
 	print '</td>';
 	print '</tr>';

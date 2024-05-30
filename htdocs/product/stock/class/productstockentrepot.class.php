@@ -3,7 +3,8 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,6 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $table_element = 'product_warehouse_properties';
 
-	public $tms = '';
-
 	/**
 	 * @var int ID
 	 */
@@ -70,7 +69,7 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -80,12 +79,11 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -114,23 +112,17 @@ class ProductStockEntrepot extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-
 		$sql .= 'fk_product,';
 		$sql .= 'fk_entrepot,';
 		$sql .= 'seuil_stock_alerte,';
 		$sql .= 'desiredstock,';
 		$sql .= 'import_key';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
 		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
 		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
 		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
 		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -146,13 +138,13 @@ class ProductStockEntrepot extends CommonObject
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			//// Call triggers
+			//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//if ($result < 0) $error++;
+			//// End call triggers
 			//}
 		}
 
@@ -174,7 +166,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param int    $id  				Id object
 	 * @param int    $fk_product 		Id product
 	 * @param int    $fk_entrepot  		Id warehouse
-	 * @return int 						<0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
@@ -239,45 +231,53 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int	 $fk_product Product from which we want to get limit and desired stock by warehouse
-	 * @param int	 $fk_entrepot Warehouse in which we want to get products limit and desired stock
-	 * @param string $sortorder  Sort Order
-	 * @param string $sortfield  Sort field
-	 * @param int    $limit      offset limit
-	 * @param int    $offset     offset limit
-	 * @param array  $filter     filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param int	 $fk_product 	Product from which we want to get limit and desired stock by warehouse
+	 * @param int	 $fk_entrepot 	Warehouse in which we want to get products limit and desired stock
+	 * @param string 		$sortorder  	Sort Order
+	 * @param string 		$sortfield  	Sort field
+	 * @param int    		$limit      	Limit
+	 * @param int    		$offset     	Offset limit
+	 * @param string|array  $filter     	Filter USF.
+	 * @param string 		$filtermode 	Filter mode (AND or OR)
+	 * @return int|array 					Return integer <0 if KO, array if OK
 	 */
-	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-
-
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-
 		$sql .= " WHERE 1=1";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -300,11 +300,11 @@ class ProductStockEntrepot extends CommonObject
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
-										'id'=>$obj->rowid
-										,'fk_product'=>$obj->fk_product
-										,'fk_entrepot'=>$obj->fk_entrepot
-										,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
-										,'desiredstock'=>$obj->desiredstock
+										'id' => $obj->rowid
+										,'fk_product' => $obj->fk_product
+										,'fk_entrepot' => $obj->fk_entrepot
+										,'seuil_stock_alerte' => $obj->seuil_stock_alerte
+										,'desiredstock' => $obj->desiredstock
 									);
 			}
 			$this->db->free($resql);
@@ -321,12 +321,11 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -377,13 +376,13 @@ class ProductStockEntrepot extends CommonObject
 		}
 
 		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		// Commit or rollback
@@ -401,12 +400,11 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param User 	$user      	User that deletes
+	 * @param int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -415,13 +413,13 @@ class ProductStockEntrepot extends CommonObject
 		$this->db->begin();
 
 		//if (!$error && !$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		if (!$error) {
@@ -498,7 +496,7 @@ class ProductStockEntrepot extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -538,9 +536,9 @@ class ProductStockEntrepot extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -598,6 +596,8 @@ class ProductStockEntrepot extends CommonObject
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+
+		return '';
 	}
 
 
@@ -605,17 +605,19 @@ class ProductStockEntrepot extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
-		$this->fk_product = null;
-		$this->fk_entrepot = null;
+		$this->tms = dol_now();
+		$this->fk_product = 0;
+		$this->fk_entrepot = 0;
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 }

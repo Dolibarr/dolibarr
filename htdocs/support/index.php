@@ -29,6 +29,7 @@
 // This is a standalone feature with no information from Dolibarr to show
 // and no database access to do.
 include_once 'inc.php';
+
 $uri = preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
 $pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
 if ($pos == '/') {
@@ -38,7 +39,7 @@ if (!defined('DOL_URL_ROOT')) {
 	define('DOL_URL_ROOT', $pos); // URL racine relative
 }
 
-$langs->loadLangs(array("other", $langs->load("help")));
+$langs->loadLangs(array("other", "help"));
 
 
 /*
@@ -65,7 +66,10 @@ if (GETPOST('dol_no_mouse_hover')) {
 if (GETPOST('dol_use_jmobile')) {
 	$homeurl .= (strpos($homeurl, '?') === false ? '?' : '&').'dol_use_jmobile=1';
 }
-print $langs->trans("ToGoBackToDolibarr", $homeurl);
+// If a global var $dolibarr_main_url_root exists, install is done and complete, we can show the link to home page
+if (!empty($dolibarr_main_url_root)) {
+	print $langs->trans("ToGoBackToDolibarr", $homeurl);
+}
 
 print '<br><br>';
 

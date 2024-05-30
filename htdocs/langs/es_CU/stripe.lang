@@ -1,0 +1,41 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Configuración del módulo de bandas
+StripeDesc=Ofrezca a sus clientes una página de pago en línea para pagos con tarjetas de crédito/débito a través de <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a>. Esto se puede utilizar para permitir que sus clientes realicen pagos ad-hoc o pagos relacionados con un objeto particular de Dolibarr (factura, pedido, ...)
+StripeOrCBDoPayment=Paga con tarjeta de crédito o Stripe
+STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después de un intento de pago (éxito o fracaso)
+StripeDoPayment=Paga con Stripe
+YouWillBeRedirectedOnStripe=Se le redirigirá a la página segura de Stripe para ingresar la información de su tarjeta de crédito
+ToOfferALinkForOnlinePayment=URL para el pago %s
+ToOfferALinkForOnlinePaymentOnOrder=URL para ofrecer una página de pago en línea %s para un pedido de ventas
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en línea %s de cualquier monto sin objeto existente
+YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b> &tag= <i> value </i> </b> a cualquiera de esas URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong> &noidempotency=1 </strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algún modo de pago puede limitar el pago a 1 por cada enlace diferente sin este parámetro)
+SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con la URL <b> %s </b> para que el pago se cree automáticamente cuando lo valide Stripe.
+STRIPE_CGI_URL_V2=Url del módulo Stripe CGI para pago
+NewStripePaymentFailed=Nuevo pago de Stripe intentado pero falló
+STRIPE_TEST_SECRET_KEY=Clave de prueba secreta
+STRIPE_TEST_PUBLISHABLE_KEY=Clave de prueba publicable
+STRIPE_TEST_WEBHOOK_KEY=Clave de prueba de webhook
+STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
+STRIPE_LIVE_PUBLISHABLE_KEY=Clave activa publicable
+STRIPE_LIVE_WEBHOOK_KEY=Clave activa de webhook
+ONLINE_PAYMENT_WAREHOUSE=Existencias a utilizar para la reducción de existencias cuando se realiza el pago en línea <br> (POR HACER ¿Cuando la opción de reducción de existencias se realiza en una acción en la factura y el pago en línea genera la factura por sí mismo?)
+StripeLiveEnabled=Stripe en vivo habilitado (de lo contrario, modo de prueba/sandbox)
+StripeImportPayment=Importar pagos de Stripe
+ExampleOfTestBankAcountForSEPA=Ejemplo de cuenta bancaria BAN para prueba de débito directo: %s
+StripeGateways=Pasarelas de banda
+OAUTH_STRIPE_TEST_ID=ID de cliente de Stripe Connect (ca_...)
+OAUTH_STRIPE_LIVE_ID=ID de cliente de Stripe Connect (ca_...)
+BankAccountForBankTransfer=Cuenta bancaria para pagos de fondos
+StripeAccount=cuenta de banda
+StripeChargeList=Lista de cargos de Stripe
+StripeTransactionList=Lista de transacciones de Stripe
+StripeCustomerId=ID de cliente de banda
+StripePaymentModes=Modos de pago de rayas
+StripeID=ID de banda
+ConfirmDeleteCard=¿Está seguro de que desea eliminar esta tarjeta de crédito o débito?
+CreateCardOnStripe=Crear tarjeta en Stripe
+ShowInStripe=Mostrar en raya
+StripeUserAccountForActions=Cuenta de usuario para usar para la notificación por correo electrónico de algunos eventos de Stripe (pagos de Stripe)
+ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo en vivo)
+ClickHereToTryAgain=<a href="%s"> Haga clic aquí para intentarlo de nuevo... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas de Strong Customer Authentication, la creación de una tarjeta debe realizarse desde el back office de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s

@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Додати поточну сторінку до закладок
-Bookmark=Закладка
-Bookmarks=Закладки
-ListOfBookmarks=Список закладок
-EditBookmarks=Список/редагування закладок
-NewBookmark=Нова закладка
-ShowBookmark=Показати закладку
-OpenANewWindow=Відкрийте нову вкладку
-ReplaceWindow=Замінити поточну вкладку
-BookmarkTargetNewWindowShort=Нова вкладка
-BookmarkTargetReplaceWindowShort=Поточна вкладка
-BookmarkTitle=Назва закладки
-UrlOrLink=URL
-BehaviourOnClick=Поведінка, коли вибрано URL-адресу закладки
-CreateBookmark=Створити закладку
-SetHereATitleForLink=Установіть назву для закладки
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Використовуйте зовнішнє/абсолютне посилання (https://externalurl.com) або внутрішнє/відносне посилання (/mypage.php). Ви також можете скористатися телефоном, як тел: 0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Виберіть, чи потрібно відкривати пов’язану сторінку в поточній вкладці чи в новій вкладці
-BookmarksManagement=Управління закладками
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=Закладок не визначено
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Додати поточну сторінку до закладок
+BehaviourOnClick = Поведінка, коли вибрано URL-адресу закладки
+Bookmark = Закладка
+Bookmarks = Закладки
+BookmarkTargetNewWindowShort = Нова вкладка
+BookmarkTargetReplaceWindowShort = Поточна вкладка
+BookmarkTitle = Назва закладки
+BookmarksManagement = Управління закладками
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Виберіть, чи потрібно відкривати пов’язану сторінку в поточній вкладці чи в новій вкладці
+CreateBookmark = Створити закладку
+EditBookmarks = Список/редагування закладок
+ListOfBookmarks = Список закладок
+NewBookmark = Нова закладка
+NoBookmarkFound = Закладок не знайдено
+NoBookmarks = Закладок не визначено
+OpenANewWindow = Відкрийте нову вкладку
+ReplaceWindow = Замінити поточну вкладку
+SetHereATitleForLink = Установіть назву для закладки
+ShowBookmark = Показати закладку
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Використовуйте зовнішнє/абсолютне посилання (https://externalurl.com) або внутрішнє/відносне посилання (/mypage.php). Ви також можете скористатися телефоном, як тел: 0123456.

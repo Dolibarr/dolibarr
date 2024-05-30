@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAdherent extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -74,7 +73,7 @@ class modAdherent extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("members", "companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();
@@ -145,10 +144,10 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
+		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
-		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
+		$this->const[$r][3] = "Password admin mailman lists";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -161,7 +160,7 @@ class modAdherent extends DolibarrModules
 
 		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
 		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
+		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
 		$this->const[$r][3] = "Text to print on member address sheets";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -198,6 +197,7 @@ class modAdherent extends DolibarrModules
 			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
 			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
 			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
+			7 => array('file'=>'box_members_by_tags.php', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -207,9 +207,9 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
@@ -250,7 +250,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 78;
-		$this->rights[$r][1] = 'Read subscriptions';
+		$this->rights[$r][1] = 'Read membership fees';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -258,7 +258,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 79;
-		$this->rights[$r][1] = 'Create/modify/remove subscriptions';
+		$this->rights[$r][1] = 'Create/modify/remove membership fees';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -345,7 +345,7 @@ class modAdherent extends DolibarrModules
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
@@ -362,8 +362,8 @@ class modAdherent extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref'=>array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
-				'path'=>"/core/modules/member/".(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+				'class' => getDolGlobalString('MEMBER_ADDON', 'mod_member_simple'),
+				'path'=>"/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -380,7 +380,7 @@ class modAdherent extends DolibarrModules
 				'dict' => 'DictionaryCountry'
 			)
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
 		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -394,7 +394,7 @@ class modAdherent extends DolibarrModules
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
 		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
@@ -431,7 +431,7 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Permissions
 		$this->remove($options);

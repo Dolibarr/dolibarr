@@ -24,35 +24,26 @@
 		"vendor-dir" : "htdocs/includes"
 	},
 	"require" : {
-		"php" : ">=5.6.0",
-		"ext-curl" : "*",
+		"php" : ">=7.1.0",
 		"ckeditor/ckeditor" : "4.12.1",
-		"mike42/escpos-php" : "2.2",
-		"mobiledetect/mobiledetectlib" : "2.8.39",
-		"phpoffice/phpexcel" : "1.8.2",
+		"mike42/escpos-php" : "3.0",
+		"mobiledetect/mobiledetectlib" : "2.8.41",
+		"phpoffice/phpspreadsheet" : ">=1.12",
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "6.3.2",
-		"nnnick/chartjs" : "^2.9",
-		"stripe/stripe-php" : "6.43.1",
-		"maximebf/debugbar" : "1.15.1",
-		"symfony/var-dumper" : "3.2"
+		"nnnick/chartjs" : "^3.7.1",
+		"stripe/stripe-php" : "10.7.0",
+		"maximebf/debugbar" : "1.18.2"
 	},
 	"require-dev" : {
-		"php-parallel-lint/php-parallel-lint" : "^0",
-		"php-parallel-lint/php-console-highlighter" : "^0",
-		"phpunit/phpunit" : "^4",
-		"squizlabs/php_codesniffer" : "^2",
-		"phpunit/phpunit-selenium" : "^2"
 	},
 	"suggest" : {
 		"ext-mysqlnd" : "To use with MySQL or MariaDB",
 		"ext-mysqli" : "To use with MySQL or MariaDB",
 		"ext-pgsql" : "To use with PostgreSQL",
-		"ext-mssql" : "To use with MSSQL (experimental)",
-		"ext-pdo_sqlite" : "To use with SQLite (experimental)",
 		"ext-gd" : "Image manipulation (Required but maybe built-in PHP)",
 		"ext-imagick" : "Generation of thumbs from PDF",
-		"ext-mcrypt" : "(Required but maybe built-in PHP)",
+		"ext-intl" : "Intl",
 		"ext-openssl" : "Secure connections (Emails, SOAP\u2026)",
 		"ext-mbstring" : "Handle non UTF-8 characters",
 		"ext-soap" : "Native SOAP",

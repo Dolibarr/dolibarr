@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox модулін орнату
-PayBoxDesc=Бұл модуль клиенттерге <a href="http://www.paybox.com" target="_blank"> Paybox </a> бойынша төлем жасауға мүмкіндік беретін беттерді ұсынады. Бұл ақысыз төлем үшін немесе белгілі бір Dolibarr объектісіндегі төлем үшін пайдаланылуы мүмкін (шот -фактура, тапсырыс, ...)
+PayBoxDesc=Бұл модуль тұтынушылардың <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> арқылы төлеуге рұқсат беретін беттерді ұсынады. Бұл тегін төлем үшін немесе белгілі бір Dolibarr нысанындағы төлем үшін (шот-фактура, тапсырыс, ...)
 FollowingUrlAreAvailableToMakePayments=Келушілерге Dolibarr нысандары бойынша төлем жасау үшін бетті ұсыну үшін келесі URL мекенжайлары қол жетімді
 PaymentForm=Төлем формасы
 WelcomeOnPaymentPage=Біздің онлайн төлем қызметіне қош келдіңіз

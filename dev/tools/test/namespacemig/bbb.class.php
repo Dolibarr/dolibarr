@@ -5,6 +5,7 @@ $globalbbb = 'globalbbb';
 
 /**
  * fbbb
+ *
  * @return string
  */
 function fbbb()
@@ -21,6 +22,7 @@ class Bbb
 
 	/**
 	 * do
+	 *
 	 * @return void
 	 */
 	public function do()

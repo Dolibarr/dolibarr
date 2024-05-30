@@ -20,4 +20,4 @@ BackToHelpCenter=Ga anders <a href="%s"> terug naar de startpagina van het Helpc
 LinkToGoldMember=U kunt een van de door Dolibarr voor uw taal geselecteerde trainers bellen (%s) door op hun Widget te klikken (status en maximumprijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
 SubscribeToFoundation=Help het Dolibarr-project, abonneer je op de stichting
-SeeOfficalSupport=Voor officiële Dolibarr-ondersteuning in uw taal: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
+SeeOfficalSupport=Voor officiële Dolibarr-ondersteuning in uw taal: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

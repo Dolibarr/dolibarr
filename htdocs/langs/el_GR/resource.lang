@@ -35,5 +35,7 @@ AssetNumber=Σειριακός αριθμός
 ResourceTypeCode=Κωδικός τύπου πόρου
 ImportDataset_resource_1=Πόροι
 
-ErrorResourcesAlreadyInUse=Ορισμένοι πόροι χρησιμοποιούνται 
+ErrorResourcesAlreadyInUse=Ορισμένοι πόροι χρησιμοποιούνται
 ErrorResourceUseInEvent=%s που χρησιμοποιήθηκε στο συμβάν %s
+
+MaxUsers=Μέγιστος αριθμός χρηστών (μέρη, θέσεις, κ.λπ.)

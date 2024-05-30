@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
  */
 
 /**
- *	\defgroup   user  Module user management
- *	\brief      Module pour gerer les utilisateurs
- *	\file       htdocs/core/modules/modUser.class.php
- *	\ingroup    user
- *	\brief      Description and activation file for the module users
+ *  \defgroup   user  Module user management
+ *  \brief      Module to manage users and usergroups
+ *
+ *  \file       htdocs/core/modules/modUser.class.php
+ *  \ingroup    user
+ *  \brief      Description and activation file for the module users
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modUser extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
 
@@ -89,124 +89,109 @@ class modUser extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Read information of other users, groups and permissions';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'lire';
+		$this->rights[$r][self::KEY_ID] = 251;
+		$this->rights[$r][self::KEY_LABEL] = 'Read information of other users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Read permissions of other users';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 252;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Create/modify internal and external users, groups and permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 253;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify internal and external users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 254;
-		$this->rights[$r][1] = 'Create/modify external users only';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][self::KEY_ID] = 254;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify external users only';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][0] = 255;
-		$this->rights[$r][1] = 'Modify the password of other users';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'password';
+		$this->rights[$r][self::KEY_ID] = 255;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify the password of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][0] = 256;
-		$this->rights[$r][1] = 'Delete or disable other users';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'supprimer';
+		$this->rights[$r][self::KEY_ID] = 256;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete or disable other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 341;
-		$this->rights[$r][1] = 'Read its own permissions';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 341;
+		$this->rights[$r][self::KEY_LABEL] = 'Read its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 342;
-		$this->rights[$r][1] = 'Create/modify of its own user';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 342;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify of its own user';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 343;
-		$this->rights[$r][1] = 'Modify its own password';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self';
-		$this->rights[$r][5] = 'password';
+		$this->rights[$r][self::KEY_ID] = 343;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own password';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][0] = 344;
-		$this->rights[$r][1] = 'Modify its own permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'writeperms';
+		$this->rights[$r][self::KEY_ID] = 344;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'writeperms';
 
 		$r++;
-		$this->rights[$r][0] = 351;
-		$this->rights[$r][1] = 'Read groups';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][self::KEY_ID] = 351;
+		$this->rights[$r][self::KEY_LABEL] = 'Read groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'read';
 
 		$r++;
-		$this->rights[$r][0] = 352;
-		$this->rights[$r][1] = 'Read permissions of groups';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 352;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 353;
-		$this->rights[$r][1] = 'Create/modify groups and permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][self::KEY_ID] = 353;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][0] = 354;
-		$this->rights[$r][1] = 'Delete groups';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'delete';
+		$this->rights[$r][self::KEY_ID] = 354;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'delete';
 
 		$r++;
-		$this->rights[$r][0] = 358;
-		$this->rights[$r][1] = 'Export all users';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'export';
+		$this->rights[$r][self::KEY_ID] = 358;
+		$this->rights[$r][self::KEY_LABEL] = 'Export all users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'export';
 
 
 		// Menus
@@ -225,7 +210,7 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>"UserAccountancyCode",
 			'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.office_phone'=>'Phone', 'u.user_mobile'=>"Mobile", 'u.office_fax'=>'Fax',
-			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
+			'u.email'=>"Email", 'u.note_public'=>"NotePublic", 'u.note_private'=>"NotePrivate", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
@@ -242,7 +227,7 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>'Text',
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
-			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
+			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note_public'=>"Text", 'u.note_private'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
 			'u.fk_user'=>"FormSelect:select_dolusers",
 			'u.birth'=>'Date',
 			'u.datepreviouslogin'=>'Date',
@@ -261,7 +246,7 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>'user',
 			'u.address'=>"user", 'u.zip'=>"user", 'u.town'=>"user",
 			'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
-			'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
+			'u.email'=>'user', 'u.note_public'=>"user", 'u.note_private'=>"user", 'u.signature'=>'user',
 			'u.fk_user'=>'user', 'u.thm'=>'user', 'u.tjm'=>'user', 'u.weeklyhours'=>'user',
 			'u.dateemployment'=>'user', 'u.dateemploymentend'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
 			'u.birth'=>'user',
@@ -275,7 +260,7 @@ class modUser extends DolibarrModules
 		$keyforelement = 'user';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if (empty($conf->adherent->enabled)) {
+		if (!isModEnabled('member')) {
 			unset($this->export_fields_array[$r]['u.fk_member']);
 			unset($this->export_entities_array[$r]['u.fk_member']);
 		}
@@ -286,6 +271,41 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
+
+
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'List of security events';
+		$this->export_permission[$r] = array(array("user"));	// Only admin
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>"Id", 'e.type'=>"Type",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Description',
+			'e.ip'=>'IPAddress', 'e.user_agent'=>'UserAgent',
+			'e.authentication_method' => 'AuthenticationMode',
+			'e.fk_user'=>"UserID", 'u.login'=>"Login",
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.rowid'=>'Numeric', 'e.type'=>"Text",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Text',
+			'e.ip'=>'Text', 'e.user_agent'=>'Text',
+			'e.authentication_method' => 'Text',
+			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
+		);
+		$this->export_entities_array[$r] = array(
+			'e.rowid'=>'securityevent', 'e.type'=>"securityevent",
+			'e.dateevent'=>"securityevent",
+			'e.description'=>'securityevent',
+			'e.ip'=>'securityevent', 'e.user_agent'=>'securityevent',
+			'e.authentication_method' => 'securityevent',
+			'e.fk_user'=>"user", 'u.login'=>"user",
+		);
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'events as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('event').')';
+
 
 		// Imports
 		$r = 0;
@@ -303,7 +323,7 @@ class modUser extends DolibarrModules
 			'u.pass_crypted'=>"Password", 'u.admin'=>"Administrator", 'u.fk_soc'=>"Company*", 'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.fk_state'=>"StateId", 'u.fk_country'=>"CountryCode",
 			'u.office_phone'=>"Phone", 'u.user_mobile'=>"Mobile", 'u.office_fax'=>"Fax",
-			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
+			'u.email'=>"Email", 'u.note_public'=>"NotePublic", 'u.note_private'=>"NotePrivate", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
@@ -337,9 +357,9 @@ class modUser extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(
 			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
-			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",
-			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note'=>"This is an example of note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
+			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note_public'=>"This is an example of public note for record", 'u.note_private'=>"This is an example of private note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
 			'u.statut'=>"0 (closed) or 1 (active)",
 		);
 		$this->import_updatekeys_array[$r] = array('u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>'Login');

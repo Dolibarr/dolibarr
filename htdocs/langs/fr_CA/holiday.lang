@@ -46,7 +46,6 @@ MenuLogCP=Afficher les journaux de modification
 PrevSoldeCP=Solde précédent
 NewSoldeCP=Nouvel équilibre
 alreadyCPexist=Une demande de congé a déjà été faite sur cette période.
-BoxTitleLastLeaveRequests=Dernier %s demandes de congé modifié
 HolidaysCancelation=Laisser l'annulation de demande
 EmployeeLastname=Nom de famille de l'employé
 EmployeeFirstname=Prénom de l'employé

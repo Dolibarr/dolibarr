@@ -14,6 +14,9 @@ namespace Mike42\Escpos;
 
 use Exception;
 use InvalidArgumentException;
+use Mike42\Escpos\GdEscposImage;
+use Mike42\Escpos\ImagickEscposImage;
+use Mike42\Escpos\NativeEscposImage;
 
 /**
  * This class deals with images in raster formats, and converts them into formats
@@ -192,7 +195,7 @@ abstract class EscposImage
      *
      * @param string|null $filename Filename to load from.
      */
-    protected function loadImageData($filename = null)
+    protected function loadImageData(string $filename = null)
     {
         // Load image in to string of 1's and 0's, also set width & height
         $this -> setImgWidth(0);
@@ -312,7 +315,7 @@ abstract class EscposImage
      * @return string[]
      *  Array of column format data, one item per row.
      */
-    private function getColumnFormat($highDensity)
+    private function getColumnFormat(bool $highDensity)
     {
         $out = [];
         $i = 0;
@@ -335,7 +338,7 @@ abstract class EscposImage
      * @return NULL|string
      *  Column format data, or null if there is no more data (when iterating)
      */
-    private function getColumnFormatLine($lineNo, $highDensity)
+    private function getColumnFormatLine(int $lineNo, bool $highDensity)
     {
         // Currently double density in both directions, very experimental
         $widthPixels = $this -> getWidth();
@@ -421,8 +424,8 @@ abstract class EscposImage
      *
      */
     public static function load(
-        $filename,
-        $allowOptimisations = true,
+        string $filename,
+        bool $allowOptimisations = true,
         array $preferred = ['imagick', 'gd', 'native']
     ) {
         /* Fail early if file is not readble */
@@ -431,28 +434,28 @@ abstract class EscposImage
         }
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         /* Choose the first implementation which can handle this format */
-        foreach ($preferred as $implemetnation) {
-            if ($implemetnation === 'imagick') {
+        foreach ($preferred as $implementation) {
+            if ($implementation === 'imagick') {
                 if (!self::isImagickLoaded()) {
                     // Skip option if Imagick is not loaded
                     continue;
                 }
-                return new \Mike42\Escpos\ImagickEscposImage($filename, $allowOptimisations);
-            } elseif ($implemetnation === 'gd') {
+                return new ImagickEscposImage($filename, $allowOptimisations);
+            } elseif ($implementation === 'gd') {
                 if (!self::isGdLoaded()) {
                     // Skip option if GD not loaded
                     continue;
                 }
-                return new \Mike42\Escpos\GdEscposImage($filename, $allowOptimisations);
-            } elseif ($implemetnation === 'native') {
-                if (!in_array($ext, ['wbmp', 'pbm', 'bmp'])) {
-                    // Pure PHP is fastest way to generate raster output from wbmp and pbm formats.
+                return new GdEscposImage($filename, $allowOptimisations);
+            } elseif ($implementation === 'native') {
+                if (!in_array($ext, ['bmp', 'gif', 'pbm', 'png', 'ppm', 'pgm', 'wbmp'])) {
+                    // Pure PHP may also be fastest way to generate raster output from wbmp and pbm formats.
                     continue;
                 }
-                return new \Mike42\Escpos\NativeEscposImage($filename, $allowOptimisations);
+                return new NativeEscposImage($filename, $allowOptimisations);
             } else {
                 // Something else on the 'preferred' list.
-                throw new InvalidArgumentException("'$implemetnation' is not a known EscposImage implementation");
+                throw new InvalidArgumentException("'$implementation' is not a known EscposImage implementation");
             }
         }
         throw new InvalidArgumentException("No suitable EscposImage implementation found for '$filename'.");

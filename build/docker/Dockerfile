@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:8.1-apache-bullseye
 
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 ENV PHP_INI_MEMORY_LIMIT 256M
@@ -25,7 +25,7 @@ RUN apt-get update -y \
         mailutils \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) ldap && \
@@ -50,7 +50,7 @@ RUN echo 'xdebug.idekey="netbeans-xdebug"' >> ${PHP_INI_DIR}/php.ini
 # set up sendmail config, to use maildev
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
-RUN echo "port 25" >> /etc/msmtprc
+RUN echo "port 1025" >> /etc/msmtprc
 RUN echo "host mail" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc

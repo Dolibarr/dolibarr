@@ -247,10 +247,13 @@ CountryJE=ジャージー島
 CountryME=モンテネグロ
 CountryBL=セントバーツ
 CountryMF=サンマルタン島
+CountryXK=コソボ
 
 ##### Civilities #####
 CivilityMME=ミセス
+CivilityMMEShort=ミセス
 CivilityMR=ミスター
+CivilityMRShort=ミスター
 CivilityMLE=ミズ
 CivilityMTRE=マスタ
 CivilityDR=ドクター

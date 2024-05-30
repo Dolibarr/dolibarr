@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Kata kunci webhook live
 ONLINE_PAYMENT_WAREHOUSE=Stok yang akan digunakan untuk penurunan stok ketika pembayaran online dilakukan <br> (TODO Kapan opsi untuk mengurangi stok dilakukan atas tindakan faktur dan pembayaran online menghasilkan sendiri faktur itu?)
 StripeLiveEnabled=Stripe langsung diaktifkan (jika tidak, uji / mode kotak pasir)
 StripeImportPayment=Impor pembayaran Stripe
-ExampleOfTestCreditCard=Contoh kartu kredit untuk pengujian: %s => valid, %s => error CVC, %s => kedaluwarsa, %s => tagihan gagal
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Gerbang gateway Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect ID Klien (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect ID Klien (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Hapus Kartu
 ConfirmDeleteCard=Anda yakin ingin menghapus kartu Kredit atau Debit ini?
 CreateCustomerOnStripe=Buat pelanggan di Stripe
 CreateCardOnStripe=Buat kartu di Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Tunjukkan di Stripe
 StripeUserAccountForActions=Akun pengguna yang akan digunakan untuk pemberitahuan email tentang beberapa acara Stripe (pembayaran Stripe)
 StripePayoutList=Daftar pembayaran Stripe
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Tautan ke setup Stripe WebHook untuk memanggil IPN (l
 PaymentWillBeRecordedForNextPeriod=Pembayaran akan dicatat untuk periode berikutnya.
 ClickHereToTryAgain= <a href="%s"> Klik di sini untuk mencoba lagi ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Karena aturan Otentikasi Pelanggan yang Kuat, pembuatan kartu harus dilakukan dari Stripe backoffice. Anda dapat mengklik di sini untuk mengaktifkan catatan pelanggan Stripe: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

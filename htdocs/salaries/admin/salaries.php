@@ -22,6 +22,7 @@
  * \brief		Setup page to configure salaries module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class

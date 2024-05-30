@@ -23,12 +23,12 @@ AddLoan=Hitel létrehozása
 FinancialCommitment=Pénzügyi kötelezettségvállalás
 InterestAmount=Kamat
 CapitalRemain=Tőke maradt
-TermPaidAllreadyPaid = Ez a kifejezés már ki van fizetve
+TermPaidAllreadyPaid = Ez a futamidő már ki van fizetve
 CantUseScheduleWithLoanStartedToPaid = Nem lehet ütemtervet létrehozni egy hitelhez, ha a fizetés megkezdődött
 CantModifyInterestIfScheduleIsUsed = Nem módosíthatja az érdeklődést, ha ütemezést használ
 # Admin
 ConfigLoan=A hitel modul konfigurálása
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Alapértelmezés szerint a számviteli tőke
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Alapértelmezés szerint a számla kamatai
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Alapértelmezés szerint a könyvelési számlabiztosítás
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Számla (a Számlatervből) alapértelmezés szerint a tőkére használandó (Kölcsön modul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Számla (a Számlatervből) alapértelmezetten kamatfizetésre használandó (Kölcsön modul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Számla (a Számlatervből) alapértelmezés szerint a biztosításhoz használandó (Kölcsön modul)
 CreateCalcSchedule=Pénzügyi kötelezettségvállalás szerkesztése

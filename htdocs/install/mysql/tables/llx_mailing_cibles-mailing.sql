@@ -32,7 +32,7 @@ create table llx_mailing_cibles
   statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
   source_url		varchar(255),
   source_id			integer,
-  source_type		varchar(16),
+  source_type		varchar(32),
   date_envoi		datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   error_text		varchar(255)						-- text with error if statut is -1

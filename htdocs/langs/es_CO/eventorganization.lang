@@ -1,20 +1,19 @@
 # Dolibarr language file - Source file is en_US - eventorganization
 ModuleEventOrganizationName =Organización del evento
 EventOrganizationDescriptionLong=Gestionar la organización de un evento (espectáculo, conferencias, asistentes o ponentes, con páginas públicas para sugerencia, voto o registro)
-Settings=Ajustes
-EVENTORGANIZATION_TASK_LABELTooltip =Al validar un evento organizado, algunas tareas se pueden crear automáticamente en el proyecto <br> <br> Por ejemplo: <br> Enviar llamada para conferencia <br> Enviar llamada para stand <br> Recibir llamada para conferencias <br> Recibir llamada para stand <br> Abrir suscripciones a eventos para asistentes <br>recordar el evento a los oradores <br> Enviar recordatorio del evento al anfitrión del stand<br> Enviar recordatorio del evento a los asistentes
+EVENTORGANIZATION_TASK_LABELTooltip =When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Enviar un recordatorio del evento a los oradores <br> Enviar un recordatorio del evento a los anfitriones del stand <br> Enviar un recordatorio del evento a los asistentes
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT =Plantilla de correo electrónico para enviar después de que se haya pagado la inscripción a un evento.
 EventOrganizationConfOrBooth=Conferencia o stand
 ManageOrganizeEvent =Gestionar la organización de un evento
 ConferenceOrBooth =Conferencia o stand
 ConferenceOrBoothTab =Conferencia o stand
 AmountPaid =Cantidad pagada
+Speaker=Vocero
 ToSpeakers=A los altavoces
 AllowUnknownPeopleSuggestConf=Permitir que las personas sugieran conferencias
 AllowUnknownPeopleSuggestBooth=Permitir que las personas soliciten un stand
 NbVotes=Numero de votos
-EvntOrgWelcomeMessage =Este formulario le permite registrarse como nuevo participante del evento: <b> %s </b>
+EvntOrgCancelled =Cancelado
 RegistrationAndPaymentWereAlreadyRecorder=Ya se registró un registro y un pago para el correo electrónico <b> %s </b>
 EmailAttendee=Correo electrónico del asistente
 EmailCompanyForInvoice=Correo electrónico de la empresa (para la factura, si es diferente del correo electrónico del asistente)
-ErrorSeveralCompaniesWithEmailContactUs=Se han encontrado varias empresas con este correo electrónico, por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual

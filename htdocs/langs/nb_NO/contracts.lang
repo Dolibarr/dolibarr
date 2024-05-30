@@ -2,7 +2,7 @@
 ContractsArea=Kontraktsområde
 ListOfContracts=Oversikt over kontrakter
 AllContracts=Alle kontrakter
-ContractCard=Kontraktskort
+ContractCard=Kontrakt
 ContractStatusNotRunning=Ikke i drift
 ContractStatusDraft=Kladd
 ContractStatusValidated=Validert
@@ -80,7 +80,7 @@ ConfirmDeleteContractLine=Er du sikker på at du vil slette denne kontraktslinje
 MoveToAnotherContract=Flytt tjeneste til annen kontrakt
 ConfirmMoveToAnotherContract=Jeg bekrefter at jeg hat valgt ny målkontrakt og at jeg ønsker å flytte denne tjenesten inn i den nye kontrakten.
 ConfirmMoveToAnotherContractQuestion=Velg hvilken kontrakt (tilhørende samme tredjepart) du vil flytte denne tjenesten til.
-PaymentRenewContractId=Forny kontraktlinje (antall %s)
+PaymentRenewContractId=Forny kontrakt %s (tjeneste %s)
 ExpiredSince=Utløpsdato
 NoExpiredServices=Ingen utgåtte, aktive tjenester
 ListOfServicesToExpireWithDuration=Liste over tjenester som utløper innen %s dager

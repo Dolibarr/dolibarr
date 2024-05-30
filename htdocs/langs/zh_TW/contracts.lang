@@ -2,7 +2,7 @@
 ContractsArea=合約區域
 ListOfContracts=合約清單
 AllContracts=所有合約
-ContractCard=合約卡
+ContractCard=合約
 ContractStatusNotRunning=不執行
 ContractStatusDraft=草案
 ContractStatusValidated=已驗證
@@ -72,7 +72,7 @@ BoardExpiredServices=服務已過期
 BoardExpiredServicesShort=服務已過期
 ServiceStatus=服務狀態
 DraftContracts=合約草案
-CloseRefusedBecauseOneServiceActive=無法關閉合約，因為合約上至少有一項開放服務
+CloseRefusedBecauseOneServiceActive=無法結束合約，因為合約上至少有一項服務啟用
 ActivateAllContracts=啟動所有合約行
 CloseAllContracts=關閉所有合約行
 DeleteContractLine=刪除合約行

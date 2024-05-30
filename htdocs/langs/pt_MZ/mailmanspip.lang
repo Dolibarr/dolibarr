@@ -7,7 +7,6 @@ MailmanCreationSuccess=O teste da assinatura foi realizado com sucesso
 MailmanDeletionSuccess=O teste de cancelamento da assinatura foi realizado com sucesso
 SynchroMailManEnabled=O Mailman sera atualizado
 SynchroSpipEnabled=O SPIP sera atualizado
-DescADHERENT_MAILMAN_ADMINPW=Senha do administrador Mailman
 DescADHERENT_MAILMAN_URL=URL para inscriçoes Mailman
 DescADHERENT_MAILMAN_UNSUB_URL=URL para desenscriçoes Mailman
 DescADHERENT_MAILMAN_LISTS=Lista(s) para inscriçao automatica de novos membros (separado por virgula)

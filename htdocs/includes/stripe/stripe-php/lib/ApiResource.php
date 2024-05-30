@@ -82,6 +82,8 @@ abstract class ApiResource extends StripeObject
     {
         // Replace dots with slashes for namespaced resources, e.g. if the object's name is
         // "foo.bar", then its URL will be "/v1/foo/bars".
+
+        /** @phpstan-ignore-next-line */
         $base = \str_replace('.', '/', static::OBJECT_NAME);
 
         return "/v1/{$base}s";

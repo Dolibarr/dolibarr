@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Thiết lập mô-đun cổng thanh toán Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Cung cấp cho khách hàng của bạn trang thanh toán trực tuyến để thanh toán bằng thẻ tín dụng/thẻ ghi nợ qua <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> . Điều này có thể được sử dụng để cho phép khách hàng của bạn thực hiện thanh toán đặc biệt hoặc thanh toán liên quan đến một đối tượng Dolibarr cụ thể (hóa đơn, đơn đặt hàng, ...)
 StripeOrCBDoPayment=Thanh toán bằng thẻ tín dụng hoặc Stripe
 FollowingUrlAreAvailableToMakePayments=Các URL sau có sẵn để cung cấp một trang cho khách hàng để thanh toán trên các đối tượng Dolibarr
 PaymentForm=Hình thức thanh toán
@@ -31,7 +31,7 @@ STRIPE_CGI_URL_V2=Mô-đun Url của Stripe CGI để thanh toán
 CSSUrlForPaymentForm=CSS style sheet Url cho hình thức thanh toán
 NewStripePaymentReceived=Đã nhận thanh toán Stripe mới
 NewStripePaymentFailed=Thanh toán Stripe mới đã thử nhưng không thành công
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=Không nạp được thẻ
 STRIPE_TEST_SECRET_KEY=Khóa kiểm tra bí mật
 STRIPE_TEST_PUBLISHABLE_KEY=Khóa kiểm tra có thể xuất bản
 STRIPE_TEST_WEBHOOK_KEY=Khóa kiểm tra webhook
@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Khóa trực tiếp trên web
 ONLINE_PAYMENT_WAREHOUSE=Tồn kho để sử dụng để giảm tồn kho khi thanh toán trực tuyến được thực hiện <br> (TODO Khi tùy chọn giảm tồn kho được thực hiện trên một hành động trên hóa đơn và thanh toán trực tuyến tự tạo hóa đơn?)
 StripeLiveEnabled=Stripe trực tiếp được kích hoạt (nếu không là chế độ kiểm tra / hộp cát)
 StripeImportPayment=Nhập dữ liệu thanh toán Stripe
-ExampleOfTestCreditCard=Ví dụ về thẻ tín dụng để kiểm tra: %s => hợp lệ, %s => lỗi CVC, %s => đã hết hạn, %s => thu phí không thành công
+ExampleOfTestCreditCard=Ví dụ về thẻ tín dụng để kiểm tra thanh toán: %s => hợp lệ, %s => lỗi CVC, %s => đã hết hạn, %s => sạc không thành công
+ExampleOfTestBankAcountForSEPA=Ví dụ về BAN tài khoản ngân hàng để kiểm tra ghi nợ trực tiếp: %s
 StripeGateways=Cổng Stripe
 OAUTH_STRIPE_TEST_ID=ID khách hàng kết nối Stripe (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID khách hàng kết nối Stripe (ca _...)
@@ -50,6 +51,7 @@ StripeAccount=Tài khoản Stripe
 StripeChargeList=Danh sách thu phí Stripe
 StripeTransactionList=Danh sách các giao dịch Stripe
 StripeCustomerId=Id khách hàng Stripe
+StripePaymentId=ID sọc thanh toán
 StripePaymentModes=Phương thức thanh toán Stripe
 LocalID=ID địa phương
 StripeID=ID Stripe
@@ -61,6 +63,7 @@ DeleteACard=Xóa thẻ
 ConfirmDeleteCard=Bạn có chắc chắn muốn xóa thẻ Tín dụng hoặc Thẻ ghi nợ này không?
 CreateCustomerOnStripe=Tạo khách hàng trên Stripe
 CreateCardOnStripe=Tạo thẻ trên Stripe
+CreateBANOnStripe=Tạo ngân hàng trên Stripe
 ShowInStripe=Hiển thị trong Stripe
 StripeUserAccountForActions=Tài khoản người dùng sử dụng để thông báo qua email về một số sự kiện Stripe (Xuất chi Stripe)
 StripePayoutList=Danh sách các khoản xuất chi của Stripe
@@ -68,4 +71,10 @@ ToOfferALinkForTestWebhook=Liên kết để thiết lập Stripe WebHook để 
 ToOfferALinkForLiveWebhook=Liên kết để thiết lập Stripe WebHook để gọi IPN (chế độ trực tiếp)
 PaymentWillBeRecordedForNextPeriod=Thanh toán sẽ được ghi lại cho giai đoạn tiếp theo.
 ClickHereToTryAgain=<a href="%s">Bấm vào đây để thử lại...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Do quy tắc Xác thực khách hàng mạnh mẽ, việc tạo thẻ phải được thực hiện từ văn phòng hỗ trợ của Stripe. Bạn có thể nhấp vào đây để bật hồ sơ khách hàng Stripe: %s
+STRIPE_CARD_PRESENT=Thẻ quà tặng cho thiết bị đầu cuối Stripe
+TERMINAL_LOCATION=Vị trí (địa chỉ) của Stripe Terminals
+RequestDirectDebitWithStripe=Yêu cầu ghi nợ trực tiếp với Stripe
+RequesCreditTransferWithStripe=Yêu cầu chuyển khoản tín dụng với Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Cho phép thanh toán Ghi nợ trực tiếp thông qua Stripe
+StripeConnect_Mode=Chế độ kết nối sọc
