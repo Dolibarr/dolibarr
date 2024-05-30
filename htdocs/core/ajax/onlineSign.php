@@ -797,9 +797,7 @@ if ($action == "importSignature") {
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
-
 					if (dol_is_file($sourcefile)) {
-
 						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
