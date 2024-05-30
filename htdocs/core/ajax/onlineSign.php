@@ -148,7 +148,6 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-
 						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
@@ -326,7 +325,6 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-
 						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
@@ -460,7 +458,6 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-
 						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
@@ -601,7 +598,6 @@ if ($action == "importSignature") {
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
 						}
 						if (dol_is_file($sourcefile)) {
-
 							$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
 							$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 							if ($reshook < 0) {
