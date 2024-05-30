@@ -12660,6 +12660,11 @@ function getElementProperties($elementType)
 		$element = 'productlot';
 		$subelement = '';
 		$table_element = 'product_lot';
+	} elseif ($elementType == 'societeaccount') {
+		$classpath = 'societe/class';
+		$classfile = 'societeaccount';
+		$classname = 'SocieteAccount';
+		$module = 'societe';
 	} elseif ($elementType == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
