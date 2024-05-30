@@ -254,10 +254,10 @@ class FormActions
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
 			print "\n";
@@ -275,6 +275,21 @@ class FormActions
 
 					// Ref
 					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
+
+					// Date
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					if ($actioncomm->datef) {
+						$tmpa = dol_getdate($actioncomm->datep);
+						$tmpb = dol_getdate($actioncomm->datef);
+						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
+							}
+						} else {
+							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+						}
+					}
+					print '</td>';
 
 					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
@@ -323,20 +338,7 @@ class FormActions
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
 
-					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
-					if ($actioncomm->datef) {
-						$tmpa = dol_getdate($actioncomm->datep);
-						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-							}
-						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
-						}
-					}
-					print '</td>';
+					// Status
 					print '<td class="right">';
 					print $actioncomm->getLibStatut(3);
 					print '</td>';

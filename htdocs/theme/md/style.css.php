@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1266,6 +1267,14 @@ div.urllink {
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
+}
+.divsection {
+	padding: 10px;
+	border: 1px solid #DFDFDF;
+	border-radius: 10px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+	/* background-color: rgba(0, 0, 0, 0.02); */
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
@@ -5953,7 +5962,7 @@ a.cke_dialog_ui_button_ok span {
 	color: #333 !important;
 }
 a.cke_button, a.cke_combo_button {
-    height: 18px !important;
+	height: 18px !important;
 }
 
 
@@ -7835,10 +7844,6 @@ table.jPicker {
 	}
 
 	td.widthpictotitle { width: 30px; }
-
-	.box-flex-container {
-		margin: 0 0 0 -8px !important;
-	}
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;

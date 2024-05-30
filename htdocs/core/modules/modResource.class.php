@@ -148,7 +148,7 @@ class modResource extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->rights[$r][0] = 63001;
 		$this->rights[$r][1] = 'Read resources';

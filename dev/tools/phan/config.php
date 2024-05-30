@@ -442,6 +442,7 @@ return [
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
 		'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled into config_extended only.

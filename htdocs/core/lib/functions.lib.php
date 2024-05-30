@@ -3208,7 +3208,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				// @phan-suppress-next-line PhanPluginRedundantAssignment
 				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
-				$to_gmt = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
@@ -4254,7 +4254,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
-				$picto = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$picto = '';
 			}
 		}
 		if ($adddivfloat == 1) {
@@ -11530,12 +11530,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$srclang = 'xml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.xaml$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$srclang = 'xaml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
@@ -11699,16 +11699,16 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-image';
 	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.ics$/i', $tmpfile)) {
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
@@ -11748,12 +11748,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-archive';
 	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	} elseif (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {				// Lib
 		$mime = 'library';
 		$imgmime = 'library.png';
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$famime = 'file-o';
 	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
@@ -12010,7 +12010,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 	} elseif (getDolGlobalString('MAIN_STATUS_USES_IMAGES')) {
 		// Use status with images (for backward compatibility)
-		$return = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$return = '';
 		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
@@ -12660,6 +12660,11 @@ function getElementProperties($elementType)
 		$element = 'productlot';
 		$subelement = '';
 		$table_element = 'product_lot';
+	} elseif ($elementType == 'societeaccount') {
+		$classpath = 'societe/class';
+		$classfile = 'societeaccount';
+		$classname = 'SocieteAccount';
+		$module = 'societe';
 	} elseif ($elementType == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
@@ -12941,7 +12946,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
-	print $langs->trans($header);
+	print '<span class="valignmiddle">'.$langs->trans($header).'</span>';
 
 	if (!empty($link)) {
 		if (!empty($arguments)) {
@@ -13471,7 +13476,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
 		$iconClass = 'fa fa-pencilxxx';
 	} elseif (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-		$iconClass = 'fa fa-comments';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$iconClass = 'fa fa-comments';
 	} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 		$iconClass = 'fa fa-mask';
 	} elseif (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {

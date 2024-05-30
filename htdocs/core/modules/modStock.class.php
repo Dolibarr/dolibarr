@@ -203,7 +203,7 @@ class modStock extends DolibarrModules
 
 		// Exports
 		//--------
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Export warehouses
 		$r++;
@@ -277,7 +277,7 @@ class modStock extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('stock' => array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect = 'product';
 		$keyforelement = 'product';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ps.reel' => 'Stock'));
 
@@ -336,7 +336,7 @@ class modStock extends DolibarrModules
 			$this->export_dependencies_array[$r] = array('stockbatch' => array('pb.rowid'), 'batch' => array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 			$keyforselect = 'product_lot';
 			$keyforelement = 'batch';
-			$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';

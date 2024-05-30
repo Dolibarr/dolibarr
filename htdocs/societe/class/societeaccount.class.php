@@ -412,9 +412,9 @@ class SocieteAccount extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
-		$langs->loadLangs(['companies, commercial']);
+		$langs->loadLangs(['companies, commercial', 'website']);
 
 		$datas = [];
 		$option = $params['option'] ?? '';

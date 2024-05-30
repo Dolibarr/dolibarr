@@ -1031,7 +1031,7 @@ if ($resql) {
 			// TODO Use a cache on user
 			$userstatic->fetch($obj->fk_user_author);
 			$objectstatic->delivery_date = $obj->dp;
-			print $objectstatic->getKanbanView('', array('thirdparty' => $companystatic, 'userauthor' => $userstatic, 'selected' => in_array($obj->id, $arrayofselected)));
+			print $objectstatic->getKanbanView('', array('thirdparty' => $companystatic, 'userauthor' => $userstatic, 'selected' => in_array($obj->rowid, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

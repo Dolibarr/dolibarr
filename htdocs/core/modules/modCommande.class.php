@@ -417,10 +417,10 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 
-		$import_extrafield_sample = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$import_extrafield_sample = array();
 		$keyforselect = 'commandedet';
 		$keyforelement = 'orderline';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commandedet'];
