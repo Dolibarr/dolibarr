@@ -1300,7 +1300,7 @@ while ($i < $imaxinloop) {
 		}
 		// Firstname
 		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->firstname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 			//print $obj->firstname;
 			print "</td>\n";
@@ -1310,7 +1310,7 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->lastname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
 			print "</td>\n";
