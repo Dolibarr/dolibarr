@@ -607,7 +607,7 @@ if ($action == "importSignature") {
 							if ($reshook < 0) {
 								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 							}
-	
+
 							if (empty($reshook)) {
 								// We build the new PDF
 								$pdf = pdf_getInstance();
