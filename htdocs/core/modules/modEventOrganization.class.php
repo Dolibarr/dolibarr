@@ -340,7 +340,7 @@ class modEventOrganization extends DolibarrModules
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
 		$keyforselect = 'conferenceorboothattendee';
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'conferenceorboothattendee';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforelement = 'conferenceorboothattendee';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');

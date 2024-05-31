@@ -1583,7 +1583,7 @@ class ActionComm extends CommonObject
 
 		$statusType = 'status9';
 		if ($percent == -1 && !$hidenastatus) {
-			$statusType = 'status9';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$statusType = 'status9';
 		}
 		if ($percent == 0) {
 			$statusType = 'status1';

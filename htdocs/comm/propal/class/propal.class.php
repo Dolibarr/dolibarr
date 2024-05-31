@@ -3307,7 +3307,7 @@ class Propal extends CommonObject
 	public function LibStatut($status, $mode = 1)
 	{
 		// phpcs:enable
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -3341,7 +3341,6 @@ class Propal extends CommonObject
 		} elseif ($status == self::STATUS_BILLED) {
 			$statusType = 'status6';
 		}
-
 
 		$parameters = array('status' => $status, 'mode' => $mode);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3930,9 +3929,9 @@ class Propal extends CommonObject
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		$return .= '</span>';
+		$return .= '</div>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
@@ -3941,11 +3940,15 @@ class Propal extends CommonObject
 		if (!empty($arraydata['projectlink'])) {
 			$return .= '<span class="info-box-ref"> | '.$arraydata['projectlink'].'</span>';
 		}
-		if (!empty($arraydata['authorlink'])) {
-			$return .= '<br><span class="info-box-label">'.$arraydata['authorlink'].'</span>';
+		$return .= '<br>';
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'total_ht')) {
-			$return .= '<br><span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
+			$return .= '<span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
+		}
+		if (!empty($arraydata['authorlink'])) {
+			$return .= ' &nbsp; <span class="info-box-label">'.$arraydata['authorlink'].'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

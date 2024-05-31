@@ -419,6 +419,14 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 						if (!empty($reg[0])) {
 							$image = $reg[1];
 						}
+						// Convert image "/medias/...." and "/viewimage.php?modulepart=medias&file=(.*)"
+						if (!empty($GLOBALS['website']->virtualhost)) {
+							if (preg_match('/^\/medias\//', $image)) {
+								$image = $GLOBALS['website']->virtualhost.$image;
+							} elseif (preg_match('/^\/viewimage\.php\?modulepart=medias&[^"]*file=([^&"]+)/', $image, $reg)) {
+								$image = $GLOBALS['website']->virtualhost.'/medias/'.$reg[1];
+							}
+						}
 					}
 				}
 
