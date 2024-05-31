@@ -72,7 +72,7 @@ print "<br>\n";
 
 // XDebug
 print '<br>';
-print '<strong>'.$langs->trans("XDebug").'</strong>:<br>';
+print '<strong>'.$langs->trans("XDebug").'</strong><br>';
 print '<div class="divsection">';
 $test = !function_exists('xdebug_is_enabled');
 if ($test) {
@@ -86,7 +86,7 @@ print '</div>';
 
 // Module log
 print '<br>';
-print '<strong>'.$langs->trans("Syslog").'</strong>:<br>';
+print '<strong>'.$langs->trans("Syslog").'</strong><br>';
 print '<div class="divsection">';
 $test = !isModEnabled('syslog');
 if ($test) {
@@ -104,7 +104,7 @@ print '</div>';
 
 // Module debugbar
 print '<br>';
-print '<strong>'.$langs->trans("DebugBar").'</strong>:<br>';
+print '<strong>'.$langs->trans("DebugBar").'</strong><br>';
 print '<div class="divsection">';
 $test = !isModEnabled('debugbar');
 if ($test) {
@@ -118,7 +118,7 @@ print '</div>';
 
 // Applicative cache
 print '<br>';
-print '<strong>'.$langs->trans("ApplicativeCache").'</strong>:<br>';
+print '<strong>'.$langs->trans("ApplicativeCache").'</strong><br>';
 print '<div class="divsection">';
 $test = isModEnabled('memcached');
 if ($test) {
@@ -137,7 +137,7 @@ print '</div>';
 
 // OPCode cache
 print '<br>';
-print '<strong>'.$langs->trans("OPCodeCache").'</strong>:<br>';
+print '<strong>'.$langs->trans("OPCodeCache").'</strong><br>';
 print '<div class="divsection">';
 $foundcache = 0;
 $test = function_exists('xcache_info');
@@ -176,7 +176,7 @@ print '</div>';
 
 // Use of preload bootstrap
 print '<br>';
-print '<strong>'.$langs->trans("PreloadOPCode").'</strong>:<br>';
+print '<strong>'.$langs->trans("PreloadOPCode").'</strong><br>';
 print '<div class="divsection">';
 if (ini_get('opcache.preload')) {
 	print ini_get('opcache.preload');
@@ -436,7 +436,7 @@ jQuery(document).ready(function() {
 print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
-print ':</strong><br>';
+print '</strong><br>';
 print '<div class="divsection">';
 // No cache on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
@@ -452,8 +452,10 @@ print '<div id="httpcachejsok">'.img_picto('', 'tick.png', 'class="pictofixedwid
 print '<div id="httpcachejsko">'.img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js)').'</div>';
 print '<div id="httpcachejsphpok">'.img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js.php)').'</div>';
 print '<div id="httpcachejsphpko">'.img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js.php)').'</div>';
+print '</div>';
 print '<br>';
-print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - '.$langs->trans("CacheByClient").':</strong><br>';
+print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - '.$langs->trans("CacheByClient").'</strong><br>';
+print '<div class="divsection">';
 print '<div id="httpcachebybrowser">'.img_picto('', 'question.png', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</div>';
 print '</div>';
 
@@ -461,7 +463,7 @@ print '</div>';
 print '<br>';
 print '<strong>';
 print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
-print '</strong>: ';
+print '</strong>';
 print '<br>';
 print '<div class="divsection">';
 // on PHP
@@ -482,7 +484,7 @@ print '</div>';
 
 // Database driver
 print '<br>';
-print '<strong>'.$langs->trans("DriverType").'</strong>: ';
+print '<strong>'.$langs->trans("DriverType").'</strong>';
 print '<br>';
 print '<div class="divsection">';
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
@@ -497,7 +499,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
 print '</div>';
 
 print '<br>';
-print '<strong>'.$langs->trans("ComboListOptim").'</strong>: ';
+print '<strong>'.$langs->trans("ComboListOptim").'</strong>';
 print '<br>';
 print '<div class="divsection">';
 // Product combo list
@@ -587,7 +589,7 @@ if ($resql) {
 print '</div>';
 
 print '<br>';
-print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
+print '<strong>'.$langs->trans("SearchOptim").'</strong>';
 print '<br>';
 print '<div class="divsection">';
 // Product search
@@ -639,7 +641,7 @@ print '</div>';
 
 // Browser
 print '<br>';
-print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
+print '<strong>'.$langs->trans("Browser").'</strong><br>';
 print '<div class="divsection">';
 if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'))) {
 	print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
@@ -651,7 +653,7 @@ print '</div>';
 
 // Options
 print '<br>';
-print '<strong>'.$langs->trans("Options").'</strong>:<br>';
+print '<strong>'.$langs->trans("Options").'</strong><br>';
 print '<div class="divsection">';
 if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
 	print img_picto('', 'tick.png', 'class="pictofixedwidth"');
