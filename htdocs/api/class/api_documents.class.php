@@ -583,7 +583,7 @@ class Documents extends DolibarrApi
 						foreach ($ecmfile->lines as $line) {
 							if ($filearray[$i]['name'] == $line->filename) {
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
-                    		}
+							}
 						}
 					}
 				}
