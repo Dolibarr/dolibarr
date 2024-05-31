@@ -23,9 +23,10 @@
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
  * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
+ * @param	string			$mode		Mode
  * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref, $obj = null)
+function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 {
 	global $langs;
 

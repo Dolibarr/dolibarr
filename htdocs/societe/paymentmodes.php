@@ -303,7 +303,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -320,7 +319,9 @@ if (empty($reshook)) {
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOSTINT('date_rummonth'), GETPOSTINT('date_rumday'), GETPOSTINT('date_rumyear'));
 			$companybankaccount->datec           = dol_now();
-			$companybankaccount->status          = 1;
+
+			//$companybankaccount->clos          = GETPOSTINT('clos');
+			$companybankaccount->status          = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -523,8 +524,8 @@ if (empty($reshook)) {
 			'use_companybankid' => GETPOST('companybankid'),
 			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
-		$_POST['lang_id'] = GETPOSTINT('lang_idrib'.GETPOSTINT('companybankid'));
-		$_POST['model'] = GETPOSTINT('modelrib'.GETPOSTINT('companybankid'));
+		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
+		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
 	}
 
 	$id = $socid;
@@ -1730,11 +1731,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				// Show online signature link
-				print '<td class="right nowraponall">';
+				print '<td class="nowraponall">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib);
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 1);
 				}
 				print '</td>';
 			}
