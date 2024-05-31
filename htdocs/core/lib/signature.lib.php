@@ -23,9 +23,10 @@
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
  * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
+ * @param	string			$mode		Mode
  * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref, $obj = null)
+function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 {
 	global $langs;
 
@@ -34,13 +35,17 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 
 	$servicename = 'Online';
 
-	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
+	$out = '';
+	if ($mode != 'short') {
+		$out .= img_picto('', 'globe', 'class="pictofixedwidth"');
+	}
+	$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="'.($mode == 'short' ? 'centpercentminusx' : 'quatrevingtpercentminusx').'" value="'.$url.'">';
 	}
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';

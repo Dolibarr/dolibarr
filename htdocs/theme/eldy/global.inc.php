@@ -856,6 +856,9 @@ th .button {
 .quatrevingtpercentminusx {
 	width: calc(80% - 52px);
 }
+.centpercentminusx {
+	width: calc(100% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
