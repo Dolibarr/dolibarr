@@ -523,11 +523,11 @@ if ($id > 0 || !empty($ref)) {
 				// Statut
 				print '<td class="center">';
 				// Activation desativation du contact
-				if ($object->statut >= 0) {
+				if ($object->status >= 0) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
 				}
 				print $contactstatic->LibStatut($tab[$i]['status'], 3);
-				if ($object->statut >= 0) {
+				if ($object->status >= 0) {
 					print '</a>';
 				}
 				print '</td>';
