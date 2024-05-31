@@ -209,6 +209,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
+	$search_all = '';
 }
 
 if (empty($reshook)) {
