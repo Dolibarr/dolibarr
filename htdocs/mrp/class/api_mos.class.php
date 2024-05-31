@@ -783,7 +783,6 @@ class Mos extends DolibarrApi
 					}
 				}
 
-				$pos = 0;
 				$idstockmove = 0;
 
 				// Record stock movement
@@ -829,6 +828,8 @@ class Mos extends DolibarrApi
 				if ($resultmoline <= 0) {
 					throw new RestException(500, $moline->error);
 				}
+
+				$pos++;
 			}
 		}
 
@@ -869,9 +870,9 @@ class Mos extends DolibarrApi
 		}
 
 		// Update status of MO
-		dol_syslog("consumptioncomplete = " . $consumptioncomplete . " productioncomplete = " . $productioncomplete);
+		dol_syslog("consumptioncomplete = " . (string) $consumptioncomplete . " productioncomplete = " . (string) $productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-		if ($consumptioncomplete && $productioncomplete) {
+    if ($consumptioncomplete && $productioncomplete) {
 			$result = $this->mo->setStatut(Mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {
 			$result = $this->mo->setStatut(Mo::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');

@@ -1044,6 +1044,9 @@ th .button {
 .quatrevingtpercentminusx {
 	width: calc(80% - 52px);
 }
+.centpercentminusx {
+	width: calc(100% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -1267,6 +1270,14 @@ div.urllink {
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
+}
+.divsection {
+	padding: 10px;
+	border: 1px solid #DFDFDF;
+	border-radius: 10px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+	/* background-color: rgba(0, 0, 0, 0.02); */
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
@@ -7836,10 +7847,6 @@ table.jPicker {
 	}
 
 	td.widthpictotitle { width: 30px; }
-
-	.box-flex-container {
-		margin: 0 0 0 -8px !important;
-	}
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
