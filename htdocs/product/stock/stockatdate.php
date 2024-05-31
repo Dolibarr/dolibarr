@@ -532,12 +532,12 @@ if ($ext == 'csv') {
 		print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 	} else {
 		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort");
+		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
-		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice");
+		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("MovementsSinceDate");
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'center ', $tooltiptext, 1);
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
 		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -588,7 +588,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if (!is_numeric($currentstock)) {
 					$currentstock = 0;
 				}
-				$currentstock += $stock_prod_warehouse[$objp->rowid][$val];
+				$currentstock += empty($stock_prod_warehouse[$objp->rowid][$val]) ? 0 : $stock_prod_warehouse[$objp->rowid][$val];
 			}
 			//} else {
 			//	$currentstock = $objp->stock_reel;
@@ -611,8 +611,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$nbofmovement = 0;
 			if (!empty($search_fk_warehouse)) {
 				foreach ($search_fk_warehouse as $val) {
-					$stock -= $movements_prod_warehouse[$objp->rowid][$val];
-					$nbofmovement += $movements_prod_warehouse_nb[$objp->rowid][$val];
+					$stock -= empty($movements_prod_warehouse[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse[$objp->rowid][$val];
+					$nbofmovement += empty($movements_prod_warehouse_nb[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse_nb[$objp->rowid][$val];
 				}
 			} else {
 				$stock -= empty($movements_prod[$objp->rowid]) ? 0 : $movements_prod[$objp->rowid];
@@ -704,12 +704,27 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				// Movements
 				print '<td class="right">';
 				if ($nbofmovement > 0) {
-					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
-					foreach ($search_fk_warehouse as $val) {
-						print($val > 0 ? '&search_warehouse='.$val : '');
+					$url = DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
+					if (GETPOSTISSET('datemonth')) {
+						$url .= '&search_date_startday='.GETPOSTINT('dateday');
+						$url .= '&search_date_startmonth='.GETPOSTINT('datemonth');
+						$url .= '&search_date_startyear='.GETPOSTINT('dateyear');
 					}
-					print '">'.$langs->trans("Movements").'</a>';
-					print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
+					if (count($search_fk_warehouse) > 1) {
+						$url = '';	// Do not show link, multi warehouse as filter not managed yet by target page
+					} else {
+						foreach ($search_fk_warehouse as $val) {
+							$url .= ($val > 0 ? '&search_warehouse='.((int) $val) : '');
+						}
+					}
+					if ($url) {
+						print '<a href="'.$url.'">';
+					}
+					print $langs->trans("Movements");
+					print '<span class="tabs paddingleft"><span class="badge">'.$nbofmovement.'</span></span>';
+					if ($url) {
+						print '</a>';
+					}
 				}
 				print '</td>';
 
