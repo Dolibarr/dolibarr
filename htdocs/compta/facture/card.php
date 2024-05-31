@@ -2084,7 +2084,16 @@ if (empty($reshook)) {
 			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '') {
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
+		// Define date start and date end for all line
+		$alldate_start = dol_mktime(GETPOST('alldate_starthour'), GETPOST('alldate_startmin'), 0, GETPOST('alldate_startmonth'), GETPOST('alldate_startday'), GETPOST('alldate_startyear'));
+		$alldate_end = dol_mktime(GETPOST('alldate_endhour'), GETPOST('alldate_endmin'), 0, GETPOST('alldate_endmonth'), GETPOST('alldate_endday'), GETPOST('alldate_endyear'));
+		foreach ($object->lines as $line) {
+			if ($line->product_type == 1) { // only service line
+				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $alldate_start, $alldate_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
+			}
+		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -2100,7 +2109,7 @@ if (empty($reshook)) {
 		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 		}
-	} elseif ($action == 'addline' && $usercancreate) {		// Add a new line
+	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add a new line
 		$langs->load('errors');
 		$error = 0;
 
@@ -6057,9 +6066,11 @@ if ($action == 'create') {
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
-
 		// Show online payment link
-		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+		// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$validpaymentmethod = getValidOnlinePaymentMethods('');
+		$useonlinepayment = count($validpaymentmethod);
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

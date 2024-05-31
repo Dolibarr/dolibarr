@@ -1220,7 +1220,7 @@ class ExtraFields
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
+				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
@@ -1259,7 +1259,7 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			if ($mode) {
 				$options = array();
 				foreach ($param['options'] as $okey => $val) {
@@ -1314,7 +1314,7 @@ class ExtraFields
 				$out .= '</select>';
 			}
 		} elseif ($type == 'sellist') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
@@ -1477,7 +1477,7 @@ class ExtraFields
 			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
@@ -1733,7 +1733,7 @@ class ExtraFields
 				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
-				$out = ''; // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$out = '';
 			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
@@ -2555,7 +2555,7 @@ class ExtraFields
 					}
 					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);

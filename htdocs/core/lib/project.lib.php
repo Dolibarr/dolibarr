@@ -683,7 +683,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->label = (!empty($taskrole[$lines[$i]->id]) ? $langs->trans("YourRole").': '.$taskrole[$lines[$i]->id] : '');
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
-				$taskstatic->fk_statut = $lines[$i]->status;
+				$taskstatic->fk_statut = $lines[$i]->status;	// deprecated
+				$taskstatic->status = $lines[$i]->status;
 				$taskstatic->date_start = $lines[$i]->date_start;
 				$taskstatic->date_end = $lines[$i]->date_end;
 				$taskstatic->datee = $lines[$i]->date_end; // deprecated

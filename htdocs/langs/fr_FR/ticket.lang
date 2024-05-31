@@ -69,13 +69,11 @@ Read=Lu
 Assigned=Assigné
 NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
-TicketAnswered=Répondu
 Waiting=En attente
 SolvedClosed=Résolu
 Deleted=Supprimé
 
 # Dict
-Type=Type
 Severity=Sévérité
 TicketGroupIsPublic=Le groupe est public
 TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans le formulaire lors de la création d’un ticket à partir de l’interface publique
@@ -106,7 +104,6 @@ TicketsShowProgressionHelp=Activez cette option pour masquer la progression du t
 TicketCreateThirdPartyWithContactIfNotExist=Demandez le nom et le nom de l'entreprise pour les e-mails inconnus.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Vérifiez s'il existe un tiers ou un contact pour l'e-mail saisi. Sinon, demandez un nom et un nom société pour créer un tiers avec contact.
 PublicInterface=Interface publique
-TicketUrlPublicInterfaceLabelAdmin=URL alternative pour l'interface publique
 TicketPublicInterfaceTextHomeLabelAdmin=Texte de bienvenue dans l'interface publique
 TicketPublicInterfaceTextHome=Vous pouvez créer un ticket ou consulter à partir d'un ID de ticket existant.
 TicketPublicInterfaceTextHomeHelpAdmin=Le texte défini ici apparaîtra sur la page d'accueil de l'interface publique.
@@ -288,7 +285,7 @@ NoLogForThisTicket=Pas encore de log pour ce ticket
 TicketLogAssignedTo=Ticket %s assigné à %s
 TicketLogPropertyChanged=Ticket %s modifié: classification de %s à %s
 TicketLogClosedBy=Ticket %s clôt par %s
-TicketLogReopen=Ticket %s ré-ouvert 
+TicketLogReopen=Ticket %s ré-ouvert
 
 #
 # Public pages
@@ -307,13 +304,13 @@ TicketNewEmailBodyCustomer=Ceci est un email automatique pour confirmer qu'un no
 TicketNewEmailBodyInfosTicket=Informations pour la surveillance du ticket
 TicketNewEmailBodyInfosTrackId=Numéro de suivi du ticket : %s
 TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cliquant sur le lien suivant
-TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
+TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez visualiser la progression du ticket dans l'interface publique en cliquant sur le lien suivant
 TicketCloseEmailBodyInfosTrackUrlCustomer=Vous pouvez consulter l'historique de ce ticket en cliquant sur le lien suivant
 TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
 TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire précisément votre question. Fournissez le plus d'informations possible pour nous permettre d'identifier correctement votre demande.
 TicketPublicMsgViewLogIn=Merci d'entrer le code de suivi du ticket
-TicketTrackId=ID de suivi publique
+TicketTrackId=ID de suivi
 OneOfTicketTrackId=Un de vos ID de suivi
 ErrorTicketNotFound=Ticket avec ID de suivi %s introuvable!
 Subject=Sujet

@@ -573,6 +573,8 @@ if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')
 		print '</table>';
 		print '</div>';
 		print dol_get_fiche_end();
+
+		print '<br>';
 	}
 }
 
@@ -636,6 +638,8 @@ if ($projectid > 0 || $project_ref) {
 		print '</div>';
 		print dol_get_fiche_end();
 
+		print '<br>';
+
 		$object = $savobject;
 	} else {
 		print "ErrorRecordNotFound";
@@ -675,7 +679,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {

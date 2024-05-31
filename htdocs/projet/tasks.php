@@ -825,12 +825,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	// WYSIWYG editor
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 	$nbrows = 0;
 	if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 		$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 	}
-	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows, '90%');
+	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), $nbrows, '90%');
 	print $doleditor->Create();
 
 	print '</td></tr>';

@@ -1040,7 +1040,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Code for search criteria persistence.
-	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	// Save data into session if key start with 'search_'
 	if (empty($method) || $method == 3 || $method == 4) {
 		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield'))) {
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
@@ -3208,7 +3208,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				// @phan-suppress-next-line PhanPluginRedundantAssignment
 				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
-				$to_gmt = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
@@ -4254,7 +4254,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
-				$picto = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$picto = '';
 			}
 		}
 		if ($adddivfloat == 1) {
@@ -4704,9 +4704,10 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  * Return the picto for a data type
  *
  * @param 	string		$key		Key
+ * @param	string		$morecss	Add more css to the object
  * @return 	string					Pïcto for the key
  */
-function getPictoForType($key)
+function getPictoForType($key, $morecss = '')
 {
 	// Set array with type -> picto
 	$type2picto = array(
@@ -4740,10 +4741,10 @@ function getPictoForType($key)
 	);
 
 	if (!empty($type2picto[$key])) {
-		return img_picto('', $type2picto[$key], 'class="pictofixedwidth"');
+		return img_picto('', $type2picto[$key], 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 	}
 
-	return img_picto('', 'generic', 'class="pictofixedwidth"');
+	return img_picto('', 'generic', 'class="pictofixedwidth'.($morecss ? ' '.$morecss : '').'"');
 }
 
 
@@ -11529,12 +11530,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$srclang = 'xml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.xaml$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$srclang = 'xaml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
@@ -11698,16 +11699,16 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-image';
 	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.ics$/i', $tmpfile)) {
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
@@ -11747,12 +11748,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-archive';
 	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
-		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	} elseif (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {				// Lib
 		$mime = 'library';
 		$imgmime = 'library.png';
-		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$famime = 'file-o';
 	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
@@ -11914,18 +11915,23 @@ function roundUpToNextMultiple($n, $x = 5)
 /**
  * Function dolGetBadge
  *
- * @param   string  $label      label of badge no html : use in alt attribute for accessibility
- * @param   string  $html       optional : label of badge with html
- * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param   ''|'pill'|'dot'	$mode	Default '' , 'pill', 'dot'
- * @param   string  $url        the url for link
+ * @param   string  			$label      label of badge no html : use in alt attribute for accessibility
+ * @param   string  			$html       optional : label of badge with html
+ * @param   string  			$type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
+ * @param   ''|'pill'|'dot'		$mode		Default '' , 'pill', 'dot'
+ * @param   string  			$url        the url for link
  * @param   array<string,mixed>	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
- * @return  string              Html badge
+ * @return  string              			Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
+	$csstouse = 'badge';
+	$csstouse .= (!empty($mode) ? ' badge-'.$mode : '');
+	$csstouse .= (!empty($type) ? ' badge-'.$type : '');
+	$csstouse .= (empty($params['css']) ? '' : ' '.$params['css']);
+
 	$attr = array(
-		'class' => 'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
+		'class' => $csstouse
 	);
 
 	if (empty($html)) {
@@ -12004,7 +12010,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 	} elseif (getDolGlobalString('MAIN_STATUS_USES_IMAGES')) {
 		// Use status with images (for backward compatibility)
-		$return = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$return = '';
 		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
@@ -12654,6 +12660,11 @@ function getElementProperties($elementType)
 		$element = 'productlot';
 		$subelement = '';
 		$table_element = 'product_lot';
+	} elseif ($elementType == 'societeaccount') {
+		$classpath = 'societe/class';
+		$classfile = 'societeaccount';
+		$classname = 'SocieteAccount';
+		$module = 'societe';
 	} elseif ($elementType == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
@@ -12691,6 +12702,13 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+	} elseif ($elementType == 'ccountry') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
@@ -12800,7 +12818,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
-
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		if ($useCache === 1
 			&& !empty($globalCacheForGetObjectFromCache[$element_type])
@@ -12929,7 +12946,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 
 
 	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
-	print $langs->trans($header);
+	print '<span class="valignmiddle">'.$langs->trans($header).'</span>';
 
 	if (!empty($link)) {
 		if (!empty($arguments)) {
@@ -13459,7 +13476,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
 		$iconClass = 'fa fa-pencilxxx';
 	} elseif (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-		$iconClass = 'fa fa-comments';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$iconClass = 'fa fa-comments';
 	} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 		$iconClass = 'fa fa-mask';
 	} elseif (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {

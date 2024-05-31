@@ -1005,6 +1005,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
+		if ($user->hasRight('member', 'configurer')) {
+			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
+		}
 		print "</td>\n";
 
 		// Morphy
@@ -2087,7 +2090,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAX = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
+			$morehtmlcenter = '';
+			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

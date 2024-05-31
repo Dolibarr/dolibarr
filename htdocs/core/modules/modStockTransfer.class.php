@@ -394,7 +394,7 @@ class modStockTransfer extends DolibarrModules
 		/* END MODULEBUILDER EXPORT STOCKTRANSFER */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT STOCKTRANSFER */
 		/*
 		 $langs->load("stocktransfer@stocktransfer");

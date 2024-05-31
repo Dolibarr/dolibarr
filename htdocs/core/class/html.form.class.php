@@ -2962,7 +2962,7 @@ class Form
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
 		// Add from (left join) from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -3032,7 +3032,7 @@ class Form
 			$sql .= " AND p.fk_product_type = 0";
 		}
 		// Add where from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -3558,7 +3558,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
+	 * Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
 	 * @param int 		$socid 			Id third party
 	 * @param string 	$selected 		Preselected product
@@ -3594,9 +3594,9 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
-			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="minwidth300" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
 			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
@@ -6930,7 +6930,7 @@ class Form
 	 *
 	 * @param integer|string 		$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string 				$prefix 		Prefix for fields name
-	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 * @param int 					$h 				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 or 4 (4=hours on a new line)=Show hour always empty
 	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 * @param int 					$empty 			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 * @param string 				$form_name 		Not used
@@ -7022,7 +7022,7 @@ class Form
 			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
 			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
-		if ($h == 3) {
+		if ($h == 3 || $h == 4) {
 			$shour = '';
 		}
 		if ($m == 3) {
@@ -7174,7 +7174,7 @@ class Form
 		}
 
 		if ($d && $h) {
-			$retstring .= ($h == 2 ? '<br>' : ' ');
+			$retstring .= (($h == 2 || $h == 4) ? '<br>' : ' ');
 			$retstring .= '<span class="nowraponall">';
 		}
 
@@ -9668,7 +9668,7 @@ class Form
     		</dd>
     		</dl>';
 		} else {
-			$linktoelem = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$linktoelem = '';
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {

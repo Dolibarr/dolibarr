@@ -1,6 +1,6 @@
 <?php
 /*
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1024,12 +1024,6 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
-.nomarginleft {
-	margin-<?php print $left; ?>: unset;
-}
-.nomarginright {
-	margin-<?php print $right; ?>: unset;
-}
 .nowidthimp {
 	width: unset !important;
 }
@@ -1084,6 +1078,14 @@ div.urllink {
 }
 div.urllink, div.urllink a {
 	color: #339 !important;
+}
+.divsection {
+	padding: 10px;
+	border: 1px solid #DFDFDF;
+	border-radius: 10px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+	/* background-color: rgba(0, 0, 0, 0.02); */
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
@@ -1417,6 +1419,9 @@ select.flat.selectlimit {
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
+}
+.nomarginright {
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
@@ -1884,10 +1889,12 @@ maxscreenheightless200 {
 select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
+	min-width: 100px;
 }
 
 
@@ -1925,9 +1932,16 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		min-width: 100px;
 		display: inline-block;
 	}
+
+	select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
+		width: calc(100% - 52px) !important;
+		display: inline-block;
+		min-width: 100px;
+	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 		width: calc(100% - 70px) !important;
 		display: inline-block;
+		min-width: 100px;
 	}
 
 	input.maxwidthinputfileonsmartphone {
@@ -3931,7 +3945,7 @@ div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
-	padding-top: 5px !important;
+	padding-top: 7px !important;
 	padding-bottom: 0px !important;
 }
 
@@ -5985,7 +5999,9 @@ a.cke_dialog_ui_button_ok span {
 	text-shadow: none !important;
 	color: #333 !important;
 }
-
+a.cke_button, a.cke_combo_button {
+	height: 18px !important;
+}
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */

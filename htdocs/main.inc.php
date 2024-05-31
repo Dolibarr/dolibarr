@@ -53,6 +53,28 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+/**
+ * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
+ *
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmojiBis()
+ */
+function getArrayOfEmoji()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
 
 /**
  * Return the real char for a numeric entities.
@@ -72,13 +94,12 @@ function realCharForNumericEntities($matches)
 		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
-	// The numeric value we want in UTF8 instead of entities because it is emoji
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	// The numeric values we want in UTF8 instead of entities because it is emoji
 	$arrayofemojis = getArrayOfEmoji();
 	foreach ($arrayofemojis as $valarray) {
 		if ($newstringnumentity >= hexdec($valarray[0]) && $newstringnumentity <= hexdec($valarray[1])) {
@@ -566,7 +587,11 @@ if ($checkifupgraderequired) {
 		if (!getDolGlobalString('MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE') || $rescomp < 3) {
 			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
 			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
-			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			if (php_sapi_name() === "cli") {
+				print "main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Try to run upgrade process.\n";
+			} else {
+				header("Location: ".DOL_URL_ROOT."/install/index.php");
+			}
 			exit;
 		}
 	}
@@ -2606,7 +2631,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a valignmiddle" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	            '.$userImage.(empty($user->photo) ? '<!-- no photo so show also the login --><span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2650,7 +2675,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	        </div>
 	    </div>';
 	} else {
-		$btnUser = '<!-- div for user link -->
+		$btnUser = '<!-- div for user link text browser -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="valignmiddle" alt="'.$langs->trans("MyUserCard").'">
 	    	'.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
@@ -3284,7 +3309,9 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 					$stringforfirstkey .= ' CTL +';
 				}
 
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1, $stringforfirstkey.' s');
+				//$textsearch = $langs->trans("Search");
+				$textsearch = '<span class="fa fa-search"></span>';
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {
@@ -3514,7 +3541,7 @@ function main_area($title = '')
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'aZ09'))) {
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
 			print '<!-- Begin show mysoc info header -->'."\n";
@@ -3902,7 +3929,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;

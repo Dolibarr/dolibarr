@@ -78,6 +78,7 @@ class MyObject extends CommonObject
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
+	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.

@@ -1478,12 +1478,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
 
-			print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
-
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
+
+			// Phone mobile
+			print '<td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
+
+			// Fax
+			print '<tr>';
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
@@ -1747,10 +1751,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
+			// TODO Use select_doluser in multiselect mode
+			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
-			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
 			// Add logo
