@@ -2362,6 +2362,7 @@ class Adherent extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
+
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
@@ -2394,6 +2395,7 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
+
 		$result .= $linkend;
 
 		if ($addlinktonotes) {
