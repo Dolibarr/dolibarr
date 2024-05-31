@@ -14143,7 +14143,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body" >';
+				$out .= '<div class="timeline-body wordbreak">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {

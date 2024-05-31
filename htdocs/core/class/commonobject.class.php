@@ -6862,7 +6862,7 @@ abstract class CommonObject
 			$this->db->begin();
 
 			$table_element = $this->table_element;
-			if ($table_element == 'categorie') {
+			if ($table_element == 'categorie') {	// TODO Rename table llx_categories_extrafields into llx_categorie_extrafields so we can remove this.
 				$table_element = 'categories'; // For compatibility
 			}
 
@@ -7155,7 +7155,12 @@ abstract class CommonObject
 			$linealreadyfound = 0;
 
 			// Check if there is already a line for this object (in most cases, it is, but sometimes it is not, for example when extra field has been created after), so we must keep this overload)
-			$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->table_element."_extrafields WHERE fk_object = ".((int) $this->id);
+			$table_element = $this->table_element;
+			if ($table_element == 'categorie') {	// TODO Rename table llx_categories_extrafields into llx_categorie_extrafields so we can remove this.
+				$table_element = 'categories'; // For compatibility
+			}
+
+			$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$tmpobj = $this->db->fetch_object($resql);
