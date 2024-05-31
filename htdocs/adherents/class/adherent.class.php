@@ -2363,7 +2363,7 @@ class Adherent extends CommonObject
 
 		$result .= $linkstart;
 
-    if ($withpictoimg) {
+		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
@@ -2396,7 +2396,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-    $result .= $linkend;
+		$result .= $linkend;
 
 		if ($addlinktonotes) {
 			if ($this->note_private) {
