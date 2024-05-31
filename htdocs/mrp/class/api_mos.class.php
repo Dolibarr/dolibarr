@@ -783,7 +783,6 @@ class Mos extends DolibarrApi
 					}
 				}
 
-				$pos = 0;
 				$idstockmove = 0;
 
 				// Record stock movement
@@ -829,6 +828,7 @@ class Mos extends DolibarrApi
 				if ($resultmoline <= 0) {
 					throw new RestException(500, $moline->error);
 				}
+				$pos++;
 			}
 		}
 
