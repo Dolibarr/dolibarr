@@ -535,6 +535,18 @@ function dol_is_link($pathoffile)
 }
 
 /**
+ * Test if directory or filename is writable
+ *
+ * @param	string		$folderorfile   Name of folder or filename
+ * @return	boolean     				True if it's writable, False if not found
+ */
+function dol_is_writable($folderorfile)
+{
+	$newfolderorfile = dol_osencode($folderorfile);
+	return is_writable($newfolderorfile);
+}
+
+/**
  * Return if path is an URI (the name of the method is misleading).
  *
  * URLs are addresses for websites, URI refer to online resources.
