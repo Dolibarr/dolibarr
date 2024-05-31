@@ -2362,10 +2362,8 @@ class Adherent extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		// if ($withpictoimg) {
-		// 	$result .= '<div class="inline-block nopadding valignmiddle">';
-		// }
-		if ($withpictoimg) {
+
+    if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
@@ -2397,10 +2395,8 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-		// if ($withpictoimg) {
-		// 	$result .= '</div>';
-		// }
-		$result .= $linkend;
+
+    $result .= $linkend;
 
 		if ($addlinktonotes) {
 			if ($this->note_private) {
