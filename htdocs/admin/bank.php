@@ -37,10 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
 $actionsave = GETPOST('save', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -48,10 +44,31 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'bankaccount';
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$error = 0;
+
 
 /*
  * Actions
  */
+
+if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT'))) {
+	$constname = preg_replace('/^set/', '', $action);
+	$constvalue = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
 
 // Order display of bank account
 if ($action == 'setbankorder') {
@@ -476,6 +493,19 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center width75">'.$langs->trans("Status")."</td>\n";
 print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td><td></td>';
+if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setBANK_DISABLE_DIRECT_INPUT&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setBANK_DISABLE_DIRECT_INPUT&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('AccountStatement');

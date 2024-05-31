@@ -1731,11 +1731,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				// Show online signature link
-				print '<td class="nowraponall">';
+				print '<td class="width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 1);
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 'short');
 				}
 				print '</td>';
 			}
