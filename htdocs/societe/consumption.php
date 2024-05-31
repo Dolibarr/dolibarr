@@ -179,7 +179,7 @@ if ($object->client) {
 	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$elementTypeArray['shipment'] = $langs->transnoentitiesnoconv('Shipments');
 	}
 	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
