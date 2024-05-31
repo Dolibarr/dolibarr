@@ -63,9 +63,14 @@ print '</a>';
 print '<br>';
 print '<br>';
 
+
+print '<br>';
+
+
 print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
 
-print '<div class="wordbreak">';
+
+print '<div class="divsection wordbreak">';
 
 // Get version of PHP
 $phpversion = version_php();
@@ -193,11 +198,9 @@ print '<br>';
 // OS Permissions
 
 print '<br>';
-print '<br>';
-print '<br>';
 print load_fiche_titre($langs->trans("OSSetup").' - '.$langs->trans("PermissionsOnFiles"), '', 'folder');
 
-print '<div class="wordbreak">';
+print '<div class="divsection wordbreak">';
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
@@ -284,18 +287,18 @@ if (file_exists($installmoduleslock)) {
 } else {
 	print $langs->trans("InstallOfAddonIsNotBlocked", DOL_DATA_ROOT);
 }
-print '<br>';
 
 print '</div>';
+
 
 
 // File conf.php
 
 print '<br>';
 print '<br>';
-print '<br>';
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
+print '<div class="divsection wordbreak">';
 print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
 if (empty($dolibarr_main_prod)) {
 	print ' &nbsp; &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
@@ -353,8 +356,8 @@ if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
 	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
 }
+print '</div>';
 
-print '<br>';
 
 /*
 if (!empty($dolibarr_main_stream_do_not_disable)) {
@@ -379,11 +382,10 @@ if (!empty($dolibarr_main_stream_do_not_disable)) {
 
 print '<br>';
 print '<br>';
-print '<br>';
 
 print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
-print '<div class="wordbreak">';
+print '<div class="divsection wordbreak">';
 
 print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
 print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? '' : img_picto('', 'tick').' ';
@@ -517,20 +519,18 @@ if (empty($out)) {
 	print ' - '.str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/events.php" target="_blank">', $s));
 }
 
-print '<br>';
-
 print '</div>';
 
+print '<br>';
 
 
 // Modules/Applications
 
 print '<br>';
 print '<br>';
-print '<br>';
 print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
-print '<div class="wordbreak">';
+print '<div class="divsection wordbreak">';
 
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
@@ -585,13 +585,16 @@ if ($test) {
 	}
 }
 
+print '</div>';
+
 
 // APIs
 
 print '<br>';
 print '<br>';
-print '<br>';
 print load_fiche_titre($langs->trans("API"), '', 'folder');
+
+print '<div class="divsection wordbreak">';
 
 if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	print $langs->trans("APIsAreNotEnabled");
@@ -602,20 +605,19 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	}
 	if (isModEnabled('api')) {
 		print '<strong>API_ENDPOINT_RULES</strong> = '.getDolGlobalString('API_ENDPOINT_RULES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>')."<br>\n";
-		print '<br>';
 	}
 }
 
 print '</div>';
 
 
-print '<br><br>';
+print '<br>';
 print '<br>';
 
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
 
-print '<div class="wordbreak">';
+print '<div class="divsection wordbreak">';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 print '<br>';
@@ -648,14 +650,19 @@ print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.getDolGlobalString
 print '<br>';
 
 print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 2)</span>'."<br>";
-print '<br>';
+
+print '</div>';
+
 
 print '<br>';
 print '<br>';
 
+
+// Other - experimental
 
 print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
 
+print '<div class="divsection wordbreak">';
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
 if (!getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
@@ -767,8 +774,6 @@ print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('W
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
-print '<br>';
-
 
 print '</div>';
 
@@ -778,7 +783,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("LimitsAndMitigation"), '', 'folder');
 
-print '<div class="wordbreak">';
+print '<div class="divsection wordbreak">';
 
 print '<span class="opacitymedium">';
 print $langs->trans("RecommendMitigationOnURL").'<br>';

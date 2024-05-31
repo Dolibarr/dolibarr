@@ -725,8 +725,9 @@ print '<tr><td class="center">';
 
 
 if ($action == "dosign" && empty($cancel)) {
+	// Show the field to sign
 	print '<div class="tablepublicpayment">';
-	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly borderbottom" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
 	print '<input type="button" class="small noborderbottom cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
@@ -768,13 +769,20 @@ if ($action == "dosign" && empty($cancel)) {
 						"entity" : \''.dol_escape_htmltag($entity).'\',
 					},
 					success: function(response) {
-						if(response == "success"){
+						if (response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : '').'");
-						}else{
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
+						} else {
+							document.body.style.cursor = \'auto\';
 							console.error(response);
+							alert("Error on calling the core/ajax/onlineSign.php. See console log.");
 						}
 					},
+					error: function(response) {
+						document.body.style.cursor = \'auto\';
+						console.error(response);
+						alert("Error on calling the core/ajax/onlineSign.php. "+response.responseText);
+					}
 				});
 			});
 		}
