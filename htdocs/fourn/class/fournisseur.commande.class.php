@@ -1764,7 +1764,9 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+		$this->date 			  = '';
 		$this->date_creation      = '';
+		$this->date_commande 	  = '';
 		$this->date_validation    = '';
 		$this->ref_supplier       = null;
 		$this->user_approve_id    = '';
