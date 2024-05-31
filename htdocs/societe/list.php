@@ -37,7 +37,6 @@
  *	\brief      Page to show list of third parties
  */
 
-
 // Load Dolibarr environment
 require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

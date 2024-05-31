@@ -1716,7 +1716,7 @@ while ($i < $imaxinloop) {
 
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
-	$objectstatic->ref_client = $obj->ref_client;
+	$objectstatic->ref_customer = $obj->ref_client;
 	$objectstatic->note_public = $obj->note_public;
 	$objectstatic->note_private = $obj->note_private;
 	$objectstatic->statut = $obj->status;
@@ -1776,6 +1776,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$objectstatic->thirdparty = $companystatic;
 		$userstatic->fetch($obj->fk_user_author);
 		$arrayofparams = array('selected' => in_array($object->id, $arrayofselected), 'authorlink' => $userstatic->getNomUrl(-2), 'projectlink' => $projectstatic->getNomUrl(2));
 		print $objectstatic->getKanbanView('', $arrayofparams);

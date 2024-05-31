@@ -2689,7 +2689,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->isService()) {
 					// Duration
-					print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
 					if ($object->duration_value > 1) {
 						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
@@ -2710,14 +2710,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				} else {
 					if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 						// Nature
-						print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+						print '<tr><td class="titlefieldmiddle">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 						print $object->getLibFinished();
 						print '</td></tr>';
 					}
 				}
 
 				if (!$object->isService() && isModEnabled('bom') && $object->finished) {
-					print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+					print '<tr><td class="titlefieldmiddle">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
 					if ($object->fk_default_bom) {
 						$bom_static = new BOM($db);
 						$bom_static->fetch($object->fk_default_bom);
@@ -2729,7 +2729,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!$object->isService()) {
 					// Brut Weight
 					if (!getDolGlobalString('PRODUCT_DISABLE_WEIGHT')) {
-						print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
+						print '<tr><td class="titlefieldmiddle">'.$langs->trans("Weight").'</td><td>';
 						if ($object->weight != '') {
 							print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
 						} else {
@@ -2778,7 +2778,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (getDolGlobalString('PRODUCT_ADD_NET_MEASURE')) {
 						// Net Measure
-						print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td>';
+						print '<tr><td class="titlefieldmiddle">'.$langs->trans("NetMeasure").'</td><td>';
 						if ($object->net_measure != '') {
 							print $object->net_measure." ".measuringUnitString($object->net_measure_units);
 						} else {
