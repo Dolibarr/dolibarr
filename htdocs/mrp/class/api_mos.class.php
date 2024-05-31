@@ -869,8 +869,7 @@ class Mos extends DolibarrApi
 		}
 
 		// Update status of MO
-		dol_syslog("consumptioncomplete = " . $consumptioncomplete . " productioncomplete = " . $productioncomplete);
-		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+		dol_syslog("consumptioncomplete = " . ($consumptioncomplete ? 'true' : 'false') . " productioncomplete = " . ($productioncomplete ? 'true' : 'false'));
 		if ($consumptioncomplete && $productioncomplete) {
 			$result = $this->mo->setStatut(Mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {
