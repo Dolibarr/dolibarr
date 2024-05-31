@@ -219,6 +219,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$getRef = GETPOST("ref", 'alphanohtml');
+
 			$test = new Ticket($db);
 			if ($test->fetch('', $getRef) > 0) {
 				$object->ref = $object->getDefaultRef();
