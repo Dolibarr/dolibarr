@@ -749,7 +749,7 @@ class EcmFiles extends CommonObject
 		}
 
 		if (!$error) {
-		 	// Update extrafields
+			// Update extrafields
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
 				$error++;
