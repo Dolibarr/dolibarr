@@ -560,7 +560,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	if ($error == 0) {
 		$ok = 1;
 	} else {
-		$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$ok = 0;
 	}
 
 	return $ok;
@@ -1676,9 +1676,9 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array<string,array{type:string,label:string}>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int<2,3>		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
- *  @param  string  $helptext       Tooltip help to use for the column name of values
- *  @param	string	$text			Text to use for the column name of values
+ *	@param	int<2,3>	$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
+ *  @param  string  	$helptext       Tooltip help to use for the column name of values
+ *  @param	string		$text			Text to use for the column name of values
  *	@return	void
  */
 function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Value')
@@ -1825,7 +1825,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
+					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1, false, 0, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);

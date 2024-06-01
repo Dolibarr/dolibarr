@@ -554,7 +554,7 @@ class Subscription extends CommonObject
 
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
-		$return .= $this->getNomUrl(-1);
+		$return .= $this->getNomUrl(0);
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -564,11 +564,11 @@ class Subscription extends CommonObject
 		}
 
 		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
-			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="margintoponly amount inline-block">'.price($this->amount).'</span>';
+			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
 			if (!empty($arraydata['bank'])) {
 				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 			}

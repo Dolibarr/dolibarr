@@ -1300,7 +1300,7 @@ class Holiday extends CommonObject
 				}
 
 				// We found a record, user is on holiday by default, so is not available is true.
-				$isavailablemorning = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailablemorning = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_start'] && $record['halfday'] == 2) {
 						continue;
@@ -1311,7 +1311,7 @@ class Holiday extends CommonObject
 					$isavailablemorning = false;
 					break;
 				}
-				$isavailableafternoon = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailableafternoon = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) {
 						continue;

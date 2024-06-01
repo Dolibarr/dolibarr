@@ -297,7 +297,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			} else {
 				dol_syslog("No invoices found for criteria");
 			}
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		}
 	} else {
 		dol_print_error($db);

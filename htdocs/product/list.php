@@ -107,6 +107,7 @@ $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_exp
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
+$search_import_key = GETPOST("search_import_key", 'alpha');
 $search_finished = GETPOST("search_finished");
 $search_units = GETPOST('search_units', 'alpha');
 $type = GETPOST("type", 'alpha');
@@ -369,6 +370,7 @@ if (empty($reshook)) {
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
 		$show_childproducts = '';
+		$search_import_key = '';
 		$search_accountancy_code_sell = '';
 		$search_accountancy_code_sell_intra = '';
 		$search_accountancy_code_sell_export = '';
@@ -551,6 +553,9 @@ if ($search_default_workstation) {
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
+}
+if ($search_import_key) {
+	$sql .= natural_search('p.import_key', $search_import_key);
 }
 if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) {
 	$sql .= " AND p.tosell = ".((int) $search_tosell);
@@ -770,6 +775,9 @@ if ($search_ref_supplier) {
 }
 if ($search_barcode) {
 	$param .= ($search_barcode ? "&search_barcode=".urlencode($search_barcode) : "");
+}
+if ($search_import_key) {
+	$param .= "&search_import_key=".urlencode($search_import_key);
 }
 if ($search_label) {
 	$param .= "&search_label=".urlencode($search_label);
@@ -1243,6 +1251,7 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '<td class="liste_titre center">';
+	print '<input class="flat maxwidth75" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.tosell']['checked'])) {

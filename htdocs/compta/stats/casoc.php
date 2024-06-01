@@ -421,7 +421,7 @@ if ($modecompta == "RECETTES-DEPENSES") {
 			$name[$obj->socid] = $obj->name;
 			$address_zip[$obj->socid] = '';
 			$address_town[$obj->socid] = '';
-			$address_pays[$obj->socid] = 0;
+			$address_pays[$obj->socid] = '';
 
 			$catotal += $obj->amount_ttc;
 

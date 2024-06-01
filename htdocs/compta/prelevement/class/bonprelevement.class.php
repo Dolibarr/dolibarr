@@ -333,7 +333,7 @@ class BonPrelevement extends CommonObject
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 			} else {
-				$result = -1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = -1;
 			}
 		} else {
 			/*
@@ -1666,7 +1666,7 @@ class BonPrelevement extends CommonObject
 
 			dol_syslog("adnotiff: " . $sql);
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 			} else {
 				$result = -1;
 				dol_syslog(get_class($this) . "::addNotification Error $result");

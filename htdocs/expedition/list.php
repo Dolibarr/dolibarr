@@ -209,6 +209,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
+	$search_all = '';
 }
 
 if (empty($reshook)) {
@@ -898,6 +899,9 @@ if ($socid > 0) {
 }
 
 $param = '';
+if ($socid > 0) {
+	$param .= '&socid='.urlencode((string) ($socid));
+}
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -1010,6 +1014,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder

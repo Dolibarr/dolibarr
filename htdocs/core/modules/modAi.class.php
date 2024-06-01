@@ -264,7 +264,7 @@ class modAi extends DolibarrModules
 
 		// Main menu entries to add
 		$this->menu = array();
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		/* END MODULEBUILDER TOPMENU */
@@ -307,7 +307,7 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER EXPORT AVAILABILITIES */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
 		/*
 		$langs->load("agenda");
