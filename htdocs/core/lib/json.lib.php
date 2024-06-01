@@ -255,6 +255,10 @@ function dol_json_decode($json, $assoc = false)
 	$strLength = strlen($json); // Must stay strlen and not dol_strlen because we want technical length, not visible length
 	for ($i = 0; $i < $strLength; $i++) {
 		if (!$comment) {
+			if ($i == 0 && !in_array($json[$i], array('{', '[', '"', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))) {
+				// Not a json format
+				return false;
+			}
 			if (($json[$i] == '{') || ($json[$i] == '[')) {
 				$out .= 'array(';
 			} elseif (($json[$i] == '}') || ($json[$i] == ']')) {
@@ -281,6 +285,7 @@ function dol_json_decode($json, $assoc = false)
 	if ($out != '') {
 		try {
 			// @phan-suppress-next-line PhanPluginUnsafeEval
+			//print  debug_print_backtrace();
 			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now.
 		} catch (Exception $e) {
 			$array = array();
