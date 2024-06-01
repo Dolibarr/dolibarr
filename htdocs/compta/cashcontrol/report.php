@@ -156,11 +156,11 @@ if ($resql) {
 	print "<!-- title of cash fence -->\n";
 	print '<center>';
 	print '<h2>';
-	if ($object->status != $object::STATUS_DRAFT) {
-		$nameterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$object->id);
-		print $langs->trans("CashControl")." #".$object->id.(($nameterminal != "TAKEPOS_TERMINAL_NAME_".$object->id) ? ' - '.$nameterminal : '');
-	} else {
-		print $langs->trans("CashControl")." #".$object->id." (".$langs->trans("Draft").")";
+
+	$nameterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$object->posnumber);
+	print $langs->trans("CashControl")." #".$object->id.(($nameterminal != "TAKEPOS_TERMINAL_NAME_".$object->posnumber) ? ' - '.$nameterminal : '');
+	if ($object->status == $object::STATUS_DRAFT) {
+		print "<br>(".$langs->trans("Draft").")";
 	}
 	print "</h2>";
 	print $mysoc->name;
