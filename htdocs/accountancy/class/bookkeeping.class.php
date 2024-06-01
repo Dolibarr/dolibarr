@@ -738,10 +738,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int 		$id 	Id object
-	 * @param string 	$ref 	Ref
-	 * @param string 	$mode 	Mode ('' or 'tmp_')
-	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int 			$id 	Id object
+	 * @param string|null	$ref 	Ref
+	 * @param string 		$mode 	Mode ('' or 'tmp_')
+	 * @return int 					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
