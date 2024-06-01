@@ -1371,6 +1371,7 @@ if ($action == 'create') {
 									$batchStock = + $dbatch->qty; // To get a numeric
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
 
+									// Now we will check if we have to reduce the deliverableQty by taking into account the qty already suggested in previous line
 									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
 									} else {
