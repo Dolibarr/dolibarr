@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,11 +52,11 @@ $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
 $accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
-$accountingaccount->fetch(null, $accountingaccount_number, true);
+$accountingaccount->fetch(0, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
 
 $journal_code = GETPOST('code_journal', 'alpha');
-$accountingjournal->fetch(null, $journal_code);
+$accountingjournal->fetch(0, $journal_code);
 $journal_label = $accountingjournal->label;
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
