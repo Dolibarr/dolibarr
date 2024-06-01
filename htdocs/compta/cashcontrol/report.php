@@ -94,7 +94,12 @@ if (!$user->hasRight('cashdesk', 'run') && !$user->hasRight('takepos', 'run')) {
 $title = $langs->trans("CashControl");
 $param = '';
 
+$conf->dol_hide_topmenu = 1;
+$conf->dol_hide_leftmenu = 1;
+
 llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
+
+print '<!-- Begin div id-container --><div id="id-container" class="id-container center">';
 
 /*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
@@ -158,9 +163,9 @@ if ($resql) {
 	print '<h2>';
 
 	$nameterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$object->posnumber);
-	print $langs->trans("CashControl")." #".$object->id.(($nameterminal != "TAKEPOS_TERMINAL_NAME_".$object->posnumber) ? ' - '.$nameterminal : '');
+	print $langs->trans("CashControl")." #".$object->id.(($nameterminal != "TAKEPOS_TERMINAL_NAME_".$object->posnumber) ? '<br>'.$nameterminal : '');
 	if ($object->status == $object::STATUS_DRAFT) {
-		print "<br>(".$langs->trans("Draft").")";
+		print '<br><span class="opacitymedium small">('.$langs->trans("Draft").")</span>";
 	}
 	print "</h2>";
 	print $mysoc->name;
@@ -448,6 +453,8 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
+
+print '</div>';
 
 llxFooter();
 
