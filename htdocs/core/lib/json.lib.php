@@ -247,7 +247,7 @@ if (!function_exists('json_decode')) {
  */
 function dol_json_decode($json, $assoc = false)
 {
-	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
+	dol_syslog("For better performance and security, enable the native json in your PHP", LOG_WARNING);
 
 	$comment = false;
 
@@ -281,7 +281,7 @@ function dol_json_decode($json, $assoc = false)
 	if ($out != '') {
 		try {
 			// @phan-suppress-next-line PhanPluginUnsafeEval
-			eval('$array = '.$out.';');
+			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now.
 		} catch (Exception $e) {
 			$array = array();
 		}
