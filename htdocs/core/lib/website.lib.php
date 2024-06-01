@@ -612,7 +612,7 @@ function includeContainer($containerref)
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
-		$includehtmlcontentopened = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$includehtmlcontentopened = 0;
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {

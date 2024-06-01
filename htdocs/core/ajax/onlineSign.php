@@ -533,7 +533,6 @@ if ($action == "importSignature") {
 			if (!empty($object->id)) {
 				$object->fetch_thirdparty();
 
-
 				$upload_dir = $conf->societe->multidir_output[$object->thirdparty->entity] . '/' . dol_sanitizeFileName($object->thirdparty->id) . '/';
 
 				$default_font_size = pdf_getPDFFontSize($langs);    // Must be after pdf_getInstance
@@ -542,11 +541,19 @@ if ($action == "importSignature") {
 
 				$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 				$filename = "signatures/" . $date . "_signature.png";
-				if (!is_dir($upload_dir . "signatures/")) {
+				if (!dol_is_dir($upload_dir . "signatures/")) {
 					if (!dol_mkdir($upload_dir . "signatures/")) {
 						$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
 						$error++;
 					}
+				}
+				if (!dol_is_writable($upload_dir . "signatures/")) {
+					$response = "Error directory " . $upload_dir . "signatures/ is not writable";
+					$error++;
+				}
+				if (!dol_is_writable(DOL_DATA_ROOT.'/admin/temp/')) {	// This is used by TCPDF as working directory
+					$response = "Error directory " . DOL_DATA_ROOT."/admin/temp/ is not writable";
+					$error++;
 				}
 
 				if (!$error) {

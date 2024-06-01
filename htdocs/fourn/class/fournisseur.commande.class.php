@@ -1347,7 +1347,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				if ($error == 0) {
 					// Call trigger
@@ -1399,7 +1399,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
@@ -1851,6 +1851,7 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;

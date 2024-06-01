@@ -381,7 +381,7 @@ class modTicket extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforselect = 'ticket';
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'ticket';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforelement = 'ticket';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'ticket as t';

@@ -1506,7 +1506,7 @@ abstract class CommonInvoice extends CommonObject
 									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
 									$stripefailurecode = 'BADPAYMENTMODE';
 									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$postactionmessages = [];  // @phan-suppress-current-line PhanPluginRedundantAssignment
+									$postactionmessages = [];
 
 									$object = $this;
 

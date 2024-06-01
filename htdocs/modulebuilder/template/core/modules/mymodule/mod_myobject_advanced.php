@@ -126,7 +126,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 */
 	public function getNextValue($object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
