@@ -874,9 +874,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
