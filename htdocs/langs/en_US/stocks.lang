@@ -100,7 +100,6 @@ VirtualStock=Virtual stock
 VirtualStockAtDate=Virtual stock at a future date
 VirtualStockAtDateDesc=Virtual stock once all the pending orders that are planned to be processed before the chosen date will be finished
 VirtualStockDesc=Virtual stock is the stock that will remain after all open/pending actions (that affect stocks) have been performed (purchase orders received, sales orders shipped, manufacturing orders produced, etc)
-AtDate=At date
 QtyAtDate=Quantity in stock at date
 MovementsSinceDate=Movements since the date
 IdWarehouse=Id warehouse
