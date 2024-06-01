@@ -59,14 +59,21 @@ function dol_json_encode($elements)
 			$num++;
 		}
 	} else {
-		$num = count($elements);
+		if (is_countable($elements)) {
+			$num = count($elements);
+		}
 	}
 	//var_dump($num);
 
 	// determine type
+	if (is_numeric($elements)) {
+		return $elements;
+	} elseif (is_string($elements)) {
+		return '"'.$elements.'"';
+	}
 	if (is_numeric(key($elements)) && key($elements) == 0) {
 		// indexed (list)
-		$keysofelements = array_keys($elements); // Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
+		$keysofelements = array_keys($elements); // Elements array must have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
 		for ($i = 0, $last = ($num - 1); $i < $num; $i++) {
 			if (!isset($elements[$keysofelements[$i]])) {
@@ -253,6 +260,11 @@ function dol_json_decode($json, $assoc = false)
 
 	$out = '';
 	$strLength = strlen($json); // Must stay strlen and not dol_strlen because we want technical length, not visible length
+
+	if (is_numeric($json)) {
+		return $json;
+	}
+
 	for ($i = 0; $i < $strLength; $i++) {
 		if (!$comment) {
 			if ($i == 0 && !in_array($json[$i], array('{', '[', '"', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))) {
