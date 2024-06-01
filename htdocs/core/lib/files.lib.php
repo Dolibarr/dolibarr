@@ -1196,7 +1196,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 		if ($overwriteifexists) {
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				if (is_dir($newpathofdestdir)) {
-					rmdir($newpathofdestdir);
+					@rmdir($newpathofdestdir);
 				}
 			}
 		}
