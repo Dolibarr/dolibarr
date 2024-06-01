@@ -244,7 +244,7 @@ if (!function_exists('json_decode')) {
  */
 function dol_json_decode($json, $assoc = false)
 {
-	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
+	dol_syslog("For better performance and security, enable the native json in your PHP", LOG_WARNING);
 
 	$comment = false;
 
@@ -276,7 +276,8 @@ function dol_json_decode($json, $assoc = false)
 	// Return an array
 	if ($out != '') {
 		try {
-			eval('$array = '.$out.';');
+			// @phan-suppress-next-line PhanPluginUnsafeEval
+			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now. // 8f9feeb1b9a (SEC: RCE on PHP 7.1 to 7.4, if json module not activated and using API)
 		} catch (Exception $e) {
 			$array = array();
 		}
