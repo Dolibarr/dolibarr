@@ -212,7 +212,8 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$getRef = GETPOST("ref", 'alphanohtml');
-			if ($object->fetch('', $getRef) > 0) {
+			$refcheck_object = new Ticket($db);
+			if ($refcheck_object->fetch('', $getRef) > 0) {
 				$object->ref = $object->getDefaultRef();
 				$object->track_id = null;
 				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
