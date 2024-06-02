@@ -182,18 +182,18 @@ print '<br>';
 print '<br>';
 
 // JSON
-print '<strong>'.$langs->trans("JSON").'</strong>: ';
+print '<strong>JSON</strong>: ';
 $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
-$test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
+$test = !in_array('json', $loadedExtensions);
 if ($test) {
-	print img_picto('', 'warning').' '.$langs->trans("NotInstalled");
+	print img_picto('', 'error').' '.$langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
 } else {
-	print img_picto('', 'tick').' '.$langs->trans("Installed");
+	print img_picto('', 'tick').' '.$langs->trans("Available");
 }
 print '<br>';
 
 // XDebug
-print '<strong>'.$langs->trans("XDebug").'</strong>: ';
+print '<strong>XDebug</strong>: ';
 $test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
 	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
