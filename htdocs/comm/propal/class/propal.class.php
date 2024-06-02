@@ -3654,7 +3654,7 @@ class Propal extends CommonObject
 		}
 		if ($user->hasRight('propal', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
-			if (isset($this->statut)) {
+			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
@@ -3674,7 +3674,7 @@ class Propal extends CommonObject
 				$langs->load('project');
 				if (empty($this->project)) {
 					$res = $this->fetch_project();
-					if ($res > 0 && $this->project instanceof Project) {
+					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
