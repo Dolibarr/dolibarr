@@ -874,12 +874,12 @@ class pdf_standard_asset extends ModelePDFAsset
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
-			$posy += 4;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
-		}
+		// if ($object->ref_client) {
+		// 	$posy += 4;
+		// 	$pdf->SetXY($posx, $posy);
+		// 	$pdf->SetTextColor(0, 0, 60);
+		// 	$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		// }
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetch_projet();
@@ -910,7 +910,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("Date");
 		}
-		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs), '', 'R');
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_acquisition, "day", false, $outputlangs), '', 'R');
 
 		if ($object->thirdparty->code_client) {
 			$posy += 3;
