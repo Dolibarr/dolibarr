@@ -983,7 +983,7 @@ if ($resql) {
 
 		// Show last bank statements
 		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
-		$liste = "";
+		$listoflastreceipts = '';
 		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
 		$sql .= $db->order("num_releve", "DESC");
@@ -1003,14 +1003,15 @@ if ($resql) {
 					$last_ok = 1;
 				}
 				$i++;
-				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
-				$liste .= img_picto($objr->num_releve, 'generic', 'class="pictofixedwidth"');
-				$liste .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
+				$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
+				$newentreyinlist .= img_picto($objr->num_releve, 'generic', 'class="paddingright"');
+				$newentreyinlist .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; ';
+				$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
 			}
 			if ($numr >= $nbmax) {
-				$liste = "... &nbsp; ".$liste;
+				$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
 			}
-			print $liste;
+			print $listoflastreceipts;
 			if ($numr <= 0) {
 				print '<b>'.$langs->trans("None").'</b>';
 			}
