@@ -975,9 +975,9 @@ if ($resql) {
 		}
 		print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
-		print ' '.$langs->trans("otherwise").' ';
+		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' '.$langs->trans("or").' ';
+		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
 		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
@@ -1003,7 +1003,9 @@ if ($resql) {
 					$last_ok = 1;
 				}
 				$i++;
-				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">'.dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
+				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
+				$liste .= img_picto($objr->num_releve, 'generic', 'class="pictofixedwidth"');
+				$liste .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
 			}
 			if ($numr >= $nbmax) {
 				$liste = "... &nbsp; ".$liste;
