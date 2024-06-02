@@ -219,6 +219,13 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
 
+	//Action confirm reopen
+	if ($action == 'confirm_reopen' && !GETPOST('cancel', 'alpha')) {
+		$object->fk_statut = 2;
+		$object->update($user);
+		header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+	}
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('expensereport', 'creer')) {
 		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
