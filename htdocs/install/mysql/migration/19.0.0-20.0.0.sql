@@ -361,6 +361,7 @@ UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
 INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'library');
 INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('library', 1, 'Library (functions)', 1, 'system', 400, 'library');
 
+UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
 -- knowledgemanagement module
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
