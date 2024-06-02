@@ -1545,6 +1545,10 @@ if ($action == 'create') {
 
 	print '</form>';
 } elseif ($id > 0 || $ref) {
+	if ($action == 'reopen') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenExpRep', $object->ref), 'confirm_reopen', '', 0, 1);
+		print $formconfirm;
+	}
 	$result = $object->fetch($id, $ref);
 
 	if ($result > 0) {
@@ -2736,6 +2740,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
+			if($user->id == $object->fk_user_valid){
+				//Reopen
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ReOpen').'</a></div>';
+			}
+
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
