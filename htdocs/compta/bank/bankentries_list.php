@@ -800,7 +800,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -815,7 +815,7 @@ if ($resql) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
-	if (GETPOST('bid')) {
+	if (GETPOSTINT('bid')) {
 		print '<input type="hidden" name="bid" value="'.GETPOSTINT("bid").'">';
 	}
 
@@ -988,6 +988,7 @@ if ($resql) {
 		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
 		$sql .= $db->order("num_releve", "DESC");
 		$sql .= $db->plimit($nbmax + 1);
+
 		print '<br>';
 		print $langs->trans("LastAccountStatements").' : ';
 		$resqlr = $db->query($sql);
