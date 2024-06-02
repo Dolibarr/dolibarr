@@ -439,12 +439,6 @@ class pdf_standard_asset extends ModelePDFAsset
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
-
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
