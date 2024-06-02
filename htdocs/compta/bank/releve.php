@@ -360,7 +360,8 @@ if (empty($numref)) {
 		$balancestart = array();
 		$content = array();
 
-		while ($i < min($numrows, $conf->liste_limit)) {
+		$max = min($numrows, $conf->liste_limit);
+		while ($i < $max) {
 			$objp = $db->fetch_object($resql);
 
 			if (!isset($objp->numr)) {
@@ -384,11 +385,11 @@ if (empty($numref)) {
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
 				$sql .= " AND b.num_releve <> ''";
 				$sql .= " AND b.fk_account = ".((int) $object->id);
-				$resql = $db->query($sql);
-				if ($resql) {
-					$obj = $db->fetch_object($resql);
+				$resqlstart = $db->query($sql);
+				if ($resqlstart) {
+					$obj = $db->fetch_object($resqlstart);
 					$balancestart[$objp->numr] = $obj->amount;
-					$db->free($resql);
+					$db->free($resqlstart);
 				}
 				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
@@ -397,11 +398,11 @@ if (empty($numref)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
 				$sql .= " AND b.fk_account = ".((int) $object->id);
-				$resql = $db->query($sql);
-				if ($resql) {
-					$obj = $db->fetch_object($resql);
+				$resqlend = $db->query($sql);
+				if ($resqlend) {
+					$obj = $db->fetch_object($resqlend);
 					$content[$objp->numr] = $obj->amount;
-					$db->free($resql);
+					$db->free($resqlend);
 				}
 				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), 0, $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
@@ -413,6 +414,7 @@ if (empty($numref)) {
 
 				print '</tr>'."\n";
 			}
+
 			$i++;
 		}
 
