@@ -496,8 +496,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-							//var_dump($posyafter);
-							//var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
@@ -534,8 +533,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
-
-
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
@@ -546,8 +543,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 						'hidedetails' => $hidedetails
 					);
 					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
-
-
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
@@ -705,7 +700,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
-
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
 		if (empty($hidetop)) {
@@ -736,7 +730,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK')) {
+		if ($object->status == $object::STATUS_DRAFT && getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK')) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK'));
 		}
 
@@ -789,7 +783,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -957,13 +951,13 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 * Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	RecruitmentJobPosition		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *  @param	TCPDF					$pdf     			PDF
+	 *  @param	RecruitmentJobPosition	$object				Object to show
+	 *  @param	Translate				$outputlangs		Object lang for output
+	 *  @param	int						$hidefreetext		1=Hide free text
+	 *  @return	int											Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
