@@ -25,7 +25,7 @@ create table llx_expeditiondet
   fk_expedition     integer NOT NULL,  						-- ID of parent object
   fk_element        integer,           						-- ID of main source object
   fk_elementdet     integer,           						-- ID of line of source object (proposal, sale order)
-  element_type   	varchar(50) DEFAULT 'order' NOT NULL,	-- Type of source object ('order', ...)
+  element_type   	varchar(50) DEFAULT 'commande' NOT NULL,	-- Type of source object ('commande', ...)
   fk_product        integer,  								-- ID of product. If empy, you can retreive it using fk_element/element_type link
   qty               real,              						-- Quantity
   fk_entrepot       integer,           						-- Warehouse for departure of product
