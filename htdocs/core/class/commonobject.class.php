@@ -7329,15 +7329,6 @@ abstract class CommonObject
 			// Special case that prevent to force $type to have multiple input
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
-			} else {
-				$valuearray = explode(",", $value);
-				foreach ($valuearray as $keytmp => $valuetmp) {
-					if (!empty($this->fields[$key]['arrayofkeyval'][$valuetmp])) {
-						$valuemultiselectinput[] = $valuetmp;
-						unset($valuearray[$keytmp]);
-					}
-				}
-				$value = implode(',', $valuearray);
 			}
 		}
 
@@ -7440,7 +7431,49 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				if (!empty($param['options'])) {
 					$out .= "<br>";
-					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], (GETPOSTISSET($keyprefix.$key.$keysuffix."_multiselect") ? GETPOST($keyprefix.$key.$keysuffix."_multiselect") : $valuemultiselectinput), 0, 0, "flat maxwidthonphone".$morecss, 0, '90%', '', '', '', ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) ? 1 : -1));
+					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= "<script>";
+					$out .= '
+					function handlemultiinputdisabling(htmlname){
+						console.log("We handle the disabling of used options for "+htmlname+"_multiinput");
+						multiinput = $("#"+htmlname+"_multiinput");
+						multiinput.find("option").each(function(){
+							tmpval = $("#"+htmlname).val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $(this).val();
+							if(tmpvalarray.includes(valtotest)){
+								$(this).prop("disabled",true);
+							} else {
+								if($(this).prop("disabled") == true){
+									console.log(valtotest)
+									$(this).prop("disabled", false);
+								}
+							}
+						});
+					}
+
+					$(document).ready(function () {
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
+							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $(this).val();
+							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								if(tmpval == ""){
+									tmpval = valtotest;
+								} else {
+									tmpval = tmpval + "," + valtotest;
+								}
+								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
+								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+							}
+						});
+						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
+							handlemultiinputdisabling($(this).attr("id"));
+						});
+						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+					})';
+					$out .= "</script>";
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
