@@ -580,8 +580,10 @@ class FormListWebPortal
 		// Loop on record
 		// --------------------------------------------------------------------
 		$i = 0;
-		$totalarray = array();
-		$totalarray['nbfield'] = 0;
+		$totalarray = [
+			'nbfield' => 0,
+			'totalizable' => []
+		];
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$obj = $this->db->fetch_object($resql);
