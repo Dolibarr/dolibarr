@@ -508,7 +508,6 @@ if ($action == 'writebookkeeping' && !$error) {
 						}
 					}
 				}
-			}
 		}
 
 		// Thirdparty
@@ -704,7 +703,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			if (isset($tabrevenuestamp[$key] && is_iterable($tabrevenuestamp[$key])) {
+			if (isset($tabrevenuestamp[$key]) && is_iterable($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
 						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
