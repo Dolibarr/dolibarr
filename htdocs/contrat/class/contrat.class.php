@@ -2087,7 +2087,7 @@ class Contrat extends CommonObject
 			if (!$nofetch) {
 				$langs->load('project');
 				if (empty($this->project)) {
-					$res = $this->fetch_project();
+					$res = $this->fetchProject();
 					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
