@@ -2747,7 +2747,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
-			if($user->id == $object->fk_user_valid){
+			if($user->id == $object->fk_user_valid) {
 				//Reopen
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ReOpen').'</a></div>';
 			}
