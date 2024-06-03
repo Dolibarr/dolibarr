@@ -1553,7 +1553,7 @@ if ($action == 'create') {
 	print '</form>';
 } elseif ($id > 0 || $ref) {
 	if ($action == 'reopen') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenExpRep', $object->ref), 'confirm_reopen', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenTrip', $object->ref), 'confirm_reopen', '', 0, 1);
 		print $formconfirm;
 	}
 	$result = $object->fetch($id, $ref);
