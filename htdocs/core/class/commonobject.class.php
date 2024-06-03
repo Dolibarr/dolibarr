@@ -7453,7 +7453,7 @@ abstract class CommonObject
 					}
 
 					$(document).ready(function () {
-						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {	
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
 							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
 							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
 							tmpvalarray = tmpval.split(",");
