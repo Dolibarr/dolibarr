@@ -1,7 +1,7 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Dahili iletişim raporu
+Module68000Desc = Dahili iletişim raporu yönetimi (Fransız DEB/DES formatı desteği)
+IntracommReportSetup = Dahili iletişim raporu modül ayarları
+IntracommReportAbout = Dahili iletişim raporu hakkında
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
@@ -14,7 +14,7 @@ INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 # Menu
-MenuIntracommReport=Intracomm report
+MenuIntracommReport=Dahili iletişim raporu
 MenuIntracommReportNew=New declaration
 MenuIntracommReportList=Liste
 
@@ -32,7 +32,7 @@ IntracommReportTitle=Preparation of an XML file in ProDouane format
 # List
 IntracommReportList=List of generated declarations
 IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
+IntracommReportPeriod=Period of analysis
 IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
 

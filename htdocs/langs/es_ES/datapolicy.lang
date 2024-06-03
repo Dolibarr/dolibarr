@@ -1,0 +1,88 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Política de privacidad de datos
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Módulo para gestionar la Privacidad de los Datos (Conformidad con el RGPD)
+
+#
+# Administration page
+#
+datapolicySetup = Configuración del módulo de Política de Privacidad de Datos
+Deletion = Eliminación de datos
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s meses
+ONE_YEAR = 1 año
+NB_YEARS = %s años
+DATAPOLICY_TIERS_CLIENT = Cliente
+DATAPOLICY_TIERS_PROSPECT = Cliente potencial
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Cliente potencial/Cliente
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = No es cliente potencial/cliente
+DATAPOLICY_TIERS_FOURNISSEUR = Proveedor
+DATAPOLICY_CONTACT_CLIENT = Cliente
+DATAPOLICY_CONTACT_PROSPECT = Cliente potencial
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Cliente potencial/Cliente
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = No es cliente potencial/cliente
+DATAPOLICY_CONTACT_FOURNISSEUR = Proveedor
+DATAPOLICY_ADHERENT = Miembro
+DATAPOLICY_Tooltip_SETUP = Tipo de contacto - Indique sus opciones para cada tipo.
+DATAPOLICYMail = Configuración de E-Mail
+DATAPOLICYSUBJECTMAIL = Subject of the email
+DATAPOLICYCONTENTMAIL = Contenido del correo electrónico
+DATAPOLICYSUBSITUTION = Puede utilizar las siguientes variables en su correo electrónico (LINKACCEPT permite crear un enlace que registre el acuerdo de la persona, LINKREFUSED permite registrar el rechazo de la persona):
+DATAPOLICYACCEPT = Mensaje después del acuerdo
+DATAPOLICYREFUSE = Message after disagreement
+SendAgreementText = Puede enviar un correo electrónico de GDPR a todos sus contactos relevantes (que aún no han recibido un correo electrónico y para los cuales no ha registrado nada sobre su acuerdo de GDPR). Para ello, utilice el siguiente botón.
+SendAgreement = Enviar correos electrónicos
+AllAgreementSend = Todos los correos electrónicos han sido enviados.
+TXTLINKDATAPOLICYACCEPT = Texto para el enlace "acuerdo"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+
+
+#
+# Extrafields
+#
+DATAPOLICY_BLOCKCHECKBOX = RGPD: Tratamiento de datos personales
+DATAPOLICY_consentement = Consentimiento obtenido para el tratamiento de datos personales
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizar a un tercero
+DATAPOLICY_POPUP_ANONYME_TEXTE = No puede eliminar este contacto de Dolibarr porque hay elementos relacionados. De acuerdo con el RGPD, harás anónimos todos estos datos para respetar tus obligaciones. ¿Desea continuar?
+
+#
+# Button for portability
+#
+DATAPOLICY_PORTABILITE = Portabilidad RGPD
+DATAPOLICY_PORTABILITE_TITLE = Exportación de datos personales
+DATAPOLICY_PORTABILITE_CONFIRMATION = Quiere exportar los datos personales de este contacto. ¿Está seguro?
+
+#
+# Notes added during an anonymization
+#
+ANONYMISER_AT = Anonimizó el %s
+
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+DATAPOLICY_SEND = Enviar correo electrónico de RGPD
+MailSent = E-mail ha sido enviado
+
+# ERROR
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

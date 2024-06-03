@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +31,19 @@
  */
 function emailcollectorPrepareHead($object)
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$langs->load("emailcollector@emailcollector");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/emailcollector_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/admin/emailcollector_card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("EmailCollector");
 	$head[$h][2] = 'card';
 	$h++;
 
-	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;
@@ -87,9 +87,10 @@ function emailcollectorPrepareHead($object)
 }
 
 /**
- * Récupère les parties d'un message
- * @param object $structure structure du message
- * @return object|boolean parties du message|false en cas d'erreur
+ * Get parts of a message
+ *
+ * @param 	object 			$structure 		Structure of message
+ * @return 	array|false						Array of parts of the message|false if error
  */
 function getParts($structure)
 {
@@ -97,9 +98,10 @@ function getParts($structure)
 }
 
 /**
- * Tableau définissant la pièce jointe
- * @param object $part partie du message
- * @return object|boolean définition du message|false en cas d'erreur
+ * Array with joined files
+ *
+ * @param 	object 			$part 		Part of message
+ * @return 	object|boolean 				Definition of message|false in case of error
  */
 function getDParameters($part)
 {
@@ -107,19 +109,21 @@ function getDParameters($part)
 }
 
 /**
- * Récupère les pièces d'un mail donné
- * @param integer $jk numéro du mail
- * @param object $mbox object connection imaap
- * @return array type, filename, pos
+ * Get attachments of a given mail
+ *
+ * @param 	integer $jk 	Number of email
+ * @param 	object 	$mbox 	object connection imap
+ * @return 	array<array{type:string,filename:string,pos:int}> 	type, filename, pos
  */
 function getAttachments($jk, $mbox)
 {
-	$structure = imap_fetchstructure($mbox, $jk);
+	$structure = imap_fetchstructure($mbox, $jk, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$parts = getParts($structure);
+
 	$fpos = 2;
 	$attachments = array();
 	$nb = count($parts);
-	if ($parts && $nb) {
+	if ($nb && !empty($parts)) {
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -140,7 +144,8 @@ function getAttachments($jk, $mbox)
 }
 
 /**
- * Récupère la contenu de la pièce jointe par rapport a sa position dans un mail donné
+ * Get content of a joined file from its position into a given email
+ *
  * @param integer $jk numéro du mail
  * @param integer $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
@@ -149,22 +154,22 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$mege = imap_fetchbody($mbox, $jk, $fpos);
-	$data = getDecodeValue($mege, $type);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
+	$data = getDecodeValue($merge, $type);
 
 	return $data;
 }
 
 /**
- * Sauvegarde de la pièce jointe dans le dossier défini avec un nom unique
- * @param string $path chemin de sauvegarde dui fichier
- * @param string $filename nom du fichier
- * @param mixed $data contenu à sauvegarder
- * @return string emplacement du fichier
+ * Save the attached file into a directory with a given name
+ *
+ * @param 	string 		$path 		Path to file
+ * @param 	string 		$filename 	Name of file
+ * @param 	mixed 		$data 		Content to save
+ * @return 	string|-1 				Return the path to the saved file, or -1 if error
  **/
 function saveAttachment($path, $filename, $data)
 {
-	global $lang;
 	$tmp = explode('.', $filename);
 	$ext = array_pop($tmp);
 	$filename = implode('.', $tmp);
@@ -186,10 +191,11 @@ function saveAttachment($path, $filename, $data)
 }
 
 /**
- * Décode le contenu du message
- * @param string $message message
- * @param integer $coding type de contenu
- * @return message décodé
+ * Decode content of a message
+ *
+ * @param 	string 		$message 	Message
+ * @param 	integer 	$coding 	Type of content
+ * @return 	string					Decoded message
  **/
 function getDecodeValue($message, $coding)
 {

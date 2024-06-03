@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+Module68000Name =Informe de intracomunicación
+Module68000Desc =Gestión de informes de Intracomm (Soporte para formato francés DEB/DES)
+IntracommReportSetup =Configuración del módulo de informes de intracomm
+INTRACOMMREPORT_NUM_AGREMENT=Número de acuerdo (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivel de obligación sobre las introducciones
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expeditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servicios de tipo "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Número de declaración
+MenuIntracommReport=Informe de intracomunicación
+MenuIntracommReportNew=Nueva declaración
+MenuIntracommReportList=Lista
+NewDeclaration=Nueva declaración
+AnalysisPeriod=Período de análisis
+DEB=Declaración de cambio de mercancías (DEB)
+IntracommReportNumber=numero de declaracion
+IntracommReportPeriod=Período de análisis

@@ -1,14 +1,12 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID del evento
 ActionsOwnedBy=Propietario del evento
-Event=Evento
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento de todo(s) el(los) día(s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
 ActionsAskedBy=Eventos informados por
-ActionsDoneBy=Eventos terminados por
 ViewCal=Vista del mes
 ViewDay=Vista del día
 ViewWeek=Vista de la semana
@@ -25,8 +23,8 @@ MemberSubscriptionAddedInDolibarr=Suscripción %s añadida para el miembro %s
 MemberSubscriptionModifiedInDolibarr=Suscripción %s modificada para el miembro %s
 MemberSubscriptionDeletedInDolibarr=Se eliminó la suscripción %s para el miembro %s
 ShipmentValidatedInDolibarr=Envío %s validado
-ShipmentClassifyClosedInDolibarr=Envío %s clasificado como facturado
 ShipmentBackToDraftInDolibarr=Envío %s vuelve al estado borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
+CANCELInDolibarr=Cancelada
 DateActionEnd=Fecha de fin

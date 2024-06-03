@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe modulini sozlash
-StripeDesc=<a href="http://www.stripe.com" target="_blank"> Stripe </a> orqali mijozlarga kredit / cebit kartalar bilan to'lovlarni amalga oshirish uchun Stripe onlayn to'lov sahifasini taklif eting. Bu sizning mijozlaringizga vaqtinchalik to'lovlarni amalga oshirishda yoki ma'lum bir Dolibarr ob'ekti bilan bog'liq to'lovlarda (faktura, buyurtma, ...) ruxsat berish uchun ishlatilishi mumkin.
+StripeDesc=Mijozlarga <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> orqali kredit/debet kartalari bilan toʻlovlar uchun onlayn toʻlov sahifasini taklif qiling. Bu sizning mijozlaringizga vaqtinchalik to'lovlarni amalga oshirish yoki ma'lum bir Dolibarr ob'ekti (hisob-kitob, buyurtma, ...) bilan bog'liq to'lovlar uchun foydalanish mumkin.
 StripeOrCBDoPayment=Kredit karta yoki Stripe orqali to'lash
 FollowingUrlAreAvailableToMakePayments=Dolibarr ob'ektlarida to'lovni amalga oshirish uchun xaridorga sahifani taklif qilish uchun quyidagi URL manzillar mavjud
 PaymentForm=To'lov shakli
@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook jonli kaliti
 ONLINE_PAYMENT_WAREHOUSE=Onlayn to'lov amalga oshirilganda aktsiyalarni pasaytirish uchun foydalaniladigan zaxiralar
 StripeLiveEnabled=Stripe jonli yoqilgan (aks holda sinov / sandbox rejimi)
 StripeImportPayment=Stripe to'lovlarini import qilish
-ExampleOfTestCreditCard=Sinov uchun kredit karta misoli: %s => valid, %s => error CVC, %s => muddati o'tgan, %s => zaryad ishlamayapti
+ExampleOfTestCreditCard=Sinov toʻlovi uchun kredit karta misoli: %s => toʻgʻri, %s => xato CVC, %s => muddati tugadi, %s => to‘lov amalga oshmadi
+ExampleOfTestBankAcountForSEPA=To'g'ridan-to'g'ri debet testi uchun bank hisobining BANiga misol: %s
 StripeGateways=Stripe shlyuzlari
 OAUTH_STRIPE_TEST_ID=Stripe Connect mijoz identifikatori (taxminan _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect mijoz identifikatori (taxminan _...)
@@ -50,6 +51,7 @@ StripeAccount=Stripe hisob qaydnomasi
 StripeChargeList=Stripe to'lovlari ro'yxati
 StripeTransactionList=Stripe operatsiyalari ro'yxati
 StripeCustomerId=Stripe mijoz identifikatori
+StripePaymentId=Stripe toʻlov identifikatori
 StripePaymentModes=Stripe to'lov rejimlari
 LocalID=Mahalliy identifikator
 StripeID=Stripe ID
@@ -61,6 +63,7 @@ DeleteACard=Kartani o'chirish
 ConfirmDeleteCard=Ushbu Kredit yoki Debet kartani o'chirishni xohlaysizmi?
 CreateCustomerOnStripe=Stripe-da mijoz yarating
 CreateCardOnStripe=Stripe-da karta yarating
+CreateBANOnStripe=Stripe-da bank yarating
 ShowInStripe=Stripe-da ko'rsatish
 StripeUserAccountForActions=Stripe voqealari (Stripe to'lovlari) haqida elektron pochta orqali xabar berish uchun foydalanuvchi hisob qaydnomasi
 StripePayoutList=Stripe to'lovlari ro'yxati
@@ -68,4 +71,10 @@ ToOfferALinkForTestWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni o'rn
 ToOfferALinkForLiveWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni sozlash uchun havola (jonli rejim)
 PaymentWillBeRecordedForNextPeriod=To'lov keyingi davr uchun qayd etiladi.
 ClickHereToTryAgain= <a href="%s"> Qayta urinish uchun shu erni bosing ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Mijozlarni kuchli autentifikatsiya qilish qoidalari tufayli kartani yaratish Stripe backoffice-da amalga oshirilishi kerak. Stripe mijozlar yozuvini yoqish uchun bu erni bosishingiz mumkin: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Kuchli mijozlarni autentifikatsiya qilish qoidalariga ko'ra, kartani yaratish Stripe orqa ofisidan amalga oshirilishi kerak. Stripe mijozlar rekordini yoqish uchun shu yerni bosing: %s
+STRIPE_CARD_PRESENT=Stripe terminallari uchun karta sovg'asi
+TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
+RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
+RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
+STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
+StripeConnect_Mode=Stripe Connect rejimi

@@ -23,6 +23,7 @@
  *  \brief      Page de fiche recap customer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -30,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 // Security check
 if ($user->socid) {
@@ -51,10 +52,10 @@ if ($id > 0) {
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -97,7 +98,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Summary");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -116,7 +117,7 @@ if ($id > 0) {
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	print dol_get_fiche_end();
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
@@ -158,7 +159,7 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -168,7 +169,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
+					'status' => $fac->getLibStatut(2, $totalpaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -239,13 +240,16 @@ if ($id > 0) {
 		if (empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-			// Sort array by date ASC to calucalte balance
+			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
 			// Balance calculation
 			$balance = 0;
 			foreach ($TData as &$data1) {
 				$balance += $data1['amount'];
+				if (!isset($data1['balance'])) {
+					$data1['balance'] = 0;
+				}
 				$data1['balance'] += $balance;
 			}
 
@@ -266,12 +270,12 @@ if ($id > 0) {
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td class=\"center\">";
+				$datedetail = dol_print_date($data['date'], 'dayhour');
 				if (!empty($data['fk_facture'])) {
-					print dol_print_date($data['date'], 'day');
-				} elseif (!empty($data['fk_paiement'])) {
-					print dol_print_date($data['date'], 'dayhour');
+					$datedetail = dol_print_date($data['date'], 'day');
 				}
+				print '<td class="center" title="'.dol_escape_htmltag($datedetail).'">';
+				print dol_print_date($data['date'], 'day');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";

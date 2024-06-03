@@ -4,8 +4,7 @@ Adding your own password generator module
 ------------------------------------
 
 
-If you want to add your own password generator module. This is steps to follow
-to add you own password generator:
+If you want to add your own password generator module. This is steps to follow to add your own password generator:
 
 
 ***** STEP 1 *****
@@ -13,18 +12,16 @@ to add you own password generator:
 Copy file
 htdocs/core/modules/security/modGeneratePassNone.class.php
 into
-htdocs/core/modules/mailings/modMyGenerator.class.php
+htdocs/core/modules/mailings/modGeneratePassMygenerator.class.php
 
-You can choose value of your choice instead of "myGenerator" in name
-of new file.
+You can choose value of your choice instead of "Mygenerator" in name of new file.
 
 
 ***** STEP 2 *****
 
-Edit this file modMyGenerator.class.php and change following text:
+Edit this file modGeneratePassMygenerator.class.php and change following text:
 
-"class modGeneratePassNone"       into    "class modMyGenerator"
-"function modGeneratePassNone"    into    "function modMyGenerator"
+"class modGeneratePassNone"     into    "class modGeneratePassMygenerator"
 
 Then add code inside the "getDecription" function. 
 Then add code inside the "getExample" function. 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,27 +27,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 
 
 /**
- *	    \class      modGeneratePassStandard
- *		\brief      Class to generate a password according to a dolibarr standard rule (8 random chars)
+ *	Class to generate a password according to a dolibarr standard rule (12 random chars)
  */
 class modGeneratePassStandard extends ModeleGenPassword
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
-	public $length;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
+	public $picto = 'fa-shield-alt';
 
 	/**
 	 *	Constructor
@@ -54,12 +44,13 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *  @param		DoliDB		$db			Database handler
 	 *	@param		Conf		$conf		Handler de conf
 	 *	@param		Translate	$langs		Handler de langue
-	 *	@param		User		$user		Handler du user connecte
+	 *	@param		User		$user		Handler du user connected
 	 */
 	public function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "standard";
-		$this->length = 12;
+		$this->length = '12';
+		$this->length2 = 12;
 
 		$this->db = $db;
 		$this->conf = $conf;
@@ -125,15 +116,21 @@ class modGeneratePassStandard extends ModeleGenPassword
 
 	/**
 	 *  Validate a password
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
 	 *  @param      string  $password   Password to check
 	 *  @return     int                 0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{
-		if (dol_strlen($password) < $this->length) {
+		global $langs;
+
+		if (dol_strlen($password) < $this->length2) {
+			$langs->load("other");
+			$this->error = $langs->trans("YourPasswordMustHaveAtLeastXChars", $this->length2);
 			return 0;
 		}
+
 		return 1;
 	}
 }

@@ -21,10 +21,12 @@ export namespace Ace {
     getLine(row: number): string;
     getLines(firstRow: number, lastRow: number): string[];
     getAllLines(): string[];
+    getLength(): number;
     getTextRange(range: Range): string;
     getLinesForRange(range: Range): string[];
     insert(position: Point, text: string): Point;
     insertInLine(position: Point, text: string): Point;
+    insertNewLine(position: Point): Point;
     clippedPos(row: number, column: number): Point;
     clonePos(pos: Point): Point;
     pos(row: number, column: number): Point;
@@ -153,7 +155,7 @@ export namespace Ace {
   }
 
   export interface EditSessionOptions {
-    wrap: string | number;
+    wrap: "off" | "free" | "printmargin" | boolean | number;
     wrapMethod: 'code' | 'text' | 'auto';
     indentedSoftWrap: boolean;
     firstLineNumber: number;
@@ -212,6 +214,7 @@ export namespace Ace {
     mergeUndoDeltas: true | false | 'always';
     behavioursEnabled: boolean;
     wrapBehavioursEnabled: boolean;
+    enableAutoIndent: boolean;
     autoScrollEditorIntoView: boolean;
     keyboardHandler: string;
     placeholder: string;
@@ -228,7 +231,7 @@ export namespace Ace {
     range: Range;
     preserveCase: boolean;
     regExp: RegExp;
-    wholeWord: string;
+    wholeWord: boolean;
     caseSensitive: boolean;
     wrap: boolean;
   }
@@ -362,7 +365,7 @@ export namespace Ace {
     moduleUrl(name: string, component?: string): string;
     setModuleUrl(name: string, subst: string): string;
     loadModule(moduleName: string | [string, string],
-      onLoad: (module: any) => void): void;
+      onLoad?: (module: any) => void): void;
     init(packaged: any): any;
     defineOptions(obj: any, path: string, options: { [key: string]: any }): Config;
     resetOptions(obj: any): void;
@@ -397,6 +400,8 @@ export namespace Ace {
 
   export interface EditSession extends EventEmitter, OptionsProvider, Folding {
     selection: Selection;
+
+    // TODO: define BackgroundTokenizer
 
     on(name: 'changeFold',
       callback: (obj: { data: Fold, action: string }) => void): Function;
@@ -519,6 +524,8 @@ export namespace Ace {
     removeKeyboardHandler(handler: KeyboardHandler): boolean;
     getKeyboardHandler(): KeyboardHandler;
     getStatusText(): string;
+    onCommandKey(e: any, hashId: number, keyCode: number): boolean;
+    onTextInput(text: string): boolean;
   }
 
   interface CommandMap {
@@ -549,10 +556,17 @@ export namespace Ace {
     toggleRecording(editor: Editor): void;
     replay(editor: Editor): void;
     addCommand(command: Command): void;
-    removeCommand(command: Command, keepCommand?: boolean): void;
+    addCommands(command: Command[]): void;
+    removeCommand(command: Command | string, keepCommand?: boolean): void;
+    removeCommands(command: Command[]): void;
     bindKey(key: string | { mac?: string, win?: string },
       command: CommandLike,
       position?: number): void;
+    bindKeys(keys: {[s: string]: Function}): void;
+    parseKeys(keyPart: string): {key: string, hashId: number};
+    findKeyCommand(hashId: number, keyString: string): string | undefined;
+    handleKeyboard(data: {}, hashId: number, keyString: string, keyCode: string | number): void | {command: string};
+    getStatusText(editor: Editor, data: {}): string;
   }
 
   export interface VirtualRenderer extends OptionsProvider, EventEmitter {
@@ -746,7 +760,7 @@ export namespace Ace {
     setFontSize(size: string): void;
     focus(): void;
     isFocused(): boolean;
-    flur(): void;
+    blur(): void;
     getSelectedText(): string;
     getCopyText(): string;
     execCommand(command: string | string[], args?: any): boolean;
@@ -844,9 +858,10 @@ export namespace Ace {
     replace(replacement: string, options?: Partial<SearchOptions>): number;
     replaceAll(replacement: string, options?: Partial<SearchOptions>): number;
     getLastSearchOptions(): Partial<SearchOptions>;
-    find(needle: string, options?: Partial<SearchOptions>, animate?: boolean): void;
+    find(needle: string | RegExp, options?: Partial<SearchOptions>, animate?: boolean): Ace.Range | undefined;
     findNext(options?: Partial<SearchOptions>, animate?: boolean): void;
     findPrevious(options?: Partial<SearchOptions>, animate?: boolean): void;
+    findAll(needle: string | RegExp, options?: Partial<SearchOptions>, additive?: boolean): number;
     undo(): void;
     redo(): void;
     destroy(): void;
@@ -857,6 +872,7 @@ export namespace Ace {
   type CompleterCallback = (error: any, completions: Completion[]) => void;
 
   interface Completer {
+    identifierRegexps?: Array<RegExp>,
     getCompletions(editor: Editor,
       session: EditSession,
       position: Point,

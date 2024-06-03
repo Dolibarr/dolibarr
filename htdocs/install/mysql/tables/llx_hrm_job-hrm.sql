@@ -22,7 +22,7 @@ CREATE TABLE llx_hrm_job(
     label varchar(255) NOT NULL,
 	description text, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	deplacement varchar(255),
     note_public text,
     note_private text,

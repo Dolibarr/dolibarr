@@ -137,7 +137,7 @@ CountryLV=Латвия
 CountryLB=Лубнон
 CountryLS=Лесото
 CountryLR=Либерия
-CountryLY=Либия
+CountryLY=Libya
 CountryLI=Лихтенштейн
 CountryLT=Литва
 CountryLU=Люксембург
@@ -247,10 +247,13 @@ CountryJE=Ҷерсӣ
 CountryME=Черногория
 CountryBL=Сент Бартелеми
 CountryMF=Сент Мартин
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Бону.
+CivilityMMEShort=Mrs.
 CivilityMR=Ҷаноб.
+CivilityMRShort=Mr.
 CivilityMLE=Бону.
 CivilityMTRE=Устод
 CivilityDR=Духтур

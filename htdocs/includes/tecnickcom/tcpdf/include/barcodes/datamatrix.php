@@ -629,7 +629,7 @@ class Datamatrix {
 					if ($numch[ENC_C40] == $numch[ENC_X12]) {
 						$k = ($pos + $charscount + 1);
 						while ($k < $data_length) {
-							$tmpchr = ord($data{$k});
+							$tmpchr = ord($data[$k]);
 							if ($this->isCharMode($tmpchr, ENC_X12)) {
 								return ENC_X12;
 							} elseif (!($this->isCharMode($tmpchr, ENC_X12) OR $this->isCharMode($tmpchr, ENC_C40))) {

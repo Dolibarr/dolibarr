@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2005-2024	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
  *	\brief      Home page of users and groups management
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 	// Redirection vers la page de l'utilisateur
 	header("Location: card.php?id=".$user->id);
 	exit;
@@ -38,8 +39,8 @@ if (!$user->rights->user->user->lire && !$user->admin) {
 $langs->load("users");
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$canreadperms = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 }
 
 // Security check (for external users)
@@ -62,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "1");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -75,8 +76,9 @@ if (GETPOST('addbox')) {
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("MenuUsersAndGroups");
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');
@@ -163,29 +165,28 @@ if ($resql) {
 		$companystatic->canvas = $obj->canvas;
 
 		$lastcreatedbox .= '<tr class="oddeven">';
-		$lastcreatedbox .= '<td class="nowraponall">';
+		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
-		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
 		}
 		$lastcreatedbox .= "</td>";
-		$lastcreatedbox .= '<td>'.$obj->login.'</td>';
-		$lastcreatedbox .= "<td>";
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
+		$texttoshow = '';
 		if ($obj->fk_soc) {
-			$lastcreatedbox .= $companystatic->getNomUrl(1);
+			$texttoshow .= $companystatic->getNomUrl(1);
 		} else {
-			$lastcreatedbox .= $langs->trans("InternalUser");
+			$texttoshow .= '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
 		}
 		if ($obj->ldap_sid) {
-			$lastcreatedbox .= ' ('.$langs->trans("DomainUser").')';
+			$texttoshow .= ' <span class="opacitymedium">('.$langs->trans("DomainUser").')</span>';
 		}
-
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -193,8 +194,9 @@ if ($resql) {
 				$entitystring = $mc->label;
 			}
 		}
-		$lastcreatedbox .= ($entitystring ? ' ('.$entitystring.')' : '');
-
+		$texttoshow .= ($entitystring ? ' <span class="opacitymedium">('.$entitystring.')</span>' : '');
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($texttoshow)).'">';
+		$lastcreatedbox .= $texttoshow;
 		$lastcreatedbox .= '</td>';
 		$lastcreatedbox .= '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 		$lastcreatedbox .= '<td class="right">';
@@ -222,10 +224,10 @@ if ($canreadperms) {
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
-		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+		$sql .= " WHERE g.entity IN (0, ".$conf->entity.")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
 	$sql .= $db->plimit($max);
@@ -233,7 +235,7 @@ if ($canreadperms) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$colspan = 1;
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			$colspan++;
 		}
 		$num = $db->num_rows($resql);
@@ -261,7 +263,7 @@ if ($canreadperms) {
 				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
 			$lastgroupbox .= "</td>";
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				$mc->getInfo($obj->entity);
 				$lastgroupbox .= '<td>';
 				$lastgroupbox .= $mc->label;

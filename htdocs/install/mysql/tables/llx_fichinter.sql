@@ -25,9 +25,10 @@ create table llx_fichinter
   fk_contrat		integer DEFAULT 0,          -- contrat auquel est rattache la fiche
   ref				varchar(30) NOT NULL,       -- number
   ref_ext			varchar(255),
+  ref_client		varchar(255),				-- customer intervention number
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  datec				datetime,                   -- date de creation 
+  datec				datetime,                   -- date de creation
   date_valid		datetime,                   -- date de validation
   datei				date,						-- date de livraison du bon d'intervention
   fk_user_author	integer,					-- user making creation
@@ -39,10 +40,17 @@ create table llx_fichinter
   datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
   description		text,
+
+  signed_status     smallint DEFAULT NULL,      -- signed status NULL, 0 or 1
+  online_sign_ip	varchar(48),
+  online_sign_name	varchar(64),
+
   note_private		text,
   note_public		text,
+
   model_pdf			varchar(255),
   last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
+
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

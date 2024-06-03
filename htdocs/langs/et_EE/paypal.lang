@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal mooduli seadistamine
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalDesc=See moodul võimaldab klientidel maksta <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPali </a> kaudu. Seda saab kasutada ad hoc makseks või Dolibarri objektiga seotud makseks (arve, tellimus jne)
 PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
 PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=Testimise/liivakasti režii
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions.
 ValidationOfPaymentFailed=Validation of payment has failed
 CardOwner=Card holder
 PayPalBalance=Paypal credit
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

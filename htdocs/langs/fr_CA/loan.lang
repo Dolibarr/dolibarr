@@ -14,6 +14,3 @@ ConfirmPayLoan=Confirmer classer payé ce prêt
 LoanPaid=Prêt payé
 AddLoan=Créer un prêt
 ConfigLoan=Configuration du prêt du module
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital de comptabilité par défaut
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compter les intérêts du compte par défaut
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Assurance compte comptable par défaut

@@ -5,24 +5,22 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* <style type="text/css" > */
 
 :root {
-			--btncolortext:rgb(<?php print $colortextlink; ?>);
+			--btncolortext: rgb(<?php print $colortextlink; ?>);
 			--btncolorbg: #fbfbfb;
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
-			/* --butactionbg:rgba(150, 110, 162, 0.95); */
-			--butactionbg:rgb(118, 145, 225);
-			--butactionbg:rgba(150, 110, 162, 0.95);
 			--butactiondeletebg: rgb(234,228,225);
-			/* tertiary color */
-			/* --butactionbg:rgb(218, 235, 225); */
-			/* --butactionbg:rgb(228, 218, 235); */
+			--butactionbg: rgb(<?php print $butactionbg; ?>);
+			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "@media (prefers-color-scheme: dark) {";
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
 	}
 	print "
       :root {
@@ -31,13 +29,12 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
             --btncolorbg: rgb(26,27,27);
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
-            --butactionbg: rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
+			--butactionbg: rgb(173,140,79);
+			--textbutaction: rgb(255,255,255);
 
       }\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "}";
-	}
+	print "}";
 }
 ?>
 
@@ -72,7 +69,7 @@ span.butAction, span.butActionDelete {
 }
 .butAction {
 	background: var(--butactionbg);
-	color: #FFF !important;
+	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butActionDelete {
@@ -86,8 +83,8 @@ span.butAction, span.butActionDelete {
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
@@ -108,7 +105,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -150,9 +147,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-	background: var(--butactiondeletebg);
+	background: var(--butactiondeletebg) !important;
 	/* border: 1px solid #633; */
-	color: #633;
+	color: #633 !important;
 }
 
 .butActionDelete:hover {
@@ -185,8 +182,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -254,11 +251,14 @@ a.btnTitle.btnTitleSelected {
 	border-radius: 3px;
 	position: relative;
 	text-align: center;
-	/* color: #ffffff;
-	background-color: rgb(<?php print $colortextlink; ?>); */
 	font-size: 12px;
 	text-decoration: none;
 	box-shadow: none;
+}
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+.btnTitlePlus:hover {
+	max-width: 24px;
+	max-height: 40px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
@@ -281,8 +281,8 @@ a.btnTitle.btnTitleSelected {
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle{
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .button-title-separator{
@@ -296,7 +296,7 @@ div.pagination li:first-child a.btnTitle{
 }
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
@@ -309,7 +309,7 @@ div.pagination li:first-child a.btnTitle{
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -325,7 +325,7 @@ div.pagination li:first-child a.btnTitle{
 }
 
 
-<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
+<?php if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
 	display: none !important;
 }

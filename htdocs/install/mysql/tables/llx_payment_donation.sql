@@ -27,7 +27,7 @@ create table llx_payment_donation
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),
   note            text,
-  ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)
+  ext_payment_id   varchar(255),						-- external id of payment (for example Stripe charge id)
   ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,                              -- creation user

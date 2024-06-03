@@ -42,6 +42,8 @@
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
@@ -83,6 +85,11 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'b
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
 DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price ALTER COLUMN packaging DROP DEFAULT;
 
 
 -- For v14
@@ -183,7 +190,7 @@ CREATE TABLE llx_workstation_workstation(
 	entity int DEFAULT 1,
 	note_private text,
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),
@@ -201,14 +208,14 @@ ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_st
 
 CREATE TABLE llx_workstation_workstation_resource(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_resource integer,
 	fk_workstation integer
 ) ENGINE=innodb;
 
 CREATE TABLE llx_workstation_workstation_usergroup(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_usergroup integer,
 	fk_workstation integer
 ) ENGINE=innodb;
@@ -264,7 +271,7 @@ create table llx_payment_vat
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_tva          integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,
@@ -431,7 +438,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer,
     fk_user_modif integer,
     last_main_doc varchar(255),
@@ -466,7 +473,7 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_
 create table llx_eventorganization_conferenceorboothattendee_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -510,7 +517,7 @@ CREATE TABLE llx_partnership(
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
 	fk_user_creat integer NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif integer, 
 	note_private text, 
 	note_public text, 
@@ -533,7 +540,7 @@ ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_member (fk_member);
 create table llx_partnership_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -568,7 +575,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	last_main_doc varchar(255), 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
@@ -592,7 +599,7 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 create table llx_knowledgemanagement_knowledgerecord_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -649,3 +656,5 @@ ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode 
 
 ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
+
+ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);

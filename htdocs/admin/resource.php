@@ -22,6 +22,7 @@
  * \brief		Setup page to configure resource module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Class
@@ -78,11 +79,11 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '<td></td>';
 
 
-// Utilisation formulaire Ajax sur choix produit
+// Use an Ajax form for the product choice
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax)) {
@@ -92,12 +93,12 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array(
-			'0'=>$langs->trans("No"),
-			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		$langs->trans("No"),
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalInt('RESOURCE_USE_SEARCH_TO_SELECT'));
 	print '</td>';
 	print '<td class="right">';
 	print '<input type="submit" class="button small" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
@@ -106,6 +107,15 @@ if (empty($conf->use_javascript_ajax)) {
 print '</tr>';
 
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
+print '<td class="right">';
+echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+/*
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkUser').'</td>';
 print '<td class="right">';
@@ -122,15 +132,7 @@ echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
 print '</td>';
 print '<td></td>';
 print '</tr>';
-
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
-print '<td class="right">';
-echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
-print '</td>';
-print '<td></td>';
-print '</tr>';
+*/
 
 print '</table>';
 print '</div>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ class Link extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	public function create($user = '')
+	public function create(User $user)
 	{
 		global $langs, $conf;
 
@@ -91,13 +92,13 @@ class Link extends CommonObject
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoUrl");
+			$this->error = $langs->trans("NoURL");
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label, objecttype, objectid)";
+		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
@@ -107,7 +108,7 @@ class Link extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."links");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."links");
 
 			if ($this->id > 0) {
 				// Call trigger
@@ -147,9 +148,9 @@ class Link extends CommonObject
 	 *
 	 *  @param  User	$user            			User executing update
 	 *  @param  int		$call_trigger    			0=no, 1=yes
-	 *  @return int  			           			<0 if KO, >=0 if OK
+	 *  @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
-	public function update($user = '', $call_trigger = 1)
+	public function update(User $user, $call_trigger = 1)
 	{
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -175,7 +176,7 @@ class Link extends CommonObject
 
 		$this->db->begin();
 
-		$sql  = "UPDATE ".MAIN_DB_PREFIX."links SET ";
+		$sql  = "UPDATE ".$this->db->prefix()."links SET ";
 		$sql .= "entity = ".$conf->entity;
 		$sql .= ", datea = '".$this->db->idate(dol_now())."'";
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
@@ -207,11 +208,11 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				// Doublon
+				// Duplicate
 				$this->error = $langs->trans("ErrorDuplicateField");
 				$result = -1;
 			} else {
-				$this->error = $langs->trans("Error sql = ".$sql);
+				$this->error = $langs->trans("Error sql")."= $sql";
 				$result = -2;
 			}
 			$this->db->rollback();
@@ -233,10 +234,10 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 		if ($sortfield) {
 			if (empty($sortorder)) {
@@ -249,7 +250,7 @@ class Link extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			dol_syslog(get_class($this)."::fetchAll ".$num."records", LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetchAll num=".((int) $num), LOG_DEBUG);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$link = new Link($this->db);
@@ -274,7 +275,7 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $dbs         Database handler
+	 *  @param  DoliDB  $dbs		Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
@@ -283,7 +284,7 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$dbs->prefix()."links";
 		$sql .= " WHERE objecttype = '".$dbs->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -313,7 +314,7 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -346,7 +347,7 @@ class Link extends CommonObject
 	 *    Delete a link from database
 	 *
 	 *	  @param	User		$user		Object suer
-	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
+	 *    @return	int						Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -364,7 +365,7 @@ class Link extends CommonObject
 		// End call triggers
 
 		// Remove link
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."links";
+		$sql = "DELETE FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);

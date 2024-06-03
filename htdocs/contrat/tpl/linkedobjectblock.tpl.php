@@ -19,11 +19,11 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -42,18 +42,17 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 <tr class="<?php echo $trclass; ?>">
 	<td><?php echo $langs->trans("Contract"); ?></td>
 	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
-	<td class="right"><?php
+	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
-	// start and end date that change with time andd that may be different that the period of reference for price.
+	// start and end date that change with time and that may be different that the period of reference for price.
 	// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
-	if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE)) {
+	if ($user->hasRight('contrat', 'lire') && !getDolGlobalString('CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE')) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
 			$totalcontrat = $totalcontrat + $linecontrat->total_ht;

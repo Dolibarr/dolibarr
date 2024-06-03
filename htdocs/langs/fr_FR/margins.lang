@@ -6,6 +6,7 @@ TotalMargin=Marge totale
 MarginOnProducts=Marge / Produits
 MarginOnServices=Marge / Services
 MarginRate=Taux de marge
+ModifyMarginRates=Modifier les taux de marge
 MarkRate=Taux de marque
 DisplayMarginRates=Afficher les taux de marge
 DisplayMarkRates=Afficher les taux de marque
@@ -22,7 +23,7 @@ ProductService=Produit ou Service
 AllProducts=Tous les produits et services
 ChooseProduct/Service=Choisissez le produit ou le service
 ForceBuyingPriceIfNull=Forcer le prix d'achat au prix de vente si non renseigné
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Si le prix d'achat/coût n'est pas fourni lors de l'ajout d'une nouvelle ligne, et cette option est "ON", la marge sera de 0%% sur la nouvelle ligne (prix d'achat/coût = prix de vente). Si cette option est "OFF" (recommandé), la marge sera égale à la valeur suggérée par défaut (et peut être 100%% si aucune valeur par défaut ne peut être trouvée).
 MARGIN_METHODE_FOR_DISCOUNT=Méthode de gestion des remises globales
 UseDiscountAsProduct=Comme un produit
 UseDiscountAsService=Comme un service
@@ -37,7 +38,7 @@ CostPrice=Prix de revient
 UnitCharges=Charge unitaire
 Charges=Charges
 AgentContactType=Type de contact agent commercial
-AgentContactTypeDetails=Définissez le type de contact (lié aux factures) à utiliser pour le rapport de marge par contact/adresse. Notez que la lecture de statistiques sur un contact n'est pas fiable car, dans la plupart des cas, le contact peut ne pas être défini explicitement sur les factures.
+AgentContactTypeDetails=Définissez le type de contact (lié aux factures) à utiliser pour le rapport de marge par contact/adresse. Notez que la lecture de statistiques sur un contact n'est pas fiable, car dans la plupart des cas, le contact peut ne pas être défini explicitement sur les factures.
 rateMustBeNumeric=Le taux doit être une valeure numérique
 markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
 ShowMarginInfos=Afficher les infos de marges

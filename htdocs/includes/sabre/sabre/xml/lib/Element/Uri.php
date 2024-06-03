@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Xml\Element;
 
 use Sabre\Xml;
@@ -20,8 +22,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Uri implements Xml\Element {
-
+class Uri implements Xml\Element
+{
     /**
      * Uri element value.
      *
@@ -30,22 +32,22 @@ class Uri implements Xml\Element {
     protected $value;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $value
      */
-    function __construct($value)
+    public function __construct($value)
     {
         $this->value = $value;
     }
 
     /**
-     * The xmlSerialize metod is called during xml writing.
+     * The xmlSerialize method is called during xml writing.
      *
      * Use the $writer argument to write its own xml serialization.
      *
      * An important note: do _not_ create a parent element. Any element
-     * implementing XmlSerializble should only ever write what's considered
+     * implementing XmlSerializable should only ever write what's considered
      * its 'inner xml'.
      *
      * The parent of the current element is responsible for writing a
@@ -54,19 +56,15 @@ class Uri implements Xml\Element {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $writer->text(
             \Sabre\Uri\resolve(
                 $writer->contextUri,
                 $this->value
             )
         );
-
     }
 
     /**
@@ -87,18 +85,15 @@ class Uri implements Xml\Element {
      * $reader->parseSubTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Xml\Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Xml\Reader $reader) {
-
+    public static function xmlDeserialize(Xml\Reader $reader)
+    {
         return new self(
             \Sabre\Uri\resolve(
-                $reader->contextUri,
+                (string) $reader->contextUri,
                 $reader->readText()
             )
         );
-
     }
-
 }

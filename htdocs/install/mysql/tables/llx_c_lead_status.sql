@@ -1,5 +1,6 @@
 -- Manage Lead
 -- Copyright (C) 2014  Florian HENRY <florian.henry@open-concept.pro>
+-- Copyright (C) 2022  Juanjo Menent <jmenent@2byte.es>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@ create table llx_c_lead_status
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   code 		  varchar(10),
-  label       varchar(50),
+  label       varchar(128),
   position    integer,
   percent     double(5,2),
   active      tinyint DEFAULT 1 NOT NULL

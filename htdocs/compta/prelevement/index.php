@@ -26,6 +26,7 @@
  */
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -37,11 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'prelevement', '', 'bons');
+
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
 
 
 /*
@@ -62,7 +65,12 @@ if (prelevement_check_config() < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByDirectDebit")), null, 'errors');
 }
 
-print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=');
+}
+
+print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"), $newcardbutton);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -78,14 +86,14 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
+print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->nbOfInvoiceToPay('direct-debit');
 print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right"><span class="amount">';
-print price($bprev->SommeAPrelever('direct-debit'), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('direct-debit'), 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
@@ -95,23 +103,23 @@ print '</span></td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid";
+$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 $sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture = f.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -141,17 +149,27 @@ if ($resql) {
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
 			$thirdpartystatic->email = $obj->email;
+			$thirdpartystatic->tva_intra = $obj->tva_intra;
+			$thirdpartystatic->siren = $obj->idprof1;
+			$thirdpartystatic->siret = $obj->idprof2;
+			$thirdpartystatic->ape = $obj->idprof3;
+			$thirdpartystatic->idprof1 = $obj->idprof1;
+			$thirdpartystatic->idprof2 = $obj->idprof2;
+			$thirdpartystatic->idprof3 = $obj->idprof3;
+			$thirdpartystatic->idprof4 = $obj->idprof4;
+			$thirdpartystatic->idprof5 = $obj->idprof5;
+			$thirdpartystatic->idprof6 = $obj->idprof6;
 
-			print '<tr class="oddeven"><td>';
+			print '<tr class="oddeven"><td class="nowraponall">';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $thirdpartystatic->getNomUrl(1, 'customer');
 			print '</td>';
 
 			print '<td class="right">';
-			print price($obj->amount);
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 
 			print '<td class="right">';
@@ -166,7 +184,7 @@ if ($resql) {
 		}
 	} else {
 		$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {
@@ -208,17 +226,17 @@ if ($result) {
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
-
-			print '<tr class="oddeven">';
-
-			print "<td>";
 			$bprev->id = $obj->rowid;
 			$bprev->ref = $obj->ref;
 			$bprev->statut = $obj->statut;
+
+			print '<tr class="oddeven">';
+
+			print '<td class="nowraponall">';
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right nowraponall"><span class="amount">'.price($obj->amount)."</span></td>\n";
 			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
 			print "</tr>\n";

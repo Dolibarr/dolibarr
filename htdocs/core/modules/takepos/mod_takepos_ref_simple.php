@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	            <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,6 +26,7 @@
  *  \ingroup    takepos
  *  \brief      File with Simple ref numbering module for takepos
  */
+
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -57,46 +60,51 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	/**
 	 *  Return description of numbering module
 	 *
-	 * @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 
-		return $langs->trans('SimpleNumRefModelDesc', $this->prefix.'0-');
+		$textinfo = $langs->trans('SimpleNumRefModelDesc', $this->prefix.'0-');
+		$textinfo .= '<br>'.$langs->trans('EachTerminalHasItsOwnCounter');
+
+		return $textinfo;
 	}
 
 	/**
-	 *  Return an example of numbering module values
+	 * Return an example of numbering module values
 	 *
-	 * @return     string      Example
+	 * @return     string      Example.
 	 */
 	public function getExample()
 	{
-		return $this->prefix.'0-0501-0001';
+		return $this->prefix.'0-0501-0001';		// TC0-0501-0001
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
+	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 * @return     boolean     false si conflit, true si ok
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
 		$pryymm = '';
 		$max = '';
 
-		$pos_source = 0;
+		$pos_source = 0;	// POS source = Terminal ID
 
 		// First, we get the max value
-		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
+		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
 
 		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
@@ -118,25 +126,29 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	}
 
 	/**
-	 *  Return next value
+	 * Return next value.
+	 * Note to increase perf of this numbering engine:
+	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'TC' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
+	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
 	 * @param   Societe     $objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      Next value
+	 * @return  string|int     			Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $db;
 
-		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
+		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;	// POS source = Terminal ID
 
 		// First, we get the max value
-		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
+		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
 		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
+		//$sql .= " and module_source = 'takepos'";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -155,13 +167,13 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max);
+				$num = sprintf("%04d", $max);
 			}
 
 			$ref = '';
 			$sql  = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-".$num."'";
+			$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-".$num)."'";
 			$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 			$sql .= " ORDER BY ref DESC";
 
@@ -178,18 +190,19 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			return $ref;
 		} elseif ($mode == 'next') {
 			$date = $invoice->date; // This is invoice date (not creation date)
-			$yymm = strftime("%y%m", $date);
+			$yymm = dol_print_date($date, "%y%m");
 
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max + 1);
+				$num = sprintf("%04d", $max + 1);
 			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$pos_source.'-'.$yymm.'-'.$num);
 			return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 
@@ -197,8 +210,9 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 *  Return next free value
 	 *
 	 * @param       Societe     $objsoc         Object third party
-	 * @param       Object      $objforref      Object for number to search
+	 * @param       Facture     $objforref      Object for number to search
 	 * @return      string      Next free value
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

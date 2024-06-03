@@ -1,4 +1,4 @@
--- Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2016-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,16 +19,17 @@
 CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	entity	integer DEFAULT 1, 
-	login             varchar(128) NOT NULL, 
+	entity	integer DEFAULT 1,
+	
+	login             varchar(128) NOT NULL,    -- a login string into website or external system 
 	pass_encoding     varchar(24),
-	pass_crypted      varchar(128),
+	pass_crypted      varchar(128),             -- the hashed password
 	pass_temp         varchar(128),			    -- temporary password when asked for forget password
-	fk_soc integer,
-	fk_website        integer,					-- id of local web site
-	site              varchar(128),				-- name of external web site
-	site_account      varchar(128),				-- a key to identify the account on external web site
-	key_account       varchar(128),				-- the id of third party in external web site (for site_account if site_account defined)
+	fk_soc            integer,                  -- if entry is linked to a thirdparty
+	fk_website        integer,					-- id of local web site (if dk_website is filled, site is empty)
+	site              varchar(128) NOT NULL,	-- name of external web site (if site is filled, fk_website is empty)
+	site_account      varchar(128),				-- a key to identify the account on external web site (for example: 'stripe', 'paypal', 'myextapp') 
+	key_account       varchar(128),				-- the id of an account in external web site (for site_account if site_account defined. some sites needs both an account name and a login that is different)
 	note_private      text,
 	date_last_login   datetime,
 	date_previous_login datetime,

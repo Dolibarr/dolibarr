@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *		\brief      Page des infos systeme de php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -33,7 +35,6 @@ $langs->loadLangs(array("admin", "install", "errors"));
 if (!$user->admin) {
 	accessforbidden();
 }
-
 
 
 /*
@@ -53,36 +54,36 @@ if (isset($title)) {
 $maxphp = @ini_get('upload_max_filesize'); // In unknown
 if (preg_match('/k$/i', $maxphp)) {
 	$maxphp = preg_replace('/k$/i', '', $maxphp);
-	$maxphp = $maxphp * 1;
+	$maxphp *= 1;
 }
 if (preg_match('/m$/i', $maxphp)) {
 	$maxphp = preg_replace('/m$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024;
+	$maxphp *= 1024;
 }
 if (preg_match('/g$/i', $maxphp)) {
 	$maxphp = preg_replace('/g$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024;
+	$maxphp *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp)) {
 	$maxphp = preg_replace('/t$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024 * 1024;
+	$maxphp *= 1024 * 1024 * 1024;
 }
 $maxphp2 = @ini_get('post_max_size'); // In unknown
 if (preg_match('/k$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1;
+	$maxphp2 *= 1;
 }
 if (preg_match('/m$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024;
+	$maxphp2 *= 1024;
 }
 if (preg_match('/g$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024 * 1024;
 }
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 	$langs->load("errors");
@@ -114,7 +115,7 @@ if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here. This is a specific test.
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 } else {
@@ -183,6 +184,22 @@ print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
+$functions = ["easter_date"];
+$name      = "Calendar";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["simplexml_load_string"];
+$name      = "Xml";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	$functions = ["locale_get_primary_language", "locale_get_region"];
 	$name      = "Intl";
@@ -195,6 +212,14 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 $functions = ["imap_open"];
 $name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = array();
+$name      = "zip";
 
 print "<tr>";
 print "<td>".$name."</td>";
@@ -226,9 +251,24 @@ foreach ($phparray as $key => $value) {
 	//var_dump($value);
 	foreach ($value as $keyparam => $keyvalue) {
 		if (!is_array($keyvalue)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$keyparam.'</td>';
+			$keytoshow = $keyparam;
 			$valtoshow = $keyvalue;
+
+			// Hide value of session cookies
+			if (in_array($keyparam, array('HTTP_COOKIE', 'Cookie', "\$_SERVER['HTTP_COOKIE']", 'Authorization'))) {
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+			if (preg_match('/'.preg_quote('$_COOKIE[\'DOLSESSID_', '/').'/i', $keyparam)) {
+				$keytoshow = $keyparam;
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+			if (preg_match('/'.preg_quote('$_SERVER[\'PHP_AUTH_PW', '/').'/i', $keyparam)) {
+				$keytoshow = $keyparam;
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+
+			print '<tr class="oddeven">';
+			print '<td>'.$keytoshow.'</td>';
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}

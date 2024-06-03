@@ -30,6 +30,7 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 	define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti CSRF attack test
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -48,7 +49,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-// Sauvegardes parametres
+// Sauvegardes parameters
 if ($action == 'update') {
 	$i = 0;
 
@@ -56,9 +57,10 @@ if ($action == 'update') {
 
 	$label  = GETPOST('EXTERNALSITE_LABEL', 'alphanohtml');
 
-	$exturl = GETPOST('EXTERNALSITE_URL', 'none');
-	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
-	$exturl = trim(dol_string_onlythesehtmlattributes($exturl));
+	// exturl can be an url or a HTML string
+	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
+	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1, array(), 1);
+	$exturl = dol_string_onlythesehtmlattributes($exturl);
 
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
@@ -100,7 +102,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"".(GETPOST('EXTERNALSITE_LABEL', 'alpha') ?GETPOST('EXTERNALSITE_LABEL', 'alpha') : ((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL == 'ExternalSite') ? '' : $conf->global->EXTERNALSITE_LABEL))."\" size=\"12\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"".(GETPOST('EXTERNALSITE_LABEL', 'alpha') ? GETPOST('EXTERNALSITE_LABEL', 'alpha') : ((!getDolGlobalString('EXTERNALSITE_LABEL') || getDolGlobalString('EXTERNALSITE_LABEL') == 'ExternalSite') ? '' : $conf->global->EXTERNALSITE_LABEL))."\" size=\"12\"></td>";
 print "<td>".$langs->trans("ExampleMyMenuEntry")."</td>";
 print "</tr>";
 
@@ -109,11 +111,11 @@ print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
 
-$exturl = GETPOST('EXTERNALSITE_URL', 'none');
-$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
-$exturl = trim(dol_string_onlythesehtmlattributes($exturl));
+$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
+$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1, array(), 1);
+$exturl = dol_string_onlythesehtmlattributes($exturl);
 
-print (GETPOSTISSET('EXTERNALSITE_URL') ? $exturl : (empty($conf->global->EXTERNALSITE_URL) ? '' : $conf->global->EXTERNALSITE_URL));
+print(GETPOSTISSET('EXTERNALSITE_URL') ? $exturl : (!getDolGlobalString('EXTERNALSITE_URL') ? '' : $conf->global->EXTERNALSITE_URL));
 print '</textarea></td>';
 print "<td>http://localhost/myurl/";
 print "<br>https://wikipedia.org/";

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=கடன்
+Loans=கடன்கள்
+NewLoan=புதிய கடன்
+ShowLoan=கடனைக் காட்டு
+PaymentLoan=கடன் செலுத்துதல்
+LoanPayment=கடன் செலுத்துதல்
+ShowLoanPayment=கடன் செலுத்துதலைக் காட்டு
+LoanCapital=மூலதனம்
+Insurance=காப்பீடு
+Interest=ஆர்வம்
+Nbterms=விதிமுறைகளின் எண்ணிக்கை
+Term=கால
+LoanAccountancyCapitalCode=கணக்கியல் கணக்கு மூலதனம்
+LoanAccountancyInsuranceCode=கணக்கியல் கணக்கு காப்பீடு
+LoanAccountancyInterestCode=கணக்கியல் கணக்கு வட்டி
+ConfirmDeleteLoan=இந்தக் கடனை நீக்குவதை உறுதிப்படுத்தவும்
+LoanDeleted=கடன் வெற்றிகரமாக நீக்கப்பட்டது
+ConfirmPayLoan=இந்த கடனை செலுத்தியதை வகைப்படுத்தவும்
+LoanPaid=கடன் செலுத்தப்பட்டது
+ListLoanAssociatedProject=திட்டத்துடன் தொடர்புடைய கடனின் பட்டியல்
+AddLoan=கடனை உருவாக்கவும்
+FinancialCommitment=நிதி அர்ப்பணிப்பு
+InterestAmount=ஆர்வம்
+CapitalRemain=மூலதனம் உள்ளது
+TermPaidAllreadyPaid = இந்த காலம் ஏற்கனவே செலுத்தப்பட்டது
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = நீங்கள் அட்டவணையைப் பயன்படுத்தினால் ஆர்வத்தை மாற்ற முடியாது
+# Admin
+ConfigLoan=தொகுதி கடன் கட்டமைப்பு
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+CreateCalcSchedule=நிதி உறுதியைத் திருத்தவும்

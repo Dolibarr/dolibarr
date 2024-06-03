@@ -18,20 +18,26 @@
  */
 
 /**
- *   	\file       htdocs/fourn/paiement/info.php
- *		\ingroup    facture
- *		\brief      Onglet info d'un paiement fournisseur
+ *    \file       htdocs/fourn/paiement/info.php
+ *    \ingroup    invoice, fournisseur
+ *    \brief      Tab for Supplier Payment Information
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("bills", "suppliers", "companies"));
 
-$id = GETPOST('id', 'int');
+// Get Parameters
+$id = GETPOSTINT('id');
 
+// Initialize Objects
 $object = new PaiementFourn($db);
 
 // Load object
@@ -40,6 +46,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
 // Security check
+$socid = ''; // Prevents PHP Warning:  Undefined variable $socid on line 55
 if ($user->socid) {
 	$socid = $user->socid;
 }

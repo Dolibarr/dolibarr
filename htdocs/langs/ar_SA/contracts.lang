@@ -2,7 +2,7 @@
 ContractsArea=منطقة العقود 
 ListOfContracts=قائمة العقود
 AllContracts=جميع العقود
-ContractCard=عقد بطاقة
+ContractCard=العقد
 ContractStatusNotRunning=غير ساري
 ContractStatusDraft=مسودة
 ContractStatusValidated=مؤكد
@@ -20,6 +20,7 @@ ContractsSubscriptions=العقود / الاشتراكات
 ContractsAndLine=العقود و بنود العقود
 Contract=العقد
 ContractLine=بند العقد
+ContractLines=خطوط العقد
 Closing=جار الإغلاق
 NoContracts=لا توجد عقود
 MenuServices=الخدمات
@@ -33,10 +34,10 @@ AddContract=إنشاء عقد
 DeleteAContract=حذف العقد
 ActivateAllOnContract=تفعيل جميع الخدمات
 CloseAContract=إغلاق العقد
-ConfirmDeleteAContract=هل انت متأكد من رغبتك في حذف هذا العقد وجميع خدماته ؟
+ConfirmDeleteAContract=هل انت متأكد من رغبتك من حذف هذا العقد و جميع خدماته ؟
 ConfirmValidateContract=هل انت متأكد من رغبتك بتأكيد العقد المسمى <b>%s</b> ؟
 ConfirmActivateAllOnContract=سيتم تفعيل جميع الخدمات (غير المفعلة بعد) . هل انت متأكد من رغبتك في تفعيل جميع الخدمات ؟
-ConfirmCloseContract=This will close all services (expired or not). Are you sure you want to close this contract?
+ConfirmCloseContract=سيؤدي هذا إلى إغلاق جميع الخدمات (منتهية الصلاحية أم لا). هل أنت متأكد أنك تريد إغلاق هذا العقد؟
 ConfirmCloseService=هل انت متأكد من رغبتك بإغلاق الخدمة بتاريخ <b>%s</b> ؟
 ValidateAContract=تصديق العقد
 ActivateService=تفعيل الخدمة
@@ -53,7 +54,7 @@ NotActivatedServices=الخدمات غير النشطة (في العقود ال�
 BoardNotActivatedServices=الخدمات المراد تفعيلها في العقود المصدقة
 BoardNotActivatedServicesShort=الخدمات المراد تفعيلها
 LastContracts=آخر  %s عقود
-LastModifiedServices=آخر  %s  خدمات مفعلة
+LastModifiedServices=آخر  %s  خدمات معدله
 ContractStartDate=تاريخ البدء
 ContractEndDate=نهاية التاريخ
 DateStartPlanned=تاريخ البداية المخطط
@@ -77,9 +78,9 @@ CloseAllContracts=إغلاق جميع بنود العقد
 DeleteContractLine=حذف بند العقد
 ConfirmDeleteContractLine=هل انت متأكد من رغبتك بحذف بند العقد هذا ؟
 MoveToAnotherContract=نقل الخدمة الى عقد اخر
-ConfirmMoveToAnotherContract=لقد اخترت عقد جدبد للخدمة و اود نقل هذه الخدمة الى العقد الجديد
+ConfirmMoveToAnotherContract=لقد اخترت عقدًا مستهدفًا جديدًا و وأؤكد أنني أرغب في نقل هذه الخدمة إلى هذا العقد.
 ConfirmMoveToAnotherContractQuestion=إختر ايأ من العقود الموجودة (لنفس الطرف الثالث) ، والتي تود نقل هذه الخدمة لها ؟
-PaymentRenewContractId=تجديد بند العقد (رقم %s)
+PaymentRenewContractId=تجديد العقد %s (الخدمة %s)
 ExpiredSince=تاريخ الانتهاء
 NoExpiredServices=الخدمات المفعلة غير المنتهية
 ListOfServicesToExpireWithDuration=قائمة الخدمات المنتهية خلال %s ايام
@@ -102,3 +103,5 @@ TypeContact_contrat_external_SALESREPSIGN=جهة إتصال توقيع العق�
 HideClosedServiceByDefault=إخفاء الخدمات المغلقة إبتداءاً
 ShowClosedServices=إظهار الخدمات المغلقة
 HideClosedServices=إخفاء الخدمات المغلقة
+UserStartingService=خدمة بدء المستخدم
+UserClosingService=خدمة إغلاق المستخدم

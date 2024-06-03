@@ -23,6 +23,7 @@ CREATE TABLE llx_establishment (
   rowid 			integer NOT NULL auto_increment PRIMARY KEY,
   entity 			integer NOT NULL DEFAULT 1,
   ref				varchar(30),
+  label       		varchar(255) NOT NULL,
   name				varchar(128),
   address           varchar(255),
   zip               varchar(25),

@@ -3,7 +3,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // Loop to complete $param for extrafields
@@ -31,8 +31,14 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 			$param .= '&'.$search_options_pattern.$tmpkey.'_endmin='.dol_print_date($val['end'], '%M');
 			$val = '';
 		}
-		if ($val != '') {
-			$param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
+		if ($val !== '') {
+			if (is_array($val)) {
+				foreach ($val as $val2) {
+					$param .= '&'.$search_options_pattern.$tmpkey.'[]='.urlencode($val2);
+				}
+			} else {
+				$param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
+			}
 		}
 	}
 }

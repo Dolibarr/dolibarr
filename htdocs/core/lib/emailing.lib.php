@@ -39,7 +39,7 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->mailing->mailing_advance->recipient)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mailing', 'mailing_advance', 'recipient'))) {
 		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailRecipients");
 		if ($object->nbemail > 0) {
@@ -49,7 +49,7 @@ function emailing_prepare_head(Mailing $object)
 		$h++;
 	}
 
-	if (!empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR)) {
+	if (getDolGlobalString('EMAILING_USE_ADVANCED_SELECTOR')) {
 		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/advtargetemailing.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailAdvTargetRecipients");
 		$head[$h][2] = 'advtargets';
@@ -59,6 +59,11 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/note.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Note");
+	$head[$h][2] = 'note';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing');

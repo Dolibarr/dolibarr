@@ -37,9 +37,9 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
-//  accessforbidden();
+	//  accessforbidden();
 
-// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
+	// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
 	'invoice_line' => 'bill',
@@ -58,7 +58,7 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
-	'virtualproduct'=>'product',
+	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
 	'stock'        => 'stock',
@@ -66,17 +66,19 @@ $entitytoicon = array(
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
+	'securityevent' => 'generic',
 	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
+	'shipment_line' => 'sending',
+	'reception' => 'sending',
+	'reception_line' => 'sending',
+	'expensereport' => 'trip',
+	'expensereport_line' => 'trip',
 	'holiday'      => 'holiday',
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
 	'bomm'         => 'bom',
-	'bomline'      => 'bom'
+	'bomline'      => 'bom',
+	'conferenceorboothattendee' => 'contact'
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -112,20 +114,23 @@ $entitytolang = array(
 	'category'     => 'Category',
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
+	'securityevent' => 'SecurityEvent',
 	'shipment'     => 'Shipments',
-	'shipment_line'=> 'ShipmentLine',
+	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
+	'resource'     => 'Resource',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
-	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport' => 'ExpenseReport',
+	'expensereport_line' => 'ExpenseReportLine',
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
-	'contract_line'=> 'ContractLine',
+	'contract_line' => 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
-	'bomline'      => 'BOMLine'
+	'bomline'      => 'BOMLine',
+	'conferenceorboothattendee' => 'Attendee'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
@@ -133,11 +138,11 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
+$step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
-$exportmodelid = GETPOST("exportmodelid", "int");
-$field = GETPOST("field", "alpa");
+$exportmodelid = GETPOSTINT("exportmodelid");
+$field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
@@ -181,8 +186,8 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 		$array_selected[$field] = count($array_selected) + 1; // We tag the key $field as "selected"
 		// We check if there is a dependency to activate
 		/*var_dump($field);
-		var_dump($fieldsentitiesarray[$field]);
-		var_dump($fieldsdependenciesarray);*/
+		 var_dump($fieldsentitiesarray[$field]);
+		 var_dump($fieldsdependenciesarray);*/
 		$listofdependencies = array();
 		if (!empty($fieldsentitiesarray[$field]) && !empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]])) {
 			// We found a dependency on the type of field
@@ -217,11 +222,11 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 	}
 }
 if ($action == 'unselectfield') {
-	if ($_GET["field"] == 'all') {
+	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
 	} else {
-		unset($array_selected[$_GET["field"]]);
+		unset($array_selected[GETPOST("field")]);
 		// Renumber fields of array_selected (from 1 to nb_elements)
 		asort($array_selected);
 		$i = 0;
@@ -236,7 +241,7 @@ if ($action == 'unselectfield') {
 }
 
 if ($action == 'downfield' || $action == 'upfield') {
-	$pos = $array_selected[$_GET["field"]];
+	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
 	}
@@ -251,9 +256,9 @@ if ($action == 'downfield' || $action == 'upfield') {
 			break;
 		}
 	}
-	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
+	//print("Switch pos=$pos (code=".GETPOST("field").") and newpos=$newpos (code=$newcode)");
 	if ($newcode) {   // Si newcode trouve (protection contre resoumission de page)
-		$array_selected[$_GET["field"]] = $newpos;
+		$array_selected[GETPOST("field")] = $newpos;
 		$array_selected[$newcode] = $pos;
 		$_SESSION["export_selected_fields"] = $array_selected;
 	}
@@ -267,7 +272,13 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	$separator = GETPOST('delimiter', 'alpha');
+	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -275,7 +286,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -287,7 +298,12 @@ if ($action == 'builddoc') {
 
 // Delete file
 if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
-	$file = $upload_dir."/".GETPOST('file'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	$file = $upload_dir."/".GETPOST('file');
 
 	$ret = dol_delete_file($file);
 	if ($ret) {
@@ -300,14 +316,24 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objexport->fetch(GETPOST('id', 'int'));
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	if (GETPOSTINT("id")) {
+		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
 	}
 }
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
 if ($action == 'add_export_model') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	if ($export_name) {
 		asort($array_selected);
 
@@ -383,21 +409,26 @@ if ($step == 2 && $action == 'select_model') {
 
 // Get form with filters
 if ($step == 4 && $action == 'submitFormField') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	// on boucle sur les champs selectionne pour recuperer la valeur
 	if (is_array($objexport->array_export_TypeFields[0])) {
 		$_SESSION["export_filtered_fields"] = array();
 		foreach ($objexport->array_export_TypeFields[0] as $code => $type) {	// $code: s.fieldname $value: Text|Boolean|List:ccc
 			$newcode = (string) preg_replace('/\./', '_', $code);
-			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
+			//print 'xxx '.$code."=".$newcode."=".$type."=".GETPOST($newcode)."\n<br>";
+			$check = 'alphanohtml';
 			$filterqualified = 1;
-			if (!GETPOSTISSET($newcode) || GETPOST($newcode, 'restricthtml') == '') {
+			if (!GETPOSTISSET($newcode) || GETPOST($newcode, $check) == '') {
 				$filterqualified = 0;
-			} elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, 'restricthtml')) && GETPOST($newcode, 'restricthtml') <= 0)) {
+			} elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, $check)) && GETPOST($newcode, $check) <= 0)) {
 				$filterqualified = 0;
 			}
 			if ($filterqualified) {
-				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
-				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, 'restricthtml');
+				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, $check);
 			}
 		}
 		$array_filtervalue = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
@@ -425,7 +456,7 @@ if ($step == 1 || !$datatoexport) {
 	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
 	// Affiche les modules d'exports
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
@@ -450,7 +481,7 @@ if ($step == 1 || !$datatoexport) {
 			print $label;
 			print '</td><td class="right">';
 			if ($objexport->array_export_perms[$key]) {
-				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
 			}
@@ -466,6 +497,11 @@ if ($step == 1 || !$datatoexport) {
 }
 
 if ($step == 2 && $datatoexport) {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	$h = 0;
@@ -518,15 +554,15 @@ if ($step == 2 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
 	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
+	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
 	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
@@ -643,6 +679,11 @@ if ($step == 3 && $datatoexport) {
 		exit;
 	}
 
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	$h = 0;
@@ -704,7 +745,7 @@ if ($step == 3 && $datatoexport) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -807,6 +848,11 @@ if ($step == 4 && $datatoexport) {
 		exit;
 	}
 
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	asort($array_selected);
 
 	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -867,18 +913,24 @@ if ($step == 4 && $datatoexport) {
 	print '<td>'.$list.'</td>';
 	print '</tr>';
 
-	// List of filtered fiels
+	// List of filtered fields
 	if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -897,7 +949,7 @@ if ($step == 4 && $datatoexport) {
 
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
@@ -999,7 +1051,7 @@ if ($step == 4 && $datatoexport) {
 		print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
@@ -1010,11 +1062,11 @@ if ($step == 4 && $datatoexport) {
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" value=""></td>';
 		print '<td>';
-		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button reposition button-save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save small" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		$tmpuser = new User($db);
@@ -1023,7 +1075,7 @@ if ($step == 4 && $datatoexport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";
@@ -1064,10 +1116,15 @@ if ($step == 4 && $datatoexport) {
 }
 
 if ($step == 5 && $datatoexport) {
-	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
+	if (count($array_selected) < 1) {      // This occurs when going back to page after session expired
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
+	}
+
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
 	}
 
 	asort($array_selected);
@@ -1085,7 +1142,7 @@ if ($step == 5 && $datatoexport) {
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	// si le filtrage est parametre pour l'export ou pas
+	// si le filtrage est parameter pour l'export ou pas
 	if ($usefilters && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
 		$head[$h][1] = $langs->trans("Step")." 3";
@@ -1114,7 +1171,7 @@ if ($step == 5 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1147,12 +1204,18 @@ if ($step == 5 && $datatoexport) {
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -1167,14 +1230,15 @@ if ($step == 5 && $datatoexport) {
 	print '<br>';
 
 	// List of available export formats
-	$htmltabloflibs = '<table class="noborder centpercent">';
+	$htmltabloflibs = '<!-- Table with available export formats --><br>';
+	$htmltabloflibs .= '<table class="noborder centpercent nomarginbottom">';
 	$htmltabloflibs .= '<tr class="liste_titre">';
 	$htmltabloflibs .= '<td>'.$langs->trans("AvailableFormats").'</td>';
 	$htmltabloflibs .= '<td>'.$langs->trans("LibraryUsed").'</td>';
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {
@@ -1186,12 +1250,13 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td>'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 		$text = $objmodelexport->getDriverDescForKey($key);
 		$label = $listeall[$key];
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$htmltabloflibs .= $form->textwithpicto($label, $text).'</td>';
 		$htmltabloflibs .= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 		$htmltabloflibs .= '</tr>'."\n";
 	}
-	$htmltabloflibs .= '</table>';
+	$htmltabloflibs .= '</table><br>';
 
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
@@ -1211,7 +1276,7 @@ if ($step == 5 && $datatoexport) {
 
 	// Show existing generated documents
 	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
+	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();

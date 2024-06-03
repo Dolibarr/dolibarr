@@ -22,7 +22,6 @@ UserForApprovalLogin=Usuario aprobador
 SendRequestCP=Crear solicitud de licencia
 DelayToRequestCP=Las solicitudes de licencias deben realizarse al menos <b>%s día(s)</b> antes.
 MenuConfCP=Saldo de licencia
-SoldeCPUser=El saldo de licencias es de <b>%s</b> días.
 ErrorEndDateCP=Debes seleccionar una fecha de finalización mayor que la fecha de inicio.
 ErrorSQLCreateCP=Se produjo un error de SQL durante la creación:
 ErrorIDFicheCP=Se ha producido un error, la solicitud de licencia no existe.

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,50 +22,37 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class CUnits // extends CommonObject
+class CUnits extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
 	public $records = array();
 
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
 	/**
-	 * @var int ID
+	 * @var string label
+	 * @deprecated
+	 * @see $label
 	 */
-	public $id;
+	public $libelle;
 
-	public $code;
-	public $label;
+	public $sortorder;
 	public $short_label;
 	public $unit_type;
 	public $scale;
-	public $active;
-
-
 
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -77,11 +65,10 @@ class CUnits // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -99,10 +86,10 @@ class CUnits // extends CommonObject
 			$this->libelle = trim($this->short_label);
 		}
 		if (isset($this->unit_type)) {
-			$this->active = trim($this->unit_type);
+			$this->unit_type = trim($this->unit_type);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->scale)) {
 			$this->scale = trim($this->scale);
@@ -112,19 +99,19 @@ class CUnits // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
+		$sql = "INSERT INTO ".$this->db->prefix()."c_units(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "label,";
 		$sql .= "short_label,";
-		$sql .= "unit_type";
+		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
-		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'");
+		$sql .= " ".(!isset($this->unit_type) ? 'NULL' : "'".$this->db->escape($this->unit_type)."'").",";
 		$sql .= " ".(!isset($this->scale) ? 'NULL' : "'".$this->db->escape($this->scale)."'");
 		$sql .= ")";
 
@@ -138,7 +125,7 @@ class CUnits // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_units");
 		}
 
 		// Commit or rollback
@@ -163,12 +150,10 @@ class CUnits // extends CommonObject
 	 *  @param		string	$code			Code
 	 *  @param		string	$short_label	Short Label ('g', 'kg', ...)
 	 *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
-	 *  @return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $short_label = '', $unit_type = '')
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
@@ -178,7 +163,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
+		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		$sql_where = array();
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
@@ -223,21 +208,19 @@ class CUnits // extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	Limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string|array $filter       	Filter USF
+	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.sortorder,";
@@ -246,24 +229,39 @@ class CUnits // extends CommonObject
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_units as t';
+		$sql .= " FROM ".$this->db->prefix()."c_units as t";
+		$sql .= " WHERE 1 = 1";
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} elseif (strpos($key, 'date') !== false) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+					} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -289,6 +287,7 @@ class CUnits // extends CommonObject
 					$record->unit_type = $obj->unit_type;
 					$record->scale = $obj->scale;
 					$record->active = $obj->active;
+
 					$this->records[$record->id] = $record;
 				}
 			}
@@ -297,7 +296,7 @@ class CUnits // extends CommonObject
 			return $this->records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -309,11 +308,10 @@ class CUnits // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -336,14 +334,14 @@ class CUnits // extends CommonObject
 			$this->scale = trim($this->scale);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_units SET";
+		$sql = "UPDATE ".$this->db->prefix()."c_units SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " sortorder=".(isset($this->sortorder) ? "'".$this->db->escape($this->sortorder)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
@@ -382,14 +380,13 @@ class CUnits // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
+		$sql = "DELETE FROM ".$this->db->prefix()."c_units";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -420,17 +417,14 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @return int            <0 if KO, Id of code if OK
+	 * @param string $unit_type weight,size,surface,volume,qty,time...
+	 * @return int|string            Return integer <0 if KO, Id of code if OK (or $code if $mode is different from '', 'short_label' or 'code')
 	 */
-	public function getUnitFromCode($code, $mode = 'code')
+	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-
-		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
-		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
+		if ($mode == 'short_label' || $mode == 'code') {
+			return dol_getIdFromCode($this->db, $code, 'c_units', $mode, 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		}
-
 		return $code;
 	}
 
@@ -443,7 +437,7 @@ class CUnits // extends CommonObject
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{
-		$value = floatval(price2num($value));
+		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
 		// Calcul en unité de base
@@ -463,22 +457,30 @@ class CUnits // extends CommonObject
 	}
 
 	/**
-	 * get scale of unit factor
-	 * @param int $id id of unit in dictionary
-	 * @return float|int
+	 * Get scale of unit factor
+	 *
+	 * @param 	int 		$id 	Id of unit in dictionary
+	 * @return 	float|int			Scale of unit
 	 */
 	public function scaleOfUnitPow($id)
 	{
 		$base = 10;
-		// TODO : add base col into unit dictionary table
-		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
-		if ($unit) {
-			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
-			if ($unit->unit_type == 'time') {
-				return floatval($unit->scale);
-			}
 
-			return pow($base, floatval($unit->scale));
+		$sql = "SELECT scale, unit_type FROM ".$this->db->prefix()."c_units WHERE rowid = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// TODO : add base col into unit dictionary table
+			$unit = $this->db->fetch_object($sql);
+			if ($unit) {
+				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
+				// Example time hour currently scale 3600 will become scale 2 base 60
+				if ($unit->unit_type == 'time') {
+					return (float) $unit->scale;
+				}
+
+				return pow($base, (float) $unit->scale);
+			}
 		}
 
 		return 0;

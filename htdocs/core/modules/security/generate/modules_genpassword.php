@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +26,57 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *  \class      ModeleGenPassword
- *  \brief      Parent class for password rules/management modules
+ *  Parent class for password rules/management modules
  */
 abstract class ModeleGenPassword
 {
+	public $picto = 'generic';
+
+	/**
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 *
+	 * @var integer
+	 */
+	public $WithoutAmbi = 0;
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var Conf dolibarr conf
+	 */
+	public $conf;
+
+	/**
+	 * @var Translate Translate Object
+	 */
+	public $langs;
+
+	/**
+	 * @var User user
+	 */
+	public $user;
+
+	/**
+	 * Minimum length (text visible by end user)
+	 *
+	 * @var string
+	 */
+	public $length;
+
+	/**
+	 * Minimum length in number of characters
+	 *
+	 * @var integer
+	 */
+	public $length2;
 
 	/**
 	 * 		Return if a module can be used or not
@@ -80,10 +123,11 @@ abstract class ModeleGenPassword
 	}
 
 	/**
-	 * 		Validate a password
+	 * 	Validate a password.
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
-	 *		@param		string	$password	Password to check
-	 *      @return     int					0 if KO, >0 if OK
+	 *	@param		string	$password	Password to check
+	 *  @return     int					0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{

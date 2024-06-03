@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Teslimat
 DeliveryRef=Teslimat Ref
-DeliveryCard=Makbuz kartı
+DeliveryCard=Stock receipt
 DeliveryOrder=Teslimat Makbuzu
 DeliveryDate=Teslim tarihi
 CreateDeliveryOrder=Teslimat makbuzu oluştur

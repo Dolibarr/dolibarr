@@ -23,6 +23,7 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
@@ -42,8 +43,14 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cron');
+}
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -55,11 +62,11 @@ if (php_sapi_name() == "cli") {
 	exit(-1);
 }
 
-// librarie core
+// core library
 // Dolibarr environment
 require '../../main.inc.php';
 
-// librarie jobs
+// cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
 
 global $langs, $conf;
@@ -69,7 +76,7 @@ $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
 if (empty($conf->cron->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Cron not enabled');
 }
 
 
@@ -87,7 +94,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
@@ -129,33 +136,25 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);
 	exit;
 }
 
-$qualifiedjobs = array();
-foreach ($object->lines as $val) {
-	if (!verifCond($val->test)) {
-		continue;
-	}
-	$qualifiedjobs[] = $val;
-}
-
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
-$nbofjobs = count($qualifiedjobs);
+$nbofjobs = count($object->lines);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
-	$savconf = dol_clone($conf);
+if (is_array($object->lines) && (count($object->lines) > 0)) {
+	$savconf = dol_clone($conf, 0);
 
 	// Loop over job
-	foreach ($qualifiedjobs as $line) {
+	foreach ($object->lines as $line) {
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -185,8 +184,15 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			}
 		}
 
+		if (!verifCond($line->test)) {
+			continue;
+		}
+
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now)) {
+		$datenextrunok = (empty($line->datenextrun) || (int) $line->datenextrun < $now);
+		$datestartok = (empty($line->datestart) || $line->datestart <= $now);
+		$dateendok = (empty($line->dateend) || $line->dateend >= $now);
+		if ($datenextrunok && $datestartok && $dateendok) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -207,11 +213,13 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
+				$resultstring = 'KO';
 			} else {
 				$nbofjobslaunchedok++;
+				$resultstring = 'OK';
 			}
 
-			echo " - result of run_jobs = ".$result;
+			echo "Result of run_jobs = ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
@@ -222,11 +230,11 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				exit;
 			}
 
-			echo " - reprogrammed\n";
+			echo "Job re-scheduled\n";
 		} else {
-			echo " - not qualified\n";
+			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php job ".$line->id." not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 

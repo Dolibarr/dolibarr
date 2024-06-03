@@ -12,6 +12,16 @@ if ($dolibarr_main_prod) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
+/*
+ * View
+ */
+
+header("Content-type: text/html; charset=UTF8");
+
+// Security options
+header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -287,7 +297,7 @@ if ($dolibarr_main_prod) {
 		<h2 id="helper">Use status helper function</h2>
 		<p>Using the dolGetStatus function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
 		<?php
-		$saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
+		$saveGlobalConf = getDolGlobalString('MAIN_STATUS_USES_CSS');
 		$conf->global->MAIN_STATUS_USES_CSS = 1;
 		?>
 		<h4>Using hidden global conf MAIN_STATUS_USES_CSS=1</h4>

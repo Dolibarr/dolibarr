@@ -18,27 +18,26 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Videnstyringssystem
+ModuleKnowledgeManagementName = Videnstyrings system
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Opsætning af Knowledge Management System
-Settings = Indstillinger
-KnowledgeManagementSetupPage = Knowledge Management System opsætningsside
+KnowledgeManagementSetup = Opsætning af Videnstyrings systemet
+KnowledgeManagementSetupPage = Opsætningsside for Videnstyrings systemet
 
 
 #
 # About page
 #
-About = Om
-KnowledgeManagementAbout = Om Knowledge Management
-KnowledgeManagementAboutPage = Videnstyring om side
+KnowledgeManagementAbout = Om Videnstyrings systemet
+KnowledgeManagementAboutPage = Videnstyring infoside
 
 KnowledgeManagementArea = Videnshåndtering
 MenuKnowledgeRecord = Videnbase
+MenuKnowledgeRecordShort = Videnbase
 ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Valider løsning
@@ -46,5 +45,15 @@ KnowledgeRecords = Artikler
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Ekstra felter til artikel
 GroupOfTicket=Gruppe af billetter
-YouCanLinkArticleToATicketCategory=Du kan linke en artikel til en billetgruppe (så artiklen vil blive foreslået under kvalificeringen af nye billetter)
-SuggestedForTicketsInGroup=Foreslås til billetter når gruppen er
+YouCanLinkArticleToATicketCategory=Du kan linke artiklen til en billetgruppe (så artiklen vil blive fremhævet på alle billetter i denne gruppe)
+SuggestedForTicketsInGroup=Foreslået til oprettelse af billet
+
+SetObsolete=Angivet som forældet
+ConfirmCloseKM=Bekræfter du lukningen af denne artikel som forældet?
+ConfirmReopenKM=Vil du gendanne denne artikel til status "Valideret"?
+BoxLastKnowledgerecordDescription=Sidste %s artikler
+BoxLastKnowledgerecord=Sidste artikler
+BoxLastKnowledgerecordContent=Sidste artikler
+BoxLastKnowledgerecordModifiedContent=Sidst ændrede artikler
+BoxLastModifiedKnowledgerecordDescription=Sidste %s ændrede artikler
+BoxLastModifiedKnowledgerecord=Sidst ændrede artikler

@@ -26,13 +26,13 @@
 // $object must be defined
 // $permissiondellink must be defined
 
-$dellinkid = GETPOST('dellinkid', 'int');
+$dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOST('idtolinkto', 'int');
+$addlinkid = GETPOSTINT('idtolinkto');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
-// Link invoice to order
+// Link object to another object
 if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
@@ -40,7 +40,7 @@ if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 
 }
 
 // Link by reference
-if ($action == 'addlinkbyref' && ! empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
 	$element_prop = getElementProperties($addlink);
 	if (is_array($element_prop)) {
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
@@ -51,7 +51,9 @@ if ($action == 'addlinkbyref' && ! empty($permissiondellink) && !$cancellink && 
 			$object->fetch($id);
 			$object->fetch_thirdparty();
 			$result = $object->add_object_linked($addlink, $objecttmp->id);
-			if (isset($_POST['reftolinkto'])) unset($_POST['reftolinkto']);
+			if (isset($_POST['reftolinkto'])) {
+				unset($_POST['reftolinkto']);
+			}
 		} elseif ($ret < 0) {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 		} else {
@@ -61,7 +63,7 @@ if ($action == 'addlinkbyref' && ! empty($permissiondellink) && !$cancellink && 
 	}
 }
 
-// Delete link
+// Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
 	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
 	if ($result < 0) {

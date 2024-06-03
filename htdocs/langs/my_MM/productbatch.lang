@@ -30,7 +30,7 @@ ManageLotMask=Custom mask
 CustomMasks=Option to define a different numbering mask for each product
 BatchLotNumberingModules=Numbering rule for automatic generation of lot number
 BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
-QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Life span (in days)
 EndOfLife=End of life
 ManufacturingDate=Manufacturing date
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Out of order
 InWorkingOrder=In working order
+ToReplace=Replace

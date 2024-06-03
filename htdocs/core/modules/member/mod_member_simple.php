@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,41 +31,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_simple extends ModeleNumRefMembers
 {
+
+	// variables inherited from ModeleNumRefMembers class
+	public $name = 'Simple';
+	public $version = 'dolibarr';
+
+	// variables not inherited
+
 	/**
-	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	public $prefix = 'MEM';
+	public $prefix = '';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Simple';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Simple';
-
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleRefNumRefModelDesc");
 	}
 
 
@@ -75,7 +71,7 @@ class mod_member_simple extends ModeleNumRefMembers
 	 */
 	public function getExample()
 	{
-		return $this->prefix."0501-0001";
+		return "1";
 	}
 
 
@@ -83,20 +79,19 @@ class mod_member_simple extends ModeleNumRefMembers
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *   @return     boolean     false if conflict, true if ok
+	 *	@param	CommonObject	$object	Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
 		$coyymm = '';
 		$max = '';
 
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -105,7 +100,7 @@ class mod_member_simple extends ModeleNumRefMembers
 				$max = $row[0];
 			}
 		}
-		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
+		if (!$coyymm || preg_match('/[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -119,65 +114,31 @@ class mod_member_simple extends ModeleNumRefMembers
 	 *  Return next value
 	 *
 	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return	string					Value if OK, 0 if KO
+	 *  @param  Adherent	$object		Object we need next value for
+	 *  @return	string|-1				Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $conf, $db;
 
-		/*
-		// First, we get the max value
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		// the ref of a member is the rowid
+		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".(int) $conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$max = intval($obj->max);
+				$max = intval($obj->max) + 1;
 			} else {
-				$max = 0;
+				$max = 1;
 			}
 		} else {
 			dol_syslog("mod_member_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
-
-		$date = empty($object->date_c) ? dol_now() : $object->date_c;
-
-		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
-
-		if ($max >= (pow(10, 4) - 1)) {
-			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		} else {
-			$num = sprintf("%04s", $max + 1);
-		}
-
-		dol_syslog("mod_member_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
-		*/
-
-		// For the moment, the ref of a member is the rowid
-		$sql = "SELECT MAX(rowid) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$max = intval($obj->max);
-			} else {
-				$max = 0;
-			}
-		} else {
-			dol_syslog("mod_member_simple::getNextValue", LOG_DEBUG);
-			return -1;
-		}
-		return ($max + 1);
+		$max = str_pad((string) $max, getDolGlobalInt('MEMBER_MOD_SIMPLE_LPAD'), "0", STR_PAD_LEFT);
+		return $max;
 	}
 }
