@@ -369,8 +369,8 @@ print '<td>';
 print img_picto('', 'category', 'class="paddingrightonly"');
 print $formother->select_categories(Categorie::TYPE_SUPPLIER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
-print $langs->trans("SubCats").'? ';
-print '<input type="checkbox" name="subcat" value="yes"';
+print '<label for="subcat" class="marginleftonly">'.$langs->trans("SubCats").'?</label> ';
+print '<input type="checkbox" name="subcat" id="subcat" value="yes"';
 if ($subcat) {
 	print ' checked';
 }
@@ -391,7 +391,7 @@ print '<td class="liste_titre left">';
 print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print $form->select_country($search_country, 'search_country');
+print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150');
 //print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -625,20 +625,22 @@ if (count($amount)) {
 	// Total
 	print '<tr class="liste_total">';
 	print '<td>'.$langs->trans("Total").'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
 	if ($modecompta != 'CREANCES-DETTES') {
 		print '<td></td>';
 	} else {
 		print '<td class="right">'.price($catotal_ht).'</td>';
 	}
 	print '<td class="right">'.price($catotal).'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$db->free($result);
+} else {
+	print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 print "</table>";

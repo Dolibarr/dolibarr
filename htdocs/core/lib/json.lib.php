@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,6 @@ function dol_json_encode($elements)
 			$num = count($elements);
 		}
 	}
-	//var_dump($num);
 
 	// determine type
 	if (is_numeric($elements)) {
@@ -297,7 +297,6 @@ function dol_json_decode($json, $assoc = false)
 	if ($out != '') {
 		try {
 			// @phan-suppress-next-line PhanPluginUnsafeEval
-			//print  debug_print_backtrace();
 			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now.
 		} catch (Exception $e) {
 			$array = array();
