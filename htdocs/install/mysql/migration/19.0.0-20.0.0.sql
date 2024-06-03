@@ -363,6 +363,8 @@ INSERT INTO llx_c_type_container(code, entity, label, active, module, position, 
 
 UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
+ALTER TABLE llx_socpeople ADD COLUMN url varchar(255);
+
 -- knowledgemanagement module
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledgerecord modified','Executed when a knowledgerecord is modified','knowledgemanagement',57002);
