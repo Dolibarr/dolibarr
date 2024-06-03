@@ -7471,7 +7471,7 @@ abstract class CommonObject
 						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
 							handlemultiinputdisabling($(this).attr("id"));
 						});
-						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");				
+						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
 					})';
 					$out .= "</script>";
 				}
