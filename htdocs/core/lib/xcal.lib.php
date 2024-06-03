@@ -410,6 +410,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$url		  = empty($event["url"]) ? '' : $event["url"];
 				$author       = $event["author"];
 				$category     = empty($event["category"]) ? null : $event["category"];
+				$image        = '';
 				if (!empty($event["image"])) {
 					$image = $event["image"];
 				} else {

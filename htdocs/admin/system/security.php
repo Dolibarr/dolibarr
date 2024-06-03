@@ -117,7 +117,7 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 print "<br>\n";
 print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? img_picto('', 'tick').' '.ini_get('open_basedir') : img_warning().' '.yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
 print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
-print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
+print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No"))." but may be required by some external modules)</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
 print "<strong>PHP disable_functions</strong> = ";
@@ -179,9 +179,21 @@ if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
+print '<br>';
+
+// JSON
+print '<strong>JSON</strong>: ';
+$loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
+$test = !in_array('json', $loadedExtensions);
+if ($test) {
+	print img_picto('', 'error').' '.$langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
+} else {
+	print img_picto('', 'tick').' '.$langs->trans("Available");
+}
+print '<br>';
 
 // XDebug
-print '<strong>'.$langs->trans("XDebug").'</strong>: ';
+print '<strong>XDebug</strong>: ';
 $test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
 	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
@@ -767,7 +779,7 @@ print $examplecsprule;
 print '")</span><br>';
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' "strict-origin-when-cross-origin")</span><br>';
+print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";

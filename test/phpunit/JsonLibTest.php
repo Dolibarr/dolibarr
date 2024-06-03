@@ -122,6 +122,16 @@ class JsonLibTest extends CommonClassTest
 		$decoded = dol_json_decode($encoded, true);
 		$this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
 
+		$encoded = dol_json_encode(123);
+		$this->assertEquals(123, $encoded);
+		$decoded = dol_json_decode($encoded, true);
+		$this->assertEquals(123, $decoded, 'test for dol_json_xxx 123');
+
+		$encoded = dol_json_encode('abc');
+		$this->assertEquals('"abc"', $encoded);
+		$decoded = dol_json_decode($encoded, true);
+		$this->assertEquals('abc', $decoded, "test for dol_json_xxx 'abc'");
+
 		// Test with object
 		$now = gmmktime(12, 0, 0, 1, 1, 1970);
 		$objecttotest = new stdClass();
