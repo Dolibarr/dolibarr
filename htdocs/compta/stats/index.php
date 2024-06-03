@@ -22,7 +22,7 @@
 
 /**
  *	\file        htdocs/compta/stats/index.php
- *	\brief       Page reporting CA
+ *	\brief       Page reporting sell turnover
  */
 
 // Load Dolibarr environment
@@ -58,12 +58,12 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ? GETPOST("q") : 0;
-	if ($q == 0) {
+	$q = GETPOSTINT("q");
+	if (empty($q)) {
 		// We define date_start and date_end
 		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 		$month_start = GETPOSTISSET("month") ? GETPOSTINT("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		if (!GETPOST('month')) {
+		if (!GETPOST('month')) {	// If month not forced
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
@@ -96,8 +96,11 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	}
 }
 
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
+
 $tmps = dol_getdate($date_start);
-$mothn_start = $tmps['mon'];
+$month_start = $tmps['mon'];
 $year_start = $tmps['year'];
 $tmpe = dol_getdate($date_end);
 $month_end = $tmpe['mon'];
@@ -113,10 +116,7 @@ if (GETPOST("modecompta", 'alpha')) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
-$userid = GETPOSTINT('userid');
-
 // Security check
-$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -184,7 +184,7 @@ if (!empty($modecompta)) {
 
 // Define $calcmode line
 $calcmode = '';
-if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEINGCOLLECTED") {
+if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEPINGCOLLECTED") {
 	/*if (isModEnabled('accounting')) {
 		$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPINGCOLLECTED"'.($modecompta == 'BOOKKEEPINGCOLLECTED' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 		$calcmode .= '<br>';
@@ -365,7 +365,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	}
 	if ($modecompta != 'BOOKKEEPING') {
-		print '<a href="casoc.php?year='.$annee.'">';
+		print '<a href="casoc.php?year='.$annee.($modecompta ? '&modecompta='.$modecompta : '').'">';
 	}
 	print $annee;
 	if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
@@ -405,13 +405,12 @@ $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $nowyearmonth = dol_print_date(dol_now(), "%Y%m");
-//$nowyearmonth = strftime("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month
-$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOSTINT('date_startmonth') - 1) : (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 0 : ($conf->global->SOCIETE_FISCAL_MONTH_START - 1));
+$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOSTINT('date_startmonth') - 1) : (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 0 : (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') - 1));
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {
