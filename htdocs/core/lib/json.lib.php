@@ -297,7 +297,6 @@ function dol_json_decode($json, $assoc = false)
 	if ($out != '') {
 		try {
 			// @phan-suppress-next-line PhanPluginUnsafeEval
-			//print  debug_print_backtrace();
 			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now.
 		} catch (Exception $e) {
 			$array = array();
