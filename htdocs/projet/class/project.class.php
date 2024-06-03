@@ -2088,8 +2088,6 @@ class Project extends CommonObject
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
-		$error = 0;
-
 		$this->weekWorkLoad = array();
 		$this->weekWorkLoadPerTask = array();
 
@@ -2152,8 +2150,6 @@ class Project extends CommonObject
 	 */
 	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	{
-		$error = 0;
-
 		$this->monthWorkLoad = array();
 		$this->monthWorkLoadPerTask = array();
 

@@ -1432,9 +1432,9 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -1442,7 +1442,6 @@ class Task extends CommonObjectLine
 				return -1;
 			}
 		}
-
 
 		$this->db->begin();
 
@@ -2572,7 +2571,7 @@ class Task extends CommonObjectLine
 	 */
 	public function mergeTask($task_origin_id)
 	{
-		global $conf, $langs, $hookmanager, $user, $action;
+		global $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$task_origin = new Task($this->db);		// The thirdparty that we will delete
