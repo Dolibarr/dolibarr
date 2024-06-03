@@ -397,7 +397,7 @@ class Conf extends stdClass
 								}
 								$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
-								// If this is constant for all generic part activated by a module. It initializes
+								// If this is a constant for all generic part activated by a module. It initializes
 								// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
 								// modules_parts['models'], modules_parts['theme']
 								// modules_parts['sms'],
@@ -409,7 +409,9 @@ class Conf extends stdClass
 									$this->modules_parts[$partname] = array();
 								}
 
+								//$arrValue = json_decode($value, true, null, JSON_BIGINT_AS_STRING|JSON_THROW_ON_ERROR);
 								$arrValue = json_decode($value, true);
+								//var_dump($key); var_dump($value); var_dump($arrValue);
 
 								if (is_array($arrValue)) {
 									$newvalue = $arrValue;

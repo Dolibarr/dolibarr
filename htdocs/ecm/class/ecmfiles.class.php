@@ -748,6 +748,14 @@ class EcmFiles extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
+		if (!$error) {
+			// Update extrafields
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers

@@ -1044,6 +1044,9 @@ th .button {
 .quatrevingtpercentminusx {
 	width: calc(80% - 52px);
 }
+.centpercentminusx {
+	width: calc(100% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -1063,7 +1066,7 @@ textarea.centpercent {
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
 	font-weight: 400;
 	line-height: 1;
-	color: #777;
+	/* color: #777; */
 }
 
 .flip {

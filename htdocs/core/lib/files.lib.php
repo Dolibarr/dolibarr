@@ -535,6 +535,18 @@ function dol_is_link($pathoffile)
 }
 
 /**
+ * Test if directory or filename is writable
+ *
+ * @param	string		$folderorfile   Name of folder or filename
+ * @return	boolean     				True if it's writable, False if not found
+ */
+function dol_is_writable($folderorfile)
+{
+	$newfolderorfile = dol_osencode($folderorfile);
+	return is_writable($newfolderorfile);
+}
+
+/**
  * Return if path is an URI (the name of the method is misleading).
  *
  * URLs are addresses for websites, URI refer to online resources.
@@ -1155,7 +1167,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  *
  * @param	string	$srcdir 			Source directory
  * @param	string 	$destdir			Destination directory
- * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
+ * @param	int		$overwriteifexists	Overwrite directory if it already exists (1 by default)
  * @param	int		$indexdatabase		Index new name of files into database.
  * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
  * @return  boolean 					True if OK, false if KO
@@ -1170,7 +1182,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 	$destexists = dol_is_dir($destdir);
 
 	if (!$srcexists) {
-		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. we ignore the move request.");
+		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. Move fails");
 		return false;
 	}
 
@@ -1178,9 +1190,20 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 		$newpathofsrcdir = dol_osencode($srcdir);
 		$newpathofdestdir = dol_osencode($destdir);
 
+		// On windows, if destination directory exists and is empty, command fails. So if overwrite is on, we first remove destination directory.
+		// On linux, if destination directory exists and is empty, command succeed. So no need to delete di destination directory first.
+		// Note: If dir exists and is not empty, it will and must fail on both linux and windows even, if option $overwriteifexists is on.
+		if ($overwriteifexists) {
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+				if (is_dir($newpathofdestdir)) {
+					@rmdir($newpathofdestdir);
+				}
+			}
+		}
+
 		$result = @rename($newpathofsrcdir, $newpathofdestdir);
 
-		// Now we rename also contents inside dir after the move to match new destination name
+		// Now rename contents in the directory after the move to match the new destination
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);
