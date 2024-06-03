@@ -1688,6 +1688,7 @@ ForANonAnonymousAccess=For an authenticated access (for a write access for examp
 PerfDolibarr=Performance setup/optimizing report
 YouMayFindPerfAdviceHere=This page provides some checks or advice related to performance.
 NotInstalled=Not installed.
+Installed=Installed.
 NotSlowedDownByThis=Not slowed down by this.
 NotRiskOfLeakWithThis=Not risk of leak with this.
 ApplicativeCache=Applicative cache
