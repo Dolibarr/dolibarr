@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2020	   Nicolas ZABOURI       <info@inovea-conseil.com>
  * Copyright (C) 2022	   Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023	   Lenin Rivas       	 <lenin.rivas777@gmail.com>
@@ -104,7 +104,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($ret > 0) {
 		$ret = $object->fetch_thirdparty();
 		if ($ret > 0 && isset($object->fk_project)) {
-			$ret = $object->fetch_project();
+			$ret = $object->fetchProject();
 		}
 	}
 	if ($ret <= 0) {
