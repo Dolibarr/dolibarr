@@ -1145,7 +1145,7 @@ abstract class CommonObject
 			return -1;
 		}
 
-		if (empty($ecmfile->id)) {
+		if (empty($ecmfile->id)) {	// No entry into file index already exists, we should initialize the shared key manually.
 			// Add entry into index
 			if ($initsharekey) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -1170,7 +1170,7 @@ abstract class CommonObject
 			} else {
 				return '';
 			}
-		} elseif (empty($ecmfile->share)) {
+		} elseif (empty($ecmfile->share)) {	// Entry into file index already exists but no share key is defined.
 			// Add entry into index
 			if ($initsharekey) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';

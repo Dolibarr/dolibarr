@@ -148,7 +148,7 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -319,13 +319,14 @@ if ($action == "importSignature") {
 				// Defined modele of doc
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('contrat');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -452,13 +453,14 @@ if ($action == "importSignature") {
 				// Defined modele of doc
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('fichinter');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -605,7 +607,7 @@ if ($action == "importSignature") {
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
 						}
 						if (dol_is_file($sourcefile)) {
-							$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
+							$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
 							$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 							if ($reshook < 0) {
 								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -799,13 +801,14 @@ if ($action == "importSignature") {
 				}
 				$last_main_doc_file = $object->last_main_doc;
 				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
+
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
-						$parameters = array('source file' => $sourcefile, 'new pdf filename' => $newpdffilename);
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
