@@ -64,7 +64,6 @@ function dol_json_encode($elements)
 			$num = count($elements);
 		}
 	}
-	//var_dump($num);
 
 	// determine type
 	if (is_numeric($elements)) {
