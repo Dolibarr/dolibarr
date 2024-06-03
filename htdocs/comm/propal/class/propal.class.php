@@ -2567,7 +2567,7 @@ class Propal extends CommonObject
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
-		$sql .= " date_cloture=NULL, fk_user_cloture=NULL, date_signature=NULL, fk_user_signature=NULL";
+		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -2631,9 +2631,8 @@ class Propal extends CommonObject
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."',";
 		if ($status == self::STATUS_SIGNED) {
-			$sql .= " date_signature='".$this->db->idate($now)."',";
+			$sql .= " date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
 		}
-		$sql .= " fk_user_signature=".$user->id;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
