@@ -1624,7 +1624,7 @@ class Propal extends CommonObject
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 
 				$this->fk_project = $obj->fk_project;
-				$this->project = null; // Clear if another value was already set by fetch_projet
+				$this->project = null; // Clear if another value was already set by fetchProject
 
 				$this->model_pdf            = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
@@ -3667,13 +3667,13 @@ class Propal extends CommonObject
 				}
 				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
 			}
-			if (!empty($this->ref_client)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			if (!empty($this->ref_customer)) {
+				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
 			}
 			if (!$nofetch) {
 				$langs->load('project');
 				if (empty($this->project)) {
-					$res = $this->fetch_project();
+					$res = $this->fetchProject();
 					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}

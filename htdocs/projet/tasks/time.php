@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -229,7 +229,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 		}
 
 		if (!$error) {
-			$object->fetch_projet();
+			$object->fetchProject();
 
 			if (empty($object->project->statut)) {
 				setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
