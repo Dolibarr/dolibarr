@@ -2,6 +2,7 @@
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4381,7 +4382,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
 	print '<span class="opacitymedium spanprefix hidden"></span> ';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag(substr((string) $pageurl, strlen('_'.$type_container.'_page_'))).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_page_/', '', (string) $pageurl)).'">';
 	print '</td></tr>';
 
 	print '<script type="text/javascript">
