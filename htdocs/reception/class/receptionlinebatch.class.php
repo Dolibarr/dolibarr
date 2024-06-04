@@ -647,7 +647,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$this->fk_element = 0;
 		$this->fk_product = 0;
 		$this->fk_elementdet = 0;
-		$this->qty = '';
+		$this->qty = 0;
 		$this->fk_entrepot = 0;
 		$this->fk_user = 0;
 		$this->datec = '';
