@@ -130,8 +130,6 @@ class MenuManager
 		$menuArbo = new Menubase($this->db, 'eldy');
 		$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
 		$this->tabMenu = $tabMenu;
-
-		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
 	}
 
 
@@ -146,8 +144,6 @@ class MenuManager
 	public function showmenu($mode, $moredata = null)
 	{
 		global $conf, $langs, $user;
-
-		//var_dump($this->tabMenu);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
