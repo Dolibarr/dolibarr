@@ -346,9 +346,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
-				//print html_entity_decode($odfHandler->__toString());
-				//print exit;
-
 
 				// Make substitutions into odt of freetext
 				try {
