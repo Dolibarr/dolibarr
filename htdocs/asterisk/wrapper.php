@@ -77,7 +77,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // Security check
-if (empty($conf->clicktodial->enabled)) {
+if (!isModEnabled('clicktodial')) {
 	accessforbidden();
 	exit;
 }
@@ -118,8 +118,11 @@ $password = GETPOST('password', 'none');
 $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 
-// Sanitize password to avoid to use the wrapper to inject malicious paylod into asterisk
+// Sanitize input data to avoid to use the wrapper to inject malicious paylod into asterisk
+$login = preg_replace('/[\n\r]/', '', $login);
 $password = preg_replace('/[\n\r]/', '', $password);
+$caller = preg_replace('/[\n\r]/', '', $caller);
+$called = preg_replace('/[\n\r]/', '', $called);
 
 // IP address of Asterisk server
 $strHost = getDolGlobalString('ASTERISK_HOST');
