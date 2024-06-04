@@ -10854,10 +10854,10 @@ class Form
 	 * Output the component to make advanced search criteries
 	 *
 	 * @param 	array<array<string,array{type:string}>>	$arrayofcriterias 					Array of available search criteria. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
-	 * @param 	array<int,string> 	$search_component_params Array of selected search criteria
-	 * @param 	string[] $arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
-	 * @param 	string 	$search_component_params_hidden 	String with $search_component_params criteria
-	 * @return	string                                    	HTML component for advanced search
+	 * @param 	array<int,string> 						$search_component_params 			Array of selected search criteria
+	 * @param 	string[] 								$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param 	string 									$search_component_params_hidden 	String with $search_component_params criteria
+	 * @return	string                                    									HTML component for advanced search
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
 	{
@@ -10871,7 +10871,7 @@ class Form
 
 		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth hideonsmartphone" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
 		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
