@@ -3483,8 +3483,8 @@ class ContratLigne extends CommonObjectLine
 		$this->qty = (float) $this->qty;
 		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
-		$this->subprice = price2num($this->subprice);
-		$this->price_ht = price2num($this->price_ht);
+		$this->subprice = (float) price2num($this->subprice);
+		$this->price_ht = (float) price2num($this->price_ht);
 		$this->info_bits = (int) $this->info_bits;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
