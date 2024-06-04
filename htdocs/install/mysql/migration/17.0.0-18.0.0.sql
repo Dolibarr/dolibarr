@@ -596,3 +596,6 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_DELETE','Third party payment information deleted','Executed when a third party payment information is deleted','societe',1);
 
 UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
+
+-- Fix against empty modules page
+UPDATE llx_const SET value = '' WHERE name LIKE 'MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT' AND value NOT IN ('common', 'commonkanban');
