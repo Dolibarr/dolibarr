@@ -2629,7 +2629,10 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
+		if ($status == self::STATUS_SIGNED) {
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
