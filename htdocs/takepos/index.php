@@ -1374,7 +1374,9 @@ if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 $menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
 
-$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
+if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
+	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
+}
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
