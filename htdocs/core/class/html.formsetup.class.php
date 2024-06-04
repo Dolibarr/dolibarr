@@ -663,9 +663,7 @@ class FormSetupItem
 	 */
 	public function loadValueFromConf()
 	{
-		global $conf;
-		if (isset($conf->global->{$this->confKey})) {
-			$this->fieldValue = $conf->global->{$this->confKey};
+		if ($this->fieldValue = dolibarr_get_const($this->db, $this->confKey, $this->entity)) {
 			return true;
 		} else {
 			$this->fieldValue = null;
