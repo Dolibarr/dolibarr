@@ -4228,22 +4228,22 @@ class User extends CommonObject
 			return -1;
 		}
 
-		// Construction de la requête d'insertion
+		// Construction of the insertion request
 		$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id)";
-		$sql .= " SELECT entity, ".$this->db->escape($toId).", fk_id";
+		$sql .= " SELECT entity, ".((int) $toId).", fk_id";
 		$sql .= " FROM ".$this->db->prefix()."user_rights src";
 		$sql .= " WHERE fk_user = ".((int) $fromId);
 		$sql .= " AND NOT EXISTS (";
 		$sql .= "   SELECT 1";
 		$sql .= "   FROM ".$this->db->prefix()."user_rights dest";
 		$sql .= "   WHERE dest.entity = src.entity";
-		$sql .= "   AND dest.fk_user = ".$this->db->escape($toId);
+		$sql .= "   AND dest.fk_user = ".((int) $toId);
 		$sql .= "   AND dest.fk_id = src.fk_id";
 		$sql .= " )";
 
 		dol_syslog(get_class($this)."::clone_rights", LOG_DEBUG);
 
-		// Exécution de la requête
+		// Execute request
 		if (!$this->db->query($sql)) {
 			$this->db->rollback();
 			return -1;
@@ -4273,7 +4273,7 @@ class User extends CommonObject
 		$categorystatic = new Categorie($this->db);
 
 		$sql = "INSERT INTO ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_user)";
-		$sql .= " SELECT fk_categorie, $toId FROM ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
+		$sql .= " SELECT fk_categorie, ".((int) $toId)." FROM ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
 		$sql .= " WHERE fk_user = ".((int) $fromId);
 
 		if (!$this->db->query($sql)) {
