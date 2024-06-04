@@ -1462,6 +1462,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
 			print $shipment->getNomUrl(1);
+			$filedir = ($conf->expedition->multidir_output[$object->entity] ? $conf->expedition->multidir_output[$object->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
+			$filename = dol_sanitizeFileName($object->ref);
+			print $formfile->getDocumentsLink('expedition', $filename, $filedir);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

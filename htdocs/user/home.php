@@ -147,7 +147,7 @@ if ($resql) {
 	$lastcreatedbox .= '<table class="noborder centpercent">';
 	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3" class="valignmiddle">';
 	$lastcreatedbox .= '<span class="valignmiddle">'.$langs->trans("LastUsersCreated", min($num, $max)).'</span>';
-	$lastcreatedbox .= '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 	$lastcreatedbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 	$lastcreatedbox .= '</a>';
 	$lastcreatedbox .= '</td>';
@@ -162,6 +162,7 @@ if ($resql) {
 
 		$fuserstatic->id = $obj->rowid;
 		$fuserstatic->statut = $obj->statut;
+		$fuserstatic->status = $obj->statut;
 		$fuserstatic->lastname = $obj->lastname;
 		$fuserstatic->firstname = $obj->firstname;
 		$fuserstatic->login = $obj->login;
@@ -253,7 +254,7 @@ if ($canreadperms) {
 		$lastgroupbox .= '<table class="noborder centpercent">';
 		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">';
 		$lastgroupbox .= '<span class="valignmiddle">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</span>';
-		$lastgroupbox .= '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastgroupbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastgroupbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 		$lastgroupbox .= '</a>';
 
