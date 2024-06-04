@@ -973,15 +973,10 @@ if (!empty($id) && $action != 'edit') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link
-	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook > 0) {
-		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
-			$useonlinepayment += $hookmanager->resArray['showonlinepaymenturl'];
-		}
-	}
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	$validpaymentmethod = getValidOnlinePaymentMethods('');
+	$useonlinepayment = count($validpaymentmethod);
 
 	if ($useonlinepayment) { //$object->statut != Facture::STATUS_DRAFT &&
 		print '<br><!-- Link to pay -->'."\n";
