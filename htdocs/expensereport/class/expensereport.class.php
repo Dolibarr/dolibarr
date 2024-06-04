@@ -2883,6 +2883,10 @@ class ExpenseReportLine extends CommonObjectLine
 	public $rowid;
 
 	public $comments;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $value_unit;
 	public $date;

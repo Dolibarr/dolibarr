@@ -2851,6 +2851,9 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $product_type = Product::TYPE_PRODUCT;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $tva_tx;
 	public $vat_src_code;

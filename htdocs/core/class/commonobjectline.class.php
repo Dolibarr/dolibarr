@@ -133,6 +133,9 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $fk_product_type;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $duree;
 	public $remise_percent;

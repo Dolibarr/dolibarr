@@ -121,6 +121,10 @@ class Mo extends CommonObject
 	 */
 	public $mrptype;
 	public $label;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse;
 	public $fk_soc;
@@ -2068,7 +2072,15 @@ class MoLine extends CommonObjectLine
 	public $position;
 	public $fk_product;
 	public $fk_warehouse;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;

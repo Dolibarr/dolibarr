@@ -90,7 +90,14 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $fk_product;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity asked
+	 */
 	public $qty_asked;
 
 	public $libelle;
