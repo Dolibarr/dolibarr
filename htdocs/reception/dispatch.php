@@ -193,7 +193,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 							$error++;
 						} else {
 							$qtystart = $supplierorderdispatch->qty;
-							$supplierorderdispatch->qty = GETPOST($qty);
+							$supplierorderdispatch->qty = (float) price2num(GETPOST($qty));
 							$supplierorderdispatch->fk_entrepot = GETPOSTINT($ent);
 							if ($modebatch == "batch") {
 								$supplierorderdispatch->eatby = $dDLUO;

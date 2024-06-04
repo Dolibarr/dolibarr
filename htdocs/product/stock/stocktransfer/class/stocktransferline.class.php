@@ -98,6 +98,10 @@ class StockTransferLine extends CommonObjectLine
 	);
 	public $rowid;
 	public $amount;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;

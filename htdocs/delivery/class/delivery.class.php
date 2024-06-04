@@ -1215,8 +1215,19 @@ class DeliveryLine extends CommonObjectLine
 	public $libelle;
 
 	// From llx_expeditiondet
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity asked
+	 */
 	public $qty_asked;
+
+	/**
+	 * @var float Quantity shiiped
+	 */
 	public $qty_shipped;
 
 	public $fk_product;

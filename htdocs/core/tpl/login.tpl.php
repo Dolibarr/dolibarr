@@ -342,7 +342,8 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
+	$state = hash('sha256', session_id());
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state='.$state;
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {

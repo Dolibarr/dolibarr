@@ -133,6 +133,9 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $fk_product_type;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $duree;
 	public $remise_percent;
@@ -149,6 +152,11 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var int special code
 	 */
 	public $special_code;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $tva_tx;
 
