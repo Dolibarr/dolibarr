@@ -33,19 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 class CLeadStatus extends CommonDict
 {
 	/**
-	 * @var array record
+	 * @var array<int,CLeadStatus> 	Array of record
 	 */
 	public $records = array();
 
 	/**
-	 * @var string element
+	 * @var string 	Element
 	 */
 	public $element = 'cleadstatus';
 
 	/**
-	 * @var string table element
+	 * @var string 	Table element
 	 */
 	public $table_element = 'c_lead_status';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position;
+
+	/**
+	 * @var float	Percent
+	 */
+	public $percent;
 
 
 	/**

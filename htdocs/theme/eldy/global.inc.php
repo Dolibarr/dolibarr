@@ -1274,10 +1274,14 @@ div.divsearchfield {
 	margin: 0 !important;
 	padding: 3px;
 }
+.tagsearch .tagsearchdelete {
+	height: 20px;
+}
 .tagsearch {
 	padding: 2px;
 	padding-right: 4px;
-	padding-bottom: 3px;
+	padding-top: 0px;
+	padding-bottom: 0px;
 	background: #ddd;
 	border-radius: 4px;
 	display: inline-block;
