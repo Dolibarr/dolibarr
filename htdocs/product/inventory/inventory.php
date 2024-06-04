@@ -360,7 +360,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
-		$qty = (GETPOST('qtytoadd') != '' ? ((float) price2num(GETPOST('qtytoadd', 'MS'))) : null);
+		$qty = (GETPOST('qtytoadd') != '' ? ((float) price2num(GETPOST('qtytoadd'), 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
