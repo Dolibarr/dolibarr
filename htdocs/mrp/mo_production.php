@@ -252,7 +252,7 @@ if (empty($reshook)) {
 
 				$i = 1;
 				while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
-					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
+					$qtytoprocess = (float) price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
 					if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
