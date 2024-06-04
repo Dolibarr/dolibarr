@@ -3999,6 +3999,10 @@ class PropaleLigne extends CommonObjectLine
 	public $tva_tx;
 	public $vat_src_code;
 
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $remise_percent;
 	public $fk_remise_except;

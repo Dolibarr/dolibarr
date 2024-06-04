@@ -858,7 +858,7 @@ class InventoryLine extends CommonObjectLine
 	public $qty_stock;
 
 	/**
-	 * @var ?float Quantity viewed
+	 * @var float|null Quantity viewed
 	 */
 	public $qty_view;
 

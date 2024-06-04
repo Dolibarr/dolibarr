@@ -3081,7 +3081,11 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_remise_except;
 
-	public $subprice; // Unit price HT
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
+	public $subprice;
 
 	/**
 	 * @var float
@@ -3090,6 +3094,9 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $price;
 
+	/**
+	 * @var float price without tax
+	 */
 	public $price_ht;
 
 	public $total_ht;
