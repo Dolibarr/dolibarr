@@ -421,7 +421,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 		$pu_ht = price2num($pu_ht);
 		$pu_ttc = price2num($pu_ttc);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
@@ -682,7 +682,7 @@ class SupplierProposal extends CommonObject
 
 		// Clean parameters
 		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 		$pu = price2num($pu);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
@@ -697,7 +697,7 @@ class SupplierProposal extends CommonObject
 			$special_code = 0; // Remove option tag
 		}
 
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -2851,10 +2851,17 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $product_type = Product::TYPE_PRODUCT;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $tva_tx;
 	public $vat_src_code;
 
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $remise_percent;
 

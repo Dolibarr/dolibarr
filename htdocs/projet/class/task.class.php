@@ -1394,6 +1394,18 @@ class Task extends CommonObjectLine
 			$ret = false;
 		}
 
+		if ($ret) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+			$sql .= " SET duration_effective = (SELECT SUM(element_duration) FROM ".MAIN_DB_PREFIX."element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = ".((int) $dest_id).")";
+			$sql .= " WHERE rowid = ".((int) $dest_id);
+
+			dol_syslog(get_class($this)."::mergeTimeSpentTask update project_task", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$ret = false;
+			}
+		}
+
 		if ($ret == true) {
 			$this->db->commit();
 		} else {

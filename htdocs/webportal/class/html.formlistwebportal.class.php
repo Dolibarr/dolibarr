@@ -582,7 +582,7 @@ class FormListWebPortal
 		$i = 0;
 		$totalarray = [
 			'nbfield' => 0,
-			'totalizable' => []
+			'totalizable' => [],
 		];
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {

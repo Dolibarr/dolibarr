@@ -3852,7 +3852,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var double
+	 * @var float
 	 */
 	public $qty;
 
