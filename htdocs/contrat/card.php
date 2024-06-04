@@ -1612,7 +1612,7 @@ if ($action == 'create') {
 						$productstatic->status_buy = $objp->tobuy;
 						$productstatic->status_batch = $objp->tobatch;
 
-						print '<td>';
+						print '<td width="85%">';
 						$text = $productstatic->getNomUrl(1, '', 32);
 						if ($objp->plabel) {
 							$text .= ' - ';
