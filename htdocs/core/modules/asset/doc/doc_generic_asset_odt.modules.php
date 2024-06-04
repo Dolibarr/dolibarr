@@ -332,10 +332,10 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->asset->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->asset->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -403,9 +403,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					// We may arrive here if tags for lines not present into template
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
-				} catch (OdfException $e) {
-					$foundtagforlines = 0;
-					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 				if ($foundtagforlines) {
 					$linenumber = 0;
@@ -419,8 +416,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
