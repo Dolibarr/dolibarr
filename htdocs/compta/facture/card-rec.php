@@ -1806,6 +1806,8 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
+	} else {
+		print $langs->trans("NoRecordFound");
 	}
 }
 
