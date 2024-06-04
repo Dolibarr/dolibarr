@@ -1736,7 +1736,7 @@ if ($action == 'create') {
 					// Line in mode update
 					// Ligne carac
 					print '<tr class="oddeven">';
-					print '<td>';
+					print '<td width="85%">';
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
 						if (empty($canchangeproduct)) {
