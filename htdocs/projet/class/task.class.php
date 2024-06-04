@@ -1394,7 +1394,7 @@ class Task extends CommonObjectLine
 			$ret = false;
 		}
 
-		if ($ret == true) {
+		if ($ret) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = (SELECT SUM(element_duration) FROM ".MAIN_DB_PREFIX."element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = ".((int) $dest_id).")";
 			$sql .= " WHERE rowid = ".((int) $dest_id);
