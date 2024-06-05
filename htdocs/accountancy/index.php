@@ -165,11 +165,7 @@ if (isModEnabled('accounting')) {
 		}
 		print "<br>\n";
 
-		print "<br>\n";
-		print $langs->trans("AccountancyAreaDescActionOnceBis");
-		print "<br>\n";
-		print "<br>\n";
-
+		// Fiscal period
 		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescFiscalPeriod", $step, '{s}');
@@ -177,6 +173,12 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+
+
+		print "<br>\n";
+		print $langs->trans("AccountancyAreaDescActionOnceBis");
+		print "<br>\n";
+		print "<br>\n";
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
