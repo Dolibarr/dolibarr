@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,7 +336,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array(
+		'formConfirm' => $formconfirm,
+		// 'lineid' => $lineid,
+	);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
