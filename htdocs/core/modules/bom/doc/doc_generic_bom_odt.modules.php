@@ -347,9 +347,6 @@ class doc_generic_bom_odt extends ModelePDFBom
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
-				//print html_entity_decode($odfHandler->__toString());
-				//print exit;
-
 
 				// Make substitutions into odt of freetext
 				try {
@@ -402,9 +399,6 @@ class doc_generic_bom_odt extends ModelePDFBom
 					// We may arrive here if tags for lines not present into template
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
-				} catch (OdfException $e) {
-					$foundtagforlines = 0;
-					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 				if ($foundtagforlines) {
 					$linenumber = 0;
@@ -429,8 +423,6 @@ class doc_generic_bom_odt extends ModelePDFBom
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
