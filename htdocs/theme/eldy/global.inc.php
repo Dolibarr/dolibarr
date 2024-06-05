@@ -1631,6 +1631,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	white-space: nowrap;
 }
 
+
 .onlinepaymentbody .amountpaymentcomplete {
 	background-color: var(--amountpaymentcomplete);
 	color: #fff;
@@ -1663,6 +1664,9 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 
 .fa-15 {
 	font-size: 1.5em;
+}
+.text-security {
+	-webkit-text-security: disc;
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */

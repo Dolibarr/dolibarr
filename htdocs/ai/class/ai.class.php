@@ -113,7 +113,7 @@ class Ai
 					}
 				}
 			} else {	// else textgeneration...
-				if ($this->apiService == 'grok') {
+				if ($this->apiService == 'groq') {
 					$this->apiEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'

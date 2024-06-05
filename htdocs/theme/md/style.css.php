@@ -1830,6 +1830,9 @@ select.flat.selectlimit {
 .fa-15 {
 	font-size: 1.5em;
 }
+.text-security {
+	-webkit-text-security: disc;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
