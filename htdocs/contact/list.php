@@ -258,7 +258,7 @@ if (isModEnabled('socialnetworks')) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
-				'position' => 300
+				'position' => 299
 			);
 		}
 	}
