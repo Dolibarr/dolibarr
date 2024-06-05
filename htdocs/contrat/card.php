@@ -1612,7 +1612,7 @@ if ($action == 'create') {
 						$productstatic->status_buy = $objp->tobuy;
 						$productstatic->status_batch = $objp->tobatch;
 
-						print '<td width="85%">';
+						print '<td>';
 						$text = $productstatic->getNomUrl(1, '', 32);
 						if ($objp->plabel) {
 							$text .= ' - ';
@@ -1730,13 +1730,13 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'view', array('class'=>'oddeven', 'style'=>$moreparam, 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'view', array('class'=>'oddeven', 'style'=>$moreparam, 'colspan'=>$colspan, 'tdclass' => 'left'), '', '', 1);
 					}
 				} else {
 					// Line in mode update
 					// Ligne carac
 					print '<tr class="oddeven">';
-					print '<td width="85%">';
+					print '<td>';
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
 						if (empty($canchangeproduct)) {
@@ -1834,7 +1834,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan,  'tdclass' => 'left'), '', '', 1);
 					}
 				}
 
