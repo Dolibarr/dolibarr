@@ -70,7 +70,10 @@ class box_propales extends ModeleBoxes
 		$propalstatic = new Propal($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."Propals", $max));
+		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."Propals", $max);
+		$this->info_box_head = array(
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/comm/propal/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('propal', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
