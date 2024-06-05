@@ -72,6 +72,7 @@ $arrayofia = array(
 
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 $item->setAsSelect($arrayofia);
+$item->cssClass = 'minwidth150';
 
 foreach ($arrayofia as $ia => $ialabel) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
