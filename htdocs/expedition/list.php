@@ -1410,11 +1410,7 @@ while ($i < $imaxinloop) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
-
-	$shipment->id = $obj->rowid;
-	$shipment->ref = $obj->ref;
-	$shipment->shipping_method_id = $obj->fk_shipping_method;
-
+	
 	$companystatic->id = $obj->socid;
 	$companystatic->ref = $obj->name;
 	$companystatic->name = $obj->name;
@@ -1461,7 +1457,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $shipment->getNomUrl(1);
+			print $object->getNomUrl(1);
 			$filedir = ($conf->expedition->multidir_output[$object->entity] ? $conf->expedition->multidir_output[$object->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);
@@ -1563,9 +1559,9 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 			// Get code using getLabelFromKey
-			$code = $langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
-			if ($shipment->shipping_method_id > 0) {
+			if ($object->shipping_method_id > 0) {
 				print $langs->trans("SendingMethod".strtoupper($code));
 			}
 			print '</td>';
@@ -1575,19 +1571,18 @@ while ($i < $imaxinloop) {
 		}
 		// Tracking number
 		if (!empty($arrayfields['e.tracking_number']['checked'])) {
-			$shipment->getUrlTrackingStatus($obj->tracking_number);
-			print '<td class="center" title="'.dol_escape_htmltag($shipment->tracking_url).'">'.dol_escape_htmltag($shipment->tracking_url)."</td>\n";
-			//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
+			$object->getUrlTrackingStatus($obj->tracking_number);
+			print '<td class="center" title="'.dol_escape_htmltag($object->tracking_url).'">'.$object->tracking_url."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 
 		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
-			$shipment->fetchObjectLinked($shipment->id, $shipment->element);
+			$object->fetchObjectLinked();
 			$receiving = '';
-			if (array_key_exists('delivery', $shipment->linkedObjects) && count($shipment->linkedObjects['delivery']) > 0) {
-				$receiving = reset($shipment->linkedObjects['delivery']);
+			if (array_key_exists('delivery', $object->linkedObjects) && count($object->linkedObjects['delivery']) > 0) {
+				$receiving = reset($object->linkedObjects['delivery']);
 			}
 
 			if (!empty($arrayfields['l.ref']['checked'])) {
@@ -1648,7 +1643,7 @@ while ($i < $imaxinloop) {
 		}
 		// Status
 		if (!empty($arrayfields['e.fk_statut']['checked'])) {
-			print '<td class="right nowrap">'.$shipment->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right nowrap">'.$object->getLibStatut(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
