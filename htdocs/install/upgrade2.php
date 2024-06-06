@@ -501,10 +501,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_contractdet_rank();
 			}
 
-			// Scripts for 19.0
-
-			$afterversionarray = explode('.', '18.0.9');
-			$beforeversionarray = explode('.', '19.0.9');
+			// Scripts for 20.0
+			$afterversionarray = explode('.', '19.0.9');
+			$beforeversionarray = explode('.', '20.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_productlot_path();
 			}
