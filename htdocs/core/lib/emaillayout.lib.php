@@ -33,7 +33,7 @@ function getHtmlOfLayout($name)
 	global $conf, $mysoc, $user, $langs;
 
 	$substitutionarray = array();
-	$substitutionarray = getCommonSubstitutionArray($langs, $substitutionarray);
+	$substitutionarray = getCommonSubstitutionArray($langs, 1);
 
 	// TODO Read template from a file "install/doctemplates/maillayout/xxx.html"
 
