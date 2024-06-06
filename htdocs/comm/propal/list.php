@@ -144,6 +144,7 @@ $search_date_signature_endyear = GETPOSTINT('search_date_signature_endyear');
 $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startmonth, $search_date_signature_startday, $search_date_signature_startyear);
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
 $search_status = GETPOST('search_status', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 
 // Pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -718,6 +719,9 @@ if ($search_date_signature_start) {
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
 }
+if ($search_note_public) {
+	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -1052,7 +1056,7 @@ if ($search_date_signature_endyear) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1452,6 +1456,7 @@ if (!empty($arrayfields['p.date_cloture']['checked'])) {
 if (!empty($arrayfields['p.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.note_private']['checked'])) {
@@ -1716,7 +1721,7 @@ while ($i < $imaxinloop) {
 
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
-	$objectstatic->ref_client = $obj->ref_client;
+	$objectstatic->ref_customer = $obj->ref_client;
 	$objectstatic->note_public = $obj->note_public;
 	$objectstatic->note_private = $obj->note_private;
 	$objectstatic->statut = $obj->status;
@@ -1776,6 +1781,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$objectstatic->thirdparty = $companystatic;
 		$userstatic->fetch($obj->fk_user_author);
 		$arrayofparams = array('selected' => in_array($object->id, $arrayofselected), 'authorlink' => $userstatic->getNomUrl(-2), 'projectlink' => $projectstatic->getNomUrl(2));
 		print $objectstatic->getKanbanView('', $arrayofparams);

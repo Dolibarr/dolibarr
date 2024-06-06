@@ -22,7 +22,7 @@
 
 /**
  *      \file       htdocs/compta/sociales/class/chargesociales.class.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      File for the ChargesSociales class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';

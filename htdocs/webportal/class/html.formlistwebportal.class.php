@@ -303,7 +303,7 @@ class FormListWebPortal
 
 		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
 		// Add table from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		if ($object->ismultientitymanaged == 1) {
@@ -349,7 +349,7 @@ class FormListWebPortal
 		//    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 		//}
 		// Add where from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -428,7 +428,7 @@ class FormListWebPortal
 			}
 		}
 		// Add $param from hooks
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 
@@ -580,8 +580,10 @@ class FormListWebPortal
 		// Loop on record
 		// --------------------------------------------------------------------
 		$i = 0;
-		$totalarray = array();
-		$totalarray['nbfield'] = 0;
+		$totalarray = [
+			'nbfield' => 0,
+			'totalizable' => [],
+		];
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$obj = $this->db->fetch_object($resql);

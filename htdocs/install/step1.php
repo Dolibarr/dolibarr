@@ -951,67 +951,67 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDF_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDF_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_FPDF_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_FPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDF_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDF_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDF_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_TCPDF_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_TCPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDF_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDI_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDI_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_FPDI_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_FPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDI_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDI_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDI_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_TCPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDI_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_GEOIP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_GEOIP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_GEOIP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_GEOIP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_NUSOAP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_NUSOAP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_NUSOAP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_NUSOAP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_NUSOAP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_ODTPHP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_ODTPHP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
 		}
 		fwrite($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_CKEDITOR)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_CKEDITOR = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_CKEDITOR = '';
 		}
 		fwrite($fp, '$dolibarr_js_CKEDITOR=\''.dol_escape_php($force_dolibarr_js_CKEDITOR, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_JQUERY = '';
 		}
 		fwrite($fp, '$dolibarr_js_JQUERY=\''.dol_escape_php($force_dolibarr_js_JQUERY, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY_UI)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY_UI = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_JQUERY_UI = '';
 		}
 		fwrite($fp, '$dolibarr_js_JQUERY_UI=\''.dol_escape_php($force_dolibarr_js_JQUERY_UI, 1).'\';');
 		fwrite($fp, "\n");
@@ -1020,13 +1020,13 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
 			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_font_DOL_DEFAULT_TTF = '';
 		}
 		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
 			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
 		}
 		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD, 1).'\';');
 		fwrite($fp, "\n");

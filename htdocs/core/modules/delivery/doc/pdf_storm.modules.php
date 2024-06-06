@@ -822,7 +822,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$posy = 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

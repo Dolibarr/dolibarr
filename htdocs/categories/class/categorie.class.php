@@ -271,7 +271,7 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
 	 */
 	public $multilangs;
 
@@ -1009,7 +1009,7 @@ class Categorie extends CommonObject
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
-				$offset = 0; // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$offset = 0;
 			}
 		}
 
@@ -1980,18 +1980,19 @@ class Categorie extends CommonObject
 			$result = $this->db->query($sql);
 
 			if ($key == $current_lang) {
+				$sql2 = '';
 				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
 					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
-				} else {
+				} elseif (isset($this->multilangs[$key])) {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
 					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
-				if (!$this->db->query($sql2)) {
+				if ($sql2 && !$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}

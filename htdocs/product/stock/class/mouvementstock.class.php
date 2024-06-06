@@ -60,6 +60,9 @@ class MouvementStock extends CommonObject
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 
 	/**

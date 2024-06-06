@@ -822,16 +822,11 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 
 
 if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
-	// Shon online payment link
-	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook > 0) {
-		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
-			$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
-		}
-	}
+	// Show online payment link
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	$validpaymentmethod = getValidOnlinePaymentMethods('');
+	$useonlinepayment = count($validpaymentmethod);
 
 	if ($useonlinepayment) {
 		print '<br>';

@@ -321,7 +321,7 @@ class CMailFile
 						$this->atleastoneimage = 1;
 						if ($this->html_images[$i]['type'] == 'cidfromdata') {
 							if (!in_array($this->html_images[$i]['fullpath'], $filename_list)) {
-								// If this file path is not already into the $filename_list, we add it.
+								// If this file path is not already into the $filename_list, we append it at end of array
 								$posindice = count($filename_list);
 								$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
 								$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
@@ -345,7 +345,7 @@ class CMailFile
 			foreach ($filename_list as $i => $val) {
 				if ($filename_list[$i]) {
 					$this->atleastonefile = 1;
-					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".$cid_list[$i], LOG_DEBUG);
+					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".(empty($cid_list[$i]) ? '' : $cid_list[$i]), LOG_DEBUG);
 				}
 			}
 		}
@@ -1162,7 +1162,7 @@ class CMailFile
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-						$res = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$res = true;
 					} else {
 						if (empty($this->error)) {
 							$this->error = $result;

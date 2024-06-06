@@ -1173,7 +1173,7 @@ class Product extends CommonObject
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
 		} else {
 			// we can continue
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		}
 
 		if ($result >= 0) {

@@ -19,7 +19,7 @@
 
 /**
  *    \file       htdocs/fourn/paiement/info.php
- *    \ingroup    facture, fournisseur
+ *    \ingroup    invoice, fournisseur
  *    \brief      Tab for Supplier Payment Information
  */
 

@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/compta/facture/invoicetemplate_list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 
@@ -520,7 +520,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -860,7 +860,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}
@@ -1059,7 +1060,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}

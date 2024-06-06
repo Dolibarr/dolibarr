@@ -215,6 +215,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
+$object->initListOfTriggers();
+
 $now = dol_now();
 //$help_url = "EN:Module_Target|FR:Module_Target_FR|ES:Módulo_Target";
 $help_url = '';
@@ -432,7 +434,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

@@ -27,12 +27,12 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/doc/pdf_eagle_proforma.modules.php
- *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eagle
+ *	\file       htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
+ *	\ingroup    order
+ *	\brief      File of Class to generate PDF orders with template Proforma
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to generate PDF orders with template Eagle
  */
-class pdf_eagle_proforma extends ModelePDFCommandes
+class pdf_eagle_proforma extends ModelePDFStockTransfer
 {
 	/**
 	 * @var DoliDB Database handler
@@ -289,7 +289,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$pdf->SetSubject($outputlangs->transnoentities("PdfOrderTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfOrderTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfOrderTitle").($object->thirdparty ? " ".$outputlangs->convToOutputCharset($object->thirdparty->name) : ''));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -298,13 +298,14 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				/// Does we have at least one line with discount $this->atleastonediscount
-				foreach ($object->lines as $line) {
-					if ($line->remise_percent) {
-						$this->atleastonediscount = true;
-						break;
+				if (is_array($object->lines)) {
+					foreach ($object->lines as $line) {
+						if ($line->remise_percent) {
+							$this->atleastonediscount = true;
+							break;
+						}
 					}
 				}
-
 
 				// New page
 				$pdf->AddPage();
@@ -1403,6 +1404,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$thirdparty = $object->thirdparty;
 			}
 
+			$carac_client_name = '';
 			if (!empty($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 			}
@@ -1630,7 +1632,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			'width' => 26, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => 'PMPValue'
+				'textkey' => 'TotalHTShort'
 			),
 			'border-left' => true, // add left line separator
 		);

@@ -466,7 +466,7 @@ class Utils
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
-						$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$ok = 0;
 					} else {
 						$i = 0;
 						if (!empty($output_arr)) {

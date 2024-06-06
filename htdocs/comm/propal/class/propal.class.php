@@ -603,7 +603,7 @@ class Propal extends CommonObject
 			}
 
 			$remise_percent = price2num($remise_percent);
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
@@ -832,7 +832,7 @@ class Propal extends CommonObject
 
 		// Clean parameters
 		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
@@ -857,7 +857,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -3307,7 +3307,7 @@ class Propal extends CommonObject
 	public function LibStatut($status, $mode = 1)
 	{
 		// phpcs:enable
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -3341,7 +3341,6 @@ class Propal extends CommonObject
 		} elseif ($status == self::STATUS_BILLED) {
 			$statusType = 'status6';
 		}
-
 
 		$parameters = array('status' => $status, 'mode' => $mode);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3655,7 +3654,7 @@ class Propal extends CommonObject
 		}
 		if ($user->hasRight('propal', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
-			if (isset($this->statut)) {
+			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
@@ -3675,7 +3674,7 @@ class Propal extends CommonObject
 				$langs->load('project');
 				if (empty($this->project)) {
 					$res = $this->fetch_project();
-					if ($res > 0 && $this->project instanceof Project) {
+					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -3930,9 +3929,9 @@ class Propal extends CommonObject
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		$return .= '</span>';
+		$return .= '</div>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
@@ -3941,11 +3940,15 @@ class Propal extends CommonObject
 		if (!empty($arraydata['projectlink'])) {
 			$return .= '<span class="info-box-ref"> | '.$arraydata['projectlink'].'</span>';
 		}
-		if (!empty($arraydata['authorlink'])) {
-			$return .= '<br><span class="info-box-label">'.$arraydata['authorlink'].'</span>';
+		$return .= '<br>';
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'total_ht')) {
-			$return .= '<br><span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
+			$return .= '<span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
+		}
+		if (!empty($arraydata['authorlink'])) {
+			$return .= ' &nbsp; <span class="info-box-label">'.$arraydata['authorlink'].'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -3996,6 +3999,10 @@ class PropaleLigne extends CommonObjectLine
 	public $tva_tx;
 	public $vat_src_code;
 
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $remise_percent;
 	public $fk_remise_except;

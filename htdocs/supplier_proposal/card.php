@@ -1277,14 +1277,14 @@ if ($action == 'create') {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
-			if (getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE')) {
+			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
 					$("#socid").change(function() {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
-						$("form[name=add]").submit();
+						$("form[name=addprop]").submit();
 					});
 				});
 				</script>';
@@ -1323,6 +1323,7 @@ if ($action == 'create') {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+			print img_picto('', 'bank', 'class="pictofixedwidth"');
 			$form->select_comptes(GETPOST('fk_account') > 0 ? GETPOSTINT('fk_account') : $fk_account, 'fk_account', 0, '', 1);
 			print '</td></tr>';
 		}

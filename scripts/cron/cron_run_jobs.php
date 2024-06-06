@@ -92,7 +92,11 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
+// Show TZ of the serveur when ran from command line.
+$ini_path = php_ini_loaded_file();
+print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check module cron is activated
 if (!isModEnabled('cron')) {
@@ -240,7 +244,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if ($forcequalified || (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))) {
+		$datenextrunok = (empty($line->datenextrun) || (int) $line->datenextrun < $now);
+		$datestartok = (empty($line->datestart) || $line->datestart <= $now);
+		$dateendok = (empty($line->dateend) || $line->dateend >= $now);
+		if ($forcequalified || ($datenextrunok && $datestartok && $dateendok)) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -267,7 +274,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$resultstring = 'OK';
 			}
 
-			echo " - run_jobs ".$resultstring." result = ".$result;
+			echo "Result of run_jobs ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
@@ -278,11 +285,11 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				exit(1);
 			}
 
-			echo " - reprogrammed\n";
+			echo "Job re-scheduled\n";
 		} else {
-			echo " - not qualified\n";
+			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php job ".$line->id." not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 
@@ -293,10 +300,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 $db->close();
 
+print "***** ".$script_file." end - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
 if ($nbofjobslaunchedko) {
 	exit(1);
 }
 exit(0);
+
 
 /**
  * script cron usage

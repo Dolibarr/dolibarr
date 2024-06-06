@@ -515,6 +515,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
 }
+.box-flex-container-columns {
+	display: flex; /* or inline-flex */
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+.box-flex-container-column {
+	flex-grow: 1;
+	}
+.box-flex-container-column:not(:last-of-type) {
+	border-right: 1px solid #AAA;
+}
 
 .box-flex-grow-zero {
 	flex-grow: 0 !important;
@@ -529,8 +541,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-item.filler {
 	height: 0;
 }
-.box-flex-item, .box-flex-item.filler {
-	margin: 5px 10px 0px 10px;
+.box-flex-item {
+	margin-top: 5px;
+	margin-<?php echo $right; ?>: 20px;
+	margin-bottom: 0px;
+	margin-<?php echo $left; ?>: 10px;
+}
+.kanban .box-flex-item {
+	line-height: 1.4em;
 }
 
 .info-box-title {

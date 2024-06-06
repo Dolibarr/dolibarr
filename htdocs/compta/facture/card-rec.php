@@ -28,7 +28,7 @@
 
 /**
  *	\file       htdocs/compta/facture/card-rec.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show predefined invoice
  */
 
@@ -1806,6 +1806,8 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
+	} else {
+		print $langs->trans("NoRecordFound");
 	}
 }
 

@@ -282,7 +282,7 @@ class modBom extends DolibarrModules
 		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforclass = 'BOMLine';
-		$keyforclassfile = '/bom/class/bom.class.php';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforclassfile = '/bom/class/bom.class.php';
 		$keyforelement = 'bomline';
 		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -329,7 +329,7 @@ class modBom extends DolibarrModules
 			'b.efficiency'        => 'Efficiency',
 			'b.duration'          => 'Duration',
 			'b.date_creation'     => 'DateCreation',
-			'b.date_valid'        => 'DateValid',
+			'b.date_valid'        => 'DateValidation',
 			'b.fk_user_modif'     => 'ModifiedById',
 			'b.fk_user_valid'     => 'ValidatedById',
 			'b.model_pdf'         => 'Model',

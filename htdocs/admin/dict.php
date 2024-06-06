@@ -32,7 +32,7 @@
 /**
  *	    \file       htdocs/admin/dict.php
  *		\ingroup    setup
- *		\brief      Page to administer data tables
+ *		\brief      Page to administer dictionary data tables
  */
 
 // Load Dolibarr environment
@@ -96,10 +96,12 @@ $langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "hol
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
+
 $id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
 $entity = GETPOSTINT('entity');
 $code = GETPOST('code', 'alpha');
+$from = GETPOST('from', 'alpha');
 
 $acts = array();
 $actl = array();
@@ -1260,7 +1262,7 @@ $title = $langs->trans("DictionarySetup");
 llxHeader('', $title);
 
 $linkback = '';
-if ($id) {
+if ($id && empty($from)) {
 	$title .= ' - '.$langs->trans($tablib[$id]);
 	$linkback = '<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
@@ -1287,6 +1289,9 @@ if ($search_active != '') {
 if ($entity != '') {
 	$param .= '&entity='.(int) $entity;
 }
+if ($from) {
+	$param .= '&from='.urlencode($from);
+}
 $paramwithsearch = $param;
 if ($sortorder) {
 	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
@@ -1294,8 +1299,8 @@ if ($sortorder) {
 if ($sortfield) {
 	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 }
-if (GETPOST('from')) {
-	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+if ($from) {
+	$paramwithsearch .= '&from='.urlencode($from);
 }
 
 
@@ -1393,7 +1398,7 @@ if ($id > 0) {
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag($from).'">';
 
 	// Special warning for VAT dictionary
 	if ($id == DICT_TVA && !getDolGlobalString('FACTURE_TVAOPTION')) {

@@ -127,7 +127,7 @@ class modTicket extends DolibarrModules
 
 
 		$this->tabs = array(
-			'thirdparty:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
+			'thirdparty:+ticket:Tickets:ticket:$user->hasRight("ticket","read"):/ticket/list.php?socid=__ID__',
 		);
 
 		// Dictionaries
@@ -278,7 +278,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 88,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;*/
@@ -293,7 +293,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 101,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->read',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -320,7 +320,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 103,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->read',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -334,7 +334,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 105,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->read',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0);
 		$r++;
@@ -347,7 +347,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->read',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0);
 		$r++;
@@ -359,8 +359,8 @@ class modTicket extends DolibarrModules
 			'url' => '/categories/index.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,
-			'enabled' => '$conf->categorie->enabled',
-			'perms' => '$user->rights->ticket->read',
+			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0);
 		$r++;
@@ -381,7 +381,7 @@ class modTicket extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforselect = 'ticket';
 		$keyforaliasextra = 'extra';
-		$keyforelement = 'ticket';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforelement = 'ticket';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'ticket as t';

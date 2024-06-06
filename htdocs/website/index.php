@@ -2,6 +2,7 @@
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1620,7 +1621,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
 				$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-				$htmlheadercontent.= "// END PHP ?>"."\n";*/
+				$htmlheadercontent.= "// END PHP"."\n";*/
 
 				$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 				if (!$result) {
@@ -1660,7 +1661,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$csscontent .= '<?php // BEGIN PHP'."\n";
 				$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
-				$csscontent .= "// END PHP ?>\n";
+				$csscontent .= "// END PHP\n";
 
 				dol_syslog("Save css content into ".$filecss);
 
@@ -1701,7 +1702,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$jscontent .= '<?php // BEGIN PHP'."\n";
 				$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
-				$jscontent .= "// END PHP ?>\n";
+				$jscontent .= "// END PHP\n";
 
 				$result = dolSaveJsFile($filejs, $jscontent);
 				if (!$result) {
@@ -1712,7 +1713,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
+			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'nohtml'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Robot file
@@ -1750,7 +1751,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
+			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'nohtml'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Htaccess file
@@ -1801,7 +1802,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
 				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-				$manifestjsoncontent .= "// END PHP ?>\n";
+				$manifestjsoncontent .= "// END PHP\n";
 
 				$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
 				if (!$result) {
@@ -1812,7 +1813,8 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_README', 'restricthtml'));
+
+			$dataposted = trim(GETPOST('WEBSITE_README', 'nohtml'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// README.md file
@@ -1850,7 +1852,8 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
-			$dataposted = trim(GETPOST('WEBSITE_LICENSE', 'restricthtml'));
+
+			$dataposted = trim(GETPOST('WEBSITE_LICENSE', 'nohtml'));
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// LICENSE file
@@ -3077,7 +3080,7 @@ if (!GETPOST('hide_websitemenu')) {
 			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 				// Overwrite template in sources
 				$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
-				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl);
+				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl, $website);
 				//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 			}
 
@@ -3761,7 +3764,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_CSS_INLINE')) {
 		$csscontent = @file_get_contents($filecss);
 		// Clean the php css file to remove php code and get only css part
-		$csscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $csscontent);
+		$csscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $csscontent);
 	} else {
 		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
@@ -3772,7 +3775,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_JS_INLINE')) {
 		$jscontent = @file_get_contents($filejs);
 		// Clean the php js file to remove php code and get only js part
-		$jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $jscontent);
+		$jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $jscontent);
 	} else {
 		$jscontent = GETPOST('WEBSITE_JS_INLINE', 'none');
 	}
@@ -3783,7 +3786,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_HTML_HEADER')) {
 		$htmlheadercontent = @file_get_contents($filehtmlheader);
 		// Clean the php htmlheader file to remove php code and get only html part
-		$htmlheadercontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheadercontent);
+		$htmlheadercontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $htmlheadercontent);
 	} else {
 		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER', 'none');
 	}
@@ -3800,7 +3803,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_ROBOT')) {
 		$robotcontent = @file_get_contents($filerobot);
 		// Clean the php htmlheader file to remove php code and get only html part
-		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $robotcontent);
+		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $robotcontent);
 	} else {
 		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nohtml');
 	}
@@ -3814,7 +3817,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_HTACCESS')) {
 		$htaccesscontent = @file_get_contents($filehtaccess);
 		// Clean the php htaccesscontent file to remove php code and get only html part
-		$htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
+		$htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $htaccesscontent);
 	} else {
 		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
@@ -3823,11 +3826,10 @@ if ($action == 'editcss') {
 		$htaccesscontent .= "# Deny from all\n";
 	}
 
-
 	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
-		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $manifestjsoncontent);
+		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {
 		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
 	}
@@ -3838,7 +3840,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_README')) {
 		$readmecontent = @file_get_contents($filereadme);
 		// Clean the readme file to remove php code and get only html part
-		$readmecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $readmecontent);
+		$readmecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $readmecontent);
 	} else {
 		$readmecontent = GETPOST('WEBSITE_README', 'none');
 	}
@@ -3849,7 +3851,7 @@ if ($action == 'editcss') {
 	if (!GETPOSTISSET('WEBSITE_LICENSE')) {
 		$licensecontent = @file_get_contents($filelicense);
 		// Clean the readme file to remove php code and get only html part
-		$licensecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $licensecontent);
+		$licensecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $licensecontent);
 	} else {
 		$licensecontent = GETPOST('WEBSITE_LICENSE', 'none');
 	}
@@ -4345,33 +4347,28 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1, 'minwidth300');
 	print '</td></tr>';
 
-	// Example/templates of page
-	if ($action == 'createcontainer') {
-		$formmail = new FormMail($db);
-		$formmail->withaiprompt = 'html';
-		$formmail->withlayout = 1;
-
-		print '<tr><td class="titlefield fieldrequired tdtop">';
-		//print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-		print '</td><td class="tdtop">';
-
-		$out = '';
-
-		$showlinktolayout = $formmail->withlayout;
-		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
-		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
-		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
-		$htmlname = 'content';
-
-		// Fill $out
-		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
-
-		print $out;
-		print '</td></tr>';
-	}
+	print '<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery("#selectWEBSITE_TYPE_CONTAINER").change(function() {
+					console.log("We change type of page : "+jQuery("#selectWEBSITE_TYPE_CONTAINER").val());
+					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'blogpost\') {
+						jQuery(".trpublicauthor").show();
+					} else {
+						jQuery(".trpublicauthor").hide();
+					}
+					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'service\' || jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'library\') {
+						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+						jQuery(".spanprefix").show();
+					} else {
+						jQuery(".spanprefix").hide();
+					}
+				});
+			});
+			</script>
+		';
 
 	// Title
 	print '<tr><td class="fieldrequired">';
@@ -4384,8 +4381,29 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<span class="opacitymedium spanprefix hidden"></span> ';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_page_/', '', (string) $pageurl)).'">';
 	print '</td></tr>';
+
+	print '<script type="text/javascript">
+			$(document).ready(function() {
+				if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
+					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+					$(".spanprefix").show();
+				}
+				$(".websiteformtoolbar").on("submit", function(event) {
+					if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
+						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_";
+						var userInput = $("#WEBSITE_PAGENAME").val();
+						var $inputField = $("#WEBSITE_PAGENAME");
+						if (userInput.indexOf(prefix) !== 0) {
+							$inputField.val(prefix + userInput);
+						}
+					}
+				});
+			});
+		</script>
+	';
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp = $langs->trans("WEBSITE_ALIASALTDesc");
@@ -4531,7 +4549,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$langs->load('categories');
 
 		if (!GETPOSTISSET('categories')) {
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
 			$arrayselected = array();
@@ -4541,7 +4558,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				}
 			}
 
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
+			//$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', '', 0, 0, 3);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', 0, 0, 3);
 		}
 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
@@ -4569,6 +4587,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	$fuser = new User($db);
 
+	// Date last modification
 	if ($action != 'createcontainer') {
 		print '<tr><td>';
 		print $langs->trans('DateLastModification');
@@ -4588,9 +4607,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
+	// Content - Example/templates of page
 	$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
-
 	$htmltext = '<small>';
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
@@ -4599,20 +4617,53 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 	$htmltext .= '<br>';
 	$htmltext .= '</small>';
-	if ($conf->browser->layout == 'phone') {
-		print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
-	} else {
-		//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-		print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+
+	$formmail = new FormMail($db);
+	$formmail->withaiprompt = 'html';
+	$formmail->withlayout = 1;
+	$showlinktolayout = $formmail->withlayout;
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
+	if ($action == 'createcontainer' && $showlinktolayout && $showlinktoai) {
+		print '<tr><td class="titlefield tdtop">';
+		if ($conf->browser->layout == 'phone') {
+			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+		} else {
+			//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+			print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+		}
+		print '</td><td class="tdtop">';
+
+		$out = '';
+
+		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
+		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		$htmlname = 'content';
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		print $out;
+		print '</td></tr>';
 	}
-	print '</td><td>';
-	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
-	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
-	$doleditor->Create();
-	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
-	print '</div>';
-	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
-	print '</td></tr>';
+
+	if ($action == 'createcontainer') {
+		print '<tr id="pageContent"><td class="tdtop">';
+		if (!$showlinktolayout || !$showlinktoai) {
+			if ($conf->browser->layout == 'phone') {
+				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+			} else {
+				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+				print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+			}
+		}
+		print '</td><td>';
+		//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+		$doleditor = new DolEditor('content', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+		$doleditor->Create();
+		//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
+		print '</div>';
+		//print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+		print '</td></tr>';
+	}
 
 	// Date creation
 	print '<tr><td>';
@@ -4635,7 +4686,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td></tr>';
 
 	// Author - public alias
-	print '<tr><td>';
+	print '<tr class="trpublicauthor hidden"><td>';
 	print $langs->trans('PublicAuthorAlias');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
@@ -4783,7 +4834,7 @@ if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimg
 
 
 	$module = 'medias';
-	$formalreadyopen = 2;	// So the form to submit a new file will not be opened another time inside the core/tpl/filemanager.tpl.php
+	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php
 	if (empty($url)) {
 		$url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
 	}
@@ -4840,7 +4891,6 @@ if ($action == 'editcontent') {
 	$doleditor->Create(0, '', false);
 }
 
-
 print "</div>\n";
 print "</form>\n";
 
@@ -4894,7 +4944,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '</div>';
 	print '<div class="tagtd">';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	$formwebsite->selectTypeOfContainer('optioncontainertype', (GETPOST('optioncontainertype', 'alpha') ? GETPOST('optioncontainertype', 'alpha') : ''), 1, '', 1, 'minwidth125 maxwidth400 widthcentpercentminusx');
+	print $formwebsite->selectTypeOfContainer('optioncontainertype', (GETPOST('optioncontainertype', 'alpha') ? GETPOST('optioncontainertype', 'alpha') : ''), 1, '', 1, 'minwidth125 maxwidth400 widthcentpercentminusx');
 	print '</div>';
 	print '</div>';
 
@@ -5015,8 +5065,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("UserCreation", 0, $_SERVER['PHP_SELF'], 'fk_user_creat', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("DateCreation", 0, $_SERVER['PHP_SELF'], 'date_creation', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date creation
@@ -5080,7 +5130,12 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					//print '</td>';
 					//print '<td class="tdoverflow100">';
 					print '<br>';
-					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : '&nbsp;').'</span>';
+					print '<span class="opacitymedium">'.dol_escape_htmltag($answerrecord->description ? $answerrecord->description : $langs->trans("NoDescription")).'</span>';
+					print '</td>';
+
+					// Language
+					print '<td class="center">';
+					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Categories - Tags
@@ -5096,11 +5151,6 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 						}
 					}
 					//var_dump($existing);
-					print '</td>';
-
-					// Language
-					print '<td class="center">';
-					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Number of words

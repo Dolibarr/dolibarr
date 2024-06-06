@@ -70,6 +70,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->marge_basse = 0;
 
 		$this->option_logo = 1; // Display logo
+		$this->option_freetext = 0; // Support add of a personalised text
+		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -106,7 +108,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->COMPANY_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -130,17 +132,25 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<table><tr><td>';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</td>';
-		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '</td>';
-		$texte .= '</tr>';
-		$texte .= '</table>';
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			//$texte .= '<table><tr><td>';
+			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			//$texte .= '</td>';
+			//$texte .= '<td class="center">&nbsp; ';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+			//$texte .= '</td>';
+			//$texte .= '</tr>';
+			//$texte .= '</table>';
+			$texte .= '</div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="COMPANY_ADDON_PDF_ODT_PATH">';
+		}
 
 		// Scan directories
 		$nbofiles = count($listoffiles);

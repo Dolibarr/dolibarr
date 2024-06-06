@@ -4,6 +4,7 @@
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOSTINT('templateid');
 
 $printer = new dolReceiptPrinter($db);
-
+$hookmanager->initHooks(array('receiptPrinter', 'globalcard'));
 if (!$mode) {
 	$mode = 'config';
 }
@@ -529,6 +530,10 @@ if ($mode == 'template' && $user->admin) {
 		print '<tr class="oddeven">';
 		print '<td>{'.$key.'}</td><td>'.$langs->trans($val).'</td>';
 		print '</tr>';
+	}
+	$reshook = $hookmanager->executeHooks('listReceiptPrinterTags', array(), $printer, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 	print '</table>';
 	print '</div>';

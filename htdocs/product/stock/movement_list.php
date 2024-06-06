@@ -324,7 +324,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'update_extras') {
+if ($action == 'update_extras' && $permissiontoadd) {
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);
 
 	// Fill array 'array_options' with data from update form
@@ -345,7 +345,7 @@ if ($action == 'update_extras') {
 }
 
 // Correct stock
-if ($action == "correct_stock") {
+if ($action == "correct_stock" && $permissiontoadd) {
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -429,7 +429,7 @@ if ($action == "correct_stock") {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
@@ -592,8 +592,7 @@ if ($action == "transfert_stock" && !$cancel) {
 }
 
 // reverse movement of stock
-if ($action == 'confirm_reverse') {
-	$listMouvement = array();
+if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
 
 	$sql = "SELECT rowid, label, inventorycode, datem";
@@ -1061,7 +1060,7 @@ if ($search_fk_project != '' && $search_fk_project != '-1') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 $param .= $hookmanager->resPrint;
 

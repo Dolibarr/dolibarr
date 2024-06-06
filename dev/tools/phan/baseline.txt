@@ -4,7 +4,7 @@
  * When Phan is invoked with --load-baseline=path/to/baseline.php,
  * The pre-existing issues listed in this file won't be emitted.
  *
- * This file can be updated by invoking Phan with --save-baseline=path/to/baseline.php
+ * This file can be updated by invoking Phan with --save-baseline=path/to/baseline.txt
  * (can be combined with --load-baseline)
  */
 return [
@@ -114,7 +114,6 @@ return [
         'htdocs/admin/barcode.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/admin/bom.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/admin/chequereceipts.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
-        'htdocs/admin/commande.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/admin/company.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/contract.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/admin/delais.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchDimFetch'],
@@ -157,6 +156,7 @@ return [
         'htdocs/admin/mrp_extrafields.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/admin/multicurrency.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/oauthlogintokens.php' => ['PhanPluginUnknownObjectMethodCall'],
+        'htdocs/admin/order.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredMethod'],
         'htdocs/admin/payment.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/admin/pdf.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/perms.php' => ['PhanPluginUnknownObjectMethodCall'],
@@ -752,6 +752,7 @@ return [
         'htdocs/core/modules/oauth/github_oauthcallback.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/google_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeArraySuspiciousNullable', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/microsoft_oauthcallback.php' => ['PhanUndeclaredMethod'],
+        'htdocs/core/modules/oauth/microsoft2_oauthcallback.php' => ['PhanUndeclaredMethod'],
         'htdocs/core/modules/oauth/stripelive_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/modules/oauth/stripetest_oauthcallback.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/modules/payment/mod_payment_ant.php' => ['PhanTypeMismatchArgumentProbablyReal'],

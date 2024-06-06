@@ -851,9 +851,22 @@ class InventoryLine extends CommonObjectLine
 	public $fk_product;
 	public $batch;
 	public $datec;
+
+	/**
+	 * @var float Quantity stock
+	 */
 	public $qty_stock;
+
+	/**
+	 * @var float|null Quantity viewed
+	 */
 	public $qty_view;
+
+	/**
+	 * @var float Quantity regulated
+	 */
 	public $qty_regulated;
+
 	public $pmp_real;
 	public $pmp_expected;
 

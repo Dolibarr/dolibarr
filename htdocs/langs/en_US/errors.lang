@@ -329,12 +329,10 @@ ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
-
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
 ErrorIncoherentDates=Date start must be less than date end
 # Warnings
@@ -383,13 +381,13 @@ WarningCommentNotFound=Warning: Can't find the start and/or end comments for the
 WarningAlreadyReverse=Stock movement already reversed
 WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
 WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
 SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
 SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
-
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
@@ -411,7 +409,6 @@ BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
 ErrorTooManyAttempts= Too many attempts, please try again later
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined

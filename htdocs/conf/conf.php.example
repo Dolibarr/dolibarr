@@ -176,6 +176,11 @@ $dolibarr_main_db_character_set='utf8';
 $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
+// dolibarr_main_db_encryption
+// If setto 1, Dolibarr make a reversible encryption of data (using AES) with mysql to store key and value into the table llx_const.
+// It is deprecated and should not be used anymore.
+
+
 // dolibarr_main_db_readonly
 // =========================
 // Set this to 1 to have the application working in readonly mode. All SQL commands INSERT/UPDATE/DELETE/CREATE/ALTER/TRUNCATE/DROP will be disabled.
