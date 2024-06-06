@@ -41,10 +41,10 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 			} else {
 				// test if we have checkbox  type , we add the _multiselect needed into param
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
-				$type = $extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey];
-				if ($type == 'checkbox'){
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey], array('checkbox', 'chkbxlst'))){
 					$param .= '&'.$search_options_pattern.$tmpkey.'_multiselect'.'='.urlencode($val);
 				}
+
 				$param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
 			}
 		}
