@@ -1543,11 +1543,13 @@ class FormMail extends Form
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for email");
+						var template = $(this).data("template");
+
+						console.log("We choose a layout for email template "+template);
+
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
 
-						var template = $(this).data("template");
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);

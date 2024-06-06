@@ -32,14 +32,23 @@ function getHtmlOfLayout($name)
 {
 	global $conf, $mysoc, $user, $langs;
 
+	$substitutionarray = array();
+	$substitutionarray = getCommonSubstitutionArray($langs, $substitutionarray);
+
+	// TODO Read template from a file "install/doctemplates/maillayout/xxx.txt"
+
 	if ($name == 'basic') {
 		$out = '
-            <div >
-            <div >';
-		if (!empty($mysoc->logo)) {
-			if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-				$out .= '<img  height="100px" width="400px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'">';
-			}
+            <div>
+            <div style="text-align:center">';
+		$logo = '';
+		if (!empty($mysoc->logo) && dol_is_file($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+			$logo = $mysoc->logo;
+		} elseif (!empty($mysoc->logo_squarred) && dol_is_file($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred)) {
+			$logo = $mysoc->logo_squarred;
+		}
+		if (!empty($logo)) {
+			$out .= '<img  height="100px" width="400px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'">';
 		} else {
 			$out .= '<img alt="Gray rectangle" width="100px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />';
 		}
@@ -150,6 +159,8 @@ function getHtmlOfLayout($name)
 	} else {
 		$out = '';
 	}
+
+	$out = make_substitutions($out, $substitutionarray);
 
 	return $out;
 }
