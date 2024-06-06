@@ -115,7 +115,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<tr>';
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
 	print '<td>';
-	print dol_print_date($builddate, 'dayhour');
+	print dol_print_date($builddate, 'dayhour', 'tzuserrel');
 	print '</td>';
 	if ($variante) {
 		print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
