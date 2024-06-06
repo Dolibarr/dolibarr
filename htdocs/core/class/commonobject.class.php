@@ -584,7 +584,7 @@ abstract class CommonObject
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
-	private $note;
+	public $note;
 
 	/**
 	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
@@ -877,7 +877,7 @@ abstract class CommonObject
 		return array(
 			'alreadypaid' => 'totalpaid',
 			'cond_reglement' => 'depr_cond_reglement',
-			'note' => 'note_private',
+			//'note' => 'note_private',		// Some classes needs ->note and others need ->note_public/private so we can't manage deprecation for this field with dolDeprecationHandler
 			'commandeFournisseur' => 'origin_object',
 			'expedition' => 'origin_object',
 			'fk_project' => 'fk_project',
