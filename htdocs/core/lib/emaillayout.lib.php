@@ -35,7 +35,7 @@ function getHtmlOfLayout($name)
 	$substitutionarray = array();
 	$substitutionarray = getCommonSubstitutionArray($langs, $substitutionarray);
 
-	// TODO Read template from a file "install/doctemplates/maillayout/xxx.txt"
+	// TODO Read template from a file "install/doctemplates/maillayout/xxx.html"
 
 	if ($name == 'basic') {
 		$out = '
