@@ -187,6 +187,10 @@ class Ai
 				} else {
 					dol_syslog("Result was detected as already HTML. Do nothing.");
 				}
+
+				// TODO If content is for website module, we must
+				// - clan html header, keep body only and remove ``` ticks added by AI
+				// - add tags <section contenEditable="true"> </section>
 			}
 
 			return $generatedContent;
