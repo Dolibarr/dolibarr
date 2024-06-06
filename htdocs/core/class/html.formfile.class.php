@@ -1298,12 +1298,11 @@ class FormFile
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
-					$filepath = $file['level1name'].'/'.$file['name'];
-					$modulepart = basename(dirname($file['path']));
-					$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					$filepath = $relativepath.$file['name'];
 
 					$editline = 0;
 					$nboflines++;
+
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 
@@ -1313,6 +1312,10 @@ class FormFile
 
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
+					// Preview link
+					if (!$editline) {
+						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity), 'paddingright') . "\n";
+					}
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
