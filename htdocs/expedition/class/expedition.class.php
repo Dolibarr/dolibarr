@@ -1066,13 +1066,12 @@ class Expedition extends CommonObject
 					$tab[] = $linebatch;
 
 					if ($linebatch->status_batch == 2 && !empty($linebatch->batch) && !empty($linebatch->fk_product)) {
+						//This array is use in create CRUD method to control unicity
 						$this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch][]=$linebatch->batch;
-						if (count($this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch])>1) {
-							$this->errors[]=$langs->trans("TooManyQtyForSerialNumber", '', $linebatch->batch);
-							dol_syslog(get_class($this)."::addline_batch error=Product ".$linebatch->batch.": ".$this->errorsToString(), LOG_ERR);
-							//$this->db->rollback();
-							//return -1;
-						}
+						//if (count($this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch])>1) {
+						//	$this->errors[]=$langs->trans("TooManyQtyForSerialNumber", '', $linebatch->batch);
+						//	dol_syslog(get_class($this)."::addline_batch error=Product ".$linebatch->batch.": ".$this->errorsToString(), LOG_ERR);
+						//}
 					}
 
 					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0')) {
