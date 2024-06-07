@@ -385,7 +385,7 @@ class Expedition extends CommonObject
 			$this->date_shipping = $this->date_expedition;
 		}
 
-		//Control Serial by product unicity in shipping
+		//Control Serial by product unicity in shipping (populated in $this->addline_batch())
 		if (!empty($this->productserial_qty_control)) {
 			foreach ($this->productserial_qty_control as $fk_product=>$serial) {
 				if (count($serial)>1) {

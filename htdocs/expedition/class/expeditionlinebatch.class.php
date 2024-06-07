@@ -53,14 +53,14 @@ class ExpeditionLineBatch extends CommonObject
 	public $fk_expeditiondet;
 
 	/**
-	 * Denormalize attribute for batch control
+	 * Denormalize attribute for serial/batch control
 	 *
 	 * @var int
 	 */
 	public $status_batch = 0;
 
 	/**
-	 * Denormalize attribute for batch control
+	 * Denormalize attribute for serial/batch control
 	 *
 	 * @var int
 	 */
