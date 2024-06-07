@@ -1065,7 +1065,9 @@ class Expedition extends CommonObject
 					}
 					$tab[] = $linebatch;
 
-					if ($linebatch->status_batch == 2 && !empty($linebatch->batch) && !empty($linebatch->fk_product)) {
+					if ($linebatch->status_batch == 2
+						&& $linebatch->batch !== null
+						&& !empty($linebatch->fk_product)) {
 						//This array is use in create CRUD method to control unicity
 						$this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch][]=$linebatch->batch;
 						//if (count($this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch])>1) {
