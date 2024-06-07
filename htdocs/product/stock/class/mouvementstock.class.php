@@ -312,6 +312,7 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
+			// Check unicity for serial numbered equipment once all movement were done.
 			if ($product->status_batch==2 && abs($qty)>1) {
 				$this->errors[] = $langs->transnoentities('TooManyQtyForSerialNumber', $product->ref, $batch);
 				dol_syslog($langs->transnoentities('TooManyQtyForSerialNumber', $product->ref, $batch), LOG_ERR);
@@ -645,7 +646,6 @@ class MouvementStock extends CommonObject
 				$error++;
 			}
 			// End call triggers
-
 			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
