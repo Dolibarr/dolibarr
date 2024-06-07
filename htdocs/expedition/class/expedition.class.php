@@ -230,6 +230,12 @@ class Expedition extends CommonObject
 	public $signed_status = 0;
 
 	/**
+	 * Internal use to control batch/serial by product
+	 * @var array
+	 */
+	private $productserial_qty_control = [];
+
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -363,7 +369,7 @@ class Expedition extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		$now = dol_now();
 
@@ -377,6 +383,20 @@ class Expedition extends CommonObject
 		}
 		if (empty($this->date_shipping) && !empty($this->date_expedition)) {
 			$this->date_shipping = $this->date_expedition;
+		}
+
+		//Control Serial by product unicity in shipping
+		if (!empty($this->productserial_qty_control)) {
+			foreach ($this->productserial_qty_control as $fk_product=>$serial) {
+				if (count($serial)>1) {
+					$this->errors[]=$langs->trans("TooManyQtyForSerialNumber", '', implode(', ', $serial));
+					dol_syslog(get_class($this)."::addline_batch error=Product ".implode(', ', $serial).": ".$this->errorsToString(), LOG_ERR);
+					$error++;
+				}
+			}
+			if (!empty($error)) {
+				return -3;
+			}
 		}
 
 		$this->user = $user;
@@ -453,7 +473,8 @@ class Expedition extends CommonObject
 							if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
 								$error++;
 							}
-						} else {	// with batch management
+						} else {
+							// with batch management
 							if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
 								$error++;
 							}
@@ -468,6 +489,7 @@ class Expedition extends CommonObject
 					}
 				}
 
+				$error++;
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
@@ -1017,7 +1039,7 @@ class Expedition extends CommonObject
 	public function addline_batch($dbatch, $array_options = [])
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$num = count($this->lines);
 		if ($dbatch['qty'] > 0 || ($dbatch['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
@@ -1040,6 +1062,16 @@ class Expedition extends CommonObject
 						$linebatch->batch = null;
 					}
 					$tab[] = $linebatch;
+
+					if ($linebatch->status_batch == 2 && !empty($linebatch->batch) && !empty($linebatch->fk_product)) {
+						$this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch][]=$linebatch->batch;
+						if (count($this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch])>1) {
+							$this->errors[]=$langs->trans("TooManyQtyForSerialNumber", '', $linebatch->batch);
+							dol_syslog(get_class($this)."::addline_batch error=Product ".$linebatch->batch.": ".$this->errorsToString(), LOG_ERR);
+							//$this->db->rollback();
+							//return -1;
+						}
+					}
 
 					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0')) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
