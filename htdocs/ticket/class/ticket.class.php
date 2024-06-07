@@ -2930,11 +2930,13 @@ class Ticket extends CommonObject
 								// Add signature
 								$message .= '<br>'.$message_signature;
 
-								if (!empty($object->origin_email)) {
+								if (!empty($object->origin_replyto)) {
+									$sendto[$object->origin_replyto] = $object->origin_replyto;
+								} else if (!empty($object->origin_email)) {
 									$sendto[$object->origin_email] = $object->origin_email;
 								}
 
-								if ($object->fk_soc > 0 && !array_key_exists($object->origin_email, $sendto)) {
+								if ($object->fk_soc > 0 && !array_key_exists($object->origin_replyto, $sendto) && !array_key_exists($object->origin_email, $sendto)) {
 									$object->socid = $object->fk_soc;
 									$object->fetch_thirdparty();
 									if (!empty($object->thirdparty->email)) {
