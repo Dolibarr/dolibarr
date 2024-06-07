@@ -489,7 +489,6 @@ class Expedition extends CommonObject
 					}
 				}
 
-				$error++;
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
@@ -519,18 +518,21 @@ class Expedition extends CommonObject
 					}
 				} else {
 					$error++;
+					dol_syslog(get_class($this)."::create errorLevel=".$error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
 			} else {
 				$error++;
 				$this->error = $this->db->lasterror()." - sql=$sql";
+				dol_syslog(get_class($this)."::create errorLevel=".$error. "Error:".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		} else {
 			$error++;
 			$this->error = $this->db->error()." - sql=$sql";
+			dol_syslog(get_class($this)."::create errorLevel=".$error. "Error:".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
