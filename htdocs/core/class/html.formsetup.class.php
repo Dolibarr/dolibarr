@@ -1078,7 +1078,7 @@ class FormSetupItem
 			$max = $genhandler->length2;
 		}
 		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
-		if ($min){
+		if ($min) {
 			$out .= ' minlength="' . $min . '"';
 		}
 		if ($max) {
