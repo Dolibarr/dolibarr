@@ -231,7 +231,7 @@ class Expedition extends CommonObject
 
 	/**
 	 * Internal use to control batch/serial by product
-	 * @var array
+	 * @var array<string,array{type:string}>
 	 */
 	private $productserial_qty_control = [];
 
