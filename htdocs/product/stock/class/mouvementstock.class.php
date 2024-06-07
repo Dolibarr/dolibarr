@@ -421,17 +421,18 @@ class MouvementStock extends CommonObject
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
+				if (isset($product->stock_warehouse[$entrepot_id])) {
+					foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
+						if ((string) $batch != (string) $batchcursor) {        // Lot '59' must be different than lot '59c'
+							continue;
+						}
 
-				foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
-					if ((string) $batch != (string) $batchcursor) {		// Lot '59' must be different than lot '59c'
-						continue;
+						$foundforbatch = 1;
+						if ($prodbatch->qty < abs($qty)) {
+							$qtyisnotenough = $prodbatch->qty;
+						}
+						break;
 					}
-
-					$foundforbatch = 1;
-					if ($prodbatch->qty < abs($qty)) {
-						$qtyisnotenough = $prodbatch->qty;
-					}
-					break;
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
 					$langs->load("stocks");
@@ -445,7 +446,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if (isset($product->stock_warehouse[$entrepot_id]) && (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
