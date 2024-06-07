@@ -4369,7 +4369,7 @@ function migrate_reload_menu($db, $langs, $conf)
 /**
  * Migrate file from old path to new one for lot path
  *
- * @return	int						Return integer <0 if KO, >0 if OK
+ * @return    void
  */
 function migrate_productlot_path()
 {
