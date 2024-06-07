@@ -11872,7 +11872,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	$regs = array();
 
@@ -12136,6 +12136,18 @@ function getElementProperties($element_type)
 	}
 	$dir_output .= $subdir;
 
+	$parameters = array(
+		'element_type' => $element_type,
+		'module' => $module,
+		'element' => $element,
+		'table_element' => $table_element,
+		'subelement' => $subelement,
+		'classpath' => $classpath,
+		'classfile' => $classfile,
+		'classname' => $classname,
+		'dir_output' => $dir_output
+	);
+
 	$element_properties = array(
 		'module' => $module,
 		'element' => $element,
@@ -12147,7 +12159,15 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	//var_dump($element_properties);
+	$reshook = $hookmanager->executeHooks('changeElementProperties', $parameters);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif ($reshook > 0) {
+		$element_properties = $hookmanager->resArray;
+	} elseif ($reshook == 0) {
+		$element_properties = array_merge($element_properties, $hookmanager->resArray);
+	}
+
 	return $element_properties;
 }
 
