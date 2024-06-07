@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2010-2012  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2022  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
+ * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,10 +299,18 @@ $coldisplay++;
 	</td>
 
 	<?php
-	// Progession for situation invoices
+	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
+			$old_fieldv = $line->get_allprev_progress($line->fk_facture);
+			$fieldv = $tmp_fieldv + $old_fieldv;
+
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+		} else {
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
+		}
 		$coldisplay++;
 		print '<td></td>';
 	}

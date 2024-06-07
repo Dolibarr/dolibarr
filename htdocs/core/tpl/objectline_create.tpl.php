@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2010-2012  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2013  Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016  Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2022      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
+ * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,9 @@ if ($nolinesbefore) {
 		// Fields for situation invoice
 		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				print '<td class="nobottom nowrap right"></td>';
+			}
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
@@ -494,6 +498,10 @@ if ($nolinesbefore) {
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$coldisplay++;
+			print '<td class="nobottom nowrap right"></td>';
+		}
 		$coldisplay++;
 		print '<td></td>';
 	}
