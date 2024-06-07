@@ -145,9 +145,9 @@ if (empty($reshook)) {
 	$startyear = GETPOST('startyear', 'int');
 	$starthour = GETPOST('startHour', 'int');
 
-	if($starthour == "0" ) {
+	if ($starthour == "0") {
 		$error++;
-		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors , 'errors');
+		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
 	}
 
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
@@ -157,9 +157,9 @@ if (empty($reshook)) {
 	$endyear = GETPOST('endyear', 'int');
 	$endhour = GETPOST('endHour', 'int');
 
-	if($endhour == "0" ) {
+	if ($endhour == "0") {
 		$error++;
-		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors , 'errors');
+		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
 	}
 
 	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);
@@ -168,7 +168,7 @@ if (empty($reshook)) {
 	if ($starthour > $endhour) {
 		if ($dateStartTimestamp === $dateEndTimestamp) {
 			$error++;
-			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), $hookmanager->errors , 'errors');
+			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), $hookmanager->errors, 'errors');
 		}
 	}
 
