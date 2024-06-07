@@ -173,7 +173,7 @@ if (empty($reshook)) {
 	}
 
 	// check date
-	if ($dateStartTimestamp >= $dateEndTimestamp) {
+	if (($dateStartTimestamp != "") && ($dateStartTimestamp >= $dateEndTimestamp)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorIncoherentDates"), $hookmanager->errors, 'errors');
 	}
