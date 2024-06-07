@@ -217,7 +217,7 @@ class SupplierProposals extends DolibarrApi
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-     * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
      * @return  array                       Array of order objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
@@ -261,8 +261,8 @@ class SupplierProposals extends DolibarrApi
 			}
 		}
 
-        //this query will return total supplier proposals with the filters given
-        $sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+		//this query will return total supplier proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
         $sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -292,22 +292,22 @@ class SupplierProposals extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving supplier proposal list : '.$this->db->lasterror());
 		}
 
-        //if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
-        if ($pagination_data) {
-            $totalsResult = $this->db->query($sqlTotals);
-            $total = $this->db->fetch_object($totalsResult)->total;
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
 
-            $tmp = $obj_ret;
-            $obj_ret = [];
+			$tmp = $obj_ret;
+			$obj_ret = [];
 
-            $obj_ret['data'] = $tmp;
-            $obj_ret['pagination'] = [
-                'total' => (int) $total,
-                'page' => $page, //count starts from 0
-                'page_count' => ceil((int) $total/$limit),
-                'limit' => $limit
-            ];
-        }
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int)$total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int)$total / $limit),
+				'limit' => $limit
+			];
+		}
 
 		return $obj_ret;
 	}
