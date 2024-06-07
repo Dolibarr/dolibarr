@@ -159,7 +159,7 @@ class Proposals extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
 	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-     * @return  array                       Array of order objects
+	 * @return  array                       Array of order objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -249,9 +249,9 @@ class Proposals extends DolibarrApi
 
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
-				'total' => (int)$total,
+				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int)$total / $limit),
+				'page_count' => ceil((int) $total / $limit),
 				'limit' => $limit
 			];
 		}

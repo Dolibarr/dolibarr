@@ -96,11 +96,11 @@ class SupplierOrders extends DolibarrApi
 	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-     * @return array                      Array of order objects
+	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '',  $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
 			throw new RestException(403);
@@ -185,7 +185,7 @@ class SupplierOrders extends DolibarrApi
 		//this query will return total supplier orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
-        $sql .= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
 				$page = 0;
@@ -222,14 +222,14 @@ class SupplierOrders extends DolibarrApi
 
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
-				'total' => (int)$total,
+				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int)$total / $limit),
+				'page_count' => ceil((int) $total / $limit),
 				'limit' => $limit
 			];
 		}
 
-        return $obj_ret;
+		return $obj_ret;
 	}
 
 	/**

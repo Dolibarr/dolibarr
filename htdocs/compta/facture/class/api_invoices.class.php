@@ -180,7 +180,7 @@ class Invoices extends DolibarrApi
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	      Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
-     * @return array                      Array of invoice objects
+	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
@@ -294,9 +294,9 @@ class Invoices extends DolibarrApi
 
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
-				'total' => (int)$total,
+				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int)$total / $limit),
+				'page_count' => ceil((int) $total / $limit),
 				'limit' => $limit
 			];
 		}
