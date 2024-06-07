@@ -28,6 +28,12 @@
  *                   element_id (Example: 1)
  */
 
+
+
+
+
+
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disable token renewal
 }
@@ -76,7 +82,6 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 // Registering the location of boxes
 if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	&& GETPOST('fk_element', 'aZ09', 3) && GETPOSTINT('element_id', 3)) {
-
 	// Make test on permission
 	$perm = 0;
 	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {
