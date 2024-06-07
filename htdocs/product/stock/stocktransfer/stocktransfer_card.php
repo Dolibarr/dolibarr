@@ -925,7 +925,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$formproduct->loadWarehouses(); // Pour charger la totalité des entrepôts
 
-		// On stock ceux qui ne doivent pas être proposés dans la liste
+		// Define a list of warehouse to not show on the list
 		$TExcludedWarehouseSource = array();
 		if (!empty($object->fk_warehouse_source)) {
 			$source_ent = new Entrepot($db);
@@ -937,7 +937,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// On stock ceux qui ne doivent pas être proposés dans la liste
+		// Define a list of warehouse to not show on the list
 		$TExcludedWarehouseDestination = array();
 		if (!empty($object->fk_warehouse_destination)) {
 			$dest_ent = new Entrepot($db);
