@@ -958,6 +958,9 @@ if ($id > 0 || $ref) {
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
 					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
 					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
+					'pfp.price'=>array('label'=>$langs->trans("PriceQtyMinHT"), 'checked'=>1, 'position'=>60),
+					'pfp.multicurrency_price'=>array('label'=>$langs->trans("PriceQtyMinHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>1, 'position'=>70),
+
 				);
 
 				// fetch optionals attributes and labels
@@ -1021,9 +1024,11 @@ if ($id > 0 || $ref) {
 				}
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				$nbfields++;
-				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				$nbfields++;
-				if (isModEnabled("multicurrency")) {
+				if (!empty($arrayfields['pfp.price']['checked'])) {
+					print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
+				}
+				if (isModEnabled("multicurrency") && !empty($arrayfields['pfp.multicurrency_price']['checked'])) {
 					print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
@@ -1156,11 +1161,13 @@ if ($id > 0 || $ref) {
 						print '</td>';
 
 						// Price for the quantity
-						print '<td class="right">';
-						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
-						print '</td>';
+						if (!empty($arrayfields['pfp.price']['checked'])) {
+							print '<td class="right">';
+							print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
+							print '</td>';
+						}
 
-						if (isModEnabled("multicurrency")) {
+						if (isModEnabled("multicurrency") && !empty($arrayfields['pfp.multicurrency_price']['checked'])) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
