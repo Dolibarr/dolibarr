@@ -28,12 +28,6 @@
  *                   element_id (Example: 1)
  */
 
-
-
-
-
-
-
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disable token renewal
 }
