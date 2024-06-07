@@ -1,5 +1,4 @@
 -- ===================================================================
--- Copyright (C) 2022	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2024	Maxime Kohlhaas 		<maxime@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,12 +16,4 @@
 --
 -- ===================================================================
 
-
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_type (fk_type);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_account (fk_account);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_mode_reglement (fk_mode_reglement);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_author (fk_user_author);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_modif (fk_user_modif);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_valid (fk_user_valid);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_projet (fk_projet);
-ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
+ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
