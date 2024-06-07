@@ -395,7 +395,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("ProductLot");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_card');
 
 $res = $object->fetch_product();
 if ($res > 0 && $object->product) {
