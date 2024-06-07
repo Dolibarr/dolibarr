@@ -1068,8 +1068,9 @@ class Expedition extends CommonObject
 					if ($linebatch->status_batch == 2
 						&& $linebatch->batch !== null
 						&& !empty($linebatch->fk_product)) {
+						$uk_serial = $linebatch->fk_product.'_'.(string) $linebatch->batch;
 						//This array is use in create CRUD method to control unicity
-						$this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch][]=$linebatch->batch;
+						$this->productserial_qty_control[$uk_serial][]=$linebatch->batch;
 						//if (count($this->productserial_qty_control[$linebatch->fk_product.'_'.$linebatch->batch])>1) {
 						//	$this->errors[]=$langs->trans("TooManyQtyForSerialNumber", '', $linebatch->batch);
 						//	dol_syslog(get_class($this)."::addline_batch error=Product ".$linebatch->batch.": ".$this->errorsToString(), LOG_ERR);
