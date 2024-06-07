@@ -2598,6 +2598,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'tva') {
 		$modulepart = 'tax-vat';
 	}
+	if ($modulepart == 'agenda') {
+		$modulepart = 'actions';
+	}
 	// Fix modulepart delivery
 	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		$modulepart = 'delivery';
