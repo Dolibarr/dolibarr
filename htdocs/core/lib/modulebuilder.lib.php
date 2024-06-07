@@ -1237,7 +1237,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 		if ($key === 'tabcond') {
 			$conditions = array_map(
 				/**
-				 * @param bool|int|string $val
+				 * @param mixed $val
 				 * @return string|int
 				 */
 				function ($val) use ($module) {
@@ -1291,7 +1291,7 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
  * @param array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return int<-1,-1>|void Return int < 0 if error, return nothing on success
+ * @return int<-1,-1> Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
