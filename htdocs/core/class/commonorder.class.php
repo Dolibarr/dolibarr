@@ -90,7 +90,7 @@ abstract class CommonOrder extends CommonObject
 				}
 			}
 		}
-		
+		return $return;
 	}
 
 	/**
