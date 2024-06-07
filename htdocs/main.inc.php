@@ -404,8 +404,8 @@ require_once 'master.inc.php';
 
 // Uncomment this and set session.save_handler = user to use local session storing
 // include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php
-// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 
+// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
