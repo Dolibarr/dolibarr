@@ -1410,7 +1410,7 @@ while ($i < $imaxinloop) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
-	
+
 	$companystatic->id = $obj->socid;
 	$companystatic->ref = $obj->name;
 	$companystatic->name = $obj->name;
