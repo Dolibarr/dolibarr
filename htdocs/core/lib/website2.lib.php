@@ -112,6 +112,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 				$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
 				$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 				$aliascontent .= '?>'."\n";
+
+				dol_mkdir($dirname.'/'.$sublang);
 				$result = file_put_contents($filealiassub, $aliascontent);
 				if ($result === false) {
 					dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
