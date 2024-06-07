@@ -1299,7 +1299,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 
 	if (empty($namedic)) {
 		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
-		return;
+		return -1;
 	}
 	if (!file_exists($file)) {
 		return -1;
@@ -1336,7 +1336,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
-		return;
+		return -1;
 	} else {
 		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
