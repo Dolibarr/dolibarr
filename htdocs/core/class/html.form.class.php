@@ -8814,7 +8814,7 @@ class Form
 					$tmplabelhtml = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
-						if (!empty($value['fulllabel'])) { // for categories, this contains the path like catparent >> catchild 
+						if (!empty($value['fulllabel'])) { // for categories, fulllabel key contains the path like catparent >> catchild
 							$tmpvalue = $value['fulllabel'];
 						} else {
 							$tmpvalue = empty($value['label']) ? '' : $value['label'];
