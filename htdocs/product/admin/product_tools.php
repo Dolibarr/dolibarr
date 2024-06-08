@@ -299,7 +299,7 @@ $form = new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product_tools');
 
 print load_fiche_titre($title, '', 'title_setup');
 

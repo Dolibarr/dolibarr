@@ -72,7 +72,7 @@ if (!isModEnabled("product")) {
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-admin_product_extrafields');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
