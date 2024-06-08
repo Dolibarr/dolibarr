@@ -952,7 +952,7 @@ if ($action == 'create') {
 			$soc = new Societe($db);
 			if ($socid > 0) {
 				$res = $soc->fetch($socid);
-			}elseif($object->socid > 0){
+			} elseif($object->socid > 0) {
 				$res = $soc->fetch($object->socid);
 			}
 
