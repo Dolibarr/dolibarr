@@ -139,7 +139,8 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), 'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes');
+$help_url = 'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes';
+llxHeader('', $langs->trans('Reception'), $help_url, '', 0, 0, '', '', '', 'mod-reception page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
