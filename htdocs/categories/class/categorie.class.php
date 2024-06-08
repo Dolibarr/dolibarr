@@ -1130,7 +1130,7 @@ class Categorie extends CommonObject
 	 * @return  int|string			-1 if error; sql search
 	 */
 	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1)
-	{	
+	{
 		$fkName = 'fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
 		$tableName = MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 
@@ -1149,15 +1149,15 @@ class Categorie extends CommonObject
 					$cat = new Categorie($this->db);
 					$arrayofcategoryid = $cat->getChilds($type, $arrayofcategoryid);
 				}
-				$searchCategorySql = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcategoryid))."))";
+				$searchCategorySql = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayofcategoryid))."))";
 			} else {
 				$arraySearchCategorySql = [];
-				foreach($arrayofcategoryid as $categoryid) {
+				foreach ($arrayofcategoryid as $categoryid) {
 					if ($searchCategoryChilds) { // include childs
 						$cat = new Categorie($this->db);
 						$arrayofcatchilds = $cat->getChilds($type, $categoryid);
 						if (is_array($arrayofcatchilds)) {
-							$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcatchilds))."))";
+							$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayofcatchilds))."))";
 						} else return -1;
 					} else {
 						$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie = ".(int) $categoryid.") ";
@@ -1179,7 +1179,7 @@ class Categorie extends CommonObject
 	 *                                                  - array (list of categories ids)
 	 * @return int<-1,-1>|array Array of childs categories including their parents
 	 */
-	public function getChilds($type, $fromid = 0) 
+	public function getChilds($type, $fromid = 0)
 	{
 		$retraw = $this->get_full_arbo($type, $fromid, 1);
 		if (is_array($retraw)) {
