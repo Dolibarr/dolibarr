@@ -1274,8 +1274,10 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $val) {
-						$val = array('id' => $val);
+					foreach ($this->socpeopleassigned as $val) {
+						if (!is_array($val)) {	// For backward compatibility when val=id
+							$val = array('id' => $val);
+						}
 						if (!empty($already_inserted[$val['id']])) {
 							continue;
 						}
