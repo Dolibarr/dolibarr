@@ -13830,7 +13830,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'message' => dol_nl2br($obj->message),
+						'message' => dol_htmlentitiesbr($obj->message),
 						'percent' => $obj->percent,
 						'acode' => $obj->acode,
 
