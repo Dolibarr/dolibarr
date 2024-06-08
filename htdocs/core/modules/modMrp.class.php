@@ -434,7 +434,7 @@ class modMrp extends DolibarrModules
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
 
 		$result = $this->_load_tables('/install/mysql/', 'mrp');
-		
+
 		// Permissions
 		$this->remove($options);
 
