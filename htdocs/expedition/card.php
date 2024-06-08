@@ -1174,7 +1174,7 @@ if ($action == 'create') {
 			print '});'."\n";
 			print '</script>'."\n";
 
-			if($object->id > 0){
+			if ($object->id > 0) {
 				print '<br>';
 
 				print '<table class="noborder centpercent">';
@@ -1844,7 +1844,6 @@ if ($action == 'create') {
 		} else {
 			dol_print_error($db);
 		}
-		
 	}
 } elseif ($object->id > 0) {
 	/* *************************************************************************** */
