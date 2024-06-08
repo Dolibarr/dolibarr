@@ -1126,7 +1126,7 @@ class Categorie extends CommonObject
 	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc...
 	 * @param	array				$searchCategoryList		array of categories to look for
 	 * @param	bool				$searchCategoryOperator	0:AND, 1:OR
-	 * @param	bool				$searchCategoryChilds	0: dont search in childs; 1: search in childs
+	 * @param	bool				$searchCategoryChilds	0: don't search in children; 1: search in children
 	 * @return  int|string			-1 if error; sql search
 	 */
 	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1)
@@ -1145,7 +1145,7 @@ class Categorie extends CommonObject
 		}
 		if (count($arrayofcategoryid) > 0) {
 			if ($searchCategoryOperator == 1) { // OR operator
-				if ($searchCategoryChilds) { // include childs
+				if ($searchCategoryChilds) { // include children
 					$cat = new Categorie($this->db);
 					$arrayofcategoryid = $cat->getChilds($type, $arrayofcategoryid);
 				}
@@ -1153,7 +1153,7 @@ class Categorie extends CommonObject
 			} else {
 				$arraySearchCategorySql = [];
 				foreach ($arrayofcategoryid as $categoryid) {
-					if ($searchCategoryChilds) { // include childs
+					if ($searchCategoryChilds) { // include children
 						$cat = new Categorie($this->db);
 						$arrayofcatchilds = $cat->getChilds($type, $categoryid);
 						if (is_array($arrayofcatchilds)) {
@@ -1169,7 +1169,7 @@ class Categorie extends CommonObject
 		return $searchCategorySql;
 	}
 
-	/** get all childs of a category or array of categories, including themselves
+	/** get all children of a category or array of categories, including themselves
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array	$fromid        		Keep only all categories (including the leaf $fromid) into the tree after this id $fromid.
@@ -1177,7 +1177,7 @@ class Categorie extends CommonObject
 	 *                                                  - int (id of category)
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
-	 * @return int<-1,-1>|array Array of childs categories including their parents
+	 * @return int<-1,-1>|array Array of children categories including their parents
 	 */
 	public function getChilds($type, $fromid = 0)
 	{

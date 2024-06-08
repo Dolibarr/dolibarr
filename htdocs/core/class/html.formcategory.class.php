@@ -40,7 +40,7 @@ class FormCategory extends Form
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
-	 * @param	int			$searchInCategoryChilds				-1, or 0 or 1 to enable the checkbox to search in childs of categs selected (0=not preseleted, 1=preselected)
+	 * @param	int			$searchInCategoryChilds				-1, or 0 or 1 to enable the checkbox to search in children of categs selected (0=not preseleted, 1=preselected)
 	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
 	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '', $searchInCategoryChilds = -1)
