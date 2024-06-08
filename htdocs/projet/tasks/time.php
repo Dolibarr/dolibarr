@@ -45,9 +45,6 @@ $langsLoad = array('projects', 'bills', 'orders', 'companies');
 if (isModEnabled('eventorganization')) {
 	$langsLoad[] = 'eventorganization';
 }
-if (isModEnabled('timesheet')) {
-	$langsLoad[] = 'timesheet';
-}
 
 $langs->loadLangs($langsLoad);
 
