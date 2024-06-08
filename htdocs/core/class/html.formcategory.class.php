@@ -79,8 +79,8 @@ class FormCategory extends Form
 		}
 		if ($searchInCategoryChilds >= 0) {
 			$htmlName3 = "search_category_".$type."_childs";
-			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName3.'" name="'.$htmlName3.'" value="1"'.($searchInCategoryChilds == 1 ? ' checked="checked"' : '').'"/>'
-					 .'<label class="none valignmiddle" for="'.$htmlName3.'" title="'.dol_escape_htmltag($langs->trans('SearchInSubCats')).'">'.$langs->trans('SubCats').'</label>';
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName3.'" name="'.$htmlName3.'" value="1"'.($searchInCategoryChilds == 1 ? ' checked="checked"' : '').'"/>';
+			$filter .= '<label class="none valignmiddle" for="'.$htmlName3.'" title="'.dol_escape_htmltag($langs->trans('SearchInSubCats')).'">'.$langs->trans('SubCats').'</label>';
 		}
 		if ($multiselect && $searchCategoryProductOperator >= 0) {
 			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';

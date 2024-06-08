@@ -1119,21 +1119,21 @@ class Categorie extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/** return sql where condition to search object linked to categories
 	 *
 	 * @param   string              $type					Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
-	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc..	
+	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc...
 	 * @param	array				$searchCategoryList		array of categories to look for
 	 * @param	bool				$searchCategoryOperator	0:AND, 1:OR
 	 * @param	bool				$searchCategoryChilds	0: dont search in childs; 1: search in childs
 	 * @return  int|string			-1 if error; sql search
 	 */
-	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1) {
-		
+	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1)
+	{	
 		$fkName = 'fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
 		$tableName = MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
-			
+
 		$searchCategorySql = '';
 		$arrayofcategoryid = [];
 		foreach ($searchCategoryList as $searchCategory) {
@@ -1143,12 +1143,12 @@ class Categorie extends CommonObject
 				$arrayofcategoryid[] = (int) $searchCategory;
 			}
 		}
-		if (count($arrayofcategoryid) > 0) {		
+		if (count($arrayofcategoryid) > 0) {
 			if ($searchCategoryOperator == 1) { // OR operator
 				if ($searchCategoryChilds) { // include childs
 					$cat = new Categorie($this->db);
 					$arrayofcategoryid = $cat->getChilds($type, $arrayofcategoryid);
-				}	
+				}
 				$searchCategorySql = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcategoryid))."))";
 			} else {
 				$arraySearchCategorySql = [];
@@ -1156,7 +1156,9 @@ class Categorie extends CommonObject
 					if ($searchCategoryChilds) { // include childs
 						$cat = new Categorie($this->db);
 						$arrayofcatchilds = $cat->getChilds($type, $categoryid);
-						if (is_array($arrayofcatchilds))	$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcatchilds))."))";
+						if (is_array($arrayofcatchilds)) {
+							$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcatchilds))."))";
+						} else return -1;
 					} else {
 						$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie = ".(int) $categoryid.") ";
 					}
@@ -1166,7 +1168,7 @@ class Categorie extends CommonObject
 		}
 		return $searchCategorySql;
 	}
-	
+
 	/** get all childs of a category or array of categories, including themselves
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
@@ -1187,7 +1189,7 @@ class Categorie extends CommonObject
 			return $ret;
 		} else return $retraw;
 	}
-	
+
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
@@ -1309,6 +1311,7 @@ class Categorie extends CommonObject
 
 		return $this->cats;
 	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
