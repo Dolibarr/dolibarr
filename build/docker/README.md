@@ -1,3 +1,4 @@
 # How to use it ?
 
-        docker-compose up
+export HOST_USER_ID=$(id -u)
+docker-compose up

@@ -2,9 +2,6 @@ FROM php:8.2-apache-bookworm
 
 LABEL maintainer="Yann Le Doaré <services@linuxconsole.org>"
 
-ENV WWW_USER_ID 33
-ENV WWW_GROUP_ID 33
-
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 ENV PHP_INI_MEMORY_LIMIT 256M
 ENV PHP_INI_UPLOAD_MAX_FILESIZE 2M
