@@ -1125,8 +1125,8 @@ class Categorie extends CommonObject
 	 * @param   string              $type					Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc...
 	 * @param	array				$searchCategoryList		array of categories to look for
-	 * @param	bool				$searchCategoryOperator	0:AND, 1:OR
-	 * @param	bool				$searchCategoryChilds	0: don't search in children; 1: search in children
+	 * @param	int					$searchCategoryOperator	0:AND, 1:OR
+	 * @param	int					$searchCategoryChilds	0: don't search in children; 1: search in children
 	 * @return  int|string			-1 if error; sql search
 	 */
 	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1)
@@ -1181,7 +1181,8 @@ class Categorie extends CommonObject
 	 */
 	public function getChilds($type, $fromid = 0)
 	{
-		$retraw = $this->get_full_arbo($type, $fromid, 1);
+		$retraw = $this->getFullArbo($type, $fromid, 1);
+		$ret = [];
 		if (is_array($retraw)) {
 			foreach ($retraw as $catid) {
 				$ret[] = $catid['id'];
@@ -1252,7 +1253,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".(int) $type;
 
-		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getFullArbo get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -1280,7 +1281,7 @@ class Categorie extends CommonObject
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)
-		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getFullArbo call to buildPathFromId", LOG_DEBUG);
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
 			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
@@ -1306,7 +1307,7 @@ class Categorie extends CommonObject
 			}
 		}
 
-		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getFullArbo dol_sort_array", LOG_DEBUG);
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		return $this->cats;
@@ -1314,6 +1315,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 * add to be deprecated : use getFullArbo instead
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
 	 *                id = id de la categorie
@@ -1331,7 +1333,6 @@ class Categorie extends CommonObject
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
-	 * @deprecated use getFullArbo
 	 */
 	public function get_full_arbo($type, $fromid = 0, $include = 0)
 	{
@@ -1341,13 +1342,13 @@ class Categorie extends CommonObject
 
 	/**
 	 *	For category id_categ and its children available in this->cats, define property fullpath and fulllabel.
-	 *  It is called by get_full_arbo()
+	 *  It is called by getFullArbo()
 	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		int<-1,1>				Return integer <0 if KO, >0 if OK
-	 *  @see get_full_arbo()
+	 *  @see getFullArbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
 	{
