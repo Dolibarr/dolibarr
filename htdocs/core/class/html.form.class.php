@@ -2874,6 +2874,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 		global $hookmanager;
+		global $conf;
 
 		$out = '';
 		$outarray = array();
