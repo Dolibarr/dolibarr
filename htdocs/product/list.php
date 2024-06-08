@@ -746,10 +746,10 @@ if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
 if ($searchCategoryProductOperator == 1) {
-	$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
+	$param .= "&search_category_product_operator=1";
 }
 if ($searchCategoryProductChilds == 1) {
-	$param .= "&search_category_product_childs=".urlencode($searchCategoryProductChilds);
+	$param .= "&search_category_product_childs=1";
 }
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
