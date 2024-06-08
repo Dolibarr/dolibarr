@@ -2932,7 +2932,7 @@ class Ticket extends CommonObject
 
 								if (!empty($object->origin_replyto)) {
 									$sendto[$object->origin_replyto] = $object->origin_replyto;
-								} else if (!empty($object->origin_email)) {
+								} elseif (!empty($object->origin_email)) {
 									$sendto[$object->origin_email] = $object->origin_email;
 								}
 
