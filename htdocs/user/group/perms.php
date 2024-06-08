@@ -135,7 +135,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_perms');
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);
