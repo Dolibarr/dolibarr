@@ -81,7 +81,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('productlot'), $help_url);
+llxHeader('', $langs->trans('productlot'), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
