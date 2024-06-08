@@ -69,7 +69,7 @@ if ($action == 'convertdynamic') {
  * View
  */
 
-llxHeader('', '', '', '', '', 0, 0, '', '', '', 'mod-admin page-database_tables');
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-database_tables');
 
 print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 

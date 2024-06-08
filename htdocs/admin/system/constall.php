@@ -38,7 +38,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader('', '', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_constall');
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_constall');
 
 print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
 
