@@ -247,7 +247,7 @@ if (empty($reshook)) {
 		$classname = ucfirst($object->origin);
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($object->origin_id);
-		if($objectsrc->id > 0){
+		if ($objectsrc->id > 0) {
 			$object->socid = $objectsrc->socid;
 		}else{
 			$object->socid = $socid;
