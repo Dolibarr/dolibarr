@@ -293,7 +293,7 @@ if ($action == 'create') {
 }
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_card');
 
 
 if ($action == 'create') {
