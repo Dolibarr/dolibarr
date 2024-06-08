@@ -571,7 +571,7 @@ $i = 0;
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
 
-llxHeader('', $title, $helpurl, '');
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_replenish');
 
 $head = array();
 

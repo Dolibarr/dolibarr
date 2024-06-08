@@ -403,12 +403,16 @@ class FormWebsite
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);
-						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+						//jQuery("#'.$htmlContent.'preview").val(contentHtml);
 
-						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
+						//var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						//if (editorInstance) {
+						//	editorInstance.setData(contentHtml);
+						//}
 					});
 				});
 		</script>';
