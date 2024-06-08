@@ -28,25 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last modified BOMs
  */
 class box_boms extends ModeleBoxes
 {
-	public $boxcode = "lastboms";
-	public $boximg = "object_bom";
+	public $boxcode  = "lastboms";
+	public $boximg   = "object_bom";
 	public $boxlabel = "BoxTitleLatestModifiedBoms";
-	public $depends = array("bom");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $depends  = array("bom");
 
 	/**
 	 *  Constructor
@@ -60,7 +49,7 @@ class box_boms extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bom->read);
+		$this->hidden = !$user->hasRight('bom', 'read');
 	}
 
 	/**
@@ -78,14 +67,18 @@ class box_boms extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$bomstatic = new Bom($this->db);
+		$bomstatic = new BOM($this->db);
 		$productstatic = new Product($this->db);
 		$userstatic = new User($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->rights->bom->read) {
-			$sql = "SELECT p.ref as product_ref, p.tobuy, p.tosell";
+		if ($user->hasRight('bom', 'read')) {
+			$sql = "SELECT p.ref as product_ref";
+			$sql .= ", p.rowid as productid";
+			$sql .= ", p.tosell";
+			$sql .= ", p.tobuy";
+			$sql .= ", p.tobatch";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
 			$sql .= ", c.tms";
@@ -111,12 +104,13 @@ class box_boms extends ModeleBoxes
 
 					$bomstatic->id = $objp->rowid;
 					$bomstatic->ref = $objp->ref;
-					$bomstatic->id = $objp->socid;
 					$bomstatic->status = $objp->status;
 
+					$productstatic->id = $objp->productid;
 					$productstatic->ref = $objp->product_ref;
-					$productstatic->status = $objp->tobuy;
-					$productstatic->status_buy = $objp->tosell;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->status_batch = $objp->tobatch;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
@@ -130,7 +124,7 @@ class box_boms extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}
@@ -142,7 +136,7 @@ class box_boms extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
@@ -156,8 +150,8 @@ class box_boms extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedOrders")
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
 					);
 				}
 
@@ -171,8 +165,8 @@ class box_boms extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
 
 /**
  *	\file       htdocs/public/notice.php
- *	\brief      Dolibarr page to show a notice.
- *              Default notice is a message to say network connection is off or show another message.
- *              You can also call this page with URL:
- *                /public/notice.php?lang=xx_XX&transkey=translation_key  (key must be inside file main.lang, error.lang or other.lang)
- *                /public/notice.php?transphrase=url_encoded_sentence_to_show
+ *	\brief      Dolibarr public page to show a notice.
+ *              Default notice is a message to say network connection is off. Some parameters can be used to show another message:
+ *              /public/notice.php?lang=xx_XX&transkey=translation_key  		(key must be inside file main.lang, error.lang or other.lang)
+ *              /public/notice.php?transphrase=sentence_to_show
  */
 
 if (!defined('NOLOGIN')) {
@@ -40,6 +39,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 
@@ -48,7 +48,7 @@ require '../main.inc.php';
  */
 
 if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml')) {
-	print 'Sorry, it seems your internet connexion is off.<br>';
+	print 'Sorry, it seems your internet connection is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
 } else {
 	$langs->loadLangs(array("error", "other"));
@@ -59,3 +59,5 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 		print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 	}
 }
+
+$db->close();

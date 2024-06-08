@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -30,8 +30,6 @@ if (empty($conf) || !is_object($conf)) {
 print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors);
-
-dol_htmloutput_errors((is_numeric($GLOBALS['error']) ? '' : $GLOBALS['error']), $GLOBALS['errors']);
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 

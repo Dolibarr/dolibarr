@@ -23,6 +23,8 @@
  *		\brief      Onglet info d'un contact
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -33,7 +35,7 @@ $langs->load("companies");
 
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -49,7 +51,7 @@ $object = new Contact($db);
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 

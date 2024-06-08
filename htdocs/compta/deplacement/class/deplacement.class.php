@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,11 +52,9 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 0;
+	public $fk_soc;
+	public $date;
+	public $type;
 
 	/**
 	 * Date creation record (datec)
@@ -83,7 +81,7 @@ class Deplacement extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var string km value formatted
+	 * @var float km value formatted
 	 */
 	public $km;
 
@@ -98,8 +96,6 @@ class Deplacement extends CommonObject
 	public $statut;
 	public $extraparams = array();
 
-	public $statuts = array();
-	public $statuts_short = array();
 
 	/**
 	 * Draft status
@@ -121,12 +117,11 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**
@@ -134,7 +129,7 @@ class Deplacement extends CommonObject
 	 * TODO Add ref number
 	 *
 	 * @param	User	$user	User that creates
-	 * @return 	int				<0 if KO, >0 if OK
+	 * @return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -167,14 +162,14 @@ class Deplacement extends CommonObject
 		$sql .= ", fk_soc";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$this->fk_user;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $this->fk_user);
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->fk_soc > 0 ? $this->fk_soc : "null");
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -210,14 +205,12 @@ class Deplacement extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
-		global $langs;
-
 		// Clean parameters
-		$this->km = price2num($this->km);
+		$this->km = (float) price2num($this->km);
 
 		// Check parameters
 		if (!is_numeric($this->km)) {
@@ -249,7 +242,7 @@ class Deplacement extends CommonObject
 		$sql .= " , note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= " , note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= " , fk_projet = ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -268,7 +261,7 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	int		$id		Id of record to load
 	 * @param	string	$ref	Ref of record
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -310,12 +303,14 @@ class Deplacement extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@param	User	$user		USer that Delete
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
+
+		$id = $this->id;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".((int) $id);
 
@@ -333,10 +328,10 @@ class Deplacement extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -345,54 +340,32 @@ class Deplacement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		} elseif ($mode == 3) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-			}
-		} elseif ($mode == 5) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
 		}
+
+		$status_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		$statusType = $status_logo[$status];
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -469,7 +442,7 @@ class Deplacement extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
-		$sql .= ' c.tms';
+		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -479,19 +452,13 @@ class Deplacement extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

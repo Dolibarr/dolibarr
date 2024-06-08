@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/setup.php
+ *	\file       htdocs/takepos/admin/other.php
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */
@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
-	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
-	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
-	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
+if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
+	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');		// Keep this ?
+	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');		// Keep this ?
+	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');	// Keep this ?
 }
 
 // Security check
@@ -82,7 +82,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-
 print '<div class="div-table-responsive-no-min">';
 
 // Marketplace
@@ -95,9 +94,9 @@ print '</tr>';
 $url = 'https://www.dolistore.com/45-pos';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
 print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 print '</tr>';
 
 print "</table>\n";
@@ -116,12 +115,12 @@ print '<td colspan="2">TakePOS Support</td>';
 print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
-$url = 'http://www.takepos.com';
+$url = 'https://www.takepos.com';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
+print '<td class="left"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 print '</tr>';
 
 print "</table>\n";

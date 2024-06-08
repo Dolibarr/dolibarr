@@ -37,16 +37,23 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 
 
-if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+if (!getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 	exit('BLOCKEDLOG_AUTHORITY_URL not set');
 }
 
+
+/*
+ * View
+ */
+
+top_httphead();
 
 $auth = new BlockedLogAuthority($db);
 $auth->syncSignatureWithAuthority();
@@ -66,7 +73,7 @@ if (is_array($bocks)) {
 $hash = $auth->getBlockchainHash();
 
 // Call external authority
-$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.urlencode($auth->signature).'&h='.urlencode($hash);
+$url = getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') . '/blockedlog/ajax/authority.php?s='.urlencode($auth->signature).'&h='.urlencode($hash);
 
 $resarray = getURLContent($url, 'GET', '', 1, array(), array(), 2);
 $res = $resarray['content'];

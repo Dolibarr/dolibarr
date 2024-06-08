@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +42,7 @@ class modTicket extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+		$langs->load("ticket");
 
 		$this->db = $db;
 
@@ -96,23 +99,35 @@ class modTicket extends DolibarrModules
 		$this->depends = array('modAgenda'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("ticket");
 
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
+		$default_footer = $langs->trans('TicketMessageMailFooterText', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
-			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0)
+			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0),
+			4 => array('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'chaine', 0, 'Automatically mark ticket as read when created from backend', 0),
+			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
+			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
+			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
+			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
+			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
+			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
+			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
 		);
 
 
 		$this->tabs = array(
-			'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
-			'project:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
+			'thirdparty:+ticket:Tickets:ticket:$user->hasRight("ticket","read"):/ticket/list.php?socid=__ID__',
 		);
 
 		// Dictionaries
@@ -120,49 +135,85 @@ class modTicket extends DolibarrModules
 			$conf->ticket = new stdClass();
 			$conf->ticket->enabled = 0;
 		}
-		$this->dictionaries = array(
-			'langs' => 'ticket',
-			'tabname' => array(
-				MAIN_DB_PREFIX."c_ticket_type",
-				MAIN_DB_PREFIX."c_ticket_severity",
-				MAIN_DB_PREFIX."c_ticket_category",
-				MAIN_DB_PREFIX."c_ticket_resolution"
-			),
-			'tablib' => array(
-				"TicketDictType",
-				"TicketDictSeverity",
-				"TicketDictCategory",
-				"TicketDictResolution"
-			),
-			'tabsql' => array(
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
-			),
-			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
-			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
-			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled && !empty($conf->global->TICKET_ENABLE_RESOLUTION)),
-			'tabhelp' => array(
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))
-			),
+
+		// Dictionary of ticket types
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_type',
+				'lib' => 'TicketDictType',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_type as f WHERE f.entity IN ('.getEntity('c_ticket_type').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
+		);
+
+		// Dictionary of ticket severities
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_severity',
+				'lib' => 'TicketDictSeverity',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_severity as f WHERE f.entity IN ('.getEntity('c_ticket_severity').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
+		);
+
+		// Dictionary of ticket categories
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_category',
+				'lib' => 'TicketDictCategory',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.$this->db->prefix().'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default,public,fk_parent',
+				'fieldvalue' => 'code,label,pos,use_default,public,fk_parent',
+				'fieldinsert' => 'code,label,pos,use_default,public,fk_parent,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket'),
+				'help' => array(
+					'code' => $langs->trans('EnterAnyCode'),
+					'use_default' => $langs->trans('Enter0or1'),
+					'public' => $langs->trans('Enter0or1').'<br>'.$langs->trans('TicketGroupIsPublicDesc'),
+					'fk_parent' => $langs->trans('IfThisCategoryIsChildOfAnother')
+				)
+			)
+		);
+
+		// (apparently unused) Dictionary of ticket resolutions
+		$this->declareNewDictionary(
+			array(
+				'name' => 'c_ticket_resolution',
+				'lib' => 'TicketDictResolution',
+				'sql' => 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.$this->db->prefix().'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')',
+				'sqlsort' => 'pos ASC',
+				'field' => 'code,label,pos,use_default',
+				'fieldvalue' => 'code,label,pos,use_default',
+				'fieldinsert' => 'code,label,pos,use_default,entity',
+				'rowid' => 'rowid',
+				'cond' => isModEnabled('ticket') && getDolGlobalString('TICKET_ENABLE_RESOLUTION'),
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+			)
 		);
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(
-			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_ticket_by_severity.php', 'enabledbydefaulton'=>'ticketindex'),
-			3=>array('file'=>'box_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
-			4=>array('file'=>'box_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
-			5=>array('file'=>'box_new_vs_close_ticket.php', 'enabledbydefaulton'=>'ticketindex')
+			0 => array('file' => 'box_last_ticket.php', 'enabledbydefaulton' => 'Home'),
+			1 => array('file' => 'box_last_modified_ticket.php', 'enabledbydefaulton' => 'Home'),
+			2 => array('file' => 'box_ticket_by_severity.php', 'enabledbydefaulton' => 'ticketindex'),
+			3 => array('file' => 'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton' => 'ticketindex'),
+			4 => array('file' => 'box_graph_nb_tickets_type.php', 'enabledbydefaulton' => 'ticketindex'),
+			5 => array('file' => 'box_new_vs_close_ticket.php', 'enabledbydefaulton' => 'ticketindex')
 		); // Boxes list
 
 		// Permissions
@@ -171,43 +222,50 @@ class modTicket extends DolibarrModules
 		$r = 0;
 		$this->rights[$r][0] = 56001; // id de la permission
 		$this->rights[$r][1] = "Read ticket"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'read';
 
 		$r++;
 		$this->rights[$r][0] = 56002; // id de la permission
 		$this->rights[$r][1] = "Create les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'write';
 
 		$r++;
 		$this->rights[$r][0] = 56003; // id de la permission
 		$this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'delete';
 
 		$r++;
 		$this->rights[$r][0] = 56004; // id de la permission
 		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'manage';
+
+		$r++;
+		$this->rights[$r][0] = 56006; // id de la permission
+		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'export';
 
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
 		$this->rights[$r][0] = 56005; // id de la permission
 		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'view';
 		$this->rights[$r][5] = 'all';
 		*/
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
@@ -219,8 +277,8 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 88,
-			'enabled' => '$conf->ticket->enabled',
-			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("ticket")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;*/
@@ -234,8 +292,8 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket',
 			'position' => 101,
-			'enabled' => '$conf->ticket->enabled',
-			'perms' => '$user->rights->ticket->read',
+			'enabled' => 'isModEnabled("ticket")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -247,7 +305,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/card.php?action=create',
 			'langs' => 'ticket',
 			'position' => 102,
-			'enabled' => '$conf->ticket->enabled',
+			'enabled' => 'isModEnabled("ticket")',
 			'perms' => '$user->rights->ticket->write',
 			'target' => '',
 			'user' => 2);
@@ -261,8 +319,8 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 103,
-			'enabled' => '$conf->ticket->enabled',
-			'perms' => '$user->rights->ticket->read',
+			'enabled' => 'isModEnabled("ticket")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -275,8 +333,8 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
 			'langs' => 'ticket',
 			'position' => 105,
-			'enabled' => '$conf->ticket->enabled',
-			'perms' => '$user->rights->ticket->read',
+			'enabled' => 'isModEnabled("ticket")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0);
 		$r++;
@@ -288,10 +346,48 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/stats/index.php',
 			'langs' => 'ticket',
 			'position' => 107,
-			'enabled' => '$conf->ticket->enabled',
-			'perms' => '$user->rights->ticket->read',
+			'enabled' => 'isModEnabled("ticket")',
+			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0);
+		$r++;
+
+		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'type' => 'left',
+			'titre' => 'Categories',
+			'mainmenu' => 'ticket',
+			'url' => '/categories/index.php?type=12',
+			'langs' => 'ticket',
+			'position' => 107,
+			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',
+			'perms' => '$user->hasRight("ticket","read")',
+			'target' => '',
+			'user' => 0);
+		$r++;
+
+		// Exports
+		//--------
+		$r = 1;
+
+		// Export list of tickets and attributes
+		$langs->load("ticket");
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("ticket", "export"));
+		$this->export_icon[$r] = 'ticket';
+		$keyforclass = 'Ticket';
+		$keyforclassfile = '/ticket/class/ticket.class.php';
+		$keyforelement = 'ticket';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		$keyforselect = 'ticket';
+		$keyforaliasextra = 'extra';
+		$keyforelement = 'ticket';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'ticket as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
+		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
+		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('ticket').')';
 		$r++;
 	}
 
@@ -307,13 +403,18 @@ class modTicket extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'ticket');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tickets/template_ticket.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
-		$dest = $dirodt.'/template_order.odt';
+		$dest = $dirodt.'/template_ticket.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -327,12 +428,14 @@ class modTicket extends DolibarrModules
 		}
 
 		$sql = array(
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
-			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('TICKET_ADDON_PDF_ODT_PATH','ticket',".$conf->entity.")"
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
+			array("sql" => "insert into ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			// remove old settings
+			"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
+			// activate default odt templates
+			array("sql" => "INSERT INTO ".$this->db->prefix()."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1),
 		);
 
 		return $this->_init($sql, $options);

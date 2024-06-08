@@ -6,7 +6,9 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2018 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2022 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,7 @@
  *	\brief      Setup page of module ExpenseReport
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -43,6 +46,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'expensereport';
@@ -55,9 +60,9 @@ $type = 'expensereport';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -78,21 +83,22 @@ if ($action == 'updateMask') {
 	$expensespecimen->status = 0; // Force statut draft to show watermark
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/expensereport/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModeleExpenseReport $module';
 
 		if ($module->write_file($expensespecimen, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expensereport&file=SPECIMEN.pdf");
@@ -108,7 +114,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'set') {
 	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-	if ($ret > 0 && empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+	if ($ret > 0 && !getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
 		dolibarr_set_const($db, 'EXPENSEREPORT_ADDON_PDF', $value, 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'del') {
@@ -133,7 +139,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// par appel method canBeActivated
 
 	dolibarr_set_const($db, "EXPENSEREPORT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setoptions') {
@@ -145,7 +151,21 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	$res3 = 0;
+	if (isModEnabled('project') && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
+		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOSTINT('EXPENSEREPORT_PROJECT_IS_REQUIRED'), 'chaine', 0, '', $conf->entity);
+	}
+
+	$dates = GETPOSTINT('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH');
+	$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+
+	$amounts = GETPOSTINT('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
+	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+
+	$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
+	$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0)) {
 		$error++;
 	}
 
@@ -165,7 +185,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport');
 
 $form = new Form($db);
 
@@ -209,16 +229,16 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -228,7 +248,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -238,7 +258,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->EXPENSEREPORT_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -296,7 +316,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -321,6 +343,7 @@ foreach ($dirmodels as $reldir) {
 	if (is_dir($dir)) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
+			$filelist = array();
 			while (($file = readdir($handle)) !== false) {
 				$filelist[] = $file;
 			}
@@ -337,16 +360,16 @@ foreach ($dirmodels as $reldir) {
 						$module = new $classname($db);
 
 						$modulequalified = 1;
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							$modulequalified = 0;
 						}
 
 						if ($modulequalified) {
 							print '<tr class="oddeven"><td width="100">';
-							print (empty($module->name) ? $name : $module->name);
+							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
 								print $module->info($langs);
@@ -358,13 +381,13 @@ foreach ($dirmodels as $reldir) {
 							// Active
 							if (in_array($name, $def)) {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
 								print '</a>';
 								print "</td>";
 							} else {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 								print "</td>";
 							}
 
@@ -373,7 +396,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->EXPENSEREPORT_ADDON_PDF == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 							}
 							print '</td>';
 
@@ -442,11 +465,11 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'EXPENSEREPORT_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td></tr>'."\n";
@@ -455,14 +478,38 @@ print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('EXPENSEREPORT_DRAFT_WATERMARK')).'">';
 print '</td></tr>'."\n";
+
+if (isModEnabled('project')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('ProjectIsRequiredOnExpenseReports');
+	print '</td><td class="right">';
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
+	print '</td></tr>';
+}
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
+print '</td></tr>';
 
 print '</table>';
 
-print '<div class="center">';
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

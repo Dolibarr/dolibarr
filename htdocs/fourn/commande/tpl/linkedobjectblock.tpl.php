@@ -19,11 +19,11 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE fourn/commande/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -42,26 +42,25 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("SupplierOrder"); ?></td>
-		<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowOrder"), "order").' '.$objectlink->ref; ?></a></td>
+		<td><?php print $objectlink->getNomUrl(1); ?></td>
 		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight("fournisseur", "commande", "lire")) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 	</tr>
 	<?php
 }
 if (count($linkedObjectBlock) > 1) {
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
 		<td class="center"></td>

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Einrichtung Produktlieferungen
 RefReception=Liefernummer
 Reception=Lieferung
 Receptions=Lieferungen
@@ -20,15 +19,13 @@ OtherReceptionsForSameOrder=Weitere Lieferungen für diese Bestellung
 ReceptionsAndReceivingForSameOrder=Lieferungen und Eingänge für diese Bestellung
 ReceptionsToValidate=Frei zu gebende Lieferungen
 StatusReceptionCanceled=widerrufen
+StatusReceptionValidatedShort=Bestätigt
 ReceptionSheet=Lieferschein
 ConfirmDeleteReception=Willst du diese Lieferung wirklich löschen?
-ConfirmValidateReception=Bist du sicher, dass du die Lieferung <b>%s</b> freigeben willst?
 ConfirmCancelReception=Bist du sicher, dass du diese Lieferung zurückziehen willst?
-StatsOnReceptionsOnlyValidated=Statistik der frei gegebenen Lieferungen nach ihrem Freigabedatum. (Der geplante LIefertermin ist nicht immer klar.)
 SendReceptionByEMail=Lieferung per E-Mail verschicken.
 SendReceptionRef=Lieferung %s einreichen
 ActionsOnReception=Verknüpfte Ereignisse zur Lieferung
-ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order record.
 ReceptionLine=Lieferposition
 ProductQtyInReceptionAlreadySent=Bereits verschickte Artikel dieser Bestellung
 ProductQtyInSuppliersReceptionAlreadyRecevied=Bereits erhaltene Artikel dieser Lieferantenbestellung

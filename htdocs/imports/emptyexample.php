@@ -48,6 +48,7 @@ function llxFooter()
 	print '</body></html>';
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
@@ -70,25 +71,22 @@ if (empty($datatoimport)) {
 }
 
 
-$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, $datatoimport);
 // Load arrays from descriptor module
-$entity = $objimport->array_import_entities[0][$code];
-$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity;
-$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $entity;
 $fieldstarget = $objimport->array_import_fields[0];
 $valuestarget = $objimport->array_import_examplevalues[0];
 
 $attachment = true;
-if (isset($_GET["attachment"])) {
-	$attachment = $_GET["attachment"];
+if (GETPOSTISSET("attachment")) {
+	$attachment = GETPOST("attachment");
 }
 //$attachment = false;
 $contenttype = dol_mimetype($format);
-if (isset($_GET["contenttype"])) {
-	$contenttype = $_GET["contenttype"];
+if (GETPOSTISSET("contenttype")) {
+	$contenttype = GETPOST("contenttype");
 }
 //$contenttype='text/plain';
 $outputencoding = 'UTF-8';

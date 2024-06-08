@@ -25,6 +25,7 @@
  *	\brief      Fiche d'information sur une resource
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -40,26 +41,40 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'resource', $id, 'resource');
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('resourcenote'));
 
-$object = new DolResource($db);
-$object->fetch($id, $ref);
+$object = new Dolresource($db);
 
-$permissionnote = $user->rights->resource->write; // Used by the include of actions_setnotes.inc.php
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
+
+$permissionnote = $user->hasRight('resource', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
  * View
  */
 
-llxHeader();
+$title = '';
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_notes');
 
 $form = new Form($db);
 
@@ -94,7 +109,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 
-	$permission = $user->rights->resource->write;
+	$permission = $user->hasRight('resource', 'write');
 	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

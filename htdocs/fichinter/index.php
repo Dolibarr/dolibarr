@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,17 @@
 
 /**
  *	\file       htdocs/fichinter/index.php
- *	\ingroup    commande
+ *	\ingroup    ficheinter
  *	\brief      Home page of interventional module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
-if (!$user->rights->ficheinter->lire) {
+if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
 }
 
@@ -43,12 +44,13 @@ $hookmanager->initHooks(array('interventionindex'));
 $langs->load("interventions");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -67,68 +69,58 @@ print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
-	$sql .= ' AND f.fk_soc = '.$user->socid;
+	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	$i = 0;
 
 	$total = 0;
 	$totalinprocess = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-			{
-				$bool = (!empty($row[2]) ?true:false);
-			if (!isset($vals[$row[1].$bool])) {
-				$vals[$row[1].$bool] = 0;
+	if ($num > 0) {
+		while ($row = $db->fetch_row($resql)) {
+			if (!isset($vals[$row[1]])) {
+				$vals[$row[1]] = 0;
 			}
-				$vals[$row[1].$bool] += $row[0];
-				$totalinprocess += $row[0];
-			}
+			$vals[$row[1]] += $row[0];
+			$totalinprocess += $row[0];
+
 			$total += $row[0];
 		}
-		$i++;
 	}
 	$db->free($resql);
-
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(0, 1, 3);
-	$bool = false;
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
+		$listofstatus[] = Fichinter::STATUS_BILLED;
+	}
+
 	foreach ($listofstatus as $status) {
-		$dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
-		if ($status == 3 && !$bool) {
-			$bool = true;
-		} else {
-			$bool = false;
-		}
+		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 
 		if ($status == Fichinter::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
@@ -139,10 +131,8 @@ if ($resql) {
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;
 		}
-		if ($status == Fichinter::STATUS_CLOSED) {
-			$colorseries[$status] = $badgeStatus6;
-		}
 	}
+
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td class="center" colspan="2">';
 
@@ -159,21 +149,15 @@ if ($resql) {
 
 		print '</td></tr>';
 	}
-	$bool = false;
 	foreach ($listofstatus as $status) {
 		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
-			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
-			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
-			print $fichinterstatic->LibStatut($status, $bool, 3);
+			print '<td>'.$fichinterstatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
+			print $fichinterstatic->LibStatut($status, 3);
 			print '</a>';
 			print '</td>';
 			print "</tr>\n";
-			if ($status == 3 && !$bool) {
-				$bool = true;
-			} else {
-				$bool = false;
-			}
 		}
 	}
 	//if ($totalinprocess != $total)
@@ -188,11 +172,11 @@ if ($resql) {
 /*
  * Draft orders
  */
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -201,7 +185,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -229,10 +213,8 @@ if (!empty($conf->ficheinter->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
-
-$max = 5;
 
 /*
  * Last modified interventions
@@ -242,7 +224,7 @@ $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as date
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -251,7 +233,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY f.tms DESC";
@@ -287,7 +269,7 @@ if ($resql) {
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -311,11 +293,11 @@ if ($resql) {
  * interventions to process
  */
 
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -324,7 +306,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.rowid DESC";
@@ -359,7 +341,7 @@ if (!empty($conf->ficheinter->enabled)) {
 
 				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -381,7 +363,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardInterventions', $parameters, $object); // Note that $action and $object may have been modified by hook

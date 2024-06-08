@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -210,7 +210,8 @@ foreach ($dups as $string => $pages) {
 	$inadmin=0;
 	foreach ($pages as $file => $lines) {
 		if ($file == 'main.lang') {
-			$inmain=1; $inadmin=0;
+			$inmain=1;
+			$inadmin=0;
 		}
 		if ($file == 'admin.lang' && ! $inmain) {
 			$inadmin=1;
@@ -218,10 +219,10 @@ foreach ($dups as $string => $pages) {
 
 		$s.=$file." ";
 
-		// Loop on each line keword was found into file.
+		// Loop on each line keyword was found into file.
 		$listoffilesforthisentry=array();
 		foreach ($lines as $line => $translatedvalue) {
-			if (! empty($listoffilesforthisentry[$file])) {
+			if (!empty($listoffilesforthisentry[$file])) {
 				$duplicateinsamefile=1;
 			}
 			$listoffilesforthisentry[$file]=1;
@@ -300,7 +301,7 @@ if ($web) {
 
 // STEP 2 - Search key not used
 
-if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
+if ((!empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
 	print "***** Strings in en_US that are never used:\n";
 
 	$unused=array();
@@ -568,16 +569,16 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	if (empty($unused)) {
 		print "No string not used found.\n";
 	} else {
-		$filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
+		$filetosave='/tmp/'.($argv[2] ? $argv[2] : "").'notused.lang';
 		print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
 		file_put_contents($filetosave, implode("", $unused));
 		print "To remove from original file, run command :\n";
-		if (($argv[2]?$argv[2]:"")) {
-			print 'cd htdocs/langs/en_US; mv '.($argv[2]?$argv[2]:"")." ".($argv[2]?$argv[2]:"").".tmp; ";
+		if (($argv[2] ? $argv[2] : "")) {
+			print 'cd htdocs/langs/en_US; mv '.($argv[2] ? $argv[2] : "")." ".($argv[2] ? $argv[2] : "").".tmp; ";
 		}
-		print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"");
-		if (($argv[2]?$argv[2]:"")) {
-			print "; rm ".($argv[2]?$argv[2]:"").".tmp;\n";
+		print "diff ".($argv[2] ? $argv[2] : "").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2] ? $argv[2] : "");
+		if (($argv[2] ? $argv[2] : "")) {
+			print "; rm ".($argv[2] ? $argv[2] : "").".tmp;\n";
 		}
 	}
 }

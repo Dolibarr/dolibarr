@@ -24,6 +24,7 @@
  *     \brief      Page with reception statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
@@ -32,15 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
-$langs->loadLangs(array("reception", "other", "companies"));
+$langs->loadLangs(array("receptions", "other", "companies"));
 
 // Security check
 if ($user->socid) {
@@ -59,7 +60,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
-
+$dir = (!empty($conf->reception->multidir_temp[$conf->entity]) ? $conf->reception->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -70,7 +71,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
@@ -78,9 +79,11 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -105,7 +108,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filenameamount = $dir.'/receptionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -143,7 +146,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filename_avg = $dir.'/receptionsaverage-'.$user->id.'-'.$year.'.png';
 }
@@ -202,7 +205,7 @@ $type = 'reception_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -233,7 +236,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -282,7 +285,7 @@ foreach ($data as $val) {
 print '</table>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -299,8 +302,8 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
-print '<div style="clear:both"></div>';
+print '</div></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

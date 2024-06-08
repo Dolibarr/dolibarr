@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_nb_ticket_last_x_days.php
+ *     \file        htdocs/core/boxes/box_graph_new_vs_close_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
@@ -30,18 +30,12 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_new_vs_close_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 * Constructor
@@ -85,7 +79,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text)
 		);
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$data = array();
 			$totalnb = 0;
 			$sql = "SELECT COUNT(t.datec) as nb";
@@ -98,10 +92,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketCreatedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -116,10 +110,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketClosedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -134,7 +128,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseries));
+					$px1->SetDataColor($colorseries);
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
@@ -157,14 +151,14 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity"),
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("BoxNoTicketSeverity").'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

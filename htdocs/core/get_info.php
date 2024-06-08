@@ -33,7 +33,7 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language and need security layer
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
@@ -56,8 +56,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 $title = $langs->trans("Info");
 
-// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Quick access -->'."\n";
+// URL http://mydolibarr/core/get_info.php?dol_use_jmobile=1 can be used for tests
+$head = '<!-- Info user page -->'."\n";
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -70,8 +70,8 @@ print '<div style="padding: 20px;">';
 
 // Define link to login card
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 	if (preg_match('/\d\.\d/', $appli)) {
 		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 			$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -83,17 +83,19 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$appli .= " ".DOL_VERSION;
 }
 
-if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
+	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.getDolGlobalInt('MAIN_FEATURES_LEVEL');
 }
 
 $logouttext = '';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+$logouthtmltext = '';
+$toprightmenu = '';
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 		$logouthtmltext .= $langs->trans("Logout").'<br>';
 
-		$logouttext .= '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+		$logouttext .= '<a href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 		//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
 		$logouttext .= '</a>';
@@ -137,77 +139,17 @@ if (!isset($form) || !is_object($form)) {
 }
 
 // Link to module builder
-if (!empty($conf->modulebuilder->enabled)) {
+if (isModEnabled('modulebuilder')) {
 	$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';
 	$text .= '</a>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
-// Link to print main content area
-/*
-if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone')
-{
-	$qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
-
-	if (is_array($_POST))
-	{
-		foreach($_POST as $key=>$value) {
-			if ($key!=='action' && $key!=='password' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
-		}
-	}
-	$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
-	$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-	//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
-	$text.='<span class="fa fa-print atoplogin"></span>';
-	$text.='</a>';
-	$toprightmenu .= $form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
-}
-*/
-
-// Link to Dolibarr wiki pages
-/*
-if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-{
-	$langs->load("help");
-
-	$helpbaseurl='';
-	$helppage='';
-	$mode='';
-
-	if (empty($helppagename)) $helppagename='EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
-
-	// Get helpbaseurl, helppage and mode from helppagename and langs
-	$arrayres=getHelpParamFor($helppagename,$langs);
-	$helpbaseurl=$arrayres['helpbaseurl'];
-	$helppage=$arrayres['helppage'];
-	$mode=$arrayres['mode'];
-
-	// Link to help pages
-	if ($helpbaseurl && $helppage)
-	{
-		$text='';
-		$title=$appli.'<br>';
-		$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
-		if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-		$text.='<a class="help" target="_blank" rel="noopener" href="';
-		if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
-		else $text.=sprintf($helpbaseurl,$helppage);
-		$text.='">';
-		//$text.=img_picto('', 'helpdoc_top').' ';
-		$text.='<span class="fa fa-question-circle atoplogin"></span>';
-		//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-		//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
-		$text.='</a>';
-		//$toprightmenu.='</div>'."\n";
-		$toprightmenu .= $form->textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
-	}
-}
-*/
-
 // Logout link
-if (GETPOST('withlogout', 'int')) {
+if (GETPOSTINT('withlogout')) {
 	$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 }
 

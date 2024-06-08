@@ -28,11 +28,12 @@
  *	\brief      Setup page to configure company social networks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
@@ -83,16 +84,19 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-company_socialnetworks');
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'socialnetworks', $langs->trans("SocialNetworksInformation"), -1, 'company');
+print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MoreNetworksAvailableWithModule")."</span><br>\n";
 print "<br>\n";
 
 
@@ -108,22 +112,26 @@ print '<input type="hidden" name="action" value="update">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
+print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td>';
+print '<td>'.$langs->trans("SocialNetworkId").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Url"), $langs->trans("KeepEmptyToUseDefault")).'</td>';
+print '<td></td>';
 print "</tr>\n";
 
-
+$listofnetworks = dol_sort_array($listofnetworks, 'label');
+//var_dump($listofnetworks);
 foreach ($listofnetworks as $key => $value) {
 	if (!empty($value['active'])) {
 		print '<tr class="oddeven">';
 		print '<td><label for="'.$key.'url">'.$langs->trans(ucfirst($key)).'</label></td>';
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
-		print '<td class="nowraponall"><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
-		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
+		print '<td class="nowraponall"><span class="paddingright fab '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
+		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.dol_escape_htmltag(getDolGlobalString($networkconstid)).'">';
 		print '</td><td>';
-		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
+		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.dol_escape_htmltag(getDolGlobalString($networkconstname)).'">';
 		print '</td>';
-		print '<td class="nowraponall">'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
+		print '<td class="nowraponall">'.dol_print_socialnetworks(dol_escape_htmltag(getDolGlobalString($networkconstid)), 0, 0, $key, $listofnetworks).'</td>';
 		print '</tr>'."\n";
 	}
 }
@@ -131,11 +139,8 @@ foreach ($listofnetworks as $key => $value) {
 print "</table>";
 print '</div>';
 
-print '<br>';
 
-print '<br><div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

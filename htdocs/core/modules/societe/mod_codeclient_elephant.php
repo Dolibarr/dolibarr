@@ -4,7 +4,8 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,41 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Elephant';
+	public $version = 'dolibarr';
 
-	/**
-	 * @var int Code modifiable
-	 */
-	public $code_modifiable;
-
-	/**
-	 * @var int Code modifiable si il est invalide
-	 */
-	public $code_modifiable_invalide;
-
-	/**
-	 * @var int Code modifiables si il est null
-	 */
-	public $code_modifiable_null;
-
-	/**
-	 * @var int Code facultatif
-	 */
-	public $code_null;
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
+	// variables not inherited
 
 	/**
 	 * @var string search string
@@ -81,17 +52,16 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public $numbitcounter;
 
-	/**
-	 * @var int thirdparty prefix is required when using {pre}
-	 */
-	public $prefixIsRequired;
-
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -119,6 +89,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ELEPHANT_MASK_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
@@ -132,15 +103,15 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
 		$texte .= '</tr>';
 
 		// Parametrage du prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -153,12 +124,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = '', $type = -1)
 	{
 		$examplecust = '';
 		$examplesup = '';
@@ -166,25 +137,33 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			"ErrorBadMask",
 			"ErrorCantUseRazIfNoYearInMask",
 			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
+			"ErrorCounterMustHaveMoreThan3Digits",
+			"ErrorBadMaskBadRazMonth",
+			"ErrorCantUseRazWithYearOnOneDigit",
 		);
+
+		$cssforerror = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') == 'mod_codeclient_elephant' ? 'error' : 'opacitymedium');
+
 		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
-			if (!$examplecust) {
-				$examplecust = $langs->trans('NotConfigured');
+			if (!$examplecust && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
+				$langs->load("errors");
+				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
 			}
 			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
+				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans($examplecust).'</span>';
 			}
 		}
 		if ($type != 0) {
 			$examplesup = $this->getNextValue($objsoc, 1);
-			if (!$examplesup) {
-				$examplesup = $langs->trans('NotConfigured');
+			if (!$examplesup && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
+				$langs->load("errors");
+				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
 			}
 			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
+				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans($examplesup).'</span>';
 			}
 		}
 
@@ -200,23 +179,23 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @param	Societe|string	$objsoc     Object third party
+	 * @param  	int		    	$type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @return 	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// Get Mask value
 		$mask = '';
 		if ($type == 0) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+			$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		}
 		if ($type == 1) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+			$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -254,12 +233,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
@@ -292,18 +271,18 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
 			}
 			if ($type == 1) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
 			}
 			if (!$mask) {
 				$this->error = 'NotConfigured';
@@ -315,7 +294,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				return -6;
 			} else {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				}
 			}
@@ -328,11 +307,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *		Indicate if the code is available or not (by another third party)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
+	 *		@param	DoliDB		$db			Handler access base
 	 *		@param	string		$code		Code a verifier
-	 *		@param	Societe		$soc		Objet societe
+	 *		@param	Societe		$soc		Object societe
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */

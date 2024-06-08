@@ -1,0 +1,40 @@
+Module68000Name = Adroddiad Intracomm
+Module68000Desc = Rheoli adroddiadau Intracomm (Cymorth ar gyfer fformat DEB/DES Ffrangeg)
+IntracommReportSetup = Gosod modiwl Intracommreport
+IntracommReportAbout = Ynglŷn ag adroddiad intracomm
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Math d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôl joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categori gwasanaethau o'r math "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Rhif declarant
+
+# Menu
+MenuIntracommReport=Adroddiad Intracomm
+MenuIntracommReportNew=Datganiad newydd
+MenuIntracommReportList=Rhestr
+
+# View
+NewDeclaration=Datganiad newydd
+Declaration=Datganiad
+AnalysisPeriod=Cyfnod dadansoddi
+TypeOfDeclaration=Math o ddatganiad
+DEB=Datganiad cyfnewid nwyddau (DEB)
+DES=Datganiad cyfnewid gwasanaethau (DES)
+
+# Export page
+IntracommReportTitle=Paratoi ffeil XML mewn fformat ProDouane
+
+# List
+IntracommReportList=Rhestr o ddatganiadau a gynhyrchwyd
+IntracommReportNumber=Nifer y datganiad
+IntracommReportPeriod=Cyfnod dadansoddi
+IntracommReportTypeDeclaration=Math o ddatganiad
+IntracommReportDownload=lawrlwytho ffeil XML
+
+# Invoice
+IntracommReportTransportMode=Dull trafnidiaeth

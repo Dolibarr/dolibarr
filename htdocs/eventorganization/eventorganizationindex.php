@@ -33,7 +33,8 @@ $langs->loadLangs(array("eventorganization"));
 
 $action = GETPOST('action', 'aZ09');
 
-$max = 5;
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $now = dol_now();
 
 // Security check
@@ -71,7 +72,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganization->read)
+if (isModEnabled('eventorganization') && $user->rights->eventorganization->read)
 {
 	$langs->load("orders");
 
@@ -144,15 +145,12 @@ if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganizati
 END MODULEBUILDER DRAFT MYOBJECT */
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
-
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganization->read)
+if (isModEnabled('eventorganization') && $user->rights->eventorganization->read)
 {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."eventorganization_myobject as s";
@@ -205,7 +203,7 @@ if (! empty($conf->eventorganization->enabled) && $user->rights->eventorganizati
 }
 */
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

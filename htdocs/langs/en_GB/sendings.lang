@@ -1,4 +1,3 @@
 # Dolibarr language file - Source file is en_US - sendings
 StatusSendingCanceled=Cancelled
 StatusSendingCanceledShort=Cancelled
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.

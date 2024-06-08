@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+DefinePropertiesFromExistingTable=Define properties from an existing table
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object

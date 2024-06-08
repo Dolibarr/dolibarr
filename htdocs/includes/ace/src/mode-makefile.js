@@ -398,6 +398,7 @@ oop.inherits(Mode, TextMode);
     this.$indentWithTabs = true;
     
     this.$id = "ace/mode/makefile";
+    this.snippetFileId = "ace/snippets/makefile";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,34 +28,42 @@
  *		\brief      Page to list actions
  */
 
-if (!defined("NOREDIRECTBYMAINTOLOGIN")) {
-	define('NOREDIRECTBYMAINTOLOGIN', 1);
-}
-
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
-$resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
-$pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
+$optioncss 	= GETPOST('optioncss', 'alpha');
+
+
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
+
+$mode = GETPOST('mode', 'aZ09');
+if (empty($mode) && preg_match('/show_/', $action)) {
+	$mode = $action;	// For backward compatibility
+}
+$resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
+$pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
-$type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
-$optioncss = GETPOST('optioncss', 'alpha');
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
-$day = GETPOST("day", 'int');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
+$type = GETPOST('search_type', 'alphanohtml') ? GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
+$day = GETPOSTINT("day");
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
@@ -63,29 +72,32 @@ if (GETPOST('search_actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
-if ($actioncode == '' && empty($actioncodearray)) {
-	$actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
-}
+
+// Search Fields
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'), 'tzuserrel');
-$dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'), 'tzuserrel');
+// $dateselect is a day included inside the event range
+$dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'), 'tzuserrel');
+$datestart_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('datestart_dtstartmonth'), GETPOSTINT('datestart_dtstartday'), GETPOSTINT('datestart_dtstartyear'), 'tzuserrel');
+$datestart_dtend = dol_mktime(23, 59, 59, GETPOSTINT('datestart_dtendmonth'), GETPOSTINT('datestart_dtendday'), GETPOSTINT('datestart_dtendyear'), 'tzuserrel');
+$dateend_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('dateend_dtstartmonth'), GETPOSTINT('dateend_dtstartday'), GETPOSTINT('dateend_dtstartyear'), 'tzuserrel');
+$dateend_dtend = dol_mktime(23, 59, 59, GETPOSTINT('dateend_dtendmonth'), GETPOSTINT('dateend_dtendday'), GETPOSTINT('dateend_dtendyear'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
-	$search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
-if (empty($action) && !GETPOSTISSET('action')) {
-	$action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+if (empty($mode) && !GETPOSTISSET('mode')) {
+	$mode = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 }
 
-$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOST("search_showbirthday", "int") ?GETPOST("search_showbirthday", "int") : GETPOST("showbirthday", "int")) : 1;
+$filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
+$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOSTINT("search_showbirthday") ? GETPOSTINT("search_showbirthday") : GETPOSTINT("showbirthday")) : 1;
+$search_categ_cus = GETPOST("search_categ_cus", "intcomma", 3) ? GETPOST("search_categ_cus", "intcomma", 3) : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new ActionComm($db);
@@ -98,14 +110,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
+if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 	$filtert = $user->id;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+// Pagination parameters
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -125,7 +138,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", 'int') ?GETPOST("search_socid", 'int') : GETPOST("socid", 'int');
+$socid = GETPOSTINT("search_socid") ? GETPOSTINT("search_socid") : GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -134,36 +147,37 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {	// If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
 $arrayfields = array(
-	'a.id'=>array('label'=>"Ref", 'checked'=>1),
-	'owner'=>array('label'=>"Owner", 'checked'=>1),
-	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
-	'a.label'=>array('label'=>"Title", 'checked'=>1),
-	'a.note'=>array('label'=>'Description', 'checked'=>0),
-	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
-	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>0),
-	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>1, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
-	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>510),
-	'a.tms'=>array('label'=>'DateModification', 'checked'=>0, 'position'=>520),
-	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
+	'a.id' => array('label' => "Ref", 'checked' => 1),
+	'owner' => array('label' => "Owner", 'checked' => 1),
+	'c.libelle' => array('label' => "Type", 'checked' => 1),
+	'a.label' => array('label' => "Title", 'checked' => 1),
+	'a.note' => array('label' => 'Description', 'checked' => 0),
+	'a.datep' => array('label' => "DateStart", 'checked' => 1),
+	'a.datep2' => array('label' => "DateEnd", 'checked' => 1),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	'a.fk_contact' => array('label' => "Contact", 'checked' => 0),
+	'a.fk_element' => array('label' => "LinkedObject", 'checked' => 1, 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
+	'a.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 510),
+	'a.tms' => array('label' => 'DateModification', 'checked' => 0, 'position' => 520),
+	'a.percent' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
@@ -176,7 +190,8 @@ if ($user->socid && $socid) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$mode = 'list';
+	$massaction = '';
 }
 
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday")) {
@@ -191,7 +206,7 @@ if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday")) {
 	exit;
 }
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -205,10 +220,19 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_id = '';
 	$search_title = '';
 	$search_note = '';
-	$datestart = '';
-	$dateend = '';
+	$datestart_dtstart = '';
+	$datestart_dtend = '';
+	$dateend_dtstart = '';
+	$dateend_dtend = '';
+	$actioncode = '';
 	$search_status = '';
-	$toselect = '';
+	$pid = '';
+	$socid = '';
+	$resourceid = '';
+	$filter = '';
+	$filtert = '';
+	$usergroup = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -246,18 +270,22 @@ if (empty($reshook)) {
 	$objectlabel = 'Events';
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
-	$permissiontodelete = $user->rights->agenda->allactions->delete;
-	$permissiontoadd = $user->rights->agenda->myactions->create;
+	$permissiontodelete = $user->hasRight('agenda', 'allactions', 'delete');
+	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create');
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);
 $userstatic = new User($db);
 $formactions = new FormActions($db);
+
+$actionstatic = new ActionComm($db);
+$societestatic = new Societe($db);
+$contactstatic = new Contact($db);
 
 $nav = '';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
@@ -265,8 +293,9 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 
 $now = dol_now();
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
-llxHeader('', $langs->trans("Agenda"), $help_url);
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
+$title = $langs->trans("Agenda");
+llxHeader('', $title, $help_url);
 
 // Define list of all external calendars
 $listofextcals = array();
@@ -276,7 +305,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($actioncode != '') {
 	if (is_array($actioncode)) {
@@ -288,9 +317,9 @@ if ($actioncode != '') {
 	}
 }
 if ($resourceid > 0) {
-	$param .= "&search_resourceid=".urlencode($resourceid);
+	$param .= "&search_resourceid=".urlencode((string) ($resourceid));
 }
-if ($search_status != '' && $search_status > -1) {
+if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($filter) {
@@ -300,22 +329,22 @@ if ($filtert) {
 	$param .= "&search_filtert=".urlencode($filtert);
 }
 if ($usergroup > 0) {
-	$param .= "&search_usergroup=".urlencode($usergroup);
+	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
 }
 if ($socid > 0) {
-	$param .= "&search_socid=".urlencode($socid);
+	$param .= "&search_socid=".urlencode((string) ($socid));
 }
 if ($showbirthday) {
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
-	$param .= "&search_projectid=".urlencode($pid);
+	$param .= "&search_projectid=".urlencode((string) ($pid));
 }
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($search_id != '') {
-	$param .= '&search_title='.urlencode($search_id);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
@@ -323,27 +352,49 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday', 'int')) {
-	$param .= '&datestartday='.GETPOST('datestartday', 'int');
+if (GETPOSTINT('datestart_dtstartday')) {
+	$param .= '&datestart_dtstartday='.GETPOSTINT('datestart_dtstartday');
 }
-if (GETPOST('datestartmonth', 'int')) {
-	$param .= '&datestartmonth='.GETPOST('datestartmonth', 'int');
+if (GETPOSTINT('datestart_dtstartmonth')) {
+	$param .= '&datestart_dtstartmonth='.GETPOSTINT('datestart_dtstartmonth');
 }
-if (GETPOST('datestartyear', 'int')) {
-	$param .= '&datestartyear='.GETPOST('datestartyear', 'int');
+if (GETPOSTINT('datestart_dtstartyear')) {
+	$param .= '&datestart_dtstartyear='.GETPOSTINT('datestart_dtstartyear');
 }
-if (GETPOST('dateendday', 'int')) {
-	$param .= '&dateendday='.GETPOST('dateendday', 'int');
+if (GETPOSTINT('datestart_dtendday')) {
+	$param .= '&datestart_dtendday='.GETPOSTINT('datestart_dtendday');
 }
-if (GETPOST('dateendmonth', 'int')) {
-	$param .= '&dateendmonth='.GETPOST('dateendmonth', 'int');
+if (GETPOSTINT('datestart_dtendmonth')) {
+	$param .= '&datestart_dtendmonth='.GETPOSTINT('datestart_dtendmonth');
 }
-if (GETPOST('dateendyear', 'int')) {
-	$param .= '&dateendyear='.GETPOST('dateendyear', 'int');
+if (GETPOSTINT('datestart_dtendyear')) {
+	$param .= '&datestart_dtendyear='.GETPOSTINT('datestart_dtendyear');
+}
+if (GETPOSTINT('dateend_dtstartday')) {
+	$param .= '&dateend_dtstartday='.GETPOSTINT('dateend_dtstartday');
+}
+if (GETPOSTINT('dateend_dtstartmonth')) {
+	$param .= '&dateend_dtstartmonth='.GETPOSTINT('dateend_dtstartmonth');
+}
+if (GETPOSTINT('dateend_dtstartyear')) {
+	$param .= '&dateend_dtstartyear='.GETPOSTINT('dateend_dtstartyear');
+}
+if (GETPOSTINT('dateend_dtendday')) {
+	$param .= '&dateend_dtendday='.GETPOSTINT('dateend_dtendday');
+}
+if (GETPOSTINT('dateend_dtendmonth')) {
+	$param .= '&dateend_dtendmonth='.GETPOSTINT('dateend_dtendmonth');
+}
+if (GETPOSTINT('dateend_dtendyear')) {
+	$param .= '&dateend_dtendyear='.GETPOSTINT('dateend_dtendyear');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_categ_cus != 0) {
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -355,13 +406,13 @@ $arrayofmassactions = array(
 	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
 	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
 );
-if ($user->rights->agenda->allactions->delete) {
+if ($user->hasRight('agenda', 'allactions', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->agenda->myactions->create) {
+if (isModEnabled('category') && $user->hasRight('agenda', 'myactions', 'create')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -372,7 +423,7 @@ if ($usergroup > 0) {
 }
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
 $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
-$sql .= ' a.fk_user_author,a.fk_user_action,';
+$sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
@@ -381,20 +432,19 @@ $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
@@ -402,7 +452,7 @@ $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -413,7 +463,7 @@ $sql .= " WHERE c.id = a.fk_action";
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (!empty($actioncode)) {
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
@@ -446,13 +496,24 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
-// We must filter on assignement table
+// Search on socid
+if ($socid) {
+	$sql .= " AND a.fk_soc = ".((int) $socid);
+}
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -486,7 +547,7 @@ if ($search_title) {
 if ($search_note) {
 	$sql .= natural_search('a.note', $search_note);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
@@ -502,11 +563,26 @@ if ($filtert > 0 || $usergroup > 0) {
 if ($dateselect > 0) {
 	$sql .= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."') OR (a.datep2 IS NULL AND a.datep > '".$db->idate($dateselect - 3600)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."'))";
 }
-if ($datestart > 0) {
-	$sql .= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart + 3600 * 24 - 1)."'";
+if ($datestart_dtstart > 0) {
+	$sql .= " AND a.datep >= '".$db->idate($datestart_dtstart)."'";
 }
-if ($dateend > 0) {
-	$sql .= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend + 3600 * 24 - 1)."'";
+if ($datestart_dtend > 0) {
+	$sql .= " AND a.datep <= '".$db->idate($datestart_dtend)."'";
+}
+if ($dateend_dtstart > 0) {
+	$sql .= " AND a.datep2 >= '".$db->idate($dateend_dtstart)."'";
+}
+if ($dateend_dtend > 0) {
+	$sql .= " AND a.datep2 <= '".$db->idate($dateend_dtend)."'";
+}
+
+// Search in categories, -1 is all and -2 is no categories
+if ($search_categ_cus != -1) {
+	if ($search_categ_cus == -2) {
+		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
+	} elseif ($search_categ_cus > 0) {
+		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
+	}
 }
 
 // Add where from extra fields
@@ -514,501 +590,433 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	// TODO Set and use an optimized request in $sqlforcount with no fields and no useless join to caluclate nb of records
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
-//print $sql;
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
-dol_syslog("comm/action/list.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql) {
-	$actionstatic = new ActionComm($db);
-	$societestatic = new Societe($db);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
 
-	$num = $db->num_rows($resql);
+$num = $db->num_rows($resql);
 
-	$arrayofselected = is_array($toselect) ? $toselect : array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	// Local calendar
-	$newtitle = '<div class="nowrap clear inline-block minheight30 margintoponly">';
-	$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
-	$newtitle .= '</div>';
-	//$newtitle=$langs->trans($title);
+// Local calendar
+$newtitle = '<div class="nowrap clear inline-block minheight30">';
+$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
+$newtitle .= '</div>';
+//$newtitle=$langs->trans($title);
 
-	$tabactive = 'cardlist';
+$tabactive = 'cardlist';
 
-	$head = calendars_prepare_head($param);
+$head = calendars_prepare_head($param);
 
-	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="type" value="'.$type.'">';
-	$nav = '';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
+$nav = '';
 
-	if ($filter) {
-		$nav .= '<input type="hidden" name="search_filter" value="'.$filter.'">';
-	}
-	if ($showbirthday) {
-		$nav .= '<input type="hidden" name="search_showbirthday" value="1">';
-	}
-	print $nav;
+if ($filter) {
+	$nav .= '<input type="hidden" name="search_filter" value="'.$filter.'">';
+}
+if ($showbirthday) {
+	$nav .= '<input type="hidden" name="search_showbirthday" value="1">';
+}
+print $nav;
 
-	//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-	//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	//print dol_get_fiche_end();
+//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+//print dol_get_fiche_end();
 
-	// Add link to show birthdays
-	/*
-	$link = '';
-	if (empty($conf->use_javascript_ajax))
-	{
-		$newparam=$param;   // newparam is for birthday links
-		$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
-		if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-		$link='<a href="'.$_SERVER['PHP_SELF'];
-		$link.='?'.$newparam;
-		$link.='">';
-		if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
-		else $link.=$langs->trans("AgendaHideBirthdayEvents");
-		$link.='</a>';
-	}
-	*/
 
-	$s = $newtitle;
+$s = $newtitle;
 
-	// Calendars from hooks
-	$parameters = array(); $object = null;
-	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
-	if (empty($reshook)) {
-		$s .= $hookmanager->resPrint;
-	} elseif ($reshook > 1) {
-		$s = $hookmanager->resPrint;
-	}
+// Calendars from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
+if (empty($reshook)) {
+	$s .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$s = $hookmanager->resPrint;
+}
+$viewyear = is_object($object) ? dol_print_date($object->datep, '%Y') : '';
+$viewmonth = is_object($object) ? dol_print_date($object->datep, '%m') : '';
+$viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
+$viewmode = '';
+$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
+//$viewmode .= '</span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
-	$viewmode = '';
-	$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
-	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
-	//$viewmode .= '</span>';
-	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
+//$viewmode .= '</span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
-	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
-	//$viewmode .= '</span>';
-	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+$viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
+//$viewmode .= '</span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
-	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
-	//$viewmode .= '</span>';
-	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+$viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
+//$viewmode .= '</span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
-	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
-	//$viewmode .= '</span>';
-	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+$viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
+//$viewmode .= '</span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
-	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
-	//$viewmode .= '</span>';
-	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
+$viewmode .= '<span class="marginrightonly"></span>';
 
-	$viewmode .= '<span class="marginrightonly"></span>';
+// Add more views from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+if (empty($reshook)) {
+	$viewmode .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$viewmode = $hookmanager->resPrint;
+}
 
-	// Add more views from hooks
-	$parameters = array(); $object = null;
-	$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
-	if (empty($reshook)) {
-		$viewmode .= $hookmanager->resPrint;
-	} elseif ($reshook > 1) {
-		$viewmode = $hookmanager->resPrint;
-	}
+$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+$newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
-	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = '100000';
+$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create'));
 
-	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
-	$url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
-	$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+$param .= '&mode='.urlencode($mode);
 
-	$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, is_numeric($nbtotalofrecords) ? -1 * $nbtotalofrecords : $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
 
-	$param .= '&action='.$action;
+print $s;
 
-	print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+$objecttmp = new ActionComm($db);
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	print $s;
+$moreforfilter = '';
 
-	$objecttmp = new ActionComm($db);
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+if ($massactionbutton) {
+	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+}
+$i = 0;
 
-	$moreforfilter = '';
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print '</div>';
 
-	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-	if ($massactionbutton) {
-		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-	}
-	$i = 0;
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div>';
-
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
-
-	print '<tr class="liste_titre_filter">';
-	if (!empty($arrayfields['a.id']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
-	}
-	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['c.libelle']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['a.label']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
-	}
-	if (!empty($arrayfields['a.note']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
-	}
-	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
-		print '</td>';
-	}
-	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
-		print '</td>';
-	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['a.fk_contact']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['a.fk_element']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	if (!empty($arrayfields['a.datec']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['a.tms']['checked'])) {
-		print '<td class="liste_titre"></td>';
-	}
-	if (!empty($arrayfields['a.percent']['checked'])) {
-		print '<td class="liste_titre center">';
-		$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'minwidth100imp maxwidth125');
-		print ajax_combobox('selectsearch_status');
-		print '</td>';
-	}
-	// Action column
+print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre" align="middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
+if (!empty($arrayfields['a.id']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+}
+if (!empty($arrayfields['owner']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['c.libelle']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.label']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
+}
+if (!empty($arrayfields['a.note']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
+}
+if (!empty($arrayfields['a.datep']['checked'])) {
+	print '<td class="liste_titre nowraponall" align="center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($datestart_dtstart, 'datestart_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($datestart_dtend, 'datestart_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+	print '</div>';
+	print '</td>';
+}
+if (!empty($arrayfields['a.datep2']['checked'])) {
+	print '<td class="liste_titre nowraponall" align="center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($dateend_dtstart, 'dateend_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($dateend_dtend, 'dateend_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+	print '</div>';
+	print '</td>';
+}
+if (!empty($arrayfields['s.nom']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.fk_contact']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.fk_element']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+if (!empty($arrayfields['a.datec']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.tms']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['a.percent']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'search_status width100 onrightofpage');
+	print '</td>';
+}
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-	print "</tr>\n";
+}
+print '</tr>'."\n";
 
-	print '<tr class="liste_titre">';
-	if (!empty($arrayfields['a.id']['checked'])) {
-		print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['owner']['checked'])) {
-		print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['c.libelle']['checked'])) {
-		print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"], "c.libelle", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.label']['checked'])) {
-		print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.note']['checked'])) {
-		print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
-	}
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (!empty($arrayfields['a.datep']['checked'])) {
-		print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.fk_contact']['checked'])) {
-		print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.fk_element']['checked'])) {
-		print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
-	}
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
-	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	if (!empty($arrayfields['a.datec']['checked'])) {
-		print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['a.tms']['checked'])) {
-		print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
-	}
-
-	if (!empty($arrayfields['a.percent']['checked'])) {
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", 'align="center"', $sortfield, $sortorder);
-	}
+// Fields title label
+// --------------------------------------------------------------------
+print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
-	print "</tr>\n";
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.id']['checked'])) {
+	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['owner']['checked'])) {
+	print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.libelle']['checked'])) {
+	print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"], "c.libelle", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.label']['checked'])) {
+	print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.note']['checked'])) {
+	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
+if (!empty($arrayfields['a.datep']['checked'])) {
+	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.datep2']['checked'])) {
+	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.nom']['checked'])) {
+	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.fk_contact']['checked'])) {
+	print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.fk_element']['checked'])) {
+	print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
-	$contactstatic = new Contact($db);
-	$now = dol_now();
-	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+if (!empty($arrayfields['a.datec']['checked'])) {
+	print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['a.tms']['checked'])) {
+	print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+// Status
+if (!empty($arrayfields['a.percent']['checked'])) {
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	$totalarray['nbfield']++;
+}
+print "</tr>\n";
 
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-	$caction = new CActionComm($db);
-	$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
-	$contactListCache = array();
+$now = dol_now();
+$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$today_start_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
 
-	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($resql);
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+$caction = new CActionComm($db);
+$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
+$contactListCache = array();
 
-		// Discard auto action if option is on
-		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO') {
-			$i++;
-			continue;
+// Loop on record
+// --------------------------------------------------------------------
+$i = 0;
+//$savnbfield = $totalarray['nbfield'];
+//$totalarray['nbfield'] = 0;
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+$cache_user_list = array();
+while ($i < $imaxinloop) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
+
+	// Store properties in $object
+	$object->setVarsFromFetchObj($obj);
+
+	// Discard auto action if option is on
+	if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
+		$i++;
+		continue;
+	}
+
+	$actionstatic->id = $obj->id;
+	$actionstatic->ref = $obj->id;
+	$actionstatic->code = $obj->code;
+	$actionstatic->type_code = $obj->type_code;
+	$actionstatic->type_label = $obj->type_label;
+	$actionstatic->type_picto = $obj->type_picto;
+	$actionstatic->type_color = $obj->type_color;
+	$actionstatic->label = $obj->label;
+	$actionstatic->location = $obj->location;
+	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
+	$actionstatic->datep = $db->jdate($obj->dp);
+	$actionstatic->percentage = $obj->percent;
+	$actionstatic->authorid = $obj->fk_user_author;
+	$actionstatic->userownerid = $obj->fk_user_action;
+
+	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
+	// but only if we need it
+	if (!empty($arrayfields['a.fk_contact']['checked'])) {
+		$actionstatic->fetchResources();
+	}
+
+	// cache of user list (owners)
+	if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+		$userstatic = new User($db);
+		$res = $userstatic->fetch($obj->fk_user_action);
+		if ($res > 0) {
+			$cache_user_list[$obj->fk_user_action] = $userstatic;
+		}
+	}
+
+	// get event style for user owner
+	$event_owner_style = '';
+	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+	if ($cache_user_list[$obj->fk_user_action]->color != '') {
+		$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
+	}
+
+	// get event style for start and end date
+	$event_more_class = '';
+	$event_start_date_css = '';
+	$event_end_date_css = '';
+	$event_start_date_time = $actionstatic->datep;
+	if ($event_start_date_time > $now) {
+		// future event
+		$event_more_class = 'event-future';
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	} else {
+		if ($obj->fulldayevent == 1) {
+			$today_start_date_time = $today_start_time;
+		} else {
+			$today_start_date_time = $now;
 		}
 
-		$actionstatic->id = $obj->id;
-		$actionstatic->ref = $obj->id;
-		$actionstatic->code = $obj->code;
-		$actionstatic->type_code = $obj->type_code;
-		$actionstatic->type_label = $obj->type_label;
-		$actionstatic->type_picto = $obj->type_picto;
-		$actionstatic->type_color = $obj->type_color;
-		$actionstatic->label = $obj->label;
-		$actionstatic->location = $obj->location;
-		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
-		$actionstatic->datep = $db->jdate($obj->dp);
-		$actionstatic->percentage = $obj->percent;
-
-		// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
-		// but only if we need it
-		if (!empty($arrayfields['a.fk_contact']['checked'])) {
-			$actionstatic->fetchResources();
+		// check event end date
+		$event_end_date_time = $db->jdate($obj->dp2);
+		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} else {
+			// current event
+			$event_more_class = 'event-current';
 		}
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	}
+	$event_start_date_css = $event_end_date_css = $event_more_class;
 
-		print '<tr class="oddeven">';
-
-		// Ref
-		if (!empty($arrayfields['a.id']['checked'])) {
-			print '<td class="nowraponall">';
-			print $actionstatic->getNomUrl(1, -1);
-			print '</td>';
-		}
-
-		// User owner
-		if (!empty($arrayfields['owner']['checked'])) {
-			print '<td class="tdoverflowmax150">'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
-			if ($obj->fk_user_action > 0) {
-				$userstatic->fetch($obj->fk_user_action);
-				print $userstatic->getNomUrl(-1);
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
-		}
-
-		// Type
-		if (!empty($arrayfields['c.libelle']['checked'])) {
-			print '<td class="nowraponall">';
-			print $actionstatic->getTypePicto();
-			$labeltype = $obj->type_code;
-			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
-				$labeltype = 'AC_OTH';
-			}
-			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
-				$labeltype = $langs->trans("Message");
-			} else {
-				if (!empty($arraylist[$labeltype])) {
-					$labeltype = $arraylist[$labeltype];
-				}
-				if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) {
-					$labeltype .= ' - '.$arraylist[$obj->code]; // Use code in priority on type_code
-				}
-			}
-			print dol_trunc($labeltype, 28);
-			print '</td>';
-		}
-
-		// Label
-		if (!empty($arrayfields['a.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
-			print $actionstatic->label;
-			print '</td>';
-		}
-
-		// Description
-		if (!empty($arrayfields['a.note']['checked'])) {
-			print '<td class="tdoverflowonsmartphone">';
-			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
-			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
-			print '</td>';
-		}
-
-		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
-
-		// Start date
-		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
-			$late = 0;
-			if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
-				$late = 1;
-			}
-			if ($late) {
-				print img_warning($langs->trans("Late")).' ';
-			}
-			print '</td>';
-		}
-
-		// End date
-		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
-			print '</td>';
-		}
-
-		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
-			if ($obj->socid > 0) {
-				$societestatic->id = $obj->socid;
-				$societestatic->client = $obj->client;
-				$societestatic->name = $obj->societe;
-				$societestatic->email = $obj->socemail;
-
-				print $societestatic->getNomUrl(1, '', 28);
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
-		}
-
-		// Contact
-		if (!empty($arrayfields['a.fk_contact']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-
-			if (!empty($actionstatic->socpeopleassigned)) {
-				$contactList = array();
-				foreach ($actionstatic->socpeopleassigned as $socpeopleassigned) {
-					if (!isset($contactListCache[$socpeopleassigned['id']])) {
-						// if no cache found we fetch it
-						$contact = new Contact($db);
-						if ($contact->fetch($socpeopleassigned['id']) > 0) {
-							$contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
-							$contactList[] = $contact->getNomUrl(1, '', 0);
-						}
-					} else {
-						// use cache
-						$contactList[] = $contactListCache[$socpeopleassigned['id']];
-					}
-				}
-				if (!empty($contactList)) {
-					print implode(', ', $contactList);
-				}
-			} elseif ($obj->fk_contact > 0) { //keep for retrocompatibility with faraway event
-				$contactstatic->id = $obj->fk_contact;
-				$contactstatic->email = $obj->email;
-				$contactstatic->lastname = $obj->lastname;
-				$contactstatic->firstname = $obj->firstname;
-				$contactstatic->phone_pro = $obj->phone_pro;
-				$contactstatic->phone_mobile = $obj->phone_mobile;
-				$contactstatic->phone_perso = $obj->phone_perso;
-				$contactstatic->country_id = $obj->country_id;
-				print $contactstatic->getNomUrl(1, '', 0);
-			} else {
-				print "&nbsp;";
-			}
-			print '</td>';
-		}
-
-		// Linked object
-		if (!empty($arrayfields['a.fk_element']['checked'])) {
-			print '<td class="tdoverflowmax150">';
-			//var_dump($obj->fkelement.' '.$obj->elementtype);
-			if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
-			} else {
-				print "&nbsp;";
-			}
-			print '</td>';
-		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		// Date creation
-		if (!empty($arrayfields['a.datec']['checked'])) {
-			// Status/Percent
-			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuser').'</td>';
-		}
-		// Date update
-		if (!empty($arrayfields['a.tms']['checked'])) {
-			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuser').'</td>';
-		}
-		if (!empty($arrayfields['a.percent']['checked'])) {
-			// Status/Percent
-			$datep = $db->jdate($obj->dp);
-			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
-		}
-		// Action column
+	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -1018,18 +1026,222 @@ if ($resql) {
 			print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-
-		print "</tr>\n";
-		$i++;
 	}
-	print "</table>";
-	print '</div>';
-	print '</form>';
+	// Ref
+	if (!empty($arrayfields['a.id']['checked'])) {
+		print '<td class="nowraponall">';
+		print $actionstatic->getNomUrl(1, -1);
+		print '</td>';
+	}
 
-	$db->free($resql);
-} else {
-	dol_print_error($db);
+	// User owner
+	if (!empty($arrayfields['owner']['checked'])) {
+		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
+		print '<td class="tdoverflowmax150">';
+		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+			$userstatic = new User($db);
+			$res = $userstatic->fetch($obj->fk_user_action);
+			if ($res > 0) {
+				$cache_user_list[$obj->fk_user_action] = $userstatic;
+			}
+		}
+		if (isset($cache_user_list[$obj->fk_user_action])) {
+			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
+		} else {
+			print '&nbsp;';
+		}
+		print '</td>';
+	}
+
+	// Type
+	if (!empty($arrayfields['c.libelle']['checked'])) {
+		print '<td class="nowraponall">';
+		print $actionstatic->getTypePicto();
+		$labeltype = $obj->type_code;
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
+			$labeltype = 'AC_OTH';
+		}
+		if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+			$labeltype = $langs->trans("Message");
+		} else {
+			if (!empty($arraylist[$labeltype])) {
+				$labeltype = $arraylist[$labeltype];
+			}
+			if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) {
+				$labeltype .= ' - '.$arraylist[$obj->code]; // Use code in priority on type_code
+			}
+		}
+		print dol_trunc($labeltype, 28);
+		print '</td>';
+	}
+
+	// Label
+	if (!empty($arrayfields['a.label']['checked'])) {
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
+		print $actionstatic->label;
+		print '</td>';
+	}
+
+	// Description
+	if (!empty($arrayfields['a.note']['checked'])) {
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
+		print '<td class="tdoverflow200" title="'.dol_escape_htmltag($text).'">';
+		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
+		print '</td>';
+	}
+
+	$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
+
+	// Start date
+	if (!empty($arrayfields['a.datep']['checked'])) {
+		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css : '').'"><span>';
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
+		}
+		print '</span>';
+		$late = 0;
+		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100) {
+			$late = 1;
+		}
+		if ($late) {
+			print img_warning($langs->trans("Late")).' ';
+		}
+		print '</td>';
+	}
+
+	// End date
+	if (!empty($arrayfields['a.datep2']['checked'])) {
+		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css : '').'"><span>';
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
+		}
+		print '</span>';
+		print '</td>';
+	}
+
+	// Third party
+	if (!empty($arrayfields['s.nom']['checked'])) {
+		print '<td class="tdoverflowmax150">';
+		if ($obj->socid > 0) {
+			$societestatic->id = $obj->socid;
+			$societestatic->client = $obj->client;
+			$societestatic->name = $obj->societe;
+			$societestatic->email = $obj->socemail;
+
+			print $societestatic->getNomUrl(1, '', 28);
+		} else {
+			print '&nbsp;';
+		}
+		print '</td>';
+	}
+
+	// Contact
+	if (!empty($arrayfields['a.fk_contact']['checked'])) {
+		print '<td class="tdoverflowmax100">';
+
+		if (!empty($actionstatic->socpeopleassigned)) {
+			$contactList = array();
+			foreach ($actionstatic->socpeopleassigned as $socpeopleassigned) {
+				if (!isset($contactListCache[$socpeopleassigned['id']])) {
+					// if no cache found we fetch it
+					$contact = new Contact($db);
+					if ($contact->fetch($socpeopleassigned['id']) > 0) {
+						$contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
+						$contactList[] = $contact->getNomUrl(1, '', 0);
+					}
+				} else {
+					// use cache
+					$contactList[] = $contactListCache[$socpeopleassigned['id']];
+				}
+			}
+			if (!empty($contactList)) {
+				print implode(', ', $contactList);
+			}
+		} elseif ($obj->fk_contact > 0) { //keep for retrocompatibility with faraway event
+			$contactstatic->id = $obj->fk_contact;
+			$contactstatic->email = $obj->email;
+			$contactstatic->lastname = $obj->lastname;
+			$contactstatic->firstname = $obj->firstname;
+			$contactstatic->phone_pro = $obj->phone_pro;
+			$contactstatic->phone_mobile = $obj->phone_mobile;
+			$contactstatic->phone_perso = $obj->phone_perso;
+			$contactstatic->country_id = $obj->country_id;
+			print $contactstatic->getNomUrl(1, '', 0);
+		} else {
+			print "&nbsp;";
+		}
+		print '</td>';
+	}
+
+	// Linked object
+	if (!empty($arrayfields['a.fk_element']['checked'])) {
+		print '<td class="tdoverflowmax150">';
+		//var_dump($obj->fkelement.' '.$obj->elementtype);
+		if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
+		} else {
+			print "&nbsp;";
+		}
+		print '</td>';
+	}
+
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Date creation
+	if (!empty($arrayfields['a.datec']['checked'])) {
+		// Status/Percent
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuserrel').'</td>';
+	}
+	// Date update
+	if (!empty($arrayfields['a.tms']['checked'])) {
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuserrel').'</td>';
+	}
+	if (!empty($arrayfields['a.percent']['checked'])) {
+		// Status/Percent
+		$datep = $db->jdate($obj->dp);
+		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
+	}
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
+
+	print '</tr>'."\n";
+
+	$i++;
 }
+// If no record found
+if ($num == 0) {
+	print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
+
+$db->free($resql);
 
 // End of page
 llxFooter();

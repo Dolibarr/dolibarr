@@ -25,6 +25,7 @@
  *		\brief      Page to setup Webservices REST module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -38,7 +39,7 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 
-//Activate ProfId
+// Activate Production mode
 if ($action == 'setproductionmode') {
 	$status = GETPOST('status', 'alpha');
 
@@ -64,6 +65,18 @@ if ($action == 'setproductionmode') {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		}
+	} else {
+		dol_print_error($db);
+	}
+}
+
+// Disable compression mode
+if ($action == 'setdisablecompression') {
+	$status = GETPOST('status', 'alpha');
+
+	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', $status, 'chaine', 0, '', 0) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	} else {
 		dol_print_error($db);
 	}
@@ -103,13 +116,13 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
-$production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
+$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
 if ($production_mode) {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&status=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -117,12 +130,26 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("RESTRICT_ON_IP");
-print ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+print '<td>'.$langs->trans("API_DISABLE_COMPRESSION").'</td>';
+$disable_compression = (!getDolGlobalString('API_DISABLE_COMPRESSION') ? false : true);
+if ($disable_compression) {
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("RESTRICT_ON_IP"), $langs->trans("Example").': '.$langs->trans("IPListExample"));
 print '</td>';
-print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'"></td>';
 print '<td>';
-print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
+print '<input type="submit" class="button button-save smallpaddingimp" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
 print '</tr>';
 
@@ -152,12 +179,14 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("ApiExporerIs").':</span><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a></div><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a></div><br>\n";
+
 	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a></div><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'"></div>';
 	print '</div>';
+	print ajax_autoselect("urltogetapidesc");
 } else {
 	$langs->load("errors");
 	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');

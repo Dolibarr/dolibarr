@@ -24,7 +24,7 @@ namespace Stripe;
  * @property null|string $failure_message Message to user further explaining reason for top-up failure if available.
  * @property bool $livemode Has the value <code>true</code> if the object exists in live mode or the value <code>false</code> if the object exists in test mode.
  * @property \Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
- * @property \Stripe\Source $source <p><code>Source</code> objects allow you to accept a variety of payment methods. They represent a customer's payment instrument, and can be used with the Stripe API just like a <code>Card</code> object: once chargeable, they can be charged, or can be attached to customers.</p><p>Related guides: <a href="https://stripe.com/docs/sources">Sources API</a> and <a href="https://stripe.com/docs/sources/customers">Sources &amp; Customers</a>.</p>
+ * @property null|\Stripe\Source $source For most Stripe users, the source of every top-up is a bank account. This hash is then the <a href="https://stripe.com/docs/api#source_object">source object</a> describing that bank account.
  * @property null|string $statement_descriptor Extra information about a top-up. This will appear on your source's bank statement. It must contain at least one letter.
  * @property string $status The status of the top-up is either <code>canceled</code>, <code>failed</code>, <code>pending</code>, <code>reversed</code>, or <code>succeeded</code>.
  * @property null|string $transfer_group A string that identifies this top-up as part of a group.
@@ -50,7 +50,7 @@ class Topup extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return Topup the canceled topup
+     * @return \Stripe\Topup the canceled topup
      */
     public function cancel($params = null, $opts = null)
     {

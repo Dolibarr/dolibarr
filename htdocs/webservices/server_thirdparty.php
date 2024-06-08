@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +22,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require_once '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -38,7 +58,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -63,11 +83,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 // Define WSDL Return object
@@ -78,57 +98,57 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
 
 $thirdparty_fields = array(
-		'id' => array('name'=>'id', 'type'=>'xsd:string'),
-		'ref' => array('name'=>'name', 'type'=>'xsd:string'),
-		'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-		'fk_user_author' => array('name'=>'fk_user_author', 'type'=>'xsd:string'),
-		'status' => array('name'=>'status', 'type'=>'xsd:string'),
-		'client' => array('name'=>'client', 'type'=>'xsd:string'),
-		'supplier' => array('name'=>'supplier', 'type'=>'xsd:string'),
-		'customer_code' => array('name'=>'customer_code', 'type'=>'xsd:string'),
-		'supplier_code' => array('name'=>'supplier_code', 'type'=>'xsd:string'),
-		'customer_code_accountancy' => array('name'=>'customer_code_accountancy', 'type'=>'xsd:string'),
-		'supplier_code_accountancy' => array('name'=>'supplier_code_accountancy', 'type'=>'xsd:string'),
-		'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
-		'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-		'note_private' => array('name'=>'note_private', 'type'=>'xsd:string'),
-		'note_public' => array('name'=>'note_public', 'type'=>'xsd:string'),
-		'address' => array('name'=>'address', 'type'=>'xsd:string'),
-		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
-		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'province_id' => array('name'=>'province_id', 'type'=>'xsd:string'),
-		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
-		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
-		'country' => array('name'=>'country', 'type'=>'xsd:string'),
-		'phone' => array('name'=>'phone', 'type'=>'xsd:string'),
-		'fax' => array('name'=>'fax', 'type'=>'xsd:string'),
-		'email' => array('name'=>'email', 'type'=>'xsd:string'),
-		'url' => array('name'=>'url', 'type'=>'xsd:string'),
-		'profid1' => array('name'=>'profid1', 'type'=>'xsd:string'),
-		'profid2' => array('name'=>'profid2', 'type'=>'xsd:string'),
-		'profid3' => array('name'=>'profid3', 'type'=>'xsd:string'),
-		'profid4' => array('name'=>'profid4', 'type'=>'xsd:string'),
-		'profid5' => array('name'=>'profid5', 'type'=>'xsd:string'),
-		'profid6' => array('name'=>'profid6', 'type'=>'xsd:string'),
-		'capital' => array('name'=>'capital', 'type'=>'xsd:string'),
-		'vat_used' => array('name'=>'vat_used', 'type'=>'xsd:string'),
-		'vat_number' => array('name'=>'vat_number', 'type'=>'xsd:string'));
+		'id' => array('name' => 'id', 'type' => 'xsd:string'),
+		'ref' => array('name' => 'name', 'type' => 'xsd:string'),
+		'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+		'fk_user_author' => array('name' => 'fk_user_author', 'type' => 'xsd:string'),
+		'status' => array('name' => 'status', 'type' => 'xsd:string'),
+		'client' => array('name' => 'client', 'type' => 'xsd:string'),
+		'supplier' => array('name' => 'supplier', 'type' => 'xsd:string'),
+		'customer_code' => array('name' => 'customer_code', 'type' => 'xsd:string'),
+		'supplier_code' => array('name' => 'supplier_code', 'type' => 'xsd:string'),
+		'customer_code_accountancy' => array('name' => 'customer_code_accountancy', 'type' => 'xsd:string'),
+		'supplier_code_accountancy' => array('name' => 'supplier_code_accountancy', 'type' => 'xsd:string'),
+		'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
+		'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
+		'note_private' => array('name' => 'note_private', 'type' => 'xsd:string'),
+		'note_public' => array('name' => 'note_public', 'type' => 'xsd:string'),
+		'address' => array('name' => 'address', 'type' => 'xsd:string'),
+		'zip' => array('name' => 'zip', 'type' => 'xsd:string'),
+		'town' => array('name' => 'town', 'type' => 'xsd:string'),
+		'region_code' => array('name' => 'region_code', 'type' => 'xsd:string'),
+		'country_id' => array('name' => 'country_id', 'type' => 'xsd:string'),
+		'country_code' => array('name' => 'country_code', 'type' => 'xsd:string'),
+		'country' => array('name' => 'country', 'type' => 'xsd:string'),
+		'phone' => array('name' => 'phone', 'type' => 'xsd:string'),
+		'fax' => array('name' => 'fax', 'type' => 'xsd:string'),
+		'email' => array('name' => 'email', 'type' => 'xsd:string'),
+		'url' => array('name' => 'url', 'type' => 'xsd:string'),
+		'profid1' => array('name' => 'profid1', 'type' => 'xsd:string'),
+		'profid2' => array('name' => 'profid2', 'type' => 'xsd:string'),
+		'profid3' => array('name' => 'profid3', 'type' => 'xsd:string'),
+		'profid4' => array('name' => 'profid4', 'type' => 'xsd:string'),
+		'profid5' => array('name' => 'profid5', 'type' => 'xsd:string'),
+		'profid6' => array('name' => 'profid6', 'type' => 'xsd:string'),
+		'capital' => array('name' => 'capital', 'type' => 'xsd:string'),
+		'vat_used' => array('name' => 'vat_used', 'type' => 'xsd:string'),
+		'vat_number' => array('name' => 'vat_number', 'type' => 'xsd:string'));
 
 $elementtype = 'societe';
 
-// Retrieve all extrafields for thirdsparty
+// Retrieve all extrafields for thirdparties
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -141,7 +161,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 			$type = 'xsd:string';
 		}
 
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 
@@ -168,9 +188,9 @@ $server->wsdl->addComplexType(
 	'',
 	array(
 		//'limit' => array('name'=>'limit','type'=>'xsd:string'),
-		'client' => array('name'=>'client', 'type'=>'xsd:string'),
-		'supplier' => array('name'=>'supplier', 'type'=>'xsd:string'),
-		'category' => array('name'=>'category', 'type'=>'xsd:string')
+		'client' => array('name' => 'client', 'type' => 'xsd:string'),
+		'supplier' => array('name' => 'supplier', 'type' => 'xsd:string'),
+		'category' => array('name' => 'category', 'type' => 'xsd:string')
 	)
 );
 
@@ -182,7 +202,7 @@ $server->wsdl->addComplexType(
 	'SOAP-ENC:Array',
 	array(),
 	array(
-		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:thirdparty[]')
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:thirdparty[]')
 	),
 	'tns:thirdparty'
 );
@@ -214,9 +234,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'barcode'=>'xsd:string', 'profid1'=>'xsd:string', 'profid2'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string', 'barcode' => 'xsd:string', 'profid1' => 'xsd:string', 'profid2' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'thirdparty'=>'tns:thirdparty'),
+	array('result' => 'tns:result', 'thirdparty' => 'tns:thirdparty'),
 	$ns,
 	$ns.'#getThirdParty',
 	$styledoc,
@@ -228,9 +248,9 @@ $server->register(
 $server->register(
 	'createThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'thirdparty'=>'tns:thirdparty'),
+	array('authentication' => 'tns:authentication', 'thirdparty' => 'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	$ns,
 	$ns.'#createThirdParty',
 	$styledoc,
@@ -242,9 +262,9 @@ $server->register(
 $server->register(
 	'updateThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'thirdparty'=>'tns:thirdparty'),
+	array('authentication' => 'tns:authentication', 'thirdparty' => 'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#updateThirdParty',
 	$styledoc,
@@ -257,9 +277,9 @@ $server->register(
 $server->register(
 	'getListOfThirdParties',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'filterthirdparty'=>'tns:filterthirdparty'),
+	array('authentication' => 'tns:authentication', 'filterthirdparty' => 'tns:filterthirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'thirdparties'=>'tns:ThirdPartiesArray2'),
+	array('result' => 'tns:result', 'thirdparties' => 'tns:ThirdPartiesArray2'),
 	$ns,
 	$ns.'#getListOfThirdParties',
 	$styledoc,
@@ -271,9 +291,9 @@ $server->register(
 $server->register(
 	'deleteThirdParty',
 	// Entry values
-		array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string'),
 	// Exit values
-		array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#deleteThirdParty',
 	$styledoc,
@@ -321,7 +341,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire) {
+		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
@@ -334,16 +354,16 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 						'supplier' => $thirdparty->fournisseur,
 						'customer_code' => $thirdparty->code_client,
 						'supplier_code' => $thirdparty->code_fournisseur,
-						'customer_code_accountancy' => $thirdparty->code_compta,
+						'customer_code_accountancy' => $thirdparty->code_compta_client,
 						'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
-						'user_creation' => $thirdparty->user_creation,
+						'user_creation_id' => $thirdparty->user_creation_id,
 						'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
-						'user_modification' => $thirdparty->user_modification,
+						'user_modification_id' => $thirdparty->user_modification_id,
 						'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
 						'town' => $thirdparty->town,
-						'province_id' => $thirdparty->state_id,
+						'region_code' => $thirdparty->region_code,
 						'country_id' => $thirdparty->country_id,
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
@@ -383,23 +403,26 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 
 				// Create
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'thirdparty'=>$thirdparty_result_fields);
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'thirdparty' => $thirdparty_result_fields);
 			} elseif ($result == -2) {
 				$error++;
-				$errorcode = 'DUPLICATE_FOUND'; $errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
+				$errorcode = 'DUPLICATE_FOUND';
+				$errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -411,7 +434,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
  * Create a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function createThirdParty($authentication, $thirdparty)
@@ -428,12 +451,15 @@ function createThirdParty($authentication, $thirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($thirdparty['ref'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 
@@ -462,7 +488,7 @@ function createThirdParty($authentication, $thirdparty)
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
 		}
-		$newobject->province_id = $thirdparty['province_id'];
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
@@ -520,7 +546,7 @@ function createThirdParty($authentication, $thirdparty)
 				$newobject->add_commercial($fuser, $thirdparty["commid"]);
 			}
 
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 		} else {
 			$db->rollback();
 			$error++;
@@ -530,7 +556,7 @@ function createThirdParty($authentication, $thirdparty)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -540,7 +566,7 @@ function createThirdParty($authentication, $thirdparty)
  * Update a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function updateThirdParty($authentication, $thirdparty)
@@ -557,12 +583,15 @@ function updateThirdParty($authentication, $thirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($thirdparty['id'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Thirdparty id is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Thirdparty id is mandatory.";
 	}
 
 	if (!$error) {
@@ -597,7 +626,7 @@ function updateThirdParty($authentication, $thirdparty)
 			if ($thirdparty['country_code']) {
 				$object->country_id = getCountry($thirdparty['country_code'], 3);
 			}
-			$object->province_id = $thirdparty['province_id'];
+			$object->region_code = $thirdparty['region_code'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];
@@ -642,11 +671,13 @@ function updateThirdParty($authentication, $thirdparty)
 			}
 		}
 
+		'@phan-var-force array{id:string} $thirdparty';
+
 		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'id' => $object->id
 			);
 		} elseif ($objectfound) {
 			$db->rollback();
@@ -661,7 +692,7 @@ function updateThirdParty($authentication, $thirdparty)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -690,7 +721,8 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 	$objectresp = array();
 	$arraythirdparties = array();
 
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -736,21 +768,21 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 						if (isset($obj->{$key})) {
-							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+							$extrafieldsOptions['options_'.$key] = $obj->$key;
 						}
 					}
 				}
 
-				$arraythirdparties[] = array('id'=>$obj->socRowid,
-					'ref'=>$obj->ref,
-					'ref_ext'=>$obj->ref_ext,
-					'adress'=>$obj->adress,
-					'zip'=>$obj->zip,
-					'town'=>$obj->town,
-					'country'=>$obj->country,
-					'phone'=>$obj->phone,
-					'fax'=>$obj->fax,
-					'url'=>$obj->url
+				$arraythirdparties[] = array('id' => $obj->socRowid,
+					'ref' => $obj->ref,
+					'ref_ext' => $obj->ref_ext,
+					'address' => $obj->address,
+					'zip' => $obj->zip,
+					'town' => $obj->town,
+					'country' => $obj->country,
+					'phone' => $obj->phone,
+					'fax' => $obj->fax,
+					'url' => $obj->url
 				);
 				$arraythirdparties[$i] = array_merge($arraythirdparties[$i], $extrafieldsOptions);
 
@@ -765,13 +797,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 
 	if ($error) {
 		$objectresp = array(
-			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
-			'thirdparties'=>$arraythirdparties
+			'result' => array('result_code' => $errorcode, 'result_label' => $errorlabel),
+			'thirdparties' => $arraythirdparties
 		);
 	} else {
 		$objectresp = array(
-			'result'=>array('result_code' => 'OK', 'result_label' => ''),
-			'thirdparties'=>$arraythirdparties
+			'result' => array('result_code' => 'OK', 'result_label' => ''),
+			'thirdparties' => $arraythirdparties
 		);
 	}
 
@@ -799,21 +831,23 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		dol_syslog("Function: deleteThirdParty checkparam");
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 	dol_syslog("Function: deleteThirdParty 1");
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer) {
+		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 
@@ -825,26 +859,28 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				if ($result > 0) {
 					$db->commit();
 
-					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+					$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''));
 				} else {
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $thirdparty->error;
-					dol_syslog("Function: deleteThirdParty cant delete");
+					dol_syslog("Function: deleteThirdParty can't delete");
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

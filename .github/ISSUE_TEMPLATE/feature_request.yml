@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest a new idea for this project
+labels: ["Feature request"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.
+
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: Feature Request
+      description: Short description
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Verbose description
+
+  - type: textarea
+    id: suggested-implementation
+    attributes:
+      label: Suggested implementation
+      description: Verbose description
+
+  - type: textarea
+    id: suggested-steps
+    attributes:
+      label: Suggested steps
+      description: List of tasks to achieve goal

@@ -22,6 +22,7 @@
  *		\brief      Page  setup proxy to use for external web access
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -77,7 +78,7 @@ if (GETPOST('action', 'aZ09') == 'set_proxy') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Proxy"), $wikihelp);
+llxHeader('', $langs->trans("Proxy"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-proxy');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -95,9 +96,10 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'proxy', '', -1);
 
+print '<br>';
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initfields()
                 {
@@ -121,7 +123,7 @@ if ($conf->use_javascript_ajax) {
 
 // Timeout
 
-print '<table width="100%" class="noborder">';
+print '<table class="centpercent noborder">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
@@ -143,7 +145,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ResponseTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_USE_RESPONSE_TIMEOUT" type="text" size="4" value="'.$conf->global->MAIN_USE_RESPONSE_TIMEOUT.'">';
+print '<input class="flat" name="MAIN_USE_RESPONSE_TIMEOUT" type="text" size="4" value="' . getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT').'">';
 print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
@@ -153,7 +155,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print $form->selectyesno('MAIN_PROXY_USE', (!empty($conf->global->MAIN_PROXY_USE) ? $conf->global->MAIN_PROXY_USE : 0), 1);
+print $form->selectyesno('MAIN_PROXY_USE', (getDolGlobalString('MAIN_PROXY_USE') ? $conf->global->MAIN_PROXY_USE : 0), 1);
 print '</td>';
 print '</tr>';
 
@@ -162,7 +164,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'.(!empty($conf->global->MAIN_PROXY_HOST) ? $conf->global->MAIN_PROXY_HOST : '').'">';
+print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_HOST') ? $conf->global->MAIN_PROXY_HOST : '').'">';
 print '</td>';
 print '</tr>';
 
@@ -171,7 +173,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.(!empty($conf->global->MAIN_PROXY_PORT) ? $conf->global->MAIN_PROXY_PORT : '').'">';
+print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.(getDolGlobalString('MAIN_PROXY_PORT') ? $conf->global->MAIN_PROXY_PORT : '').'">';
 print '</td>';
 print '</tr>';
 
@@ -180,7 +182,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'.(!empty($conf->global->MAIN_PROXY_USER) ? $conf->global->MAIN_PROXY_USER : '').'">';
+print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_USER') ? $conf->global->MAIN_PROXY_USER : '').'">';
 print '</td>';
 print '</tr>';
 
@@ -189,17 +191,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_PROXY_PASS" type="text" size="16" value="'.(!empty($conf->global->MAIN_PROXY_PASS) ? $conf->global->MAIN_PROXY_PASS : '').'">';
+print '<input class="flat" name="MAIN_PROXY_PASS" type="text" size="16" value="'.(getDolGlobalString('MAIN_PROXY_PASS') ? $conf->global->MAIN_PROXY_PASS : '').'">';
 print '</td>';
 print '</tr>';
 
 print '</table>';
 
-print dol_get_fiche_end();
+print $form->buttonsSaveCancel("Modify", '');
 
-print '<div class="center">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</div>';
+print dol_get_fiche_end();
 
 print '</form>';
 

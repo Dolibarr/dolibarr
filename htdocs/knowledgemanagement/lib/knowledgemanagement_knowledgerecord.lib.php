@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2021       Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/knowledgemanagementlib/knowledgemanagement_knowledgerecord.lib.php
+ * \file    htdocs/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php
  * \ingroup knowledgemanagement
  * \brief   Library files with common functions for KnowledgeRecord
  */
@@ -52,7 +52,7 @@ function knowledgerecordPrepareHead($object)
 		$head[$h][0] = DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

@@ -20,7 +20,6 @@ CREATE TABLE llx_supplier_proposal (
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT 1,
   ref_ext varchar(255) DEFAULT NULL,
-  ref_int varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
   fk_projet integer DEFAULT NULL,
   tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -56,7 +55,7 @@ CREATE TABLE llx_supplier_proposal (
   extraparams varchar(255) DEFAULT NULL,
   
   fk_multicurrency        integer,
-  multicurrency_code      varchar(255),
+  multicurrency_code      varchar(3),
   multicurrency_tx        double(24,8) DEFAULT 1,
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum/Wiki podrška
 EMailSupport=Podrška e-poštom
-RemoteControlSupport=Online real-time / remote support
+RemoteControlSupport=Online podrška u stvarnom vremenu / daljinska podrška
 OtherSupport=Ostala podrška
 ToSeeListOfAvailableRessources=Da biste kontaktirali/vidjeli raspoložive resurse:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+HelpCenter=Centar za pomoć
+DolibarrHelpCenter=Dolibarr centar za pomoć i podršku
+ToGoBackToDolibarr=U suprotnom, kliknite <a href="%s">ovdje za korištenje Dolibarr-a</a>
+TypeOfSupport=Vrsta podrške
 TypeSupportCommunauty=Zajednica (besplatno)
 TypeSupportCommercial=Komercijalno
 TypeOfHelp=Vrsta
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=Need support?
 Efficiency=Efikasnost
 TypeHelpOnly=Samo pomoć
 TypeHelpDev=Pomoć + Razvoj
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Pomoć + Razvoj + Obuka
+BackToHelpCenter=Inače, <a href="%s"> vrati se na početnu stranicu centra za pomoć </a> .
+LinkToGoldMember=Možete nazvati jednog od trenera koje je Dolibarr unaprijed odabrao za vaš jezik (%s) klikom na njihov Widget (status i maksimalna cijena se automatski ažuriraju):
 PossibleLanguages=Podržani jezici
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Za oficijalnu Dolibarr podršku na vašem jeziku: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Pomognite Dolibarr projektu, prijavite se u zakladu
+SeeOfficalSupport=Za službenu Dolibarr podršku na vašem jeziku: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

@@ -19,12 +19,13 @@
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -62,14 +63,24 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '</td>';
 	print '<td class="valuefieldcreate">';
+
 	if (!empty($val['picto'])) {
 		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
 	}
+
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
+		$value = GETPOSTISSET($key) ? GETPOSTINT($key) : $object->$key;
 	} elseif ($val['type'] == 'double') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
-	} elseif (preg_match('/^(text|html)/', $val['type'])) {
+	} elseif (preg_match('/^text/', $val['type'])) {
+		$tmparray = explode(':', $val['type']);
+		if (!empty($tmparray[1])) {
+			$check = $tmparray[1];
+		} else {
+			$check = 'nohtml';
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {
 			$check = $tmparray[1];
@@ -77,16 +88,25 @@ foreach ($object->fields as $key => $val) {
 			$check = 'restricthtml';
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif (in_array($val['type'], array('date', 'datetime'))) {
+		$value = GETPOSTISSET($key) ? dol_mktime(GETPOSTINT($key.'hour'), GETPOSTINT($key.'min'), GETPOSTINT($key.'sec'), GETPOSTINT($key.'month'), GETPOSTINT($key.'day'), GETPOSTINT($key.'year')) : $object->$key;
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
+	} elseif ($key == 'lang') {
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'aZ09') : $object->lang;
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
-		print $object->showInputField($val, $key, $value, '', '', '', 0);
+		if ($key == 'lang') {
+			print img_picto('', 'language', 'class="pictofixedwidth"');
+			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+		} else {
+			print $object->showInputField($val, $key, $value, '', '', '', 0);
+		}
 	}
 	print '</td>';
 	print '</tr>';

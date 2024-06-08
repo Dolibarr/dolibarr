@@ -21,28 +21,37 @@
  */
 
 /**
- *      \file       htdocs/compta/bank/categ.php
- *      \ingroup    compta
- *      \brief      Page ajout de categories bancaires
+ *    \file       htdocs/compta/bank/categ.php
+ *    \ingroup    compta/bank
+ *    \brief      Page to manage Bank Categories
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-
-if (!$user->rights->banque->configurer) {
-	accessforbidden();
-}
-
-$bankcateg = new BankCateg($db);
 $categid = GETPOST('categid');
 $label = GETPOST("label");
+
+
+// Initialize technical objects
+$bankcateg = new BankCateg($db);
+
+
+// Security Check  Access Control
+if (!$user->hasRight('banque', 'configurer')) {
+	accessforbidden();
+}
 
 
 
@@ -100,7 +109,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td>';
@@ -113,7 +122,7 @@ if ($action != 'edit') {
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" class="maxwidth100"></td>';
 	print '<td></td>';
-	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="center"><input type="submit" name="add" class="button button-add small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 }
 
@@ -146,8 +155,8 @@ if ($result) {
 			//print '<a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$langs->trans("List").'</a>';
 			print '</td>';
 			print '<td class="center">';
-			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit&amp;token='.newToken().'">'.img_edit().'</a>';
-			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete&amp;token='.newToken().'">'.img_delete().'</a>';
+			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 			print '</td>';
 		}
 		print "</tr>";

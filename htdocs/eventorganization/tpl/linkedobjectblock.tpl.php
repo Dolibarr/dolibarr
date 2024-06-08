@@ -20,10 +20,10 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
-echo "<!-- BEGIN PHP TEMPLATE -->\n";
+echo "<!-- BEGIN PHP TEMPLATE eventorganization/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 
@@ -54,7 +54,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	echo '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
-	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	echo '</tr>';
 }
 

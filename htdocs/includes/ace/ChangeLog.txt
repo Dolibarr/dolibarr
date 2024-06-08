@@ -1,3 +1,26 @@
+2022.01.26 Version 1.4.14
+* update vim mode
+* remove slow regex in beautify extension
+
+2021.09.30 Version 1.4.13
+* added useStrictCSP global option to use in environments where dynamic style creation is disabled
+  see demo/csp.html for an example of a page which loads external css files instead of generating styles with javascript
+* updated vim mode, added support for gqq command 
+
+2020.07.06 Version 1.4.12
+* removed unused es5-shim
+* imporved ruby and vbscript highlighting and folding
+* workaround for double space being converted to dot on mobile keyboards
+
+2020.04.15 Version 1.4.10
+* added workaround for chrome bug causing memory leak after calling editor.destroy
+* added code folding support for vbscript mode
+
+2020.04.01 Version 1.4.9
+* added option to disable autoindent 
+* added new language modes
+* fixed backspace not working with some mobile keyboards
+
 2020.01.14 Version 1.4.8
 * highlight both matched braces, and highlight unmatched brace in red
 * improve snippet manager

@@ -52,19 +52,21 @@ function establishment_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
 
 	return $head;
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return	array		head
  */
 function hrm_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$langs->load('hrm');
 

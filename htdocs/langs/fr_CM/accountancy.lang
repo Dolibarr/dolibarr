@@ -1,3 +1,7 @@
 # Dolibarr language file - Source file is en_US - accountancy
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+AccountingJournalType9=Has-new
+AccountancyClosureAccountingReversal=Extract entries
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "has-new" entry on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "has-new" entry, detail the sub-ledger accounts
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping records has been inserted successfully
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to accounting reversal ?

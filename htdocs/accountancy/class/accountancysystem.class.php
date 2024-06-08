@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2023      Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,19 @@ class AccountancySystem
 	public $error = '';
 
 	/**
+	 * @var string[] Array of Errors code (or messages)
+	 */
+	public $errors = array();
+
+	/**
 	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -47,6 +60,21 @@ class AccountancySystem
 	 * @var int ID
 	 */
 	public $fk_pcg_version;
+
+	/**
+	 * @var int pcg version
+	 */
+	public $pcg_version;
+
+	/**
+	 * @var string ref
+	 */
+	public $ref;
+
+	/**
+	 * @var int active
+	 */
+	public $active;
 
 	/**
 	 * @var string pcg type
@@ -89,7 +117,7 @@ class AccountancySystem
 	 *
 	 * @param 	int 	$rowid 				   Id
 	 * @param 	string 	$ref             	   ref
-	 * @return 	int                            <0 if KO, Id of record if OK and found
+	 * @return 	int                            Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = 0, $ref = '')
 	{
@@ -105,7 +133,7 @@ class AccountancySystem
 				$sql .= " a.pcg_version = '".$this->db->escape($ref)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
@@ -143,14 +171,15 @@ class AccountancySystem
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
 		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
+		$sql .= " VALUES ('".$this->db->idate($now)."',".((int) $user->id).",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
 			if ($id > 0) {
+				$this->id = $id;
 				$this->rowid = $id;
 				$result = $this->rowid;
 			} else {

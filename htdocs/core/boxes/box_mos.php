@@ -28,25 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last manufacturing orders (MO)
  */
 class box_mos extends ModeleBoxes
 {
-	public $boxcode = "lastmos";
-	public $boximg = "object_mrp";
+	public $boxcode  = "lastmos";
+	public $boximg   = "object_mrp";
 	public $boxlabel = "BoxTitleLatestModifiedMos";
-	public $depends = array("mrp");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $depends  = array("mrp");
 
 	/**
 	 *  Constructor
@@ -60,7 +49,7 @@ class box_mos extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bom->read);
+		$this->hidden = !$user->hasRight('bom', 'read');
 	}
 
 	/**
@@ -84,14 +73,17 @@ class box_mos extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
 
-		if ($user->rights->mrp->read) {
+		if ($user->hasRight('mrp', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
+			$sql .= ", p.rowid as productid";
+			$sql .= ", p.tosell";
+			$sql .= ", p.tobuy";
+			$sql .= ", p.tobatch";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
 			$sql .= ", c.tms";
 			$sql .= ", c.ref";
 			$sql .= ", c.status";
-			//$sql.= ", c.fk_user_valid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= ", ".MAIN_DB_PREFIX."mrp_mo as c";
 			$sql .= " WHERE c.fk_product = p.rowid";
@@ -110,9 +102,12 @@ class box_mos extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 					$mostatic->id = $objp->rowid;
 					$mostatic->ref = $objp->ref;
-					$mostatic->id = $objp->socid;
 					$mostatic->status = $objp->status;
+					$productstatic->id = $objp->productid;
 					$productstatic->ref = $objp->product_ref;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->status_batch = $objp->tobatch;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
@@ -126,7 +121,7 @@ class box_mos extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}
@@ -138,7 +133,7 @@ class box_mos extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

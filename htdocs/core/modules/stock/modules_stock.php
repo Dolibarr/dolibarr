@@ -24,9 +24,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class ModelePDFStock extends CommonDocGenerator
 {
 	/**
-	 * @var string Error code (or message)
+	 * @var DoliDB Database handler
 	 */
-	public $error = '';
+	public $db;
+
+	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * @var string		Dolibarr version of the loaded document
+	 */
+	public $version = 'dolibarr';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -40,8 +60,6 @@ abstract class ModelePDFStock extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'stock';
 		$list = array();
 

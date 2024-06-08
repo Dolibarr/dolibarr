@@ -1,0 +1,98 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=கூட்டு மேலாண்மை
+PartnershipDescription=தொகுதி கூட்டாண்மை மேலாண்மை
+PartnershipDescriptionLong= தொகுதி கூட்டாண்மை மேலாண்மை
+Partnership=கூட்டு
+Partnerships=Partnerships
+AddPartnership=கூட்டாண்மையைச் சேர்க்கவும்
+CancelPartnershipForExpiredMembers=கூட்டாண்மை: காலாவதியான சந்தாக்களைக் கொண்ட உறுப்பினர்களின் கூட்டாண்மையை ரத்துசெய்யவும்
+PartnershipCheckBacklink=கூட்டாண்மை: பின்னிணைப்பைக் குறிப்பிடுவதைச் சரிபார்க்கவும்
+
+#
+# Menu
+#
+NewPartnership=புதிய கூட்டாண்மை
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+ListOfPartnerships=கூட்டாண்மை பட்டியல்
+
+#
+# Admin page
+#
+PartnershipSetup=கூட்டாண்மை அமைப்பு
+PartnershipAbout=கூட்டாண்மை பற்றி
+PartnershipAboutPage=பக்கத்தைப் பற்றிய கூட்டாண்மை
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
+PARTNERSHIP_IS_MANAGED_FOR=கூட்டாண்மை நிர்வகிக்கப்படுகிறது
+PARTNERSHIP_BACKLINKS_TO_CHECK=சரிபார்க்க பின்னிணைப்புகள்
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
+ReferingWebsiteCheck=இணையதளம் குறிப்பிடுவதை சரிபார்க்கவும்
+ReferingWebsiteCheckDesc=உங்கள் பங்குதாரர்கள் தங்கள் சொந்த இணையதளத்தில் உங்கள் இணையதள டொமைன்களில் பின்னிணைப்பைச் சேர்த்துள்ளார்களா என்பதைச் சரிபார்க்க ஒரு அம்சத்தை நீங்கள் இயக்கலாம்.
+PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
+
+#
+# Object
+#
+DeletePartnership=கூட்டாண்மையை நீக்கவும்
+PartnershipDedicatedToThisThirdParty=கூட்டு இந்த மூன்றாம் தரப்பினருக்கு அர்ப்பணிக்கப்பட்டது
+PartnershipDedicatedToThisMember=கூட்டாண்மை இந்த உறுப்பினருக்கு அர்ப்பணிக்கப்பட்டுள்ளது
+DatePartnershipStart=தொடக்க தேதி
+DatePartnershipEnd=கடைசி தேதி
+ReasonDecline=காரணம் மறுக்கவும்
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=கூட்டாண்மை ஏற்கனவே உள்ளது
+ManagePartnership=கூட்டாண்மையை நிர்வகிக்கவும்
+BacklinkNotFoundOnPartnerWebsite=கூட்டாளர் இணையதளத்தில் பின்னிணைப்பு இல்லை
+ConfirmClosePartnershipAsk=இந்தக் கூட்டாண்மையை நிச்சயமாக ரத்துசெய்ய விரும்புகிறீர்களா?
+PartnershipType=கூட்டு வகை
+PartnershipRefApproved=கூட்டாண்மை %s அங்கீகரிக்கப்பட்டது
+KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
+PartnershipDraft=வரைவு
+PartnershipAccepted=ஏற்றுக் கொள்ளப்பட்டது
+PartnershipRefused=மறுத்தார்
+PartnershipCanceled=ரத்து செய்யப்பட்டது
+PartnershipManagedFor=பங்குதாரர்கள்
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=பார்ட்னர்ஷிப் விரைவில் ரத்து செய்யப்படும்
+SendingEmailOnPartnershipRefused=கூட்டு மறுத்தது
+SendingEmailOnPartnershipAccepted=கூட்டாண்மை ஏற்றுக்கொள்ளப்பட்டது
+SendingEmailOnPartnershipCanceled=பார்ட்னர்ஷிப் ரத்து செய்யப்பட்டது
+
+YourPartnershipWillSoonBeCanceledTopic=பார்ட்னர்ஷிப் விரைவில் ரத்து செய்யப்படும்
+YourPartnershipRefusedTopic=கூட்டு மறுத்தது
+YourPartnershipAcceptedTopic=கூட்டாண்மை ஏற்றுக்கொள்ளப்பட்டது
+YourPartnershipCanceledTopic=பார்ட்னர்ஷிப் ரத்து செய்யப்பட்டது
+
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
+
+CountLastUrlCheckError=கடைசி URL சரிபார்ப்புக்கான பிழைகளின் எண்ணிக்கை
+LastCheckBacklink=கடைசியாக URL சரிபார்த்த தேதி
+
+NewPartnershipRequest=New partnership request
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
+
+IPOfApplicant=IP of applicant
+

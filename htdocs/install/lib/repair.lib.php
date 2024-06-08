@@ -32,8 +32,8 @@ function checkElementExist($id, $table)
 {
 	global $db;
 
-	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$table;
-	$sql .= ' WHERE rowid = '.((int) $id);
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
+	$sql .= " WHERE rowid = ".((int) $id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -87,8 +87,8 @@ function checkLinkedElements($sourcetype, $targettype)
 
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
-	$sql = 'SELECT rowid, fk_source, fk_target FROM '.MAIN_DB_PREFIX.'element_element';
-	$sql .= ' WHERE sourcetype="'.$sourcetype.'" AND targettype="'.$targettype.'"';
+	$sql = "SELECT rowid, fk_source, fk_target FROM ".MAIN_DB_PREFIX."element_element";
+	$sql .= " WHERE sourcetype = '".$db->escape($sourcetype)."' AND targettype = '".$db->escape($targettype)."'";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -106,7 +106,7 @@ function checkLinkedElements($sourcetype, $targettype)
 		foreach ($elements as $key => $element) {
 			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable)) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
-				$sql .= ' WHERE rowid = '.((int) $key);
+				$sql .= " WHERE rowid = ".((int) $key);
 				$resql = $db->query($sql);
 				$deleted++;
 			}
@@ -125,7 +125,7 @@ function checkLinkedElements($sourcetype, $targettype)
 /**
  * Clean data into ecm_directories table
  *
- * @return	void
+ * @return	int			Return integer <0 if KO, >0 if OK
  */
 function clean_data_ecm_directories()
 {
@@ -145,12 +145,14 @@ function clean_data_ecm_directories()
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {
 					dol_print_error($db, 'Failed to update');
+					return -1;
 				}
 			}
 		}
 	} else {
 		dol_print_error($db, 'Failed to run request');
+		return -1;
 	}
 
-	return;
+	return 1;
 }

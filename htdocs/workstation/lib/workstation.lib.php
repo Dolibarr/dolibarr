@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    workstation/lib/workstation.lib.php
+ * \file    htdocs/workstation/lib/workstation.lib.php
  * \ingroup workstation
  * \brief   Library files with common functions for Workstation
  */
@@ -34,7 +35,7 @@ function workstationAdminPrepareHead()
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT . "/admin/workstation.php";
+	$head[$h][0] = DOL_URL_ROOT."/admin/workstation.php";
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -60,6 +61,8 @@ function workstationAdminPrepareHead()
 	//	'entity:-tabname:Title:@workstation:/workstation/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'workstation', 'remove');
 
 	return $head;
 }

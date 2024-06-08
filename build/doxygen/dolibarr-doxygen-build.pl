@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 #--------------------------------------------------------------------
-# Lance la generation de la doc dev doxygen
+# Start the generation of the development documentation with doxygen
 #--------------------------------------------------------------------
 
-# Detecte repertoire du script
+# Determine the patho of this script
 ($DIR=$0) =~ s/([^\/\\]+)$//;
 $DIR||='.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
@@ -17,9 +17,9 @@ use Cwd;
 my $dir = getcwd;
 
 print "Current dir is: $dir\n";
-print "Running dir for doxygen must be: $DIR\n";
+#print "Running dir for doxygen must be: $DIR\n";
 
-if (! -s $CONFFILE)
+if (! -s "build/doxygen/$CONFFILE")
 {
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
     print "\n";
@@ -30,7 +30,7 @@ if (! -s $CONFFILE)
     exit 1;   
 }
 
-$SOURCE="../..";
+$SOURCE=".";
 
 # Get version $MAJOR, $MINOR and $BUILD
 $result = open( IN, "< " . $SOURCE . "/htdocs/filefunc.inc.php" );
@@ -47,8 +47,8 @@ $version=$MAJOR.".".$MINOR.".".$BUILD;
 
 
 print "Running doxygen for version ".$version.", please wait...\n";
-print "cat $CONFFILE | sed -e 's/x\.y\.z/".$version."/' | doxygen $OPTIONS - 2>&1\n";
-$result=`cat $CONFFILE | sed -e 's/x\.y\.z/$version/' | doxygen $OPTIONS - 2>&1`;
+print "cat build/doxygen/$CONFFILE | sed -e 's/x\.y\.z/".$version."/' | doxygen $OPTIONS - 2>&1\n";
+$result=`cat build/doxygen/$CONFFILE | sed -e 's/x\.y\.z/$version/' | doxygen $OPTIONS - 2>&1`;
 
 print $result;
 

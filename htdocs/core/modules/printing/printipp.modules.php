@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2021  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ class printing_printipp extends PrintingDriver
 	public $active = 'PRINTING_PRINTIPP';
 
 	/**
-	 * @var array array of setup value
+	 * @var array<int,array<string,int|string>> array of setup values
 	 */
 	public $conf = array();
 
@@ -81,6 +82,11 @@ class printing_printipp extends PrintingDriver
 	public $password;
 
 	/**
+	 * @var int Does CUPS connection use SSL ?
+	 */
+	public $ssl;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -95,8 +101,6 @@ class printing_printipp extends PrintingDriver
 	 */
 	public $db;
 
-	const LANGFILE = 'printipp';
-
 
 	/**
 	 *  Constructor
@@ -108,15 +112,17 @@ class printing_printipp extends PrintingDriver
 		global $conf;
 
 		$this->db = $db;
-		$this->host = $conf->global->PRINTIPP_HOST;
-		$this->port = $conf->global->PRINTIPP_PORT;
-		$this->user = $conf->global->PRINTIPP_USER;
-		$this->password = $conf->global->PRINTIPP_PASSWORD;
-		$this->conf[] = array('varname'=>'PRINTIPP_HOST', 'required'=>1, 'example'=>'localhost', 'type'=>'text');
-		$this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
-		$this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
-		$this->conf[] = array('varname'=>'PRINTIPP_PASSWORD', 'required'=>0, 'example'=>'', 'type'=>'password', 'moreattributes'=>'autocomplete="off"');
-		$this->conf[] = array('enabled'=>1, 'type'=>'submit');
+		$this->host = getDolGlobalString('PRINTIPP_HOST');
+		$this->port = getDolGlobalString('PRINTIPP_PORT');
+		$this->user = getDolGlobalString('PRINTIPP_USER');
+		$this->password = getDolGlobalString('PRINTIPP_PASSWORD');
+		$this->ssl = getDolGlobalInt('PRINTIPP_SSL');
+		$this->conf[] = array('varname' => 'PRINTIPP_HOST', 'required' => 1, 'example' => 'localhost', 'type' => 'text');
+		$this->conf[] = array('varname' => 'PRINTIPP_PORT', 'required' => 1, 'example' => '631', 'type' => 'text');
+		$this->conf[] = array('varname' => 'PRINTIPP_USER', 'required' => 0, 'example' => '', 'type' => 'text', 'moreattributes' => 'autocomplete="off"');
+		$this->conf[] = array('varname' => 'PRINTIPP_PASSWORD', 'required' => 0, 'example' => '', 'type' => 'password', 'moreattributes' => 'autocomplete="off"');
+		$this->conf[] = array('varname' => 'PRINTIPP_SSL', 'required' => 0, 'example' => '', 'type' => 'checkbox', 'moreattributes' => 'autocomplete="off"');
+		$this->conf[] = array('enabled' => 1, 'type' => 'submit');
 	}
 
 	/**
@@ -139,6 +145,7 @@ class printing_printipp extends PrintingDriver
 		$ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
 		$ipp->setHost($this->host);
 		$ipp->setPort($this->port);
+		$ipp->ssl = $this->ssl;
 		$ipp->setJobName($file, true);
 		$ipp->setUserName($this->userid);
 		// Set default number of copy
@@ -158,9 +165,9 @@ class printing_printipp extends PrintingDriver
 				// Set number of copy
 				$ipp->setCopies($obj->copy);
 			} else {
-				if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
-					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
-					$ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+				if (getDolGlobalString('PRINTIPP_URI_DEFAULT')) {
+					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".getDolGlobalString('PRINTIPP_URI_DEFAULT'));
+					$ipp->setPrinterURI(getDolGlobalString('PRINTIPP_URI_DEFAULT'));
 				} else {
 					$this->errors[] = 'NoDefaultPrinterDefined';
 					$error++;
@@ -194,6 +201,8 @@ class printing_printipp extends PrintingDriver
 	 *  Return list of available printers
 	 *
 	 *  @return  int                     0 if OK, >0 if KO
+	 *
+	 *  @phan-suppress PhanTypeExpectedObjectPropAccess
 	 */
 	public function listAvailablePrinters()
 	{
@@ -216,6 +225,7 @@ class printing_printipp extends PrintingDriver
 		$list = $this->getlistAvailablePrinters();
 		foreach ($list as $value) {
 			$printer_det = $this->getPrinterDetail($value);
+			'@phan-var-force stdClass $printer_det';
 			$html .= '<tr class="oddeven">';
 			$html .= '<td>'.$value.'</td>';
 			//$html.= '<td><pre>'.print_r($printer_det,true).'</pre></td>';
@@ -228,12 +238,12 @@ class printing_printipp extends PrintingDriver
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
 			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
-			// Defaut
+			// Default
 			$html .= '<td class="center">';
 			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";
@@ -245,7 +255,7 @@ class printing_printipp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array                list of printers
+	 *  @return string[]                List of printers (URIs)
 	 */
 	public function getlistAvailablePrinters()
 	{
@@ -267,7 +277,7 @@ class printing_printipp extends PrintingDriver
 	 *  Get printer detail
 	 *
 	 *  @param  string  $uri    URI
-	 *  @return array           List of attributes
+	 *  @return stdClass        List of attributes
 	 */
 	private function getPrinterDetail($uri)
 	{
@@ -309,7 +319,7 @@ class printing_printipp extends PrintingDriver
 			$ipp->setAuthentication($this->user, $this->password);
 		}
 		// select printer uri for module order, propal,...
-		$sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
+		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape($module)."'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

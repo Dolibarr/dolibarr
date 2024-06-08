@@ -22,6 +22,7 @@
  *      \brief      Page to setup printing module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -70,7 +71,7 @@ if ($action == 'setconst' && $user->admin) {
 	foreach ($_POST['setupdriver'] as $setupconst) {
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -89,7 +90,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 
@@ -135,7 +136,12 @@ if ($mode == 'setup' && $user->admin) {
 	$submit_enabled = 0;
 
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -145,7 +151,7 @@ if ($mode == 'setup' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -155,7 +161,16 @@ if ($mode == 'setup' && $user->admin) {
 				case "password":
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
-					print '<td><input size="32" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.getDolGlobalString($key['varname']).'"';
+					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
+					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
+					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
+					print '</tr>'."\n";
+					break;
+				case "checkbox":
+					print '<tr class="oddeven">';
+					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
@@ -195,13 +210,15 @@ if ($mode == 'setup' && $user->admin) {
 			$i++;
 
 			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
+				$keyforprovider = '';	// @BUG This must be set
+
 				// Token
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("Token").'</td>';
 				print '<td colspan="2">';
 				$tokenobj = null;
 				// Dolibarr storage
-				$storage = new DoliStorage($db, $conf);
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
 				} catch (Exception $e) {
@@ -231,7 +248,7 @@ if ($mode == 'setup' && $user->admin) {
 
 	if (!empty($driver)) {
 		if ($submit_enabled) {
-			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
+			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 		}
 	}
 
@@ -253,18 +270,24 @@ if ($mode == 'config' && $user->admin) {
 
 	$object = new PrintingDriver($db);
 	$result = $object->listDrivers($db, 10);
-	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
-	foreach ($result as $driver) {
+
+	if (!empty($conf->modules_parts['printing'])) {
+		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+	} else {
+		$dirmodels = array('/core/modules/printing/');
+	}
+
+	foreach ($result as $tmpdriver) {
 		foreach ($dirmodels as $dir) {
-			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
+				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
 		}
 		require_once $classfile;
-		$classname = 'printing_'.$driver;
+		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 		//print '<pre>'.print_r($printer, true).'</pre>';
 
 		print '<tr class="oddeven">';
@@ -273,14 +296,14 @@ if ($mode == 'config' && $user->admin) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print ajax_constantonoff($printer->active);
 		} else {
-			if (empty($conf->global->{$printer->conf})) {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			if (!getDolGlobalString($printer->conf)) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&token='.newToken().'&varname='.urlencode($printer->active).'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&token='.newToken().'&varname='.urlencode($printer->active).'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 			}
 		}
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=test&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&token='.newToken().'&driver='.urlencode($printer->name).'">'.img_picto('', 'setup').'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=test&token='.newToken().'&driver='.urlencode($printer->name).'">'.img_picto('', 'setup').'</a></td>';
 		print '</tr>'."\n";
 	}
 
@@ -296,7 +319,12 @@ if ($mode == 'test' && $user->admin) {
 
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -305,9 +333,10 @@ if ($mode == 'test' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$langs->load($driver);
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load($driver);
+		$langs->load('printing');
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {

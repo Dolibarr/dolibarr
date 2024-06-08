@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,52 +16,171 @@
 #
 # Generic
 #
-Assets = Aset
-NewAsset = Aset baru
-AccountancyCodeAsset = Kode akuntansi (aset)
-AccountancyCodeDepreciationAsset = Kode akuntansi (akun penyusutan aset)
-AccountancyCodeDepreciationExpense = Kode akuntansi (akun penyusutan pengeluaran)
-NewAssetType=Jenis aset baru
-AssetsTypeSetup=Pengaturan jenis aset
-AssetTypeModified=Jenis aset diubah
-AssetType=Jenis aset
+NewAsset=Aset baru
+AccountancyCodeAsset=Kode akuntansi (aset)
+AccountancyCodeDepreciationAsset=Kode akuntansi (akun penyusutan aset)
+AccountancyCodeDepreciationExpense=Kode akuntansi (akun penyusutan pengeluaran)
 AssetsLines=Aset
 DeleteType=Hapus
-DeleteAnAssetType=Hapus jenis aset
-ConfirmDeleteAssetType=Anda yakin ingin menghapus jenis aset ini?
-ShowTypeCard=Tampilkan jenis '%s'
+DeleteAnAssetType=Hapus model aset
+ConfirmDeleteAssetType=Anda yakin ingin menghapus aset model ini?
+ShowTypeCard=Tampilkan model '1%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Aset
+ModuleAssetsName=Aset
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Deskripsi Aset
+ModuleAssetsDesc=Deskripsi Aset
 
 #
 # Admin page
 #
-AssetsSetup = Pengaturan aset
-Settings = Pengaturan
-AssetsSetupPage = Halaman pengaturan aset
-ExtraFieldsAssetsType = Atribut pelengkap (jenis aset)
-AssetsType=Jenis aset
-AssetsTypeId=Id jenis aset
-AssetsTypeLabel=Label jenis aset
-AssetsTypes=Jenis aset
+AssetSetup=Pengaturan aset
+AssetSetupPage=Halaman pengaturan aset
+ExtraFieldsAssetModel=Complementary attributes (Asset's model)
+
+AssetsType=Asset model
+AssetsTypeId=Asset model id
+AssetsTypeLabel=Asset model label
+AssetsTypes=Assets models
+ASSET_ACCOUNTANCY_CATEGORY=Grup akuntansi aset tetap
 
 #
 # Menu
 #
-MenuAssets = Aset
-MenuNewAsset = Aset baru
-MenuTypeAssets = Ketikkan aset
-MenuListAssets = Daftar
-MenuNewTypeAssets = Baru
-MenuListTypeAssets = Daftar
+MenuAssets=Aset
+MenuNewAsset=Aset baru
+MenuAssetModels=Model assets
+MenuListAssets=Daftar
+MenuNewAssetModel=New asset's model
+MenuListAssetModels=Daftar
 
 #
 # Module
 #
-Asset=Aset
-NewAssetType=Jenis aset baru
-NewAsset=Aset baru
 ConfirmDeleteAsset=Anda yakin ingin menghapus aset ini?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Pilihan depresiasi
+AssetAccountancyCodes=Akun akuntansi
+AssetDepreciation=Depresiasi
+
+#
+# Asset
+#
+Asset=Aset
+Assets=Aset
+AssetReversalAmountHT=Nilai pembalikan (tanpa pajak)
+AssetAcquisitionValueHT=Nilai akuisisi (tanpa pajak)
+AssetRecoveredVAT=Recovered VAT
+AssetReversalDate=Tanggal pembalikan
+AssetDateAcquisition=Tanggal perolehan
+AssetDateStart=Date of start-up
+AssetAcquisitionType=Jenis akuisisi
+AssetAcquisitionTypeNew=Baru
+AssetAcquisitionTypeOccasion=Digunakan
+AssetType=Jenis aset
+AssetTypeIntangible=Tidak berwujud
+AssetTypeTangible=Berwujud
+AssetTypeInProgress=Dalam proses
+AssetTypeFinancial=Finansial
+AssetNotDepreciated=Tidak terdepresiasi
+AssetDisposal=Pembuangan
+AssetConfirmDisposalAsk=Anda yakin ingin membuang aset <b> %s </b>?
+AssetConfirmReOpenAsk=Anda yakin ingin membuka kembali aset <b> %s </b> ?
+
+#
+# Asset status
+#
+AssetInProgress=Dalam proses
+AssetDisposed=Dibuang
+AssetRecorded=Diperhitungkan
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Tanggal dibuang
+AssetDisposalAmount=Disposal value
+AssetDisposalType=Type of disposal
+AssetDisposalDepreciated=Depreciate the year of transfer
+AssetDisposalSubjectToVat=Disposal subject to VAT
+
+#
+# Asset model
+#
+AssetModel=Asset's model
+AssetModels=Asset's models
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Depresiasi ekonomi
+AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionDepreciationType=Jenis depresiasi
+AssetDepreciationOptionDepreciationTypeLinear=Garis lurus
+AssetDepreciationOptionDepreciationTypeDegressive=Menurun
+AssetDepreciationOptionDepreciationTypeExceptional=Pengecualian
+AssetDepreciationOptionDegressiveRate=Tingkat penurunan
+AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionDuration=Durasi
+AssetDepreciationOptionDurationType=Jenis durasi
+AssetDepreciationOptionDurationTypeAnnual=Tahunan
+AssetDepreciationOptionDurationTypeMonthly=Bulanan
+AssetDepreciationOptionDurationTypeDaily=Harian
+AssetDepreciationOptionRate=Nilai (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Dasar depresiasi (tanpa PPN)
+AssetDepreciationOptionAmountBaseDeductibleHT=Dasar pengurangan (tanpa PPN)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Depresiasi ekonomi
+AssetAccountancyCodeAsset=Aset
+AssetAccountancyCodeDepreciationAsset=Depresiasi
+AssetAccountancyCodeDepreciationExpense=Biaya depresiasi
+AssetAccountancyCodeValueAssetSold=Nilai aset dibuang
+AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
+AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
+AssetAccountancyCodeVatCollected=PPN dipungut
+AssetAccountancyCodeVatDeductible=Recovered VAT on assets
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetAccountancyCodeAcceleratedDepreciation=Akun
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Biaya depresiasi
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
+AssetDepreciationBeginDate=Mulai depresiasi pada
+AssetDepreciationDuration=Durasi
+AssetDepreciationRate=Nilai (1%%)
+AssetDepreciationDate=Tanggal depresiasi
+AssetDepreciationHT=Depresiasi (tanpa PPN)
+AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
+AssetResidualHT=Residual value (excl. VAT)
+AssetDispatchedInBookkeeping=Depreciation recorded
+AssetFutureDepreciationLine=Future depreciation
+AssetDepreciationReversal=Reversal
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
+AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
+AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
+AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
+AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
+AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
+AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
+AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
+AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
+AssetErrorAddDepreciationLine=Error when adding a depreciation line
+AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
+AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
+AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
+AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
+AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount

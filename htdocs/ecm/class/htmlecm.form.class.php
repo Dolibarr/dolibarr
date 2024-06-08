@@ -55,15 +55,19 @@ class FormEcm
 	 *  @param	int		$selected    		Id of preselected section
 	 *  @param  string	$select_name		Name of HTML select component
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
+	 *  @param	array	$ids_to_ignore		Array of id to ignore
 	 *  @return	string						String with HTML select
 	 */
-	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm')
+	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm', $ids_to_ignore = array())
 	{
 		global $conf, $langs;
 		$langs->load("ecm");
 
 		if ($select_name == '') {
 			$select_name = "catParent";
+		}
+		if (!is_array($ids_to_ignore)) {
+			$ids_to_ignore = array($ids_to_ignore);
 		}
 
 		$cate_arbo = null;
@@ -83,13 +87,15 @@ class FormEcm
 			} else {
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value) {
-					$valueforoption = empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id'];
-					if ($selected && $valueforoption == $selected) {
-						$add = 'selected ';
-					} else {
-						$add = '';
+					if (!in_array($cate_arbo[$key]['id'], $ids_to_ignore)) {
+						$valueforoption = empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id'];
+						if ($selected && $valueforoption == $selected) {
+							$add = 'selected ';
+						} else {
+							$add = '';
+						}
+						$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
 					}
-					$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
 				}
 			}
 		}

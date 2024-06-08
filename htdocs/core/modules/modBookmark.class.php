@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modBookmark extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -57,7 +56,7 @@ class modBookmark extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("bookmarks");
@@ -81,22 +80,22 @@ class modBookmark extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 331; // id de la permission
 		$this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 332; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 333; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 
 

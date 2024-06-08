@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal модулін орнату
-PaypalDesc=Бұл модуль клиенттерге <a href="http://www.paypal.com" target="_blank"> PayPal </a> арқылы төлем жасауға мүмкіндік береді. Бұл арнайы төлем үшін немесе Dolibarr объектісіне байланысты төлем үшін пайдаланылуы мүмкін (шот-фактура, тапсырыс, ...)
+PaypalDesc=Бұл модуль тұтынушыларға <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> арқылы төлеуге мүмкіндік береді. Бұл арнайы төлем үшін немесе Dolibarr нысанына қатысты төлем үшін (шот-фактура, тапсырыс, ...)
 PaypalOrCBDoPayment=PayPal арқылы төлеу (карта немесе PayPal)
 PaypalDoPayment=PayPal арқылы төлеу
 PAYPAL_API_SANDBOX=Режимді тексеру/құм жәшігі
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Барлық Post әрекеттері бой
 ValidationOfPaymentFailed=Төлем расталмады
 CardOwner=Карточка ұстаушы
 PayPalBalance=Paypal несиесі
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

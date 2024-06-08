@@ -3,7 +3,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // Require
@@ -49,7 +49,7 @@ if ($action !== 'editcomment') {
 	print '</td>';
 
 	print '<td class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
 }
 

@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_clients.php
- *	\ingroup    Facture
+ *	\ingroup    invoice
  *	\brief      Module d'affichage pour les encours dépassés
  */
 
@@ -35,18 +35,9 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	public $boxcode = "customersoutstandingbillreached";
 	public $boximg = "object_company";
 	public $boxlabel = "BoxCustomersOutstandingBillReached";
-	public $depends = array("facture","societe");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
+	public $depends = array("facture", "societe");
 
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,16 +47,16 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -86,19 +77,19 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastOutstandingBillReached", $max));
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.outstanding_limit";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -133,7 +124,8 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 					$thirdpartystatic->entity = $objp->entity;
 					$thirdpartystatic->outstanding_limit = $objp->outstanding_limit;
 
-					$outstandingtotal = $thirdpartystatic->getOutstandingBills()['opened'];
+					$tmp = $thirdpartystatic->getOutstandingBills();
+					$outstandingtotal = $tmp['opened'];
 					$outstandinglimit = $thirdpartystatic->outstanding_limit;
 
 					if ($outstandingtotal >= $outstandinglimit) {
@@ -154,9 +146,9 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				}
 
 				if ($num == 0 || $nboutstandingbillreachedcustomers == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
+					$this->info_box_contents[0][] = array(
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
 					);
 				}
 
