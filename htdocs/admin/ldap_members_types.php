@@ -94,7 +94,7 @@ if ($action == 'setvalue' && $user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_members_types');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
@@ -200,7 +200,7 @@ if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDA
 }
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmembertype') {
+	if ($action == 'testmembertype') {
 		// Create object
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();

@@ -243,14 +243,11 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
  */
 function CreateFolder($resourceType, $currentFolder)
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sErrorNumber = '0';
 	$sErrorMsg = '';
 
 	if (isset($_GET['NewFolderName'])) {
-		$sNewFolderName = $_GET['NewFolderName'];
+		$sNewFolderName = GETPOST('NewFolderName');
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
 		if (strpos($sNewFolderName, '..') !== false) {
@@ -266,7 +263,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$sErrorNumber = '0';
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':
@@ -741,9 +738,6 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).

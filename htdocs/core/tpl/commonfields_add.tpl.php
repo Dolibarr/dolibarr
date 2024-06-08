@@ -25,7 +25,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -36,7 +36,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 
 foreach ($object->fields as $key => $val) {
 	// Discard if field is a hidden field on form
-	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) {
+	// Ensure $val['visible'] is treated as an integer
+	$visible = (int) $val['visible'];
+	if (abs($visible) != 1 && abs($visible) != 3) {
 		continue;
 	}
 

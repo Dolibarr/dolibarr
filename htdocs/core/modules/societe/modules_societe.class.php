@@ -136,14 +136,14 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("CustomerCodeDesc").'<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("SupplierCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
@@ -255,13 +255,14 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  Societe	$societe        Third party object
 	 *  @param  string	$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
+	 *  @return	int<-1,1>				>=0 if success, -1 if failure
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
 		// phpcs:enable
 		global $langs;
 
-		return $langs->trans("NotAvailable");
+		dol_syslog(get_class($this)."::get_code".$langs->trans("NotAvailable"), LOG_ERR);
+		return -1;
 	}
 }

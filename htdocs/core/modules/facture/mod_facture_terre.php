@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/modules/facture/mod_facture_terre.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      File containing class for numbering module Terre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -74,7 +75,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $conf, $mysoc;
 
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
 			$this->prefixreplacement = 'IR';
 			$this->prefixdeposit = 'ID';
@@ -240,7 +241,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max);
+				$num = sprintf("%04d", $max);
 			}
 
 			$ref = '';
@@ -268,7 +269,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max + 1);
+				$num = sprintf("%04d", $max + 1);
 			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);

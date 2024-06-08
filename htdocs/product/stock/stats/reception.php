@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 	$shortlabel = dol_trunc($object->batch, 16);
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_reception');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
@@ -223,7 +223,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as recep ON (recep.fk_soc = s.rowid)";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as d ON (d.fk_reception = recep.rowid)";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."receptiondet_batch as d ON (d.fk_reception = recep.rowid)";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}

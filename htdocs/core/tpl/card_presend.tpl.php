@@ -32,7 +32,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 $fileparams = array();
@@ -69,7 +69,9 @@ if ($action == 'presend') {
 	$outputlangs = $langs;
 	$newlang = '';
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-		$newlang = $object->thirdparty->default_lang;
+		if (is_object($object->thirdparty)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}

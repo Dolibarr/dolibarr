@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_serpis extends ModelNumRefContracts
 {
-
 	// variables inherited from ModelNumRefContracts class
 	public $name = 'Serpis';
 	public $version = 'dolibarr';
@@ -145,7 +145,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_contract_serpis::getNextValue return ".$this->prefix.$yymm."-".$num);

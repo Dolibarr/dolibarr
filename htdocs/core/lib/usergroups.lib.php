@@ -559,7 +559,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
 			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? $conf->global->THEME_TOPMENU_DISABLE_IMAGE : 0, 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth500');
 		} else {
-			$listoftopmenumodes[getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE')];
+			print $listoftopmenumodes[getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')];
 			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
@@ -586,6 +586,23 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		/*
 		 print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 		 print "</tr>";*/
+	}
+
+	// Main menu color logo
+	if ($foruserprofile) {
+		// Nothing
+	} else {
+		// Show logo
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("THEME_MENU_COLORLOGO").'</td>';
+		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_MENU_COLORLOGO', array(), null, 0, 0, 1);
+		} else {
+			print yn(getDolGlobalString('THEME_MENU_COLORLOGO'));
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		print '</td>';
+		print '</tr>';
 	}
 
 	// BorderTableActive

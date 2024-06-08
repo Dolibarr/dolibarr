@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,11 @@ $arrayofparameters = array(
 $error = 0;
 $setupnotempty = 0;
 
+$tmpobjectkey = GETPOST('object', 'aZ09');
+$moduledir = 'recruitment';
+$myTmpObjects = array();
+$myTmpObjects['recruitmentcandidature'] = array('label' => 'RecruitmentCandidature', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'RecruitmentCandidature');
+
 
 /*
  * Actions
@@ -82,11 +88,11 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -121,8 +127,6 @@ if ($action == 'updateMask') {
 	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
-	$tmpobjectkey = GETPOST('object');
-
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
@@ -132,7 +136,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey)."_ADDON";
 
@@ -140,7 +143,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set default model
-	$tmpobjectkey = GETPOST('object');
 	$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
@@ -154,7 +156,6 @@ if ($action == 'updateMask') {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -232,11 +233,6 @@ if ($action == 'edit') {
 }
 
 
-$moduledir = 'recruitment';
-$myTmpObjects = array();
-$myTmpObjects['RecruitmentCandidature'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
@@ -310,7 +306,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -366,7 +363,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {

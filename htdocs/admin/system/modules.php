@@ -67,6 +67,8 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
+
 $param = '';
 $info_admin = '';
 
@@ -113,6 +115,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
 
 								$modules[$objMod->numero] = $objMod;
 								$modules_files[$objMod->numero] = $file;
@@ -130,6 +133,7 @@ foreach ($modulesdir as $dir) {
 		closedir($handle);
 	}
 }
+'@phan-var-force array<string,DolibarrModules> $modules';
 
 // create pre-filtered list for modules
 foreach ($modules as $key => $module) {
@@ -203,7 +207,7 @@ foreach ($modules as $key => $module) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
@@ -226,7 +230,8 @@ $mode = '';
 $arrayofmassactions = array();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';
@@ -311,7 +316,7 @@ print '</tr>';
 if ($sortfield == "name" && $sortorder == "asc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		function (stdClass $a, stdClass $b) {
 			return strcasecmp($a->name, $b->name);
 		}
@@ -319,7 +324,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "name" && $sortorder == "desc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($b->name, $a->name);
 		}
@@ -327,7 +332,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "version" && $sortorder == "asc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($a->version, $b->version);
 		}
@@ -335,7 +340,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "version" && $sortorder == "desc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($b->version, $a->version);
 		}

@@ -3,6 +3,7 @@
  * Copyright (C) 2023 		Christian Humpel     <christian.humpel@gmail.com>
  * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +252,7 @@ if (empty($reshook)) {
 
 				$i = 1;
 				while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
-					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
+					$qtytoprocess = (float) price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
 					if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
@@ -325,7 +326,7 @@ if (empty($reshook)) {
 
 				$i = 1;
 				while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
-					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
+					$qtytoprocess = (float) price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
 					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
 					if ($qtytoprocess != 0) {
@@ -422,8 +423,7 @@ if (empty($reshook)) {
 			}
 
 			// Update status of MO
-			dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-			//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+			dol_syslog("consumptioncomplete = ".json_encode($consumptioncomplete)." productioncomplete = ".json_encode($productioncomplete));
 			if ($consumptioncomplete && $productioncomplete) {
 				$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 			} else {
@@ -823,7 +823,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
 		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
-		$parameters = array('morecss'=>'reposition');
+		$parameters = array('morecss' => 'reposition');
 
 		$newcardbutton = '';
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
@@ -1432,7 +1432,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$newcardbutton = '';
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addproduceline&token='.newToken();
 		$permissiontoaddaproductline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
-		$parameters = array('morecss'=>'reposition');
+		$parameters = array('morecss' => 'reposition');
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
 			if ($nblinetoproduce == 0 || $object->mrptype == 1) {
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddNewProduceLines'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaproductline, $parameters);

@@ -74,6 +74,7 @@ class modAgenda extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies","project");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Module parts
 		$this->module_parts = array();
@@ -201,7 +202,7 @@ class modAgenda extends DolibarrModules
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
 		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			// Use 'perms'=>'$user->hasRights('mymodule', 'level1', 'level2') if you want your menu with a permission rules
+		//							'perms'=>'1',			// Use 'perms'=>'$user->hasRight('mymodule', 'level1', 'level2') if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
@@ -579,9 +580,9 @@ class modAgenda extends DolibarrModules
 		);
 
 		// Import Event Extra Fields
-		$keyforselect = 'actioncomm';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforelement = 'action';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 	}
 }

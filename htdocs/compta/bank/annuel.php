@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +206,7 @@ for ($mois = 1; $mois < 13; $mois++) {
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
-		$case = sprintf("%04s-%02s", $annee, $mois);
+		$case = sprintf("%04d-%02d", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';
 		if (isset($decaiss[$case]) && $decaiss[$case] > 0) {

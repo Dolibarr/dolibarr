@@ -59,13 +59,14 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$show_files = GETPOST('show_files', 'aZ');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOSTINT('msid');
-$idproduct = GETPOSTINT('idproduct');
-$product_id = GETPOSTINT("product_id");
+$idproduct = GETPOST('idproduct', 'intcomma');
+$product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -86,8 +87,8 @@ $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
-$search_type_mouvement = GETPOSTINT('search_type_mouvement');
-$search_fk_project = GETPOSTINT("search_fk_project");
+$search_type_mouvement = GETPOST('search_type_mouvement');
+$search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
 
@@ -323,8 +324,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'update_extras') {
-	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
+if ($action == 'update_extras' && $permissiontoadd) {
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
@@ -344,7 +345,7 @@ if ($action == 'update_extras') {
 }
 
 // Correct stock
-if ($action == "correct_stock") {
+if ($action == "correct_stock" && $permissiontoadd) {
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -428,7 +429,7 @@ if ($action == "correct_stock") {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
@@ -591,8 +592,7 @@ if ($action == "transfert_stock" && !$cancel) {
 }
 
 // reverse movement of stock
-if ($action == 'confirm_reverse') {
-	$listMouvement = array();
+if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
 
 	$sql = "SELECT rowid, label, inventorycode, datem";
@@ -821,7 +821,7 @@ if ($msid) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_movement_list');
 
 /*
  * Show tab only if we ask a particular warehouse
@@ -1060,7 +1060,7 @@ if ($search_fk_project != '' && $search_fk_project != '-1') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1147,7 +1147,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1365,10 +1366,10 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $warehouse, $action); // Note that $action and $warehouse may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['m.datec']['checked'])) {
-	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['m.datec']['label'], $_SERVER["PHP_SELF"], "m.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['m.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['m.tms']['label'], $_SERVER["PHP_SELF"], "m.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

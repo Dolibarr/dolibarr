@@ -72,7 +72,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Add external contacts ids
@@ -176,7 +176,7 @@ class Donations extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 
 		// Check mandatory fields
@@ -185,11 +185,11 @@ class Donations extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->don->context['caller'] = $request_data['caller'];
+				$this->don->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->don->$field = $value;
+			$this->don->$field = $this->_checkValForAPI($field, $value, $this->don);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -225,7 +225,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -233,11 +233,11 @@ class Donations extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->don->context['caller'] = $request_data['caller'];
+				$this->don->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->don->$field = $value;
+			$this->don->$field = $this->_checkValForAPI($field, $value, $this->don);
 		}
 
 		if ($this->don->update(DolibarrApiAccess::$user) > 0) {
@@ -265,7 +265,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->don->delete(DolibarrApiAccess::$user)) {
@@ -314,7 +314,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -331,7 +331,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->don->fetchObjectLinked();

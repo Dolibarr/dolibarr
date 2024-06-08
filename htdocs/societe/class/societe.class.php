@@ -128,24 +128,13 @@ class Societe extends CommonObject
 	public $picto = 'company';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * @var Societe To store a cloned copy of object before to edit it and keep track of old properties
+	 * @var static To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
 
@@ -166,7 +155,7 @@ class Societe extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -188,7 +177,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -889,6 +878,8 @@ class Societe extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		$this->client = 0;
 		$this->prospect = 0;
 		$this->fournisseur = 0;
@@ -954,6 +945,10 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -992,7 +987,10 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."',";
+			$sql .= " '".$this->db->escape($this->name_alias)."',";
+			$sql .= " ".((int) $this->entity).",";
+			$sql .= " '".$this->db->idate($this->date_creation)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
@@ -1012,6 +1010,7 @@ class Societe extends CommonObject
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
@@ -1373,7 +1372,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -1399,7 +1398,7 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim($this->tva_assuj) : 0;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
 		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
@@ -1421,10 +1420,10 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = ($this->capital != '') ? (float) price2num(trim($this->capital)) : null;
+		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
-		$this->effectif_id = trim($this->effectif_id);
-		$this->forme_juridique_code = trim($this->forme_juridique_code);
+		$this->effectif_id = trim((string) $this->effectif_id);
+		$this->forme_juridique_code = trim((string) $this->forme_juridique_code);
 
 		//Gencod
 		$this->barcode = trim($this->barcode);
@@ -1797,11 +1796,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
-	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
-	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
+	 * 	  @param	int		$is_client		Only client third party
+	 *    @param	int		$is_supplier	Only supplier third party
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{
 		global $langs;
 		global $conf;
@@ -2145,12 +2144,8 @@ class Societe extends CommonObject
 				$toute_categs = array();
 
 				// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
-				if ($this->client || $this->prospect) {
-					$toute_categs['customer'] = $static_cat->containing($this->id, Categorie::TYPE_CUSTOMER);
-				}
-				if ($this->fournisseur) {
-					$toute_categs['supplier'] = $static_cat->containing($this->id, Categorie::TYPE_SUPPLIER);
-				}
+				$toute_categs['customer'] = $static_cat->containing($this->id, Categorie::TYPE_CUSTOMER);
+				$toute_categs['supplier'] = $static_cat->containing($this->id, Categorie::TYPE_SUPPLIER);
 
 				// Remove each "Categorie"
 				foreach ($toute_categs as $type => $categs_type) {
@@ -2464,20 +2459,21 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc = $this->id;
+			$discount->socid = $this->id;
 
 			$discount->discount_type = $discount_type;
 
 			if ($price_base_type == 'TTC') {
 				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise / (1 + $vatrate / 100), 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($discount->amount_ttc - $discount->amount_ht, 'MT');
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
 			} else {
 				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
-				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
 			}
 
-			$discount->tva_tx = price2num($vatrate);
+			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -2497,11 +2493,11 @@ class Societe extends CommonObject
 	/**
 	 * 	Returns amount of included taxes of the current discounts/credits available from the company
 	 *
-	 *	@param	User	$user			Filter on a user author of discounts
-	 * 	@param	string	$filter			Other filter
-	 * 	@param	integer	$maxvalue		Filter on max value for discount
-	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int						Return integer <0 if KO, Credit note amount otherwise
+	 *	@param	?User		$user			Filter on a user author of discounts
+	 * 	@param	string		$filter			Other filter
+	 * 	@param	int			$maxvalue		Filter on max value for discount
+	 * 	@param	int<0,1>	$discount_type	0 => customer discount, 1 => supplier discount
+	 *	@return	float|int<-1,-1>		Return integer <0 if KO, Credit note amount otherwise
 	 */
 	public function getAvailableDiscounts($user = null, $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
@@ -2521,10 +2517,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of third party or <0 if KO
+	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2532,16 +2528,14 @@ class Societe extends CommonObject
 
 		$reparray = array();
 
-		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
+		// Condition here should be the same than into select_dolusers()
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
-			$sql .= " AND ug.entity = ".$conf->entity.")";
-			$sql .= " OR u.admin = 1)";
+			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
-			$sql .= " WHERE entity in (0, ".$conf->entity.")";
+			$sql .= " WHERE entity IN (0, ".$this->db->sanitize($conf->entity).")";
 		}
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);
@@ -3111,8 +3105,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
-	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
-	 *    @return     array       					Array of contacts emails
+	 *	  @param	int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
+	 *    @return   array  	    				Array of contacts emails
 	 */
 	public function thirdparty_and_contact_email_array($addthirdparty = 0)
 	{
@@ -3120,12 +3114,14 @@ class Societe extends CommonObject
 		global $langs;
 
 		$contact_emails = $this->contact_property_array('email', 1);
+
 		if ($this->email && $addthirdparty) {
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
 			$contact_emails['thirdparty'] = ($addthirdparty == 2 ? '<span class="opacitymedium">' : '').$langs->transnoentitiesnoconv("ThirdParty").($addthirdparty == 2 ? '</span>' : '').': '.dol_trunc($this->name, 16)." <".$this->email.">";
 		}
+
 		//var_dump($contact_emails)
 		return $contact_emails;
 	}
@@ -3341,7 +3337,7 @@ class Societe extends CommonObject
 
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$bac->fetch(0, $this->id);
+		$bac->fetch(0, '', $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
 			if ($mode == 'label') {
@@ -4058,18 +4054,25 @@ class Societe extends CommonObject
 	{
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES');
+
+		// Now try to guess using different tips
 		if (!empty($this->tva_intra)) {
 			$isACompany = 1;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
 			$isACompany = 1;
-		} elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN') {
-			// TODO Add a field is_a_company into dictionary
-			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
-				$isACompany = 0;
+		} else {
+			if (!getDolGlobalString('MAIN_CUSTOMERS_ARE_COMPANIES_EVEN_IF_SET_AS_INDIVIDUAL')) {
+				// TODO Add a field is_a_company into dictionary
+				if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {
+					$isACompany = 0;
+				} else {
+					$isACompany = 1;
+				}
 			} else {
 				$isACompany = 1;
 			}
 		}
+
 		return (bool) $isACompany;
 	}
 
@@ -4979,7 +4982,7 @@ class Societe extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				$result = $bac->fetch(0, $this->id);
+				$result = $bac->fetch(0, '', $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
 				} else {
@@ -5109,10 +5112,8 @@ class Societe extends CommonObject
 			return false;
 		}
 
-		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
-		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
-		 */
+		// Sales representationves cannot be twice in the same thirdparties so we look for them and remove the one that are common some to avoid duplicate.
+		// Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
 		$sql .= ' SELECT fk_user ';
@@ -5124,10 +5125,8 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
-		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
-		 * Do not include llx_societe because it will be replaced later.
-		 */
+		// llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
 			'societe_account',
 			'societe_commerciaux',
@@ -5217,7 +5216,7 @@ class Societe extends CommonObject
 	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '', $arraydata = null)
+	public function getKanbanView($option = '', $arraydata = array())
 	{
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -5327,11 +5326,14 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    Merge a company with another one, deleting the given company.
+	 *    Merge a company with current one, deleting the given company $soc_origin_id.
 	 *    The company given in parameter will be removed.
+	 *    This is called for example by the societe/card.php file.
+	 *    It calls the method replaceThirdparty() of each object with relation with thirdparties,
+	 *    including hook 'replaceThirdparty' for external modules.
 	 *
 	 *    @param	int     $soc_origin_id		Company to merge the data from
-	 *    @return	int							-1 if error
+	 *    @return	int							-1 if error, >=0 if OK
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
@@ -5351,8 +5353,8 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			// Recopy some data
-			$this->client = $this->client | $soc_origin->client;
-			$this->fournisseur = $this->fournisseur | $soc_origin->fournisseur;
+			$this->client |= $soc_origin->client;
+			$this->fournisseur |= $soc_origin->fournisseur;
 			$listofproperties = array(
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_mobile', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
@@ -5429,7 +5431,6 @@ class Societe extends CommonObject
 			if (!$error) {
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
-					'Societe' => '/societe/class/societe.class.php',
 					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
@@ -5437,7 +5438,6 @@ class Societe extends CommonObject
 					'Facture' => '/compta/facture/class/facture.class.php',
 					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-					'Mo' => '/mrp/class/mo.class.php',
 					'Contact' => '/contact/class/contact.class.php',
 					'Contrat' => '/contrat/class/contrat.class.php',
 					'Expedition' => '/expedition/class/expedition.class.php',
@@ -5447,13 +5447,21 @@ class Societe extends CommonObject
 					'Reception' => '/reception/class/reception.class.php',
 					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-					'Delivery' => '/delivery/class/delivery.class.php',
 					'Product' => '/product/class/product.class.php',
+					//'ProductThirparty' => '...', 	// for llx_product_thirdparty
 					'Project' => '/projet/class/project.class.php',
 					'User' => '/user/class/user.class.php',
 					'Account' => '/compta/bank/class/account.class.php',
-					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
+					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php',
+					'Societe' => '/societe/class/societe.class.php',
+					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirparty of Societe.
 				);
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'delivery')) {
+					$objects['Delivery'] = '/delivery/class/delivery.class.php';
+				}
+				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'mrp_mo')) {
+					$objects['Mo'] = '/mrp/class/mo.class.php';
+				}
 				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'don')) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
@@ -5509,6 +5517,25 @@ class Societe extends CommonObject
 				}
 				// End call triggers
 			}
+
+			if (!$error) {
+				// Move files from the dir of the third party to delete into the dir of the third party to keep
+				if (!empty($conf->societe->multidir_output[$this->entity])) {
+					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
+					$destdir = $conf->societe->multidir_output[$this->entity]."/".$this->id;
+
+					if (dol_is_dir($srcdir)) {
+						$dirlist = dol_dir_list($srcdir, 'files', 1);
+						foreach ($dirlist as $filetomove) {
+							$destfile = $destdir.'/'.$filetomove['relativename'];
+							//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+						}
+						//exit;
+					}
+				}
+			}
+
 
 			if (!$error) {
 				// We finally remove the old thirdparty

@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,6 @@ class Subscription extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'subscription';
-
-	/**
-	 * Does this object supports the multicompany module ?
-	 *
-	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -104,7 +98,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -130,6 +124,8 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 
@@ -185,6 +181,32 @@ class Subscription extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->fk_type = $type;
+		}
+
+		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
+			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+		}
+
+		// Add object linked
+		if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+			foreach ($this->linked_objects as $origin => $tmp_origin_id) {
+				if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+					foreach ($tmp_origin_id as $origin_id) {
+						$ret = $this->add_object_linked($origin, $origin_id);
+						if (!$ret) {
+							$this->error = $this->db->lasterror();
+							$error++;
+						}
+					}
+				} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					$origin_id = $tmp_origin_id;
+					$ret = $this->add_object_linked($origin, $origin_id);
+					if (!$ret) {
+						$this->error = $this->db->lasterror();
+						$error++;
+					}
+				}
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -532,7 +554,7 @@ class Subscription extends CommonObject
 
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
-		$return .= $this->getNomUrl(-1);
+		$return .= $this->getNomUrl(0);
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -542,11 +564,11 @@ class Subscription extends CommonObject
 		}
 
 		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
-			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="margintoponly amount inline-block">'.price($this->amount).'</span>';
+			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
 			if (!empty($arraydata['bank'])) {
 				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 			}

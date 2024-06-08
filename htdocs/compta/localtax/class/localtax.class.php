@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -534,7 +535,7 @@ class Localtax extends CommonObject
 						dol_print_error($this->db);
 					}
 
-					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
+					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs((float) $this->amount), '', '', $user);
 
 					// Update fk_bank into llx_localtax so we know the line of localtax used to generate the bank entry.
 					if ($bank_line_id > 0) {

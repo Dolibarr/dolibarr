@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +46,15 @@ $langs->loadLangs($langsLoad);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOSTINT('show_files');
+//$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
+$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
+//$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
+//$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
+$optioncss  = GETPOST('optioncss', 'aZ');
+$backtopage = GETPOST('backtopage', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 $id = GETPOSTINT('id');
@@ -64,9 +72,6 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-$backtopage = GETPOST('backtopage', 'alpha');
-$cancel = GETPOST('cancel', 'alpha');
 
 $search_user_id = GETPOSTINT('search_user_id');
 $search_taskref = GETPOST('search_taskref');
@@ -102,8 +107,6 @@ $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
-$optioncss  = GETPOST('optioncss', 'aZ');
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -146,9 +149,13 @@ $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
-$planned_workloadhour = (GETPOSTINT('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : 0);
-$planned_workloadmin = (GETPOSTINT('planned_workloadmin') ? GETPOSTINT('planned_workloadmin') : 0);
-$planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
+$planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
+$planned_workloadmin = (GETPOSTISSET('planned_workloadmin') ? GETPOSTINT('planned_workloadmin') : '');
+if (GETPOSTISSET('planned_workloadhour') || GETPOSTISSET('planned_workloadmin')) {
+	$planned_workload = (int) $planned_workloadhour * 3600 + (int) $planned_workloadmin * 60;
+} else {
+	$planned_workload = '';
+}
 
 // Definition of fields for list
 $arrayfields = array(
@@ -176,6 +183,7 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
@@ -184,7 +192,14 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) {
+if ($cancel) {
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
 	$action = 'list';
 	$massaction = '';
 }
@@ -405,7 +420,7 @@ $taskstatic = new Task($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
 }
 if ($action == 'create') {
@@ -563,7 +578,7 @@ if ($id > 0 || !empty($ref)) {
 
 	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 		$tmpurl = $_SESSION['pageforbacktolist']['project'];
-		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -722,7 +737,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
@@ -795,7 +810,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
 	print img_picto('', 'clock', 'class="pictofixedwidth"');
-	print $form->select_duration('planned_workload', !empty($planned_workload) ? $planned_workload : 0, 0, 'text');
+	print $form->select_duration('planned_workload', $planned_workload, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
@@ -810,12 +825,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	// WYSIWYG editor
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 	$nbrows = 0;
 	if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 		$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 	}
-	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows, '90%');
+	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), $nbrows, '90%');
 	print $doleditor->Create();
 
 	print '</td></tr>';

@@ -55,8 +55,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 	/**
 	 * Function called when a Dolibarr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * All functions "runTrigger" are triggered if file of function is inside directory core/triggers.
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object
@@ -65,7 +64,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 * @param Conf 			$conf 		Object conf
 	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->webhook) || empty($conf->webhook->enabled)) {
 			return 0; // If module is not enabled, we do nothing
@@ -79,7 +78,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$target_url = $static_object->fetchAll();
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
-			if (is_array($actionarray) && in_array($action, $actionarray)) {
+			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;
@@ -97,7 +96,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$jsonstr = json_encode($resobject);
 
-				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array(), array('http', 'https'), 0, -1);
+				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array('content-type:application/json'), array('http', 'https'), 2, -1);
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {

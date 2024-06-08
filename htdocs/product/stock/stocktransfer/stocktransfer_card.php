@@ -189,8 +189,13 @@ if (empty($reshook)) {
 		} else {
 			if (!empty($batch)) {
 				$error++;
-				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), null, 'errors');
 			}
+		}
+
+		if ($prod->status_batch==2 && abs($qty)>1) {
+			$error++;
+			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
 
 		if (empty($error)) {
@@ -249,6 +254,12 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
 				$action = 'editline';
 			}
+		}
+
+		if ($prod->status_batch==2 && abs($qty)>1) {
+			$error++;
+			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
+			$action = 'editline';
 		}
 
 		if (empty($error)) {
@@ -395,7 +406,7 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("StockTransfer");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_card');
 
 
 
@@ -439,8 +450,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -448,6 +457,10 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
 	if (isModEnabled('incoterm')) {
+		$soc = new Societe($db);
+		if (!empty($object->fk_soc)) {
+			$soc->fetch($object->fk_soc);
+		}
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -607,7 +620,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
-	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && !empty($object->thirdparty) && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
@@ -709,6 +722,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		*/
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+			$fk_element = $object->id;
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
@@ -806,7 +820,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.'>';
 		print '<td class="titlefield">';
 		if ($action === 'editline' && $line->id == $lineid) {
-			$form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
+			$form->select_produits($line->fk_product, 'fk_product', '', 0, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
 		} else {
 			print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 		}
@@ -829,14 +843,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>';
 
 		if ($action === 'editline' && $line->id == $lineid) {
-			print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
+			print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatics->getNomUrl(1);
 		}
 		print '</td>';
 		print '<td>';
 		if ($action === 'editline' && $line->id == $lineid) {
-			print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseDestination);
+			print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatict->getNomUrl(1);
 		}
@@ -881,7 +895,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 				print '<td class="linecolmove tdlineupdown center">';
-				$coldisplay++;
 				if ($i > 0) { ?>
 					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 						<?php print img_up('default', 0, 'imgupforline'); ?>
@@ -895,7 +908,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '</td>';
 			} else {
 				print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
-				$coldisplay++;
 			}
 		}
 
@@ -927,7 +939,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$formproduct->loadWarehouses(); // Pour charger la totalité des entrepôts
 
-		// On stock ceux qui ne doivent pas être proposés dans la liste
+		// Define a list of warehouse to not show on the list
 		$TExcludedWarehouseSource = array();
 		if (!empty($object->fk_warehouse_source)) {
 			$source_ent = new Entrepot($db);
@@ -939,7 +951,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// On stock ceux qui ne doivent pas être proposés dans la liste
+		// Define a list of warehouse to not show on the list
 		$TExcludedWarehouseDestination = array();
 		if (!empty($object->fk_warehouse_destination)) {
 			$dest_ent = new Entrepot($db);
@@ -1100,7 +1112,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'stocktransfer', 0, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'stocktransfer', 0, 1, '', $MAXEVENT, '');
 
 		print '</div></div>';
 	}

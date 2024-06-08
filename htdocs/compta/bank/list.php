@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ $mode = GETPOST('mode', 'aZ');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
-$search_status = GETPOST('search_status') ? GETPOST('search_status', 'alpha') : 'opened'; // 'all' or '' means 'opened'
+$search_status = GETPOST('search_status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $search_category_list = "";
@@ -125,6 +126,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'configurer');
@@ -210,10 +212,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
-if ($search_status == 'opened') {
+if ($search_status === 'opened') {
 	$sql .= " AND clos = 0";
 }
-if ($search_status == 'closed') {
+if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
@@ -332,7 +334,7 @@ if ($search_label != '') {
 if ($search_number != '') {
 	$param .= '&search_number='.urlencode($search_number);
 }
-if ($search_status != '') {
+if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($show_files) {
@@ -341,7 +343,7 @@ if ($show_files) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -423,7 +425,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

@@ -10,6 +10,7 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 
 /**
  *	\file       htdocs/compta/facture/card-rec.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show predefined invoice
  */
 
@@ -55,8 +56,10 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
-// Security check
+
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 $lineid = GETPOSTINT('lineid');
 $ref = GETPOST('ref', 'alpha');
@@ -129,6 +132,7 @@ $now = dol_now();
 
 $error = 0;
 
+// Security check
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
 
 
@@ -151,7 +155,28 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (GETPOST('cancel', 'alpha')) {
+	$backurlforlist = DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	// include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	if ($cancel) {
+		/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 		$action = '';
 	}
 
@@ -322,7 +347,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setfrequency' && $user->hasRight('facture', 'creer')) {
 		// Set frequency and unit frequency
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Frequency"));
-		$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
+		$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOST('unit_frequency'));
 	} elseif ($action == 'setdate_when' && $user->hasRight('facture', 'creer')) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
@@ -542,7 +567,7 @@ if (empty($reshook)) {
 				//$tva_npr = $datapriceofproduct['tva_npr'];
 
 				$tmpvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht)) {
@@ -1128,32 +1153,32 @@ if ($action == 'create') {
 
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
-		print "<input type='text' name='frequency' value='".GETPOSTINT('frequency')."' size='4' />&nbsp;";
+		print '<input type="text" class="width50" name="frequency" value="'.GETPOST('frequency', 'int').'">&nbsp;';
 		print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// Date next run
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
-		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max').'" size="5" />';
+		print '<input type="text" class="width50" name="nb_gen_max" value="'.GETPOSTINT('nb_gen_max').'">';
 		print "</td></tr>";
 
 		// Auto validate the invoice
 		print "<tr><td>".$langs->trans("StatusOfAutoGeneratedInvoices")."</td><td>";
 		$select = array('0' => $langs->trans('BillStatusDraft'), '1' => $langs->trans('BillStatusValidated'));
-		print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
+		print $form->selectarray('auto_validate', $select, GETPOSTINT('auto_validate'));
 		print "</td></tr>";
 
 		// Auto generate document
 		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print "<tr><td>".$langs->trans("StatusOfGeneratedDocuments")."</td><td>";
 			$select = array('0' => $langs->trans('DoNotGenerateDoc'), '1' => $langs->trans('AutoGenerateDoc'));
-			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
+			print $form->selectarray('generate_pdf', $select, GETPOSTINT('generate_pdf'));
 			print "</td></tr>";
 		} else {
 			print '<input type="hidden" name="generate_pdf" value="1">';
@@ -1189,6 +1214,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
+		$flag_price_may_change = getDolGlobalString('INVOICE_REC_PRICE_MAY_CHANGE');
 		if (!empty($flag_price_may_change)) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
@@ -1542,7 +1568,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding">';
 			print '<tr><td>';
-			print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;";
+			print '<input type="text" name="frequency" class="width50 marginrightonly right" value="'.$object->frequency.'">';
 			print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 			print '</td>';
 			print '<td class="left"><input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
@@ -1688,7 +1714,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer') && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 
@@ -1780,6 +1806,8 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
+	} else {
+		print $langs->trans("NoRecordFound");
 	}
 }
 

@@ -161,7 +161,7 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans('Closure');
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
 llxHeader('', $title, $help_url);
 
@@ -309,7 +309,7 @@ if (isset($current_fiscal_period)) {
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep1");
 	$head[0][2] = 'step1';
-	print dol_get_fiche_head($head, 'step1', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step1', '', -1, '');
 
 	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
@@ -334,7 +334,7 @@ if (isset($current_fiscal_period)) {
 		print '<td class="right">' . $langs->trans("Year") . '</td>';
 	}
 	for ($i = 1; $i <= 12; $i++) {
-		print '<td class="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
 	print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
 	print '</tr>';
@@ -355,12 +355,14 @@ if (isset($current_fiscal_period)) {
 	print "</table>\n";
 	print '</div>';
 
+	print '<br>';
+
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
-	print dol_get_fiche_head($head, 'step2', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 
@@ -371,12 +373,14 @@ if (isset($current_fiscal_period)) {
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
+	print '<br>';
+
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
-	print dol_get_fiche_head($head, 'step3', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step3', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
 

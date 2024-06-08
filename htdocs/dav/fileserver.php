@@ -97,7 +97,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 	/**
 	 * @param string	$username	Username to validate as a login
 	 * @param string	$password	Password to validate for $username
-	 * @return true				True if login ok, false if not
+	 * @return bool					True if login ok, false if not
 	 */
 	static function ($username, $password) {
 		global $user, $conf;
@@ -247,7 +247,7 @@ $server->addPlugin($tempFF);
 */
 
 // And off we go!
-$server->exec();
+$server->start();
 
 if (is_object($db)) {
 	$db->close();

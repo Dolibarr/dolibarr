@@ -60,6 +60,9 @@ class MouvementStock extends CommonObject
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 
 	/**
@@ -166,7 +169,7 @@ class MouvementStock extends CommonObject
 	 *	@param		User			$user				User object
 	 *	@param		int				$fk_product			Id of product
 	 *	@param		int				$entrepot_id		Id of warehouse
-	 *	@param		int				$qty				Qty of movement (can be <0 or >0 depending on parameter type)
+	 *	@param		float			$qty				Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int				$type				Direction of movement:
 	 *													0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *													2=output (stock decrease), 3=input (stock increase)
@@ -183,7 +186,7 @@ class MouvementStock extends CommonObject
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
-	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
+	 *	@return		int|string							Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK, or printabl result of hook
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
@@ -194,7 +197,7 @@ class MouvementStock extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
+		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".json_encode($skip_batch));
 
 		// Call hook at beginning
 		global $action, $hookmanager;
@@ -418,17 +421,18 @@ class MouvementStock extends CommonObject
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
+				if (isset($product->stock_warehouse[$entrepot_id])) {
+					foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
+						if ((string) $batch != (string) $batchcursor) {        // Lot '59' must be different than lot '59c'
+							continue;
+						}
 
-				foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
-					if ((string) $batch != (string) $batchcursor) {		// Lot '59' must be different than lot '59c'
-						continue;
+						$foundforbatch = 1;
+						if ($prodbatch->qty < abs($qty)) {
+							$qtyisnotenough = $prodbatch->qty;
+						}
+						break;
 					}
-
-					$foundforbatch = 1;
-					if ($prodbatch->qty < abs($qty)) {
-						$qtyisnotenough = $prodbatch->qty;
-					}
-					break;
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
 					$langs->load("stocks");
@@ -442,7 +446,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if (isset($product->stock_warehouse[$entrepot_id]) && (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
@@ -747,7 +751,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			Object user
 	 * 	@param		int				$idProduct		Id product
 	 * 	@param		int				$entrepot_id	Warehouse id
-	 * 	@param		int				$qty			Quantity
+	 * 	@param		float			$qty			Quantity
 	 * 	@param		int				$type			Type
 	 * 	@param		int				$price			Price
 	 * 	@param		string			$label			Label of movement
@@ -810,7 +814,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			    	Object user
 	 * 	@param		int				$fk_product		    	Id product
 	 * 	@param		int				$entrepot_id	    	Warehouse id
-	 * 	@param		int				$qty			    	Quantity
+	 * 	@param		float			$qty			    	Quantity
 	 * 	@param		int				$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
 	 * 	@param		int|string		$datem			    	Force date of movement
@@ -837,7 +841,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			     	Object user
 	 * 	@param		int				$fk_product		     	Id product
 	 * 	@param		int				$entrepot_id	     	Warehouse id
-	 * 	@param		int				$qty			     	Quantity
+	 * 	@param		float			$qty			     	Quantity
 	 * 	@param		int				$price			     	Price
 	 * 	@param		string			$label			     	Label of stock movement
 	 *	@param		integer|string	$eatby			     	eat-by date
@@ -893,7 +897,7 @@ class MouvementStock extends CommonObject
 	 * @param	array|int	$dluo	      Could be either
 	 *                                    - int if row id of product_batch table (for update)
 	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
-	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
+	 * @param	float		$qty	      Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
@@ -962,8 +966,8 @@ class MouvementStock extends CommonObject
 	/**
 	 * Return Url link of origin object
 	 *
-	 * @param  int     $origin_id      Id origin
-	 * @param  int     $origin_type     Type origin
+	 * @param  int		$origin_id		Id origin
+	 * @param  string	$origin_type	Type origin ('project', 'xxx@MODULENAME', etc)
 	 * @return string
 	 */
 	public function get_origin($origin_id, $origin_type)
@@ -1014,7 +1018,7 @@ class MouvementStock extends CommonObject
 				break;
 			default:
 				if ($origin_type) {
-					// Separate originetype with "@" : left part is class name, right part is module name
+					// Separate origin_type with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
 					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];

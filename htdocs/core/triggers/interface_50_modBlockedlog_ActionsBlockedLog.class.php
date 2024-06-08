@@ -56,7 +56,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
 			return 0; // Module not active, we do nothing

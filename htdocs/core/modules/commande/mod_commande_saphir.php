@@ -22,7 +22,7 @@
 
 /**
  * \file       htdocs/core/modules/commande/mod_commande_saphir.php
- * \ingroup    commande
+ * \ingroup    order
  *  \brief     File of class to manage Sales Order numbering rules Saphir
  */
 

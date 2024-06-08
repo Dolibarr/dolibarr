@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +48,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
@@ -56,7 +58,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	 * @param conf		    $conf       Object conf
 	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->mailmanspip) || empty($conf->mailmanspip->enabled)) {
 			return 0; // Module not active, we do nothing
@@ -114,10 +116,13 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			// Add user into some linked tools (mailman, spip, etc...)
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)) {
 				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
-					if ($object->oldcopy->del_to_abo() < 0) {
-						$this->errors = $object->oldcopy->errors;
-						if (!empty($object->oldcopy->error)) {
-							$this->errors[] = $object->oldcopy->error;
+					// $object->oldcopy may be a stdClass and not original object depending on copy type, so we realod a new object to run the del_to_abo()
+					$tmpmember = new Adherent($this->db);
+					$tmpmember->fetch($object->oldcopy->id);
+					if ($tmpmember->del_to_abo() < 0) {
+						$this->errors = $tmpmember->errors;
+						if (!empty($tmpmember->error)) {
+							$this->errors[] = $tmpmember->error;
 						}
 						$return = -1;
 					} else {

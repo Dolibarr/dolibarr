@@ -235,7 +235,7 @@ class modCategorie extends DolibarrModules
 
 		$keyforselect = 'societe';
 		$keyforelement = 'company';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -281,9 +281,9 @@ class modCategorie extends DolibarrModules
 			't.libelle' => 'company', 'pl.code' => 'company', 'st.code' => 'company'
 		); // We define here only fields that use another picto
 
-		$keyforselect = 'societe';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforelement = 'company';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -312,7 +312,7 @@ class modCategorie extends DolibarrModules
 
 		$keyforselect = 'adherent';
 		$keyforelement = 'member';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -367,7 +367,7 @@ class modCategorie extends DolibarrModules
 
 		$keyforselect = 'socpeople';
 		$keyforelement = 'contact';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -397,7 +397,7 @@ class modCategorie extends DolibarrModules
 
 		$keyforselect = 'projet';
 		$keyforelement = 'project';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -423,7 +423,7 @@ class modCategorie extends DolibarrModules
 
 		$keyforselect = 'user';
 		$keyforelement = 'user';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

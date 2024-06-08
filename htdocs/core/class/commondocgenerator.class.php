@@ -4,10 +4,11 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
+ * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,18 +148,18 @@ abstract class CommonDocGenerator
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
 	/**
-	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
+	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
 
@@ -254,7 +255,7 @@ abstract class CommonDocGenerator
 		global $conf, $extrafields;
 
 		if ($member->photo) {
-			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+			$logotouse = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
 			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
@@ -385,11 +386,12 @@ abstract class CommonDocGenerator
 			'company_vatnumber' => $object->tva_intra,
 			'company_customercode' => $object->code_client,
 			'company_suppliercode' => $object->code_fournisseur,
-			'company_customeraccountancycode' => $object->code_compta,
+			'company_customeraccountancycode' => $object->code_compta_client,
 			'company_supplieraccountancycode' => $object->code_compta_fournisseur,
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
 			'company_capital' => $object->capital,
+			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
 			'company_idprof1' => $object->idprof1,
 			'company_idprof2' => $object->idprof2,
 			'company_idprof3' => $object->idprof3,
@@ -744,8 +746,8 @@ abstract class CommonDocGenerator
 			'line_localtax2_rate' => vatrate($line->localtax1_tx),
 			'line_up' => price2num($line->subprice),
 			'line_up_locale' => price($line->subprice, 0, $outputlangs),
-			'line_total_up' => price2num($line->subprice * $line->qty),
-			'line_total_up_locale' => price($line->subprice * $line->qty, 0, $outputlangs),
+			'line_total_up' => price2num($line->subprice * (float) $line->qty),
+			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
@@ -821,14 +823,17 @@ abstract class CommonDocGenerator
 		if (isset($line->fk_product) && $line->fk_product > 0) {
 			$tmpproduct = new Product($this->db);
 			$result = $tmpproduct->fetch($line->fk_product);
-			foreach ($tmpproduct->array_options as $key => $label) {
-				$resarray["line_product_".$key] = $label;
+			if (!empty($tmpproduct->array_options) && is_array($tmpproduct->array_options)) {
+				foreach ($tmpproduct->array_options as $key => $label) {
+					$resarray["line_product_".$key] = $label;
+				}
 			}
 		} else {
 			// Set unused placeholders as blank
 			$extrafields->fetch_name_optionals_label("product");
 			if ($extrafields->attributes["product"]['count'] > 0) {
 				$extralabels = $extrafields->attributes["product"]['label'];
+
 				foreach ($extralabels as $key => $label) {
 					$resarray['line_product_options_'.$key] = '';
 				}
@@ -856,7 +861,7 @@ abstract class CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 
 		$array_shipment = array(
 			$array_key.'_id' => $object->id,
@@ -898,7 +903,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (!empty($object->commande) && is_object($object->commande)) {
+		if (is_object($object->commande) && !empty($object->commande->ref)) {
 			$array_shipment['order_ref'] = $object->commande->ref;
 			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
@@ -930,13 +935,17 @@ abstract class CommonDocGenerator
 						$array_other['object_'.$key] = $value;
 					} elseif (is_array($value) && $recursive) {
 						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
-						foreach ($tmparray as $key2 => $value2) {
-							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						if (!empty($tmparray) && is_array($tmparray)) {
+							foreach ($tmparray as $key2 => $value2) {
+								$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+							}
 						}
 					} elseif (is_object($value) && $recursive) {
 						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
-						foreach ($tmparray as $key2 => $value2) {
-							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						if (!empty($tmparray) && is_array($tmparray)) {
+							foreach ($tmparray as $key2 => $value2) {
+								$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+							}
 						}
 					}
 				}
@@ -1044,13 +1053,13 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF	$pdf			Object PDF
-	 * @param	float	$x				Abscissa of first point
-	 * @param	float	$y		        Ordinate of first point
-	 * @param	float	$l				??
-	 * @param	float	$h				??
-	 * @param	int		$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param	int		$hidebottom		Hide bottom
+	 * @param	TCPDI|TCPDF	$pdf            Pdf object
+	 * @param	float		$x				Abscissa of first point
+	 * @param	float		$y		        Ordinate of first point
+	 * @param	float		$l				??
+	 * @param	float		$h				??
+	 * @param	int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param	int			$hidebottom		Hide bottom
 	 * @return	void
 	 */
 	public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
@@ -1248,7 +1257,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print standard column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
@@ -1291,7 +1300,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print description column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param  object      $object 		CommonObject
@@ -1369,7 +1378,7 @@ abstract class CommonDocGenerator
 
 		$extrafieldOutputContent = '';
 		if (isset($object->array_options[$extrafieldOptionsKey])) {
-			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element, $outputlangs);
 		}
 
 		// TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...
@@ -1473,6 +1482,11 @@ abstract class CommonDocGenerator
 
 				if (empty($enabled)) {
 					continue;
+				}
+
+				// Load language if required
+				if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) {
+					$outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
 				}
 
 				$field = new stdClass();
@@ -1600,12 +1614,12 @@ abstract class CommonDocGenerator
 	/**
 	 * Print standard column content
 	 *
-	 * @param TCPDI	    $pdf            Pdf object
-	 * @param float     $tab_top        Tab top position
-	 * @param float     $tab_height     Default tab height
-	 * @param Translate $outputlangs    Output language
-	 * @param int       $hidetop        Hide top
-	 * @return float                    Height of col tab titles
+	 * @param TCPDI|TCPDF	$pdf            Pdf object
+	 * @param float			$tab_top        Tab top position
+	 * @param float			$tab_height     Default tab height
+	 * @param Translate		$outputlangs    Output language
+	 * @param int			$hidetop        Hide top
+	 * @return float						Height of col tab titles
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
 	{

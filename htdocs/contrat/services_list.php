@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +40,9 @@ $langs->loadLangs(array('products', 'contracts', 'companies'));
 // Get parameters
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')).$mode; // To manage different context of search
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -72,8 +73,19 @@ $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
 $search_product_category = GETPOSTINT('search_product_category');
+
+// To support selection into combo list of status with detailed status '4&filter'
+$filter = '';
+if ($search_status == '4&filter=notexpired') {
+	$search_status = '4';
+	$filter = 'notexpired';
+}
+if ($search_status == '4&filter=expired') {
+	$search_status = '4';
+	$filter = 'expired';
+}
+
 $socid = GETPOSTINT('socid');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
@@ -139,6 +151,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
@@ -196,6 +209,7 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
+		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -283,10 +297,10 @@ if ($search_status == "0") {
 if ($search_status == "4") {
 	$sql .= " AND cd.statut = 4";
 }
-if ($search_status == "4&filter=expired") {
+if ($search_status == "4&filter=expired" || ($search_status == '4' && $filter == 'expired')) {
 	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."'";
 }
-if ($search_status == "4&filter=notexpired") {
+if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter == 'notexpired')) {
 	$sql .= " AND cd.statut = 4 AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
 if ($search_status == "5") {
@@ -557,7 +571,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -775,7 +790,7 @@ $productstatic = new Product($db);
 
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array('nbfield' => 0, 'cd.qty' => 0, 'cd.total_ht' => 0, 'cd.total_tva' => 0);
+$totalarray = array('nbfield' => 0, 'val' => array('cd.qty' => 0, 'cd.total_ht' => 0, 'cd.total_tva' => 0));
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -988,7 +1003,8 @@ while ($i < $imaxinloop) {
 		print '<td class="right">';
 		if ($obj->cstatut == 0) {
 			// If contract is draft, we say line is also draft
-			print $contractstatic->LibStatut(0, 5);
+			//print $contractstatic->LibStatut(0, 5);
+			print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now) ? 1 : 0, '', ' - '.$langs->trans("Draft"));
 		} else {
 			print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now) ? 1 : 0);
 		}

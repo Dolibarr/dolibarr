@@ -5,6 +5,7 @@
  * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,7 +272,7 @@ if (empty($reshook)) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--|__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--|__ID__/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
@@ -508,7 +509,7 @@ if (empty($reshook)) {
 
 			if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 				$tmpurl = $_SESSION['pageforbacktolist']['project'];
-				$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+				$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 				$urlback = $tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1';
 			} else {
 				$urlback = DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1';
@@ -568,7 +569,7 @@ $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE'))) {
 	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
 
@@ -770,7 +771,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
 			$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 		}
-		$text = img_picto('', 'company').$form->select_company(GETPOSTINT('socid'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		$text = img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOSTINT('socid'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
@@ -875,14 +876,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
 		$arrayselected = GETPOST('categories', 'array');
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
@@ -1007,7 +1008,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Ref
 		$suggestedref = $object->ref;
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="25" name="ref" value="'.$suggestedref.'">';
+		print '<td><input class="width200" name="ref" value="'.$suggestedref.'">';
 		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 		print '</td></tr>';
 
@@ -1266,7 +1267,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1274,7 +1275,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		if (isModEnabled('category')) {
 			$arrayselected = array();
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
 			foreach ($cats as $cat) {
@@ -1300,7 +1301,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 			$tmpurl = $_SESSION['pageforbacktolist']['project'];
-			$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+			$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 			$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		} else {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -1386,7 +1387,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Opportunity status
 			print '<tr><td>'.$langs->trans("OpportunityStatus");
 			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
-				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+				print '<a class="editfielda paddingtop" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td><td>';
 			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
@@ -1400,7 +1401,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			if (strcmp($object->opp_amount, '')) {
 				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 				if (strcmp($object->opp_percent, '')) {
-					print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+					print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 				}
 			}
 			print '</td></tr>';

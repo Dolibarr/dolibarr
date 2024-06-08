@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -148,5 +148,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 print dolJSToSetRandomPassword($constname);
 
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
+
+if (isModEnabled('website')) {
+	print info_admin($langs->trans("YouCanEmbedOnWebsite"));
+}
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';

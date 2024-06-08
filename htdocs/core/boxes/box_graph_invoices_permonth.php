@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -68,7 +69,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		//$facturestatic=new Facture($this->db);
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
@@ -123,7 +124,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1) : 2);	// Default is 3 years
+			$startyear = $endyear - getDolGlobalInt('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH', 3) + 1;	// Default is 3 years
 
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';

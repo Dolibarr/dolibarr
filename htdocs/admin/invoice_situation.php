@@ -23,7 +23,7 @@
 
 /**
  *      \file       htdocs/admin/invoice_situation.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 
@@ -133,7 +133,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $help_yrl = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura';
 
-llxHeader("", $langs->trans("BillsSetup"), $help_url);
+llxHeader("", $langs->trans("BillsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-invoice_situation');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

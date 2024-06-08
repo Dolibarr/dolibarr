@@ -5,9 +5,10 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023      Benjamin GREMBI         <benjamin@oarces.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,14 +158,14 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				// By default, electronic transfer from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
-				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {
+				if ($tmpaccountto->type == Account::TYPE_CASH || $tmpaccountfrom->type == Account::TYPE_CASH) {
 					// This is transfer of change
 					$typefrom = 'LIQ';
 					$typeto = 'LIQ';
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', '', $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;

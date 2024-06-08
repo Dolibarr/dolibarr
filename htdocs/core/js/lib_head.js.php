@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1162,7 +1163,7 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
@@ -1240,7 +1241,7 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 

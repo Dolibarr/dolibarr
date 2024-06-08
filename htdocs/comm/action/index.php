@@ -56,10 +56,10 @@ $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $check_holiday = GETPOSTINT('check_holiday');
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
-$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
+$usergroup = GETPOST("search_usergroup", "intcomma", 3) ? GETPOST("search_usergroup", "intcomma", 3) : GETPOST("usergroup", "intcomma", 3);
 $showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
-$search_categ_cus = GETPOSTINT("search_categ_cus", 3) ? GETPOSTINT("search_categ_cus", 3) : 0;
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma', 3) ? GETPOST("search_categ_cus", 'intcomma', 3) : 0;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
@@ -109,7 +109,7 @@ $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOSTINT("search_resourceid");
+$resourceid = GETPOST("search_resourceid", 'int');
 $year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
 $month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
 $week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
@@ -117,7 +117,7 @@ $day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
 $pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
-$maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
+$maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : getDolGlobalInt('AGENDA_MAX_EVENTS_DAY_VIEW');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
@@ -141,24 +141,24 @@ if ($status == '' && !GETPOSTISSET('search_status')) {
 	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 
-$defaultview = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
-$defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
+$defaultview = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_month');	// default for app
+$defaultview = getDolUserString('AGENDA_DEFAULT_VIEW', $defaultview);	// default for user
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = $defaultview;
 }
 if ($mode == 'default') {	// When action is default, we want a calendar view and not the list
 	$mode = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOSTINT('viewcal') && GETPOSTINT('mode') != 'show_day' && GETPOSTINT('mode') != 'show_week') {
+if (GETPOST('viewcal') && GETPOST('mode') != 'show_day' && GETPOST('mode') != 'show_week') {
 	$mode = 'show_month';
 	$day = '';
 } // View by month
-if (GETPOSTINT('viewweek') || GETPOSTINT('mode') == 'show_week') {
+if (GETPOST('viewweek') || GETPOST('mode') == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOSTINT('viewday') || GETPOSTINT('mode') == 'show_day') {
+if (GETPOST('viewday') || GETPOST('mode') == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
 } // View by day
@@ -272,6 +272,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		if (getDolGlobalString($source) && getDolGlobalString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
+				'type' => 'globalsetup',
 				'src' => getDolGlobalString($source),
 				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
 				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
@@ -283,6 +284,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		}
 	}
 }
+
 // Define list of external calendars (user setup)
 if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 	$i = 0;
@@ -299,6 +301,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
+				'type' => 'usersetup',
 				'src' => getDolUserString($source),
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
@@ -489,9 +492,6 @@ if ($optioncss != '') {
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//print dol_get_fiche_end();
 
 $viewmode = '<div class="navmode inline-block">';
 
@@ -560,6 +560,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 // Define the legend/list of calendard to show
 $s = '';
 $link = '';
+
 
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
@@ -662,7 +663,9 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn').'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
+
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -914,7 +917,6 @@ if ($resql) {
 		$event->type = $obj->type_type;
 		$event->type_picto = $obj->type_picto;
 
-		$event->libelle = $obj->label; // deprecated
 		$event->label = $obj->label;
 		$event->percentage = $obj->percent;
 
@@ -1177,7 +1179,8 @@ if ($user->hasRight("holiday", "read")) {
 // Complete $eventarray with external import Ical
 if (count($listofextcals)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
-	foreach ($listofextcals as $extcal) {
+
+	foreach ($listofextcals as $key => $extcal) {
 		$url = $extcal['src']; // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
 		$namecal = $extcal['name'];
 		$offsettz = $extcal['offsettz'];
@@ -1189,6 +1192,11 @@ if (count($listofextcals)) {
 
 		$ical = new ICal();
 		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
+		if ($ical->error) {
+			// Save error message for extcal
+			$listofextcals[$key]['error'] = $ical->error;
+			$s .= '<br><div class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</div>';
+		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
@@ -1462,7 +1470,6 @@ if (count($listofextcals)) {
 	}
 }
 
-
 // Complete $eventarray with events coming from external module
 $parameters = array();
 $object = null;
@@ -1493,7 +1500,7 @@ if (is_readable($color_file)) {
 	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
+	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 }
 
 $massactionbutton = '';
@@ -1731,8 +1738,8 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		$maxnbofchar = 80;
 
 		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
-		$minhour = round($tmp[0], 0);
-		$maxhour = round($tmp[1], 0);
+		$minhour = round((float) $tmp[0], 0);
+		$maxhour = round((float) $tmp[1], 0);
 		if ($minhour > 23) {
 			$minhour = 23;
 		}
@@ -1793,7 +1800,7 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
@@ -1803,6 +1810,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 	global $hookmanager;
+
+	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 @phan-var-force User[] $cacheusers
+	 @phan-var-force array<int<0,3>> $colorindexused';
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -1815,10 +1826,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
-	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
+	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad((string) $day, 2, "0", STR_PAD_LEFT).'&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}
@@ -1954,7 +1965,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color
+						// Define color  // @suppress-next-line PhanPluginPrintfIncompatibleArgumentType
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					}
 					$cssclass = $cssclass.' eventday_'.$ymd;
@@ -2110,6 +2121,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					} else {
+						'@phan-var-force ActionComm $event';
 						if (empty($reshook)) {
 							// Other calendar
 							if (empty($event->fulldayevent)) {
@@ -2156,17 +2168,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 							// Show title
 							$titletoshow = $daterange;
-							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
+							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label);
 
 							if ($event->type_code != 'ICALEVENT') {
-								$savlabel = $event->label ? $event->label : $event->libelle;
+								$savlabel = $event->label;
 								$event->label = $titletoshow;
-								$event->libelle = $titletoshow;		// deprecatd
 								// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
 								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
-								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle inline-block', '', 0, 0);
+								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle', '', 0, 0);	// do not add 'inline-block' in css here: it makes the title transformed completely into '...'
 								$event->label = $savlabel;
-								$event->libelle = $savlabel;
 							}
 
 							// Loop on each assigned user
@@ -2270,7 +2280,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
 					print($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
-					print($filtert ? '&search_filtert='.urlencode($filtert) : '');
+					print($filtert ? '&search_filtert='.urlencode((string) $filtert) : '');
 					print($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
 					print($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
 					print '">'.img_picto("all", "1downarrow_selected.png").' ...';

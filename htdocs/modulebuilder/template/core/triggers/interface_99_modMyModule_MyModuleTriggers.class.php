@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
@@ -64,7 +65,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 * @param Conf 			$conf 		Object conf
 	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (!isModEnabled('mymodule')) {
 			return 0; // If module is not enabled, we do nothing
@@ -138,7 +139,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_DELETE':
 			//case 'ORDER_CANCEL':
 			//case 'ORDER_SENTBYMAIL':
-			//case 'ORDER_CLASSIFY_BILLED':
+			//case 'ORDER_CLASSIFY_BILLED':		// TODO Replace it with ORDER_BILLED
+			//case 'ORDER_CLASSIFY_UNBILLED':	// TODO Replace it with ORDER_UNBILLED
 			//case 'ORDER_SETDRAFT':
 			//case 'LINEORDER_INSERT':
 			//case 'LINEORDER_UPDATE':
@@ -150,6 +152,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_VALIDATE':
 			//case 'ORDER_SUPPLIER_DELETE':
 			//case 'ORDER_SUPPLIER_APPROVE':
+			//case 'ORDER_SUPPLIER_CLASSIFY_BILLED':		// TODO Replace with ORDER_SUPPLIER_BILLED
+			//case 'ORDER_SUPPLIER_CLASSIFY_UNBILLED':		// TODO Replace with ORDER_SUPPLIER_UNBILLED
 			//case 'ORDER_SUPPLIER_REFUSE':
 			//case 'ORDER_SUPPLIER_CANCEL':
 			//case 'ORDER_SUPPLIER_SENTBYMAIL':
@@ -164,6 +168,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PROPAL_MODIFY':
 			//case 'PROPAL_VALIDATE':
 			//case 'PROPAL_SENTBYMAIL':
+			//case 'PROPAL_CLASSIFY_BILLED':		// TODO Replace it with PROPAL_BILLED
+			//case 'PROPAL_CLASSIFY_UNBILLED':		// TODO Replace it with PROPAL_UNBILLED
 			//case 'PROPAL_CLOSE_SIGNED':
 			//case 'PROPAL_CLOSE_REFUSED':
 			//case 'PROPAL_DELETE':
@@ -207,6 +213,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'LINEBILL_UPDATE':
 			//case 'LINEBILL_DELETE':
 
+			// Recurring Bills
+			//case 'BILLREC_MODIFY':
+			//case 'BILLREC_DELETE':
+			//case 'BILLREC_AUTOCREATEBILL':
+			//case 'LINEBILLREC_MODIFY':
+			//case 'LINEBILLREC_DELETE':
+
 			//Supplier Bill
 			//case 'BILL_SUPPLIER_CREATE':
 			//case 'BILL_SUPPLIER_UPDATE':
@@ -239,6 +252,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'FICHINTER_CREATE':
 			//case 'FICHINTER_MODIFY':
 			//case 'FICHINTER_VALIDATE':
+			//case 'FICHINTER_CLASSIFY_BILLED':			// TODO Replace it with FICHINTER_BILLED
+			//case 'FICHINTER_CLASSIFY_UNBILLED':		// TODO Replace it with FICHINTER_UNBILLED
 			//case 'FICHINTER_DELETE':
 			//case 'LINEFICHINTER_CREATE':
 			//case 'LINEFICHINTER_UPDATE':

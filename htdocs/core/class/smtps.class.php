@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +54,10 @@ class SMTPs
 	/**
 	 * SMTP Server Port definition. 25 is default value
 	 * This can be defined via a INI file or via a setter method
+	 *
+	 * @var int
 	 */
-	private $_smtpsPort = '25';
+	private $_smtpsPort = 25;
 
 	/**
 	 * Secure SMTP Server access ID
@@ -84,6 +87,16 @@ class SMTPs
 	 * This can be defined via a INI file or via a setter method
 	 */
 	private $_msgReplyTo = null;
+
+	/**
+	 * List of In-Reply-To
+	 */
+	private $_msgInReplyTo = null;
+
+	/**
+	 * List of Msg-Id
+	 */
+	private $_msgReferences = null;
 
 	/**
 	 * Who will the Message be sent to; TO, CC, BCC
@@ -651,12 +664,9 @@ class SMTPs
 	 */
 	public function sendMsg()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		/**
-		 * Default return value
-		 */
+
+		// Default return value
 		$_retVal = false;
 
 		// Connect to Server
@@ -895,17 +905,17 @@ class SMTPs
 
 	/**
 	 * Defines the Port Number of the Mail Server to use
-	 * This is defaulted to '25'
+	 * The default is 25
 	 * This is  used only with 'socket' based mail transmission
 	 *
-	 * @param 	int 	$_intPort 		Port Number of the Mail Server to use
+	 * @param 	int|string 	$_intPort 		Port Number of the Mail Server to use
 	 * @return 	void
 	 */
 	public function setPort($_intPort)
 	{
 		if ((is_numeric($_intPort)) &&
 		(($_intPort >= 1) && ($_intPort <= 65536))) {
-			$this->_smtpsPort = $_intPort;
+			$this->_smtpsPort = (int) $_intPort;
 		}
 	}
 
@@ -913,11 +923,11 @@ class SMTPs
 	 * Retrieves the Port Number of the Mail Server to use
 	 * This is  used only with 'socket' based mail transmission
 	 *
-	 * @return 	string 		Port Number of the Mail Server to use
+	 * @return 	int 		Port Number of the Mail Server to use
 	 */
 	public function getPort()
 	{
-		return $this->_smtpsPort;
+		return (int) $this->_smtpsPort;
 	}
 
 	/**
@@ -1135,6 +1145,56 @@ class SMTPs
 		} else {
 			$_retValue = $this->_msgReplyTo[$_part];
 		}
+
+		return $_retValue;
+	}
+
+	/**
+	 * Set References in the list of Msg-Id
+	 *
+	 * @param 	string 	$_strInReplyTo 	List of Msg-Id
+	 * @return 	void
+	 */
+	public function setInReplyTo($_strInReplyTo)
+	{
+		if ($_strInReplyTo) {
+			$this->_msgInReplyTo = $_strInReplyTo;
+		}
+	}
+
+	/**
+	 * Retrieves the InReplyTo from which mail we reply to
+	 *
+	 * @return 	string 				Msg-Id of email we reply to
+	 */
+	public function getInReplyTo()
+	{
+		$_retValue = $this->_msgInReplyTo;
+
+		return $_retValue;
+	}
+
+	/**
+	 * Set References in the list of Msg-Id
+	 *
+	 * @param 	string 	$_strReferences 	List of Msg-Id
+	 * @return 	void
+	 */
+	public function setReferences($_strReferences)
+	{
+		if ($_strReferences) {
+			$this->_msgReferences = $_strReferences;
+		}
+	}
+
+	/**
+	 * Retrieves the References from which mail will be the reply-to
+	 *
+	 * @return 	string 				List of Msg-Id
+	 */
+	public function getReferences()
+	{
+		$_retValue = $this->_msgReferences;
 
 		return $_retValue;
 	}
@@ -1451,9 +1511,7 @@ class SMTPs
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
-			$_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
 		} else {
 			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
@@ -1464,10 +1522,6 @@ class SMTPs
 		if ($this->getMoreInHeader()) {
 			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
 		}
-
-		//$_header .=
-		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
-		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
 
 		if ($this->getSensitivity()) {
 			$_header .= 'Sensitivity: '.$this->getSensitivity()."\r\n";
@@ -1493,6 +1547,13 @@ class SMTPs
 		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
+		// Add also $this->references and In-Reply-To
+		if ($this->getInReplyTo()) {
+			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
+		}
+		if ($this->getReferences()) {
+			$_header .= "References: ".$this->getReferences()."\r\n";
+		}
 
 		return $_header;
 	}
@@ -1689,6 +1750,8 @@ class SMTPs
 			}
 
 			$content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
+		} else {
+			die("Sorry, no content");
 		}
 
 		return $content;

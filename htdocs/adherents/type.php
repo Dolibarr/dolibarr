@@ -9,6 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ if (!$sortfield) {
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
-$status = GETPOSTINT("status");
+$status = GETPOST("status", "intcomma");
 $subscription = GETPOSTINT("subscription");
 $amount = GETPOST('amount', 'alpha');
 $duration_value = GETPOSTINT('duration_value');
@@ -145,7 +146,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (int) $vote;
+	$object->vote = $vote;  // $vote is already int
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -174,7 +175,12 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			$backurlforlist = $_SERVER["PHP_SELF"];
+
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $id, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
+
+			header("Location: " . $urltogo);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -201,7 +207,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (bool) trim($vote);
+	$object->vote = $vote;  // $vote is already int.
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -266,7 +272,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$param = '';
 		if (!empty($mode)) {
-			$param .= '&mode'.urlencode($mode);
+			$param .= '&mode='.urlencode($mode);
 		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
@@ -432,6 +438,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 

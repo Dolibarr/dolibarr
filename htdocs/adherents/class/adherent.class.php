@@ -60,17 +60,6 @@ class Adherent extends CommonObject
 	public $table_element = 'adherent';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'member';
@@ -316,7 +305,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -394,6 +383,8 @@ class Adherent extends CommonObject
 		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par default
 		$this->public = 0;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
 	}
@@ -560,12 +551,13 @@ class Adherent extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
-	 *  @param	int			$addbadge	Add badge (1=Full label, 2=First letters only)
+	 *  @param	int<0,2>	$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
 	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+		$s = '';
 
 		// Clean var
 		if (!$morphy) {
@@ -573,7 +565,6 @@ class Adherent extends CommonObject
 		}
 
 		if ($addbadge) {
-			$s = '';
 			$labeltoshowm = $langs->trans("Moral");
 			$labeltoshowp = $langs->trans("Physical");
 			if ($morphy == 'phy') {
@@ -674,6 +665,7 @@ class Adherent extends CommonObject
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
+						'@phan-var-force ModeleNumRefMembers $modCodeMember';
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -856,7 +848,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
+					$isencrypted = getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 1 : 0;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -1836,8 +1828,8 @@ class Adherent extends CommonObject
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
-				if (!empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects'])) {
-					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$invoice->linked_objects = array_merge($invoice->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$result = $invoice->create($user);
@@ -2301,7 +2293,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=???)
 	 *	@param	int		$maxlen						length max label
 	 *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
 	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
@@ -2370,9 +2362,7 @@ class Adherent extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpictoimg) {
-			$result .= '<div class="inline-block nopadding valignmiddle">';
-		}
+
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
@@ -2405,9 +2395,7 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-		if ($withpictoimg) {
-			$result .= '</div>';
-		}
+
 		$result .= $linkend;
 
 		if ($addlinktonotes) {
@@ -2470,19 +2458,19 @@ class Adherent extends CommonObject
 		} elseif ($status >= self::STATUS_VALIDATED) {
 			if ($need_subscription === 0) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("WaitingSubscription");
 				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
-				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {
@@ -3138,7 +3126,7 @@ class Adherent extends CommonObject
 								$extraparams = '';
 
 								$actionmsg = '';
-								$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 								if ($message) {
 									$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
@@ -3294,7 +3282,9 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status paddingtop">';
+			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
+			$return .= '</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

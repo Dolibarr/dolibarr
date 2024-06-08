@@ -69,6 +69,9 @@ class CSMSFile
 	public $priority;
 	public $class;
 	public $message;
+	/**
+	 * @var bool
+	 */
 	public $nostop;
 
 	public $socid;
@@ -208,7 +211,7 @@ class CSMSFile
 				// Send sms method not correctly defined
 				// --------------------------------------
 				$this->error = 'Bad value for MAIN_SMS_SENDMODE constant';
-				$res = false;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$res = false;
 			}
 		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
@@ -242,7 +245,7 @@ class CSMSFile
 			fwrite($fp, "Priority: ".$this->priority."\n");
 			fwrite($fp, "Class: ".$this->class."\n");
 			fwrite($fp, "Deferred: ".$this->deferred."\n");
-			fwrite($fp, "DisableStop: ".$this->nostop."\n");
+			fwrite($fp, "DisableStop: ".((string) (int) $this->nostop)."\n");
 			fwrite($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fwrite($fp, "Message:\n".$this->message);
 

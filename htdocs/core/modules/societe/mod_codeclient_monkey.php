@@ -137,7 +137,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($max >= (pow(10, 5) - 1)) {
 			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
 		} else {
-			$num = sprintf("%05s", $max + 1);
+			$num = sprintf("%05d", $max + 1);
 		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
@@ -164,7 +164,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
@@ -173,7 +173,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {
@@ -242,7 +242,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if (dol_strlen($code) < 11) {
 			$res = -1;
 		} else {
-			$res = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$res = 0;
 		}
 		return $res;
 	}

@@ -4,6 +4,7 @@
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018-2022  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,6 +257,7 @@ if (empty($conf->stripeconnect->enabled)) {
 						}
 					}
 					$endpoint->url = $url;
+					// @phan-suppress-next-line PhanDeprecatedFunction
 					$endpoint->save();
 
 					if ($endpoint->status == 'enabled') {
@@ -328,6 +330,7 @@ if (empty($conf->stripeconnect->enabled)) {
 						}
 					}
 					$endpoint->url = $url;
+					// @phan-suppress-next-line PhanDeprecatedFunction
 					$endpoint->save();
 					if ($endpoint->status == 'enabled') {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
@@ -471,7 +474,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STRIPE_KLARNA", $arrval, $conf->global->STRIPE_KLARNA);
 	}
-	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForKlarnaCustomers").'</span>';
 	print '</td></tr>';
 }
 

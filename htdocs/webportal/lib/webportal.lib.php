@@ -32,16 +32,12 @@ function webportalAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	// global $db;
-	// $extrafields = new ExtraFields($db);
-	// $extrafields->fetch_name_optionals_label('myobject');
-
 	$langs->load("website");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '"/webportal/admin/setup.php';
+	$head[$h][0] = DOL_URL_ROOT . '/webportal/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -56,17 +52,6 @@ function webportalAdminPrepareHead()
 	$head[$h][2] = 'css';
 	$h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/webportal/admin/myobject_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['myobject']['label']) ? count($extrafields->attributes['myobject']['label']) : 0;
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">' . $nbExtrafields . '</span>';
-	}
-	$head[$h][2] = 'myobject_extrafields';
-	$h++;
-	*/
-
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
@@ -75,9 +60,9 @@ function webportalAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webportal:/webportal/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'website');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'website', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal', 'remove');
 
 	return $head;
 }

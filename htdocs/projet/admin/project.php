@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,18 +137,16 @@ if ($action == 'updateMaskTask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/task/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -512,7 +511,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -656,7 +657,9 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		$num_rows = $db->num_rows($resql);
 		while ($i < $num_rows) {
 			$array = $db->fetch_array($resql);
-			array_push($def, $array[0]);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
 			$i++;
 		}
 	} else {
@@ -842,16 +845,14 @@ print '<input type="submit" class="button small reposition" name="PROJECT_TIMESH
 print '</td>';
 print '</tr>';
 
-$key = 'PROJECT_DISPLAY_LINKED_BY_CONTACT';
-echo '<tr class="oddeven">',
-		'<td class="left">',
-			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
-		'</td>',
-		'<td class="right" colspan="2">',
-			ajax_constantonoff($key),
-		'</td>',
-	'</tr>';
-
+print '<tr class="oddeven">';
+print '<td class="left">';
+print $form->textwithpicto($langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT'), $langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT_help'));
+print '</td>';
+print '<td class="right" colspan="2">';
+print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
+print '</td>';
+print '</tr>';
 
 print '</table>';
 print '</div>';

@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -27,7 +27,7 @@
  */
 
 /**
- *  \file        fichinter/card-rec.php
+ *  \file        htdocs/fichinter/card-rec.php
  *  \ingroup     intervention
  *  \brief       Page to show predefined fichinter
  */
@@ -98,7 +98,7 @@ $extrafields = new ExtraFields($db);
 
 
 $arrayfields = array(
-	'f.titre' => array('label' => "Ref", 'checked' => 1),
+	'f.title' => array('label' => "Ref", 'checked' => 1),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
 	'f.fk_contrat' => array('label' => "Contract", 'checked' => 1),
 	'f.duree' => array('label' => "Duration", 'checked' => 1),
@@ -130,7 +130,7 @@ if ($cancel) {
 
 // Create predefined intervention
 if ($action == 'add') {
-	if (!GETPOST('titre')) {
+	if (!GETPOST('title')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
@@ -167,7 +167,7 @@ if ($action == 'add') {
 
 	if (!$error) {
 		$object->id_origin = $id;
-		$object->title			= GETPOST('titre', 'alpha');
+		$object->title			= GETPOST('title', 'alpha');
 		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOSTINT('socid');
 		$object->fk_project		= GETPOSTINT('projectid');
@@ -243,7 +243,7 @@ if ($action == 'add') {
 } elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
-	$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
+	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 } elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
 	// Set next date of execution
 	$object->fetch($id);
@@ -322,7 +322,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", "alphanohtml")).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", "alphanohtml")).'">';
 		print '</td>';
 
 		// Note
@@ -777,9 +777,9 @@ if ($action == 'create') {
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title,";
+		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
-		$sql .= " f.date_last_gen, f.date_when, f.datec";
+		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
@@ -796,7 +796,7 @@ if ($action == 'create') {
 		}
 		/*
 		if (!empty($search_ref)) {
-			$sql .= natural_search('f.titre', $search_ref);
+			$sql .= natural_search('f.title', $search_ref);
 		}
 		*/
 		if (!empty($search_societe)) {
@@ -824,7 +824,7 @@ if ($action == 'create') {
 			$i = 0;
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.title", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			if (isModEnabled('contract')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');

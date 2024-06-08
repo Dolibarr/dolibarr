@@ -17,7 +17,7 @@
 
 /**
  *  \file       htdocs/compta/facture/agenda-rec.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      Tab of events on Invoices
  */
 require '../../main.inc.php';

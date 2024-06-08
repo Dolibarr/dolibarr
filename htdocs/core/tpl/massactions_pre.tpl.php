@@ -2,6 +2,7 @@
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+'@phan-var-force CommonObject $objecttmp';
+
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
 
@@ -65,12 +68,12 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 		// Test on $object (should be useless, we already check on $objecttmp just after)
 		if (isset($object) && $categdef['obj_table'] == $object->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 		if (isset($objecttmp) && $categdef['obj_table'] == $objecttmp->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 	}
@@ -345,12 +348,12 @@ if ($massaction == 'edit_extrafields') {
 		$outputShowOutputFields = '<div class="extrafields-inputs">';
 
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
-			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
-			$outputShowOutputFields.= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
-			$outputShowOutputFields.= '</div>';
+			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields .= '</div>';
 		}
-		$outputShowOutputFields.= '<script>
+		$outputShowOutputFields .= '<script>
 		jQuery(function($) {
             $("#extrafield-key-to-update").on(\'change\',function(){
             	let selectedExtrtafield = $(this).val();
@@ -361,7 +364,7 @@ if ($massaction == 'edit_extrafields') {
             });
 		});
 		</script>';
-		$outputShowOutputFields.= '</div>';
+		$outputShowOutputFields .= '</div>';
 
 
 
@@ -391,6 +394,16 @@ if ($massaction == 'presetcommercial') {
 			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
 }
+if ($massaction == 'unsetcommercial') {
+	$formquestion = array();
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$formquestion[] = array('type' => 'other',
+		'name' => 'unassigncommercial',
+		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
+		'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUnallocateCommercial"), $langs->trans("ConfirmUnallocateCommercialQuestion", count($toselect)), "unassigncommercial", $formquestion, 1, 0, 200, 500, 1);
+}
+
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }

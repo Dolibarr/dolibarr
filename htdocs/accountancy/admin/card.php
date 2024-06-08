@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,7 +242,7 @@ if ($action == 'create') {
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 	print '<td>';
-	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, null, 0, 0, 'minwidth200');
+	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, [], 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Chart of accounts type

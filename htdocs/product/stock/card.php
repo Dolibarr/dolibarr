@@ -8,6 +8,7 @@
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,9 @@ $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $projectid = GETPOSTINT('projectid');
 
 $id = GETPOSTINT('id');
@@ -67,8 +71,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
-
-$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
@@ -164,7 +166,7 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
-						$backtopage = str_replace("__ID__", $id, $backtopage);
+						$backtopage = str_replace("__ID__", (string) $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {
@@ -291,7 +293,7 @@ if ($action == 'create') {
 }
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_card');
 
 
 if ($action == 'create') {
@@ -309,7 +311,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input class="width200" name="libelle" value=""></td></tr>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
 
@@ -365,6 +367,11 @@ if ($action == 'create') {
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
+	// Warehouse usage
+	if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+		// TODO
+	}
+
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
@@ -385,7 +392,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
@@ -499,6 +506,13 @@ if ($action == 'create') {
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
+
+			// Warehouse usage
+			if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+				$labelusagestring = $object->fields['warehouse_usage']['arrayofkeyval'][empty($object->warehouse_usage) ? 1 : $object->warehouse_usage];
+				$labelusage = $labelusagestring ? $langs->trans($labelusagestring) : 'Unknown';
+				print '<td class="titlefield tdtop">'.$langs->trans("WarehouseUsage").'</td><td>'.dol_htmlentitiesbr($labelusage).'</td></tr>';
+			}
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();
@@ -963,7 +977,7 @@ if ($action == 'create') {
 			// Tags-Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
 				$arrayselected = array();

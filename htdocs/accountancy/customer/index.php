@@ -234,17 +234,17 @@ if ($action == 'validatehistory') {
 			$facture_static_det->desc = $objp->description;
 
 			$accountingAccountArray = array(
-				'dom'=>$objp->aarowid,
-				'intra'=>$objp->aarowid_intra,
-				'export'=>$objp->aarowid_export,
-				'thirdparty' =>$objp->aarowid_thirdparty);
+				'dom' => $objp->aarowid,
+				'intra' => $objp->aarowid_intra,
+				'export' => $objp->aarowid_export,
+				'thirdparty' => $objp->aarowid_thirdparty);
 
 			$code_sell_p_notset = '';
 			$code_sell_t_notset = '';
 
 			$suggestedid = 0;
 
-			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
+			$return = $accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 			if (!is_array($return) && $return < 0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
@@ -299,7 +299,7 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("CustomersVentilation"), $help_url);
 
@@ -328,7 +328,6 @@ print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"')
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
@@ -347,7 +346,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -362,7 +361,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -399,12 +398,12 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+			//print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
-			print length_accountg($row[0]);
+			print length_accountg($row[0]).' - ';
 		}
-		print '</td>';
-		print '<td>';
+		//print '</td>';
+		//print '<td>';
 		if ($row[0] == 'tobind') {
 			$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			if ($startmonth > 12) {
@@ -434,7 +433,7 @@ if ($resql) {
 			// Add link to make binding
 			if (!empty(price2num($row[$i]))) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
-				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
@@ -445,7 +444,7 @@ if ($resql) {
 	$db->free($resql);
 
 	if ($num == 0) {
-		print '<tr class="oddeven"><td colspan="16">';
+		print '<tr class="oddeven"><td colspan="15">';
 		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 		print '</td></tr>';
 	}
@@ -465,7 +464,6 @@ print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
@@ -484,7 +482,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -499,7 +497,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -535,15 +533,12 @@ if ($resql) {
 		//}
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="tdoverflowmax300"'.(empty($row[1]) ? '' : ' title="'.dol_escape_htmltag($row[1]).'"').'>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("Unknown");
+			//print $langs->trans("Unknown");
 		} else {
-			print length_accountg($row[0]);
+			print length_accountg($row[0]).' - ';
 		}
-		print '</td>';
-
-		print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
@@ -569,7 +564,7 @@ if ($resql) {
 	$db->free($resql);
 
 	if ($num == 0) {
-		print '<tr class="oddeven"><td colspan="16">';
+		print '<tr class="oddeven"><td colspan="15">';
 		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 		print '</td></tr>';
 	}
@@ -595,7 +590,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -605,7 +600,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -655,7 +650,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 			if ($j > 12) {
 				$j -= 12;
 			}
-			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -670,17 +665,17 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 				$sql .= " SUM(".$db->ifsql(
 					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
-								"fd.total_ht < 0",
-								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
-							).")",
+						"fd.total_ht < 0",
+						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
+						"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+					).")",
 					0
-				).") AS month".str_pad((int) $j, 2, '0', STR_PAD_LEFT).",";
+				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
 				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+				"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
 			).") as total";
 		} else {
 			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
@@ -697,7 +692,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))"
 					).")",
 					0
-				).") AS month".str_pad((int) $j, 2, '0', STR_PAD_LEFT).",";
+				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",

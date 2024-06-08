@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_commande_fournisseur');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
@@ -224,7 +224,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur as cf ON (cf.fk_soc = s.rowid)";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfd ON (cfd.fk_commande = cf.rowid)";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfdi ON (cfdi.fk_commandefourndet = cfd.rowid)";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."receptiondet_batch as cfdi ON (cfdi.fk_elementdet = cfd.rowid)";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}

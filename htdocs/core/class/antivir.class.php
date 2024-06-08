@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,11 +138,11 @@ class AntiVir
 		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
 		$param = getDolGlobalString('MAIN_ANTIVIRUS_PARAM');
 
-		$param = preg_replace('/%maxreclevel/', $maxreclevel, $param);
-		$param = preg_replace('/%maxfiles/', $maxfiles, $param);
-		$param = preg_replace('/%maxratio/', $maxratio, $param);
-		$param = preg_replace('/%bz2archivememlim/', $bz2archivememlim, $param);
-		$param = preg_replace('/%maxfilesize/', $maxfilesize, $param);
+		$param = preg_replace('/%maxreclevel/', (string) $maxreclevel, $param);
+		$param = preg_replace('/%maxfiles/', (string) $maxfiles, $param);
+		$param = preg_replace('/%maxratio/', (string) $maxratio, $param);
+		$param = preg_replace('/%bz2archivememlim/', (string) $bz2archivememlim, $param);
+		$param = preg_replace('/%maxfilesize/', (string) $maxfilesize, $param);
 		$param = preg_replace('/%file/', trim($file), $param);
 
 		if (!preg_match('/%file/', getDolGlobalString('MAIN_ANTIVIRUS_PARAM'))) {

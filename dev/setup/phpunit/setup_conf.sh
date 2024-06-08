@@ -5,6 +5,8 @@
 TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR:=$(realpath "$(dirname "$0")/../../..")}
 MYSQL=${MYSQL:=mysql}
 MYSQLDUMP=${MYSQLDUMP:="${MYSQL}dump"}
+PHP=${PHP:=php}
+PHP_OPT="-d error_reporting=32767"
 
 DB=${DB:=mariadb}
 DB_ROOT=${DB_ROOT:=root}
@@ -168,7 +170,7 @@ echo "Setting up Dolibarr '$INSTALL_FORCED_FILE' to test installation"
 # Ensure we catch errors
 set +e
 {
-	echo '<?php '
+	echo '<?php'
 	echo 'error_reporting(E_ALL);'
 	echo '$'force_install_noedit=2';'
 	if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
@@ -198,9 +200,9 @@ if [ "$load_cache" != "1" ] ; then
 		pVer=${VERSIONS[0]}
 		for v in "${VERSIONS[@]:1}" ; do
 			LOGNAME="${TRAVIS_BUILD_DIR}/upgrade${pVer//./}${v//./}"
-			php upgrade.php "$pVer" "$v" ignoredbversion > "${LOGNAME}.log"
-			php upgrade2.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-2.log"
-			php step5.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-3.log"
+			"${PHP}" $PHP_OPT upgrade.php "$pVer" "$v" ignoredbversion > "${LOGNAME}.log"
+			"${PHP}" $PHP_OPT upgrade2.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-2.log"
+			"${PHP}" $PHP_OPT step5.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-3.log"
 			pVer="$v"
 		done
 
@@ -208,11 +210,11 @@ if [ "$load_cache" != "1" ] ; then
 
 
 		{
-			php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport
-			php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP
-			php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT
-			php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP
-			php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector
 		} > $TRAVIS_BUILD_DIR/enablemodule.log
 	) && save_db_cache
 fi

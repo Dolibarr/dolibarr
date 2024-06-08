@@ -2,6 +2,7 @@
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -463,6 +464,7 @@ class DataPolicyCron
 
 		foreach ($arrayofparameters as $key => $params) {
 			if (getDolGlobalInt($key) > 0) {
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);

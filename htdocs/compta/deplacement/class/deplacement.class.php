@@ -52,13 +52,6 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 0;
-
-
 	public $fk_soc;
 	public $date;
 	public $type;
@@ -127,6 +120,8 @@ class Deplacement extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**

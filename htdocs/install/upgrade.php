@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +247,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 
 	/*
-	 * Remove deprecated indexes and constraints for Mysql
+	 * Remove deprecated indexes and constraints for Mysql without knowing its name
 	 */
 	if ($ok && preg_match('/mysql/', $db->type)) {
 		$versioncommande = array(4, 0, 0);
@@ -274,17 +275,19 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					$resql = $db->query($sql);
 					if ($resql) {
 						$values = $db->fetch_array($resql);
-						$i = 0;
-						$createsql = $values[1];
-						$reg = array();
-						while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
-							$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
-							$resqldrop = $db->query($sqldrop);
-							if ($resqldrop) {
-								print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+						if (is_array($values)) {
+							$i = 0;
+							$createsql = $values[1];
+							$reg = array();
+							while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
+								$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+								$resqldrop = $db->query($sqldrop);
+								if ($resqldrop) {
+									print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+								}
+								$createsql = preg_replace('/CONSTRAINT `'.$reg[1].'`/i', 'XXX', $createsql);
+								$i++;
 							}
-							$createsql = preg_replace('/CONSTRAINT `'.$reg[1].'`/i', 'XXX', $createsql);
-							$i++;
 						}
 						$db->free($resql);
 					} else {
@@ -417,8 +420,9 @@ if (!$ok && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- upgrade: end ".((!$ok && empty($_GET["ignoreerrors"])) || $dirmodule));
-$nonext = (!$ok && empty($_GET["ignoreerrors"])) ? 2 : 0;
+dolibarr_install_syslog("--- upgrade: end ".((int) (!$ok && !GETPOST("ignoreerrors")))." dirmodule=".$dirmodule);
+
+$nonext = (!$ok && !GETPOST("ignoreerrors")) ? 2 : 0;
 if ($dirmodule) {
 	$nonext = 1;
 }

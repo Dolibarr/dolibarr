@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023	Joachim Kueter		    <git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,7 +211,7 @@ class SupplierInvoices extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -257,14 +258,19 @@ class SupplierInvoices extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 
-		if ($this->invoice->update($id, DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 
@@ -387,7 +393,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if ($result < 0) {
+		if ($this->invoice->error !== '') {
 			throw new RestException(405, $this->invoice->error);
 		}
 

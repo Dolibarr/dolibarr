@@ -1,8 +1,9 @@
+<!-- file header_login.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 global $langs;
@@ -22,7 +23,7 @@ global $langs;
 		}
 		?>
 	</title>
-	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/global.css'; ?>">
+	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/global.css.php'; ?>">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
 	<?php
 	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';

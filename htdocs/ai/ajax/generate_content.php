@@ -61,19 +61,20 @@ if (is_null($jsonData)) {
 }
 $ai = new Ai($db);
 
-$function = 'textgeneration';
+// Get parameters
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgenerationemail', 'textgenerationwebpage', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
-$format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
+$format = empty($jsonData['format']) ? '' : $jsonData['format'];
 
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	// client errors
-	if ($generatedContent['code'] >= 400) {
-		print "Error : " . $generatedContent['message'];
-		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('Check Config of Module').'</a>';
-	} elseif ($generatedContent['code'] == 429) {
+	// Output error
+	if (!empty($generatedContent['code']) && $generatedContent['code'] == 429) {
 		print "Quota or allowed period exceeded. Retry Later !";
+	} elseif ($generatedContent['code'] >= 400) {
+		print "Error : " . $generatedContent['message'];
+		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
 	} else {
 		print "Error returned by API call: " . $generatedContent['message'];
 	}

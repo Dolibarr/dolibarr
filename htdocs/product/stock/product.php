@@ -70,7 +70,7 @@ $ref = GETPOST('ref', 'alpha');
 $stocklimit = (float) GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
-$fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 $d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 $pdluoid = GETPOSTINT('pdluoid');
@@ -556,7 +556,7 @@ if ($id > 0 || $ref) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock_product');
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
@@ -612,7 +612,7 @@ if ($id > 0 || $ref) {
 
 		dol_htmloutput_events();
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
 		if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -1292,18 +1292,24 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 		$pse = new ProductStockEntrepot($db);
 		$lines = $pse->fetchAll($id);
 
+		$visibleWarehouseEntities = explode(',', getEntity('stock')); 	// For MultiCompany compatibility
+
 		if (!empty($lines)) {
 			$var = false;
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
-				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
-				print '<td class="right">'.$line['desiredstock'].'</td>';
-				if ($user->hasRight('produit', 'creer')) {
-					print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+
+				if (!isModEnabled("multicompany") || in_array($ent->entity, $visibleWarehouseEntities)) {
+					// Display only warehouses from our entity and entities sharing stock with actual entity
+					print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
+					print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
+					print '<td class="right">'.$line['desiredstock'].'</td>';
+					if ($user->hasRight('produit', 'creer')) {
+						print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+					}
+					print '</tr>';
 				}
-				print '</tr>';
 			}
 		}
 

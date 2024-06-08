@@ -3,6 +3,7 @@
  * Copyright (C) 2016  Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Maxime DEMAREST              <maxime@indelog.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +118,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($paiementFourn, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
@@ -149,7 +151,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("SupplierPaymentSetup"), 'EN:Supplier_Payment_Configuration|FR:Configuration_module_paiement_fournisseur');
+llxHeader('', $langs->trans("SupplierPaymentSetup"), 'EN:Supplier_Payment_Configuration|FR:Configuration_module_paiement_fournisseur', '', 0, 0, '', '', '', 'mod-admin page-supplier_payment');
 
 $form = new Form($db);
 
@@ -184,7 +186,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {

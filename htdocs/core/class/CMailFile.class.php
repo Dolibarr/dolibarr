@@ -2,11 +2,11 @@
 /**
  * Copyright (C)            Dan Potter
  * Copyright (C)            Eric Seigne
- * Copyright (C) 2000-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2000-2005  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
+
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -51,7 +52,7 @@ class CMailFile
 	public $subject;
 	public $addr_from; // From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
 	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
+	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and the sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
 	// Return-Path: Email where to send bounds.
 	public $reply_to; // Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
 	public $errors_to; // Errors-To:	Email where to send errors.
@@ -81,19 +82,20 @@ class CMailFile
 	 */
 	public $errors = array();
 
-	public $smtps; // Contains SMTPs object (if this method is used)
-	public $phpmailer; // Contains PHPMailer object (if this method is used)
+
+	/**
+	 * @var SMTPS (if this method is used)
+	 */
+	public $smtps;
+	/**
+	 * @var Swift_Mailer (if the method is used)
+	 */
+	public $mailer;
 
 	/**
 	 * @var Swift_SmtpTransport
 	 */
 	public $transport;
-
-	/**
-	 * @var Swift_Mailer
-	 */
-	public $mailer;
-
 	/**
 	 * @var Swift_Plugins_Loggers_ArrayLogger
 	 */
@@ -108,9 +110,25 @@ class CMailFile
 	//! Defined background directly in body tag
 	public $bodyCSS;
 
+	/**
+	 * @var string	Message-ID of the email to send (generated)
+	 */
 	public $msgid;
+
+	/**
+	 * @var string	Value to use in In-reply-to when email is set as an answer of another email (The Msg-Id of received email)
+	 */
+	public $in_reply_to;
+
+	/**
+	 * @var string	References to add to the email to send (generated from the email we answer)
+	 */
+	public $references;
+
 	public $headers;
+
 	public $message;
+
 	/**
 	 * @var array fullfilenames list (full path of filename on file system)
 	 */
@@ -166,10 +184,12 @@ class CMailFile
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
-	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
+	 *  @param	string	$replyto			 Reply-to email (will be set to the same value than From by default if not provided)
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
+	 *  @param	string	$in_reply_to		 Message-ID of the message we reply to
+	 *  @param	string	$references			 String with list of Message-ID of the thread ('<123> <456> ...')
 	 */
-	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '')
+	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '', $in_reply_to = '', $references = '')
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
@@ -277,7 +297,7 @@ class CMailFile
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
-					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
+					$this->error = 'ErrorInAddAttachmentsImageBaseOnMedia';
 					return;
 				}
 			}
@@ -287,8 +307,8 @@ class CMailFile
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData < 0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
-					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
+					$this->error = 'ErrorInAddAttachmentsImageBaseIsSrcData';
 					return;
 				}
 				$findimg += $resultImageData;
@@ -301,7 +321,7 @@ class CMailFile
 						$this->atleastoneimage = 1;
 						if ($this->html_images[$i]['type'] == 'cidfromdata') {
 							if (!in_array($this->html_images[$i]['fullpath'], $filename_list)) {
-								// If this file path is not already into the $filename_list, we add it.
+								// If this file path is not already into the $filename_list, we append it at end of array
 								$posindice = count($filename_list);
 								$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
 								$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
@@ -325,7 +345,7 @@ class CMailFile
 			foreach ($filename_list as $i => $val) {
 				if ($filename_list[$i]) {
 					$this->atleastonefile = 1;
-					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".$cid_list[$i], LOG_DEBUG);
+					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".(empty($cid_list[$i]) ? '' : $cid_list[$i]), LOG_DEBUG);
 				}
 			}
 		}
@@ -364,7 +384,8 @@ class CMailFile
 			$tabto = explode(",", $to);
 			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 			foreach ($tabto as $key => $addrto) {
-				if (in_array($addrto, $listofemailstonotsendto)) {
+				$addrto = array_keys($this->getArrayAddress($addrto));
+				if (in_array($addrto[0], $listofemailstonotsendto)) {
 					unset($tabto[$key]);
 					$replaceto = true;
 				}
@@ -378,7 +399,8 @@ class CMailFile
 			$replacecc = false;
 			$tabcc = explode(',', $addr_cc);
 			foreach ($tabcc as $key => $cc) {
-				if (in_array($cc, $tabcc)) {
+				$cc = array_keys($this->getArrayAddress($cc));
+				if (in_array($cc[0], $listofemailstonotsendto)) {
 					unset($tabcc[$key]);
 					$replacecc = true;
 				}
@@ -392,7 +414,8 @@ class CMailFile
 			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
-				if (in_array($bcc, $tabbcc)) {
+				$bcc = array_keys($this->getArrayAddress($bcc));
+				if (in_array($bcc[0], $listofemailstonotsendto)) {
 					unset($tabbcc[$key]);
 					$replacebcc = true;
 				}
@@ -422,6 +445,8 @@ class CMailFile
 		$this->reply_to = dol_sanitizeEmail($replyto);
 		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
+		$this->in_reply_to = $in_reply_to;
+		$this->references = $references;
 		// Set arrays with attached files info
 		$this->filename_list = $filename_list;
 		$this->mimetype_list = $mimetype_list;
@@ -456,7 +481,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set ->msgid)
+			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
@@ -510,14 +535,22 @@ class CMailFile
 			$smtps->setSubject($subjecttouse);
 			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
-			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
 
-			//X-Dolibarr-TRACKID is generated inside the smtps->getHeader
+			$smtps->setTrackId($this->trackid);
+
+			if (!empty($this->in_reply_to)) {
+				$smtps->setInReplyTo($this->in_reply_to);
+			}
+			if (!empty($this->references)) {
+				$smtps->setReferences($this->references);
+			}
 
 			if (!empty($moreinheader)) {
 				$smtps->setMoreInHeader($moreinheader);
 			}
+
+			//X-Dolibarr-TRACKID, In-Reply-To, References and $moreinheader will be added to header inside the smtps->getHeader
 
 			if (!empty($this->html)) {
 				if (!empty($css)) {
@@ -525,7 +558,7 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
@@ -554,7 +587,7 @@ class CMailFile
 			$smtps->setBCC($this->addr_bcc);
 			$smtps->setErrorsTo($this->errors_to);
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
-			if (!empty($conf->global->$keyforsslseflsigned)) {
+			if (getDolGlobalString($keyforsslseflsigned)) {
 				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 			}
 
@@ -579,12 +612,21 @@ class CMailFile
 			//$this->message = new Swift_SignedMessage();
 			// Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
+
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
 			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
-			$headers->addIdHeader('References', $headerID);
+
+			// Add 'In-Reply-To:' header
+			if (!empty($this->in_reply_to)) {
+				$headers->addIdHeader('In-Reply-To', $this->in_reply_to);
+			}
+			// Add 'References:' header
+			if (!empty($this->references)) {
+				$headers->addIdHeader('References', $this->references);
+			}
 
 			if (!empty($moreinheader)) {
 				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
@@ -663,10 +705,18 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			if ($this->atleastoneimage) {
+				foreach ($this->html_images as $img) {
+					// $img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
+					$attachment = Swift_Image::fromPath($img['fullpath']);
+					// embed image
+					$imgcid = $this->message->embed($attachment);
+					// replace cid by the one created by swiftmail in html message
+					$msg = str_replace("cid:".$img['cid'], $imgcid, $msg);
+				}
 				foreach ($this->images_encoded as $img) {
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
 					$attachment = Swift_Image::fromPath($img['fullpath']);
@@ -727,11 +777,12 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Send mail that was prepared by constructor.
 	 *
-	 * @return    int|bool|string	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 * @return    bool	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 *
+	 * @phan-suppress PhanTypeMismatchReturnNullable  False positif by phan for unclear reason.
 	 */
 	public function sendfile()
 	{
@@ -1119,7 +1170,7 @@ class CMailFile
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-						$res = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$res = true;
 					} else {
 						if (empty($this->error)) {
 							$this->error = $result;
@@ -1533,14 +1584,21 @@ class CMailFile
 
 		$trackid = $this->trackid;
 		if ($trackid) {
-			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
-			$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
 			$this->msgid = time().'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
+		}
+
+		// Add 'In-Reply-To:' header with the Message-Id we answer
+		if (!empty($this->in_reply_to)) {
+			$out .= 'In-Reply-To: <'.$this->in_reply_to.'>'.$this->eol2;
+		}
+		// Add 'References:' header with list of all Message-ID in thread history
+		if (!empty($this->references)) {
+			$out .= 'References: '.$this->references.$this->eol2;
 		}
 
 		if (!empty($_SERVER['REMOTE_ADDR'])) {
@@ -1626,7 +1684,7 @@ class CMailFile
 			$strContentAltText = trim(wordwrap($strContentAltText, 75, !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA') ? "\r\n" : "\n"));
 
 			// Check if html header already in message, if not complete the message
-			$strContent = $this->checkIfHTML($strContent);
+			$strContent = $this->checkIfHTML($strContent);		// This add a header and a body including custom CSS to the HTML content
 		}
 
 		// Make RFC2045 Compliant, split lines
@@ -1971,8 +2029,15 @@ class CMailFile
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
+
+		if (empty($images_dir)) {
+			//$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+			$images_dir = $conf->admin->dir_output.'/temp/cmailfile';
+		}
 
 		if ($images_dir && !dol_is_dir($images_dir)) {
 			dol_mkdir($images_dir, DOL_DATA_ROOT);
@@ -1996,7 +2061,7 @@ class CMailFile
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
 				// No temp directory provided, so we are not able to support conversion of data:image into physical images.
-				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
+				$this->errors[] = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
 
@@ -2018,7 +2083,7 @@ class CMailFile
 						dolChmod($destfiletmp);
 					} else {
 						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-						return -1;
+						return -2;
 					}
 				}
 
@@ -2126,19 +2191,18 @@ class CMailFile
 	 * Return a formatted array of address string for SMTP protocol
 	 *
 	 * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
-	 * @return  array                       array of email => name
+	 * @return  array                       array(email => name)
 	 * @see getValidAddress()
 	 */
 	public static function getArrayAddress($address)
 	{
-		global $conf;
-
 		$ret = array();
 
 		$arrayaddress = explode(',', $address);
 
 		// Boucle sur chaque composant de l'address
 		foreach ($arrayaddress as $val) {
+			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
@@ -2147,7 +2211,7 @@ class CMailFile
 				$email = trim($val);
 			}
 
-			$ret[$email] = !getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL') ? $name : null;
+			$ret[$email] = getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL') ? null : $name;
 		}
 
 		return $ret;

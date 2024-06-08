@@ -57,9 +57,6 @@
  *
  * AUTHOR INFORMATION
  * Copyright 2005, Miles Kaufmann.
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -428,6 +425,7 @@ class EvalMath
 					if ($fnn == 'ln') {
 						$fnn = 'log';
 					}
+					// @phan-suppress-next-line PhanPluginUnsafeEval
 					eval('$stack->push('.$fnn.'($op1));'); // perfectly safe eval()
 				} elseif (array_key_exists($fnn, $this->f)) { // user function
 					// get args

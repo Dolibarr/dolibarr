@@ -217,7 +217,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
-			$tmpuser = dol_clone($object);
+			$tmpuser = dol_clone($object, 2);
 			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
 				$tmpuser->fk_soc = 0;
 			}
@@ -593,7 +593,7 @@ if (empty($reshook)) {
 				$rowid = $object->id;
 				$id = $object->id;
 
-				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
+				$backtopage = preg_replace('/__ID__/', (string) $id, $backtopage);
 			} else {
 				$db->rollback();
 
@@ -1001,9 +1001,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$listetype = $adht->liste_array(1);
 		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
-			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		} else {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
+		}
+		if ($user->hasRight('member', 'configurer')) {
+			print ' <a href="'.DOL_URL_ROOT.'/adherents/type.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&typeid=--IDFORBACKTOPAGE--').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
 		}
 		print "</td>\n";
 
@@ -1012,7 +1015,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		print "</td>\n";
 
 		// Company
@@ -1035,7 +1038,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
 		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
-		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 		print '</td></tr>';
 
 		// EMail
@@ -1116,14 +1119,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
 		print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
 		print "</td><td>\n";
-		print $form->selectyesno("public", $object->public, 1);
+		print $form->selectyesno("public", $object->public, 1, false, 0, 1);
 		print "</td></tr>\n";
 
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
-			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, '', 'parent', 64, 0, 3);
+			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1231,7 +1234,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->hasRight('adherent', 'creer')) {
-			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $object->typeid), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $object->typeid), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		} else {
 			print $adht->getNomUrl(1);
 			print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
@@ -1242,7 +1245,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		print "</td></tr>";
 
 		// Company
@@ -1266,7 +1269,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
 		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
-		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 		print '</td></tr>';
 
 		// Photo
@@ -1279,9 +1282,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '<table class="nobordernopadding">';
 			if ($object->photo) {
-				print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+				print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"><label for="photodelete" class="paddingleft">'.$langs->trans("Delete").'</label><br></td></tr>';
 			}
-			print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 			print '<tr><td>';
 			$maxfilesizearray = getMaxFileSizeArray();
 			$maxmin = $maxfilesizearray['maxmin'];
@@ -1371,14 +1373,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
 		print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
 		print "</td><td>\n";
-		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
+		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1, false, 0, 1);
 		print "</td></tr>\n";
 
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, '', '', 64, 0, 3);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
 			$arrayselected = array();
@@ -1387,7 +1389,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category', 'class="pictofixedwidth"');
+			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, 0, 0, 'widthcentpercentminusx', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1855,7 +1858,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>';
 				print $form->select_company($object->socid, 'socid', '', 1);
 				print '</td>';
-				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+				print '<td class="left"><input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
 				if ($object->socid) {
@@ -2061,15 +2064,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 
 			// Show online payment link
-			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-
-			$parameters = array();
-			$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-			if ($reshook < 0) {
-				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-			} else {
-				$useonlinepayment = $reshook;
-			}
+			// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			$validpaymentmethod = getValidOnlinePaymentMethods('');
+			$useonlinepayment = count($validpaymentmethod);
 
 			if ($useonlinepayment) {
 				print '<br>';
@@ -2087,7 +2085,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAX = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
+			$morehtmlcenter = '';
+			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

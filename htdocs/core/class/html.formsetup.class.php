@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 /**
  * This class help you create setup render
  */
@@ -25,6 +25,9 @@ class FormSetup
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
+
+	/** @var int */
+	public $entity;
 
 	/** @var FormSetupItem[]  */
 	public $items = array();
@@ -91,7 +94,8 @@ class FormSetup
 	 */
 	public function __construct($db, $outputLangs = null)
 	{
-		global $langs;
+		global $conf, $langs;
+
 		$this->db = $db;
 
 		$this->form = new Form($this->db);
@@ -99,6 +103,8 @@ class FormSetup
 
 		$this->formHiddenInputs['token'] = newToken();
 		$this->formHiddenInputs['action'] = 'update';
+
+		$this->entity = (is_null($this->entity) ? $conf->entity : $this->entity);
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -154,15 +160,15 @@ class FormSetup
 			return $hookmanager->resPrint;
 		} else {
 			$out = '<!-- Start generateOutput from FormSetup class  -->';
-			$out.= $this->htmlBeforeOutputForm;
+			$out .= $this->htmlBeforeOutputForm;
 
 			if ($editMode) {
-				$out.= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
 
 				// generate hidden values from $this->formHiddenInputs
 				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
 					foreach ($this->formHiddenInputs as $hiddenKey => $hiddenValue) {
-						$out.= '<input type="hidden" name="'.dol_escape_htmltag($hiddenKey).'" value="' . dol_escape_htmltag($hiddenValue) . '">';
+						$out .= '<input type="hidden" name="'.dol_escape_htmltag($hiddenKey).'" value="' . dol_escape_htmltag($hiddenValue) . '">';
 					}
 				}
 			}
@@ -180,7 +186,7 @@ class FormSetup
 				return $hookmanager->resPrint;
 			} elseif ($editMode) {
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
-				$out.= $this->htmlOutputMoreButton;
+				$out .= $this->htmlOutputMoreButton;
 				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
 				/*$out .= ' &nbsp;&nbsp; ';
 				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
@@ -192,7 +198,7 @@ class FormSetup
 				$out .= '</form>';
 			}
 
-			$out.= $this->htmlAfterOutputForm;
+			$out .= $this->htmlAfterOutputForm;
 
 			return $out;
 		}
@@ -311,27 +317,27 @@ class FormSetup
 	public function generateLineOutput($item, $editMode = false)
 	{
 		$out = '';
-		if ($item->enabled==1) {
+		if ($item->enabled == 1) {
 			$trClass = 'oddeven';
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
 
 			$this->setupNotEmpty++;
-			$out.= '<tr class="'.$trClass.'">';
+			$out .= '<tr class="'.$trClass.'">';
 
-			$out.= '<td class="col-setup-title">';
-			$out.= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
-			$out.= $this->form->textwithpicto($item->getNameText(), $item->getHelpText(), 1, 'info', '', 0, 3, 'tootips'.$item->confKey);
-			$out.= '</span>';
-			$out.= '</td>';
+			$out .= '<td class="col-setup-title">';
+			$out .= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
+			$out .= $this->form->textwithpicto($item->getNameText(), $item->getHelpText(), 1, 'info', '', 0, 3, 'tootips'.$item->confKey);
+			$out .= '</span>';
+			$out .= '</td>';
 
-			$out.= '<td>';
+			$out .= '<td>';
 
 			if ($editMode) {
-				$out.= $item->generateInputField();
+				$out .= $item->generateInputField();
 			} else {
-				$out.= $item->generateOutputField();
+				$out .= $item->generateOutputField();
 			}
 
 			if (!empty($item->errors)) {
@@ -339,8 +345,8 @@ class FormSetup
 				setEventMessages(null, $item->errors, 'errors');
 			}
 
-			$out.= '</td>';
-			$out.= '</tr>';
+			$out .= '</td>';
+			$out .= '</tr>';
 		}
 
 		return $out;
@@ -393,6 +399,7 @@ class FormSetup
 
 		$item = new FormSetupItem($confKey);
 		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
@@ -458,6 +465,8 @@ class FormSetup
 	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
 		$item = new FormSetupItem($confKey);
+
+		$item->entity = $this->entity;
 
 		// set item rank if not defined as last item
 		if (empty($item->rank)) {
@@ -593,19 +602,23 @@ class FormSetupItem
 	/** @var Form */
 	public $form;
 
+
 	/** @var string $confKey the conf key used in database */
 	public $confKey;
 
-	/** @var string|false $nameText  */
+	/** @var string|false $nameText */
 	public $nameText = false;
 
-	/** @var string $helpText  */
+	/** @var string $helpText */
 	public $helpText = '';
 
-	/** @var string $fieldValue  */
+	/** @var string $picto */
+	public $picto = '';
+
+	/** @var string $fieldValue */
 	public $fieldValue;
 
-	/** @var string $defaultFieldValue  */
+	/** @var string $defaultFieldValue */
 	public $defaultFieldValue = null;
 
 	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
@@ -625,6 +638,9 @@ class FormSetupItem
 
 	/** @var array set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
+
+	/** @var array set this var to add more parameters */
+	public $fieldParams = array();
 
 	/** @var callable $saveCallBack  */
 	public $saveCallBack;
@@ -655,7 +671,7 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param string $confKey the conf key used in database
+	 * @param string	$confKey	the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
@@ -669,7 +685,7 @@ class FormSetupItem
 		}
 
 		$this->langs = $langs;
-		$this->entity = $conf->entity;
+		$this->entity = (is_null($this->entity) ? $conf->entity : ((int) $this->entity));
 
 		$this->confKey = $confKey;
 		$this->loadValueFromConf();
@@ -831,7 +847,9 @@ class FormSetupItem
 		$out = (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
 
 		// if conf defined on entity 0, prepend a picto to indicate it will apply across all entities
-		if (isModEnabled('multicompany') && $this->entity == 0) $out = img_picto($this->langs->trans('AllEntities'), 'fa-globe-americas em088 opacityhigh') . '&nbsp;' . $out;
+		if (isModEnabled('multicompany') && $this->entity == 0) {
+			$out = img_picto($this->langs->trans('AllEntities'), 'fa-globe-americas em088 opacityhigh') . '&nbsp;' . $out;
+		}
 
 		return $out;
 	}
@@ -866,51 +884,51 @@ class FormSetupItem
 		$out = '';
 
 		if ($this->type == 'title') {
-			$out.= $this->generateOutputField(); // title have no input
+			$out .= $this->generateOutputField(); // title have no input
 		} elseif ($this->type == 'multiselect') {
-			$out.= $this->generateInputFieldMultiSelect();
+			$out .= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
-			$out.= $this->generateInputFieldSelect();
+			$out .= $this->generateInputFieldSelect();
 		} elseif ($this->type == 'selectUser') {
-			$out.= $this->generateInputFieldSelectUser();
+			$out .= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
-			$out.= $this->generateInputFieldTextarea();
-		} elseif ($this->type== 'html') {
-			$out.= $this->generateInputFieldHtml();
-		} elseif ($this->type== 'color') {
-			$out.=  $this->generateInputFieldColor();
+			$out .= $this->generateInputFieldTextarea();
+		} elseif ($this->type == 'html') {
+			$out .= $this->generateInputFieldHtml();
+		} elseif ($this->type == 'color') {
+			$out .=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out.= ajax_constantonoff($this->confKey);
+				$out .= ajax_constantonoff($this->confKey);
 			} else {
-				$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+				$out .= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
-			$out.= $this->generateInputFieldEmailTemplate();
+			$out .= $this->generateInputFieldEmailTemplate();
 		} elseif (preg_match('/category:/', $this->type)) {
-			$out.=$this->generateInputFieldCategories();
+			$out .= $this->generateInputFieldCategories();
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 			$formcompany = new FormCompany($this->db);
-			$out.= $formcompany->selectProspectCustomerType($this->fieldValue, $this->confKey);
+			$out .= $formcompany->selectProspectCustomerType($this->fieldValue, $this->confKey);
 		} elseif ($this->type == 'securekey') {
-			$out.= $this->generateInputFieldSecureKey();
+			$out .= $this->generateInputFieldSecureKey();
 		} elseif ($this->type == 'product') {
 			if (isModEnabled("product") || isModEnabled("service")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
-				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
+				$out .= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} elseif ($this->type == 'selectBankAccount') {
 			if (isModEnabled("bank")) {
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
-				$out.= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
+				$out .= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
 			}
 		} elseif ($this->type == 'password') {
-			$out.= $this->generateInputFieldPassword('dolibarr');
+			$out .= $this->generateInputFieldPassword('dolibarr');
 		} elseif ($this->type == 'genericpassword') {
-			$out.= $this->generateInputFieldPassword('generic');
+			$out .= $this->generateInputFieldPassword('generic');
 		} else {
-			$out.= $this->generateInputFieldText();
+			$out .= $this->generateInputFieldText();
 		}
 
 		return $out;
@@ -937,8 +955,8 @@ class FormSetupItem
 	public function generateInputFieldTextarea()
 	{
 		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
-		$out.= dol_htmlentities($this->fieldValue);
-		$out.= "</textarea>\n";
+		$out .= dol_htmlentities($this->fieldValue);
+		$out .= "</textarea>\n";
 		return $out;
 	}
 
@@ -1019,14 +1037,15 @@ class FormSetupItem
 	public function generateInputFieldSecureKey()
 	{
 		global $conf;
-		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
-		if (!empty($conf->use_javascript_ajax)) {
-			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
-		}
+		$out = '<input type="text" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'">';
 
-		// Add button to autosuggest a key
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		if (!empty($conf->use_javascript_ajax) && empty($this->fieldParams['hideGenerateButton'])) {
+			$out .= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
+
+			// Add button to autosuggest a key
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+		}
 
 		return $out;
 	}
@@ -1043,7 +1062,7 @@ class FormSetupItem
 	{
 		global $conf, $langs, $user;
 
-		$min = 8;
+		$min = 6;
 		$max = 50;
 		if ($type == 'dolibarr') {
 			$gen = getDolGlobalString('USER_PASSWORD_GENERATED', 'standard');
@@ -1057,7 +1076,14 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" minlength="' . $min . '" maxlength="' . $max . '">';
+		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		if ($min) {
+			$out .= ' minlength="' . $min . '"';
+		}
+		if ($max) {
+			$out .= ' maxlength="' . $max . '"';
+		}
+		$out .= '>';
 		return $out;
 	}
 
@@ -1086,7 +1112,13 @@ class FormSetupItem
 	 */
 	public function generateInputFieldSelect()
 	{
-		return $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+		$s = '';
+		if ($this->picto) {
+			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
+		}
+		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
+
+		return $s;
 	}
 
 	/**
@@ -1114,9 +1146,9 @@ class FormSetupItem
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
 	 *
-	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
-	 * @return bool
+	 * @param 		string 	$type 	Possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
+	 * @deprecated 					this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
+	 * @return 		bool
 	 */
 	public function setTypeFromTypeString($type)
 	{
@@ -1167,25 +1199,25 @@ class FormSetupItem
 		if ($this->type == 'title') {
 			// nothing to do
 		} elseif ($this->type == 'textarea') {
-			$out.= dol_nl2br($this->fieldValue);
+			$out .= dol_nl2br($this->fieldValue);
 		} elseif ($this->type == 'multiselect') {
-			$out.= $this->generateOutputFieldMultiSelect();
+			$out .= $this->generateOutputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
-			$out.= $this->generateOutputFieldSelect();
+			$out .= $this->generateOutputFieldSelect();
 		} elseif ($this->type == 'selectUser') {
-			$out.= $this->generateOutputFieldSelectUser();
+			$out .= $this->generateOutputFieldSelectUser();
 		} elseif ($this->type == 'html') {
-			$out.=  $this->fieldValue;
+			$out .=  $this->fieldValue;
 		} elseif ($this->type == 'color') {
-			$out.=  $this->generateOutputFieldColor();
+			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$out.= ajax_constantonoff($this->confKey);
+				$out .= ajax_constantonoff($this->confKey, array(), $this->entity); // TODO possibility to add $input parameter
 			} else {
 				if ($this->fieldValue == 1) {
-					$out.= $langs->trans('yes');
+					$out .= $langs->trans('yes');
 				} else {
-					$out.= $langs->trans('no');
+					$out .= $langs->trans('no');
 				}
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
@@ -1199,7 +1231,7 @@ class FormSetupItem
 				if (is_numeric($template) && $template < 0) {
 					$this->setErrors($formmail->errors);
 				}
-				$out.= $this->langs->trans($template->label);
+				$out .= $this->langs->trans($template->label);
 			}
 		} elseif (preg_match('/category:/', $this->type)) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -1213,16 +1245,16 @@ class FormSetupItem
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 			}
-			$out.='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+			$out .= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		} elseif (preg_match('/thirdparty_type/', $this->type)) {
-			if ($this->fieldValue==2) {
-				$out.= $this->langs->trans("Prospect");
-			} elseif ($this->fieldValue==3) {
-				$out.= $this->langs->trans("ProspectCustomer");
-			} elseif ($this->fieldValue==1) {
-				$out.= $this->langs->trans("Customer");
-			} elseif ($this->fieldValue==0) {
-				$out.= $this->langs->trans("NorProspectNorCustomer");
+			if ($this->fieldValue == 2) {
+				$out .= $this->langs->trans("Prospect");
+			} elseif ($this->fieldValue == 3) {
+				$out .= $this->langs->trans("ProspectCustomer");
+			} elseif ($this->fieldValue == 1) {
+				$out .= $this->langs->trans("Customer");
+			} elseif ($this->fieldValue == 0) {
+				$out .= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -1230,7 +1262,7 @@ class FormSetupItem
 			$product = new Product($this->db);
 			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {
-				$out.= $product->ref;
+				$out .= $product->ref;
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}
@@ -1240,14 +1272,14 @@ class FormSetupItem
 			$bankaccount = new Account($this->db);
 			$resbank = $bankaccount->fetch($this->fieldValue);
 			if ($resbank > 0) {
-				$out.= $bankaccount->label;
+				$out .= $bankaccount->label;
 			} elseif ($resbank < 0) {
 				$this->setErrors($bankaccount->errors);
 			}
 		} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
-			$out.= str_repeat('*', strlen($this->fieldValue));
+			$out .= str_repeat('*', strlen($this->fieldValue));
 		} else {
-			$out.= $this->fieldValue;
+			$out .= $this->fieldValue;
 		}
 
 		return $out;
@@ -1270,7 +1302,7 @@ class FormSetupItem
 		if (!empty($TSelected)) {
 			foreach ($TSelected as $selected) {
 				if (!empty($this->fieldOptions[$selected])) {
-					$outPut.= dolGetBadge('', $this->fieldOptions[$selected], 'info').' ';
+					$outPut .= dolGetBadge('', $this->fieldOptions[$selected], 'info').' ';
 				}
 			}
 		}
@@ -1285,7 +1317,7 @@ class FormSetupItem
 	public function generateOutputFieldColor()
 	{
 		global $langs;
-		$this->fieldAttr['disabled']=null;
+		$this->fieldAttr['disabled'] = null;
 		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
 		if ($color) {
 			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
@@ -1299,7 +1331,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldColor()
 	{
-		$this->fieldAttr['type']= 'color';
+		$this->fieldAttr['type'] = 'color';
 		$default = $this->defaultFieldValue;
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($this->db);

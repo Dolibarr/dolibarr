@@ -92,11 +92,9 @@ $search_date_start_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_start_tom
 $search_date_end_from = dol_mktime(0, 0, 0, GETPOSTINT('search_date_end_frommonth'), GETPOSTINT('search_date_end_fromday'), GETPOSTINT('search_date_end_fromyear'));
 $search_date_end_to = dol_mktime(23, 59, 59, GETPOSTINT('search_date_end_tomonth'), GETPOSTINT('search_date_end_today'), GETPOSTINT('search_date_end_toyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_account = GETPOSTINT('search_account');
+$search_account = GETPOST('search_account', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_type_id = GETPOST('search_type_id', 'intcomma');
-
-$filtre = GETPOST("filtre", 'restricthtml');
 
 $childids = $user->getAllChildIds(1);
 
@@ -164,6 +162,93 @@ if (GETPOST('cancel', 'alpha')) {
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
+}
+
+//credit transfer request
+if ($massaction == 'withdrawrequest') {
+	$langs->load("withdrawals");
+
+	if (!$user->hasRight('paymentbybanktransfer', 'create')) {
+		$error++;
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+	} else {
+		//Checking error
+		$error = 0;
+		$listofSalries =  array();
+		$arrayofselected = is_array($toselect) ? $toselect : array();
+		foreach ($arrayofselected as $toselectid) {
+			$objecttmp = new Salary($db);
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$totalpaid = $objecttmp->getSommePaiement();
+				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('remaintopay' => $objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
+				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+				} elseif ($resteapayer < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+				}
+
+				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+				$rsql .= " , pfd.date_traite as date_traite";
+				$rsql .= " , pfd.amount";
+				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+				$rsql .= " WHERE fk_salary = ".((int) $objecttmp->id);
+				$rsql .= " AND pfd.fk_user_demande = u.rowid";
+				$rsql .= " AND pfd.traite = 0";
+				$rsql .= " ORDER BY pfd.date_demande DESC";
+
+				$result_sql = $db->query($rsql);
+				if ($result_sql) {
+					$numprlv = $db->num_rows($result_sql);
+				}
+
+				if ($numprlv > 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				} elseif (!empty($objecttmp->type_payment) && $objecttmp->type_payment != '2') {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				} else {
+					$listofSalries[] = $objecttmp;
+				}
+			}
+		}
+
+		if (!empty($listofSalries)) {
+			$nbwithdrawrequestok = 0;
+			foreach ($listofSalries as $salary) {
+				$db->begin();
+				$result = $salary->demande_prelevement($user, (float) $salary->resteapayer, 'salaire');
+				if ($result > 0) {
+					$db->commit();
+					$nbwithdrawrequestok++;
+				} else {
+					$db->rollback();
+					setEventMessages($aBill->error, $aBill->errors, 'errors');
+				}
+			}
+			if ($nbwithdrawrequestok > 0) {
+				setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+			}
+		}
+	}
 }
 
 $parameters = array();
@@ -401,7 +486,7 @@ if (!empty($search_date_end_to)) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -412,6 +497,10 @@ $arrayofmassactions = array(
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
+	$langs->load("withdrawals");
+	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
@@ -473,7 +562,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

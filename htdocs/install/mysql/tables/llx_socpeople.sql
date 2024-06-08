@@ -27,7 +27,9 @@ create table llx_socpeople
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
-  name_alias           varchar(255),
+  name_alias        varchar(255),
+  fk_parent         integer NULL,
+
   civility			varchar(6),
   lastname			varchar(50),
   firstname			varchar(50),
@@ -48,6 +50,7 @@ create table llx_socpeople
   phone_perso		varchar(30),
   phone_mobile		varchar(30),
   fax				varchar(30),
+  url               varchar(255),                        		-- web site
   email				varchar(255),
 
   socialnetworks    text DEFAULT NULL,                          -- json with socialnetworks

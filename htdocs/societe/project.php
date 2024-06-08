@@ -119,7 +119,7 @@ if ($socid) {
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);

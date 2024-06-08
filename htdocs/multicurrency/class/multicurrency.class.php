@@ -652,7 +652,7 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf, $db, $langs;
 
-		if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+		if (getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 			if ($mode == "cron") {
 				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
 			} else {

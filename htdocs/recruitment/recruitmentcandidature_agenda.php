@@ -128,7 +128,6 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $object->ref." - ".$langs->trans('Agenda');
-	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'Module_Agenda_En|DE:Modul_Terminplanung';
 	llxHeader('', $title, $help_url);
 

@@ -35,8 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('agenda', 'contrat', 'companies'));
+$langs->loadLangs(array('agenda', 'contracts', 'companies'));
 
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contratagenda';
 
 if (GETPOST('actioncode', 'array')) {
@@ -51,8 +53,6 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
@@ -145,7 +145,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 $object->fetch_thirdparty();
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 	$title = $object->ref." - ".$title;
 }
 $help_url = 'EN:Module_Contracts|FR:Module_Contrat';
@@ -226,9 +226,8 @@ print dol_get_fiche_end();
 
 $morehtmlright = '';
 
-$morehtmlright = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
+$morehtmlright .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
 $morehtmlright .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id, '', 1);
-
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
