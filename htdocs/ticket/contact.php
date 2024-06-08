@@ -188,7 +188,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
  */
 
 $help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $langs->trans("TicketContacts"), $help_url);
+llxHeader('', $langs->trans("TicketContacts"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_contacts');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
