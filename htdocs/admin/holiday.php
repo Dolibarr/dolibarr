@@ -162,7 +162,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
