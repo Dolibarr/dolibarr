@@ -252,7 +252,7 @@ if (empty($reshook)) {
 		} else {
 			$object->socid = $socid;
 		}
-		
+
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planned
@@ -380,7 +380,7 @@ if (empty($reshook)) {
 			if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
 				for ($i = 0; $i < $num; $i++) {
 					$qty = "qtyl".$i;
-	
+
 					if (!isset($batch_line[$i])) {
 						// not batch mode
 						if (isset($stockLine[$i])) {
@@ -406,7 +406,7 @@ if (empty($reshook)) {
 								if (!($objectsrc->lines[$i]->fk_product > 0)) {
 									$entrepot_id = 0;
 								}
-	
+
 								$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTINT($qty), 'MS'), $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
