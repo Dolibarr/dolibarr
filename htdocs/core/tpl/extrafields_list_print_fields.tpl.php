@@ -36,7 +36,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
 					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
 				} else {
-					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey : '');
+					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey : 
+						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : '') );
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
@@ -45,7 +46,6 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
-					//var_dump($value);
 				}
 
 				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
