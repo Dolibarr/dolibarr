@@ -2849,8 +2849,8 @@ if ($action == 'create') {
 		}
 
 		$tmparray = $object->getTotalWeightVolume();
-		$totalWeight = isset($tmparray['weight']) ?:0;
-		$totalVolume = isset($tmparray['volume']) ?:0;
+		$totalWeight = isset($tmparray['weight']) ? $tmparray['weight'] : 0;
+		$totalVolume = isset($tmparray['volume']) ? $tmparray['volume'] : 0;
 		if ($totalWeight) {
 			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
 			print '<td class="valuefield">';
