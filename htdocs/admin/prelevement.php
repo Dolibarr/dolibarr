@@ -21,7 +21,6 @@
 
 /**
  *	\file       htdocs/admin/prelf
- * evement.php
  *	\ingroup    prelevement
  *	\brief      Page to setup Withdrawals
  */
