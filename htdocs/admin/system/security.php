@@ -50,7 +50,7 @@ $execmethod = getDolGlobalInt('MAIN_EXEC_USE_POPEN', 1);
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_security');
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
