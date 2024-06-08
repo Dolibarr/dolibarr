@@ -69,7 +69,7 @@ $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
-llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-perms');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 

@@ -82,7 +82,7 @@ if ($action == 'getlastversion') {
  */
 
 $wikihelp = 'EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
-llxHeader('', $langs->trans("Upgrade"), $wikihelp);
+llxHeader('', $langs->trans("Upgrade"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-tools_update');
 
 print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 
