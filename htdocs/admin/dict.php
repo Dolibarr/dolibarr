@@ -1259,7 +1259,7 @@ $form = new Form($db);
 
 $title = $langs->trans("DictionarySetup");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
 
 $linkback = '';
 if ($id && empty($from)) {
