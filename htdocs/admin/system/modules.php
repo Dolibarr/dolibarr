@@ -207,7 +207,7 @@ foreach ($modules as $key => $module) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
