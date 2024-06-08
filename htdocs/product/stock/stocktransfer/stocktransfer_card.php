@@ -406,7 +406,7 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("StockTransfer");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_card');
 
 
 
