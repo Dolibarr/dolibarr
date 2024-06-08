@@ -1569,7 +1569,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Check if optional invoiceable exists for the project tasks
 		$object->fetch_optionals();
 		$invoiceable = false;
-		if ( isset($object->array_options) && array_key_exists('options_invoiceable', $object->array_options) ){
+		if ( isset($object->array_options) && array_key_exists('options_invoiceable', $object->array_options)) {
 			$invoiceable = true;
 		}
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
