@@ -2503,6 +2503,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Creates or updates extrafields handled by the module
+	 *
+	 * @return int Error count (0 if OK)
 	 */
 	protected function insertExtrafields(): int
 	{
