@@ -446,7 +446,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $labelfieldmissing), null, 'errors');
 				$error++;
 			}
-		}elseif (!$error) {
+		} elseif (!$error) {
 			$ret = $object->create($user); // This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating or closing shipment.
 			if ($ret <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
