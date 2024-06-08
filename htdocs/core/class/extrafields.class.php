@@ -664,6 +664,10 @@ class ExtraFields
 			$table = 'categories_extrafields';
 		}
 
+		if ($type == 'separator') {
+			$type = 'separate';
+		}
+
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			if ($type == 'boolean') {
 				$typedb = 'int';

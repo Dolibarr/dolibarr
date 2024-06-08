@@ -2537,9 +2537,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$attrname = $extrafield['attrname'];
 			$elementtype = $extrafield['elementtype'];
 
+			if ($elementtype == 'thirdparty') {
+				$elementtype = 'societe';
+			} elseif ($elementtype == 'contact') {
+				$elementtype = 'socpeople';
+			} elseif ($elementtype == 'order_supplier') {
+				$elementtype = 'commande_fournisseur';
+			}
+
 			if (! array_key_exists($elementtype, $extrafields->attributes)) {
 				$extrafields->fetch_name_optionals_label($elementtype);
 			}
+
 			// Update extrafield if it exists
 			if (isset($extrafields->attributes[$elementtype]['type'][$attrname])) {
 				$result = $extrafields->update(
