@@ -488,6 +488,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_menus();
 		}
 
+		// Insert extrafields
 		if (!$err) {
 			$err += $this->insertExtrafields();
 		}
@@ -600,6 +601,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Remove module's menus (entries in llx_menu)
 		if (!$err) {
 			$err += $this->delete_menus();
+		}
+
+		// Disable extrafields managed by the module
+		if (!$err) {
+			$err += $this->deleteExtrafields();
 		}
 
 		// Remove module's directories
@@ -2602,6 +2608,26 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		return 0;
 	}
+
+	/**
+	 * Disable extrafields managed by the module
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	protected function deleteExtrafields(): int
+	{
+		$sql = 'UPDATE '.$this->db->prefix().'extrafields SET enabled = 0 WHERE module = "'.$this->db->escape($this->rights_class).'"';
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		return 0;
+	}
+
 	/**
 	 * Function called when module is enabled.
 	 * The init function adds tabs, constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
