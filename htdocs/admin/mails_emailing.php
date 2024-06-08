@@ -150,7 +150,7 @@ if (!$server) {
 
 
 $wikihelp = 'EN:Setup_EMails|FR:Paramétrage_EMails|ES:Configuración_EMails';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-mails_emailing');
 
 print load_fiche_titre($langs->trans("EMailsSetup"), '', 'title_setup');
 
