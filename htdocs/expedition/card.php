@@ -430,7 +430,7 @@ if (empty($reshook)) {
 				if ($ret < 0) {
 					$error++;
 				}
-	
+
 				if (!$error) {
 					$ret = $object->create($user); // This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating or closing shipment.
 					if ($ret <= 0) {
