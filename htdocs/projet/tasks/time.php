@@ -2436,7 +2436,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							$invoiced = true;
 						} else {
-							if($task_time->options_invoiceable == "1") {
+							if ($task_time->options_invoiceable == "1") {
 								print $langs->trans("No");
 							} else {
 								print $langs->trans("No")." ".$langs->trans("Invoiceable");
@@ -2493,9 +2493,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							}
 							print '&nbsp;';
 							// Disable select if task not invoiceable or already invoiced
-							$disabled = ($task_time->options_invoiceable!="1"||$invoiced);
+							$disabled = ( $task_time->options_invoiceable!="1" || $invoiced );
 							$ctrl = '<input '.($disabled?'disabled':'').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
-							if($disabled){
+							if ($disabled) {
 								// If disabled, a dbl-click very close outside the control
 								// will re-enable it, so that user is not blocked if needed.
 								print '<span id="cbsp'. $task_time->rowid . '">'.$ctrl.'</span>';
