@@ -1,11 +1,8 @@
 <?php
-/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW                      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024 Maxime Kohlhaas <maxime@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,183 +19,1008 @@
  */
 
 /**
- *    \file       holiday.class.php
- *    \ingroup    holiday
- *    \brief      Class file of the module paid holiday.
+ * \file        class/holiday.class.php
+ * \ingroup     holiday
+ * \brief       This file is a CRUD class file for Holiday (Create/Read/Update/Delete)
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
-
 /**
- *	Class of the module paid holiday. Developed by Teclib ( http://www.teclib.com/ )
+ * Class for Holiday
  */
 class Holiday extends CommonObject
 {
 	/**
-	 * @var string ID to identify managed object
+	 * @var string ID of module.
+	 */
+	public $module = 'holiday';
+
+	/**
+	 * @var string ID to identify managed object.
 	 */
 	public $element = 'holiday';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'holiday';
 
 	/**
-	 * @var string Field with ID of parent key if this field has a parent
+	 * @var string 	If permission must be checkec with hasRight('holiday', 'read') and not hasright('mymodyle', 'holiday', 'read'), you can uncomment this line
 	 */
-	public $fk_element = 'fk_holiday';
+	public $element_for_permission = 'holiday';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for holiday. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'holiday@holiday' if picto is file 'img/object_holiday.png'.
 	 */
 	public $picto = 'holiday';
 
-	/**
-	 * @var int User ID
-	 */
-	public $fk_user;
-
-	public $date_create = '';
-
-	/**
-	 * @var string description
-	 */
-	public $description;
-
-	/**
-	 * @var int|string Date start in PHP server TZ
-	 */
-	public $date_debut = '';
-
-	/**
-	 * @var int|string Date end in PHP server TZ
-	 */
-	public $date_fin = '';
-
-	/**
-	 * @var int|string Date start in GMT
-	 */
-	public $date_debut_gmt = '';
-
-	/**
-	 * @var int|string Date end in GMT
-	 */
-	public $date_fin_gmt = '';
-
-	/**
-	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
-	 */
-	public $halfday = '';
-
-	/**
-	 * @var int Status 1=draft, 2=validated, 3=approved, 4 canceled, 5 refused
-	 * @deprecated
-	 */
-	public $statut = 0;
-
-	/**
-	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
-	 */
-	public $fk_validator;
-
-	/**
-	 * @var int 	Date of validation or approval. TODO: Use date_valid instead for validation.
-	 */
-	public $date_valid = 0;
-
-	/**
-	 * @var int 	ID of user that has validated
-	 */
-	public $fk_user_valid;
-
-	/**
-	 * @var int 	Date approval
-	 */
-	public $date_approval;
-
-	/**
-	 * @var int 	ID of user that has approved
-	 */
-	public $fk_user_approve;
-
-	/**
-	 * @var int 	Date for refuse
-	 */
-	public $date_refuse = 0;
-
-	/**
-	 * @var int 	ID for refuse
-	 */
-	public $fk_user_refuse;
-
-	/**
-	 * @var int 	Date for cancellation
-	 */
-	public $date_cancel = 0;
-
-	/**
-	 * @var int 	ID for cancellation
-	 */
-	public $fk_user_cancel;
-
-	/**
-	 * @var int 	ID for creation
-	 */
-	public $fk_user_create;
-
-	/**
-	 * @var string Detail of refuse
-	 */
-	public $detail_refuse = '';
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_type;
-
-	public $holiday = array();
-	public $events = array();
-	public $logs = array();
-
-	public $optName = '';
-	public $optValue = '';
-	public $optRowid = '';
-
-	/**
-	 * Draft status
-	 */
 	const STATUS_DRAFT = 1;
-	/**
-	 * Validated status
-	 */
 	const STATUS_VALIDATED = 2;
-	/**
-	 * Approved
-	 */
 	const STATUS_APPROVED = 3;
-	/**
-	 * Canceled
-	 */
 	const STATUS_CANCELED = 4;
-	/**
-	 * Refused
-	 */
 	const STATUS_REFUSED = 5;
 
+	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid'				=> array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
+		'ref'				=> array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'noteditable' => 0, 'default' => '', 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object', 'validate' => 1),
+		'fk_user'			=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125',),
+		'fk_validator'		=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'ValidatorCP', 'enabled' => 1, 'position' => 31, 'notnull' => 1, 'visible' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125',),
+		'fk_user_create'	=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 35, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_modif'		=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 40, 'notnull' => -1, 'visible' => -2, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_type'			=> array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 45, 'notnull' => 1, 'visible' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'date_create'		=> array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 50),
+		'description'		=> array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'validate' => 1),
+		'date_debut'		=> array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1,),
+		'date_fin'			=> array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 65, 'notnull' => 1, 'visible' => 1,),
+		'halfday'			=> array('type' => 'integer', 'label' => 'Halfday', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 0,),
+		'nb_open_day'		=> array('type' => 'double(24,8)', 'label' => 'NbUseDaysCPShort', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1,),
+		'statut'			=> array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 2000, 'csslist' => 'center', 'arrayofkeyval' => array(1 => 'DraftCP', 2 => 'ToReviewCP', 3 => 'ApprovedCP', 4 => 'CancelCP', 5 => 'RefuseCP'), 'validate' => 1),
+		'date_valid'		=> array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'position' => 85, 'notnull' => 0, 'visible' => 1,),
+		'fk_user_valid'		=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'position' => 86, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'date_approval'		=> array('type' => 'datetime', 'label' => 'DateApprove', 'enabled' => 1, 'position' => 90, 'notnull' => 0, 'visible' => 1,),
+		'fk_user_approve'	=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuserapprove', 'enabled' => 1, 'position' => 91, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'date_refuse'		=> array('type' => 'datetime', 'label' => 'Daterefuse', 'enabled' => 1, 'position' => 95, 'notnull' => 0, 'visible' => -1,),
+		'fk_user_refuse'	=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuserrefuse', 'enabled' => 1, 'position' => 96, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'date_cancel'		=> array('type' => 'datetime', 'label' => 'Datecancel', 'enabled' => 1, 'position' => 105, 'notnull' => 0, 'visible' => -1,),
+		'fk_user_cancel'	=> array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercancel', 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'detail_refuse'		=> array('type' => 'varchar(250)', 'label' => 'DetailRefuse', 'enabled' => 1, 'position' => 115, 'notnull' => 0, 'visible' => -1,),
+		'note_public'		=> array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 56, 'validate' => 1, 'cssview' => 'wordbreak'),
+		'note_private'		=> array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 57, 'validate' => 1, 'cssview' => 'wordbreak'),
+		'tms'				=> array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 0, 'position' => 51),
+		'import_key'		=> array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+	);
+	public $rowid;
+	public $ref;
+	public $fk_user;
+	public $fk_user_create;
+	public $fk_user_modif;
+	public $fk_type;
+	public $date_create;
+	public $description;
+	public $date_debut;
+	public $date_fin;
+	public $halfday;
+	public $statut;
+	public $fk_validator;
+	public $date_valid;
+	public $fk_user_valid;
+	public $date_refuse;
+	public $fk_user_refuse;
+	public $date_cancel;
+	public $fk_user_cancel;
+	public $detail_refuse;
+	public $note_private;
+	public $note_public;
+	public $tms;
+	public $import_key;
+	public $date_approval;
+	public $fk_user_approve;
+	public $nb_open_day;
+	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 *   Constructor
+	 * Constructor
 	 *
-	 *   @param		DoliDB		$db      Database handler
+	 * @param DoliDB $db Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
-		$this->db = $db;
+		global $langs;
 
-		$this->ismultientitymanaged = 0;
+		$this->db = $db;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
+		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
+				}
+			}
+		}
+
+		$this->fields['fk_type']['arrayofkeyval'] = array_column($this->getTypes(1, -1), 'label');
+		//var_dump($this->fields['fk_type']['arrayofkeyval']);
 	}
 
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = 0)
+	{
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		return $resultcreate;
+	}
+
+	/**
+	 * Clone an object into another one
+	 *
+	 * @param  	User 	$user      	User that creates
+	 * @param  	int 	$fromid     Id of object to clone
+	 * @return 	mixed 				New object created, <0 if KO
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		global $langs, $extrafields;
+		$error = 0;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$result = $object->fetchCommon($fromid);
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
+
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_create);
+		unset($object->import_key);
+
+		// Clear fields
+		if (property_exists($object, 'ref')) {
+			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		}
+		if (property_exists($object, 'label')) {
+			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		}
+		if (property_exists($object, 'statut')) {
+			$object->statut = self::STATUS_DRAFT;
+		}
+		if (property_exists($object, 'date_creation')) {
+			$object->date_creation = dol_now();
+		}
+		if (property_exists($object, 'date_modification')) {
+			$object->date_modification = null;
+		}
+		// ...
+		// Clear extrafields that are unique
+		if (is_array($object->array_options) && count($object->array_options) > 0) {
+			$extrafields->fetch_name_optionals_label($this->table_element);
+			foreach ($object->array_options as $key => $option) {
+				$shortkey = preg_replace('/options_/', '', $key);
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
+					unset($object->array_options[$key]);
+				}
+			}
+		}
+
+		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->setErrorsFromObject($object);
+		}
+
+		unset($object->context['createfromclone']);
+
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
+	{
+		$res = $this->fetchCommon($id, $ref, '', $noextrafields);
+		if ($res > 0) {
+			// Needed to ensure right calculation of nb_open_days
+			$this->date_debut_gmt = $this->db->jdate($this->db->idate($this->date_debut), 1);
+			$this->date_fin_gmt = $this->db->jdate($this->db->idate($this->date_fin), 1);
+
+			$this->status = $this->statut;
+		}
+		return $res;
+	}
+
+
+	/**
+	 * Load list of objects in memory from the database.
+	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
+	 * your own loop with start and stop pagination.
+	 *
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	Limit the number of lines returned
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+
+		$sql = "SELECT ";
+		$sql .= $this->getFieldList('t');
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		} else {
+			$sql .= " WHERE 1 = 1";
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < ($limit ? min($limit, $num) : $num)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				if (!empty($record->isextrafieldmanaged)) {
+					$record->fetch_optionals();
+				}
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = 0)
+	{
+		return $this->deleteCommon($user, $notrigger);
+	}
+
+
+	/**
+	 *	Validate leave request
+	 *
+	 *  @param	User	$user        	User that validate
+	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 */
+	public function validate($user = null, $notrigger = 0)
+	{
+		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$error = 0;
+
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
+		// Define new ref
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
+			$num = $this->getNextNumRef(null);
+		} else {
+			$num = $this->ref;
+		}
+		$this->newref = dol_sanitizeFileName($num);
+
+		// Update status
+		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
+		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " date_valid = '".$this->db->idate(dol_now())."',";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
+		} else {
+			$this->error = 'Property status must be a numeric value';
+			$error++;
+		}
+		$sql .= " ref = '".$this->db->escape($num)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('HOLIDAY_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		}
+
+		if (!$error) {
+			$this->oldref = $this->ref;
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
+				// Now we rename also files into index
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . "ecm_files set filename = CONCAT('" . $this->db->escape($this->newref) . "', SUBSTR(filename, " . (strlen($this->ref) + 1) . ")), filepath = 'holiday/" . $this->db->escape($this->newref) . "'";
+				$sql .= " WHERE filename LIKE '" . $this->db->escape($this->ref) . "%' AND filepath = 'holiday/" . $this->db->escape($this->ref) . "' and entity = " . ((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->holiday->multidir_output[$this->entity] . '/' . $oldref;
+				$dirdest = $conf->holiday->multidir_output[$this->entity] . '/' . $newref;
+				if (!$error && file_exists($dirsource)) {
+					dol_syslog(get_class($this) . "::validate rename dir " . $dirsource . " into " . $dirdest);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^' . preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry) {
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^' . preg_quote($oldref, '/') . '/', $newref, $dirsource);
+							$dirsource = $fileentry['path'] . '/' . $dirsource;
+							$dirdest = $fileentry['path'] . '/' . $dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
+		}
+
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::validate ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 *	Approve leave request
+	 *
+	 *  @param	User	$user        	User that approve
+	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 */
+	public function approve($user = null, $notrigger = 0)
+	{
+		$error = 0;
+
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
+		$sql .= " description= '".$this->db->escape($this->description)."',";
+		if (!empty($this->date_debut)) {
+			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
+		} else {
+			$error++;
+		}
+		if (!empty($this->date_fin)) {
+			$sql .= " date_fin = '".$this->db->idate($this->date_fin)."',";
+		} else {
+			$error++;
+		}
+		$sql .= " halfday = ".((int) $this->halfday).",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
+		} else {
+			$error++;
+		}
+		if (!empty($this->fk_validator)) {
+			$sql .= " fk_validator = ".((int) $this->fk_validator).",";
+		} else {
+			$error++;
+		}
+		if (!empty($this->date_valid)) {
+			$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
+		} else {
+			$sql .= " date_valid = NULL,";
+		}
+		if (!empty($this->fk_user_valid)) {
+			$sql .= " fk_user_valid = ".((int) $this->fk_user_valid).",";
+		} else {
+			$sql .= " fk_user_valid = NULL,";
+		}
+		if (!empty($this->date_approval)) {
+			$sql .= " date_approval = '".$this->db->idate($this->date_approval)."',";
+		} else {
+			$sql .= " date_approval = NULL,";
+		}
+		if (!empty($this->fk_user_approve)) {
+			$sql .= " fk_user_approve = ".((int) $this->fk_user_approve).",";
+		} else {
+			$sql .= " fk_user_approve = NULL,";
+		}
+		if (!empty($this->date_refuse)) {
+			$sql .= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
+		} else {
+			$sql .= " date_refuse = NULL,";
+		}
+		if (!empty($this->fk_user_refuse)) {
+			$sql .= " fk_user_refuse = ".((int) $this->fk_user_refuse).",";
+		} else {
+			$sql .= " fk_user_refuse = NULL,";
+		}
+		if (!empty($this->date_cancel)) {
+			$sql .= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
+		} else {
+			$sql .= " date_cancel = NULL,";
+		}
+		if (!empty($this->fk_user_cancel)) {
+			$sql .= " fk_user_cancel = ".((int) $this->fk_user_cancel).",";
+		} else {
+			$sql .= " fk_user_cancel = NULL,";
+		}
+		if (!empty($this->detail_refuse)) {
+			$sql .= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
+		} else {
+			$sql .= " detail_refuse = NULL";
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::approve", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('HOLIDAY_APPROVE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::approve ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setDraft($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HOLIDAY_UNVALIDATE');
+	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancel($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut != self::STATUS_VALIDATED) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'HOLIDAY_CANCEL');
+	}
+
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @since 	v18
+	 * @return 	array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$datas = [];
+
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			return ['optimize' => $langs->trans("ShowHoliday")];
+		}
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Holiday").'</u>';
+		if (isset($this->statut)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		if (property_exists($this, 'ref')) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (isset($this->halfday) && !empty($this->date_debut) && !empty($this->date_fin)) {
+			$listhalfday = array(
+				'morning' => "Morning",
+				"afternoon" => "Afternoon"
+			);
+			$starthalfday = ($this->halfday == -1 || $this->halfday == 2) ? 'afternoon' : 'morning';
+			$endhalfday = ($this->halfday == 1 || $this->halfday == 2) ? 'morning' : 'afternoon';
+			$datas['date_start'] = '<br><b>'.$langs->trans('DateDebCP') . '</b>: '. dol_print_date($this->date_debut, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+			$datas['date_end'] = '<br><b>'.$langs->trans('DateFinCP') . '</b>: '. dol_print_date($this->date_fin, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+		}
+
+		return $datas;
+	}
+
+	/**
+	 *  Return a link to the object card (with optionally the picto)
+	 *
+	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param  int     $notooltip                  1=Disable tooltip
+	 *  @param  string  $morecss                    Add more css on link
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string                              String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
+
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
+
+		$url = dol_buildpath('/holiday/card.php', 1).'?id='.$this->id;
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowHoliday");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
+
+		if (empty($this->showphoto_on_popup)) {
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			}
+		} else {
+			if ($withpicto) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+				[$class, $module] = explode('@', $this->picto);
+				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
+				$filearray = dol_dir_list($upload_dir, "files");
+				$filename = $filearray[0]['name'];
+				if (!empty($filename)) {
+					$pospoint = strpos($filearray[0]['name'], '.');
+
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
+					} else {
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
+					}
+
+					$result .= '</div>';
+				} else {
+					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
+				}
+			}
+		}
+
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element.'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
+	 */
+	public function getLabelStatus($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the label of a given status
+	 *
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
+	 */
+	public function LibStatut($status, $mode = 0)
+	{
+		global $langs;
+
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
+		}
+
+		$statusType = 'status6';
+		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
+			$statusType = 'status4';
+			$params = array('tooltip' => $this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
+		}
+		if ($status == self::STATUS_DRAFT) {
+			$statusType = 'status0';
+		}
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status1';
+		}
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		}
+		if ($status == self::STATUS_REFUSED) {
+			$statusType = 'status9';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+	/**
+	 *	Load the info information in the object
+	 *
+	 *	@param  int		$id       Id of object
+	 *	@return	void
+	 */
+	public function info($id)
+	{
+		global $conf;
+
+		$sql = "SELECT f.rowid, f.statut as status,";
+		$sql .= " f.date_create as datec,";
+		$sql .= " f.tms as date_modification,";
+		$sql .= " f.date_valid as datev,";
+		$sql .= " f.date_approval as datea,";
+		$sql .= " f.date_refuse as dater,";
+		$sql .= " f.fk_user_create as fk_user_creation,";
+		$sql .= " f.fk_user_modif as fk_user_modification,";
+		$sql .= " f.fk_user_valid as fk_user_validation,";
+		$sql .= " f.fk_user_approve as fk_user_approval_done,";
+		$sql .= " f.fk_validator as fk_user_approval_expected,";
+		$sql .= " f.fk_user_refuse as fk_user_refuse";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
+		$sql .= " WHERE f.rowid = ".((int) $id);
+		$sql .= " AND f.entity = ".$conf->entity;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+
+				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_validation = $this->db->jdate($obj->datev);
+				$this->date_approval = $this->db->jdate($obj->datea);
+
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_validation;
+				$this->user_modification_id = $obj->fk_user_modification;
+
+				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
+					if ($obj->fk_user_approval_done) {
+						$this->user_approve_id = $obj->fk_user_approval_done;
+					}
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
+	 *
+	 * @return int
+	 */
+	public function initAsSpecimen()
+	{
+		global $user;
+
+		$this->fk_user = $user->id;
+		$this->date_debut = dol_now();
+		$this->date_fin = dol_now() + (24 * 3600);
+		$this->date_valid = dol_now();
+		$this->fk_validator = $user->id;
+		$this->halfday = 0;
+		$this->fk_type = 1;
+		$this->status = Holiday::STATUS_VALIDATED;
+
+		return $this->initAsSpecimenCommon();
+	}
 
 	/**
 	 *  Returns the reference to the following non used Order depending on the active numbering module
@@ -253,6 +1075,124 @@ class Holiday extends CommonObject
 	}
 
 	/**
+	 * Return validation test result for a field.
+	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
+	 *
+	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool 						Return false if fail, true on success, set $this->error for error message
+	 */
+	public function validateField($fields, $fieldKey, $fieldValue)
+	{
+		// Add your own validation rules here.
+		// ...
+
+		return parent::validateField($fields, $fieldKey, $fieldValue);
+	}
+
+	/**
+	 * Action executed by scheduler
+	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
+	 *
+	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function doScheduledJob()
+	{
+		//global $conf, $langs;
+
+		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlogfile.log';
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		dol_syslog(__METHOD__." start", LOG_INFO);
+
+		$now = dol_now();
+
+		$this->db->begin();
+
+		// ...
+
+		$this->db->commit();
+
+		dol_syslog(__METHOD__." end", LOG_INFO);
+
+		return $error;
+	}
+
+	/**
+	 * Return HTML string to show a field into a page
+	 * Code very similar with showOutputField of extra fields
+	 *
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
+	 * @param  string  	$key            	Key of attribute
+	 * @param  string  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  	$moreparam      	To add more parameters on html tag
+	 * @param  string  	$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  	$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   	$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
+		global $conf, $langs, $form;
+
+		if ($key == 'date_debut') {
+			$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
+			$starthalfday = ($this->halfday == -1 || $this->halfday == 2) ? 'afternoon' : 'morning';
+			$moreOut = ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+			return parent::showOutputField($val, $key, $value, $moreparam, $keyprefix, $morecss) . $moreOut;
+		}
+
+		if ($key == 'date_fin') {
+			$listhalfday = array('morning' => "Morning", "afternoon" => "Afternoon");
+			$endhalfday = ($this->halfday == 1 || $this->halfday == 2) ? 'morning' : 'afternoon';
+			$moreOut = ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+			return parent::showOutputField($val, $key, $value, $moreparam, $keyprefix, $morecss) . $moreOut;
+		}
+
+		if ($key == 'date_valid') {
+			$val['type'] = 'date'; // Force to show only date instead of datetime
+		}
+
+		if ($key == 'date_approval') {
+			$val['type'] = 'date'; // Force to show only date instead of datetime
+		}
+
+		if ($key == 'nb_open_day') {
+			$value = $this->nb_open_day = num_open_day($this->date_debut, $this->date_fin, 0, 1, $this->halfday);
+		}
+
+		return parent::showOutputField($val, $key, $value, $moreparam, $keyprefix, $morecss);
+	}
+
+	/**
+	 * Return HTML string to put an input field into a page
+	 * Code very similar with showInputField of extra fields
+	 *
+	 * @param ?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined)
+	 *                                                                                                                                                                                                                                                                                                                                          Array of properties of field to show
+	 * @param  string  		$key           Key of attribute
+	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param  string  		$moreparam     To add more parameters on html input tag
+	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
+	 * @return string
+	 */
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
+	{
+		global $conf, $langs, $form;
+		if ($key == 'fk_type') {
+			return $this->getTypes(1, -1);
+		}
+	}
+
+	/**
 	 * Update balance of vacations and check table of users for holidays is complete. If not complete.
 	 *
 	 * @return	int			Return integer <0 if KO, >0 if OK
@@ -272,211 +1212,6 @@ class Holiday extends CommonObject
 			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
-			return -1;
-		}
-	}
-
-	/**
-	 *   Créer un congés payés dans la base de données
-	 *
-	 *   @param		User	$user        	User that create
-	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *   @return    int			         	Return integer <0 if KO, Id of created object if OK
-	 */
-	public function create($user, $notrigger = 0)
-	{
-		global $conf;
-		$error = 0;
-
-		$now = dol_now();
-
-		// Check parameters
-		if (empty($this->fk_user) || !is_numeric($this->fk_user) || $this->fk_user < 0) {
-			$this->error = "ErrorBadParameterFkUser";
-			return -1;
-		}
-		if (empty($this->fk_validator) || !is_numeric($this->fk_validator) || $this->fk_validator < 0) {
-			$this->error = "ErrorBadParameterFkValidator";
-			return -1;
-		}
-		if (empty($this->fk_type) || !is_numeric($this->fk_type) || $this->fk_type < 0) {
-			$this->error = "ErrorBadParameterFkType";
-			return -1;
-		}
-
-		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
-		$sql .= "ref,";
-		$sql .= "fk_user,";
-		$sql .= "date_create,";
-		$sql .= "description,";
-		$sql .= "date_debut,";
-		$sql .= "date_fin,";
-		$sql .= "halfday,";
-		$sql .= "statut,";
-		$sql .= "fk_validator,";
-		$sql .= "fk_type,";
-		$sql .= "fk_user_create,";
-		$sql .= "entity";
-		$sql .= ") VALUES (";
-		$sql .= "'(PROV)',";
-		$sql .= " ".((int) $this->fk_user).",";
-		$sql .= " '".$this->db->idate($now)."',";
-		$sql .= " '".$this->db->escape($this->description)."',";
-		$sql .= " '".$this->db->idate($this->date_debut)."',";
-		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".((int) $this->halfday).",";
-		$sql .= " '1',";
-		$sql .= " ".((int) $this->fk_validator).",";
-		$sql .= " ".((int) $this->fk_type).",";
-		$sql .= " ".((int) $user->id).",";
-		$sql .= " ".((int) $conf->entity);
-		$sql .= ")";
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
-
-			if ($this->id) {
-				// update ref
-				$initialref = '(PROV'.$this->id.')';
-				if (!empty($this->ref)) {
-					$initialref = $this->ref;
-				}
-
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
-				if ($this->db->query($sql)) {
-					$this->ref = $initialref;
-
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
-					}
-
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('HOLIDAY_CREATE', $user);
-						if ($result < 0) {
-							$error++;
-						}
-						// End call triggers
-					}
-				}
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return $this->id;
-		}
-	}
-
-
-	/**
-	 *	Load object in memory from database
-	 *
-	 *  @param	int		$id         Id object
-	 *  @param	string	$ref        Ref object
-	 *  @return int         		Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id, $ref = '')
-	{
-		$sql = "SELECT";
-		$sql .= " cp.rowid,";
-		$sql .= " cp.ref,";
-		$sql .= " cp.fk_user,";
-		$sql .= " cp.date_create,";
-		$sql .= " cp.description,";
-		$sql .= " cp.date_debut,";
-		$sql .= " cp.date_fin,";
-		$sql .= " cp.halfday,";
-		$sql .= " cp.statut as status,";
-		$sql .= " cp.fk_validator,";
-		$sql .= " cp.date_valid,";
-		$sql .= " cp.fk_user_valid,";
-		$sql .= " cp.date_approval,";
-		$sql .= " cp.fk_user_approve,";
-		$sql .= " cp.date_refuse,";
-		$sql .= " cp.fk_user_refuse,";
-		$sql .= " cp.date_cancel,";
-		$sql .= " cp.fk_user_cancel,";
-		$sql .= " cp.detail_refuse,";
-		$sql .= " cp.note_private,";
-		$sql .= " cp.note_public,";
-		$sql .= " cp.fk_user_create,";
-		$sql .= " cp.fk_type,";
-		$sql .= " cp.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
-		if ($id > 0) {
-			$sql .= " WHERE cp.rowid = ".((int) $id);
-		} else {
-			$sql .= " WHERE cp.ref = '".$this->db->escape($ref)."'";
-		}
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id    = $obj->rowid;
-				$this->ref   = ($obj->ref ? $obj->ref : $obj->rowid);
-				$this->fk_user = $obj->fk_user;
-				$this->date_create = $this->db->jdate($obj->date_create);
-				$this->description = $obj->description;
-				$this->date_debut = $this->db->jdate($obj->date_debut);
-				$this->date_fin = $this->db->jdate($obj->date_fin);
-				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
-				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
-				$this->halfday = $obj->halfday;
-				$this->status = $obj->status;
-				$this->statut = $obj->status;	// deprecated
-				$this->fk_validator = $obj->fk_validator;
-				$this->date_valid = $this->db->jdate($obj->date_valid);
-				$this->fk_user_valid = $obj->fk_user_valid;
-				$this->user_validation_id = $obj->fk_user_valid;
-				$this->date_approval = $this->db->jdate($obj->date_approval);
-				$this->fk_user_approve = $obj->fk_user_approve;
-				$this->date_refuse = $this->db->jdate($obj->date_refuse);
-				$this->fk_user_refuse = $obj->fk_user_refuse;
-				$this->date_cancel = $this->db->jdate($obj->date_cancel);
-				$this->fk_user_cancel = $obj->fk_user_cancel;
-				$this->detail_refuse = $obj->detail_refuse;
-				$this->note_private = $obj->note_private;
-				$this->note_public = $obj->note_public;
-				$this->fk_user_create = $obj->fk_user_create;
-				$this->fk_type = $obj->fk_type;
-				$this->entity = $obj->entity;
-
-				$this->fetch_optionals();
-
-				$result = 1;
-			} else {
-				$result = 0;
-			}
-			$this->db->free($resql);
-
-			return $result;
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -613,569 +1348,6 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	List all holidays of all users
-	 *
-	 *  @param      string	$order      Sort order
-	 *  @param      string	$filter     SQL Filter
-	 *  @return     int      			-1 if KO, 1 if OK, 2 if no result
-	 */
-	public function fetchAll($order, $filter)
-	{
-		$sql = "SELECT";
-		$sql .= " cp.rowid,";
-		$sql .= " cp.ref,";
-		$sql .= " cp.fk_user,";
-		$sql .= " cp.fk_type,";
-		$sql .= " cp.date_create,";
-		$sql .= " cp.tms as date_modification,";
-		$sql .= " cp.description,";
-		$sql .= " cp.date_debut,";
-		$sql .= " cp.date_fin,";
-		$sql .= " cp.halfday,";
-		$sql .= " cp.statut as status,";
-		$sql .= " cp.fk_validator,";
-		$sql .= " cp.date_valid,";
-		$sql .= " cp.fk_user_valid,";
-		$sql .= " cp.date_approval,";
-		$sql .= " cp.fk_user_approve,";
-		$sql .= " cp.date_refuse,";
-		$sql .= " cp.fk_user_refuse,";
-		$sql .= " cp.date_cancel,";
-		$sql .= " cp.fk_user_cancel,";
-		$sql .= " cp.detail_refuse,";
-
-		$sql .= " uu.lastname as user_lastname,";
-		$sql .= " uu.firstname as user_firstname,";
-		$sql .= " uu.login as user_login,";
-		$sql .= " uu.statut as user_status,";
-		$sql .= " uu.photo as user_photo,";
-
-		$sql .= " ua.lastname as validator_lastname,";
-		$sql .= " ua.firstname as validator_firstname,";
-		$sql .= " ua.login as validator_login,";
-		$sql .= " ua.statut as validator_status,";
-		$sql .= " ua.photo as validator_photo";
-
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
-
-		// Selection filtering
-		if (!empty($filter)) {
-			$sql .= $filter;
-		}
-
-		// order of display
-		if (!empty($order)) {
-			$sql .= $order;
-		}
-
-		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-
-		// If no SQL error
-		if ($resql) {
-			$i = 0;
-			$tab_result = $this->holiday;
-			$num = $this->db->num_rows($resql);
-
-			// If no registration
-			if (!$num) {
-				return 2;
-			}
-
-			// List the records and add them to the table
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
-				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
-
-				$tab_result[$i]['fk_user'] = $obj->fk_user;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
-				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
-				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
-				$tab_result[$i]['description'] = $obj->description;
-				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
-				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
-				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
-				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
-				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->status;
-				$tab_result[$i]['status'] = $obj->status;
-				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
-				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
-				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
-				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
-				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
-				$tab_result[$i]['date_refuse'] = $obj->date_refuse;
-				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
-				$tab_result[$i]['date_cancel'] = $obj->date_cancel;
-				$tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
-				$tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
-
-				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
-				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
-				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_status;
-				$tab_result[$i]['user_status'] = $obj->user_status;
-				$tab_result[$i]['user_photo'] = $obj->user_photo;
-
-				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
-				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_status;
-				$tab_result[$i]['validator_status'] = $obj->validator_status;
-				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
-
-				$i++;
-			}
-			// Returns 1 and adds the array to the variable
-			$this->holiday = $tab_result;
-			return 1;
-		} else {
-			// SQL Error
-			$this->error = "Error ".$this->db->lasterror();
-			return -1;
-		}
-	}
-
-
-	/**
-	 *	Validate leave request
-	 *
-	 *  @param	User	$user        	User that validate
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
-	 */
-	public function validate($user = null, $notrigger = 0)
-	{
-		global $conf, $langs;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$error = 0;
-
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
-
-		if ($checkBalance > 0) {
-			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-
-			if ($balance < 0) {
-				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
-				return -1;
-			}
-		}
-
-		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
-			$num = $this->getNextNumRef(null);
-		} else {
-			$num = $this->ref;
-		}
-		$this->newref = dol_sanitizeFileName($num);
-
-		// Update status
-		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
-		$sql .= " fk_user_valid = ".((int) $user->id).",";
-		$sql .= " date_valid = '".$this->db->idate(dol_now())."',";
-		if (!empty($this->status) && is_numeric($this->status)) {
-			$sql .= " statut = ".((int) $this->status).",";
-		} else {
-			$this->error = 'Property status must be a numeric value';
-			$error++;
-		}
-		$sql .= " ref = '".$this->db->escape($num)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_VALIDATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE ' . MAIN_DB_PREFIX . "ecm_files set filename = CONCAT('" . $this->db->escape($this->newref) . "', SUBSTR(filename, " . (strlen($this->ref) + 1) . ")), filepath = 'holiday/" . $this->db->escape($this->newref) . "'";
-				$sql .= " WHERE filename LIKE '" . $this->db->escape($this->ref) . "%' AND filepath = 'holiday/" . $this->db->escape($this->ref) . "' and entity = " . ((int) $conf->entity);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->holiday->multidir_output[$this->entity] . '/' . $oldref;
-				$dirdest = $conf->holiday->multidir_output[$this->entity] . '/' . $newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this) . "::validate rename dir " . $dirsource . " into " . $dirdest);
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^' . preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^' . preg_quote($oldref, '/') . '/', $newref, $dirsource);
-							$dirsource = $fileentry['path'] . '/' . $dirsource;
-							$dirdest = $fileentry['path'] . '/' . $dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
-			}
-		}
-
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::validate ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-
-	/**
-	 *	Approve leave request
-	 *
-	 *  @param	User	$user        	User that approve
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
-	 */
-	public function approve($user = null, $notrigger = 0)
-	{
-		$error = 0;
-
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
-
-		if ($checkBalance > 0) {
-			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-
-			if ($balance < 0) {
-				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
-				return -1;
-			}
-		}
-
-		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
-		$sql .= " description= '".$this->db->escape($this->description)."',";
-		if (!empty($this->date_debut)) {
-			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
-		} else {
-			$error++;
-		}
-		if (!empty($this->date_fin)) {
-			$sql .= " date_fin = '".$this->db->idate($this->date_fin)."',";
-		} else {
-			$error++;
-		}
-		$sql .= " halfday = ".((int) $this->halfday).",";
-		if (!empty($this->status) && is_numeric($this->status)) {
-			$sql .= " statut = ".((int) $this->status).",";
-		} else {
-			$error++;
-		}
-		if (!empty($this->fk_validator)) {
-			$sql .= " fk_validator = ".((int) $this->fk_validator).",";
-		} else {
-			$error++;
-		}
-		if (!empty($this->date_valid)) {
-			$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
-		} else {
-			$sql .= " date_valid = NULL,";
-		}
-		if (!empty($this->fk_user_valid)) {
-			$sql .= " fk_user_valid = ".((int) $this->fk_user_valid).",";
-		} else {
-			$sql .= " fk_user_valid = NULL,";
-		}
-		if (!empty($this->date_approval)) {
-			$sql .= " date_approval = '".$this->db->idate($this->date_approval)."',";
-		} else {
-			$sql .= " date_approval = NULL,";
-		}
-		if (!empty($this->fk_user_approve)) {
-			$sql .= " fk_user_approve = ".((int) $this->fk_user_approve).",";
-		} else {
-			$sql .= " fk_user_approve = NULL,";
-		}
-		if (!empty($this->date_refuse)) {
-			$sql .= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
-		} else {
-			$sql .= " date_refuse = NULL,";
-		}
-		if (!empty($this->fk_user_refuse)) {
-			$sql .= " fk_user_refuse = ".((int) $this->fk_user_refuse).",";
-		} else {
-			$sql .= " fk_user_refuse = NULL,";
-		}
-		if (!empty($this->date_cancel)) {
-			$sql .= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
-		} else {
-			$sql .= " date_cancel = NULL,";
-		}
-		if (!empty($this->fk_user_cancel)) {
-			$sql .= " fk_user_cancel = ".((int) $this->fk_user_cancel).",";
-		} else {
-			$sql .= " fk_user_cancel = NULL,";
-		}
-		if (!empty($this->detail_refuse)) {
-			$sql .= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
-		} else {
-			$sql .= " detail_refuse = NULL";
-		}
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::approve", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_APPROVE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::approve ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-	/**
-	 *	Update database
-	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
-	 */
-	public function update($user = null, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error = 0;
-
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
-
-		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
-			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-
-			if ($balance < 0) {
-				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
-				return -1;
-			}
-		}
-
-		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
-
-		$sql .= " description= '".$this->db->escape($this->description)."',";
-
-		if (!empty($this->date_debut)) {
-			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
-		} else {
-			$error++;
-		}
-		if (!empty($this->date_fin)) {
-			$sql .= " date_fin = '".$this->db->idate($this->date_fin)."',";
-		} else {
-			$error++;
-		}
-		$sql .= " halfday = ".$this->halfday.",";
-		if (!empty($this->status) && is_numeric($this->status)) {
-			$sql .= " statut = ".$this->status.",";
-		} else {
-			$error++;
-		}
-		if (!empty($this->fk_validator)) {
-			$sql .= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
-		} else {
-			$error++;
-		}
-		if (!empty($this->date_valid)) {
-			$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
-		} else {
-			$sql .= " date_valid = NULL,";
-		}
-		if (!empty($this->fk_user_valid)) {
-			$sql .= " fk_user_valid = ".((int) $this->fk_user_valid).",";
-		} else {
-			$sql .= " fk_user_valid = NULL,";
-		}
-		if (!empty($this->date_approval)) {
-			$sql .= " date_approval = '".$this->db->idate($this->date_approval)."',";
-		} else {
-			$sql .= " date_approval = NULL,";
-		}
-		if (!empty($this->fk_user_approve)) {
-			$sql .= " fk_user_approve = ".((int) $this->fk_user_approve).",";
-		} else {
-			$sql .= " fk_user_approve = NULL,";
-		}
-		if (!empty($this->date_refuse)) {
-			$sql .= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
-		} else {
-			$sql .= " date_refuse = NULL,";
-		}
-		if (!empty($this->fk_user_refuse)) {
-			$sql .= " fk_user_refuse = ".((int) $this->fk_user_refuse).",";
-		} else {
-			$sql .= " fk_user_refuse = NULL,";
-		}
-		if (!empty($this->date_cancel)) {
-			$sql .= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
-		} else {
-			$sql .= " date_cancel = NULL,";
-		}
-		if (!empty($this->fk_user_cancel)) {
-			$sql .= " fk_user_cancel = ".((int) $this->fk_user_cancel).",";
-		} else {
-			$sql .= " fk_user_cancel = NULL,";
-		}
-		if (!empty($this->detail_refuse)) {
-			$sql .= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
-		} else {
-			$sql .= " detail_refuse = NULL";
-		}
-
-		$sql .= " WHERE rowid = ".((int) $this->id);
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-
-	/**
-	 *   Delete object in database
-	 *
-	 *	 @param		User	$user        	User that delete
-	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	 @return	int						Return integer <0 if KO, >0 if OK
-	 */
-	public function delete($user, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error = 0;
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday";
-		$sql .= " WHERE rowid=".((int) $this->id);
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('HOLIDAY_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-	/**
 	 *	Check if a user is on holiday (partially or completely) into a period.
 	 *  This function can be used to avoid to have 2 leave requests on same period for example.
 	 *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
@@ -1260,7 +1432,6 @@ class Holiday extends CommonObject
 		return true;
 	}
 
-
 	/**
 	 *	Check that a user is not on holiday for a particular timestamp. Can check approved leave requests and not into public holidays of company.
 	 *
@@ -1336,200 +1507,6 @@ class Holiday extends CommonObject
 		}
 		return $result;
 	}
-
-	/**
-	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
-	 * @since v18
-	 * @return array
-	 */
-	public function getTooltipContentArray($params)
-	{
-		global $langs;
-
-		$langs->load('holiday');
-		$nofetch = !empty($params['nofetch']);
-
-		$datas = array();
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
-		if (isset($this->status)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5);
-		}
-		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		// show type for this record only in ajax to not overload lists
-		if (!$nofetch && !empty($this->fk_type)) {
-			$typeleaves = $this->getTypes(1, -1);
-			if (empty($typeleaves[$this->fk_type])) {
-				$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type);
-			} else {
-				$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
-			}
-			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . $labeltoshow;
-		}
-		if (isset($this->halfday) && !empty($this->date_debut) && !empty($this->date_fin)) {
-			$listhalfday = array(
-				'morning' => $langs->trans("Morning"),
-				"afternoon" => $langs->trans("Afternoon")
-			);
-			$starthalfday = ($this->halfday == -1 || $this->halfday == 2) ? 'afternoon' : 'morning';
-			$endhalfday = ($this->halfday == 1 || $this->halfday == 2) ? 'morning' : 'afternoon';
-			$datas['date_start'] = '<br><b>'.$langs->trans('DateDebCP') . '</b>: '. dol_print_date($this->date_debut, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-			$datas['date_end'] = '<br><b>'.$langs->trans('DateFinCP') . '</b>: '. dol_print_date($this->date_fin, 'day') . '&nbsp;&nbsp;<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-		}
-
-
-		return $datas;
-	}
-
-	/**
-	 *	Return clicable name (with picto eventually)
-	 *
-	 *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	 *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param  int         $notooltip					1=Disable tooltip
-	 *  @param  string  	$morecss                    Add more css on link
-	 *	@return	string									String with URL
-	 */
-	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
-	{
-		global $conf, $langs, $hookmanager;
-
-		if (!empty($conf->dol_no_mouse_hover)) {
-			$notooltip = 1; // Force disable tooltips
-		}
-
-		$result = '';
-		$params = [
-			'id' => $this->id,
-			'objecttype' => $this->element,
-			'nofetch' => 1,
-		];
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$label = '';
-		} else {
-			$label = implode($this->getTooltipContentArray($params));
-		}
-
-		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
-
-		//if ($option != 'nolink')
-		//{
-		// Add param to save lastsearch_values or not
-		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-			$add_save_lastsearch_values = 1;
-		}
-		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
-		}
-		//}
-
-		$linkclose = '';
-		if (empty($notooltip)) {
-			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
-		} else {
-			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
-		}
-
-		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
-
-		$result .= $linkstart;
-
-		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
-		}
-		if ($withpicto != 2) {
-			$result .= $this->ref;
-		}
-		$result .= $linkend;
-
-		global $action;
-		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
-		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
-		}
-		return $result;
-	}
-
-
-	/**
-	 *	Returns the label status
-	 *
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@return     string      		Label
-	 */
-	public function getLibStatut($mode = 0)
-	{
-		return $this->LibStatut($this->status, $mode, $this->date_debut);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Returns the label of a status
-	 *
-	 *	@param      int			$status     Id status
-	 *	@param      int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @param		int|string	$startdate	Date holiday should start
-	 *	@return     string      			Label
-	 */
-	public function LibStatut($status, $mode = 0, $startdate = '')
-	{
-		// phpcs:enable
-		global $langs;
-
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
-			$this->labelStatus[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
-			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
-			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
-		}
-
-		$params = array();
-		$statusType = 'status6';
-		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
-			$statusType = 'status4';
-			$params = array('tooltip' => $this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
-		}
-		if ($status == self::STATUS_DRAFT) {
-			$statusType = 'status0';
-		}
-		if ($status == self::STATUS_VALIDATED) {
-			$statusType = 'status1';
-		}
-		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
-		}
-		if ($status == self::STATUS_REFUSED) {
-			$statusType = 'status9';
-		}
-
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
-	}
-
 
 	/**
 	 *   Show select with list of leave status
@@ -1749,42 +1726,6 @@ class Holiday extends CommonObject
 				return 1;
 			} else {
 				return -1;
-			}
-		}
-	}
-
-	/**
-	 *  Create entries for each user at setup step
-	 *
-	 *  @param	boolean		$single		Single
-	 *  @param	int			$userid		Id user
-	 *  @return void
-	 */
-	public function createCPusers($single = false, $userid = 0)
-	{
-		// do we have to add balance for all users ?
-		if (!$single) {
-			dol_syslog(get_class($this).'::createCPusers');
-			$arrayofusers = $this->fetchUsers(false, true);
-
-			foreach ($arrayofusers as $users) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dol_print_error($this->db);
-				}
-			}
-		} else {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES (".((int) $userid)."', '0')";
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
 			}
 		}
 	}
@@ -2071,57 +2012,6 @@ class Holiday extends CommonObject
 		}
 	}
 
-
-	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr
-	 *
-	 *  @return     int      retourne le nombre d'utilisateur
-	 */
-	public function countActiveUsers()
-	{
-		$sql = "SELECT count(u.rowid) as compteur";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.statut > 0";
-
-		$result = $this->db->query($sql);
-		$object = $this->db->fetch_object($result);
-
-		return $object->compteur;
-	}
-	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
-	 *
-	 *  @return     int      retourne le nombre d'utilisateur
-	 */
-	public function countActiveUsersWithoutCP()
-	{
-		$sql = "SELECT count(u.rowid) as compteur";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
-		$sql .= " WHERE u.statut > 0 AND hu.fk_user IS NULL";
-
-		$result = $this->db->query($sql);
-		$object = $this->db->fetch_object($result);
-
-		return $object->compteur;
-	}
-
-	/**
-	 *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
-	 *
-	 *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
-	 *  @param    int	$userCP    				Number of active users into table of holidays
-	 *  @return   int							Return integer <0 if KO, >0 if OK
-	 */
-	public function verifNbUsers($userDolibarrWithoutCP, $userCP)
-	{
-		if (empty($userCP)) {
-			$userCP = 0;
-		}
-		dol_syslog(get_class($this).'::verifNbUsers userDolibarr='.$userDolibarrWithoutCP.' userCP='.$userCP);
-		return 1;
-	}
-
-
 	/**
 	 * addLogCP
 	 *
@@ -2301,90 +2191,6 @@ class Holiday extends CommonObject
 		}
 
 		return array();
-	}
-
-
-	/**
-	 *  Load information on object
-	 *
-	 *  @param  int     $id      Id of object
-	 *  @return void
-	 */
-	public function info($id)
-	{
-		global $conf;
-
-		$sql = "SELECT f.rowid, f.statut as status,";
-		$sql .= " f.date_create as datec,";
-		$sql .= " f.tms as date_modification,";
-		$sql .= " f.date_valid as datev,";
-		$sql .= " f.date_approval as datea,";
-		$sql .= " f.date_refuse as dater,";
-		$sql .= " f.fk_user_create as fk_user_creation,";
-		$sql .= " f.fk_user_modif as fk_user_modification,";
-		$sql .= " f.fk_user_valid as fk_user_validation,";
-		$sql .= " f.fk_user_approve as fk_user_approval_done,";
-		$sql .= " f.fk_validator as fk_user_approval_expected,";
-		$sql .= " f.fk_user_refuse as fk_user_refuse";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
-		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id = $obj->rowid;
-
-				$this->date_creation = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->date_validation = $this->db->jdate($obj->datev);
-				$this->date_approval = $this->db->jdate($obj->datea);
-
-				$this->user_creation_id = $obj->fk_user_creation;
-				$this->user_validation_id = $obj->fk_user_validation;
-				$this->user_modification_id = $obj->fk_user_modification;
-
-				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
-					if ($obj->fk_user_approval_done) {
-						$this->fk_user_approve = $obj->fk_user_approval_done;
-					}
-				}
-			}
-			$this->db->free($resql);
-		} else {
-			dol_print_error($this->db);
-		}
-	}
-
-
-	/**
-	 *  Initialise an instance with random values.
-	 *  Used to build previews or test instances.
-	 *	id must be 0 if object instance is a specimen.
-	 *
-	 *  @return int
-	 */
-	public function initAsSpecimen()
-	{
-		global $user, $langs;
-
-		// Initialise parameters
-		$this->id = 0;
-		$this->specimen = 1;
-
-		$this->fk_user = $user->id;
-		$this->description = 'SPECIMEN description';
-		$this->date_debut = dol_now();
-		$this->date_fin = dol_now() + (24 * 3600);
-		$this->date_valid = dol_now();
-		$this->fk_validator = $user->id;
-		$this->halfday = 0;
-		$this->fk_type = 1;
-		$this->status = Holiday::STATUS_VALIDATED;
-
-		return 1;
 	}
 
 	/**
