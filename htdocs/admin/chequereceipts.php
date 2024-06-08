@@ -97,7 +97,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT') {
  */
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-llxHeader("", $langs->trans("BankSetupModule"));
+llxHeader("", $langs->trans("BankSetupModule"), '', '', 0, 0, '', '', '', 'mod-admin page-chequereceipts');
 
 $form = new Form($db);
 
