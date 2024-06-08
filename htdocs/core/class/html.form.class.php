@@ -2961,6 +2961,11 @@ class Form
 		}
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+
+		if (getDolGlobalString('MAIN_SEARCH_PRODUCT_FORCE_INDEX')) {
+			$sql .= " USE INDEX (" . $this->db->sanitize(getDolGlobalString('MAIN_PRODUCT_FORCE_INDEX')) . ")";
+		}
+
 		// Add from (left join) from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
