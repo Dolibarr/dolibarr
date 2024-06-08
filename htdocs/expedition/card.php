@@ -249,7 +249,7 @@ if (empty($reshook)) {
 		$objectsrc->fetch($object->origin_id);
 		if ($objectsrc->id > 0) {
 			$object->socid = $objectsrc->socid;
-		}else{
+		} else {
 			$object->socid = $socid;
 		}
 		
@@ -376,7 +376,7 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-		if(!empty($object->origin_id)){
+		if (!empty($object->origin_id)) {
 			if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
 				for ($i = 0; $i < $num; $i++) {
 					$qty = "qtyl".$i;
