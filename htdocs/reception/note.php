@@ -114,7 +114,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'));
+llxHeader('', $langs->trans('Reception'), '', '', 0, 0, $morejs, '', '', 'mod-reception page-card_notes');
 
 $form = new Form($db);
 
