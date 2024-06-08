@@ -15,7 +15,6 @@ MailErrorsTo=Errors to
 MailReply=Reply to
 MailTo=To
 MailToUsers=To user(s)
-MailDate=Mail date
 MailCC=Copy to
 MailToCCUsers=Copy to users(s)
 MailCCC=Cached copy to
