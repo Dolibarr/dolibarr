@@ -312,15 +312,6 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
-			// Check unicity for serial numbered equipment once all movement were done.
-			if ($product->status_batch==2 && abs($qty)>1) {
-				$this->errors[] = $langs->transnoentities('TooManyQtyForSerialNumber', $product->ref, $batch);
-				dol_syslog($langs->transnoentities('TooManyQtyForSerialNumber', $product->ref, $batch), LOG_ERR);
-
-				$this->db->rollback();
-				return -9;
-			}
-
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
