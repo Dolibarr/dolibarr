@@ -2558,6 +2558,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					array_key_exists('totalizable', $extrafield) ? $extrafield['totalizable'] : 0,
 					array_key_exists('printable', $extrafield) ? $extrafield['printable'] : 0,
 					array_key_exists('moreparams', $extrafield) ? $extrafield['moreparams'] : array(),
+					$this->rights_class,
 				);
 			} else {
 				$result = $extrafields->addExtraField(
@@ -2582,6 +2583,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					array_key_exists('totalizable', $extrafield) ? $extrafield['totalizable'] : 0,
 					array_key_exists('printable', $extrafield) ? $extrafield['printable'] : 0,
 					array_key_exists('moreparams', $extrafield) ? $extrafield['moreparams'] : array(),
+					$this->rights_class,
 				);
 			}
 

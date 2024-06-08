@@ -388,3 +388,6 @@ ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
 
 -- table paiementcharge indexes
 ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
+
+ALTER TABLE llx_extrafields ADD module VARCHAR(255) AFTER csslist;
+

@@ -43,6 +43,7 @@ create table llx_extrafields
 	css             varchar(128),                               -- to store css on create/update forms
 	cssview         varchar(128),                               -- to store css on view form
 	csslist         varchar(128),                               -- to store css on list
+	module			varchar(255),								-- module responsible for the extrafield
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

@@ -137,9 +137,10 @@ class ExtraFields
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int             $printable          Is extrafield displayed on PDF
 	 *  @param	array			$moreparams			More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
+	 *  @param	string			$module				Module responsible for the extrafield
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $module = null)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -169,7 +170,7 @@ class ExtraFields
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $module);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -387,10 +388,11 @@ class ExtraFields
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
 	 *  @param  int             $printable      Is extrafield displayed on PDF
 	 *  @param	array			$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
+	 *  @param	string			$module			Module responsible for the extrafield
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $module = null)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -438,6 +440,10 @@ class ExtraFields
 			$cssview = $moreparams['cssview'];
 		}
 
+		if (empty($module)) {
+			$module = null;
+		}
+
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
@@ -473,7 +479,8 @@ class ExtraFields
 			$sql .= " totalizable,";
 			$sql .= " css,";
 			$sql .= " csslist,";
-			$sql .= " cssview";
+			$sql .= " cssview,";
+			$sql .= " module";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -500,7 +507,8 @@ class ExtraFields
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
-			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
+			$sql .= " ".($module ? "'".$this->db->escape($module)."'" : "null");
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -636,10 +644,11 @@ class ExtraFields
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
 	 *  @param  int     $printable        	Is extrafield displayed on PDF
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
+	 *  @param	string	$module				Module responsible for the extrafield
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $module = null)
 	{
 		global $action, $hookmanager;
 
@@ -722,7 +731,7 @@ class ExtraFields
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 					dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $module);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -779,10 +788,11 @@ class ExtraFields
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
 	 *  @param  int     $printable        	Is extrafield displayed on PDF
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
+	 *  @param	string	$module				Module responsible for the extrafield
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $module = null)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -826,6 +836,10 @@ class ExtraFields
 		$cssview = '';
 		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
 			$cssview = $moreparams['cssview'];
+		}
+
+		if (empty($module)) {
+			$module = null;
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
@@ -882,7 +896,8 @@ class ExtraFields
 			$sql .= " help,";
 			$sql .= " css,";
 			$sql .= " csslist,";
-			$sql .= " cssview";
+			$sql .= " cssview,";
+			$sql .= " module";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
@@ -909,7 +924,8 @@ class ExtraFields
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
 			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
-			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
+			$sql .= " ".($module ? "'".$this->db->escape($module)."'" : "null");
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
