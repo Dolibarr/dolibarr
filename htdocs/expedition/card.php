@@ -1005,46 +1005,46 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Third party
-		print '<tr class="field_socid">';
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans('Customer').'</td>';
-		if ($soc->id > 0) {
-			print '<td class="valuefieldcreate">';
-			print $soc->getNomUrl(1, 'customer');
-			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-			print '</td>';
-		} else {
-			print '<td class="valuefieldcreate">';
-			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
-				print '<script>
-				$(document).ready(function() {
-					$("#socid").change(function() {
-						console.log("We have changed the company - Reload page");
-						var socid = $(this).val();
-						// reload page
-						$("input[name=action]").val("create");
-						$("input[name=changecompany]").val("1");
-						$("form[name=addexp]").submit();
+			print '<tr class="field_socid">';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans('Customer').'</td>';
+			if ($soc->id > 0) {
+				print '<td class="valuefieldcreate">';
+				print $soc->getNomUrl(1, 'customer');
+				print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+				print '</td>';
+			} else {
+				print '<td class="valuefieldcreate">';
+				$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
+				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
+					print '<script>
+					$(document).ready(function() {
+						$("#socid").change(function() {
+							console.log("We have changed the company - Reload page");
+							var socid = $(this).val();
+							// reload page
+							$("input[name=action]").val("create");
+							$("input[name=changecompany]").val("1");
+							$("form[name=addexp]").submit();
+						});
 					});
-				});
-				</script>';
+					</script>';
+				}
+				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print '</td>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
-			print '</td>';
-		}
-		print '</tr>'."\n";
+			print '</tr>'."\n";
 
-		// Project
-		if (isModEnabled('project')) {
-			$langs->load("projects");
-			print '<tr class="field_projectid">';
-			print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-			print '</td>';
-			print '</tr>';
-		}
+			// Project
+			if (isModEnabled('project')) {
+				$langs->load("projects");
+				print '<tr class="field_projectid">';
+				print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
+				print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
