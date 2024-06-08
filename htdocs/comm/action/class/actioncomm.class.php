@@ -402,20 +402,6 @@ class ActionComm extends CommonObject
 
 	public $fields = array();
 
-
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>  Old property to new property mapping
-	 */
-	protected function deprecatedProperties()
-	{
-		return array(
-			'libelle' => 'label',
-		) + parent::deprecatedProperties();
-	}
-
-
 	/**
 	 *      Constructor
 	 *
