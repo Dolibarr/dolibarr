@@ -94,7 +94,7 @@ $permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') ||
 $permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
-$upload_dir = $conf->workstation->multidir_output[$object->entity ? $object->entity : $conf->entity]."/workstation/".get_exdir(0, 0, 0, 1, $object);
+$upload_dir = rtrim(getMultidirOutput($object, '', 1), '/');
 
 // Security check
 $isdraft = 0;
