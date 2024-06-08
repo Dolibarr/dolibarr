@@ -2442,7 +2442,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 							if ($task_time->options_invoiceable == "1") {
 								print $langs->trans("No");
 							} else {
-								print $langs->trans("No")." ".$langs->trans("Invoiceable");
+								print $langs->trans("Disabled");
 							}
 						}
 					} else {
