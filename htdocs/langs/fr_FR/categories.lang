@@ -18,6 +18,7 @@ AccountsCategoriesArea=Espace des tags/categories de comptes bancaires
 ProjectsCategoriesArea=Espace des tags/catégories des projets
 UsersCategoriesArea=Espace des tags/catégories des utilisateurs
 SubCats=Sous-catégories
+SearchInSubCats=Chercher aussi dans les sous-catégories de celles sélectionnées
 CatList=Liste des tags/catégories
 CatListAll=Liste de toutes les catégories (de tous types)
 NewCategory=Nouveau tag/catégorie

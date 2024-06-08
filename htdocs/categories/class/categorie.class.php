@@ -1119,8 +1119,75 @@ class Categorie extends CommonObject
 			return -1;
 		}
 	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	
+	/** return sql where condition to search object linked to categories
+	 *
+	 * @param   string              $type					Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc..	
+	 * @param	array				$searchCategoryList		array of categories to look for
+	 * @param	bool				$searchCategoryOperator	0:AND, 1:OR
+	 * @param	bool				$searchCategoryChilds	0: dont search in childs; 1: search in childs
+	 * @return  int|string			-1 if error; sql search
+	 */
+	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1) {
+		
+		$fkName = 'fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
+		$tableName = MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
+			
+		$searchCategorySql = '';
+		$arrayofcategoryid = [];
+		foreach ($searchCategoryList as $searchCategory) {
+			if (intval($searchCategory) == -2) {
+				$searchCategorySql = "NOT EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName)";
+			} elseif (intval($searchCategory) > 0) {
+				$arrayofcategoryid[] = (int) $searchCategory;
+			}
+		}
+		if (count($arrayofcategoryid) > 0) {		
+			if ($searchCategoryOperator == 1) { // OR operator
+				if ($searchCategoryChilds) { // include childs
+					$cat = new Categorie($this->db);
+					$arrayofcategoryid = $cat->getChilds($type, $arrayofcategoryid);
+				}	
+				$searchCategorySql = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcategoryid))."))";
+			} else {
+				$arraySearchCategorySql = [];
+				foreach($arrayofcategoryid as $categoryid) {
+					if ($searchCategoryChilds) { // include childs
+						$cat = new Categorie($this->db);
+						$arrayofcatchilds = $cat->getChilds($type, $categoryid);
+						if (is_array($arrayofcatchilds))	$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',',$arrayofcatchilds))."))";
+					} else {
+						$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie = ".(int) $categoryid.") ";
+					}
+				}
+				$searchCategorySql = implode(' AND ', $arraySearchCategorySql);
+			}
+		}
+		return $searchCategorySql;
+	}
+	
+	/** get all childs of a category or array of categories, including themselves
+	 *
+	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   int|string|array	$fromid        		Keep only all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
+	 *                                                  - int (id of category)
+	 *                                                  - string (categories ids separated by comma)
+	 *                                                  - array (list of categories ids)
+	 * @return int<-1,-1>|array Array of childs categories including their parents
+	 */
+	public function getChilds($type, $fromid = 0) 
+	{
+		$retraw = $this->get_full_arbo($type, $fromid, 1);
+		if (is_array($retraw)) {
+			foreach ($retraw as $catid) {
+				$ret[] = $catid['id'];
+			}
+			return $ret;
+		} else return $retraw;
+	}
+	
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
@@ -1140,9 +1207,8 @@ class Categorie extends CommonObject
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	public function getFullArbo($type, $fromid = 0, $include = 0)
 	{
-		// phpcs:enable
 		global $langs;
 
 		if (!is_numeric($type)) {
@@ -1242,6 +1308,32 @@ class Categorie extends CommonObject
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		return $this->cats;
+	}
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Rebuilding the category tree as an array
+	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
+	 *                id = id de la categorie
+	 *                id_mere = id de la categorie mere
+	 *                id_children = tableau des id enfant
+	 *                label = nom de la categorie
+	 *                fulllabel = Name with full path for the category
+	 *                fullpath = Full path built with the id's
+	 *
+	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   int|string|array	$fromid        		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
+	 *                                                  - int (id of category)
+	 *                                                  - string (categories ids separated by comma)
+	 *                                                  - array (list of categories ids)
+	 * @param   int                 $include            [=0] Removed or 1=Keep only
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @deprecated use getFullArbo
+	 */
+	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	{
+		// phpcs:enable
+		return $this->getFullArbo($type, $fromid, $include);
 	}
 
 	/**

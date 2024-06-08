@@ -86,8 +86,10 @@ $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
+$searchCategoryProductChilds = 1;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
+	$searchCategoryProductChilds = GETPOSTINT('search_category_product_childs');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
@@ -359,6 +361,7 @@ if (empty($reshook)) {
 		$search_default_workstation = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
+		$searchCategoryProductChilds = 1;
 		$searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
@@ -574,30 +577,11 @@ if (dol_strlen($canvas) > 0) {
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 if (!empty($searchCategoryProductList)) {
-	$searchCategoryProductSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategoryProductList as $searchCategoryProduct) {
-		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product)";
-		} elseif (intval($searchCategoryProduct) > 0) {
-			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategoryProductOperator == 1) {
-		if (!empty($searchCategoryProductSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategoryProductSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
-		}
+	$cat = new Categorie($db);
+	$searchCategoryProductSql = $cat->getSqlSearch('product', 'p.rowid', $searchCategoryProductList, $searchCategoryProductOperator, $searchCategoryProductChilds);
+	if (!empty($searchCategoryProductSql)) {
+		echo $searchCategoryProductSql;
+		$sql .= " AND ".$searchCategoryProductSql;
 	}
 }
 if ($fourn_id > 0) {
@@ -763,6 +747,9 @@ if ($search_all) {
 }
 if ($searchCategoryProductOperator == 1) {
 	$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
+}
+if ($searchCategoryProductChilds == 1) {
+	$param .= "&search_category_product_childs=".urlencode($searchCategoryProductChilds);
 }
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
@@ -946,7 +933,7 @@ if ($search_all) {
 $moreforfilter = '';
 if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0, 1, 1, '', $searchCategoryProductChilds);
 }
 
 // Show/hide child variant products

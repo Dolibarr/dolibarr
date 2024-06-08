@@ -40,9 +40,10 @@ class FormCategory extends Form
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
+	 * @param	int			$searchInCategoryChilds				-1, or 0 or 1 to enable the checkbox to search in childs of categs selected (0=not preseleted, 1=preselected)
 	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '')
+	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '', $searchInCategoryChilds = -1)
 	{
 		global $langs, $db;
 
@@ -75,6 +76,11 @@ class FormCategory extends Form
 			$formother = new FormOther($db);
 
 			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
+		}
+		if ($searchInCategoryChilds >= 0) {
+			$htmlName3 = "search_category_".$type."_childs";
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName3.'" name="'.$htmlName3.'" value="1"'.($searchInCategoryChilds == 1 ? ' checked="checked"' : '').'"/>'
+					 .'<label class="none valignmiddle" for="'.$htmlName3.'" title="'.dol_escape_htmltag($langs->trans('SearchInSubCats')).'">'.$langs->trans('SubCats').'</label>';
 		}
 		if ($multiselect && $searchCategoryProductOperator >= 0) {
 			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
