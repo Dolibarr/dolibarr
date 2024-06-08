@@ -656,3 +656,4 @@ SearchUnpaidSupplierInvoicesWithDueDate=Search unpaid supplier invoices with a d
 SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a validation date = %s
 SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
 PaymentMadeForSeveralInvoices=Payment made for several invoices
+SituationInvoiceProgressCurrent=Invoice progress
