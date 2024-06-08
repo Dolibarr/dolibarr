@@ -121,12 +121,6 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Agenda event label
-	 * @deprecated Use $label
-	 */
-	private $libelle;
-
-	/**
 	 * @var int Date creation record (datec)
 	 */
 	public $datec;

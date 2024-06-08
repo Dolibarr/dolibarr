@@ -193,7 +193,7 @@ function dolDecrypt($chain, $key = '')
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id
-			$key = $conf->file->instance_unique_id;
+			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
