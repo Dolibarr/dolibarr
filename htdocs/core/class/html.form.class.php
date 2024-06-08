@@ -2874,7 +2874,6 @@ class Form
 		// phpcs:enable
 		global $langs;
 		global $hookmanager;
-		global $conf;
 
 		$out = '';
 		$outarray = array();
@@ -2963,7 +2962,7 @@ class Form
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
 
-		if (getDolGlobalString($conf->global->MAIN_SEARCH_PRODUCT_FORCE_INDEX)) {
+		if (getDolGlobalString('MAIN_SEARCH_PRODUCT_FORCE_INDEX')) {
 			$sql .= " USE INDEX (" . $this->db->sanitize($conf->global->MAIN_PRODUCT_FORCE_INDEX) . ")";
 		}
 
