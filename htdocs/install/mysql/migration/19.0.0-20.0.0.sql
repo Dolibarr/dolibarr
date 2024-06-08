@@ -390,3 +390,5 @@ ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
 
 -- table paiementcharge indexes
 ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
+
+ALTER TABLE llx_product ADD INDEX idx_product_entity_fk_product_type (entity, fk_product_type);
