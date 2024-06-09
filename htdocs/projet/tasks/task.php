@@ -120,7 +120,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = GETPOSTFLOAT('budget_amount');
-		$object->billable = (GETPOST('billable','aZ') == 'yes' ? 1 : 0);
+		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -513,7 +513,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Billable
 		print '<tr><td>'.$langs->trans("Billable").'</td><td>';
-		print $form->selectyesno('billable',$object->billable);
+		print $form->selectyesno('billable', $object->billable);
 		print '</td></tr>';
 
 		// Description
