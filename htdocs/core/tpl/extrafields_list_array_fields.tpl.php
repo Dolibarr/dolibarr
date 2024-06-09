@@ -27,7 +27,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			$enabled = true;
 			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['enabled'][$key])) {
-				// An enablemend condition exists, it is evaluated.
+				// An enablement condition exist, it is evaluated.
 				$enabled = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['enabled'][$key], 1);
 			}
 			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) && $enabled ) {
