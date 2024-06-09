@@ -73,7 +73,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 
-llxHeader("", $langs->trans("Orders"), $help_url);
+llxHeader('', $langs->trans("Orders"), $help_url, '', 0, 0, '', '', '', 'mod-commande page-index');
 
 
 print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
