@@ -287,7 +287,7 @@ if ($action == 'initbarcodeproducts') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MassBarcodeInit"));
+llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
