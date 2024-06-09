@@ -11,6 +11,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Vincent Maury	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,10 +119,14 @@ $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
 $searchCategoryCustomerOperator = 0;
+$searchCategoryProjectOperator = 0;
+$searchCategoryProjectChilds = 1;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+	$searchCategoryProjectOperator = GETPOSTINT('search_category_project_operator');
+	$searchCategoryProjectChilds = GETPOSTINT('search_category_project_childs');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+	$searchCategoryCustomerOperator = $searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -178,10 +183,10 @@ $search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
 $search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
-$search_category_array = array();
+$searchCategoryProjectList = array();
 
 if (isModEnabled('category')) {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+	$searchCategoryProjectList = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
@@ -402,7 +407,7 @@ if (empty($reshook)) {
 		$search_import_key = '';
 		$toselect = array();
 		$search_array_options = array();
-		$search_category_array = array();
+		$searchCategoryProjectList = array();
 	}
 
 
@@ -705,34 +710,12 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	}
 }
 
-// Search for tag/category ($searchCategoryProjectList is an array of ID)
-$searchCategoryProjectList = $search_category_array;
-$searchCategoryProjectOperator = 0;
+// Search for tag/category ($searchCategoryProjectList is an array of ID) TODO VMAURY
+$cat = new Categorie($db);
 if (!empty($searchCategoryProjectList)) {
-	$searchCategoryProjectSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategoryProjectList as $searchCategoryProject) {
-		if (intval($searchCategoryProject) == -2) {
-			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
-		} elseif (intval($searchCategoryProject) > 0) {
-			if ($searchCategoryProjectOperator == 0) {
-				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie = ".((int) $searchCategoryProject).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategoryProjectOperator == 1) {
-		if (!empty($searchCategoryProjectSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategoryProjectSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
-		}
+	$searchCategoryProjectSql = $cat->getSqlSearch('project', 'p.rowid', $searchCategoryProjectList, $searchCategoryProjectOperator, $searchCategoryProjectChilds);
+	if (!empty($searchCategoryProjectSql)) {
+		$sql .= " AND ".$searchCategoryProjectSql;
 	}
 }
 $searchCategoryCustomerSqlList = array();
@@ -971,8 +954,8 @@ if ($search_date_modif_endday) {
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
-if (!empty($search_category_array)) {
-	foreach ($search_category_array as $tmpval) {
+if (!empty($searchCategoryProjectList)) {
+	foreach ($searchCategoryProjectList as $tmpval) {
 		$param .= '&search_categegory_project_list[]='.urlencode($tmpval);
 	}
 }
@@ -1166,7 +1149,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 // Filter on categories
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp minwidth300 widthcentpercentminusx');
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $searchCategoryProjectList, 'minwidth300imp minwidth300 widthcentpercentminusx', $searchCategoryProjectOperator, 1, 1, '', $searchCategoryProjectChilds);
 }
 
 // Filter on customer categories

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Vincent Maury	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +37,14 @@ class FormCategory extends Form
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param 	array		$preSelected						A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
+	 * @param	int			$searchCategoryOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
 	 * @param	int			$multiselect						0 or 1
 	 * @param	int			$nocateg							1=Add an entry '- No Category -'
 	 * @param	string		$showempty							1 or 'string' to add an empty entry
 	 * @param	int			$searchInCategoryChilds				-1, or 0 or 1 to enable the checkbox to search in children of categs selected (0=not preseleted, 1=preselected)
 	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '', $searchInCategoryChilds = -1)
+	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '', $searchInCategoryChilds = -1)
 	{
 		global $langs, $db;
 
@@ -82,8 +83,8 @@ class FormCategory extends Form
 			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName3.'" name="'.$htmlName3.'" value="1"'.($searchInCategoryChilds == 1 ? ' checked="checked"' : '').'"/>';
 			$filter .= '<label class="none valignmiddle" for="'.$htmlName3.'" title="'.dol_escape_htmltag($langs->trans('SearchInSubCats')).'">'.$langs->trans('SubCats').'</label>';
 		}
-		if ($multiselect && $searchCategoryProductOperator >= 0) {
-			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
+		if ($multiselect && $searchCategoryOperator >= 0) {
+			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
 			$filter .= '<label class="none valignmiddle '.$htmlName2.'" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
 			$filter .= $langs->trans('UseOrOperatorShort');
 			$filter .= '</label>';
