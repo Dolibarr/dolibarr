@@ -4208,7 +4208,14 @@ class OrderLine extends CommonOrderLine
 
 	public $oldline;
 
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $parent_element = 'commande';
+	
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $fk_parent_attribute = 'fk_commande';
 
 	/**
