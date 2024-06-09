@@ -133,7 +133,7 @@ if ($action == 'update') {
  */
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-pdf_other');
 
 $form = new Form($db);
 $formother = new FormOther($db);

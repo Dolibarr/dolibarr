@@ -60,7 +60,7 @@ class box_shipments extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->loadLangs(array('orders', 'sendings'));
 
 		$this->max = $max;
@@ -73,7 +73,9 @@ class box_shipments extends ModeleBoxes
 		$orderstatic = new Commande($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastCustomerShipments", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/expedition/list.php?sortfield=e.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('expedition', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -103,7 +105,7 @@ class box_shipments extends ModeleBoxes
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND sc.fk_user = ".((int) $user->id);
 			} else {
-				$sql .= " ORDER BY e.date_delivery, e.ref DESC";
+				$sql .= " ORDER BY e.tms DESC, e.date_delivery DESC, e.ref DESC";
 			}
 			$sql .= $this->db->plimit($max, 0);
 
@@ -147,7 +149,7 @@ class box_shipments extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
-						'text' => $orderstatic->getNomUrl(1),
+						'text' => ($orderstatic->id > 0 ? $orderstatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
 

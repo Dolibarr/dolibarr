@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,7 +375,7 @@ if ($ext == 'csv') {
 		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
 		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
-	llxHeader('', $title, $helpurl, '');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
 
 	$head = array();
 
@@ -470,7 +470,7 @@ if ($ext == 'csv') {
 	if ($num) {
 		print '<p>';
 		print '<a href="stockatdate.php?output=csv&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&type='.((int) $type).'&mode='.urlencode($mode).
-			(($productid > 0)?"&productid=".urlencode($productid):'').
+			(($productid > 0)?"&productid=".((int) $productid):'').
 			$param_warehouse.
 			"&search_ref=".dol_escape_htmltag($search_ref).
 			"&search_nom=".dol_escape_htmltag($search_nom).

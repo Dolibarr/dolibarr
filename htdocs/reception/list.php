@@ -217,7 +217,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->reception->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {
+	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 		$receptions = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
@@ -596,7 +596,7 @@ $formfile = new FormFile($db);
 
 
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('', $langs->trans('ListOfReceptions'), $helpurl);
+llxHeader('', $langs->trans('ListOfReceptions'), $helpurl, '', 0, 0, '', '', '', 'mod-reception page-list');
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";

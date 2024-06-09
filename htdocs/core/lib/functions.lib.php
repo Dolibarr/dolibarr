@@ -1953,7 +1953,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
 		if (count($tmparrayoftags)) {
-			$tmp = str_ireplace('DOUBLEQUOTE', '', $tmp);	// The keyword DOUBLEQUOTE is forbidden. Reserved, so we removed it if we find it.
+			$tmp = str_ireplace('__DOUBLEQUOTE', '', $tmp);	// The keyword DOUBLEQUOTE is forbidden. Reserved, so we removed it if we find it.
 
 			foreach ($tmparrayoftags as $tagtoreplace) {
 				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
@@ -1964,13 +1964,15 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$reg = array();
 				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
 					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
-					$tmpattributes = str_ireplace('"', 'DOUBLEQUOTE', $tmpattributes);
-					$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.]/i', '', $tmpattributes);
+					$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
+					$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
+					$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
+					$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.-]/i', '', $tmpattributes);
 					$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
 				}
 				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)> \/>/', $tmp, $reg)) {
 					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
-					$tmpattributes = str_ireplace('"', 'DOUBLEQUOTE', $tmpattributes);
+					$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
 					$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&]/i', '', $tmpattributes);
 					$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+) \/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
 				}
@@ -1988,7 +1990,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
 
-			$result = str_ireplace('DOUBLEQUOTE', '"', $result);
+			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
+			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
+			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
 		}
 
 		return $result;
@@ -6376,7 +6380,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<input onfocus="this.value=null;" onchange="this.blur();" class="flat selectlimit nopadding maxwidth75 right pageplusone" id="limit" name="limit" list="limitlist" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'" value="'.$limit.'">';
 				print '<datalist id="limitlist">';
 			} else {
-				print '<li class="paginationxxx">';
+				print '<li class="paginationxxx valignmiddle">';
 				print '<select id="limit" class="flat selectlimit nopadding maxwidth75 center" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
 			}
 			$tmpchoice = explode(',', $pagesizechoices);
@@ -10126,7 +10130,7 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 /**
  * Verify if condition in string is ok or not
  *
- * @param 	string		$strToEvaluate	String with condition to check
+ * @param 	string	$strToEvaluate		String with condition to check
  * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
@@ -10156,7 +10160,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '[]'
- * @return	void|string					Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
+ * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond()
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -11390,7 +11394,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 	// old behavior, return a string
 	if ($isAllowedForPreview) {
 		$tmpurl = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '');
-		$title = $langs->trans("Preview");
+		$title = $langs->transnoentities("Preview");
 		//$title = '%27-alert(document.domain)-%27';
 		//$tmpurl = 'file='.urlencode("'-alert(document.domain)-'_small.jpg");
 
@@ -13800,7 +13804,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'message' => $obj->message,
+						'message' => dol_htmlentitiesbr($obj->message),
 						'percent' => $obj->percent,
 
 						'userid' => $obj->user_id,
@@ -13830,7 +13834,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'message' => $obj->message,
+						'message' => dol_htmlentitiesbr($obj->message),
 						'percent' => $obj->percent,
 						'acode' => $obj->acode,
 
@@ -14149,16 +14153,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt" >';
-					$out .= 	$truncatedText ;
-					$out .= ' 	<a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
+					$out .= 	dolPrintHTML($truncatedText);
+					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
-					$out .= $histo[$key]['message'];
+					$out .=  dolPrintHTML($histo[$key]['message']);
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> '.$langs->trans("ReadLess").'</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= $histo[$key]['message'];
+					$out .= dolPrintHTML($histo[$key]['message']);
 				}
 
 				$out .= '</div>';

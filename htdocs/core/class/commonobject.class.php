@@ -584,7 +584,7 @@ abstract class CommonObject
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
-	private $note;
+	public $note;
 
 	/**
 	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
@@ -877,7 +877,7 @@ abstract class CommonObject
 		return array(
 			'alreadypaid' => 'totalpaid',
 			'cond_reglement' => 'depr_cond_reglement',
-			'note' => 'note_private',
+			//'note' => 'note_private',		// Some classes needs ->note and others need ->note_public/private so we can't manage deprecation for this field with dolDeprecationHandler
 			'commandeFournisseur' => 'origin_object',
 			'expedition' => 'origin_object',
 			'fk_project' => 'fk_project',
@@ -1145,7 +1145,7 @@ abstract class CommonObject
 			return -1;
 		}
 
-		if (empty($ecmfile->id)) {
+		if (empty($ecmfile->id)) {	// No entry into file index already exists, we should initialize the shared key manually.
 			// Add entry into index
 			if ($initsharekey) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -1170,7 +1170,7 @@ abstract class CommonObject
 			} else {
 				return '';
 			}
-		} elseif (empty($ecmfile->share)) {
+		} elseif (empty($ecmfile->share)) {	// Entry into file index already exists but no share key is defined.
 			// Add entry into index
 			if ($initsharekey) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -7214,6 +7214,29 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Convenience method for retrieving the value of an extrafield without actually fetching it from the database.
+	 *
+	 * @param string $key Name of the extrafield
+	 * @return mixed|null
+	 */
+	public function getExtraField($key)
+	{
+		return $this->array_options['options_'.$key] ?? null;
+	}
+
+	/**
+	 * Convenience method for setting the value of an extrafield without actually updating it in the database.
+	 *
+	 * @param string $key   Name of the extrafield
+	 * @param mixed  $value Value to be assigned to the extrafield
+	 * @return void
+	 */
+	public function setExtraField($key, $value)
+	{
+		$this->array_options['options_'.$key] = $value;
+	}
+
+	/**
 	 *	Update an extra language value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
@@ -7250,8 +7273,8 @@ abstract class CommonObject
 	 * @param  string  		$key           Key of attribute
 	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
-	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keysuffix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
 	 * @return string
@@ -7329,15 +7352,6 @@ abstract class CommonObject
 			// Special case that prevent to force $type to have multiple input
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
-			} else {
-				$valuearray = explode(",", $value);
-				foreach ($valuearray as $keytmp => $valuetmp) {
-					if (!empty($this->fields[$key]['arrayofkeyval'][$valuetmp])) {
-						$valuemultiselectinput[] = $valuetmp;
-						unset($valuearray[$keytmp]);
-					}
-				}
-				$value = implode(',', $valuearray);
 			}
 		}
 
@@ -7440,7 +7454,49 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				if (!empty($param['options'])) {
 					$out .= "<br>";
-					$out .= $form->multiselectarray($keyprefix.$key.$keysuffix."_multiselect", $param['options'], (GETPOSTISSET($keyprefix.$key.$keysuffix."_multiselect") ? GETPOST($keyprefix.$key.$keysuffix."_multiselect") : $valuemultiselectinput), 0, 0, "flat maxwidthonphone".$morecss, 0, '90%', '', '', '', ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) ? 1 : -1));
+					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
+					$out .= "<script>";
+					$out .= '
+					function handlemultiinputdisabling(htmlname){
+						console.log("We handle the disabling of used options for "+htmlname+"_multiinput");
+						multiinput = $("#"+htmlname+"_multiinput");
+						multiinput.find("option").each(function(){
+							tmpval = $("#"+htmlname).val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $(this).val();
+							if(tmpvalarray.includes(valtotest)){
+								$(this).prop("disabled",true);
+							} else {
+								if($(this).prop("disabled") == true){
+									console.log(valtotest)
+									$(this).prop("disabled", false);
+								}
+							}
+						});
+					}
+
+					$(document).ready(function () {
+						$("#'.$keyprefix.$key.$keysuffix.'_multiinput").on("change",function() {
+							console.log("We add the selected value to the text area '.$keyprefix.$key.$keysuffix.'");
+							tmpval = $("#'.$keyprefix.$key.$keysuffix.'").val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $(this).val();
+							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								if(tmpval == ""){
+									tmpval = valtotest;
+								} else {
+									tmpval = tmpval + "," + valtotest;
+								}
+								$("#'.$keyprefix.$key.$keysuffix.'").val(tmpval);
+								handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+							}
+						});
+						$("#'.$keyprefix.$key.$keysuffix.'").on("change",function(){
+							handlemultiinputdisabling($(this).attr("id"));
+						});
+						handlemultiinputdisabling("'.$keyprefix.$key.$keysuffix.'");
+					})';
+					$out .= "</script>";
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');

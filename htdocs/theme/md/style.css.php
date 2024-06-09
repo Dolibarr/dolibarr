@@ -1066,7 +1066,7 @@ textarea.centpercent {
 .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
 	font-weight: 400;
 	line-height: 1;
-	color: #777;
+	/* color: #777; */
 }
 
 .flip {
@@ -1830,6 +1830,9 @@ select.flat.selectlimit {
 .fa-15 {
 	font-size: 1.5em;
 }
+.text-security {
+	-webkit-text-security: disc;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
@@ -2502,8 +2505,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
 		print 'margin-top: 12px;';
 	} ?>
@@ -2527,7 +2530,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -2538,7 +2541,7 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
@@ -2549,7 +2552,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2557,7 +2560,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -3494,7 +3497,7 @@ div.vmenu, td.vmenu {
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
 	white-space: nowrap; font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
 }
-span.vmenudisabled, font.vmenudisabled  { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
+span.vmenudisabled { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }

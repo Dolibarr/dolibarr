@@ -98,6 +98,10 @@ class StockTransferLine extends CommonObjectLine
 	);
 	public $rowid;
 	public $amount;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;
@@ -410,7 +414,7 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
@@ -428,18 +432,6 @@ class StockTransferLine extends CommonObjectLine
 		$movementstock->origin_id = $this->fk_stocktransfer;
 
 		if (empty($this->batch)) { // no batch for line
-			/*$result = $p->correct_stock(
-				$user,
-				$fk_entrepot,
-				$this->qty,
-				$direction, // 1=décrémentation
-				$label,
-				empty($direction) ? $this->pmp : 0,
-				$code_inv,
-				'stocktransfer',
-				$this->fk_stocktransfer
-			);*/
-
 			$result = $movementstock->_create(
 				$user,
 				$p->id,
@@ -452,8 +444,8 @@ class StockTransferLine extends CommonObjectLine
 			);
 
 			if ($result < 0) {
-				setEventMessages($p->error, $p->errors, 'errors');
-				return 0;
+				$this->setErrorsFromObject($movementstock);
+				return -1;
 			}
 		} else {
 			if ($p->hasbatch()) {
@@ -462,24 +454,10 @@ class StockTransferLine extends CommonObjectLine
 					$firstrecord = array_shift($arraybatchinfo);
 					$dlc = $firstrecord['eatby'];
 					$dluo = $firstrecord['sellby'];
-					//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
 				} else {
 					$dlc = '';
 					$dluo = '';
 				}
-
-				/*$result = $p->correct_stock_batch(
-					$user,
-					$fk_entrepot,
-					$this->qty,
-					$direction,
-					$label,
-					empty($direction) ? $this->pmp : 0,
-					$dlc,
-					$dluo,
-					$this->batch,
-					$code_inv
-				);*/
 
 				$result = $movementstock->_create(
 					$user,
@@ -497,11 +475,12 @@ class StockTransferLine extends CommonObjectLine
 				);
 
 				if ($result < 0) {
-					setEventMessages($p->error, $p->errors, 'errors');
-					return 0;
+					$this->setErrorsFromObject($movementstock);
+					return $result;
 				}
 			} else {
-				setEventMessages($langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl()), '', 'errors');
+				$this->error=$langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
+				$this->errors[]= $this->error;
 				return -1;
 			}
 		}

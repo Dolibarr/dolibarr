@@ -209,7 +209,7 @@ $arrayofcss = array();
 $title = $langs->trans("Target");
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-webhook page-target_card');
 
 // Part to create
 if ($action == 'create') {
@@ -403,14 +403,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	// TODO Remove this part of code
-	$arraytriggercodes = explode(",", $object->trigger_codes);
-	foreach ($arraytriggercodes as $key => $value) {
-		if (isset($object->fields["trigger_codes"]['arrayofkeyval'][$value])) {
-			$arraytriggercodes[$key] = $object->fields["trigger_codes"]['arrayofkeyval'][$value];
-		}
-	}
-	$object->trigger_codes = implode(",", $arraytriggercodes);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
@@ -586,7 +578,7 @@ if ($action == "test") {
 	$doleditor = new DolEditor("jsondata", $datatosend, 0, 200, 'dolibarr_details', 'In', true, true, 'ace');
 	print $doleditor->Create(0, '', true, '', 'json');
 	*/
-	print '<textarea id="jsondatasendtarget" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
+	print '<textarea id="jsondata" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
 	print $datatosend;
 	print '</textarea>';
 

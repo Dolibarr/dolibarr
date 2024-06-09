@@ -252,7 +252,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fichinter');
 
 $form = new Form($db);
 

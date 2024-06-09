@@ -95,7 +95,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('LDAP');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_ldap');
 
 $head = group_prepare_head($object);
 

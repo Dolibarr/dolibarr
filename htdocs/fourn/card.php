@@ -586,7 +586,7 @@ if ($object->id > 0) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent lastrecordtable">';
 		print '<tr class="liste_titre'.(($num == 0) ? ' nobottom' : '').'">';
-		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td class="right" colspan="2">';
 		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllProductReferencesOfSupplier").'</span><span class="badge marginleftonlyshort">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
@@ -611,7 +611,7 @@ if ($object->id > 0) {
 				print '<td>';
 				print dol_escape_htmltag($objp->supplier_ref);
 				print '</td>';
-				print '<td class="maxwidthonsmartphone">';
+				print '<td class="tdoverflowmax200">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
 				//print '<td class="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';

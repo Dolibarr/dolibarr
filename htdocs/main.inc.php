@@ -280,6 +280,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 					//$errormessage .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');	// Disabled to avoid text injection
 
 					$errormessage2 = 'page='.htmlentities((empty($_SERVER["REQUEST_URI"]) ? '' : $_SERVER["REQUEST_URI"]), ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramtype='.htmlentities((string) $type, ENT_COMPAT, 'UTF-8');
 					$errormessage2 .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
 					$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
 
@@ -1753,9 +1754,10 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 
 	// Referrer-Policy
 	// Say if we must provide the referrer when we jump onto another web page.
-	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'strict-origin' so browser doesn't send any referrer when going into another web site domain.
+	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'same-origin' so browser doesn't send any referrer at all when going into another web site domain.
+	// Note that we do not use 'strict-origin' as this breaks feature to restore filters when clicking on "back to page" link on some cases.
 	if (!defined('MAIN_SECURITY_FORCERP')) {
-		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "strict-origin");
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}

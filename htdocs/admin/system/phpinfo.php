@@ -41,7 +41,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
 
