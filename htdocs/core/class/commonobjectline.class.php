@@ -32,6 +32,16 @@
 abstract class CommonObjectLine extends CommonObject
 {
 	/**
+	 * @var string Parent CommonObject type (element name)
+	 */
+	public $parent_element = '';
+
+	/**
+	 * @var string Attribute related to CommonObject rowid (many2one)
+	 */
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Id of the line
 	 * @var int
 	 */
@@ -209,4 +219,25 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
+	
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *
+	 *	@param      int			$withpicto                Add picto into link
+	 *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *	@param      int			$max          	          Max length to show
+	 *	@param      int			$short			          ???
+	 *  @param	    int   	    $notooltip		          1=Disable tooltip
+	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param		int			$addlinktonotes			  Add link to notes
+	 *  @param		string		$target			  		  attribute target for link
+	 *	@return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
+	{
+		// To overload
+		return '#'.$this->id;
+	}
+	
 }

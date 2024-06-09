@@ -4213,6 +4213,9 @@ class OrderLine extends CommonOrderLine
 
 	public $table_element = 'commandedet';
 
+	public $parent_element = 'commande';
+	public $fk_parent_attribute = 'fk_commande';
+
 	public $oldline;
 
 	/**
@@ -4822,5 +4825,125 @@ class OrderLine extends CommonOrderLine
 			$this->db->rollback();
 			return -2;
 		}
+	}
+	
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
+	{
+		global $db, $user, $langs, $conf, $hookmanager;
+
+		// Commande
+		$commande = new Commande($db);
+		$commande->fetch($this->fk_commande);
+
+		// Product
+		if ($this->fk_product) {
+			$product = new Product($db);
+			$product->fetch($this->fk_product);
+		}
+		else {
+			$product = '';
+		}
+		$label = '';
+
+		// Return
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
+
+		$result = '';
+
+		$url = DOL_URL_ROOT.'/commande/card.php?id='.$commande->id;
+
+		if (!$user->hasRight('commande', 'lire')) {
+			$option = 'nolink';
+		}
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		if ($short) {
+			return $url;
+		}
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
+
+		$linkclose = '';
+		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("Order");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
+
+			$target_value = array('_self', '_blank', '_parent', '_top');
+			if (in_array($target, $target_value)) {
+				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
+			}
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
+
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
+
+		$result .= $linkstart;
+
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), $commande->picto, (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $commande->ref;
+		}
+
+		$result .= ' : '.($this->qty!=1 ?$this->qty.' x ' :'');
+
+		$product_label = '';
+		$label = '';
+		if ($product && $product->id) {
+			$product_label = $product->label;
+			$label = $product->ref.' - '.$product_label;
+		}
+		if ($this->desc && $product_label != $this->desc) {
+			$label .= ($label ?' - ' :'').$this->desc;
+		}
+		$result .= $label;
+		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+		return $result;
 	}
 }

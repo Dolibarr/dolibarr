@@ -11856,7 +11856,7 @@ function getElementProperties($element_type)
 
 	//$element_type='facture';
 
-	$classfile = $classname = $classpath = $subdir = $dir_output = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = $parent_element = '';
 
 	// Parse element/subelement
 	$module = $element_type;
@@ -11932,30 +11932,54 @@ function getElementProperties($element_type)
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
+	} elseif ($element_type == 'facturedet') {
+		$classpath = 'compta/facture/class';
+		$classfile = 'facture';
+		$classname = 'FactureLigne';
+		$module = 'facture';
+		$table_element = 'facturedet';
+		$parent_element = 'facture';
 	} elseif ($element_type == 'commande' || $element_type == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
 		$table_element = 'commande';
+	} elseif ($element_type == 'commandedet') {
+		$classpath = 'commande/class';
+		$classfile = 'commande';
+		$classname = 'OrderLine';
+		$module = 'commande';
+		$table_element = 'commandedet';
+		$parent_element = 'commande';
 	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
 		$table_element = 'propal';
+	} elseif ($element_type == 'propaldet') {
+		$classpath = 'comm/propal/class';
+		$classfile = 'propal';
+		$subelement = 'propaleline';
+		$module = 'propal';
+		$table_element = 'propaldet';
+		$parent_element = 'propal';
 	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
 		$module = 'expedition';
 		$table_element = 'expedition';
+	} elseif ($element_type == 'shippingdet') {
+		$classpath = 'expedition/class';
+		$classfile = 'expedition';
+		$classname = 'ExpeditionLigne';
+		$module = 'expedition';
+		$table_element = 'expeditiondet';
+		$parent_element = 'expedition';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($element_type == 'shipping') {
-		$classpath = 'expedition/class';
-		$subelement = 'expedition';
-		$module = 'expedition_bon';
 	} elseif ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
@@ -12001,15 +12025,11 @@ function getElementProperties($element_type)
 		$module = 'resource';
 		$subelement = 'dolresource';
 		$table_element = 'resource';
-	} elseif ($element_type == 'propaldet') {
-		$classpath = 'comm/propal/class';
-		$module = 'propal';
-		$subelement = 'propaleligne';
 	} elseif ($element_type == 'opensurvey_sondage') {
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($element_type == 'order_supplier') {
+	} elseif ($element_type == 'order_supplier' || $element_type == 'commande_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -12017,6 +12037,14 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
+	} elseif ($element_type == 'commande_fournisseurdet') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.commande';
+		$classname = 'CommandeFournisseurLigne';
+		$subelement = '';
+		$table_element = 'commande_fournisseurdet';
+		$parent_element = 'commande_fournisseur';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -12025,6 +12053,14 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
+	} elseif ($element_type == 'facture_fourn_det') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.facture';
+		$element = 'facture_fourn_det';
+		$subelement = '';
+		$classname = 'SupplierInvoiceLine';
+		$table_element = 'facture_fourn_det';
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
@@ -12113,7 +12149,8 @@ function getElementProperties($element_type)
 		'classpath' => $classpath,
 		'classfile' => $classfile,
 		'classname' => $classname,
-		'dir_output' => $dir_output
+		'dir_output' => $dir_output,
+		'parent_element' => $parent_element,
 	);
 
 	//var_dump($element_properties);

@@ -1273,6 +1273,13 @@ class MyObjectLine extends CommonObjectLine
 	public $isextrafieldmanaged = 0;
 
 	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = '';
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDb $db Database handler
