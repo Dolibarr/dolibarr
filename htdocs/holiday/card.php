@@ -604,7 +604,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		// If status is waiting approval and approver is also user
-		if ($object->status == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
+		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
 			$object->oldcopy = dol_clone($object, 2);
 
 			$object->date_approval = dol_now();
@@ -711,7 +711,7 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
-			if ($object->status == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
+			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
 				$object->date_refuse = dol_now();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
@@ -1566,7 +1566,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 					if ($object->status == Holiday::STATUS_VALIDATED) {	// If validated
 						// Button Approve / Refuse
-						if (($user->id == $object->fk_validator && $user->hasRight('holiday', 'approve')) || ($user->hasRight('holiday', 'writeall') && $user->hasRight('holiday', 'approve'))) {
+						if (($user->id == $object->fk_validator || $cancreateall) && $user->hasRight('holiday', 'approve')) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'" class="butAction">'.$langs->trans("Approve").'</a>';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {
