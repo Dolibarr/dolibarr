@@ -1255,6 +1255,11 @@ class MyObjectLine extends CommonObjectLine
 	 * @see CommonObjectLine
 	 */
 	public $parent_element = '';
+	
+	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
 	public $fk_parent_attribute = '';
 
 	/**
