@@ -12670,7 +12670,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $element_type == 'commande_fournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';

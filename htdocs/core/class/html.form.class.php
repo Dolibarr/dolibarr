@@ -8328,7 +8328,7 @@ class Form
 			$prefixforautocompletemode = 'produit';
 		}
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
-		
+
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
 
 		// Generate the combo HTML component
@@ -8427,7 +8427,7 @@ class Form
 		if (empty($fieldstoshow)) {
 			if (!empty($objecttmp->parent_element)) {
 				$fieldstoshow = 'o.ref';
-				if(empty($sortfield)) {
+				if (empty($sortfield)) {
 					$sortfield = 'o.ref';
 				}
 				if (in_array($objecttmp->element, ['commandedet', 'propaldet', 'facturedet', 'expeditiondet'])) {
@@ -8437,7 +8437,8 @@ class Form
 			}
 			elseif (isset($objecttmp->fields['ref'])) {
 				$fieldstoshow = 't.ref';
-			} else {
+			}
+			else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
 				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
@@ -8459,7 +8460,7 @@ class Form
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $parent_properties['table_element'] . " as o ON o.rowid=t.".$objecttmp->fk_parent_attribute;
 		}
-		if (in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition']))	 {
+		if (in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid=t.fk_product";
 		}
 		if (isset($objecttmp->ismultientitymanaged)) {
@@ -8508,7 +8509,7 @@ class Form
 				}
 			}
 			$splittedfieldstoshow = explode(',', $fieldstoshow);
-			foreach($splittedfieldstoshow as &$field2) {
+			foreach ($splittedfieldstoshow as &$field2) {
 				if (is_numeric($pos=strpos($field2, ' '))) {
 					$field2 = substr($field2, 0, $pos);
 				}

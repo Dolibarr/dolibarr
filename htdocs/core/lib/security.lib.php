@@ -447,24 +447,20 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
-	elseif (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
 		$features = substr($features, 0, -3);
-	}
-	elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
 		$features = substr($features, 0, -4);
-	}
-	elseif ($features == 'commandefournisseurdispatch') {
+	} elseif ($features == 'commandefournisseurdispatch') {
 		$features = 'commandefournisseur';
-	}
-	elseif ($features == 'invoice_supplier_det_rec') {
+	} elseif ($features == 'invoice_supplier_det_rec') {
 		$features = 'invoice_supplier_rec';
 	}
 	// @todo check : project_task
 	// @todo possible ?
 	// elseif (substr($features, -3, 3) == 'det') {
 	// 	$features = substr($features, 0, -3);
-	// }
-	// elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
 	// 	$features = substr($features, 0, -4);
 	// }
 
