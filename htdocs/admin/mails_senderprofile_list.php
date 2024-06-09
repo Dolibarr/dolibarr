@@ -227,7 +227,7 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans("EMailsSetup");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-mails_senderprofile_list');
 
 $linkback = '';
 $titlepicto = 'title_setup';

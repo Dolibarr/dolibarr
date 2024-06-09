@@ -144,6 +144,7 @@ $search_date_signature_endyear = GETPOSTINT('search_date_signature_endyear');
 $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startmonth, $search_date_signature_startday, $search_date_signature_startyear);
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
 $search_status = GETPOST('search_status', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 
 // Pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -390,6 +391,7 @@ if (empty($reshook)) {
 		$search_date_signature_end = '';
 		$toselect = array();
 		$search_array_options = array();
+		$socid = 0;
 	}
 
 	// Mass actions
@@ -717,6 +719,9 @@ if ($search_date_signature_start) {
 }
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
+}
+if ($search_note_public) {
+	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 // Search on user
 if ($search_user > 0) {
@@ -1102,6 +1107,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode"value="'.$mode.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'propal', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -1226,7 +1232,7 @@ if (!empty($arrayfields['pr.title']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"'.($socid > 0 ? " disabled" : "").'>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1452,6 +1458,7 @@ if (!empty($arrayfields['p.date_cloture']['checked'])) {
 if (!empty($arrayfields['p.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.note_private']['checked'])) {

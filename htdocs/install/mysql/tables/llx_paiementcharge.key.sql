@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2024	Maxime Kohlhaas 		<maxime@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,8 +16,4 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_element (fk_element);
-ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_reception (fk_reception);
-ALTER TABLE llx_receptiondet_batch ADD CONSTRAINT fk_receptiondet_batch_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
-ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_product (fk_product);
-ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_elementdet (fk_elementdet);
+ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);

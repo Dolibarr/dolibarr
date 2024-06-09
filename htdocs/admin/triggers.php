@@ -46,7 +46,7 @@ $sortorder = 'ASC';
  * View
  */
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-triggers');
 
 $form = new Form($db);
 

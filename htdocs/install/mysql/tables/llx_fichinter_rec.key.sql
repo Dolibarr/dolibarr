@@ -20,7 +20,7 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_fichinter_rec ADD UNIQUE INDEX idx_fichinter_rec_uk_titre (titre, entity);
+ALTER TABLE llx_fichinter_rec ADD UNIQUE INDEX idx_fichinter_rec_uk_titre (title, entity);
 
 ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_soc (fk_soc);
 ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_user_author (fk_user_author);

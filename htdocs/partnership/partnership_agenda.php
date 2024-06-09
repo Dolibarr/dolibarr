@@ -143,7 +143,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

@@ -298,10 +298,11 @@ class html_cerfafr extends ModeleDon
 		$prim = array();
 		$secon = array();
 		$trio = array();
+		// @phpstan-ignore-next-line
 		'@phan-var string[] $prim
 		 @phan-var string[] $secon
 		 @phan-var string[] $trio
-        ';
+		';
 		for ($i = 1; $i <= 3; $i++) {
 			$prim[$i] = '';
 			$secon[$i] = '';

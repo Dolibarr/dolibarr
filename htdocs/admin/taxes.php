@@ -143,7 +143,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader('', $langs->trans("TaxSetup"));
+llxHeader('', $langs->trans("TaxSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-taxes');
 
 $form = new Form($db);
 if (isModEnabled('accounting')) {

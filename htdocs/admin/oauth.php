@@ -213,7 +213,7 @@ $form = new Form($db);
 $title = $langs->trans('ConfigOAuth');
 $help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauth');
 
 // Confirmation of action process
 if ($action == 'delete') {

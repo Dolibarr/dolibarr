@@ -199,7 +199,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
  */
 
 $title = $langs->trans("Audit");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_listevents');
 
 $form = new Form($db);
 

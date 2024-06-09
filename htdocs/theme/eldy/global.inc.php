@@ -1631,6 +1631,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	white-space: nowrap;
 }
 
+
 .onlinepaymentbody .amountpaymentcomplete {
 	background-color: var(--amountpaymentcomplete);
 	color: #fff;
@@ -1663,6 +1664,9 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 
 .fa-15 {
 	font-size: 1.5em;
+}
+.text-security {
+	-webkit-text-security: disc;
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
@@ -2403,7 +2407,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -2414,7 +2418,7 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
@@ -2425,7 +2429,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2433,7 +2437,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 14px);\n";
+		print "width: calc(50% - 16px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -3422,7 +3426,7 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.v
 }
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active,
 span.vmenu, span.vmenu:link, span.vmenu:visited, span.vmenu:hover, span.vmenu:active { font-weight: bold;  }	/* bold = 600, 500 is ko with Edge on 1200x960 */
-span.vmenudisabled, font.vmenudisabled  {
+span.vmenudisabled {
 	/* bold = 600, 500 is ko with Edge on 1200x960 */
 	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap;
 }

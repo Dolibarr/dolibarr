@@ -810,7 +810,7 @@ if ($object->id > 0) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
 
 
 if ($action == 'create' || $action == 'adduserldap') {

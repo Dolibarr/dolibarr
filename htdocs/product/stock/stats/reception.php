@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 	$shortlabel = dol_trunc($object->batch, 16);
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_reception');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);

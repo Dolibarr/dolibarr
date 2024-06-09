@@ -123,7 +123,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), '');
+llxHeader('', $langs->trans('Reception'), '', '', 0, 0, '', '', '', 'mod-reception page-card_documents');
 
 $form = new Form($db);
 

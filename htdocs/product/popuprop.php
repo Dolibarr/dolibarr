@@ -81,7 +81,7 @@ if ($type == '0') {
 $title = $langs->trans("Statistics");
 
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-popuprop');
 
 print load_fiche_titre($title, '', 'product');
 

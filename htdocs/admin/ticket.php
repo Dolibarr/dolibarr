@@ -242,7 +242,7 @@ $formcategory = new FormCategory($db);
 // Page Header
 $help_url = 'EN:Module_Ticket|FR:Module_Ticket_FR';
 $page_name = 'TicketSetup';
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

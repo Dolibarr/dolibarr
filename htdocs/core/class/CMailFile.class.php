@@ -709,6 +709,14 @@ class CMailFile
 			}
 
 			if ($this->atleastoneimage) {
+				foreach ($this->html_images as $img) {
+					// $img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
+					$attachment = Swift_Image::fromPath($img['fullpath']);
+					// embed image
+					$imgcid = $this->message->embed($attachment);
+					// replace cid by the one created by swiftmail in html message
+					$msg = str_replace("cid:".$img['cid'], $imgcid, $msg);
+				}
 				foreach ($this->images_encoded as $img) {
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
 					$attachment = Swift_Image::fromPath($img['fullpath']);

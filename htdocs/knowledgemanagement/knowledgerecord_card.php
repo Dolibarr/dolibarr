@@ -166,7 +166,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans("KnowledgeRecord");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card');
 
 // Part to create
 if ($action == 'create') {

@@ -72,7 +72,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+$title = '';
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_notes');
 
 $form = new Form($db);
 

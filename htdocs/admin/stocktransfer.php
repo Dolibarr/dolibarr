@@ -164,7 +164,7 @@ $form = new Form($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $page_name = "StockTransferSetup";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', 0, 0, '', '', '', 'mod-admin page-stocktransfer');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';

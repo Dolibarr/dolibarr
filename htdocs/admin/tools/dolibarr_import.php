@@ -49,7 +49,7 @@ $type = $db->type;
 
 
 $help_url = 'EN:Restores|FR:Restaurations|ES:Restauraciones';
-llxHeader('', '', $help_url);
+llxHeader('', '', $help_url, '', 0, 0, '', '', '', 'mod-admin page-tools_dolibarr_import');
 
 ?>
 <script type="text/javascript">

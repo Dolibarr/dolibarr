@@ -101,7 +101,7 @@ $form = new Form($db);
 $title = $langs->trans("KnowledgeRecord").' - '.$langs->trans("Files");
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card_documents');
 
 if ($object->id) {
 	/*

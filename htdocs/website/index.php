@@ -4657,11 +4657,11 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		}
 		print '</td><td>';
 		//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
-		$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+		$doleditor = new DolEditor('content', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
 		$doleditor->Create();
 		//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
 		print '</div>';
-		print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+		//print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
 		print '</td></tr>';
 	}
 

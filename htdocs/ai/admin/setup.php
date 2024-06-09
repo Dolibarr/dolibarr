@@ -66,12 +66,13 @@ $formSetup = new FormSetup($db);
 // List all available IA
 $arrayofia = array(
 	'chatgpt' => 'ChatGPT',
-	'grok' => 'Grok',
+	'groq' => 'Groq',
 	//'gemini' => 'Gemini'
 );
 
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 $item->setAsSelect($arrayofia);
+$item->cssClass = 'minwidth150';
 
 foreach ($arrayofia as $ia => $ialabel) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
@@ -79,10 +80,11 @@ foreach ($arrayofia as $ia => $ialabel) {
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
-	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
-	$item->cssClass = 'minwidth500';
+	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->cssClass = 'minwidth500 text-security';
 }
 
 $setupnotempty = + count($formSetup->items);

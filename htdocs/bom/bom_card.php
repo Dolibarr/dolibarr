@@ -313,7 +313,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
 $help_url = 'EN:Module_BOM';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card');
 
 // Part to create
 if ($action == 'create') {

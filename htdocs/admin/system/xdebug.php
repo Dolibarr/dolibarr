@@ -35,7 +35,7 @@ if (!$user->admin) {
  * View
 */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_xdebug');
 
 print load_fiche_titre("XDebug", '', 'title_setup');
 

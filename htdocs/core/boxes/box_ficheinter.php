@@ -67,7 +67,9 @@ class box_ficheinter extends ModeleBoxes
 		$ficheinterstatic = new Fichinter($this->db);
 		$thirdpartystatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('ficheinter', 'lire')) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";

@@ -746,7 +746,7 @@ if (empty($reshook)) {
 
 $title = $object->ref.' - '.$langs->trans('Reception');
 
-llxHeader('', $title, 'Reception');
+llxHeader('', $title, 'Reception', '', 0, 0, '', '', '', 'mod-reception page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);

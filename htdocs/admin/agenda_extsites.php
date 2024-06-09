@@ -189,7 +189,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-admin page-agenda-extsites');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');

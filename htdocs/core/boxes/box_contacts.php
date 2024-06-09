@@ -72,7 +72,9 @@ class box_contacts extends ModeleBoxes
 		$contactstatic = new Contact($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedContacts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire')) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";

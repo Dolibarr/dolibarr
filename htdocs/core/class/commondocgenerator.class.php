@@ -255,7 +255,7 @@ abstract class CommonDocGenerator
 		global $conf, $extrafields;
 
 		if ($member->photo) {
-			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+			$logotouse = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
 			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
@@ -386,7 +386,7 @@ abstract class CommonDocGenerator
 			'company_vatnumber' => $object->tva_intra,
 			'company_customercode' => $object->code_client,
 			'company_suppliercode' => $object->code_fournisseur,
-			'company_customeraccountancycode' => $object->code_compta,
+			'company_customeraccountancycode' => $object->code_compta_client,
 			'company_supplieraccountancycode' => $object->code_compta_fournisseur,
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
@@ -903,7 +903,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (!empty($object->commande) && is_object($object->commande)) {
+		if (is_object($object->commande) && !empty($object->commande->ref)) {
 			$array_shipment['order_ref'] = $object->commande->ref;
 			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}

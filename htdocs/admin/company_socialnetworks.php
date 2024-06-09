@@ -87,7 +87,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
 $form = new Form($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-company_socialnetworks');
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 

@@ -604,6 +604,17 @@ class Don extends CommonObject
 			if (!$resql) {
 				$this->errors[] = $this->db->lasterror();
 				$error++;
+			} else {
+				// we delete file with dol_delete_dir_recursive
+				$this->deleteEcmFiles(1);
+
+				$dir = DOL_DATA_ROOT.'/'.$this->element.'/'.$this->ref;
+				// For remove dir
+				if (dol_is_dir($dir)) {
+					if (!dol_delete_dir_recursive($dir)) {
+						$this->errors[] = $this->error;
+					}
+				}
 			}
 		}
 

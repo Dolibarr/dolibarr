@@ -1119,6 +1119,10 @@ class FunctionsLibTest extends CommonClassTest
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
+
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
 	}
 
 

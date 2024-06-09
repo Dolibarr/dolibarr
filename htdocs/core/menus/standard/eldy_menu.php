@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,19 @@ class MenuManager
 	 */
 	public $db;
 
-	public $type_user; // Put 0 for internal users, 1 for external users
-	public $atarget = ""; // To store default target to use onto links
+	/**
+	 * @var int Put 0 for internal users, 1 for external users
+	 */
+	public $type_user;
+
+	/**
+	 * @var string To store default target to use onto links
+	 */
+	public $atarget = "";
+
+	/**
+	 * @var string Menu name
+	 */
 	public $name = "eldy";
 
 	/**
@@ -118,9 +130,6 @@ class MenuManager
 		$menuArbo = new Menubase($this->db, 'eldy');
 		$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
 		$this->tabMenu = $tabMenu;
-		//var_dump($tabMenu);
-
-		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
 	}
 
 
@@ -135,8 +144,6 @@ class MenuManager
 	public function showmenu($mode, $moredata = null)
 	{
 		global $conf, $langs, $user;
-
-		//var_dump($this->tabMenu);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 

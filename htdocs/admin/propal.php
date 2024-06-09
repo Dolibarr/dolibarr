@@ -233,7 +233,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("PropalSetup"));
+llxHeader('', $langs->trans("PropalSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-propal');
 
 //if ($mesg) print $mesg;
 

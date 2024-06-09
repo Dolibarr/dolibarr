@@ -83,7 +83,7 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
-llxHeader('', $langs->trans('KnowledgeRecord'), $help_url);
+llxHeader('', $langs->trans('KnowledgeRecord'), $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card_notes');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

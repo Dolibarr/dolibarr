@@ -1475,7 +1475,7 @@ class FormMail extends Form
 							console.log('Add response into field \'".$htmlContent."\': '+response);
 
 							jQuery('#".$htmlContent."').val(response);
-							jQuery('#".$htmlContent."preview').val(response);
+							//jQuery('#".$htmlContent."preview').val(response);
 
 							if (CKEDITOR.instances) {
 								var editorInstance = CKEDITOR.instances.".$htmlContent.";
@@ -1483,10 +1483,10 @@ class FormMail extends Form
 									editorInstance.setReadOnly(0);
 									editorInstance.setData(response);
 								}
-								var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
-								if (editorInstancepreview) {
-									editorInstancepreview.setData(response);
-								}
+								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+								//if (editorInstancepreview) {
+								//	editorInstancepreview.setData(response);
+								//}
 							}
 
 							// remove readonly
@@ -1543,11 +1543,13 @@ class FormMail extends Form
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for email");
+						var template = $(this).data("template");
+
+						console.log("We choose a layout for email template "+template);
+
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
 
-						var template = $(this).data("template");
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);

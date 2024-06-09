@@ -204,7 +204,7 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delais');
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 

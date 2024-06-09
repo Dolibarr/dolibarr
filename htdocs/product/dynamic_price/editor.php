@@ -139,7 +139,7 @@ if ($action == 'delete') {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-dynamic_price_editor');
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 

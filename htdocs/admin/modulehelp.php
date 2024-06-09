@@ -67,7 +67,7 @@ if (empty($user->admin)) {
 $form = new Form($db);
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url);
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-modulehelp');
 
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {

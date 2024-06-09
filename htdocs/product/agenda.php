@@ -144,7 +144,7 @@ $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-agenda');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card_agenda');
 
 if (isModEnabled('notification')) {
 	$langs->load("mails");

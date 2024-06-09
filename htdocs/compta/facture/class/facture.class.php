@@ -443,7 +443,7 @@ class Facture extends CommonInvoice
 	{
 		global $langs, $conf, $mysoc, $hookmanager;
 		$error = 0;
-
+		$origin_user_author_id = ($user->id > 0 ? (int) $user->id : 0);
 		// Clean parameters
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
@@ -510,6 +510,9 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
+			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
+				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : $origin_user_author_id);
+			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
@@ -683,15 +686,15 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape($this->fk_fac_rec_source)."'" : "null");
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null");
-		$sql .= ", ".($user->id > 0 ? (int) $user->id : "null");
-		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
+		$sql .= ", ".($origin_user_author_id > 0 ? (int) $origin_user_author_id : "null");
+		$sql .= ", ".($this->fk_project ? (int) $this->fk_project : "null");
 		$sql .= ", ".((int) $this->cond_reglement_id);
 		$sql .= ", ".((int) $this->mode_reglement_id);
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
 		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
-		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
+		$sql .= ", ".($this->situation_final ? (int) $this->situation_final : 0);
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->fk_multicurrency;
@@ -2856,7 +2859,7 @@ class Facture extends CommonInvoice
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
-			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
+			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact() >= 0 ) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
 
 				$resql = $this->db->query($sql);

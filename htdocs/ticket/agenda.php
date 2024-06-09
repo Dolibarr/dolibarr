@@ -154,7 +154,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ticketnameonly/', getD
 }
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_agenda');
 
 if ($socid > 0) {
 	$object->fetch_thirdparty();

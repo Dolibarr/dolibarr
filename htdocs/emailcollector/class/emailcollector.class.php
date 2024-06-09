@@ -2291,6 +2291,7 @@ class EmailCollector extends CommonObject
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
+						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($date, "dayhourtext")));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));

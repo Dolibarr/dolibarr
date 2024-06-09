@@ -118,7 +118,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Info');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_agenda');
 
 $head = user_prepare_head($object);
 

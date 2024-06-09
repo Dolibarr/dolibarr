@@ -272,7 +272,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Partnership");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-card');
 
 // Part to create
 if ($action == 'create') {

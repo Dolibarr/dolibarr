@@ -106,7 +106,7 @@ $title = $langs->trans("BillOfMaterials").' - '.$langs->trans("Files");
 $help_url = 'EN:Module_BOM';
 $morehtmlref = "";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_documents');
 
 if ($object->id) {
 	/*

@@ -100,7 +100,7 @@ $form = new Form($db);
 $title = $langs->trans("ModuleStockTransferName").' - '.$langs->trans("Files");
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_document');
 
 if ($object->id) {
 	/*

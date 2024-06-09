@@ -1039,8 +1039,8 @@ class ExtraFields
 	 * @param  string        $key            		Key of attribute
 	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
 	 * @param  string        $moreparam      		To add more parameters on html input tag
-	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
 	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
@@ -2439,11 +2439,11 @@ class ExtraFields
 	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
 	 * @param  array|string		$extrafieldsobjectkey  	array of extrafields (old usage) or value of object->table_element (new usage)
-	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int								array_options set or 0 if no value
 	 */
-	public function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
+	public function getOptionalsFromPost($extrafieldsobjectkey, $keysuffix = '', $keyprefix = '')
 	{
 		global $_POST;
 
@@ -2464,8 +2464,8 @@ class ExtraFields
 				}
 
 				if (in_array($key_type, array('date'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
 					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
@@ -2475,15 +2475,16 @@ class ExtraFields
 						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif (in_array($key_type, array('datetime', 'datetimegmt'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
+
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
 						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
@@ -2491,51 +2492,51 @@ class ExtraFields
 						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
+							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
+							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif ($key_type == 'select') {
 					// to detect if we are in search context
-					if (GETPOSTISARRAY($keysuffix."options_".$key.$keyprefix)) {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
 						$value_key = implode(',', $value_arr);
 					} else {
-						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					// We test on a hidden field named "..._multiselect" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix.'_multiselect')) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix.'_multiselect')) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($keyprefix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
 						$value_key = $value_arr;
@@ -2543,25 +2544,25 @@ class ExtraFields
 				} elseif (in_array($key_type, array('boolean'))) {
 					// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."_boolean")) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix."_boolean")) {
 						$value_key = '';
 					} else {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
+					$value_key = dol_htmlcleanlastbr(GETPOST($keyprefix."options_".$key.$keysuffix, 'restricthtml'));
 				} else {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 				}
 
-				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
+				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
 			}
 
 			return $array_options;

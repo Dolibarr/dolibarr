@@ -78,7 +78,7 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_purge');
 
 $form = new Form($db);
 

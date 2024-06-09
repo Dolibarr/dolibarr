@@ -482,7 +482,7 @@ if ($result) {
 		print '</td>';
 
 		// Ref Expense report
-		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';
+		print '<td class="tdoverflowmax150">'.$expensereport_static->getNomUrl(1).'</td>';
 
 		// Date validation
 		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {

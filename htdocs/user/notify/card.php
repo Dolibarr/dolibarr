@@ -148,7 +148,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
 
 
 if ($result > 0) {

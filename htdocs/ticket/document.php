@@ -125,7 +125,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
 if ($object->id) {
 	/*

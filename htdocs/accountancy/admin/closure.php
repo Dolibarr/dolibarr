@@ -162,7 +162,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 
 print '</form>';
 

@@ -70,7 +70,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = $_SESSION['addvariant_'.$object->id] ?: array();
+$selectedvariant = isset($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 $selected = '';
 // Security check
 if (!isModEnabled('variants')) {

@@ -63,8 +63,8 @@ $object = new Ticket($db);
 
 $title = $langs->trans("Statistics");
 $dir = $conf->ticket->dir_temp;
-
-llxHeader('', $title);
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-stats');
 
 print load_fiche_titre($title, '', 'ticket');
 

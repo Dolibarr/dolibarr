@@ -389,7 +389,7 @@ if ($resql) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 	}
 
-	llxHeader("", $texte, $helpurl);
+	llxHeader("", $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-reassort');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

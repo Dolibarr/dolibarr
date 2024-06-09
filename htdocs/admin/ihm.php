@@ -341,7 +341,9 @@ llxHeader(
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
 	),
-	array()
+	array(),
+	'',
+	'mod-admin page-ihm'
 );
 
 $form = new Form($db);

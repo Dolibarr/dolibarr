@@ -208,7 +208,7 @@ $i = 0;
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-user page-group_list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

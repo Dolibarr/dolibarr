@@ -119,7 +119,7 @@ if ($action == 'updateform') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Files"), $wikihelp);
+llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_file');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 

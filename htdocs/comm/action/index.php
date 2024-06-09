@@ -1195,7 +1195,7 @@ if (count($listofextcals)) {
 		if ($ical->error) {
 			// Save error message for extcal
 			$listofextcals[$key]['error'] = $ical->error;
-			$s .= '<br><font class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</font>';
+			$s .= '<br><div class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</div>';
 		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...

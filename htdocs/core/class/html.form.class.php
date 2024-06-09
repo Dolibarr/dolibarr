@@ -2961,6 +2961,11 @@ class Form
 		}
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+
+		if (getDolGlobalString('MAIN_SEARCH_PRODUCT_FORCE_INDEX')) {
+			$sql .= " USE INDEX (" . $this->db->sanitize(getDolGlobalString('MAIN_PRODUCT_FORCE_INDEX')) . ")";
+		}
+
 		// Add from (left join) from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
@@ -9019,7 +9024,7 @@ class Form
 						$tmpvalue = empty($value['label']) ? '' : $value['label'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
-						$tmplabelhtml = empty($value['labelhtml']) ? '' : $value['labelhtml'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']): $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);

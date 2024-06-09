@@ -375,7 +375,7 @@ if ($ext == 'csv') {
 		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
 		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
-	llxHeader('', $title, $helpurl, '');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
 
 	$head = array();
 

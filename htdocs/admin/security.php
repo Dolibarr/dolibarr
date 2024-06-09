@@ -171,7 +171,7 @@ if ($action == 'updatepattern') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Passwords"), $wikihelp);
+llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 

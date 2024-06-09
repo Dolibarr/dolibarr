@@ -78,7 +78,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$target_url = $static_object->fetchAll();
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
-			if (is_array($actionarray) && in_array($action, $actionarray)) {
+			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;

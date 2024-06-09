@@ -132,7 +132,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
 $help_url ='EN:Module_BOM';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-net_needs');
 
 
 // Part to show record

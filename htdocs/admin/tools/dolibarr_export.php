@@ -90,7 +90,7 @@ $type = $db->type;
 //var_dump($db);
 
 $help_url = 'EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('', '', $help_url);
+llxHeader('', '', $help_url, '', 0, 0, '', '', '', 'mod-admin page-tools_dolibarr_export');
 
 print '<script type="text/javascript">
 jQuery(document).ready(function() {';

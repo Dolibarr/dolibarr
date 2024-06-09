@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 $boxid = GETPOSTINT('boxid');
 $boxorder = GETPOST('boxorder');
-$zone = GETPOSTINT('zone');
+$zone = GETPOST('zone');		// Can be '0' or '1' or 'pagename'...
 $userid = GETPOSTINT('userid');
 
 // Security check

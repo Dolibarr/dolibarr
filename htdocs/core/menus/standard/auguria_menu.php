@@ -3,6 +3,7 @@
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,19 @@ class MenuManager
 	 */
 	public $db;
 
-	public $type_user; // Put 0 for internal users, 1 for external users
-	public $atarget = ""; // To store default target to use onto links
+	/**
+	 * @var int Put 0 for internal users, 1 for external users
+	 */
+	public $type_user;
+
+	/**
+	 * @var string To store default target to use onto links
+	 */
+	public $atarget = "";
+
+	/**
+	 * @var string Menu name
+	 */
 	public $name = "auguria";
 
 	/**

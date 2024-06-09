@@ -217,7 +217,8 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
-llxHeader('', $title, '');
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card');
 
 $form = new Form($db);
 $formresource = new FormResource($db);

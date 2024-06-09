@@ -555,7 +555,7 @@ if ($resql) {
 			$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}
 	}
-	llxHeader("", $texte, $help_url);
+	llxHeader("", $texte, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_movement_card');
 
 	/*
 	 * Show tab only if we ask a particular warehouse

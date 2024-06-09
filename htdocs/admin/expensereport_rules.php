@@ -182,7 +182,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_rules');
 
 $form = new Form($db);
 

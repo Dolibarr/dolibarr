@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 				if (strcmp($projectstatic->opp_amount, '')) {
 					print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 					if (strcmp($projectstatic->opp_percent, '')) {
-						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 					}
 				}
 				print '</td></tr>';

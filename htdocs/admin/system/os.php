@@ -35,7 +35,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_os');
 
 print load_fiche_titre($langs->trans("InfoOS"), '', 'title_setup');
 

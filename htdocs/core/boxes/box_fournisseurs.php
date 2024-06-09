@@ -60,7 +60,7 @@ class box_fournisseurs extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $hookmanager;
+		global $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -68,7 +68,9 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=f&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

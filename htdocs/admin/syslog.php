@@ -171,7 +171,7 @@ if ($action == 'setlevel') {
  * View
  */
 
-llxHeader('', $langs->trans("SyslogSetup"));
+llxHeader('', $langs->trans("SyslogSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-syslog');
 
 $form = new Form($db);
 

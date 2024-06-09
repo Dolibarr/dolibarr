@@ -203,7 +203,7 @@ if ($action == 'setmod') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delivery');
 
 $form = new Form($db);
 
