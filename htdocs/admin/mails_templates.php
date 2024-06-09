@@ -618,7 +618,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-admin page-mails_templates');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
