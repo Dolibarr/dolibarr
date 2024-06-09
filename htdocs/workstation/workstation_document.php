@@ -103,7 +103,7 @@ $title = $langs->trans("Workstation").' - '.$langs->trans("Files");
 
 $help_url = 'EN:Module_Workstation';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-workstation page-card_workstation_document');
 
 if ($object->id) {
 	/*

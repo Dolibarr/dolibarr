@@ -170,7 +170,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Module_Workstation';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-workstation page-workstation_card');
 
 // jquery code
 ?>
