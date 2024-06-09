@@ -256,7 +256,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 $title = $langs->trans('Delivery');
 
-llxHeader('', $title, 'Livraison');
+llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
