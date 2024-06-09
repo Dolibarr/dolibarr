@@ -3414,6 +3414,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $table_element = 'facture_fourn_det';
 
+	public $parent_element = 'facture_fourn';
+	public $fk_parent_attribute = 'fk_facture_fourn';
+
 	public $oldline;
 
 	/**
