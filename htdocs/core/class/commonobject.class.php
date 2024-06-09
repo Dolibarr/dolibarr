@@ -7214,6 +7214,29 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Convenience method for retrieving the value of an extrafield without actually fetching it from the database.
+	 *
+	 * @param string $key Name of the extrafield
+	 * @return mixed|null
+	 */
+	public function getExtraField($key)
+	{
+		return $this->array_options['options_'.$key] ?? null;
+	}
+
+	/**
+	 * Convenience method for setting the value of an extrafield without actually updating it in the database.
+	 *
+	 * @param string $key   Name of the extrafield
+	 * @param mixed  $value Value to be assigned to the extrafield
+	 * @return void
+	 */
+	public function setExtraField($key, $value)
+	{
+		$this->array_options['options_'.$key] = $value;
+	}
+
+	/**
 	 *	Update an extra language value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
