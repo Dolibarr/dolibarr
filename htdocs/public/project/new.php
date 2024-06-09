@@ -177,23 +177,23 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	if (!GETPOST("lastname")) {
+	if (!GETPOST("lastname", 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (!GETPOST("firstname")) {
+	if (!GETPOST("firstname", 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	if (!GETPOST("email")) {
+	if (!GETPOST("email", 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("description")) {
+	if (!GETPOST("description", 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Message"))."<br>\n";
 	}
-	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	if (GETPOST("email", 'alpha') && !isValidEmail(GETPOST("email", 'alpha'))) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
@@ -211,21 +211,21 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $GETPOST('email', 'alpha'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
 			// Create the prospect
-			if (GETPOST('societe')) {
-				$thirdparty->name =  GETPOST('societe');
-				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			if (GETPOST('societe', 'alpha')) {
+				$thirdparty->name =  GETPOST('societe', 'alpha');
+				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			} else {
-				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			}
-			$thirdparty->email = GETPOST('email');
-			$thirdparty->address = GETPOST('address');
-			$thirdparty->zip = GETPOST('zip');
-			$thirdparty->town = GETPOST('town');
+			$thirdparty->email = GETPOST('email', 'alpha');
+			$thirdparty->address = GETPOST('address', 'alpha');
+			$thirdparty->zip = GETPOST('zip', 'alpha');
+			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOST('country_id', 'int');
 			$thirdparty->state_id = GETPOST('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
