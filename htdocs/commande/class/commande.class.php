@@ -4208,6 +4208,9 @@ class OrderLine extends CommonOrderLine
 
 	public $oldline;
 
+	public $parent_element = 'commande';
+	public $fk_parent_attribute = 'fk_commande';
+
 	/**
 	 * Id of parent order
 	 * @var int
