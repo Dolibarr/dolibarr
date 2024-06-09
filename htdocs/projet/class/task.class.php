@@ -1423,7 +1423,7 @@ class Task extends CommonObjectLine
 	 */
 	public function addTimeSpent($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 

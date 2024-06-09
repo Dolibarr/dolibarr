@@ -209,7 +209,7 @@ $arrayofcss = array();
 $title = $langs->trans("Target");
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-webhook page-target_card');
 
 // Part to create
 if ($action == 'create') {

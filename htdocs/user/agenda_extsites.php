@@ -158,7 +158,7 @@ $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firs
 $title = $person_name." - ".$langs->trans('ExtSites');
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-user page-agenda_extsites');
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';

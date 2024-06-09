@@ -691,7 +691,7 @@ $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
 $title = $actionobject->getTitle($action);
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card');
 
 if ($action == 'create' || $action == 'presend') {
 	if (empty($permissiontoadd)) {

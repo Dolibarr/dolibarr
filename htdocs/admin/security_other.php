@@ -96,7 +96,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
+llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_other');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 

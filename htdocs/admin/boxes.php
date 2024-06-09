@@ -210,7 +210,7 @@ if ($action == 'switch') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Boxes"));
+llxHeader('', $langs->trans("Boxes"), '', '', 0, 0, '', '', '', 'mod-admin page-boxes');
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 

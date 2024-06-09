@@ -199,7 +199,7 @@ $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firs
 $title = $person_name." - ".$langs->trans('Card');
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_param_ihm');
 
 // List of possible landing pages
 $tmparray = array();

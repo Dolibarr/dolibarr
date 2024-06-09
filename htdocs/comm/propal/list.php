@@ -391,6 +391,7 @@ if (empty($reshook)) {
 		$search_date_signature_end = '';
 		$toselect = array();
 		$search_array_options = array();
+		$socid = 0;
 	}
 
 	// Mass actions
@@ -1106,6 +1107,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode"value="'.$mode.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'propal', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -1230,7 +1232,7 @@ if (!empty($arrayfields['pr.title']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"'.($socid > 0 ? " disabled" : "").'>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {

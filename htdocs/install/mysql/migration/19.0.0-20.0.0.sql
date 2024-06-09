@@ -306,6 +306,7 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elem
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_element (fk_element);
 
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
@@ -374,3 +375,18 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledgerecord cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from knowledgerecord file','knowledgerecord when you send email from knowledgerecord file','knowledgemanagement',57004);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledgerecord deleted','Executed when a knowledgerecord is deleted','knowledgemanagement',57006);
+
+-- table chargesociales indexes
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_type (fk_type);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_account (fk_account);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_mode_reglement (fk_mode_reglement);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_author (fk_user_author);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_projet (fk_projet);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
+
+-- table paiementcharge indexes
+ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
+
+ALTER TABLE llx_product ADD INDEX idx_product_entity_fk_product_type (entity, fk_product_type);
