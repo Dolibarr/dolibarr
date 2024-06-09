@@ -8434,11 +8434,9 @@ class Form
 					$fieldstoshow .= ',p.ref AS p_ref,p.label,t.description';
 					$sortfield .= ', p.ref';
 				}
-			}
-			elseif (isset($objecttmp->fields['ref'])) {
+			} elseif (isset($objecttmp->fields['ref'])) {
 				$fieldstoshow = 't.ref';
-			}
-			else {
+			} else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
 				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
