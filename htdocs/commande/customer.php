@@ -68,7 +68,7 @@ if (!$sortfield) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
 $thirdpartystatic = new Societe($db);
 
