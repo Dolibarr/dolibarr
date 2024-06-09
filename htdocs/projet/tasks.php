@@ -148,7 +148,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
-$billable = (GETPOST('billable','aZ') == 'yes'? 1 : 0);
+$billable = (GETPOST('billable', 'aZ') == 'yes'? 1 : 0);
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
