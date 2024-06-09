@@ -259,11 +259,11 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
-	
+
 	/**
 	 * Return clicable link of object line (with eventually picto)
-	 * May (should) return the associated "parent" object informations
-	 * 
+	 * May (should) also return information about the associated "parent" object
+	 *
 	 * To overlolad
 	 *
 	 * @param      int			$withpicto                Add picto into link
