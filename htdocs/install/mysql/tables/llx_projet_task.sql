@@ -1,6 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2024 Vincent de Grandpré  <vincent@de-grandpre.quebec>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -44,5 +45,6 @@ create table llx_projet_task
   note_public			text,
   rang                  integer DEFAULT 0,
   model_pdf        		varchar(255),
-  import_key			varchar(14)						-- Import key
+  import_key			varchar(14),						-- Import key
+  billable    smallint DEFAULT 1
 )ENGINE=innodb;
