@@ -3975,7 +3975,14 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $table_element = 'propaldet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $parent_element = 'propal';
+	
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $fk_parent_attribute = 'fk_propal';
 
 	public $oldline;

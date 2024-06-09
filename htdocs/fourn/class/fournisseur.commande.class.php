@@ -3741,7 +3741,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $table_element = 'commande_fournisseurdet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $parent_element = 'commande_fournisseur';
+
+	/**
+	 * @see CommonObjectLine
+	 */
 	public $fk_parent_attribute = 'fk_commande_fournisseur';
 
 	public $oldline;

@@ -2143,6 +2143,9 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet_rec';
 
+	public $parent_element = 'facturerec';
+	public $fk_parent_attribute = 'fk_facture';
+
 	//! From llx_facturedet_rec
 	//! Id facture
 	public $fk_facture;

@@ -34,7 +34,7 @@
 abstract class CommonObjectLine extends CommonObject
 {
 	/**
-	 * @var string Parent CommonObject type (element name)
+	 * @var string string string ID to identify parent CommonObject type (element name)
 	 */
 	public $parent_element = '';
 
