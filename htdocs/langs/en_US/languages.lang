@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=Ethiopian
 Language_af_ZA=Afrikaans (South Africa)
-Language_en_AE=Arabic (United Arab Emirates)
 Language_ar_AR=Arabic
 Language_ar_DZ=Arabic (Algeria)
 Language_ar_EG=Arabic (Egypt)
@@ -57,7 +56,6 @@ Language_es_PE=Spanish (Peru)
 Language_es_PR=Spanish (Puerto Rico)
 Language_es_US=Spanish (USA)
 Language_es_UY=Spanish (Uruguay)
-Language_es_GT=Spanish (Guatemala)
 Language_es_VE=Spanish (Venezuela)
 Language_et_EE=Estonian
 Language_eu_ES=Basque
@@ -88,6 +86,7 @@ Language_kk_KZ=Kazakh
 Language_km_KH=Khmer
 Language_kn_IN=Kannada
 Language_ko_KR=Korean
+Language_ku_IQ=Kurdish
 Language_lo_LA=Lao
 Language_lt_LT=Lithuanian
 Language_lv_LV=Latvian

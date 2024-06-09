@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partenariat dédié à cet adhérent
 DatePartnershipStart=Date de début
 DatePartnershipEnd=Date de fin
 ReasonDecline=Raison du refus
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=Raison du refus ou de l'annulation
 PartnershipAlreadyExist=Partenariat déjà existant
 ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
@@ -95,4 +95,3 @@ NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie 
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
 
 IPOfApplicant=IP du demandeur
-

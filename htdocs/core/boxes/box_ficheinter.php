@@ -37,17 +37,6 @@ class box_ficheinter extends ModeleBoxes
 	public $depends = array("ficheinter"); // conf->contrat->enabled
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -78,7 +67,9 @@ class box_ficheinter extends ModeleBoxes
 		$ficheinterstatic = new Fichinter($this->db);
 		$thirdpartystatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('ficheinter', 'lire')) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
@@ -95,7 +86,7 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

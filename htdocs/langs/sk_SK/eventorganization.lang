@@ -36,7 +36,7 @@ EventOrganizationSetup=Nastavenie organizácie udalosti
 EventOrganization=Organizácia podujatia
 EventOrganizationSetupPage = Stránka nastavenia organizácie udalosti
 EVENTORGANIZATION_TASK_LABEL = Označenie úloh, ktoré sa vytvorí automaticky pri overení projektu
-EVENTORGANIZATION_TASK_LABELTooltip = Keď potvrdíte organizáciu udalosti, niektoré úlohy sa môžu automaticky vytvoriť v projekte<br><br>Napríklad: <br>Odoslať výzvu na konferencie<br>Odoslať výzvu na stánok<br> návrhy na konferenciu<span>Valispandate class ='notranslate'><br>Overiť prihlášku pre stánky<br>Otvoriť odbery udalosti pre účastníkovb0342fccfda>Sbz0 udalosti prednášajúcim<span class='notranslate'><br>Poslať pripomienku udalosti hosťom stánku<br>Poslať účastníkom pripomienku udalosti
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Ponechajte prázdne, ak nepotrebujete vytvárať úlohy automaticky.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategória na pridanie k tretím stranám sa automaticky vytvorí, keď niekto navrhne konferenciu
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategória na pridanie k tretím stranám sa automaticky vytvorí, keď navrhnú stánok
@@ -88,6 +88,7 @@ PriceOfRegistration=Cena registrácie
 PriceOfRegistrationHelp=Cena za registráciu alebo účasť na podujatí
 PriceOfBooth=Cena predplatného na státie stánku
 PriceOfBoothHelp=Cena predplatného na státie stánku
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Prepojiť ICS pre konferencie
 ConferenceOrBoothInformation=Informácie o konferencii alebo stánku
 Attendees=Účastníci
@@ -127,8 +128,8 @@ PublicAttendeeSubscriptionPage = Verejný odkaz na registráciu iba na túto uda
 MissingOrBadSecureKey = Bezpečnostný kľúč je neplatný alebo chýba
 EvntOrgWelcomeMessage = Tento formulár vám umožňuje zaregistrovať sa ako nový účastník podujatia
 EvntOrgDuration = Táto konferencia sa začína %s a končí sa %s.
-ConferenceAttendeeFee = Účastnícky poplatok za udalosť: '%s' od %s do <span class='notranslate'>b0ecb2ec87f49f >.
-BoothLocationFee = Miesto stánku pre udalosť: '%s' od %s do <span class='notranslate'>%s
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Typ udalosti
 LabelOfBooth=Označenie stánku
 LabelOfconference=Konferenčný štítok

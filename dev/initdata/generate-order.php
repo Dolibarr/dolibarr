@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 
 /*
- * Parametre
+ * Parameter
  */
 
 define('GEN_NUMBER_COMMANDE', $argv[1] ?? 10);

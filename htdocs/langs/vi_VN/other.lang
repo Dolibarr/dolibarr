@@ -336,3 +336,5 @@ FTPFailedToUploadFile=Không tải được tệp lên <b>%s</b>.
 AddFolder=Tạo thư mục
 FileWasCreateFolder=Thư mục <b>%s</b> đã được tạo
 FTPFailedToCreateFolder=Không tạo được thư mục <b>%s</b>.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date

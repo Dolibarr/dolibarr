@@ -34,7 +34,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 // Include Dolibarr environment
@@ -52,6 +52,8 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -64,12 +66,12 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 // Check parameters
 if (!isset($argv[1])) {
 	rebuild_merge_pdf_usage();
-	exit(-1);
+	exit(1);
 }
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $diroutputpdf = $conf->facture->dir_output.'/temp';
@@ -137,7 +139,7 @@ foreach ($argv as $key => $value) {
 		$paymentdatebefore = dol_stringtotime($argv[$key + 2].'235959');
 		if (empty($paymentdateafter) || empty($paymentdatebefore)) {
 			print 'Error: Bad date format or value'."\n";
-			exit(-1);
+			exit(1);
 		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
@@ -160,7 +162,7 @@ foreach ($argv as $key => $value) {
 		$result = $bankaccount->fetch(0, $paymentonbankref);
 		if ($result <= 0) {
 			print 'Error: Bank account with ref "'.$paymentonbankref.'" not found'."\n";
-			exit(-1);
+			exit(1);
 		}
 		$paymentonbankid = $bankaccount->id;
 		print 'Rebuild PDF for invoices with at least one payment on financial account '.$bankaccount->ref."\n";
@@ -209,23 +211,23 @@ foreach ($argv as $key => $value) {
 
 	if (!$found && preg_match('/filter=/i', $value)) {
 		rebuild_merge_pdf_usage();
-		exit(-1);
+		exit(1);
 	}
 }
 
 // Check if an option and a filter has been provided
 if (empty($option) && count($filter) <= 0) {
 	rebuild_merge_pdf_usage();
-	exit(-1);
+	exit(1);
 }
-// Check if there is no uncompatible choice
+// Check if there is no incompatible choice
 if (in_array('payments', $filter) && in_array('nopayment', $filter)) {
 	rebuild_merge_pdf_usage();
-	exit(-1);
+	exit(1);
 }
 if (in_array('bank', $filter) && in_array('nopayment', $filter)) {
 	rebuild_merge_pdf_usage();
-	exit(-1);
+	exit(1);
 }
 
 // Define SQL and SQL request to select invoices

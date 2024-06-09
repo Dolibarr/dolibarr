@@ -1,10 +1,10 @@
 --
 -- Script to repair some fatal errors due to database corruption
--- when current version is 2.6.0 or higher. 
+-- when current version is 2.6.0 or higher.
 --
 
 
--- Replace xxx with your IP Address 
+-- Replace xxx with your IP Address
 -- bind-address        = xxx.xxx.xxx.xxx
 -- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
 -- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
@@ -65,10 +65,10 @@
 -- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
 -- -- a tester VPGSQL9.5 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid ON CONFLICT DO NOTHING;
 -- -- avant 9.5 faire en variant x pour qu'au 2eme passage, le premier doublon soit dans la tabel cible
--- -- INSERT INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) 
--- -- SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author 
+-- -- INSERT INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif)
+-- -- SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author
 -- -- from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e
--- -- WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid 
+-- -- WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid
 -- -- AND NOT EXISTS (SELECT 1 FROM llx_product_lot as b WHERE b.fk_product=ps.fk_product and pb.batch=b.batch) LIMIT x
 
 
@@ -145,13 +145,13 @@ update llx_product_batch set batch = '' where batch = 'Non défini';
 update llx_stock_mouvement set batch = null where batch = 'Non d&eacute;fini';
 update llx_stock_mouvement set batch = null where batch = 'Non défini';
 
-DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
-DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
+DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product);
+DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product);
 DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
 
 
 
--- Merge splitted lines into one in table llx_product_batch 
+-- Merge splitted lines into one in table llx_product_batch
 DROP TABLE tmp_llx_product_batch;
 DROP TABLE tmp_llx_product_batch2;
 CREATE TABLE tmp_llx_product_batch AS select fk_product_stock, eatby, sellby, batch, SUM(qty) as qty, COUNT(rowid) as nb FROM llx_product_batch GROUP BY fk_product_stock, eatby, sellby, batch HAVING COUNT(rowid) > 1;
@@ -169,13 +169,16 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
+-- Fix: delete orphelins in llx_societe_commerciaux
+DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+
 -- Fix: delete orphelins in product_association
 delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
 delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
 
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
-create table tmp_categorie as select * from llx_categorie; 
+create table tmp_categorie as select * from llx_categorie;
 -- select * from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
 delete from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
 drop table tmp_categorie;
@@ -316,6 +319,15 @@ delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_a
 drop table tmp_accounting_account_double;
 
 
+-- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
+drop table tmp_commande_extrafields_double;
+--select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
+create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
+--select * from tmp_links_double;
+delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
+drop table tmp_commande_extrafields_double;
+
+
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
 
 
@@ -388,7 +400,7 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
-delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
+delete from llx_receptiondet_batch where fk_elementdet = 0 or fk_elementdet IS NULL;
 
 
 delete from llx_menu where menu_handler = 'smartphone';
@@ -399,7 +411,7 @@ update llx_expedition set date_valid = NOW() where fk_statut = 1 and date_valid 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.element_duration) as y from llx_projet_task as pt, llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task' group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
 update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task') where pt.duration_effective <> (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task');
- 
+
 
 -- Remove duplicate of shipment mode (keep the one with tracking defined)
 drop table tmp_c_shipment_mode;
@@ -434,9 +446,9 @@ UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilati
 
 
 -- Clean product prices
---delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
+--delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05';
 -- Set product prices into llx_product with last price into llx_product_prices
---update llx_product as p set 
+--update llx_product as p set
 -- p.price = (select pp.price from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
 -- p.price_ttc = (select pp.price_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
 -- p.price_min = (select pp.price_min from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
@@ -494,7 +506,7 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 --ALTER TABLE llx_table modify column columnname datetime DEFAULT CURRENT_TIMESTAMP;
 
 
--- Backport a change of value into the hourly rate. 
+-- Backport a change of value into the hourly rate.
 -- update llx_element_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
 
@@ -504,14 +516,14 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
- 
+
 
 DELETE FROM llx_mrp_production where qty = 0;
 
 
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
- 
+
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
 
@@ -519,21 +531,21 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
 --Fix bad sign on multicompany column for customer invoice lines
 UPDATE llx_facturedet SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and subprice > 0) OR (multicurrency_subprice > 0 and subprice < 0));
 UPDATE llx_facturedet SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
-UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0)); 
-UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicompany column for customer invoices
-UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
-UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
-UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicurrency column for supplier invoice lines
 UPDATE llx_facture_fourn_det SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and pu_ht > 0) OR (multicurrency_subprice > 0 and pu_ht < 0));
 UPDATE llx_facture_fourn_det SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
-UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0)); 
-UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicompany column for customer invoices
-UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
-UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
-UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 
 
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
@@ -549,7 +561,7 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 --update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
 
 
--- TODO We should fix multicurrency_amount that are empty into llx_societe_remise_except, but we can't because we don't know what is the rate 
+-- TODO We should fix multicurrency_amount that are empty into llx_societe_remise_except, but we can't because we don't know what is the rate
 -- We may retreive info fro minvoice line by using fk_facture_line or fk_facture_supplier_line
 -- select * from llx_societe_remise_except where multicurrency_amount_ht = 0 and amount_ht <> 0;
 
@@ -577,7 +589,7 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account
 -- Note: pamount is always amount into the main currency
--- Note: pmulticurrencyamount is in the currency of invoice 
+-- Note: pmulticurrencyamount is in the currency of invoice
 -- Note: amount_main_currency must be NULL or amount in main currency of company (we set it when the currency of the bank account differs from main currency)
 -- DROP TABLE tmp_bank;
 -- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount, b.datec FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
@@ -598,6 +610,9 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- Delete department of regions linked to no coutry, then delete region with no country
 DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
 DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
+
+
+UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
 
 -- Drop duplicate indexes not named correctly and create the only one we should have
@@ -665,5 +680,3 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
-
-

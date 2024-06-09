@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=U krye një rikthim në të gjitha veprimet e
 ValidationOfPaymentFailed=Verifikimi i pagesës dështoi
 CardOwner=Mbajtësi i kartës
 PayPalBalance=Kredi Paypal
-OnlineSubscriptionPaymentLine=Abonimi në linjë i regjistruar në %s<br>Paguar nëpërmjet b0ecb2ec87f49fzpan class='span><span notranslate'><br>Adresa IP e origjinës: %s<br>Identifikimi i transaksionit: <spanf2000/01/2011 </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

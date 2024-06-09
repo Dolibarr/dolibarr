@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2023 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +71,8 @@ class PrintingDriver
 	 *  Return list of printing driver
 	 *
 	 *  @param  DoliDB  $db                 Database handler
-	 *  @param  integer  $maxfilenamelength  Max length of value to show
-	 *  @return array                       List of drivers
+	 *  @param  int		$maxfilenamelength	Max length of value to show
+	 *  @return array<string,string>		List of drivers
 	 */
 	public static function listDrivers($db, $maxfilenamelength = 0)
 	{

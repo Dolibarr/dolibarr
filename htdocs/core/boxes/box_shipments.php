@@ -38,17 +38,6 @@ class box_shipments extends ModeleBoxes
 	public $depends = array("expedition");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -60,7 +49,7 @@ class box_shipments extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->expedition->lire);
+		$this->hidden = !$user->hasRight('expedition', 'lire');
 	}
 
 	/**
@@ -71,7 +60,7 @@ class box_shipments extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->loadLangs(array('orders', 'sendings'));
 
 		$this->max = $max;
@@ -84,7 +73,9 @@ class box_shipments extends ModeleBoxes
 		$orderstatic = new Commande($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastCustomerShipments", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/expedition/list.php?sortfield=e.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('expedition', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -101,7 +92,7 @@ class box_shipments extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 			}
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -111,10 +102,10 @@ class box_shipments extends ModeleBoxes
 			if ($user->socid > 0) {
 				$sql.= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND sc.fk_user = ".((int) $user->id);
 			} else {
-				$sql .= " ORDER BY e.date_delivery, e.ref DESC ";
+				$sql .= " ORDER BY e.tms DESC, e.date_delivery DESC, e.ref DESC";
 			}
 			$sql .= $this->db->plimit($max, 0);
 
@@ -158,7 +149,7 @@ class box_shipments extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
-						'text' => $orderstatic->getNomUrl(1),
+						'text' => ($orderstatic->id > 0 ? $orderstatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
 

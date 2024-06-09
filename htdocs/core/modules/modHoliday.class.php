@@ -5,6 +5,7 @@
  * Copyright (C) 2011      Dimitri Mouillard 	<dmouillard@teclib.com>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,26 +222,26 @@ class modHoliday extends DolibarrModules
 		$this->export_icon[$r] = 'holiday';
 		$this->export_permission[$r] = array(array("holiday", "readall"));
 		$this->export_fields_array[$r] = array(
-			'd.rowid'=>"LeaveId", 'd.fk_type'=>'TypeOfLeaveId', 't.code'=>'TypeOfLeaveCode', 't.label'=>'TypeOfLeaveLabel', 'd.fk_user'=>'UserID',
-			'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
-			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID",
-			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login",
-			'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
-			'ua.login'=>"UserForApprovalLogin", 'd.description'=>'Description', 'd.statut'=>'Status'
+			'd.rowid' => "LeaveId", 'd.fk_type' => 'TypeOfLeaveId', 't.code' => 'TypeOfLeaveCode', 't.label' => 'TypeOfLeaveLabel', 'd.fk_user' => 'UserID',
+			'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.halfday' => 'HalfDay', 'none.num_open_days' => 'NbUseDaysCP',
+			'd.date_valid' => 'DateApprove', 'd.fk_validator' => "UserForApprovalID",
+			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login",
+			'ua.lastname' => "UserForApprovalLastname", 'ua.firstname' => "UserForApprovalFirstname",
+			'ua.login' => "UserForApprovalLogin", 'd.description' => 'Description', 'd.statut' => 'Status'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'd.rowid'=>"Numeric", 't.code'=>'Text', 't.label'=>'Text', 'd.fk_user'=>'Numeric',
-			'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
-			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric",
-			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text",
-			'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
-			'ua.login'=>"Text", 'd.description'=>'Text', 'd.statut'=>'Numeric'
+			'd.rowid' => "Numeric", 't.code' => 'Text', 't.label' => 'Text', 'd.fk_user' => 'Numeric',
+			'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'none.num_open_days' => 'NumericCompute',
+			'd.date_valid' => 'Date', 'd.fk_validator' => "Numeric",
+			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text",
+			'ua.lastname' => "Text", 'ua.firstname' => "Text",
+			'ua.login' => "Text", 'd.description' => 'Text', 'd.statut' => 'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'u.lastname'=>'user', 'u.firstname'=>'user', 'u.login'=>'user', 'ua.lastname'=>'user', 'ua.firstname'=>'user', 'ua.login'=>'user'
+			'u.lastname' => 'user', 'u.firstname' => 'user', 'u.login' => 'user', 'ua.lastname' => 'user', 'ua.firstname' => 'user', 'ua.login' => 'user'
 		);
 		//$this->export_alias_array[$r] = array('d.rowid'=>"idholiday");
-		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
+		$this->export_special_array[$r] = array('none.num_open_days' => 'getNumOpenDays');
 		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$keyforselect = 'holiday';

@@ -125,14 +125,14 @@ if ($action == 'setvalue' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_contacts');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -281,26 +281,26 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 $butlabel = $langs->trans("LDAPTestSynchroContact");
 $testlabel = 'test';
-$key = $conf->global->LDAP_KEY_CONTACTS;
-$dn = $conf->global->LDAP_CONTACT_DN;
-$objectclass = $conf->global->LDAP_CONTACT_OBJECT_CLASS;
+$key = getDolGlobalString('LDAP_KEY_CONTACTS');
+$dn = getDolGlobalString('LDAP_CONTACT_DN');
+$objectclass = getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS');
 
 show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'test') {
-		// Creation objet
+	if ($action == 'test') {
+		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -323,7 +323,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';

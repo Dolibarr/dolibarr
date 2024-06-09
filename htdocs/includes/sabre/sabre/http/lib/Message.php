@@ -88,7 +88,7 @@ abstract class Message implements MessageInterface
          * @var string|int|null
          */
         $contentLength = $this->getHeader('Content-Length');
-        if (is_int($contentLength) || ctype_digit($contentLength)) {
+        if (null !== $contentLength && (is_int($contentLength) || ctype_digit($contentLength))) {
             return stream_get_contents($body, (int) $contentLength);
         }
 
@@ -96,7 +96,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Returns the message body, as it's internal representation.
+     * Returns the message body, as its internal representation.
      *
      * This could be either a string, a stream or a callback writing the body to php://output.
      *
@@ -141,7 +141,7 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Returns a specific HTTP header, based on it's name.
+     * Returns a specific HTTP header, based on its name.
      *
      * The name must be treated as case-insensitive.
      * If the header does not exist, this method must return null.
@@ -172,7 +172,7 @@ abstract class Message implements MessageInterface
      * For every time the HTTP header appeared in the request or response, an
      * item will appear in the array.
      *
-     * If the header did not exists, this method will return an empty array.
+     * If the header did not exist, this method will return an empty array.
      *
      * @return string[]
      */
@@ -283,8 +283,6 @@ abstract class Message implements MessageInterface
 
     /**
      * Returns the HTTP version.
-     *
-     * @return string
      */
     public function getHttpVersion(): string
     {

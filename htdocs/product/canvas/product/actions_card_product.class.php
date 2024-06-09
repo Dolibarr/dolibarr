@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class ActionsCardProduct
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
 	/**
@@ -257,7 +258,7 @@ class ActionsCardProduct
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 

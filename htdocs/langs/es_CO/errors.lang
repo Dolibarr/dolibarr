@@ -2,7 +2,6 @@
 NoErrorCommitIsDone=Sin error, nos comprometemos
 ErrorButCommitIsDone=Errores encontrados pero validamos a pesar de esto
 ErrorBadValueForParamNotAString=Mal valor para su parámetro. Generalmente se adjunta cuando falta la traducción.
-ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorLoginAlreadyExists=El inicio de sesión %s ya existe.
 ErrorRecordNotFound=Registro no encontrado.
 ErrorRecordNotFoundShort=Extraviado

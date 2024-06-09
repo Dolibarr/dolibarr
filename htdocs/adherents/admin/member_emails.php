@@ -105,7 +105,7 @@ if ($action == 'updateall') {
 
 // Action to update or add a constant
 if ($action == 'update' || $action == 'add') {
-	$constlineid = GETPOST('rowid', 'int');
+	$constlineid = GETPOSTINT('rowid');
 	$constname = GETPOST('constname', 'alpha');
 
 	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));
@@ -152,6 +152,8 @@ print dol_get_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
+
+print '<br>';
 
 form_constantes($constantes, 3, '');
 

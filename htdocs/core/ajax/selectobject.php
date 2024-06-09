@@ -45,7 +45,7 @@ $extrafields = new ExtraFields($db);
 
 $objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);
 $htmlname = GETPOST('htmlname', 'aZ09');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $id = GETPOSTINT('id');
 $objectfield = GETPOST('objectfield', 'alpha');	// 'MyObject:field' or 'MyModule_MyObject:field' or 'MyObject:option_field' or 'MyModule_MyObject:option_field'
 
@@ -137,7 +137,11 @@ if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// The
 $searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
 // Add a security test to avoid to get content of all tables
-restrictedArea($user, $objecttmp->element, $id);
+if (!empty($objecttmp->module)) {
+	restrictedArea($user, $objecttmp->module, $id, $objecttmp->table_element, $objecttmp->element);
+} else {
+	restrictedArea($user, $objecttmp->element, $id);
+}
 
 
 /*
@@ -149,7 +153,6 @@ $form = new Form($db);
 top_httphead($outjson ? 'application/json' : 'text/html');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-//print_r($_GET);
 
 $arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 

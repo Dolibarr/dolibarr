@@ -159,10 +159,10 @@ InfoTransData=Valor: %s <br> Metode: %s <br> Data: %s
 InfoRejectSubject=Pedido de pagamento por débito direto recusado
 InfoRejectMessage=Olá, <br> <br> a ordem de pagamento de débito directo da factura  %s relacionada com a empresa %s, com uma quantidade de %s foi recusada pelo banco. <br> <br> <br> <br>%s
 ModeWarning=Opção para o modo real não foi definido, nós paramos depois desta simulação
-ErrorCompanyHasDuplicateDefaultBAN=empresa, companhia com Id. %s tem mais de um <span class=' padrão notranslate'>conta bancária</span>. Não há como saber qual usar.
+ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know which one to use.
 ErrorICSmissing=ICS ausente em conta bancária %s
 TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=A quantidade total de Débito direto encomenda difere da soma das linhas
-WarningSomeDirectDebitOrdersAlreadyExists=Aviso: já existem alguns pedidos pendentes de Débito direto (%s) solicitados no valor de %s 
+WarningSomeDirectDebitOrdersAlreadyExists=Aviso: já existem alguns pedidos pendentes de Débito direto (%s) solicitados no valor de %s
 WarningSomeCreditTransferAlreadyExists=Aviso: já existem algumas transferências de crédito pendentes (%s) solicitadas no valor de %s
 UsedFor=Usado para %s
 Societe_ribSigned=Mandato SEPA assinado
@@ -171,4 +171,3 @@ SalaryWaitingWithdraw=Salários aguardando pagamento por transferência bancári
 RefSalary=Salário
 NoSalaryInvoiceToWithdraw=Nenhum salário esperando por um '%s'. Acesse a aba '%s' no cartão de salário para fazer uma solicitação.
 SalaryInvoiceWaitingWithdraw=Salários aguardando pagamento por transferência bancária
-

@@ -210,7 +210,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=ໃນບາງປະເທດ
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=ໃຊ້ທາງເລືອກນີ້ຖ້າອັນອື່ນບໍ່ເsuitາະສົມ
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=ລູກຄ້າທີ່ບໍ່ດີ <b> </b> ແມ່ນລູກຄ້າທີ່ປະຕິເສດທີ່ຈະຊໍາລະ ໜີ້ ຂອງລາວ.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=ທາງເລືອກນີ້ຖືກໃຊ້ເມື່ອການຊໍາລະເງິນບໍ່ສໍາເລັດເພາະວ່າບາງຜະລິດຕະພັນຖືກສົ່ງຄືນ
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=ຈຳນວນທີ່ຍັງບໍ່ໄດ້ຈ່າຍແມ່ນ <b>ຄ່າທຳນຽມທະນາຄານຕົວກາງ</b>, ຫັກອອກໂດຍກົງຈາກ b0aee8336583 >ຈຳນວນທີ່ຖືກຕ້ອງ<span class='notranslate'></b> ລູກຄ້າຈ່າຍໃຫ້.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=ຈໍານວນທີ່ບໍ່ໄດ້ຈ່າຍຈະບໍ່ຖືກຈ່າຍຍ້ອນວ່າມັນເປັນພາສີຫັກຢູ່ບ່ອນຈ່າຍ
 ConfirmClassifyPaidPartiallyReasonOtherDesc=ໃຊ້ຕົວເລືອກນີ້ຖ້າຄົນອື່ນທັງareົດບໍ່ເsuitableາະສົມ, ຕົວຢ່າງໃນສະຖານະການຕໍ່ໄປນີ້: <br> - ການຊໍາລະເງິນບໍ່ສໍາເລັດເພາະວ່າບາງຜະລິດຕະພັນຖືກສົ່ງຄືນ <br> - ຈໍານວນທີ່ອ້າງວ່າສໍາຄັນເກີນໄປເພາະວ່າມີສ່ວນຫຼຸດຖືກລືມ <br> ໃນທຸກກໍລະນີ, ຈໍານວນເງິນທີ່ອ້າງສິດເກີນໄປຕ້ອງໄດ້ຮັບການແກ້ໄຂ. ໃນລະບົບບັນຊີໂດຍການສ້າງບັນທຶກສິນເຊື່ອ.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>ຜູ້ສະໜອງທີ່ບໍ່ດີ</b> ເປັນຜູ້ສະໜອງທີ່ພວກເຮົາປະຕິເສດທີ່ຈະຈ່າຍເງິນ.

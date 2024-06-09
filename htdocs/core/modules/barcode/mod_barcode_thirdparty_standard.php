@@ -4,6 +4,8 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2022      Faustin Boitel <fboitel@enseirb-matmeca.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +52,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
 	public $searchcode; // Search string
 
 	public $numbitcounter; // Number of digits the counter
@@ -76,10 +73,11 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	}
 
 
-	/**		Return description of module
+	/**
+	 * Return description of module
 	 *
-	 * 		@param	Translate 		$langs		Object langs
-	 * 		@return string      			Description of module
+	 * @param	Translate 	$langs		Object langs
+	 * @return  string      			Description of module
 	 */
 	public function info($langs)
 	{
@@ -124,10 +122,10 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	Societe		$objthirdparty	Object third-party
+	 * @param	?Societe	$objthirdparty	Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objthirdparty = 0)
+	public function getExample($langs, $objthirdparty = null)
 	{
 		$examplebarcode = $this->getNextValue($objthirdparty, '');
 		if (!$examplebarcode) {
@@ -143,18 +141,18 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *  Return literal barcode type code from numerical rowid type of barcode
 	 *
-	 *	@param	Database    $db         Database
+	 *	@param	DoliDB    	$db         Database
 	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
-	public function literalBarcodeType($db, $type = '')
+	public function literalBarcodeType($db, $type = 0)
 	{
 		global $conf;
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-		$sql .= " WHERE rowid = '".$db->escape($type)."'";
+		$sql .= " WHERE rowid = ". (int) $type;
 		$sql .= " AND entity = ".((int) $conf->entity);
 		$result = $db->query($sql);
 		if ($result) {
@@ -173,13 +171,13 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objthirdparty     Object third-party
-	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	?CommonObject	$objthirdparty  Object third-party
+	 * @param	string			$type       	Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objthirdparty, $type = '')
+	public function getNextValue($objthirdparty = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
@@ -189,13 +187,8 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		}
 
-		// TODO
-
 		// Get Mask value
-		$mask = '';
-		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
-		}
+		$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 
 		if (empty($mask)) {
 			$this->error = 'NotConfigured';
@@ -209,24 +202,25 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 
 		$numFinal = get_next_value($db, $mask, 'societe', $field, $where, '', $now);
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
-		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
+		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 			$literaltype = '';
 			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
 			switch ($literaltype) {
 				case 'EAN13': //EAN13 rowid = 2
-					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
+					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
-							$eansum = barcode_gen_ean_sum($ean);
+						$eansum = barcode_gen_ean_sum($ean);
 						$ean .= $eansum; //substitute the las character by the key
 						$numFinal = $ean;
 					}
 					break;
-				// Other barcode cases with key could be written here
+					// Other barcode cases with key could be written here
 				default:
 					break;
 			}
 		}
 		//End barcode with key
+
 		return  $numFinal;
 	}
 
@@ -247,10 +241,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
 	{
-		global $conf;
-
-		//var_dump($code.' '.$thirdparty->ref.' '.$thirdparty_type);exit;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;
@@ -278,6 +268,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		}
 
 		dol_syslog(get_class($this)."::verif type=".$thirdparty_type." result=".$result);
+
 		return $result;
 	}
 
@@ -286,9 +277,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Societe		$thirdparty	Objet third-party
+	 *	@param	Societe		$thirdparty	Object third-party
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $thirdparty)

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array("mrp", "companies"));
 
 // Get parameters
-$id   = GETPOST('id', 'int');
+$id   = GETPOSTINT('id');
 $ref  = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -94,7 +94,7 @@ $title = $langs->trans('BillOfMaterials');
 
 $help_url = 'EN:Module_BOM';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_notes');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

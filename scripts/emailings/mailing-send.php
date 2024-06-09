@@ -25,6 +25,7 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
+
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -36,12 +37,12 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." (ID_MAILING|all) [userloginforsignature] [maxnbofemails]\n";
-	exit(-1);
+	exit(1);
 }
 
 $id = $argv[1];
@@ -52,7 +53,7 @@ if (isset($argv[2]) || !empty($argv[2])) {
 	$login = '';
 }
 
-$max = 0;
+$max = -1;
 
 if (isset($argv[3]) || !empty($argv[3])) {
 	$max = $argv[3];
@@ -75,8 +76,10 @@ $langs->loadLangs(array("main", "mails"));
 
 if (!isModEnabled('mailing')) {
 	print 'Module Emailing not enabled';
-	exit(-1);
+	exit(1);
 }
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -95,7 +98,7 @@ if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $user = new User($db);
@@ -105,7 +108,7 @@ if (!empty($login)) {
 }
 
 // We get list of emailing id to process
-$sql = "SELECT m.rowid";
+$sql = "SELECT m.rowid, m.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.statut IN (1,2)";
 if ($id != 'all') {
@@ -119,11 +122,17 @@ if ($resql) {
 	$j = 0;
 
 	if ($num) {
-		for ($j = 0; $j < $num; $j++) {
+		for ($j = 0; $j < $num && $max != 0; $j++) {
 			$obj = $db->fetch_object($resql);
 
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
+
+			if ($obj->status == 1) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 2 WHERE rowid = ".((int) $obj->rowid);
+				$result_sql = $db->query($sql);
+				dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
+			}
 
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
@@ -151,7 +160,7 @@ if ($resql) {
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
-				$sql2 .= " LIMIT " . getDolGlobalString('MAILING_LIMIT_SENDBYCLI');
+				$sql2 .= " LIMIT " . getDolGlobalInt('MAILING_LIMIT_SENDBYCLI');
 			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), $max);
 			} elseif ($max > 0) {
@@ -185,6 +194,7 @@ if ($resql) {
 						$now = dol_now();
 
 						$obj = $db->fetch_object($resql2);
+						$max--;
 
 						// sendto en RFC2822
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">");
@@ -405,25 +415,16 @@ if ($resql) {
 						$i++;
 					}
 				} else {
-					$mesg = "Emailing id ".$id." has no recipient to target";
+					//$mesg = "Emailing id ".$id." has no recipient to target";
 					print $mesg."\n";
 					dol_syslog($mesg, LOG_ERR);
-				}
 
-				// Loop finished, set global statut of mail
-				$statut = 2;
-				if (!$nbko) {
-					$statut = 3;
-				}
+					// Loop finished, set global statut of mail
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
+					$result_sql = $db->query($sql);
 
-				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid=".((int) $id);
-
-				dol_syslog("update global status", LOG_DEBUG);
-				print "Update status of emailing id ".$id." to ".$statut."\n";
-				$resqlenddate = $db->query($sqlenddate);
-				if (!$resqlenddate) {
-					dol_print_error($db);
-					$error++;
+					dol_syslog("update global status", LOG_DEBUG);
+					print "Update status of emailing id ".$id." to ".$statut."\n";
 				}
 			} else {
 				dol_print_error($db);

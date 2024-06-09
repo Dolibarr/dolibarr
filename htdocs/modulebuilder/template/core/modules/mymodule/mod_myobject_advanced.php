@@ -122,11 +122,11 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      	        Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

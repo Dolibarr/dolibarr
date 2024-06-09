@@ -1,0 +1,78 @@
+#!/bin/sh
+# To install this precommit file: put this file in your local repo in .git/hooks directory and make it executable.
+# You may need to set th DIRPHPCS to the path to your phpcs install.
+# If phpcs checks fail and AUTOFIX is set to 1, then it run phpcbf to fix automatically the syntax, and git commit is canceled.
+# If you have a multiprocessor computer, you can add to the option --parallel=xx
+# When running git commit, it first execute this file checking only modified files, so it is faster than running on all files
+# To run the fix manually: cd ~/git/dolibarr; phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true "fileordir"
+
+# NOTE: Use the pre-commit hook file with the tool pre-commit install is a better choice.
+
+PROJECT=$(php -r "echo dirname(dirname(dirname(realpath('$0'))));")
+STAGED_FILES_CMD=$(git diff --cached --name-only --diff-filter=ACMR HEAD | grep -v '/includes/'| grep \\\\.php)
+DIRPHPCS=""
+AUTOFIX=1
+
+echo "Running precommit hook in .git/hooks/pre-commit" 1>&2
+
+# Determine if a file list is passed
+if [ "$#" -eq 1 ]
+then
+	oIFS=$IFS
+	IFS=$(printf '\n')
+	SFILES="$1"
+	IFS=$oIFS
+fi
+SFILES=${SFILES:-$STAGED_FILES_CMD}
+
+echo "Checking PHP Lint with php -l ..."
+
+for FILE in $SFILES
+do
+	php -l -d display_errors=0 "$PROJECT/$FILE"
+
+	result1=$?
+
+	if [ "x$result1" != "x0" ]
+	then
+		echo "Fix the error before commit." 1>&2
+		exit 1
+	fi
+	# shellcheck disable=2089
+	FILES="$FILES '$PROJECT/$FILE'"
+done
+
+
+if [ "$FILES" != "" ]
+then
+	echo "Running PHPCS Code Sniffer..."
+
+	# Check Dolibarr standard
+	# shellcheck disable=2086,2090
+	"${DIRPHPCS}phpcs" -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+
+	# Check a common standard
+	#${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=PSR2 --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+
+	result2=$?
+
+	if [ "x$result2" != "x0" ]
+	then
+		# Fix standard errors
+		if [ "x$AUTOFIX" != "x0" ]
+		then
+			# shellcheck disable=2086,2090
+			"${DIRPHPCS}phpcbf" -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+
+			#${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+
+			echo "Found some errors in syntax rules. An automatic fix has been applied. Check it before commit." 1>&2
+			exit 1
+		else
+			echo "Found some errors in syntax rules. Fix the error(s) before commit." 1>&2;
+			exit 1
+		fi
+	fi
+fi
+
+exit 0

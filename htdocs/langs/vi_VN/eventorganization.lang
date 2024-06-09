@@ -88,6 +88,7 @@ PriceOfRegistration=Giá đăng ký
 PriceOfRegistrationHelp=Giá phải trả để đăng ký hoặc tham gia sự kiện
 PriceOfBooth=Giá đăng ký đứng gian hàng
 PriceOfBoothHelp=Giá đăng ký đứng gian hàng
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Liên kết ICS cho hội nghị
 ConferenceOrBoothInformation=Thông tin hội nghị hoặc gian hàng
 Attendees=Người tham dự

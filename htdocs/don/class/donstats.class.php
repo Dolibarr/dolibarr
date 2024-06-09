@@ -28,7 +28,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
 /**
  *	Class to manage donations statistics
  */
@@ -57,6 +56,10 @@ class DonationStats extends Stats
 	 */
 	public $where;
 
+	/**
+	 * @var string JOIN
+	 */
+	public $join;
 
 	/**
 	 * Constructor
@@ -65,8 +68,10 @@ class DonationStats extends Stats
 	 * @param 	int		$socid	   	Id third party for filter
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
+	 * @param   int		$typentid  	Id of type of third party for filter
+	 * @param   int		$status    	Status of donation for filter
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $status = 4)
 	{
 		global $conf;
 
@@ -76,17 +81,31 @@ class DonationStats extends Stats
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
+		$this->join = '';
+
+		if ($status == 0 || $status == 1 || $status == 2) {
+			$this->where = ' d.fk_statut IN ('.$this->db->sanitize($status).')';
+		} elseif ($status == 3) {
+			$this->where = ' d.fk_statut IN (-1)';
+		} elseif ($status == 4) {
+			$this->where = ' d.fk_statut >= 0';
+		}
 
 		$object = new Don($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as d";
-		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
-		//$this->field='weight';	// Warning, unit of weight is NOT USED AND MUST BE
-		$this->where .= " d.fk_statut > 0"; // Not draft and not cancelled
 
-		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
+		if ($socid !== "-1" && $socid > 0) {
+			$this->where .= " AND d.fk_soc = ".((int) $socid);
+		}
+
 		$this->where .= " AND d.entity = ".$conf->entity;
 		if ($this->userid > 0) {
-			$this->where .= ' WHERE c.fk_user_author = '.((int) $this->userid);
+			$this->where .= ' AND d.fk_user_author = '.((int) $this->userid);
+		}
+
+		if ($typentid) {
+			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = d.fk_soc';
+			$this->where .= ' AND s.fk_typent = '.((int) $typentid);
 		}
 	}
 
@@ -101,13 +120,13 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
+		$sql .= $this->join;
 		$sql .= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getNbByMonth($year, $sql, $format);
-		return $res;
+		return $this->_getNbByMonth($year, $sql, $format);
 	}
 
 	/**
@@ -120,6 +139,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%Y') as dm, COUNT(*) as nb, SUM(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
+		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -138,7 +158,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, sum(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -157,7 +177,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, avg(d.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -175,6 +195,7 @@ class DonationStats extends Stats
 	{
 		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
+		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

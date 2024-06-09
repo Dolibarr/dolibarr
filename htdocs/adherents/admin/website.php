@@ -63,7 +63,7 @@ if ($action == 'update') {
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
 	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
+	$forcetype = GETPOSTINT('MEMBER_NEWFORM_FORCETYPE');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
@@ -198,7 +198,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 
-	print '<br>';
+	print '<br><br>';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -220,6 +220,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
+	$morphys = array();
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
@@ -247,7 +248,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1);
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1, false, 0, 1);
 	print "</td></tr>\n";
 
 	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
@@ -255,7 +256,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowMembershipTypesTable");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Show "vote allowed" setting for membership types
@@ -263,7 +264,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowVotesAllowed");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

@@ -38,17 +38,7 @@ class box_comptes extends ModeleBoxes
 	public $boxlabel = "BoxCurrentAccounts";
 	public $depends  = array("banque"); // Box active if module banque active
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -68,7 +58,7 @@ class box_comptes extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = empty($user->rights->banque->lire);
+		$this->hidden = !$user->hasRight('banque', 'lire');
 	}
 
 	/**
@@ -86,22 +76,23 @@ class box_comptes extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
 		if ($user->hasRight('banque', 'lire')) {
-			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
+			$sql = "SELECT b.rowid, b.ref, b.label, b.bank, b.number, b.courant, b.clos, b.rappro, b.url";
 			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
-			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
+			$sql .= ", b.domiciliation as address, b.proprio, b.owner_address";
 			$sql .= ", b.account_number, b.currency_code";
 			$sql .= ", b.min_allowed, b.min_desired, comment";
 			$sql .= ', b.fk_accountancy_journal';
 			$sql .= ', aj.code as accountancy_journal';
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid = b.fk_accountancy_journal';
 			$sql .= " WHERE b.entity = ".$conf->entity;
 			$sql .= " AND clos = 0";
-			//$sql.= " AND courant = 1";
 			$sql .= " ORDER BY label";
+
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);

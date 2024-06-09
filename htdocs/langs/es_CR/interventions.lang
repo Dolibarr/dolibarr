@@ -17,7 +17,6 @@ DocumentModelStandard=Modelo estándar de documento para intervenciones
 InterventionCardsAndInterventionLines=Intervenciones y líneas de intervención
 InterventionClassifyBilled=Marcar como "Facturado"
 InterventionClassifyDone=Marcar como "Listo"
-StatusInterInvoiced=Facturada
 SendInterventionByMail=Enviar intervención por correo
 InterventionClassifiedBilledInDolibarr=Intervención %s marcada como facturada
 InterventionClassifiedUnbilledInDolibarr=Intervención %s marcada como sin facturar

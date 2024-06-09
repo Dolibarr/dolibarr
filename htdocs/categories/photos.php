@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id      = GETPOST('id', 'int');
+$id      = GETPOSTINT('id');
 $label   = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
 if ($id == '' && $label == '') {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -82,8 +83,8 @@ if (empty($reshook)) {
 			$file = $_FILES['userfile'];
 			if (is_array($file['name']) && count($file['name']) > 0) {
 				foreach ($file['name'] as $i => $name) {
-					if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
-						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+					if (empty($file['tmp_name'][$i]) || (getDolGlobalInt('MAIN_UPLOAD_DOC') * 1000) <= filesize($file['tmp_name'][$i])) {
+						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'), 'errors');
 						unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
 					}
 				}
@@ -95,12 +96,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
-		$object->delete_photo($upload_dir."/".$_GET["file"]);
+	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
+		$object->delete_photo($upload_dir."/".GETPOST("file"));
 	}
 
-	if ($action == 'addthumb' && $_GET["file"]) {
-		$object->addThumbs($upload_dir."/".$_GET["file"]);
+	if ($action == 'addthumb' && GETPOST("file")) {
+		$object->addThumbs($upload_dir."/".GETPOST("file"));
 	}
 }
 
@@ -133,10 +134,10 @@ if ($object->id) {
 	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
-	 * Confirmation de la suppression de photo
-	*/
+	 * Confirmation deletion of picture
+	 */
 	if ($action == 'delete') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&file='.urlencode(GETPOST("file")), $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
 	print '<br>';

@@ -49,8 +49,8 @@ foreach ($dirmenus as $dirmenu) {
 
 $error = 0;
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This can be a big page.  The execution time limit is increased.
+// This setting can only be changed when the 'safe_mode' is inactive.
 $err = error_reporting();
 error_reporting(0); // Disable all errors
 //error_reporting(E_ALL);
@@ -63,7 +63,7 @@ error_reporting($err);
  */
 
 if ($action == 'update' && !$cancel) {
-	$_SESSION["mainmenu"] = "home"; // Le gestionnaire de menu a pu changer
+	$_SESSION["mainmenu"] = "home"; // The menu manager may have changed
 
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -124,13 +124,14 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-menus');
 
 print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
 $head[$h][1] = $langs->trans("MenuHandlers");
 $head[$h][2] = 'handler';
@@ -167,17 +168,17 @@ print '</tr>';
 // Menu top
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 print '<td>';
-$formadmin->select_menu(!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? $conf->global->MAIN_MENU_STANDARD : $conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? '' : ' disabled');
+$formadmin->select_menu(getDolGlobalString('MAIN_MENU_STANDARD_FORCED', getDolGlobalString('MAIN_MENU_STANDARD')), 'MAIN_MENU_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? '' : ' disabled');
 print '</td>';
 print '<td>';
-$formadmin->select_menu(!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? $conf->global->MAIN_MENUFRONT_STANDARD : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? '' : ' disabled');
+$formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', getDolGlobalString('MAIN_MENUFRONT_STANDARD')), 'MAIN_MENUFRONT_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? '' : ' disabled');
 print '</td>';
 print '</tr>';
 
 // Menu smartphone
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 print '<td>';
-$formadmin->select_menu(!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? $conf->global->MAIN_MENU_SMARTPHONE : $conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
+$formadmin->select_menu(getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENU_SMARTPHONE')), 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
 
 if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
 	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE))) {
@@ -186,7 +187,7 @@ if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone
 
 print '</td>';
 print '<td>';
-$formadmin->select_menu(!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? $conf->global->MAIN_MENUFRONT_SMARTPHONE : $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
+$formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')), 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
 
 if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
 	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE))) {

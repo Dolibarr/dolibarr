@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ if (empty($mode)) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 
-$search_status = GETPOST('search_statut', 'int') ? GETPOST('search_statut', 'int') : GETPOST('search_status', 'int');
-if ($search_status === '') {
+$search_status = GETPOST('search_status', 'intcomma');
+if ($search_status == '') {
 	$search_status = '1';
 }
 
@@ -103,7 +103,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
 $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
@@ -114,7 +114,7 @@ if (($search_employee != '' && $search_employee >= 0)) {
 }
 $sqlfilter= '';
 if (!empty($filters)) {
-	$sqlfilter = join(' AND ', $filters);
+	$sqlfilter = implode(' AND ', $filters);
 }
 // Load hierarchy of users
 $user_arbo_all = $userstatic->get_full_tree(0, '');
@@ -140,11 +140,11 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['id'];
+		$userstatic->ref = (string) $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
-		$userstatic->statut = $val['statut'];
+		$userstatic->status = $val['statut'];
 		$userstatic->email = $val['email'];
 		$userstatic->gender = $val['gender'];
 		$userstatic->socid = $val['fk_soc'];
@@ -196,17 +196,30 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 				if (!empty($user_arbo_all[$idparent])) {
 					$val = $user_arbo_all[$idparent];
 					$userstatic->id = $val['id'];
-					$userstatic->ref = $val['id'];
+					$userstatic->ref = (string) $val['id'];
 					$userstatic->login = $val['login'];
 					$userstatic->firstname = $val['firstname'];
 					$userstatic->lastname = $val['lastname'];
-					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
 					$userstatic->email = $val['email'];
 					$userstatic->gender = $val['gender'];
 					$userstatic->socid = $val['fk_soc'];
 					$userstatic->admin = $val['admin'];
 					$userstatic->entity = $val['entity'];
 					$userstatic->photo = $val['photo'];
+
+					$entity = $val['entity'];
+					$entitystring = '';
+
+					// TODO Set of entitystring should be done with a hook
+					if (isModEnabled('multicompany') && is_object($mc)) {
+						if (empty($entity)) {
+							$entitystring = $langs->trans("AllEntities");
+						} else {
+							$mc->getInfo($entity);
+							$entitystring = $mc->label;
+						}
+					}
 
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
@@ -238,7 +251,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					// We should not be here. If a record has a parent id, parent id should be into $user_arbo_all
 					$data[$key]['fk_menu'] = -2;
 					if (empty($data[-2])) {
-						$li = '<span class="opacitymedium">'.$langs->trans("ParentIDDoesNotExistAnymore").'</span>';
+						$li = '<span class="opacitymedium">'.$langs->trans("WarningParentIDDoesNotExistAnymore").'</span>';
 						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
 						$data[-2] = array(
 							'rowid'=>'-2',
@@ -284,7 +297,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste nohover centpercent">';
 
 	print '<tr class="liste_titre_filter">';

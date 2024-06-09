@@ -39,8 +39,8 @@ $error = 0;
 $action = GETPOST('action', 'aZ09');
 
 $id = GETPOSTINT('id');
-$ikoffset = GETPOSTINT('ikoffset');
-$coef = (float) price2num(GETPOST('coef'));
+$ikoffset = (float) price2num(GETPOST('ikoffset', 'alpha'));
+$coef = (float) price2num(GETPOST('coef', 'alpha'));
 $fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
 $fk_range = GETPOSTINT('fk_range');
 
@@ -59,7 +59,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 	}
 
@@ -85,7 +85,7 @@ if ($action == 'updateik') {
 	if ($id > 0) {
 		$result = $expIk->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $expIk->error, $expIk->errors);
+			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 
 		$expIk->delete($user);
@@ -102,7 +102,7 @@ $rangesbycateg = $expIk->getAllRanges();
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_ik');
 
 $form = new Form($db);
 

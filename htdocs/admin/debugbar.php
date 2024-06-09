@@ -49,8 +49,8 @@ $action = GETPOST('action', 'aZ09');
 if ($action == 'set') {
 	$db->begin();
 
-	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
-	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
+	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOSTINT('DEBUGBAR_LOGS_LINES_NUMBER'), 'chaine', 0, '', 0);
+	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOSTINT('DEBUGBAR_USE_LOG_FILE'), 'chaine', 0, '', 0);
 	if ($result1 < 0 || $result2 < 0) {
 		$error++;
 	}
@@ -69,7 +69,7 @@ if ($action == 'set') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-debugbar');
 
 $form = new Form($db);
 

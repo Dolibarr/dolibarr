@@ -40,16 +40,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 	public $version = 'development';
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -67,7 +57,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
 		//$this->enabled = 1;
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 	}
 
 	/**
@@ -102,7 +92,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$colorseriesstat = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
-		$sql .= " WHERE active=1";
+		$sql .= " WHERE active = 1";
 		$sql .= " AND cls.code <> 'LOST'";
 		$sql .= " AND cls.code <> 'WON'";
 		$sql .= $this->db->order('cls.rowid', 'ASC');
@@ -196,6 +186,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$data = array('');
 				$customlabels = array();
 				$total = 0;
+				$maxamount = 0;
 				foreach ($listofstatus as $status) {
 					$customlabel = '';
 					$labelStatus = '';
@@ -208,8 +199,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$labelStatus = $listofopplabel[$status];
 						}
 						$amount = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+						$customlabel = $amount."€";
+
 						$data[] = $amount;
-						$customlabel = $amount;
 						$liststatus[] = $labelStatus;
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
@@ -217,9 +209,21 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$stringtoprint .= '<td class="nowraponall right amount"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 							$stringtoprint .= "</tr>\n";
 						}
+						$customlabels[] = $customlabel;
+						if ($maxamount < $amount) {
+							$maxamount = $amount;
+						}
 					}
-					$customlabels[] = $customlabel;
 				}
+
+				// Permit to have a bar if value inferior to a certain value
+				$valuetoaddtomindata = $maxamount / 100;
+				foreach ($data as $key => $value) {
+					if ($value != "") {
+						$data[$key] = $valuetoaddtomindata + $value;
+					}
+				}
+
 				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

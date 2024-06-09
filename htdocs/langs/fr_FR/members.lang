@@ -77,7 +77,6 @@ ConfirmDeleteMemberType=Êtes-vous sur de vouloir supprimer ce type d' adhérent
 MemberTypeDeleted=Type d'adhérent supprimé
 MemberTypeCanNotBeDeleted=Ce type d'adhérent ne peut pas être supprimé
 NewSubscription=Nouvelle cotisation
-NewMembership=Nouvelle cotisation
 NewSubscriptionDesc=Ce formulaire permet de vous inscrire comme nouvel adhérent de l'association. Pour un renouvellement (si vous êtes déjà adhérent), contactez plutôt l'association par email %s.
 Subscription=Adhésion / cotisation
 AnyAmountWithAdvisedAmount=N'importe quel montant de votre choix, recommandé %s
@@ -239,11 +238,12 @@ MemberFirstname=Prénom du membre
 MemberLastname=Nom de famille du membre
 MemberCodeDesc=Code membre, unique pour tous les membres
 MemberSubscriptionStartFirstDayOf=La date de début d'adhésion correspond au premier jour de
-MemberSubscriptionStartAfter=Délai minimum avant l'entrée en vigueur de la date de début d'une cotisation hors renouvellements (exemple +3m = +3 mois, -5d = -5 jours, +1Y = +1 an) 
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+MemberSubscriptionStartAfter=Délai minimum avant l'entrée en vigueur de la date de début d'une cotisation hors renouvellements (exemple +3m = +3 mois, -5d = -5 jours, +1Y = +1 an)
+SubscriptionLinkedToConciliatedTransaction=L'adhésion est liée à une transaction rapprochée, donc cette modification n'est pas autorisée.
+ConfirmMassSubsriptionCreation=Confirmer la création de cotisation
+ConfirmMassSubsriptionCreationQuestion=Êtes-vous sûr de vouloir créer la/les %s cotisation(s) sélectionnée(s) ?
+XSubsriptionCreated=%s cotisation(s) créée(s)
+XSubsriptionErrors=%s cotisation(s) sont en erreur
 CreateSubscription=Créer cotisation
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Aucune action complémentaire d'enregistrement ne sera exécutée avec cette action de masse.
+NewMembership=Nouvelle adhésion

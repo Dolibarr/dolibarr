@@ -35,13 +35,13 @@ DeleteAContract=Fshi një kontratë
 ActivateAllOnContract=Aktivizoni të gjitha shërbimet
 CloseAContract=Mbyllni një kontratë
 ConfirmDeleteAContract=Je i sigurt që dëshiron ta fshish këtë kontratë dhe të gjitha shërbimet e saj?
-ConfirmValidateContract=Jeni i sigurt që dëshironi ta vërtetoni këtë kontratë me emrin <b>%s<span class='notranslate'>b09a4b739f17f8z ?
+ConfirmValidateContract=Are you sure you want to validate this contract under name <b>%s</b>?
 ConfirmActivateAllOnContract=Kjo do të hapë të gjitha shërbimet (ende jo aktive). Jeni i sigurt që dëshironi të hapni të gjitha shërbimet?
 ConfirmCloseContract=Kjo do të mbyllë të gjitha shërbimet (të skaduara ose jo). Jeni i sigurt që dëshironi ta mbyllni këtë kontratë?
-ConfirmCloseService=Jeni i sigurt që dëshironi ta mbyllni këtë shërbim me datë <b>%s<span class='notranslate'></b></s0 ?
+ConfirmCloseService=Are you sure you want to close this service with date <b>%s</b>?
 ValidateAContract=Vërtetoni një kontratë
 ActivateService=Aktivizoni shërbimin
-ConfirmActivateService=Jeni i sigurt që dëshironi ta aktivizoni këtë shërbim me datë <b>%s<span class='notranslate'>b09a4b739f17f>z ?
+ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b>?
 RefContract=Referenca e kontratës
 DateContract=Data e kontratës
 DateServiceActivate=Data e aktivizimit të shërbimit
@@ -90,7 +90,7 @@ NoteListOfYourExpiredServices=Kjo listë përmban vetëm shërbimet e kontratave
 StandardContractsTemplate=Modeli i kontratave standarde
 ContactNameAndSignature=Për %s, emri dhe nënshkrimi:
 OnlyLinesWithTypeServiceAreUsed=Vetëm linjat me llojin "Shërbim" do të klonohen.
-ConfirmCloneContract=Jeni i sigurt që doni të klononi kontratën <b>%s<span class='notranslate'>b09a4b739f17f8z></s0?
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Data më e ulët e planifikuar e përfundimit të shërbimeve aktive
 SendContractRef=Informacioni i kontratës __REF__
 OtherContracts=Kontrata të tjera

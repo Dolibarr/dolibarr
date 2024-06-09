@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $hookmanager->initHooks(array('rowinterface'));
 
+$roworder = GETPOST('roworder', 'alpha', 3);
+$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
+$fk_element = GETPOST('fk_element', 'aZ09', 3);
+$element_id = GETPOSTINT('element_id', 3);
+
+
 // Security check
 // This is done later into view.
 
@@ -62,18 +69,13 @@ $hookmanager->initHooks(array('rowinterface'));
 
 top_httphead();
 
+dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
+
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
 if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
-	&& GETPOST('fk_element', 'aZ09', 3) && GETPOST('element_id', 'int', 3)) {
-	$roworder = GETPOST('roworder', 'alpha', 3);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
-	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOST('element_id', 'int', 3);
-
-	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
-
+	&& GETPOST('fk_element', 'aZ09', 3) && GETPOSTINT('element_id', 3)) {
 	// Make test on permission
 	$perm = 0;
 	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {
@@ -126,7 +128,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
-	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	$parameters = array('roworder' => &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
 	$row = new GenericObject($db);
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;

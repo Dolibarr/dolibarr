@@ -58,10 +58,10 @@ function shipping_prepare_head($object)
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
-			// Take first one element of array
+			// Take first element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 
-			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;
+			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".((int) $tmp);
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -75,7 +75,7 @@ function shipping_prepare_head($object)
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".((int) $object->id);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -241,7 +241,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$warehousestatic = new Entrepot($db);
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
-	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
+	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot as warehouse_id,";
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
@@ -252,7 +252,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
-	$sql .= " AND obj.rowid = ed.fk_origin_line";
+	$sql .= " AND obj.rowid = ed.fk_elementdet";
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
 		$sql .= $filter;
@@ -361,7 +361,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					// Add description in form
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($objp->description) && $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
+						print (!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '') : '');
 					}
 
 					print '</td>';
@@ -406,7 +406,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					print '</td>';
 				}
 
-				// Batch number managment
+				// Batch number management
 				/*TODO Add link to expeditiondet_batch
 				if (!empty($conf->productbatch->enabled))
 				{
@@ -438,7 +438,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 				}*/
 
-				// Informations on receipt
+				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
@@ -450,7 +450,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
-						// $expedition->fk_origin_line = id of det line of order
+						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
 						// $receiving->origin may be 'shipping'
 						// $receiving->origin_id may be id of shipping

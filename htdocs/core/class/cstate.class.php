@@ -31,14 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 class Cstate extends CommonDict
 {
 	/**
-	 * @var int ID
+	 * @var int         The ID of the state
 	 */
 	public $rowid;
 
+	/**
+	 * @var string      The code of the state
+	 *                  (ex: LU0011, MA12, 07, 0801, etc.)
+	 */
 	public $code_departement;
 
 	/**
-	 * @var string name
+	 * @var string      The name of the state
 	 */
 	public $name = '';
 
@@ -53,7 +57,7 @@ class Cstate extends CommonDict
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -80,7 +84,7 @@ class Cstate extends CommonDict
 			$this->nom = trim($this->nom);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -130,8 +134,8 @@ class Cstate extends CommonDict
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param      int		$id    	Id object
-	 *  @param		string	$code	Code
+	 *  @param      int		$id    	State ID
+	 *  @param		string	$code	State code
 	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
@@ -174,7 +178,7 @@ class Cstate extends CommonDict
 	/**
 	 *  Update object into database
 	 *
-	 *  @param      User	$user        User that modify
+	 *  @param      User	$user        User who updates
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
@@ -190,7 +194,7 @@ class Cstate extends CommonDict
 			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -266,7 +270,7 @@ class Cstate extends CommonDict
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)

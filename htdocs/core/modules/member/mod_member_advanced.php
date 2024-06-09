@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,33 +32,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_advanced extends ModeleNumRefMembers
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+	// variables inherited from ModeleNumRefMembers class
+	public $name = 'Advanced';
 	public $version = 'dolibarr';
 
+	// variables not inherited
+
 	/**
-	 * prefix
-	 *
-	 * @var string
+	 *  @var string
 	 */
 	public $prefix = 'MEM';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Advanced';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *  Return description of numbering module
@@ -87,7 +79,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
@@ -125,7 +117,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 	 *
 	 *  @param  Societe		$objsoc		Object third party
 	 *  @param  Adherent	$object		Object we need next value for
-	 *  @return	string					Value if OK, 0 if KO
+	 *  @return	string|-1				Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -158,7 +150,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_member_advanced::getNextValue return ".$this->prefix.$yymm."-".$num, LOG_INFO);

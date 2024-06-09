@@ -8,6 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +26,13 @@
 
 /**
  *	\file       htdocs/core/db/pgsql.class.php
- *	\brief      Fichier de la classe permettant de gerer une base pgsql
+ *	\brief      Fichier de la class permettant de gerer une base pgsql
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
- *	Class to drive a Postgresql database for Dolibarr
+ *	Class to drive a PostgreSQL database for Dolibarr
  */
 class DoliDBPgsql extends DoliDB
 {
@@ -51,11 +52,11 @@ class DoliDBPgsql extends DoliDB
 	const VERSIONMIN = '9.0.0'; // Version min database
 
 	/**
-	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by Postgresql driver
+	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by PostgreSQL driver
 	 */
 	public $unescapeslashquot = false;
 	/**
-	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of sting using '' and not \'
+	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of string using '' and not \'
 	 */
 	public $standard_conforming_strings = false;
 
@@ -67,12 +68,12 @@ class DoliDBPgsql extends DoliDB
 
 	/**
 	 *	Constructor.
-	 *	This create an opened connexion to a database server and eventually to a database
+	 *	This create an opened connection to a database server and eventually to a database
 	 *
 	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Nom de l'utilisateur autorise
-	 *	@param	    string	$pass		Mot de passe
+	 *	@param	    string	$pass		Password
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
 	 */
@@ -112,7 +113,7 @@ class DoliDBPgsql extends DoliDB
 			return;
 		}
 
-		// Essai connexion serveur
+		// Essai connection serveur
 		//print "$host, $user, $pass, $name, $port";
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
 
@@ -127,7 +128,7 @@ class DoliDBPgsql extends DoliDB
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error.'. Failed to connect to host='.$host.' port='.$port.' user='.$user, LOG_ERR);
 		}
 
-		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
+		// If server connection serveur ok and DB connection is requested, try to connect to DB
 		if ($this->connected && $name) {
 			if ($this->select_db($name)) {
 				$this->database_selected = true;
@@ -241,7 +242,7 @@ class DoliDBPgsql extends DoliDB
 				$line = preg_replace('/^float/i', 'numeric', $line);
 				$line = preg_replace('/(\s*)float/i', '\\1numeric', $line);
 
-				//Check tms timestamp field case (in Mysql this field is defautled to now and
+				//Check tms timestamp field case (in Mysql this field is defaulted to now and
 				// on update defaulted by now
 				$line = preg_replace('/(\s*)tms(\s*)timestamp/i', '\\1tms timestamp without time zone DEFAULT now() NOT NULL', $line);
 
@@ -320,11 +321,11 @@ class DoliDBPgsql extends DoliDB
 				}
 			}
 
-			// To have postgresql case sensitive
+			// To have PostgreSQL case sensitive
 			$count_like = 0;
 			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
 			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
-				// @see https://docs.postgresql.fr/11/unaccent.html : 'unaccent()' function must be installed before
+				// @see https://docs.PostgreSQL.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
@@ -361,7 +362,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i', 'FROM \\1, \\2, \\3, \\4, \\5', $line);
 			//print $line."\n";
 
-			// Replace espacing \' by ''.
+			// Replace spacing ' with ''.
 			// By default we do not (should be already done by db->escape function if required
 			// except for sql insert in data file that are mysql escaped so we removed them to
 			// be compatible with standard_conforming_strings=on that considers \ as ordinary character).
@@ -378,8 +379,8 @@ class DoliDBPgsql extends DoliDB
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Select a database
-	 *  Ici postgresql n'a aucune fonction equivalente de mysql_select_db
-	 *  On compare juste manuellement si la database choisie est bien celle activee par la connexion
+	 *  PostgreSQL does not have an equivalent for `mysql_select_db`
+	 *  Only compare if the chosen DB is the one active on the connection
 	 *
 	 *	@param	    string	$database	Name of database
 	 *	@return	    bool				true if OK, false if KO
@@ -395,14 +396,14 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Connexion to server
+	 *	Connection to server
 	 *
 	 *	@param	    string		$host		Database server host
 	 *	@param	    string		$login		Login
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
-	 *	@return		bool|resource			Database access handler
+	 *	@return		false|resource			Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -416,7 +417,7 @@ class DoliDBPgsql extends DoliDB
 		$login = str_replace(array("\\", "'"), array("\\\\", "\\'"), $login);
 		$passwd = str_replace(array("\\", "'"), array("\\\\", "\\'"), $passwd);
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
-		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
+		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), (string) $port);
 
 		if (!$name) {
 			$name = "postgres"; // When try to connect using admin user
@@ -485,9 +486,9 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *  Close database connexion
+	 *  Close database connection
 	 *
-	 *  @return     boolean     True if disconnect successfull, false otherwise
+	 *  @return     boolean     True if disconnect successful, false otherwise
 	 *  @see        connect()
 	 */
 	public function close()
@@ -513,11 +514,11 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf, $dolibarr_main_db_readonly;
+		global $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
-		// Convert MySQL syntax to PostgresSQL syntax
+		// Convert MySQL syntax to PostgreSQL syntax
 		$query = $this->convertSQLFromMysql($query, $type, ($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
@@ -593,7 +594,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -610,7 +611,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_array($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -627,7 +628,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_row($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -645,7 +646,7 @@ class DoliDBPgsql extends DoliDB
 	public function num_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -663,7 +664,7 @@ class DoliDBPgsql extends DoliDB
 	public function affected_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -674,14 +675,14 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Libere le dernier resultset utilise sur cette connexion
+	 * Libere le dernier resultset utilise sur cette connection
 	 *
 	 * @param	resource	$resultset  Result set of request
 	 * @return	void
 	 */
 	public function free($resultset = null)
 	{
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -724,7 +725,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return pg_escape_string($stringtoencode);
+		return pg_escape_string($this->db, $stringtoencode);
 	}
 
 	/**
@@ -741,10 +742,10 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *  Format a SQL IF
 	 *
-	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *  @param	string	$resok          resultat si test egal
-	 *  @param	string	$resko          resultat si test non egal
-	 *  @return	string          		chaine formate SQL
+	 *  @param	string	$test           Test expression (example: 'cd.statut=0', 'field IS NULL')
+	 *  @param	string	$resok          Result to generate when test is True
+	 *  @param	string	$resko          Result to generate when test is False
+	 *  @return	string          		chaine format SQL
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
@@ -754,30 +755,30 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Format a SQL REGEXP
 	 *
-	 *	@param	string	$subject        string tested
+	 *	@param	string	$subject        Field name to test
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
 	 *	@return	string          		SQL string
 	 */
 	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
-			return "(". $subject ." ~ '" . $pattern . "')";
+			return "(". $subject ." ~ '" . $this->escape($pattern) . "')";
 		}
 
-		return "('". $subject ."' ~ '" . $pattern . "')";
+		return "('". $this->escape($subject) ."' ~ '" . $this->escape($pattern) . "')";
 	}
 
 
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 * @return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return	string		Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide.
+			// Si il y a eu echec de connection, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -794,7 +795,7 @@ class DoliDBPgsql extends DoliDB
 			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
 			'42703' => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			42701 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP', // May also be Type xxx does not exists
@@ -847,9 +848,9 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
 	 * @param	string	$fieldid	Field name
-	 * @return  string     			Id of row
+	 * @return  int     			Id of row
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
@@ -862,7 +863,7 @@ class DoliDBPgsql extends DoliDB
 		}
 		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result, 0, 0);
-		return $row;
+		return (int) $row;
 	}
 
 	/**
@@ -875,7 +876,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -891,12 +892,12 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Decrypt sensitive data in database
 	 *
-	 *	@param	int		$value			Value to decrypt
+	 *	@param	string	$value			Value to decrypt
 	 * 	@return	string					Decrypted value if used
 	 */
 	public function decrypt($value)
 	{
-		global $conf;
+		//global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
@@ -911,9 +912,9 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return	        string      Id connexion
+	 * @return	        string      Id connection
 	 */
 	public function DDLGetConnectId()
 	{
@@ -933,7 +934,7 @@ class DoliDBPgsql extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	false|resource				resource defined if OK, null if KO
+	 * 	@return	false|resource			Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{
@@ -950,8 +951,10 @@ class DoliDBPgsql extends DoliDB
 
 		// NOTE: Do not use ' around the database name
 		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
+
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
+
 		return $ret;
 	}
 
@@ -1016,8 +1019,7 @@ class DoliDBPgsql extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des informations des champs de la table
-	 *
+	 *	@return	array				Array with information on table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -1025,22 +1027,21 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as \"Column\",";
+		$sql .= "	infcol.column_name as 'Column',";
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as \"Type\",";
-		$sql .= "	infcol.collation_name as \"Collation\",";
-		$sql .= "	infcol.is_nullable as \"Null\",";
-		$sql .= "	'' as \"Key\",";
-		$sql .= "	infcol.column_default as \"Default\",";
-		$sql .= "	'' as \"Extra\",";
-		$sql .= "	'' as \"Privileges\"";
+		$sql .= "	END as 'Type',";
+		$sql .= "	infcol.collation_name as 'Collation',";
+		$sql .= "	infcol.is_nullable as 'Null',";
+		$sql .= "	'' as 'Key',";
+		$sql .= "	infcol.column_default as 'Default',";
+		$sql .= "	'' as 'Extra',";
+		$sql .= "	'' as 'Privileges'";
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
-		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
@@ -1056,7 +1057,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -1067,64 +1068,76 @@ class DoliDBPgsql extends DoliDB
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
 		// phpcs:enable
-		// FIXME: $fulltext_keys parameter is unused
+		// @TODO: $fulltext_keys parameter is unused
 
-		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
-		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "create table ".$table."(";
+		$sqlk = array();
+		$sqluq = array();
+
+		// Keys found into the array $fields: type,value,attribute,null,default,extra
+		// ex. : $fields['rowid'] = array(
+		//			'type'=>'int' or 'integer',
+		//			'value'=>'11',
+		//			'null'=>'not null',
+		//			'extra'=> 'auto_increment'
+		//		);
+		$sql = "CREATE TABLE ".$this->sanitize($table)."(";
 		$i = 0;
+		$sqlfields = array();
 		foreach ($fields as $field_name => $field_desc) {
-			$sqlfields[$i] = $field_name." ";
-			$sqlfields[$i] .= $field_desc['type'];
-			if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-				$sqlfields[$i] .= "(".$field_desc['value'].")";
-			} elseif (preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-				$sqlfields[$i] .= " ".$field_desc['attribute'];
-			} elseif (preg_match("/^[^\s]/i", $field_desc['default'])) {
-				if (preg_match("/null/i", $field_desc['default'])) {
-					$sqlfields[$i] .= " default ".$field_desc['default'];
+			$sqlfields[$i] = $this->sanitize($field_name)." ";
+			$sqlfields[$i] .= $this->sanitize($field_desc['type']);
+			if (isset($field_desc['value']) && $field_desc['value'] !== '') {
+				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
+			}
+			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+			}
+			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
+				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+					$sqlfields[$i] .= " DEFAULT ".((float) $field_desc['default']);
+				} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+					$sqlfields[$i] .= " DEFAULT ".$this->sanitize($field_desc['default']);
 				} else {
-					$sqlfields[$i] .= " default '".$this->escape($field_desc['default'])."'";
+					$sqlfields[$i] .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 				}
-			} elseif (preg_match("/^[^\s]/i", $field_desc['null'])) {
-				$sqlfields[$i]  .= " ".$field_desc['null'];
-			} elseif (preg_match("/^[^\s]/i", $field_desc['extra'])) {
-				$sqlfields[$i]  .= " ".$field_desc['extra'];
+			}
+			if (isset($field_desc['null']) && $field_desc['null'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
+			}
+			if (isset($field_desc['extra']) && $field_desc['extra'] !== '') {
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
+			}
+			if (!empty($primary_key) && $primary_key == $field_name) {
+				$sqlfields[$i] .= " AUTO_INCREMENT PRIMARY KEY";	// mysql instruction that will be converted by driver late
 			}
 			$i++;
-		}
-		if ($primary_key != "") {
-			$pk = "primary key(".$primary_key.")";
 		}
 
 		if (is_array($unique_keys)) {
 			$i = 0;
 			foreach ($unique_keys as $key => $value) {
-				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$this->escape($value)."')";
+				$sqluq[$i] = "UNIQUE KEY '".$this->sanitize($key)."' ('".$this->escape($value)."')";
 				$i++;
 			}
 		}
 		if (is_array($keys)) {
 			$i = 0;
 			foreach ($keys as $key => $value) {
-				$sqlk[$i] = "KEY ".$key." (".$value.")";
+				$sqlk[$i] = "KEY ".$this->sanitize($key)." (".$value.")";
 				$i++;
 			}
 		}
-		$sql .= implode(',', $sqlfields);
-		if ($primary_key != "") {
-			$sql .= ",".$pk;
-		}
-		if (is_array($unique_keys)) {
+		$sql .= implode(', ', $sqlfields);
+		if ($unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}
 		if (is_array($keys)) {
 			$sql .= ",".implode(',', $sqlk);
 		}
-		$sql .= ") type=".$type;
+		$sql .= ")";
+		//$sql .= " engine=".$this->sanitize($type);
 
-		dol_syslog($sql, LOG_DEBUG);
-		if (!$this->query($sql)) {
+		if (!$this->query($sql, 1)) {
 			return -1;
 		} else {
 			return 1;
@@ -1143,38 +1156,13 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "DROP TABLE ".$tmptable;
+		$sql = "DROP TABLE ".$this->sanitize($tmptable);
 
-		if (!$this->query($sql)) {
+		if (!$this->query($sql, 1)) {
 			return -1;
 		} else {
 			return 1;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Create a user to connect to database
-	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip server
-	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
-	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
-	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	int									Return integer <0 if KO, >=0 if OK
-	 */
-	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
-	{
-		// phpcs:enable
-		// Note: using ' on user does not works with pgsql
-		$sql = "CREATE USER ".$this->escape($dolibarr_main_db_user)." with password '".$this->escape($dolibarr_main_db_pass)."'";
-
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
-		$resql = $this->query($sql);
-		if (!$resql) {
-			return -1;
-		}
-
-		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1205,7 +1193,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *  @param  array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1214,30 +1202,32 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
-				$sql .= "(".$field_desc['value'].")";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
+		$sql .= $this->sanitize($field_desc['type']);
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-			$sql .= " ".$field_desc['attribute'];
+		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
+			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['null'])) {
+		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
 			$sql .= " ".$field_desc['null'];
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
-			if (preg_match("/null/i", $field_desc['default'])) {
-				$sql .= " default ".$field_desc['default'];
+		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= " DEFAULT ".((float) $field_desc['default']);
+			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+				$sql .= " DEFAULT ".$this->sanitize($field_desc['default']);
 			} else {
-				$sql .= " default '".$this->escape($field_desc['default'])."'";
+				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$field_desc['extra'];
+		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$field_position;
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this -> query($sql)) {
@@ -1252,36 +1242,36 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	string	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " ALTER COLUMN ".$this->escape($field_name)." TYPE ".$field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+		$sql = "ALTER TABLE ".$this->sanitize($table);
+		$sql .= " ALTER COLUMN ".$this->sanitize($field_name)." TYPE ".$this->sanitize($field_desc['type']);
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
-				$sql .= "(".$field_desc['value'].")";
+				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
 
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
+		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$table." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
 				$this->query($sqlbis);
-			} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sqlbis = "UPDATE ".$table." SET ".$this->escape($field_name)." = ".((int) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
+			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 		}
 
 		if (isset($field_desc['default']) && $field_desc['default'] != '') {
-			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sql .= ", ALTER COLUMN ".$this->escape($field_name)." SET DEFAULT ".((float) $field_desc['default']);
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= ", ALTER COLUMN ".$this->sanitize($field_name)." SET DEFAULT ".((float) $field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {	// Default not supported on text fields ?
-				$sql .= ", ALTER COLUMN ".$this->escape($field_name)." SET DEFAULT '".$this->escape($field_desc['default'])."'";
+				$sql .= ", ALTER COLUMN ".$this->sanitize($field_name)." SET DEFAULT '".$this->escape($field_desc['default'])."'";
 			}
 		}
 
@@ -1305,11 +1295,36 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
 
-		$sql = "ALTER TABLE ".$table." DROP COLUMN ".$tmp_field_name;
+		$sql = "ALTER TABLE ".$this->sanitize($table)." DROP COLUMN ".$this->sanitize($tmp_field_name);
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;
 		}
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Create a user to connect to database
+	 *
+	 *	@param	string	$dolibarr_main_db_host 		Ip server
+	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
+	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									Return integer <0 if KO, >=0 if OK
+	 */
+	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
+	{
+		// phpcs:enable
+		// Note: using ' on user does not works with pgsql
+		$sql = "CREATE USER ".$this->sanitize($dolibarr_main_db_user)." with password '".$this->escape($dolibarr_main_db_pass)."'";
+
+		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
+		$resql = $this->query($sql);
+		if (!$resql) {
+			return -1;
+		}
+
 		return 1;
 	}
 
@@ -1332,7 +1347,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array		List of Charset
+	 *	@return		array|null		List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1371,7 +1386,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		Liste of Collation
+	 *	@return		array|null		Liste of Collation
 	 */
 	public function getListOfCollation()
 	{

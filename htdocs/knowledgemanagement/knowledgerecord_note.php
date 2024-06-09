@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_kno
 $langs->loadLangs(array("knowledgemanagement", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -83,7 +83,7 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
-llxHeader('', $langs->trans('KnowledgeRecord'), $help_url);
+llxHeader('', $langs->trans('KnowledgeRecord'), $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card_notes');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

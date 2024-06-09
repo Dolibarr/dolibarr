@@ -91,8 +91,7 @@ CountLastUrlCheckError=Son URL yoxlaması üçün xətaların sayı
 LastCheckBacklink=Son URL yoxlamasının tarixi
 
 NewPartnershipRequest=Yeni tərəfdaşlıq tələbi
-NewPartnershipRequestDesc=Bu forma sizə tərəfdaşlıq proqramımızın bir hissəsi olmaq üçün müraciət etməyə imkan verir. Bu formanı doldurmaq üçün köməyə ehtiyacınız varsa, lütfən, e-poçt vasitəsilə əlaqə saxlayın <b>%s<span class='notranslate'></b> span>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu səhifədə aşağıdakı domenlərdən birinə ən azı bir keçid olmalıdır: %s
 
 IPOfApplicant=Ərizəçinin IP
-

@@ -336,3 +336,5 @@ FTPFailedToUploadFile=<b>%s</b> faylini yuklab bo‘lmadi.
 AddFolder=Jild yaratish
 FileWasCreateFolder=<b>%s</b> jild yaratildi
 FTPFailedToCreateFolder=<b>%s</b> jildini yaratib bo‘lmadi.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date
