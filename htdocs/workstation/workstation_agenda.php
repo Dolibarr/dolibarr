@@ -132,7 +132,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = 'EN:Module_Workstation';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-workstation page-card_workstation_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
