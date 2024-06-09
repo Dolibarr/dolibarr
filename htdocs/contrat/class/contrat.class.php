@@ -3010,16 +3010,6 @@ class ContratLigne extends CommonObjectLine
 	public $table_element = 'contratdet';
 
 	/**
-	 * @see CommonObjectLine
-	 */
-	public $parent_element = 'contrat';
-	
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $fk_parent_attribute = 'fk_contrat';
-
-	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
 	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */

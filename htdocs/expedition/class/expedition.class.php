@@ -2656,15 +2656,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element = 'expeditiondet';
 
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $parent_element = 'expedition';
-
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $fk_parent_attribute = 'fk_expedition';
 
 	/**
 	 * Id of the line. Duplicate of $id.

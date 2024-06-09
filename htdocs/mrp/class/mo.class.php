@@ -2002,16 +2002,6 @@ class MoLine extends CommonObjectLine
 	public $table_element = 'mrp_production';
 
 	/**
-	 * @see CommonObjectLine
-	 */
-	public $parent_element = 'mo';
-	
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $fk_parent_attribute = 'fk_mo';
-
-	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),

@@ -6029,9 +6029,6 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet';
 
-	public $parent_element = 'facture';
-	public $fk_parent_attribute = 'fk_facture';
-
 	/**
 	 * @var FactureLigne
 	 */

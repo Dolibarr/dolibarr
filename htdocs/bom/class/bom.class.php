@@ -1671,16 +1671,6 @@ class BOMLine extends CommonObjectLine
 	public $table_element = 'bom_bomline';
 
 	/**
-	 * @see CommonObjectLine
-	 */
-	public $parent_element = 'bom';
-	
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $fk_parent_attribute = 'fk_bom';
-
-	/**
 	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
 	 */
 	public $picto = 'bomline';

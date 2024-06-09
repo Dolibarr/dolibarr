@@ -2815,16 +2815,6 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $table_element = 'supplier_proposaldet';
 
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $parent_element = 'supplier_proposal';
-
-	/**
-	 * @see CommonObjectLine
-	 */
-	public $fk_parent_attribute = 'fk_supplier_proposal';
-
 	public $oldline;
 
 	/**
