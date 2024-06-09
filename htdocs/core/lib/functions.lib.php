@@ -10466,7 +10466,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'be-BY',
 		'bg-BG',
 		'bn-BD',
-		comm/propal/class/propal.class.php//'bn-IN',		// Moved after en-IN
+		//'bn-IN',		// Moved after en-IN
 		'bo-CN',
 		'br-FR',
 		'ca-ES',
