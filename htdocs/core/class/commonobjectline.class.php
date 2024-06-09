@@ -39,7 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	public $parent_element = '';
 
 	/**
-	 * @var string Attribute related to CommonObject rowid (many2one)
+	 * @var string Attribute related to parent CommonObject rowid (many2one)
 	 */
 	public $fk_parent_attribute = '';
 
