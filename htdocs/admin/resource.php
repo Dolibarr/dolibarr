@@ -60,7 +60,7 @@ if ($action == 'updateoptions') {
  * View
  */
 
-llxHeader('', $langs->trans('ResourceSetup'));
+llxHeader('', $langs->trans('ResourceSetup'), '', '', 0, 0, '', '', '', 'mod-admin page-resource');
 
 $form = new Form($db);
 

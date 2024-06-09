@@ -257,7 +257,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
 }
 $help_url = "";
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_card');
 
 
 $form = new Form($db);

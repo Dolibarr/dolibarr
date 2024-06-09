@@ -1221,6 +1221,17 @@ class Ticket extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
+			} else {
+				// we delete file with dol_delete_dir_recursive
+				$this->deleteEcmFiles(1);
+
+				$dir = DOL_DATA_ROOT.'/'.$this->element.'/'.$this->ref;
+				// For remove dir
+				if (dol_is_dir($dir)) {
+					if (!dol_delete_dir_recursive($dir)) {
+						$this->errors[] = $this->error;
+					}
+				}
 			}
 		}
 
@@ -2932,7 +2943,7 @@ class Ticket extends CommonObject
 
 								if (!empty($object->origin_replyto)) {
 									$sendto[$object->origin_replyto] = $object->origin_replyto;
-								} else if (!empty($object->origin_email)) {
+								} elseif (!empty($object->origin_email)) {
 									$sendto[$object->origin_email] = $object->origin_email;
 								}
 

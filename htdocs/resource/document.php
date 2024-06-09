@@ -95,8 +95,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $form = new Form($db);
-
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_documents');
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();
