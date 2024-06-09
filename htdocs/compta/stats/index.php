@@ -461,7 +461,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
+					if (!empty($cum[$caseprev]) && !empty($cum[$case]) && $cum[$caseprev] != 0) {
 						$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
 						//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
