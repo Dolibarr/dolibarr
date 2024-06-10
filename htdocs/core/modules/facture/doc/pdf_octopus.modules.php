@@ -1121,7 +1121,7 @@ class pdf_octopus extends ModelePDFFactures
 				$tabtop = $this->tab_top_newpage;
 				$tabhauteur = $this->page_hauteur - $tabtop - $this->heightforfooter - $this->heightforinfotot - $this->heightforfreetext;
 				$tabTitleHeight = '';
-                $this->_tableau($pdf, $tabtop, $tabhauteur, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
+				$this->_tableau($pdf, $tabtop, $tabhauteur, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 
 				$bottomlasttab = $tabtop + $tabhauteur + $tabTitleHeight + 10;
 
@@ -1566,10 +1566,10 @@ class pdf_octopus extends ModelePDFFactures
 	{
 		global $conf, $mysoc, $hookmanager;
 
-        $sign = 1;
-        if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
-            $sign = -1;
-        }
+		$sign = 1;
+		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+			$sign = -1;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -3413,10 +3413,10 @@ class pdf_octopus extends ModelePDFFactures
 
 		$height = 4;
 
-		$sign=1;
+		$sign = 1;
 		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
-            $sign = -1;
-        }
+			$sign = -1;
+		}
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
