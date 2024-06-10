@@ -258,7 +258,7 @@ if (isModEnabled('socialnetworks')) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
-				'position' => 300
+				'position' => 299
 			);
 		}
 	}
@@ -1631,7 +1631,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

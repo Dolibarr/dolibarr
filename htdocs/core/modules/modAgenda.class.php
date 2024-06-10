@@ -580,9 +580,9 @@ class modAgenda extends DolibarrModules
 		);
 
 		// Import Event Extra Fields
-		$keyforselect = 'actioncomm';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforelement = 'action';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 	}
 }

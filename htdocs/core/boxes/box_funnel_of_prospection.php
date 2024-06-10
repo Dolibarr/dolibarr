@@ -92,7 +92,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$colorseriesstat = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
-		$sql .= " WHERE active=1";
+		$sql .= " WHERE active = 1";
 		$sql .= " AND cls.code <> 'LOST'";
 		$sql .= " AND cls.code <> 'WON'";
 		$sql .= $this->db->order('cls.rowid', 'ASC');

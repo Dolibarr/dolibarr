@@ -80,8 +80,8 @@ class box_last_knowledgerecord extends ModeleBoxes
 
 		$text = $langs->trans("BoxLastKnowledgerecordDescription", $max);
 		$this->info_box_head = array(
-			'text' => $text,
-			'limit' => dol_strlen($text),
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_list.php?sortfield=t.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			//'limit' => dol_strlen($text),
 		);
 
 		$this->info_box_contents[0][0] = array(

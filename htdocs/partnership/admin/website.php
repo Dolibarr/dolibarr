@@ -82,7 +82,7 @@ $form = new Form($db);
 $title = $langs->trans('PartnershipSetup');
 $help_url = '';
 //$help_url = 'EN:Module_Partnership|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-admin-website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

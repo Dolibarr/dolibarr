@@ -121,12 +121,6 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Agenda event label
-	 * @deprecated Use $label
-	 */
-	private $libelle;
-
-	/**
 	 * @var int Date creation record (datec)
 	 */
 	public $datec;
@@ -407,20 +401,6 @@ class ActionComm extends CommonObject
 
 
 	public $fields = array();
-
-
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>  Old property to new property mapping
-	 */
-	protected function deprecatedProperties()
-	{
-		return array(
-			'libelle' => 'label',
-		) + parent::deprecatedProperties();
-	}
-
 
 	/**
 	 *      Constructor
@@ -1274,7 +1254,7 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+					foreach ($this->socpeopleassigned as $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
 							$val = array('id' => $val);
 						}
@@ -1583,7 +1563,7 @@ class ActionComm extends CommonObject
 
 		$statusType = 'status9';
 		if ($percent == -1 && !$hidenastatus) {
-			$statusType = 'status9';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$statusType = 'status9';
 		}
 		if ($percent == 0) {
 			$statusType = 'status1';

@@ -1591,7 +1591,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1610,7 +1610,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1629,7 +1629,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1651,7 +1651,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -2029,6 +2029,10 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;

@@ -520,7 +520,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-ticket page-list bodyforlist');
 
 if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
@@ -573,6 +573,8 @@ if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')
 		print '</table>';
 		print '</div>';
 		print dol_get_fiche_end();
+
+		print '<br>';
 	}
 }
 
@@ -635,6 +637,8 @@ if ($projectid > 0 || $project_ref) {
 
 		print '</div>';
 		print dol_get_fiche_end();
+
+		print '<br>';
 
 		$object = $savobject;
 	} else {

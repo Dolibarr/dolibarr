@@ -800,7 +800,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -815,7 +815,7 @@ if ($resql) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
-	if (GETPOST('bid')) {
+	if (GETPOSTINT('bid')) {
 		print '<input type="hidden" name="bid" value="'.GETPOSTINT("bid").'">';
 	}
 
@@ -840,7 +840,7 @@ if ($resql) {
 			print $langs->trans("AccountAccounting");
 			print '</td>';
 		}*/
-		print '<td align="center">&nbsp;</td>';
+		print '<td class="center">&nbsp;</td>';
 		print '</tr>';
 
 		print '<tr>';
@@ -974,20 +974,21 @@ if ($resql) {
 			print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 		}
 		print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
-		print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-		print ' '.$langs->trans("or").' ';
-		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
+		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
+		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
+		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		// Show last bank statements
 		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
-		$liste = "";
+		$listoflastreceipts = '';
 		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $object->id)." AND num_releve IS NOT NULL";
 		$sql .= $db->order("num_releve", "DESC");
 		$sql .= $db->plimit($nbmax + 1);
+
 		print '<br>';
 		print $langs->trans("LastAccountStatements").' : ';
 		$resqlr = $db->query($sql);
@@ -1002,12 +1003,15 @@ if ($resql) {
 					$last_ok = 1;
 				}
 				$i++;
-				$liste = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">'.dol_escape_htmltag($objr->num_releve).'</a> &nbsp; '.$liste;
+				$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($objr->num_releve).'">';
+				$newentreyinlist .= img_picto($objr->num_releve, 'generic', 'class="paddingright"');
+				$newentreyinlist .= dol_escape_htmltag($objr->num_releve).'</a> &nbsp; ';
+				$listoflastreceipts = $newentreyinlist.$listoflastreceipts;
 			}
 			if ($numr >= $nbmax) {
-				$liste = "... &nbsp; ".$liste;
+				$listoflastreceipts = "... &nbsp; ".$listoflastreceipts;
 			}
-			print $liste;
+			print $listoflastreceipts;
 			if ($numr <= 0) {
 				print '<b>'.$langs->trans("None").'</b>';
 			}
@@ -1126,13 +1130,13 @@ if ($resql) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
+		print '<td class="liste_titre center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
 	// Checked
 	if (!empty($arrayfields['bu.label']['checked'])) {
@@ -1172,7 +1176,7 @@ if ($resql) {
 	}
 	// Numero statement
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
+		print '<td class="liste_titre center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
 	}
 	// Conciliated
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
@@ -1182,10 +1186,10 @@ if ($resql) {
 	}
 	// Bordereau
 	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'" size="3"></td>';
+		print '<td class="liste_titre center"><input type="text" class="flat" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'" size="3"></td>';
 	}
 	// Action edit/delete and select
-	print '<td class="nowraponall" align="center"></td>';
+	print '<td class="nowraponall center"></td>';
 
 	// Actions and select
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1276,7 +1280,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action edit/delete and select
-	print '<td class="nowraponall" align="center"></td>';
+	print '<td class="nowraponall center"></td>';
 	$totalarray['nbfield']++;
 	// Actions and select
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1324,8 +1328,10 @@ if ($resql) {
 			$sqlforbalance .= " WHERE b.fk_account = ba.rowid";
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
 			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
+			// To limit record on the page
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
+
 			//print $sqlforbalance;
 			if ($resqlforbalance) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
@@ -1392,14 +1398,22 @@ if ($resql) {
 				if (!empty($arrayfields['balancebefore']['checked'])) {
 					print '<td class="right">';
 					if ($search_conciliated !== '0') {
-						print price(price2num($balance, 'MT'), 1, $langs);
+						if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
+							print price(price2num($balancebefore, 'MT'), 1, $langs);
+						} else {
+							print price(price2num($balance, 'MT'), 1, $langs);
+						}
 					}
 					print '</td>';
 				}
 				if (!empty($arrayfields['balance']['checked'])) {
 					print '<td class="right">';
-					if ($search_conciliated !== '0') {
-						print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {	// If not filter of filter on "conciliated"
+						if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
+							print price(price2num($balancebefore, 'MT'), 1, $langs);
+						} else {
+							print price(price2num($balance, 'MT'), 1, $langs);
+						}
 					}
 					print '</td>';
 				}
@@ -1604,7 +1618,7 @@ if ($resql) {
 
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="nowrap center">';
 			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
@@ -1621,7 +1635,7 @@ if ($resql) {
 
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="nowrap center">';
 			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
@@ -1653,7 +1667,7 @@ if ($resql) {
 
 		// Num cheque
 		if (!empty($arrayfields['b.num_chq']['checked'])) {
-			print '<td class="nowrap" align="center">'.($objp->num_chq ? dol_escape_htmltag($objp->num_chq) : "")."</td>\n";
+			print '<td class="nowrap center">'.($objp->num_chq ? dol_escape_htmltag($objp->num_chq) : "")."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1785,7 +1799,7 @@ if ($resql) {
 		}
 
 		if (!empty($arrayfields['b.num_releve']['checked'])) {
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			// Transaction reconciliated or edit link
 			if ($bankaccount->canBeConciliated() > 0) {
 				if ($objp->num_releve) {
@@ -1800,7 +1814,7 @@ if ($resql) {
 		}
 
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			print yn($objp->conciliated);
 			print '</td>';
 			if (!$i) {
@@ -1810,7 +1824,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
 			$bordereaustatic->fetch($objp->fk_bordereau);
-			print '<td class="nowraponall" align="center">';
+			print '<td class="nowraponall center">';
 			print $bordereaustatic->getNomUrl();
 			print '</td>';
 			if (!$i) {
@@ -1824,7 +1838,7 @@ if ($resql) {
 		print $hookmanager->resPrint;
 
 		// Action edit/delete and select
-		print '<td class="nowraponall" align="center">';
+		print '<td class="nowraponall center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';

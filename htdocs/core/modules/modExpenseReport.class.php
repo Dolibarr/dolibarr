@@ -73,7 +73,7 @@ class modExpenseReport extends DolibarrModules
 
 		// Constants
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->const[$r][0] = "EXPENSEREPORT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";

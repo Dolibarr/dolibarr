@@ -101,7 +101,7 @@ class modExternalSite extends DolibarrModules
 
 		// Menus
 		//------
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
