@@ -683,8 +683,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -725,8 +723,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestaskres->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
