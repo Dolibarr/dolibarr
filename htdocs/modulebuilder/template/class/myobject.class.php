@@ -45,7 +45,7 @@ class MyObject extends CommonObject
 	public $element = 'myobject';
 
 	/**
-	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
 	 */
 	public $table_element = 'mymodule_myobject';
 
@@ -1254,13 +1254,13 @@ class MyObjectLine extends CommonObjectLine
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $parent_element = '';
+	public $parent_element = '';		// Example: '' or 'myobject'
 
 	/**
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $fk_parent_attribute = '';
+	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
 
 	/**
 	 * Constructor
