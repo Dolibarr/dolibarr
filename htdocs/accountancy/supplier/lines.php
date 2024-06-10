@@ -503,7 +503,8 @@ if ($result) {
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturefournisseur_static->getNomUrl(1);
+		print '<td class="nowraponall tdoverflowmax125">';
+		print $facturefournisseur_static->getNomUrl(1);
 		if ($objp->ref_supplier) {
 			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
 		}
@@ -517,7 +518,7 @@ if ($result) {
 		*/
 
 		// Supplier invoice label
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 		print dol_escape_htmltag($objp->invoice_label);
 		print '</td>';
 
@@ -551,7 +552,7 @@ if ($result) {
 		print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
 
 		// Country
-		print '<td>';
+		print '<td class="tdoverflowmax100">';
 		if ($objp->country_code) {
 			print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
 		}

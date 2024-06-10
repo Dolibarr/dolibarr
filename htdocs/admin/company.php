@@ -801,11 +801,11 @@ print "</tr>\n";
 // Main tax
 print '<tr class="oddeven"><td><label><input type="radio" name="optiontva" id="use_vat" value="1"'.(!getDolGlobalString('FACTURE_TVAOPTION') ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
-$tooltiphelp = '';
+$tooltiphelp = $langs->trans("VATIsUsedDesc");
 if ($mysoc->country_code == 'FR') {
-	$tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
+	$tooltiphelp .= '<br><br><i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
 }
-print '<label for="use_vat">'.$form->textwithpicto($langs->trans("VATIsUsedDesc"), $tooltiphelp)."</label>";
+print '<label for="use_vat">'.$form->textwithpicto($langs->trans("VATIsUsedStandard"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
 
