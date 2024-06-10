@@ -87,7 +87,7 @@ $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
-$searchCategoryProductChilds = 1;
+
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	$searchCategoryProductChilds = GETPOSTINT('search_category_product_childs');
@@ -164,6 +164,11 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formproduct = new FormProduct($db);
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$cat = new Categorie($db);
+	$cat->getFullArbo(Categorie::TYPE_PRODUCT);
+	$enableSearchCategoryProductChilds = $cat->maxDeepLevel > 0;
+} else $enableSearchCategoryProductChilds = false;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -578,8 +583,7 @@ if (dol_strlen($canvas) > 0) {
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 if (!empty($searchCategoryProductList)) {
-	$cat = new Categorie($db);
-	$searchCategoryProductSql = $cat->getSqlSearch('product', 'p.rowid', $searchCategoryProductList, $searchCategoryProductOperator, $searchCategoryProductChilds);
+	$searchCategoryProductSql = $cat->getSqlSearch(Categorie::TYPE_PRODUCT, 'p.rowid', $searchCategoryProductList, $searchCategoryProductOperator, $searchCategoryProductChilds);
 	if (!empty($searchCategoryProductSql)) {
 		//echo $searchCategoryProductSql;
 		$sql .= " AND ".$searchCategoryProductSql;
@@ -934,7 +938,7 @@ if ($search_all) {
 $moreforfilter = '';
 if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0, 1, 1, '', $searchCategoryProductChilds);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0, 1, 1, '', $enableSearchCategoryProductChilds ? $searchCategoryProductChilds : -1);
 }
 
 // Show/hide child variant products

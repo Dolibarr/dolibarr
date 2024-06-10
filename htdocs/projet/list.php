@@ -121,18 +121,25 @@ $search_import_key = GETPOST('search_import_key', 'alpha');
 $searchCategoryCustomerOperator = 0;
 $searchCategoryProjectOperator = 0;
 $searchCategoryProjectChilds = 1;
+$searchCategoryCustomerChilds = 1;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 	$searchCategoryProjectOperator = GETPOSTINT('search_category_project_operator');
 	$searchCategoryProjectChilds = GETPOSTINT('search_category_project_childs');
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+	$searchCategoryCustomerChilds = GETPOSTINT('search_category_customer_childs');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = $searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+
+if (isModEnabled('category')) {
+	$searchCategoryProjectList = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+	$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+} else $searchCategoryProjectList = $searchCategoryCustomerList = array();
+
+
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
 }
-
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
@@ -182,12 +189,6 @@ $search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
 $search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
 $search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
-
-$searchCategoryProjectList = array();
-
-if (isModEnabled('category')) {
-	$searchCategoryProjectList = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
-}
 
 if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
@@ -408,6 +409,11 @@ if (empty($reshook)) {
 		$toselect = array();
 		$search_array_options = array();
 		$searchCategoryProjectList = array();
+		$searchCategoryCustomerList = array();
+		$searchCategoryProjectOperator = 0;
+		$searchCategoryCustomerOperator = 0;
+		$searchCategoryProjectChilds = 1;
+		$searchCategoryCustomerChilds = 1;
 	}
 
 
@@ -477,6 +483,16 @@ $taskstatic = new Task($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
+if (isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
+	$catProj = new Categorie($db);
+	$catProj->getFullArbo(Categorie::TYPE_PROJECT);
+	$enableSearchCategoryProjectChilds = $catProj->maxDeepLevel > 0;
+} else $enableSearchCategoryProjectChilds = false;
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
+	$catCust = new Categorie($db);
+	$catCust->getFullArbo(Categorie::TYPE_CUSTOMER);
+	$enableSearchCategoryCustomerChilds = $catCust->maxDeepLevel > 0;
+} else $enableSearchCategoryCustomerChilds = false;
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("LeadsOrProjects");
@@ -710,56 +726,17 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	}
 }
 
-// Search for tag/category ($searchCategoryProjectList is an array of ID) TODO VMAURY
-$cat = new Categorie($db);
-if (!empty($searchCategoryProjectList)) {
-	$searchCategoryProjectSql = $cat->getSqlSearch('project', 'p.rowid', $searchCategoryProjectList, $searchCategoryProjectOperator, $searchCategoryProjectChilds);
+// Search for tag/category ($searchCategoryProjectList is an array of ID)
+if (is_object($catProj) && !empty($searchCategoryProjectList)) {
+	$searchCategoryProjectSql = $catProj->getSqlSearch(Categorie::TYPE_PROJECT, 'p.rowid', $searchCategoryProjectList, $searchCategoryProjectOperator, $searchCategoryProjectChilds);
 	if (!empty($searchCategoryProjectSql)) {
 		$sql .= " AND ".$searchCategoryProjectSql;
 	}
 }
-$searchCategoryCustomerSqlList = array();
-if ($searchCategoryCustomerOperator == 1) {
-	$existsCategoryCustomerList = array();
-	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
-		if (intval($searchCategoryCustomer) == -2) {
-			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
-			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
-			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
-			$sqlCategoryCustomerNotExists .= " )";
-			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
-		} elseif (intval($searchCategoryCustomer) > 0) {
-			$existsCategoryCustomerList[] = $db->escape($searchCategoryCustomer);
-		}
-	}
-	if (!empty($existsCategoryCustomerList)) {
-		$sqlCategoryCustomerExists = " EXISTS (";
-		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
-		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
-		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
-		$sqlCategoryCustomerExists .= " )";
-		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
-	}
-	if (!empty($searchCategoryCustomerSqlList)) {
-		$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
-	}
-} else {
-	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
-		if (intval($searchCategoryCustomer) == -2) {
-			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
-			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
-			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
-			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
-			$sqlCategoryCustomerNotExists .= " )";
-			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
-		} elseif (intval($searchCategoryCustomer) > 0) {
-			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
-		}
-	}
-	if (!empty($searchCategoryCustomerSqlList)) {
-		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+if (is_object($catCust) && !empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSql = $catCust->getSqlSearch(Categorie::TYPE_CUSTOMER, 'p.fk_soc', $searchCategoryCustomerList, $searchCategoryCustomerOperator, $searchCategoryCustomerChilds);
+	if (!empty($searchCategoryCustomerSql)) {
+		$sql .= " AND ".$searchCategoryCustomerSql;
 	}
 }
 // Add where from extra fields
@@ -1149,13 +1126,13 @@ if ($user->hasRight('user', 'user', 'lire')) {
 // Filter on categories
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $searchCategoryProjectList, 'minwidth300imp minwidth300 widthcentpercentminusx', $searchCategoryProjectOperator, 1, 1, '', $searchCategoryProjectChilds);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $searchCategoryProjectList, 'minwidth300', $searchCategoryProjectOperator, 1, 1, '', $enableSearchCategoryProjectChilds ? $searchCategoryProjectChilds : -1); // why css was minwidth300imp minwidth300 widthcentpercentminusx ?
 }
 
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator, 1, 1, '', $enableSearchCategoryCustomerChilds ? $searchCategoryCustomerChilds : -1);
 }
 
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {

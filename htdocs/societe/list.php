@@ -16,7 +16,7 @@
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		Vincent Maury	<vmaury@timgroup.fr>
+ * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -511,6 +511,17 @@ $formcompany = new FormCompany($db);
 $prospectstatic = new Client($db);
 $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$catCust = new Categorie($db);
+	$catCust->getFullArbo(Categorie::TYPE_CUSTOMER);
+	$enableSearchCategoryCustomerChilds = $catCust->maxDeepLevel > 0;
+} else $enableSearchCategoryCustomerChilds = false;
+
+if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$catFourn = new Categorie($db);
+	$catFourn->getFullArbo(Categorie::TYPE_SUPPLIER);
+	$enableSearchCategorySupplierChilds = $catFourn->maxDeepLevel > 0;
+} else $enableSearchCategorySupplierChilds = false;
 
 $now = dol_now();
 
@@ -608,18 +619,16 @@ if ($search_sale && $search_sale != '-1') {
 }
 
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-if (!empty($searchCategoryCustomerList)) {
-	$cat = new Categorie($db);
-	$searchCategoryCustomerSql = $cat->getSqlSearch('customer', 's.rowid', $searchCategoryCustomerList, $searchCategoryCustomerOperator, $searchCategoryCustomerChilds);
+if (is_object($catCust) && !empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSql = $catCust->getSqlSearch(Categorie::TYPE_CUSTOMER, 's.rowid', $searchCategoryCustomerList, $searchCategoryCustomerOperator, $searchCategoryCustomerChilds);
 	if (!empty($searchCategoryCustomerSql)) {
 		$sql .= " AND $searchCategoryCustomerSql ";
 	}
 }
 
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
-if (!empty($searchCategorySupplierList)) {
-	$cat = new Categorie($db);
-	$searchCategorySupplierSql = $cat->getSqlSearch('supplier', 's.rowid', $searchCategorySupplierList, $searchCategorySupplierOperator, $searchCategorySupplierChilds);
+if (is_object($catFourn) && !empty($searchCategorySupplierList)) {
+	$searchCategorySupplierSql = $catFourn->getSqlSearch(Categorie::TYPE_SUPPLIER, 's.rowid', $searchCategorySupplierList, $searchCategorySupplierOperator, $searchCategorySupplierChilds);
 	if (!empty($searchCategorySupplierSql)) {
 		$sql .= " AND $searchCategorySupplierSql ";
 	}
@@ -1204,14 +1213,14 @@ $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
 	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0, 1, 1, '', $searchCategoryCustomerChilds);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0, 1, 1, '', $enableSearchCategoryCustomerChilds ? $searchCategoryCustomerChilds : -1);
 	}
 }
 
 if (empty($type) || $type == 'f') {
 	if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0, 1, 1, '', $searchCategorySupplierChilds);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0, 1, 1, '', $enableSearchCategorySupplierChilds ? $searchCategorySupplierChilds : -1);
 	}
 }
 
