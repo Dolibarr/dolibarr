@@ -1064,7 +1064,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_chart($file, $fileurl)
+	private function draw_chart($file, $fileurl) // @phpstan-ignore-linne
 	{
 		// phpcs:enable
 		global $langs;
