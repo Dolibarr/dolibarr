@@ -518,7 +518,7 @@ if ($result) {
 		*/
 
 		// Supplier invoice label
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 		print dol_escape_htmltag($objp->invoice_label);
 		print '</td>';
 
