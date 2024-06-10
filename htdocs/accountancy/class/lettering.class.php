@@ -51,6 +51,10 @@ class Lettering extends BookKeeping
 					'table' => 'societe_remise_except',
 					'fk_doc' => 'fk_facture_source',
 					'fk_link' => 'fk_facture',
+					'fk_line_link' => 'fk_facture_line',
+					'table_link_line' => 'facturedet',
+					'fk_table_link_line' => 'rowid',
+					'fk_table_link_line_parent' => 'fk_facture',
 					'prefix' => 'a',
 					'is_fk_link_is_also_fk_doc' => true,
 				),
@@ -73,6 +77,10 @@ class Lettering extends BookKeeping
 					'table' => 'societe_remise_except',
 					'fk_doc' => 'fk_invoice_supplier_source',
 					'fk_link' => 'fk_invoice_supplier',
+					'fk_line_link' => 'fk_invoice_supplier_line',
+					'table_link_line' => 'facture_fourn_det',
+					'fk_table_link_line' => 'rowid',
+					'fk_table_link_line_parent' => 'fk_facture_fourn',
 					'prefix' => 'a',
 					'is_fk_link_is_also_fk_doc' => true,
 				),
@@ -765,10 +773,26 @@ class Lettering extends BookKeeping
 		$link_by_element = array();
 		$element_by_link = array();
 		foreach ($doc_type_info['linked_info'] as $linked_info) {
-			$sql = "SELECT DISTINCT tl2." . $linked_info['fk_link'] . " AS fk_link, tl2." . $linked_info['fk_doc'] . " AS fk_doc";
-			$sql .= " FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl2 ON tl2." . $linked_info['fk_link'] . " = tl." . $linked_info['fk_link'];
-			$sql .= " WHERE tl." . $linked_info['fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+			if (empty($linked_info['fk_line_link'])) {
+				$sql = "SELECT DISTINCT tl2.".$linked_info['fk_link']." AS fk_link, tl2.".$linked_info['fk_doc']." AS fk_doc";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$linked_info['table']." AS tl";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$linked_info['table']." AS tl2 ON tl2.".$linked_info['fk_link']." = tl.".$linked_info['fk_link'];
+				$sql .= " WHERE tl.".$linked_info['fk_doc']." IN (".$this->db->sanitize(implode(',', $document_ids)).")";
+			} else {
+				$sql = "SELECT DISTINCT tl2.fk_link, tl2.fk_doc";
+				$sql .= " FROM (";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent'],  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
+				$sql .= "   FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
+				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table_link_line'] . " AS tll ON tll." . $linked_info['fk_table_link_line'] . " = tl." . $linked_info['fk_line_link'];
+				$sql .= ") AS tl";
+				$sql .= " LEFT JOIN (";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent'],  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
+				$sql .= "   FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
+				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table_link_line'] . " AS tll ON tll." . $linked_info['fk_table_link_line'] . " = tl." . $linked_info['fk_line_link'];
+				$sql .= ") AS tl2 ON tl2.fk_link = tl.fk_link";
+				$sql .= " WHERE tl.fk_doc IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+				$sql .= " AND tl2.fk_doc IS NOT NULL";
+			}
 
 			dol_syslog(__METHOD__ . " - Get document lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);

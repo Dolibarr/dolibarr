@@ -39,7 +39,7 @@ $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
-$socid = 0;
+
 $id = GETPOST('id', 'int');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
@@ -73,7 +73,11 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '');
+$result = restrictedArea($user, 'holiday', $id);
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
 
 
 /*

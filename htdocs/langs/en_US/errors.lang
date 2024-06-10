@@ -320,6 +320,7 @@ ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
 
