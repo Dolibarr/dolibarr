@@ -268,11 +268,11 @@ class Categorie extends CommonObject
 	public $maxDeepLevel = 0;
 
 	/** Full Arbo of cat type
-	 * to avoid several DB access and/or tree processing 
+	 * to avoid several DB access and/or tree processing
 	 *
 	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
 	 */
-	private $catsFullArbo = array();	
+	private $catsFullArbo = array();
 
 	/**
 	 *
@@ -1312,7 +1312,6 @@ class Categorie extends CommonObject
 			$this->cats = $this->catsFullArbo[$type];
 			$this->maxDeepLevel = $this->maxDeepLevelByType[$type];
 		}
-		
 
 		// Include or exclude leaf (including $fromid) from tree
 		if (count($fromid) > 0) {
