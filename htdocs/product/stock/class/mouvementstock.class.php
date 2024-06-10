@@ -473,7 +473,7 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		if ($movestock && $product->stockable_product == PRODUCT::ENABLED_STOCK) {	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $product->stockable_product == Product::ENABLED_STOCK) {	// Change stock for current product, change for subproduct is done after
 			// Set $origin_type, origin_id and fk_project
 			$fk_project = $this->fk_project;
 			if (!empty($this->origin_type)) {			// This is set by caller for tracking reason
