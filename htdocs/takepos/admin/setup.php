@@ -131,7 +131,7 @@ $formproduct = new FormProduct($db);
 
 $help_url = 'EN:Module_Point_of_sale_(TakePOS)';
 
-llxHeader('', $langs->trans("CashDeskSetup"), $help_url);
+llxHeader('', $langs->trans("CashDeskSetup"), $help_url, '', 0, 0, '', '', '', 'mod-takepos page-admin_setup');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');

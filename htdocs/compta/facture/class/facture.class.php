@@ -2859,7 +2859,7 @@ class Facture extends CommonInvoice
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
-			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
+			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact() >= 0 ) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
 
 				$resql = $this->db->query($sql);

@@ -283,8 +283,9 @@ if (empty($reshook)) {
 				$db->begin();
 				foreach ($lines as $line) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source);
-					if ($res <= 0) {
+					if ($res < 0) {
 						$error++;
+						setEventMessages($line->error, $line->errors, 'errors');
 					}
 				}
 				if (empty($error)) {
@@ -311,6 +312,7 @@ if (empty($reshook)) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source, 0);
 					if ($res <= 0) {
 						$error++;
+						setEventMessages($line->error, $line->errors, 'errors');
 					}
 				}
 				if (empty($error)) {
@@ -337,6 +339,7 @@ if (empty($reshook)) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination, 0);
 					if ($res <= 0) {
 						$error++;
+						setEventMessages($line->error, $line->errors, 'errors');
 					}
 				}
 				if (empty($error)) {
@@ -363,6 +366,7 @@ if (empty($reshook)) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination);
 					if ($res <= 0) {
 						$error++;
+						setEventMessages($line->error, $line->errors, 'errors');
 					}
 				}
 				if (empty($error)) {
