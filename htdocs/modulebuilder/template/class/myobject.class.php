@@ -1251,6 +1251,18 @@ class MyObjectLine extends CommonObjectLine
 	// We should have a field rowid, fk_myobject and position
 
 	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = '';
+
+	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler

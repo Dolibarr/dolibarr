@@ -53,6 +53,16 @@ class EvaluationLine extends CommonObjectLine
 	public $table_element = 'hrm_evaluationdet';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'hrm_evaluation';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_evaluation';
+
+	/**
 	 * @var string String with name of icon for evaluationdet. Must be the part after the 'object_' into object_evaluationdet.png
 	 */
 	public $picto = 'evaluationdet@hrm';
