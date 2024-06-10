@@ -190,7 +190,7 @@ $arrayfields = array(
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 110),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax1_assuj == "1", 'position' => 95),
 	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax2_assuj == "1", 'position' => 100),
-	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 115),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1, 'position' => 115),
 	'dynamount_payed' => array('label' => "Paid", 'checked' => 0, 'position' => 116),
 	'rtp' => array('label' => "Rest", 'checked' => 0, 'position' => 117),
 	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
