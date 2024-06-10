@@ -80,10 +80,10 @@ class FormResource
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
-	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = 'minwidth100', $multiple = false)
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$out = '';
 		$outarray = array();
@@ -103,7 +103,7 @@ class FormResource
 
 		if ($resourcestat) {
 			// Construct $out and $outarray
-			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) {
 				$out .= '<option value="-1">&nbsp;</option>'."\n";
 			}
