@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
- * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2005-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
+ * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -505,7 +505,7 @@ if ($action == 'edit') {
 		}
 		print '<a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
 		$s = '';
-		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
+		if (isset($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto']) && !empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
 			$s = img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
 		}
 		if (empty($s)) {
