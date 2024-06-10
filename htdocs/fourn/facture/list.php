@@ -180,7 +180,7 @@ $arrayfields = array(
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 43),
-	's.zip' => array('label' => "Zip", 'checked' => 1, 'position' => 44),
+	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 44),
 	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 45),
 	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 46),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 49),
@@ -1378,7 +1378,7 @@ if (!empty($arrayfields['s.town']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['state.nom']['checked'])) {
