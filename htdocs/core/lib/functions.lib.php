@@ -12159,7 +12159,7 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	$reshook = $hookmanager->executeHooks('changeElementProperties', $parameters);
+	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	} elseif ($reshook > 0) {
