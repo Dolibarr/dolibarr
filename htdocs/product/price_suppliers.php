@@ -520,8 +520,8 @@ if ($id > 0 || $ref) {
 					}
 					print '<script type="text/javascript">
 					$(document).ready(function () {
-						$("#search_id_fourn").change(load_vat)
 						console.log("Requesting default VAT rate for the supplier...")
+						$("#search_id_fourn").change(load_vat)
 					});
 					function load_vat() {
 						// get soc id
@@ -529,11 +529,12 @@ if ($id > 0 || $ref) {
 
 						// load available VAT rates
 						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
-						//Make GET request with params
+						// make GET request with params
 						let options = "";
 						options += "id=" + socid
 						options += "&htmlname=tva_tx"
-						options += "&action=default" // not defined in vatrates.php, default behavior.
+						options += "&token='.currentToken().'"
+						options += "&action=getBuyerVATRates" // not defined in vatrates.php, default behavior.
 
 						var get = $.getJSON(
 							vat_url,
