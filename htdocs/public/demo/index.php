@@ -290,7 +290,7 @@ $i = 0;
 foreach ($demoprofiles as $profilearray) {
 	if ($profilearray['default'] >= 0) {
 		//print $profilearray['lang'];
-		if (!empty($profilearray['lang'])) {
+		if (isset($profilearray['lang']) && !empty($profilearray['lang'])) {
 			$langs->load($profilearray['lang']);
 		}
 
