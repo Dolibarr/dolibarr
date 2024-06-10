@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +252,11 @@ if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
-			$tmparray['sep'.$i] = array('data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>', 'label'=>'--- '.$langs->trans("Bookmarks"));
+			$tmparray['sep'.$i] = array(
+				'data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>',
+				'label'=>'--- '.$langs->trans("Bookmarks"),
+				'picto' => '',
+			);
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
