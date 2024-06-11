@@ -2626,14 +2626,14 @@ class pdf_octopus extends ModelePDFFactures
 			$this->cols['prev_progress']['status'] = true;
 		}
 
-		// Colonne "Progression précédente"
+		// Column 'Previous progression'
 		$rank = $rank + 10;
 		$this->cols['prev_progress_amount'] = array(
 			'rank' => $rank,
 			'width' => 15, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('BtpAmountColTitle', $derniere_situation->situation_counter)
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceAmountColTitle', $derniere_situation->situation_counter)
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2641,32 +2641,32 @@ class pdf_octopus extends ModelePDFFactures
 			$this->cols['prev_progress_amount']['status'] = true;
 		}
 
-		// Colonne "Pourcentage Progression actuelle"
+		// Column 'Current percent progress'
 		$rank = $rank + 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
 			'width' => 10, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('BtpProgressColTitle', $object->situation_counter)
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceProgressColTitle', $object->situation_counter)
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $object->situation_counter, dol_print_date($object->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceDate', $object->situation_counter, dol_print_date($object->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15
 			),
 		);
 
-		// Colonne "Progression actuelle"
+		// Column 'Current progress'
 		$rank = $rank + 10;
 		$this->cols['progress_amount'] = array(
 			'rank' => $rank,
 			'width' => 15, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('BtpAmountColTitle', $object->situation_counter)
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceAmountColTitle', $object->situation_counter)
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2695,7 +2695,7 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => 18, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('BtpTotHt')
+				'textkey' => $outputlangs->transnoentities('TotalHT')
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2736,7 +2736,6 @@ class pdf_octopus extends ModelePDFFactures
 	{
 		global $conf, $object, $db;
 
-		$outputlangs->loadLangs(array("btp@btp"));
 		$form = new Form($db);
 
 		$tab_height -= 29; // Réduction de la hauteur global du tableau
@@ -2783,20 +2782,20 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->line($this->posx_cumul_anterieur-1, $tab_top, $this->posx_cumul_anterieur-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posx_cumul_anterieur-1, $tab_top+0.5);
-			$pdf->MultiCell(35, 2, $outputlangs->transnoentities("BtpAnteCumul"), '', 'C');
+			$pdf->MultiCell(35, 2, $outputlangs->transnoentities("SituationInvoiceOldCumulation"), '', 'C');
 		}
 
 		// PRINT COLUMNS TITLES
 		$pdf->line($this->posx_new_cumul-1, $tab_top, $this->posx_new_cumul-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posx_new_cumul-1, $tab_top+0.5);
-			$pdf->MultiCell(35, 2, $outputlangs->transnoentities("BtpNewCumul"), '', 'C');
+			$pdf->MultiCell(35, 2, $outputlangs->transnoentities("SituationInvoiceNewCumulation"), '', 'C');
 		}
 
 		$pdf->line($this->posx_current-1, $tab_top, $this->posx_current-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posx_current-1, $tab_top+0.5);
-			$pdf->MultiCell(36, 2, $outputlangs->transnoentities("BtpCurrentSituation", $object->situation_counter), '', 'C');
+			$pdf->MultiCell(36, 2, $outputlangs->transnoentities("CurrentSituationTotal", $object->situation_counter), '', 'C');
 		}
 
 		// ADD HORIZONTAL LINES
@@ -2816,10 +2815,10 @@ class pdf_octopus extends ModelePDFFactures
 		// ADD TEXT INTO CELL
 		/********************** Titles ******************************/
 		$pdf->SetXY($this->marge_gauche+2, $tab_top+8);
-		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("BtpMainWork"), '', 'L');
+		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("SituationInvoiceMainTask"), '', 'L');
 
 		$pdf->SetXY($this->marge_gauche+2, $tab_top+12);
-		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("BtpAdditionalWork"), '', 'L');
+		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("SituationInvoiceAdditionalTask"), '', 'L');
 
 		$form->load_cache_vatrates("'".$object->thirdparty->country_code."'");
 
@@ -2849,12 +2848,12 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetFont('', 'B', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche+2, $tab_top+58);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("BtpTotalSituationTTC"), '', 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("TotalSituationInvoice"), '', 'L');
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($displayWarranty) {
 			$pdf->SetXY($this->marge_gauche + 2, $tab_top + 74);
-			$pdf->MultiCell(80, 2, $outputlangs->trans("BtpRetenueGarantieWithPercent", $object->retained_warranty), '', 'L');
+			$pdf->MultiCell(80, 2, $outputlangs->trans("TotalSituationInvoiceWithRetainedWarranty", $object->retained_warranty), '', 'L');
 			$nextY = $tab_top+93;
 		} else {
 			$nextY = $tab_top+74;
@@ -2862,7 +2861,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetFont('', 'B', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche+2, $nextY);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("BtpRayToRest"), '', 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("SituationTotalRayToRest"), '', 'L');
 		$pdf->SetFont('', '', $default_font_size - 2);
 		/***********************************************************/
 
@@ -2963,18 +2962,15 @@ class pdf_octopus extends ModelePDFFactures
 	public function _getDataSituation(&$object)
 	{
 		global $conf, $db;
-		// $btpModule = new modBtp($db);
 
-		/* from dolibarr core
-		* Fetch previous and next situations invoices.
-		* Return all previous and next invoices (both standard and credit notes).
-		*/
+		// Fetch previous and next situations invoices.
+		// Return all previous and next invoices (both standard and credit notes)
 		$object->fetchPreviousNextSituationInvoice();
 		/** @var Facture[] $TPreviousInvoices */
 		$TPreviousInvoices = $object->tab_previous_situation_invoice;
 		unset($object->tab_previous_situation_invoice);
 
-		//liste de toutes les factures précédentes
+		// liste de toutes les factures précédentes
 		// print json_encode($TPreviousInvoices); exit;
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
@@ -3536,7 +3532,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(241, 241, 241);
-				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("ReductionWarrantyShort", $retainedWarrantyRate), $useborder, 'L', 1);
+				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RetainedWarrantyShort", $retainedWarrantyRate), $useborder, 'L', 1);
 
 				$total_ht_rg = price2num(price($total_ht * $retainedWarrantyRate/100), 'MT');
 				$total_ttc_rg = price2num(price($total_ttc * $retainedWarrantyRate/100), 'MT');
@@ -3553,7 +3549,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(224, 224, 224);
-				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalWithRgTTC"), $useborder, 'L', 1);
+				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalSituationInvoiceWithRetainedWarranty"), $useborder, 'L', 1);
 
 				$pdf->SetXY($posx+$width, $posy + $height * $index);
 				$pdf->MultiCell($width2, $height, price($sign * $total_ttc_with_rg, 0, $outputlangs), $useborder, 'R', 1);
