@@ -230,7 +230,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->expedition->dir_output."/sending") {
+		if ($conf->expedition->multidir_output[$object->entity]."/sending") {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -244,7 +244,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->expedition->dir_output."/sending";
+			$dir = $conf->expedition->multidir_output[$object->entity]."/sending";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -551,7 +551,6 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				return 1; // Success
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
-				return -1;
 			}
 		}
 
