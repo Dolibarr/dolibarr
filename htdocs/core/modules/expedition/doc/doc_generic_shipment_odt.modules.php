@@ -84,7 +84,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -227,7 +227,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
-		// Load traductions files required by page
+		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->expedition->dir_output."/sending") {
@@ -451,21 +451,25 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
 				foreach ($tmparray as $key => $value) {
 					try {
-						if (preg_match('/logo$/', $key)) { // Image
+						if (preg_match('/logo$/', $key)) {
+							// Image
 							if (file_exists($value)) {
 								$odfHandler->setImage($key, $value);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else { // Text
+						} else {
+							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
 				// Replace tags of lines
 				$foundtagforlines = 1;
 				try {
@@ -476,8 +480,10 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 				if ($foundtagforlines) {
+					$linenumber = 0;
 					foreach ($object->lines as $line) {
-						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
+						$linenumber++;
+						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook
 						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
@@ -532,6 +538,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						return -1;
 					}
 				}
+
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
