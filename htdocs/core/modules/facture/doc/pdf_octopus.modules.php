@@ -2109,7 +2109,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 		if ($this->situationinvoice) {
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation");
-			$subtitle = $outputlangs->transnoentities("BtpTitle", $object->situation_counter);
+			$subtitle = $outputlangs->transnoentities("PDFSituationTitle", $object->situation_counter);
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
