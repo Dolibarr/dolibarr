@@ -221,8 +221,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_url"
 				   value="<?php print $dolibarr_main_url_root; ?> "
 <?php if (!empty($force_install_noedit)) {
-	/* Behind a reverse proxy with https, we have to keep it writable */
-	//print ' disabled';
+	print ' disabled';
 }
 ?>
 			>
