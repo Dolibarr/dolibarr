@@ -180,7 +180,7 @@ $arrayfields = array(
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 43),
-	's.zip' => array('label' => "Zip", 'checked' => 1, 'position' => 44),
+	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 44),
 	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 45),
 	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 46),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 49),
@@ -190,7 +190,7 @@ $arrayfields = array(
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 110),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax1_assuj == "1", 'position' => 95),
 	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax2_assuj == "1", 'position' => 100),
-	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 115),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1, 'position' => 115),
 	'dynamount_payed' => array('label' => "Paid", 'checked' => 0, 'position' => 116),
 	'rtp' => array('label' => "Rest", 'checked' => 0, 'position' => 117),
 	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
@@ -1378,7 +1378,7 @@ if (!empty($arrayfields['s.town']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['state.nom']['checked'])) {

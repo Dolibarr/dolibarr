@@ -2029,6 +2029,10 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;

@@ -265,9 +265,6 @@ if (empty($search_projectstatus) && $search_projectstatus == '') {
 	$search_projectstatus = 1;
 }
 
-
-
-
 /*
  * View
  */
@@ -987,6 +984,7 @@ print '</tr>'."\n";
 
 $totalarray = array(
 	'nbfield' => 0,
+	'type' => [],
 	'val' => array(
 		't.planned_workload' => 0,
 		't.duration_effective' => 0,
@@ -1000,8 +998,10 @@ $totalarray = array(
 	'totalbilledfield' => 0,
 	'totalbudget_amountfield' => 0,
 	'totalbudgetamount' => 0,
+	'totalbudget' => 0,
 	'totaltobill' => 0,
 	'totalbilled' => 0,
+	'totalizable' => [],
 );
 
 // Fields title label

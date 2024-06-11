@@ -3733,6 +3733,16 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $table_element = 'facture_fourn_det';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'facture_fourn';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_facture_fourn';
+
+	/**
 	 * @var static
 	 */
 	public $oldline;
@@ -3852,7 +3862,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var double
+	 * @var float
 	 */
 	public $qty;
 

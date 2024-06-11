@@ -69,7 +69,7 @@ if ($action == 'set') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-debugbar');
 
 $form = new Form($db);
 

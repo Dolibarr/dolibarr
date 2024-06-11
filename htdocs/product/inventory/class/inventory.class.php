@@ -801,6 +801,16 @@ class InventoryLine extends CommonObjectLine
 	public $table_element = 'inventorydet';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'inventory';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_inventory';
+
+	/**
 	 * @var string String with name of icon for inventory
 	 */
 	public $picto = 'stock';
@@ -851,9 +861,22 @@ class InventoryLine extends CommonObjectLine
 	public $fk_product;
 	public $batch;
 	public $datec;
+
+	/**
+	 * @var float Quantity stock
+	 */
 	public $qty_stock;
+
+	/**
+	 * @var float|null Quantity viewed
+	 */
 	public $qty_view;
+
+	/**
+	 * @var float Quantity regulated
+	 */
 	public $qty_regulated;
+
 	public $pmp_real;
 	public $pmp_expected;
 

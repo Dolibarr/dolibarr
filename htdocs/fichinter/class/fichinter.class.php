@@ -1681,6 +1681,11 @@ class FichinterLigne extends CommonObjectLine
 	public $duration; 	// Duration of intervention
 	public $rang = 0;
 	public $tva_tx;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 
 	/**

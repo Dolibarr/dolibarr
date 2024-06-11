@@ -121,6 +121,10 @@ class Mo extends CommonObject
 	 */
 	public $mrptype;
 	public $label;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse;
 	public $fk_soc;
@@ -759,7 +763,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -832,7 +836,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty, 'MS');
+							$moLine->qty = (float) price2num($qty, 'MS');
 							$res = $moLine->update($user);
 							if (!$res) {
 								$error++;
@@ -1998,6 +2002,16 @@ class MoLine extends CommonObjectLine
 	public $table_element = 'mrp_production';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'mo';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_mo';
+
+	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
@@ -2068,7 +2082,15 @@ class MoLine extends CommonObjectLine
 	public $position;
 	public $fk_product;
 	public $fk_warehouse;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;

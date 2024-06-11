@@ -603,7 +603,7 @@ class Propal extends CommonObject
 			}
 
 			$remise_percent = price2num($remise_percent);
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
@@ -832,7 +832,7 @@ class Propal extends CommonObject
 
 		// Clean parameters
 		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
@@ -857,7 +857,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -3975,6 +3975,16 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $table_element = 'propaldet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'propal';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_propal';
+
 	public $oldline;
 
 	// From llx_propaldet
@@ -3999,6 +4009,10 @@ class PropaleLigne extends CommonObjectLine
 	public $tva_tx;
 	public $vat_src_code;
 
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $remise_percent;
 	public $fk_remise_except;

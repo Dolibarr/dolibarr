@@ -255,7 +255,7 @@ abstract class CommonDocGenerator
 		global $conf, $extrafields;
 
 		if ($member->photo) {
-			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+			$logotouse = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
 			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
@@ -386,7 +386,7 @@ abstract class CommonDocGenerator
 			'company_vatnumber' => $object->tva_intra,
 			'company_customercode' => $object->code_client,
 			'company_suppliercode' => $object->code_fournisseur,
-			'company_customeraccountancycode' => $object->code_compta,
+			'company_customeraccountancycode' => $object->code_compta_client,
 			'company_supplieraccountancycode' => $object->code_compta_fournisseur,
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
@@ -721,9 +721,9 @@ abstract class CommonDocGenerator
 	 *	Define array with couple substitution key => substitution value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  CommonObjectLine $line				Object line
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
+	 *	@param  CommonObjectLine	$line			Object line
+	 *	@param  Translate			$outputlangs    Translate object to use for output
+	 *  @param  int					$linenumber		The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
@@ -903,7 +903,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (!empty($object->commande) && is_object($object->commande)) {
+		if (is_object($object->commande) && !empty($object->commande->ref)) {
 			$array_shipment['order_ref'] = $object->commande->ref;
 			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
@@ -1343,9 +1343,9 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     		Common object
-	 *  @param	string		$extrafieldKey    	The extrafield key
-	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
+	 *  @param	CommonObject	$object     		Common object
+	 *  @param	string			$extrafieldKey    	The extrafield key
+	 *  @param	Translate		$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
 	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
@@ -1408,10 +1408,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	object		$object    		line of common object
-	 *  @param 	Translate 	$outputlangs    Output language
-	 *  @param 	array 		$params    		array of additional parameters
-	 *  @return	string  					Html string
+	 *  @param	CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 			$outputlangs    Output language
+	 *  @param 	array 				$params    		array of additional parameters
+	 *  @return	string  							Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{

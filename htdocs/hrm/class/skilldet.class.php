@@ -51,6 +51,16 @@ class Skilldet extends CommonObjectLine
 	public $table_element = 'hrm_skilldet';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'skill';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_skill';
+
+	/**
 	 * @var string String with name of icon for skilldet. Must be the part after the 'object_' into object_skilldet.png
 	 */
 	public $picto = 'skilldet@hrm';

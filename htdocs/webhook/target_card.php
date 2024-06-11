@@ -209,7 +209,7 @@ $arrayofcss = array();
 $title = $langs->trans("Target");
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-webhook page-target_card');
 
 // Part to create
 if ($action == 'create') {
@@ -578,7 +578,7 @@ if ($action == "test") {
 	$doleditor = new DolEditor("jsondata", $datatosend, 0, 200, 'dolibarr_details', 'In', true, true, 'ace');
 	print $doleditor->Create(0, '', true, '', 'json');
 	*/
-	print '<textarea id="jsondatasendtarget" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
+	print '<textarea id="jsondata" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
 	print $datatosend;
 	print '</textarea>';
 

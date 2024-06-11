@@ -147,7 +147,7 @@ if (preg_match('/^mac/i', PHP_OS)) {
 }
 
 $wikihelp = 'EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-sms');
 
 print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 

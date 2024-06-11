@@ -3010,6 +3010,16 @@ class ContratLigne extends CommonObjectLine
 	public $table_element = 'contratdet';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'contrat';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_contrat';
+
+	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
 	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
@@ -3081,7 +3091,11 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_remise_except;
 
-	public $subprice; // Unit price HT
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
+	public $subprice;
 
 	/**
 	 * @var float
@@ -3090,6 +3104,9 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $price;
 
+	/**
+	 * @var float price without tax
+	 */
 	public $price_ht;
 
 	public $total_ht;
@@ -3473,11 +3490,11 @@ class ContratLigne extends CommonObjectLine
 		$this->tva_tx = trim((string) $this->tva_tx);
 		$this->localtax1_tx = trim($this->localtax1_tx);
 		$this->localtax2_tx = trim($this->localtax2_tx);
-		$this->qty = trim((string) $this->qty);
+		$this->qty = (float) $this->qty;
 		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
-		$this->subprice = price2num($this->subprice);
-		$this->price_ht = price2num($this->price_ht);
+		$this->subprice = (float) price2num($this->subprice);
+		$this->price_ht = (float) price2num($this->price_ht);
 		$this->info_bits = (int) $this->info_bits;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
