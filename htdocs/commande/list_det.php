@@ -706,7 +706,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-commande page-list_det');
 
 	$param = '';
 

@@ -86,7 +86,7 @@ $form = new Form($db);
 
 $help_url = 'EN:Module_Workstation';
 
-llxHeader('', $langs->trans('Workstation'), $help_url);
+llxHeader('', $langs->trans('Workstation'), $help_url, '', 0, 0, '', '', '', 'mod-workstation page-card_workstation_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
