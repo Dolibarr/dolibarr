@@ -1608,13 +1608,13 @@ class pdf_octopus extends ModelePDFFactures
 		if ($remise > 0) {
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemiseHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemiseHT") : ''), 0, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("DiscountHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("DiscountHT") : ''), 0, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($remise, 0, $outputlangs), 0, 'R', 1);
 
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTwithRemise").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTwithRemise") : ''), 0, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTWithDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTWithDiscount") : ''), 0, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht - $remise, 0, $outputlangs), 0, 'R', 1);
 		}
@@ -2612,11 +2612,11 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => 10, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('BtpProgressColTitle', $derniere_situation->situation_counter)
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceProgressColTitle', $derniere_situation->situation_counter)
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $derniere_situation->situation_counter, dol_print_date($derniere_situation->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
+				'textkey' => $outputlangs->transnoentities('SituationInvoiceDate', $derniere_situation->situation_counter, dol_print_date($derniere_situation->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15 //current width + amount cell width
@@ -3384,7 +3384,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFont('', '', $default_font_size - 1);
 
-			$label = $outputlangs->transnoentities("BtpTotalPropal");
+			$label = $outputlangs->transnoentities("SituationInvoiceTotalProposal");
 			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $label, 0, 'L', 0, 1, $posx, $posy+1);
 
 			$amount = price($sign * ($total_ht + (! empty($propal->remise)?$propal->remise:0)));
@@ -3451,7 +3451,7 @@ class pdf_octopus extends ModelePDFFactures
 				$force_to_zero = true;
 			}
 
-			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceOfDate", dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs)), 0, 'L', 0);
+			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceDateUsed", dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs)), 0, 'L', 0);
 
 			$pdf->SetFont('', '', $default_font_size - 1);
 
@@ -3716,7 +3716,7 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche, $posy + 1);
-		$label = $outputlangs->transnoentities("RemainToBillHT");
+		$label = $outputlangs->transnoentities("SituationTotalRayToRest");
 		$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $label, 0, 'L', 0);
 
 		$amount = price($remain_to_pay);

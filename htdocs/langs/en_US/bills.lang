@@ -586,6 +586,7 @@ TypeContact_invoice_supplier_external_BILLING=Vendor invoice contact
 TypeContact_invoice_supplier_external_SHIPPING=Vendor shipping contact
 TypeContact_invoice_supplier_external_SERVICE=Vendor service contact
 # Situation invoices
+WarningsObjectIsNotASituation=Warning, this invoice is not a situation
 InvoiceFirstSituationAsk=First situation invoice
 InvoiceFirstSituationDesc=The <b>situation invoices</b> are tied to situations related to a progression, for example the progression of a construction. Each situation is tied to an invoice.
 InvoiceSituation=Situation invoice
@@ -609,7 +610,8 @@ NoSituations=No open situations
 InvoiceSituationLast=Final and general invoice
 SituationInvoiceAmountColTitle=Amount(net)
 SituationInvoiceProgressColTitle=Progress
-SituationInvoiceDate=Date
+SituationInvoiceDate=Date invoice situation
+SituationInvoiceTotalProposal=Proposal of invoice situation
 SituationInvoiceOldCumulation=Old cumulation
 SituationInvoiceNewCumulation=New cumulation
 SituationInvoiceMainTask=Main task
