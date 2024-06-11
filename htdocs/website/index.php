@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
+/* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -66,6 +66,8 @@ if (!$user->hasRight('website', 'read')) {
 $conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 
 $error = 0;
+$virtualurl = '';
+$dataroot = '';
 $websiteid = GETPOSTINT('websiteid');
 $websitekey = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');

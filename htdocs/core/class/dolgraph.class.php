@@ -777,7 +777,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_jflot($file, $fileurl)
+	private function draw_jflot($file, $fileurl) // @phpstan-ignore-line
 	{
 		// phpcs:enable
 		global $langs;
@@ -1064,7 +1064,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_chart($file, $fileurl)
+	private function draw_chart($file, $fileurl) // @phpstan-ignore-line
 	{
 		// phpcs:enable
 		global $langs;
