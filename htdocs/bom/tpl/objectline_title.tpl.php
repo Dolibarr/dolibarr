@@ -89,7 +89,10 @@ if ($filtertype != 1) {
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 } else {
 	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-
+	if (getDolGlobalInt('BOM_ENABLE_FREEZE_SERVICE_QTY')) {
+		// Qty frozen
+		print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+	}
 	if (isModEnabled('workstation')) {
 		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 	}
