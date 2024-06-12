@@ -296,7 +296,7 @@ class Categories extends DolibarrApi
 	 * Get the list of categories linked to an object
 	 *
 	 * @param int       $id         Object ID
-	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project','actioncomm')
+	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project', 'actioncomm')
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
@@ -317,7 +317,7 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_MEMBER,
 			Categorie::TYPE_PROJECT,
 			Categorie::TYPE_KNOWLEDGEMANAGEMENT,
-			Categorie::TYPE_ACTIONCOMM		  
+			Categorie::TYPE_ACTIONCOMM
 		])) {
 			throw new RestException(403);
 		}
@@ -352,7 +352,7 @@ class Categories extends DolibarrApi
 	 * Link an object to a category by id
 	 *
 	 * @param int $id  ID of category
-	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact','actioncomm')
+	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
 	 * @param int      $object_id ID of object
 	 *
 	 * @return array
