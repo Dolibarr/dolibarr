@@ -797,7 +797,8 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
-		} 
+		}
+
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
