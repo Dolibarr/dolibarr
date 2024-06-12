@@ -935,7 +935,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * isEmpty We consider CommonObject isEmpty if id equal zéro
+	 * isEmpty We consider CommonObject isEmpty if this->id is empty
 	 *
 	 * @return bool
 	 */
