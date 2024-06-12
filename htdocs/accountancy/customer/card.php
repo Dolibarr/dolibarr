@@ -86,7 +86,7 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
  */
 $help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader("", $langs->trans('FicheVentilation'), $help_url);
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
