@@ -1034,14 +1034,20 @@ if ($action == 'create') {
 				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
-				$email = CMailFile::getValidAddress($object->email_errorsto, 2);
-				if ($action != 'editemail_errorsto') {
-					if ($email && !isValidEmail($email)) {
-						$langs->load("errors");
-						print img_warning($langs->trans("ErrorBadEMail", $email));
-					} elseif ($email && !isValidMailDomain($email)) {
-						$langs->load("errors");
-						print img_warning($langs->trans("ErrorBadMXDomain", $email));
+				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
+				foreach ($emailarray as $email => $name) {
+					if ($name != $email) {
+						print dol_escape_htmltag($name).' &lt;'.$email;
+						print '&gt;';
+						if ($email && !isValidEmail($email)) {
+							$langs->load("errors");
+							print img_warning($langs->trans("ErrorBadEMail", $email));
+						} elseif ($email && !isValidMailDomain($email)) {
+							$langs->load("errors");
+							print img_warning($langs->trans("ErrorBadMXDomain", $email));
+						}
+					} else {
+						print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 					}
 				}
 				print '</td></tr>';
@@ -1081,9 +1087,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalInt('MAILING_LIMIT_SENDBYWEB'));
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}

@@ -41,6 +41,7 @@ $erreur = false;
 $erreurNb = 0;
 $choixdate = '';
 
+
 /*
  * Actions
  */
@@ -337,7 +338,7 @@ if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 
 // valeurs du nombre de jour dans le mois et du premier jour du mois
 $nbrejourmois = idate("t", dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
-$premierjourmois = dol_print_date(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]), "%w") - 1;
+$premierjourmois = (int) dol_print_date(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]), "%w") - 1;
 //var_dump(dol_get_first_day((int) $_SESSION["annee"], (int) $_SESSION["mois"]));
 //var_dump($premierjourmois);
 
