@@ -46,7 +46,9 @@ $type = GETPOST('type', 'alpha');
 
 // Load object according to $id and $element
 $object = fetchObjectByElement($id, $element);
-
+if (is_numeric($object) || empty($object->element)) {
+	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
+}
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');

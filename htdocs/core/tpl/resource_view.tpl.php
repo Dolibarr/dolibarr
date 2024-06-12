@@ -30,6 +30,10 @@ print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 if ((array) $linked_resources && count($linked_resources) > 0) {
 	foreach ($linked_resources as $linked_resource) {
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
+		if (is_numeric($object_resource) || empty($object_resource->element)) {
+			//fatal ? at least dolibarr log
+			dol_syslog("Failed to get object with fetchObjectByElement", LOG_ERR);
+		}
 
 		//$element_id = $linked_resource['rowid'];
 

@@ -52,7 +52,7 @@ if (GETPOSTISSET('option')) {
 
 // Load object according to $element
 $object = fetchObjectByElement($id, $objecttype);
-if (empty($object->element)) {
+if (is_numeric($object) || empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
 }
 

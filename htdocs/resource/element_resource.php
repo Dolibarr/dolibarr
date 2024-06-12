@@ -120,6 +120,10 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
+			if (is_numeric($objstat) || empty($objstat->element)) {
+				//fatal ? at least dolibarr log
+				dol_syslog("Failed to get object with fetchObjectByElement", LOG_ERR);
+			}
 			$objstat->element = $element; // For externals module, we need to keep @xx
 
 			// TODO : add this check at update_linked_resource and when modifying event start or end date

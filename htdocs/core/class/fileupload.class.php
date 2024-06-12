@@ -70,6 +70,10 @@ class FileUpload
 		if ($pathname !== null && $filename !== null) {
 			// Get object from its id and type
 			$object = fetchObjectByElement($fk_element, $element);
+			if (is_numeric($object) || empty($object->element)) {
+				//fatal ? at least dolibarr log
+				dol_syslog("Failed to get object with fetchObjectByElement", LOG_ERR);
+			}
 
 			$object_ref = dol_sanitizeFileName($object->ref);
 

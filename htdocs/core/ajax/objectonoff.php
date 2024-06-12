@@ -52,7 +52,7 @@ $format = 'int';
 
 // Load object according to $id and $element
 $object = fetchObjectByElement($id, $element);
-if (!is_object($object)) {
+if (is_numeric($object) || empty($object->element)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
 
