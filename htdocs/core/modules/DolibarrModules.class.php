@@ -138,6 +138,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $rights_class;
 
+	/**
+	 * @var array Module extrafields
+	 */
+	public $extrafields = array();
+
 	const KEY_ID = 0;
 	const KEY_LABEL = 1;
 	const KEY_TYPE = 2;	// deprecated
@@ -483,6 +488,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_menus();
 		}
 
+		// Insert extrafields
+		if (!$err) {
+			$err += $this->insertExtrafields();
+		}
+
 		// Create module's directories
 		if (!$err) {
 			$err += $this->create_dirs();
@@ -591,6 +601,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Remove module's menus (entries in llx_menu)
 		if (!$err) {
 			$err += $this->delete_menus();
+		}
+
+		// Disable extrafields managed by the module
+		if (!$err) {
+			$err += $this->deleteExtrafields();
 		}
 
 		// Remove module's directories
@@ -2484,6 +2499,144 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			}
 		}
 		return $err;
+	}
+
+	/**
+	 * Creates or updates extrafields handled by the module
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	protected function insertExtrafields(): int
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+
+		$extrafields = new ExtraFields($this->db);
+
+		foreach ($this->extrafields as $extrafield) {
+			if (! array_key_exists('size', $extrafield)) {
+				$extrafield['size'] = 0;
+			}
+
+			if (! array_key_exists('pos', $extrafield)) {
+				$extrafield['pos'] = 0;
+			}
+
+			if (array_key_exists('default_value', $extrafield)) {
+				$extrafield['default'] = $extrafield['default_value'];
+			}
+
+			if (
+				! array_key_exists('attrname', $extrafield)
+				|| ! array_key_exists('label', $extrafield)
+				|| ! array_key_exists('type', $extrafield)
+				|| ! array_key_exists('elementtype', $extrafield)
+			) {
+				continue;
+			}
+
+			$extrafield['length'] = $extrafield['size'];
+
+			$attrname = $extrafield['attrname'];
+			$elementtype = $extrafield['elementtype'];
+
+			if ($elementtype == 'thirdparty') {
+				$elementtype = 'societe';
+			} elseif ($elementtype == 'contact') {
+				$elementtype = 'socpeople';
+			} elseif ($elementtype == 'order_supplier') {
+				$elementtype = 'commande_fournisseur';
+			}
+
+			if (! array_key_exists($elementtype, $extrafields->attributes)) {
+				$extrafields->fetch_name_optionals_label($elementtype);
+			}
+
+			// Update extrafield if it exists
+			if (isset($extrafields->attributes[$elementtype]['type'][$attrname])) {
+				$result = $extrafields->update(
+					$attrname,
+					$extrafield['label'],
+					$extrafield['type'],
+					$extrafield['size'],
+					$elementtype,
+					array_key_exists('unique', $extrafield) ? $extrafield['unique'] : 0,
+					array_key_exists('required', $extrafield) ? $extrafield['required'] : 0,
+					$extrafield['pos'],
+					array_key_exists('param', $extrafield) ? $extrafield['param'] : array(),
+					array_key_exists('alwayseditable', $extrafield) ? $extrafield['alwayseditable'] : 0,
+					array_key_exists('perms', $extrafield) ? $extrafield['perms'] : '',
+					array_key_exists('list', $extrafield) ? $extrafield['list'] : '',
+					array_key_exists('help', $extrafield) ? $extrafield['help'] : '',
+					array_key_exists('default_value', $extrafield) ? $extrafield['default_value'] : '',
+					array_key_exists('computed', $extrafield) ? $extrafield['computed'] : '',
+					array_key_exists('entity', $extrafield) ? $extrafield['entity'] : '',
+					array_key_exists('langfile', $extrafield) ? $extrafield['langfile'] : '',
+					array_key_exists('enabled', $extrafield) ? $extrafield['enabled'] : '1',
+					array_key_exists('totalizable', $extrafield) ? $extrafield['totalizable'] : 0,
+					array_key_exists('printable', $extrafield) ? $extrafield['printable'] : 0,
+					array_key_exists('moreparams', $extrafield) ? $extrafield['moreparams'] : array(),
+					$this->rights_class,
+				);
+			} else {
+				$result = $extrafields->addExtraField(
+					$attrname,
+					$extrafield['label'],
+					$extrafield['type'],
+					$extrafield['pos'],
+					$extrafield['size'],
+					$elementtype,
+					array_key_exists('unique', $extrafield) ? $extrafield['unique'] : 0,
+					array_key_exists('required', $extrafield) ? $extrafield['required'] : 0,
+					array_key_exists('default_value', $extrafield) ? $extrafield['default_value'] : '',
+					array_key_exists('param', $extrafield) ? $extrafield['param'] : '',
+					array_key_exists('alwayseditable', $extrafield) ? $extrafield['alwayseditable'] : 0,
+					array_key_exists('perms', $extrafield) ? $extrafield['perms'] : '',
+					array_key_exists('list', $extrafield) ? $extrafield['list'] : '-1',
+					array_key_exists('help', $extrafield) ? $extrafield['help'] : '',
+					array_key_exists('computed', $extrafield) ? $extrafield['computed'] : '',
+					array_key_exists('entity', $extrafield) ? $extrafield['entity'] : '',
+					array_key_exists('langfile', $extrafield) ? $extrafield['langfile'] : '',
+					array_key_exists('enabled', $extrafield) ? $extrafield['enabled'] : '1',
+					array_key_exists('totalizable', $extrafield) ? $extrafield['totalizable'] : 0,
+					array_key_exists('printable', $extrafield) ? $extrafield['printable'] : 0,
+					array_key_exists('moreparams', $extrafield) ? $extrafield['moreparams'] : array(),
+					$this->rights_class,
+				);
+			}
+
+			if ($result < 0) {
+				if (empty($this->error) && ! empty($extrafields->error)) {
+					$this->error = $extrafields->error;
+				}
+
+				if (empty($this->errors) && ! empty($extrafields->error)) {
+					$this->errors = $extrafields->errors;
+				}
+
+				return 1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Disable extrafields managed by the module
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	protected function deleteExtrafields(): int
+	{
+		$sql = 'UPDATE '.$this->db->prefix().'extrafields SET enabled = 0 WHERE module = "'.$this->db->escape($this->rights_class).'"';
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		return 0;
 	}
 
 	/**

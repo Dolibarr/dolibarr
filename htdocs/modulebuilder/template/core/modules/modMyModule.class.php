@@ -450,6 +450,62 @@ class modMyModule extends DolibarrModules
 		$this->import_run_sql_after_array[$r] = array();
 		$r++; */
 		/* END MODULEBUILDER IMPORT MYOBJECT */
+
+		$this->extrafields = array();
+		/* `attrname`, `label`, `type` and `elementtype` are required. @see ExtraFields::addExtraField() for supported indices.
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_separator1',
+			'label' => 'Separator 1',
+			'type' => 'separator',
+			'elementtype' => 'thirdparty',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_myattr1',
+			'label' => 'New Attr 1 label',
+			'type' => 'boolean',
+			'elementtype' => 'thirdparty',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_myattr2',
+			'label' => 'New Attr 2 label',
+			'type' => 'varchar',
+			'size' => 10,
+			'elementtype' => 'projet',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_myattr3',
+			'label' => 'New Attr 3 label',
+			'type' => 'varchar',
+			'size' => 10,
+			'elementtype' => 'bank_account',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_myattr4',
+			'label' => 'New Attr 4 label',
+			'type' => 'select',
+			'param' => array('options' => array('code1' => 'Val1', 'code2' => 'Val2', 'code3' => 'Val3')),
+			'size' => 3,
+			'elementtype' => 'thirdparty',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		$this->extrafields[] = array(
+			'attrname' => 'mymodule_myattr5',
+			'label' => 'New Attr 5 label',
+			'type' => 'text',
+			'elementtype' => 'user',
+			'pos' => 1,
+			'langfile' => 'mymodule@mymodule',
+		);
+		 */
 	}
 
 	/**
@@ -469,16 +525,6 @@ class modMyModule extends DolibarrModules
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
-
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result0=$extrafields->addExtraField('mymodule_separator1', "Separator 1", 'separator', 1,  0, 'thirdparty',   0, 0, '', array('options'=>array(1=>1)), 1, '', 1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
 
 		// Permissions
 		$this->remove($options);
