@@ -750,7 +750,7 @@ class Categories extends DolibarrApi
 	 * Get the list of objects in a category.
 	 *
 	 * @param int        $id         ID of category
-	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project', 'actioncomm')
+	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
 	 * @param int        $onlyids    Return only ids of objects (consume less memory)
 	 *
 	 * @return mixed
@@ -797,9 +797,7 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
-		} elseif ($type == 'actioncomm') {
-			$objects_api = new Actioncomm();
-		}
+		} 
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
