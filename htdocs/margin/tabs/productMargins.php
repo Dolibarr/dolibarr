@@ -47,9 +47,10 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -139,7 +140,7 @@ if ($id > 0 || !empty($ref)) {
 
 	llxHeader('', $title, $help_url);
 
-	$param = "id=".$object->id;
+	$param = "&id=".$object->id;
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
@@ -238,9 +239,14 @@ if ($id > 0 || !empty($ref)) {
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
-			$sql .= $db->order($sortfield, $sortorder);
+
 			// TODO: calculate total to display then restore pagination
-			//$sql.= $db->plimit($conf->liste_limit +1, $offset);
+			$nbtotalofrecords = '';
+
+			$sql .= $db->order($sortfield, $sortorder);
+			if ($limit) {
+				$sql .= $db->plimit($limit + 1, $offset);
+			}
 			dol_syslog('margin:tabs:productMargins.php', LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result) {
@@ -255,7 +261,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
-				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;id=$object->id", $sortfield, $sortorder, '', 0, 0, '');
+				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
 				$moreforfilter = '';
 
@@ -389,7 +395,8 @@ if ($id > 0 || !empty($ref)) {
 				$cumul_qty = 0;
 
 				if ($num > 0) {
-					while ($i < $num /*&& $i < $conf->liste_limit*/) {
+					$imaxinloop = ($limit ? min($num, $limit) : $num);
+					while ($i < $imaxinloop) {
 						$objp = $db->fetch_object($result);
 
 						$marginRate = ($objp->buying_price != 0) ? (100 * $objp->marge / $objp->buying_price) : '';
@@ -471,6 +478,7 @@ if ($id > 0 || !empty($ref)) {
 				print "</tr>\n";
 				print "</table>";
 				print '</div>';
+				print '</form>';
 			} else {
 				dol_print_error($db);
 			}
