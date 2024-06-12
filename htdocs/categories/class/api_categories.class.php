@@ -404,7 +404,7 @@ class Categories extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 				throw new RestException(403);
 			}
-			$object = new Actioncomm($this->db);
+			$object = new ActionComm($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}
@@ -485,7 +485,7 @@ class Categories extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 				throw new RestException(403);
 			}
-			$object = new Actioncomm($this->db);
+			$object = new ActionComm($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}
@@ -566,7 +566,7 @@ class Categories extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 				throw new RestException(403);
 			}
-			$object = new Actioncomm($this->db);
+			$object = new ActionComm($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}
@@ -645,7 +645,7 @@ class Categories extends DolibarrApi
 			if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 				throw new RestException(403);
 			}
-			$object = new Actioncomm($this->db);
+			$object = new ActionComm($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}
