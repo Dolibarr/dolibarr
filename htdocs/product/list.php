@@ -1972,7 +1972,9 @@ while ($i < $imaxinloop) {
 					if ($product_fourn->product_fourn_price_id > 0) {
 						if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
+// VSPR fix: this should not be hardcoded // price should be created by function so we changed the function too. 2 now comes back with the number only
+							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->display_price_product_fournisseur(2, 0, 0, 0) ).' '.$langs->trans("HT"), $htmltext).'</span>';
+// VSPR END
 						} else {
 							print '<span class="amount">'.price($product_fourn->fourn_unitprice).' '.$langs->trans("HT").'</span>';
 						}
