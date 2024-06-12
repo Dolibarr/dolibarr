@@ -2961,6 +2961,11 @@ class Form
 		}
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+
+		if (getDolGlobalString('MAIN_SEARCH_PRODUCT_FORCE_INDEX')) {
+			$sql .= " USE INDEX (" . $this->db->sanitize(getDolGlobalString('MAIN_PRODUCT_FORCE_INDEX')) . ")";
+		}
+
 		// Add from (left join) from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
@@ -9019,7 +9024,7 @@ class Form
 						$tmpvalue = empty($value['label']) ? '' : $value['label'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
-						$tmplabelhtml = empty($value['labelhtml']) ? '' : $value['labelhtml'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']): $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
@@ -10247,7 +10252,7 @@ class Form
 	 * @return	string								HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
-	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
+	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = 'minwidth200')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -10299,7 +10304,7 @@ class Form
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
-			$out .= '<select class="flat minwidth200' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
+			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;

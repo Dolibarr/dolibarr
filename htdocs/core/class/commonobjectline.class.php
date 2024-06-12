@@ -34,6 +34,16 @@
 abstract class CommonObjectLine extends CommonObject
 {
 	/**
+	 * @var string ID to identify parent CommonObject type (element name)
+	 */
+	public $parent_element = '';
+
+	/**
+	 * @var string Attribute related to parent CommonObject rowid (many2one)
+	 */
+	public $fk_parent_attribute = '';
+
+	/**
 	 * Id of the line
 	 * @var int
 	 */

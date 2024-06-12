@@ -213,7 +213,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-bookmarks page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

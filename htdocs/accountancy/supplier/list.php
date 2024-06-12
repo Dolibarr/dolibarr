@@ -234,7 +234,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("SuppliersVentilation"), $help_url);
+llxHeader('', $langs->trans("SuppliersVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-supplier page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -691,9 +691,9 @@ if ($result) {
 
 		// Description of line
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
+		print '<td class="tdoverflowmax150 small classfortooltip" title="'.dol_escape_htmltag($text).'">';
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION');
+		print dol_trunc($text, $trunclength);
 		print '</td>';
 
 		print '<td class="right nowraponall amount">';

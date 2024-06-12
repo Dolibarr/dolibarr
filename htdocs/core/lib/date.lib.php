@@ -123,7 +123,6 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
-	global $conf;
 	if (empty($duration_value)) {
 		return $time;
 	}
@@ -763,7 +762,7 @@ function getGMTEasterDatetime($year)
  */
 function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	$nbFerie = 0;
 
@@ -1006,7 +1005,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see also num_public_holiday(), num_open_day()
+ *  @see num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1130,6 +1129,7 @@ function monthArray($outputlangs, $short = 0)
 
 	return $montharray;
 }
+
 /**
  *	Return array of week numbers.
  *
@@ -1147,12 +1147,13 @@ function getWeekNumbersOfMonth($month, $year)
 	}
 	return $TWeek;
 }
+
 /**
  *	Return array of first day of weeks.
  *
- *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
+ *	@param	string[] 	$TWeek			array of week numbers we want (week 1 must be '01')
  *  @param	int			$year			Year number
- *	@return string[]					First day of week (day 1 is '01')
+ *	@return string[]					First day of each week in entry (day 1 is '01')
  */
 function getFirstDayOfEachWeek($TWeek, $year)
 {
@@ -1165,6 +1166,7 @@ function getFirstDayOfEachWeek($TWeek, $year)
 	}
 	return $TFirstDayOfWeek;
 }
+
 /**
  *	Return array of last day of weeks.
  *
@@ -1180,6 +1182,7 @@ function getLastDayOfEachWeek($TWeek, $year)
 	}
 	return $TLastDayOfWeek;
 }
+
 /**
  *	Return week number.
  *
