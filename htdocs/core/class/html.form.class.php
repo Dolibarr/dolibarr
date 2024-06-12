@@ -8067,7 +8067,7 @@ class Form
 					}
 				} else {
 					// For a property in ->fields
-					if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
+					if (is_array($tmparray) && array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
 						$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
 						$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
 					}
