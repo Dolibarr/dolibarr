@@ -146,10 +146,10 @@ $arrayfields = array(
 	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 
-if(getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0){
+if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	$arrayfields['u.datelastlogin'] = array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100);
 	$arrayfields['u.datepreviouslogin'] = array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110);
-} 
+}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -276,10 +276,10 @@ if (empty($reshook)) {
 		$search_categ = 0;
 		$toselect = array();
 		$search_array_options = array();
-		if(getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0){
+		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 			$search_datelastlogin = "";
 			$search_datepreviouslogin = "";
-		} 
+		}
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
