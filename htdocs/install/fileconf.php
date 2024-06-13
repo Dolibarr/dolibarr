@@ -286,7 +286,7 @@ if (!empty($force_install_noedit)) {
 
 	<?php
 	if (!isset($dolibarr_main_db_host)) {
-		$dolibarr_main_db_host = "localhost";
+		$dolibarr_main_db_host = "127.0.0.1";
 	}
 	?>
 	<tr>
@@ -405,7 +405,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text"
 				   id="db_host"
 				   name="db_host"
-				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
+				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : '127.0.0.1')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
 					print ' disabled';
 				} ?>
