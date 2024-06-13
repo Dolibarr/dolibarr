@@ -867,17 +867,17 @@ abstract class CommonObject
 	/**
 	 * @var string		Image filename (full or relative path)
 	 */
-	public $photo
+	public $photo;
 
 	/**
 	 * @var int 		Image width in px
 	 */
-	public $imgWidth
+	public $imgWidth;
 
 	/**
 	 * @var int 		Image height in px
 	 */
-	public $imgHeight
+	public $imgHeight;
 
 
 	// No constructor as it is an abstract class
