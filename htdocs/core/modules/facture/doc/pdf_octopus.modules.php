@@ -89,11 +89,6 @@ class pdf_octopus extends ModelePDFFactures
 	public $page_hauteur;
 
 	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
 	 * @var int marge_gauche
 	 */
 	public $marge_gauche;
@@ -1137,7 +1132,7 @@ class pdf_octopus extends ModelePDFFactures
 				}
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs, 0 );
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
@@ -2722,7 +2717,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF			$pdf	 		Object PDF
+	 *   @param		TCPDF		$pdf	 		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -3196,7 +3191,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF		$pdf			Object PDF
+	 * @param	TCPDF	$pdf			Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y				Ordinate of first point
 	 * @param	float	$l				??
@@ -3205,7 +3200,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * @param	int		$hidebottom		Hide bottom
 	 * @return	void
 	 */
-	public function printRectBtp($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
+	public function printRectBtp(&$pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
 	{
 		if (empty($hidetop) || $hidetop==-1) {
 			$pdf->line($x, $y, $x+$l, $y);
