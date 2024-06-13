@@ -254,7 +254,6 @@ if ($socid > 0) {
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 
 	// TODO: calculate total to display then restore pagination
-	$nbtotalofrecords = '';
 
 	$sql .= $db->order($sortfield, $sortorder);
 	if ($limit) {
@@ -275,7 +274,7 @@ if ($socid > 0) {
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 
-		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
 		$moreforfilter = '';
 
