@@ -6775,13 +6775,11 @@ class FactureLigne extends CommonInvoiceLine
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_PROPOSAL";
 		}
 
-		if (!empty($MODULE)) {
-			if (!empty($conf->global->$MODULE)) {
-				$modsactivated = explode(',', $conf->global->$MODULE);
-				foreach ($modsactivated as $mod) {
-					if (isModEnabled($mod)) {
-						return 1; // update was disabled by specific setup
-					}
+		if (getDolGlobalString($MODULE)) {
+			$modsactivated = explode(',', $MODULE);
+			foreach ($modsactivated as $mod) {
+				if (isModEnabled($mod)) {
+					return 1; // update was disabled by specific setup
 				}
 			}
 		}
