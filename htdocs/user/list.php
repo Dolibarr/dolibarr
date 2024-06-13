@@ -1175,18 +1175,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Phone mobile
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
 			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
 			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Api key
 		if (!empty($arrayfields['u.api_key']['checked'])) {
 			$api_key = dolDecrypt($obj->api_key);
 			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($api_key).'">';
@@ -1204,6 +1207,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// User
 		if (!empty($arrayfields['u.fk_soc']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->fk_soc > 0) {
@@ -1295,14 +1299,14 @@ while ($i < $imaxinloop) {
 
 		// Date last login
 		if (!empty($arrayfields['u.datelastlogin']['checked'])) {
-			print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Date previous login
 		if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
-			print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

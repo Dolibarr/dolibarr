@@ -935,6 +935,16 @@ abstract class CommonObject
 	}
 
 	/**
+	 * isEmpty We consider CommonObject isEmpty if this->id is empty
+	 *
+	 * @return bool
+	 */
+	public function isEmpty()
+	{
+		return (empty($this->id));
+	}
+
+	/**
 	 * setErrorsFromObject
 	 *
 	 * @param CommonObject $object commonobject
@@ -7226,6 +7236,29 @@ abstract class CommonObject
 		} else {
 			return 0;
 		}
+	}
+
+	/**
+	 * Convenience method for retrieving the value of an extrafield without actually fetching it from the database.
+	 *
+	 * @param string $key Name of the extrafield
+	 * @return mixed|null
+	 */
+	public function getExtraField($key)
+	{
+		return $this->array_options['options_'.$key] ?? null;
+	}
+
+	/**
+	 * Convenience method for setting the value of an extrafield without actually updating it in the database.
+	 *
+	 * @param string $key   Name of the extrafield
+	 * @param mixed  $value Value to be assigned to the extrafield
+	 * @return void
+	 */
+	public function setExtraField($key, $value)
+	{
+		$this->array_options['options_'.$key] = $value;
 	}
 
 	/**
