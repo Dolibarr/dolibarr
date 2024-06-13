@@ -1881,7 +1881,7 @@ class Products extends DolibarrApi
 			}
 		}
 
-		$result = $this->product->fetch('', trim($ref));
+		$result = $this->product->fetch(0, trim($ref));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
