@@ -864,6 +864,21 @@ abstract class CommonObject
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/**
+	 * @var string		Image filename (full or relative path)
+	 */
+	public $photo
+
+	/**
+	 * @var int 		Image width in px
+	 */
+	public $imgWidth
+
+	/**
+	 * @var int 		Image height in px
+	 */
+	public $imgHeight
+
 
 	// No constructor as it is an abstract class
 
@@ -9293,7 +9308,7 @@ abstract class CommonObject
 	 * getDataToShowPhoto
 	 *
 	 * @param 	string	$modulepart		Module part
-	 * @param 	string	$imagesize		Image size
+	 * @param 	string	$imagesize		Image size ('', 'mini' or 'small')
 	 * @return	array{dir:string,file:string,originalfile:string,altfile:string,email:string,capture:string}	Array of data to show photo
 	 */
 	public function getDataToShowPhoto($modulepart, $imagesize)
