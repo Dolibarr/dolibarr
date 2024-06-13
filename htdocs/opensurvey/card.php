@@ -341,9 +341,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
-if ($action != 'edit') {
+//if ($action != 'edit') {
 	print ajax_autoselect("opensurveyurl", $url, 'image');
-}
+//}
 
 print '</td></tr>';
 

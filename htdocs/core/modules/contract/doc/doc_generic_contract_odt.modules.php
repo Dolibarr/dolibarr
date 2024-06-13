@@ -229,7 +229,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->contrat->multidir_output[$object->entity]) {
+		if ($conf->contract->multidir_output[$object->entity]) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -243,7 +243,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->contrat->multidir_output[$object->entity];
+			$dir = $conf->contract->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -283,8 +283,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 				//print "file=".$file;
 				//print "conf->contrat->dir_temp=".$conf->contrat->dir_temp;
 
-				dol_mkdir($conf->contrat->dir_temp);
-				if (!is_writable($conf->contrat->dir_temp)) {
+				dol_mkdir($conf->contract->dir_temp);
+				if (!is_writable($conf->contract->dir_temp)) {
 					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->contrat->dir_temp);
 					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
@@ -483,7 +483,6 @@ class doc_generic_contract_odt extends ModelePDFContract
 				return 1; // Success
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
-				return -1;
 			}
 		}
 

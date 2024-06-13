@@ -1061,7 +1061,7 @@ while ($i < $imaxinloop) {
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+		if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
