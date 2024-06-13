@@ -1923,12 +1923,12 @@ class Facture extends CommonInvoice
 			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
 
 			// Complete datas
-			if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-				// Load the alreadypaid field
-				$this->alreadypaid = $this->getSommePaiement(0);
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+				// Load the totalpaid field
+				$this->totalpaid = $this->getSommePaiement(0);
 			}
-			if (isset($this->status) && isset($this->alreadypaid)) {
-				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+			if (isset($this->status) && isset($this->totalpaid)) {
+				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 			}
 			if ($moretitle) {
 				$datas['picto'] .= ' - '.$moretitle;
