@@ -865,7 +865,7 @@ abstract class CommonObject
 	public $isextrafieldmanaged = 0;
 
 	/**
-	 * @var string		Image filename (full or relative path)
+	 * @var string|1	Image filename (full or relative path) or 1 (1 is only used in htdocs/contrat/index.php, which might be a mistake => check TODO)
 	 */
 	public $photo;
 
