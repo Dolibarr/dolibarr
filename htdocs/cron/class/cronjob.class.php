@@ -520,7 +520,7 @@ class Cronjob extends CommonObject
 	 * @param	int				$offset			Offset ppage
 	 * @param	int				$status			Display active or not
 	 * @param	string|array	$filter			Filter USF.
-	 * @param	int				$processing		Processing or not
+	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0
 	 */
 	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
