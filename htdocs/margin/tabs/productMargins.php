@@ -241,7 +241,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			// TODO: calculate total to display then restore pagination
-			$nbtotalofrecords = '';
 
 			$sql .= $db->order($sortfield, $sortorder);
 			if ($limit) {
@@ -261,7 +260,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
-				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
 				$moreforfilter = '';
 
