@@ -13,6 +13,11 @@ categorie
 categories
 clos
 crypted
+contaxt
+courant
+datea
+datee
+doubleclick
 errorstring
 exten
 falsy
@@ -36,6 +41,7 @@ sav
 files'
 # Used as array key
 seeked
+tweek
 # Used as key
 marge
 # moral (var name)

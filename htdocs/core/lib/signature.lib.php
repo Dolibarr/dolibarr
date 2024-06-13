@@ -23,24 +23,29 @@
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
  * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
+ * @param	string			$mode		Mode
  * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref, $obj = null)
+function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("payment", "paybox"));
+	$langs->loadLangs(array("payment", "paybox", "stripe"));
 
 	$servicename = 'Online';
 
-	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
+	$out = '';
+	if ($mode != 'short') {
+		$out .= img_picto('', 'globe', 'class="pictofixedwidth"');
+	}
+	$out .= '<span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="'.($mode == 'short' ? 'centpercentminusx' : 'quatrevingtpercentminusx').'" value="'.$url.'">';
 	}
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
@@ -61,7 +66,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $conf, $dolibarr_main_url_root;
+	global $dolibarr_main_url_root;
 
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0

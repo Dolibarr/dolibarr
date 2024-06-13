@@ -81,7 +81,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
  */
 
 $help_url = '';
-llxHeader('', $langs->trans("CompanyFoundation"), $help_url);
+llxHeader('', $langs->trans("CompanyFoundation"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-accountant');
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 

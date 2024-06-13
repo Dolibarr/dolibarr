@@ -551,14 +551,16 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
-	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		$head[$h][0] = DOL_URL_ROOT . '/projet/admin/project_task_extrafields.php';
+		$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+		$nbExtrafields = $extrafields->attributes['projet_task']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+		}
+		$head[$h][2] = 'attributes_task';
+		$h++;
 	}
-	$head[$h][2] = 'attributes_task';
-	$h++;
 
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$langs->load("members");
@@ -681,7 +683,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->label = (!empty($taskrole[$lines[$i]->id]) ? $langs->trans("YourRole").': '.$taskrole[$lines[$i]->id] : '');
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
-				$taskstatic->fk_statut = $lines[$i]->status;
+				$taskstatic->fk_statut = $lines[$i]->status;	// deprecated
+				$taskstatic->status = $lines[$i]->status;
 				$taskstatic->date_start = $lines[$i]->date_start;
 				$taskstatic->date_end = $lines[$i]->date_end;
 				$taskstatic->datee = $lines[$i]->date_end; // deprecated
@@ -825,7 +828,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$shtml = '';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration_effective) {
 						if ($lines[$i]->planned_workload) {
-							$s = round(100 * $lines[$i]->duration_effective / $lines[$i]->planned_workload, 2).' %';
+							$s = round(100 * (float) $lines[$i]->duration_effective / (float) $lines[$i]->planned_workload, 2).' %';
 							$shtml = $s;
 						} else {
 							$s = $langs->trans('WorkloadNotDefined');
@@ -974,7 +977,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$total_projectlinesa_spent_if_planned += $lines[$i]->duration_effective;
 				}
 				if ($lines[$i]->planned_workload) {
-					$total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
+					$total_projectlinesa_declared_if_planned += (float) $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 				}
 			}
 		} else {
@@ -2937,7 +2940,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
 	$out .= '</span>';
-	$out .= '    <div class="progress sm '.$spaced.'">';
+	$out .= '    <div class="progress sm'.($spaced ? $spaced : '').'">';
 	$diffval = (float) $task->progress - (float) $progressCalculated;
 	if ($diffval >= 0) {
 		// good

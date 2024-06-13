@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman			<info@almoman.com>
  *
@@ -421,11 +421,11 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 		// Clean some POST vars
 		if (!$error) {
-			$_POST["subscription"] = '';
-			$_POST["accountid"] = '';
-			$_POST["operation"] = '';
-			$_POST["label"] = '';
-			$_POST["num_chq"] = '';
+			$accountid = '';
+			$operation = '';
+			$label = '';
+			$num_chq = '';
+			$option = '';
 		}
 	}
 }
@@ -822,16 +822,11 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 
 
 if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
-	// Shon online payment link
-	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook > 0) {
-		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
-			$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
-		}
-	}
+	// Show online payment link
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	$validpaymentmethod = getValidOnlinePaymentMethods('');
+	$useonlinepayment = count($validpaymentmethod);
 
 	if ($useonlinepayment) {
 		print '<br>';
@@ -1111,7 +1106,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 			// Bank account
 			print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-			print img_picto('', 'bank_account');
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2, '', 0, 'minwidth200');
 			print "</td></tr>\n";
 

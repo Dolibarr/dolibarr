@@ -50,6 +50,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -68,9 +69,7 @@ print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -216,8 +215,6 @@ if (isModEnabled('intervention')) {
 
 print '</div><div class="fichetwothirdright">';
 
-
-$max = 5;
 
 /*
  * Last modified interventions

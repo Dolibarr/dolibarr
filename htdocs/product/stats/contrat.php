@@ -63,6 +63,8 @@ if (!$sortfield) {
 	$sortfield = "c.date_contrat";
 }
 
+$socid = 0;
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
@@ -87,7 +89,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-stats_contrat');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -175,12 +177,14 @@ if ($id > 0 || !empty($ref)) {
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$option .= '&limit='.((int) $limit);
 			}
+			/*
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);
 			}
 			if (!empty($search_year)) {
 				$option .= '&search_year='.urlencode((string) ($search_year));
 			}
+			*/
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -241,6 +245,8 @@ if ($id > 0 || !empty($ref)) {
 					print "</tr>\n";
 					$i++;
 				}
+			} else {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print '</table>';

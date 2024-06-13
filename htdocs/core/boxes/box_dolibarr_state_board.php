@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			$hookmanager->initHooks(array('index'));
 			$object = new stdClass();
 			$action = '';
-			$parameters =array();
+			$parameters = array();
 			$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
@@ -254,6 +255,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 						$board = new $class($this->db);
 						if (method_exists($board, 'load_state_board')) {
+							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
 							$board->load_state_board();
 						} elseif (method_exists($board, 'loadStateBoard')) {
 							$board->loadStateBoard();
@@ -297,7 +299,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'tr' => 'class="nohover"',
-					'td' => 'class="tdwidgetstate"',
+					'td' => 'class="tdwidgetstate center"',
 					'textnoformat' => $boxstat
 				);
 			}

@@ -51,12 +51,6 @@ class AdherentType extends CommonObject
 	public $picto = 'members';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string
 	 * @deprecated Use label
 	 * @see $label
@@ -151,6 +145,8 @@ class AdherentType extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->status = 1;
 	}
 
@@ -522,9 +518,10 @@ class AdherentType extends CommonObject
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
+				return $this->id;
+			} else {
+				return 0;
 			}
-
-			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;

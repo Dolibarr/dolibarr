@@ -147,7 +147,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "WebhookSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-webhook');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -159,7 +159,7 @@ $head = webhookAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage").'</span><br><br>';
+echo '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'</span><br><br>';
 
 
 if ($action == 'edit') {
@@ -339,10 +339,11 @@ if ($action == 'edit') {
 	}
 }
 
-
+/*
 if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
+*/
 
 // Page end
 print dol_get_fiche_end();

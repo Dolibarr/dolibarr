@@ -75,14 +75,26 @@ if (GETPOST('addbox')) {
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("AccountancyArea"), $help_url);
+llxHeader('', $langs->trans("AccountancyArea"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-index');
+
+$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+
+$boxlist = '';
+$boxlist .= '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
 
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-
-
-	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = false;
+	//$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
@@ -94,7 +106,13 @@ if (isModEnabled('accounting')) {
 		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
-	            jQuery( "#idfaq" ).toggle({
+				console.log("We click on show-hide");
+				if ($(".idfaq2").is(":hidden")) {
+					jQuery( ".idfaq2" ).show();
+				} else {
+					jQuery( ".idfaq2" ).hide();
+				}
+	            jQuery( ".idfaq" ).toggle({
 	                duration: 400,
 	            });
 	        });
@@ -102,19 +120,23 @@ if (isModEnabled('accounting')) {
 	    </script>';
 	}
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
 		print "<br>";
 	}
 
-	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
+	if (!$helpisexpanded && empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])) {
+		print '<div class="opacitymedium idfaq2"><br>'.$langs->trans("ClickOnUseTutorialForHelp", $langs->transnoentities("ShowTutorial"))."</div>\n";
+	}
+
+	print '<div class="'.($helpisexpanded ? '' : 'hideobject').' idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
 		print '<br>';
-		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
+		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
 		print '<hr>';
 		print "<br>\n";
 
@@ -155,11 +177,7 @@ if (isModEnabled('accounting')) {
 		}
 		print "<br>\n";
 
-		print "<br>\n";
-		print $langs->trans("AccountancyAreaDescActionOnceBis");
-		print "<br>\n";
-		print "<br>\n";
-
+		// Fiscal period
 		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescFiscalPeriod", $step, '{s}');
@@ -167,6 +185,12 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+
+
+		print "<br>\n";
+		print $langs->trans("AccountancyAreaDescActionOnceBis");
+		print "<br>\n";
+		print "<br>\n";
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
@@ -215,7 +239,7 @@ if (isModEnabled('accounting')) {
 	// Step A - E
 
 	print "<br>\n";
-	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '');
+	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '', 0, '', 'nomarginbottom')."\n";
 	print '<hr>';
 	print "<br>\n";
 	$step = 0;
@@ -255,10 +279,10 @@ if (isModEnabled('accounting')) {
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
 
-	print "<br>\n";
-
-
-	print '<br>';
+	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
+		print "<br>\n";
+		print '<br>';
+	}
 
 	print '</div>';
 
@@ -269,23 +293,13 @@ if (isModEnabled('accounting')) {
 	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
 	print "<br>";
 } else {
-	// This case can happen mode no accounting module is on but module "intracommreport" is on
+	// This case can happen when no accounting module is on but module "intracommreport" is on
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
 
 /*
  * Show boxes
  */
-$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
-$boxlist = '<div class="twocolumns">';
-$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-$boxlist .= $resultboxes['boxlista'];
-$boxlist .= '</div>';
-$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist .= $resultboxes['boxlistb'];
-$boxlist .= '</div>';
-$boxlist .= "\n";
-$boxlist .= '</div>';
 print $boxlist;
 
 // End of page

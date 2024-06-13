@@ -64,6 +64,8 @@ $enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddat
 
 $search_ref = GETPOST('search_ref', 'alpha');
 
+$hookmanager->initHooks(array('checkmarginlist'));
+
 // Security check
 $result = restrictedArea($user, 'margins');
 

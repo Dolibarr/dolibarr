@@ -49,7 +49,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class ReceptionTest extends CommonClassTest
 {
 	/**
-	 * testSocieteCreate
+	 * testReceptionCreate
 	 *
 	 * @return int
 	 */

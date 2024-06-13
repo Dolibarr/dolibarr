@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket", "companies", "other", "projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
 
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -107,9 +108,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
+/*if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
 	$_GET['search_fk_statut'][] = 'openall'; // For backward compatibility
-}
+}*/
 
 // Initialize array of search criteria
 $search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
@@ -197,7 +198,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }
@@ -335,7 +336,17 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('Tickets');
+
+$moretitle = '';
+if ($socid > 0) {
+	$socstatic->fetch($socid);
+	$moretitle = $langs->trans("ThirdParty") . ' - ';
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
+		$moretitle = $socstatic->name . ' - ';
+	}
+}
+
+$title = $moretitle . $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
@@ -397,7 +408,7 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
-	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project') {
+	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
 			$sql .= natural_search($key, $search[$key], 2);
 		}
@@ -509,7 +520,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-ticket page-list bodyforlist');
 
 if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
@@ -562,6 +573,8 @@ if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')
 		print '</table>';
 		print '</div>';
 		print dol_get_fiche_end();
+
+		print '<br>';
 	}
 }
 
@@ -625,6 +638,8 @@ if ($projectid > 0 || $project_ref) {
 		print '</div>';
 		print dol_get_fiche_end();
 
+		print '<br>';
+
 		$object = $savobject;
 	} else {
 		print "ErrorRecordNotFound";
@@ -664,7 +679,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {
@@ -681,39 +696,39 @@ if ($contractid > 0) {
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
-	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_startday='.((int) $tmparray['mday']);
+	$param .= '&search_date_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_startyear='.((int) $tmparray['year']);
 }
 if ($search_date_end) {
 	$tmparray = dol_getdate($search_date_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_start) {
 	$tmparray = dol_getdate($search_dateread_start);
-	$param .= '&search_dateread_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_end) {
 	$tmparray = dol_getdate($search_dateread_end);
-	$param .= '&search_dateread_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_endday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_start) {
 	$tmparray = dol_getdate($search_dateclose_start);
-	$param .= '&search_dateclose_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateclose_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateclose_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateclose_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateclose_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateclose_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_end) {
 	$tmparray = dol_getdate($search_dateclose_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 // List of mass actions available
 $arrayofmassactions = array(

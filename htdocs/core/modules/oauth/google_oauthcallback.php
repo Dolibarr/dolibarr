@@ -152,7 +152,7 @@ if ($action == 'delete') {
 }
 
 if (!GETPOST('code')) {
-	dol_syslog("Page is called without code parameter defined");
+	dol_syslog("Page is called without the 'code' parameter defined");
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
 	// to the OAuth provider login page.
@@ -161,25 +161,13 @@ if (!GETPOST('code')) {
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
-	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
-	/*
-	if (!empty($_POST["tz"])) {
-		$_SESSION["tz"] = $_POST["tz"];
-	}
-	if (!empty($_POST["tz_string"])) {
-		$_SESSION["tz_string"] = $_POST["tz_string"];
-	}
-	if (!empty($_POST["dst_first"])) {
-		$_SESSION["dst_first"] = $_POST["dst_first"];
-	}
-	if (!empty($_POST["dst_second"])) {
-		$_SESSION["dst_second"] = $_POST["dst_second"];
-	}
-	*/
+	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
+	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
 	if ($forlogin) {
-		$apiService->setApprouvalPrompt('force');
+		// Set approval_prompt
+		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
+		$apiService->setApprouvalPrompt($approval_prompt);
 	}
 
 	// This may create record into oauth_state before the header redirect.
@@ -363,7 +351,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

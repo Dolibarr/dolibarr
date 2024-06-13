@@ -133,7 +133,7 @@ class Tickets extends DolibarrApi
 
 		// Check parameters
 		if (($id < 0) && !$track_id && !$ref) {
-			throw new RestException(401, 'Wrong parameters');
+			throw new RestException(400, 'Wrong parameters');
 		}
 		if ($id == 0) {
 			$result = $this->ticket->initAsSpecimen();
@@ -179,7 +179,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		return $this->_cleanObjectDatas($this->ticket);
 	}
@@ -294,11 +294,11 @@ class Tickets extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->ticket->context['caller'] = $request_data['caller'];
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->ticket->$field = $value;
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		if (empty($this->ticket->ref)) {
 			$this->ticket->ref = $ticketstatic->getDefaultRef();
@@ -315,7 +315,7 @@ class Tickets extends DolibarrApi
 	}
 
 	/**
-	 * Create ticket object
+	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of ticket
@@ -333,11 +333,11 @@ class Tickets extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->ticket->context['caller'] = $request_data['caller'];
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->ticket->$field = $value;
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
 		$result = $this->ticket->fetch('', '', $this->ticket->track_id);
@@ -370,17 +370,17 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->ticket->context['caller'] = $request_data['caller'];
+				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->ticket->$field = $value;
+			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 
 		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
@@ -408,7 +408,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->ticket->delete(DolibarrApiAccess::$user)) {
@@ -523,7 +523,14 @@ class Tickets extends DolibarrApi
 			"cache_category_tickets",
 			"regeximgext",
 			"labelStatus",
-			"labelStatusShort"
+			"labelStatusShort",
+			"multicurrency_code",
+			"multicurrency_tx",
+			"multicurrency_total_ht",
+			"multicurrency_total_ttc",
+			"multicurrency_total_tva",
+			"multicurrency_total_localtax1",
+			"multicurrency_total_localtax2"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);

@@ -146,7 +146,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -197,11 +197,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	overflow: hidden;
 	float: left;
-	/* height: 90px; */
-	width: 86px;
 	text-align: center;
 	font-size: 45px;
-	line-height: 90px;
+	line-height: 94px;;	/* must be same height as min-height of .info-box */
+	height: 94px;;		/* must be same height as min-height of .info-box */
+	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
@@ -391,6 +391,13 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-text{
 	font-size: 0.90em;
 }
+/* Force values for small screen 480 */
+@media only screen and (max-width: 480px)
+{
+	.info-box-text {
+		font-size: 0.85em;
+	}
+}
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
 
@@ -554,25 +561,51 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
-	margin: 0 0 0 -15px;
-	/*justify-content: space-between;*/
+	margin: 0 0 0 -10px;
+	/* justify-content: space-between; Do not use this: If there is 3 elements on last line and previous has 4, then the 3 are centered */
+}
+.box-flex-container-columns {
+	display: flex; /* or inline-flex */
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+.box-flex-container-column {
+	flex-grow: 1;
+	}
+.box-flex-container-column:not(:last-of-type) {
+	border-right: 1px solid #AAA;
 }
 
 .box-flex-grow-zero{
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 
-	width: 280px;
-	margin: 5px 0px 0px 15px;
+	width: 300px;
 }
 .box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
 	height: 0;
+}
+.box-flex-item {
+	margin-top: 5px;
+	margin-<?php echo $right; ?>: 10px;
+	margin-bottom: 0px;
+	margin-<?php echo $left; ?>: 10px;
+}
+.kanban .box-flex-item {
+	line-height: 1.4em;
+}
+
+@media only screen and (max-width: 767px)
+{
+	.box-flex-container {
+		margin: 0 0 0 -8px !important;
+	}
 }
 
 .info-box-title {
@@ -595,7 +628,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		max-width: 315px;
 	}
 }
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
@@ -617,5 +650,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
-
-
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}

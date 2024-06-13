@@ -306,7 +306,7 @@ class pdf_standard extends ModeleExpenseReport
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
-					$tab_top = 95;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$tab_top = 95;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxpiece - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -795,7 +795,7 @@ class pdf_standard extends ModeleExpenseReport
 			}
 
 			// Show recipient
-			$posy = 50;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$posy = 50;
 			$posx = 100;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/lib/invoice2.lib.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      Function to rebuild PDF and merge PDF files into one
  */
 
@@ -297,7 +297,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			} else {
 				dol_syslog("No invoices found for criteria");
 			}
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		}
 	} else {
 		dol_print_error($db);

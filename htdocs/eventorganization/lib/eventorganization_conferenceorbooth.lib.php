@@ -127,7 +127,7 @@ function conferenceorboothProjectPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . 'eventorganization/conferenceorbooth_list.php?projectid=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $object->id;
 	$head[$h][1] = $langs->trans("ConferenceOrBooth");
 	$head[$h][2] = 'conferenceorbooth';
 	// Enable caching of conf or booth count attendees

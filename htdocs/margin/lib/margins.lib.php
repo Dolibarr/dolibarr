@@ -145,7 +145,7 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 	if ($pu_ht_remise < 0) {
 		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
 	} else {
-		$marge = $pu_ht_remise - $pa_ht_ret;
+		$marge = (float) $pu_ht_remise - $pa_ht_ret;
 	}
 
 	// calcul taux marge
@@ -154,7 +154,7 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 	}
 	// calcul taux marque
 	if ($pu_ht_remise != 0) {
-		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
+		$marque_tx_ret = (100 * $marge) / (float) $pu_ht_remise;
 	}
 
 	return array($pa_ht_ret, $marge_tx_ret, $marque_tx_ret);

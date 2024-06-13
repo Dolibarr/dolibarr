@@ -74,6 +74,7 @@ class modAgenda extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies","project");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Module parts
 		$this->module_parts = array();
@@ -256,7 +257,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Calendar',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
+			'url' => '/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs' => 'agenda',
 			'position' => 140,
 			'perms' => '$user->hasRight("agenda", "myactions", "read")',
@@ -270,7 +271,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'MenuToDoMyActions',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+			'url' => '/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs' => 'agenda',
 			'position' => 141,
 			'perms' => '$user->hasRight("agenda", "myactions", "read")',
@@ -284,7 +285,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'MenuDoneMyActions',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+			'url' => '/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs' => 'agenda',
 			'position' => 142,
 			'perms' => '$user->hasRight("agenda", "myactions", "read")',
@@ -298,7 +299,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'MenuToDoActions',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+			'url' => '/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs' => 'agenda',
 			'position' => 143,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
@@ -312,7 +313,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'MenuDoneActions',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+			'url' => '/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs' => 'agenda',
 			'position' => 144,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
@@ -579,9 +580,9 @@ class modAgenda extends DolibarrModules
 		);
 
 		// Import Event Extra Fields
-		$keyforselect = 'actioncomm';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforelement = 'action';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 	}
 }

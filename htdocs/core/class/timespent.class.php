@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/timespent.class.php
+ * \file        htdocs/core/class/timespent.class.php
  * \ingroup     timespent
  * \brief       This file is a CRUD class file for TimeSpent (Create/Read/Update/Delete)
  */
@@ -48,17 +48,6 @@ class TimeSpent extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'element_time';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for timespent. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'timespent@timespent' if picto is file 'img/object_timespent.png'.
@@ -160,9 +149,12 @@ class TimeSpent extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;

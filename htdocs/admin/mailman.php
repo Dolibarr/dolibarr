@@ -80,7 +80,7 @@ if ($action == 'update' || $action == 'add') {
 
 // Action to activate a submodule of the 'adherent' module
 if ($action == 'set') {
-	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, GETPOST("name", 'aZ09'), GETPOST("value"), '', 0, '', $conf->entity);
 	if ($result < 0) {
 		dol_print_error($db);
 	}
@@ -88,7 +88,7 @@ if ($action == 'set') {
 
 // Action to deactivate a submodule of the 'adherent' module
 if ($action == 'unset') {
-	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
+	$result = dolibarr_del_const($db, GETPOST("name", 'aZ09'), $conf->entity);
 	if ($result < 0) {
 		dol_print_error($db);
 	}
@@ -137,7 +137,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && getDolGlobal
 
 $help_url = '';
 
-llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url);
+llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-mailman');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

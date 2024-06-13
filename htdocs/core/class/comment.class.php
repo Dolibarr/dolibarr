@@ -77,7 +77,7 @@ class Comment extends CommonObject
 	public $comments = array();
 
 	/**
-	 * @var Comment 	Object oldcopy
+	 * @var static 	Object oldcopy
 	 */
 	public $oldcopy;
 

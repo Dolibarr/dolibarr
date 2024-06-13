@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  */
 
 /**
- * \file    ai/admin/setup.php
+ * \file    htdocs/ai/admin/setup.php
  * \ingroup ai
  * \brief   Ai setup page.
  */
@@ -63,17 +64,27 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 // List all available IA
-$arrayofia = array('chatgpt');
+$arrayofia = array(
+	'chatgpt' => 'ChatGPT',
+	'groq' => 'Groq',
+	//'gemini' => 'Gemini'
+);
 
-foreach ($arrayofia as $ia) {
+$item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+$item->setAsSelect($arrayofia);
+$item->cssClass = 'minwidth150';
+
+foreach ($arrayofia as $ia => $ialabel) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
-	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
-	$item->cssClass = 'minwidth500';
+	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->cssClass = 'minwidth500 text-security';
 }
 
 $setupnotempty = + count($formSetup->items);

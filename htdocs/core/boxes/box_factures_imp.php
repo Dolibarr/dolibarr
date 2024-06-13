@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_factures_imp.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Widget to show remain to get on sale invoices
  */
 
@@ -76,7 +76,9 @@ class box_factures_imp extends ModeleBoxes
 		$langs->load("bills");
 
 		$textHead = $langs->trans("BoxTitleOldestUnpaidCustomerBills");
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max), 'limit' => dol_strlen($textHead));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'limit' => dol_strlen($textHead));
 
 		if ($user->hasRight('facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";

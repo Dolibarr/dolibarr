@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021-2023	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,12 +73,14 @@ $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type 		= GETPOST("search_type", 'alpha');
 $search_email 		= GETPOST("search_email", 'alpha');
-$search_categ 		= GETPOSTINT("search_categ");
+$search_categ 		= GETPOST("search_categ", 'intcomma');
 $search_morphy 		= GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
 
-$catid 		= GETPOSTINT("catid");
 $socid 		= GETPOSTINT('socid');
+if (GETPOSTINT('catid') && empty($search_categ)) {
+	$search_categ = GETPOSTINT('catid');
+}
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // status
@@ -223,7 +226,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => isset($socid) ? $socid : null);
+$parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -312,9 +315,9 @@ if (empty($reshook)) {
 		foreach ($toselect as $idtoclose) {
 			$tmpmember->fetch($idtoclose);
 
-			if (!empty($tmpmember->fk_soc)) {
+			if (!empty($tmpmember->socid)) {
 				$nuser = new User($db);
-				$tmpuser = dol_clone($tmpmember);
+				$tmpuser = dol_clone($tmpmember, 2);
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 
@@ -400,7 +403,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
+if (!empty($search_categ) && $search_categ > 0) {
 	$sql = "SELECT DISTINCT";
 } else {
 	$sql = "SELECT";
@@ -442,10 +445,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 // SQL Alias adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
-
-if ($catid && empty($search_categ)) {
-	$search_categ = $catid;
-}
 
 $searchCategoryContactList = $search_categ ? array($search_categ) : array();
 $searchCategoryContactOperator = 0;
@@ -492,6 +491,8 @@ if ($search_filter == 'waitingsubscription') {
 	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
 }
 if ($search_filter == 'uptodate') {
+	//$sql .= " AND (datefin >= '".$db->idate($now)."')";
+	// Up to date subscription OR no subscription required
 	$sql .= " AND (datefin >= '".$db->idate($now)."' OR (datefin IS NULL AND t.subscription = '0'))";
 }
 if ($search_filter == 'outofdate') {
@@ -818,7 +819,8 @@ if ($search_all) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';
@@ -1207,12 +1209,11 @@ while ($i < $imaxinloop) {
 
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
-	$memberstatic->civility_id = $obj->civility;
+	$memberstatic->civility_code = $obj->civility;
 	$memberstatic->login = $obj->login;
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
-	$memberstatic->statut = $obj->status;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
@@ -1244,8 +1245,10 @@ while ($i < $imaxinloop) {
 		}
 		$membertypestatic->id = $obj->type_id;
 		$membertypestatic->label = $obj->type;
+
 		$memberstatic->type = $membertypestatic->label;
 		$memberstatic->photo = $obj->photo;
+
 		// Output Kanban
 		print $memberstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == (min($num, $limit) - 1)) {
@@ -1288,10 +1291,10 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Civility
+		// Title/Civility
 		if (!empty($arrayfields['d.civility']['checked'])) {
 			print "<td>";
-			print $obj->civility;
+			print dol_escape_htmltag($obj->civility);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1299,7 +1302,7 @@ while ($i < $imaxinloop) {
 		}
 		// Firstname
 		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->firstname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 			//print $obj->firstname;
 			print "</td>\n";
@@ -1309,7 +1312,7 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->lastname).'">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
 			print "</td>\n";
@@ -1364,7 +1367,7 @@ while ($i < $imaxinloop) {
 		// Address
 		if (!empty($arrayfields['d.address']['checked'])) {
 			print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->address).'">';
-			print $obj->address;
+			print dol_escape_htmltag($obj->address);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1373,7 +1376,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['d.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->zip;
+			print dol_escape_htmltag($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1382,7 +1385,7 @@ while ($i < $imaxinloop) {
 		// Town
 		if (!empty($arrayfields['d.town']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->town;
+			print dol_escape_htmltag($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1390,7 +1393,9 @@ while ($i < $imaxinloop) {
 		}
 		// State / County / Departement
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".$obj->state_name."</td>\n";
+			print "<td>";
+			print dol_escape_htmltag($obj->state_name);
+			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1408,7 +1413,7 @@ while ($i < $imaxinloop) {
 		// Phone pro
 		if (!empty($arrayfields['d.phone']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->phone;
+			print dol_print_phone($obj->phone);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1417,7 +1422,7 @@ while ($i < $imaxinloop) {
 		// Phone perso
 		if (!empty($arrayfields['d.phone_perso']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->phone_perso;
+			print dol_print_phone($obj->phone_perso);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1426,7 +1431,7 @@ while ($i < $imaxinloop) {
 		// Phone mobile
 		if (!empty($arrayfields['d.phone_mobile']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->phone_mobile;
+			print dol_print_phone($obj->phone_mobile);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1444,23 +1449,25 @@ while ($i < $imaxinloop) {
 		// End of subscription date
 		$datefin = $db->jdate($obj->datefin);
 		if (!empty($arrayfields['d.datefin']['checked'])) {
-			print '<td class="nowraponall center">';
+			$s = '';
 			if ($datefin) {
-				print dol_print_date($datefin, 'day');
+				$s .= dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
 					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
-					print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+					$s .= " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 				}
 			} else {
 				if (!empty($obj->subscription)) {
-					print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
+					$s .= '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 					if ($obj->status > 0) {
-						print " ".img_warning();
+						$s .= " ".img_warning();
 					}
 				} else {
-					print '&nbsp;';
+					$s .= '<span class="opacitymedium">'.$langs->trans("SubscriptionNotNeeded").'</span>';
 				}
 			}
+			print '<td class="nowraponall center tdoverflowmax150" title="'.dolPrintHTMLForAttribute(dol_string_nohtmltag($s)).'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

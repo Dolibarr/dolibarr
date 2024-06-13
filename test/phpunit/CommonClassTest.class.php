@@ -235,6 +235,69 @@ abstract class CommonClassTest extends TestCase
 		}
 	}
 
+
+	/**
+	 * Call method, even if protected.
+	 *
+	 * @param object $obj  Object on which to call method
+	 * @param string $name Method to call
+	 * @param array  $args Arguments to provide in method call
+	 * @return mixed Return value
+	 */
+	public static function callMethod($obj, $name, array $args = [])
+	{
+		$class = new \ReflectionClass($obj);
+		$method = $class->getMethod($name);
+		// If PHP is older then 8.1.0
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
+		return $method->invokeArgs($obj, $args);
+	}
+
+
+	/**
+	 * Compare all public properties values of 2 objects
+	 *
+	 * @param   Object $oA                      Object operand 1
+	 * @param   Object $oB                      Object operand 2
+	 * @param   boolean $ignoretype             False will not report diff if type of value differs
+	 * @param   array $fieldstoignorearray      Array of fields to ignore in diff
+	 * @return  array                           Array with differences
+	 */
+	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
+	{
+		$retAr = array();
+
+		if (get_class($oA) !== get_class($oB)) {
+			$retAr[] = "Supplied objects are not of same class.";
+		} else {
+			$oVarsA = get_object_vars($oA);
+			$oVarsB = get_object_vars($oB);
+			$aKeys = array_keys($oVarsA);
+			if (method_exists($oA, 'deprecatedProperties')) {
+				// Update exclusions
+				foreach (self::callMethod($oA, 'deprecatedProperties') as $deprecated => $new) {
+					if (in_array($deprecated, $fieldstoignorearray)) {
+						$fieldstoignorearray[] = $new;
+					}
+				}
+			}
+			foreach ($aKeys as $sKey) {
+				if (in_array($sKey, $fieldstoignorearray)) {
+					continue;
+				}
+				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
+					$retAr[] = get_class($oA).'::'.$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : json_encode($oVarsA[$sKey])).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : json_encode($oVarsB[$sKey]));
+				}
+				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
+					$retAr[] = get_class($oA).'::'.$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : json_encode($oVarsA[$sKey])).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : json_encode($oVarsB[$sKey]));
+				}
+			}
+		}
+		return $retAr;
+	}
+
 	/**
 	 * Map deprecated module names to new module names
 	 */

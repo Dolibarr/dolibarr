@@ -209,7 +209,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 
@@ -256,6 +256,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		$includeconferror = 'ErrorBadFormatForConfFile';
 	}
 }
+
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
@@ -392,8 +393,8 @@ foreach ($handlers as $handler) {
 
 	require_once $file;
 	$loghandlerinstance = new $handler();
-	if (!$loghandlerinstance instanceof LogHandlerInterface) {
-		throw new Exception('Log handler does not extend LogHandlerInterface');
+	if (!$loghandlerinstance instanceof LogHandler) {
+		throw new Exception('Log handler does not extend LogHandler');
 	}
 
 	if (empty($conf->loghandlers[$handler])) {
@@ -507,8 +508,8 @@ function conf($dolibarr_main_document_root)
 
 		require_once $file;
 		$loghandlerinstance = new $handler();
-		if (!$loghandlerinstance instanceof LogHandlerInterface) {
-			throw new Exception('Log handler does not extend LogHandlerInterface');
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
 		}
 
 		if (empty($conf->loghandlers[$handler])) {

@@ -18,7 +18,7 @@
 
 /**
  *    \file       htdocs/expedition/stats/month.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Page des stats expeditions par mois
  */
 

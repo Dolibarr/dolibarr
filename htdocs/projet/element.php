@@ -8,8 +8,9 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Frédéric France      wfrederic.france@netlogic.fr>
+ * Copyright (C) 2023      	Frédéric France      wfrederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -197,7 +198,7 @@ $hookmanager->initHooks(array('projectOverview'));
  */
 
 $title = $langs->trans('ProjectReferers').' - '.$object->ref.' '.$object->name;
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectReferers');
 }
 
@@ -316,7 +317,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
 		print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
-			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 		}
 	}
 	print '</td></tr>';
@@ -988,6 +989,29 @@ print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
 print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
+// and the cost per attendee
+if ($object->usage_organize_event) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+	$conforboothattendee = new ConferenceOrBoothAttendee($db);
+	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
+
+	if (!is_array($result) && $result < 0) {
+		setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+	} else {
+		$nbAttendees = count($result);
+	}
+
+	if ($nbAttendees >= 2) {
+		$costperattendee_ht = $balance_ht / $nbAttendees;
+		$costperattendee_ttc = $balance_ttc / $nbAttendees;
+		print '<tr class="liste_total">';
+		print '<td class="right" colspan="2">'.$langs->trans("ProfitPerValidatedAttendee").'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ht, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ttc, 'MT')).'</td>';
+		print '</tr>';
+	}
+}
+
 // and the margin (profit / revenues)
 if ($total_revenue_ht) {
 	print '<tr class="liste_total">';
@@ -1126,6 +1150,11 @@ foreach ($listofreferent as $key => $value) {
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		// Product and qty on stock_movement
+		if ('MouvementStock' == $classname) {
+			print '<td style="width: 200px">'.$langs->trans("Product").'</td>';
+			print '<td style="width: 50px">'.$langs->trans("Qty").'</td>';
+		}
 		// Date
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
 		if (in_array($tablename, array('projet_task'))) {
@@ -1259,7 +1288,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowraponall">';
+				print '<td class="left nowraponall tdoverflowmax250">';
 				if ($tablename == 'expensereport_det') {
 					print $expensereport->getNomUrl(1);
 				} else {
@@ -1312,7 +1341,13 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 				print "</td>\n";
-
+				// Product and qty on stock movement
+				if ('MouvementStock' == $classname) {
+					$mvsProd = new Product($element->db);
+					$mvsProd->fetch($element->product_id);
+					print '<td>'.$mvsProd->getNomUrl(1).'</td>';
+					print '<td>'.$element->qty.'</td>';
+				}
 				// Date or TimeSpent
 				$date = '';
 				$total_time_by_line = null;
@@ -1372,7 +1407,7 @@ foreach ($listofreferent as $key => $value) {
 				print '</td>';
 
 				// Third party or user
-				print '<td class="left">';
+				print '<td class="tdoverflowmax150">';
 				if (is_object($element->thirdparty)) {
 					print $element->thirdparty->getNomUrl(1, '', 48);
 				} elseif ($tablename == 'expensereport_det') {

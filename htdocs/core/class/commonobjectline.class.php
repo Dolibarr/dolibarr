@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,16 @@
  */
 abstract class CommonObjectLine extends CommonObject
 {
+	/**
+	 * @var string ID to identify parent CommonObject type (element name)
+	 */
+	public $parent_element = '';
+
+	/**
+	 * @var string Attribute related to parent CommonObject rowid (many2one)
+	 */
+	public $fk_parent_attribute = '';
+
 	/**
 	 * Id of the line
 	 * @var int
@@ -78,8 +89,15 @@ abstract class CommonObjectLine extends CommonObject
 
 	public $multilangs;
 
-	public $product_type;		// type in line
-	public $fk_product;			// product id in line (when line is linked to a product)
+	/**
+	 * @var int type in line
+	 */
+	public $product_type;
+
+	/**
+	 * @var int product id in line (when line is linked to a product or service)
+	 */
+	public $fk_product;
 
 	/**
 	 * Description of the line
@@ -95,18 +113,60 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $description;
 
-	public $product;			// To store full product object after a fetch_product() on a line
-	public $product_ref;		// ref in product table
-	public $product_label;		// label in product table
-	public $product_barcode;	// barcode in product table
-	public $product_desc;		// desc in product table
-	public $fk_product_type;	// type in product table
+	/**
+	 * @var Product Object product to store full product object after a fetch_product() on a line
+	 */
+	public $product;
 
+	/**
+	 * @var string reference in product table
+	 */
+	public $product_ref;
+
+	/**
+	 * @var string label in product table
+	 */
+	public $product_label;
+
+	/**
+	 * @var string barcode in product table
+	 */
+	public $product_barcode;
+
+	/**
+	 * @var string description in product table
+	 */
+	public $product_desc;
+
+	/**
+	 * @var int type in product table
+	 */
+	public $fk_product_type;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $duree;
 	public $remise_percent;
+
+	/**
+	 * List of cumulative options:
+	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
 	public $info_bits;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $tva_tx;
 
@@ -178,8 +238,7 @@ abstract class CommonObjectLine extends CommonObject
 		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			$res = $this->db->fetch_array($resql);
+		if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 			if ($label_type == 'code') {
 				$label = 'unit'.$res['code'];
 			} else {

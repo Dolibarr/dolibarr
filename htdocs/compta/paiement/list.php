@@ -47,10 +47,11 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$mode = GETPOST('mode', 'alpha');
 
-$facid = GETPOSTINT('facid');
-$socid = GETPOSTINT('socid');
-$userid = GETPOSTINT('userid');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
+$userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -63,13 +64,13 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company = GETPOST("search_company", 'alpha');
 $search_paymenttype = GETPOST("search_paymenttype");
-$search_account = GETPOSTINT("search_account");
+$search_account = GETPOST("search_account", 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
 $search_status = GETPOST('search_status', 'intcomma');
 $search_sale = GETPOSTINT('search_sale');
 
-$mode = GETPOST('mode', 'alpha');
+
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -265,7 +266,7 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= natural_search('s.nom', $search_company);
 	}
 	// Search on sale representative
-	if ($search_sale && $search_sale != '-1') {
+	if ($search_sale && $search_sale != -1) {
 		if ($search_sale == -2) {
 			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
 		} elseif ($search_sale > 0) {

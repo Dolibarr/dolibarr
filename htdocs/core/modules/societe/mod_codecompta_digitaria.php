@@ -123,16 +123,16 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte = str_replace(array('{s1}', '{s2}', '{s3}', '{s4}'), array($s1, $s2, $s3, $s4), $texte);
 		$texte .= "<br>\n";
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {
 			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')."<br>\n";
 		}
-		// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
-			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
+		// If value is not unique (if COMPANY_DIGITARIA_UNIQUE_CODE is set to 0), we show this
+		if (!getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
+			$texte .= $langs->trans('DuplicateForbidden').' = '.yn(0)."<br>\n";
 		}
 		$texte .= '</td>';
 		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
@@ -235,7 +235,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
+			if (getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
 				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
 				while ($disponibility != 0 && $i < 1000) {
