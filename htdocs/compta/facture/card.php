@@ -1989,7 +1989,7 @@ if (empty($reshook)) {
 							$line->situation_percent = 0; // get good progress including credit note
 
 							// The $line->situation_percent has been modified, so we must recalculate all amounts
-							$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $line->situation_percent);
+							$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $line->situation_percent);
 							$line->total_ht = $tabprice[0];
 							$line->total_tva = $tabprice[1];
 							$line->total_ttc = $tabprice[2];
