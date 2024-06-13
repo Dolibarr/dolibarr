@@ -490,7 +490,7 @@ class Categories extends DolibarrApi
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
-		$result = $object->fetch('', $object_ref);
+		$result = $object->fetch(0, $object_ref);
 		if ($result > 0) {
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
