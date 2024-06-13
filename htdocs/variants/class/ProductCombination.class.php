@@ -747,7 +747,7 @@ class ProductCombination
 	 * @param User 				$user 			Object user
 	 * @param Product 			$product 		Parent product
 	 * @param array<int,int> 	$combinations 	Attribute and value combinations.
-	 * @param array<string,array<string,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations
+	 * @param array<int,array<int,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations (example: $variations[fk_product_attribute][fk_product_attribute_value]['weight'])
 	 * @param bool|array 		$price_var_percent 	Is the price variation a relative variation?
 	 * @param bool|float 		$forced_pricevar 	If the price variation is forced
 	 * @param bool|float 		$forced_weightvar 	If the weight variation is forced
