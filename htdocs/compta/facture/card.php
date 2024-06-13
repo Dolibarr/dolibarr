@@ -2951,6 +2951,9 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
 			}
 		}
+	} elseif ($action == 'remove_file' && $confirm == 'no') {
+		// Remove action if remove_file not confirmed by dialog.
+		$action = '';
 	}
 
 	// Actions when printing a doc from card
