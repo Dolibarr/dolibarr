@@ -341,7 +341,7 @@ if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($search_id != '') {
-	$param .= '&search_title='.urlencode($search_id);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);

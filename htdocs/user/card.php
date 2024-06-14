@@ -726,7 +726,7 @@ if (empty($reshook)) {
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
-			$ldapusers = $ldap->getRecords($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields);
+			$ldapusers = $ldap->getRecords($selecteduser, getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields);
 			//print_r($ldapusers);
 
 			if (is_array($ldapusers)) {
@@ -805,43 +805,44 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "<br>";
 
 
-	if (isModEnabled('ldap') && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
+	if (isModEnabled('ldap') && (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR)) {
+		$liste = array();
+
 		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 		if ($result >= 0) {
 			$required_fields = array(
-				$conf->global->LDAP_KEY_USERS,
-				$conf->global->LDAP_FIELD_FULLNAME,
-				$conf->global->LDAP_FIELD_NAME,
-				$conf->global->LDAP_FIELD_FIRSTNAME,
-				$conf->global->LDAP_FIELD_LOGIN,
-				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-				$conf->global->LDAP_FIELD_PASSWORD,
-				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-				$conf->global->LDAP_FIELD_PHONE,
-				$conf->global->LDAP_FIELD_FAX,
-				$conf->global->LDAP_FIELD_MOBILE,
-				$conf->global->LDAP_FIELD_SKYPE,
-				$conf->global->LDAP_FIELD_MAIL,
-				$conf->global->LDAP_FIELD_TITLE,
-				$conf->global->LDAP_FIELD_DESCRIPTION,
-				$conf->global->LDAP_FIELD_SID
+				getDolGlobalString('LDAP_KEY_USERS'),
+				getDolGlobalString('LDAP_FIELD_FULLNAME'),
+				getDolGlobalString('LDAP_FIELD_NAME'),
+				getDolGlobalString('LDAP_FIELD_FIRSTNAME'),
+				getDolGlobalString('LDAP_FIELD_LOGIN'),
+				getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'),
+				getDolGlobalString('LDAP_FIELD_PASSWORD'),
+				getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED'),
+				getDolGlobalString('LDAP_FIELD_PHONE'),
+				getDolGlobalString('LDAP_FIELD_FAX'),
+				getDolGlobalString('LDAP_FIELD_MOBILE'),
+				getDolGlobalString('LDAP_FIELD_SKYPE'),
+				getDolGlobalString('LDAP_FIELD_MAIL'),
+				getDolGlobalString('LDAP_FIELD_TITLE'),
+				getDolGlobalString('LDAP_FIELD_DESCRIPTION'),
+				getDolGlobalString('LDAP_FIELD_SID')
 			);
 
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
 			// Get from LDAP database an array of results
-			$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
+			$ldapusers = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 1);
 
 			if (is_array($ldapusers)) {
-				$liste = array();
 				foreach ($ldapusers as $key => $ldapuser) {
 					// Define the label string for this user
 					$label = '';
 					foreach ($required_fields as $value) {
-						if ($value === $conf->global->LDAP_FIELD_PASSWORD || $value === $conf->global->LDAP_FIELD_PASSWORD_CRYPTED) {
+						if ($value === getDolGlobalString('LDAP_FIELD_PASSWORD') || $value === getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 							$label .= $value."=******* ";
 						} elseif ($value) {
 							$label .= $value."=".$ldapuser[$value]." ";
@@ -1975,7 +1976,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle', '', $canSendMail, $params);
 				}
 
-				if ($caneditfield && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				if ($caneditfield && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 						$params['attr']['title'] = $langs->trans('DisabledInMonoUserMode');
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
@@ -1984,7 +1985,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&token='.newToken(), '', true, $params);
 					}
 				} elseif ($caneditpasswordandsee && !$object->ldap_sid &&
-				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
 				}
@@ -2001,7 +2002,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} elseif (($user->id != $id && $caneditpasswordandsee) && $object->login && !$object->ldap_sid &&
-					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
 					}
@@ -2010,7 +2011,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
 						print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} elseif (($user->id != $id && $caneditpasswordandsend) && $object->login && !$object->ldap_sid &&
-					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						if ($object->email) {
 							unset($params['attr']['title']);
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
@@ -2022,13 +2023,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 
 				if ($user->id != $id && $candisableuser && $object->statut == 0 &&
-				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
 				}
 				// Disable user
 				if ($user->id != $id && $candisableuser && $object->statut == 1 &&
-				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
 				} else {
@@ -2039,7 +2040,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				// Delete
 				if ($user->id != $id && $candisableuser &&
-				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);

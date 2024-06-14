@@ -213,7 +213,7 @@ if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= natural_search("er.comments", $search_desc);
+	$sql .= natural_search("erd.comments", $search_desc);
 }
 if (strlen(trim($search_amount))) {
 	$sql .= natural_search("erd.total_ht", $search_amount, 1);

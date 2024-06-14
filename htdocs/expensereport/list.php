@@ -524,7 +524,7 @@ if ($resql) {
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('expensereport', 'creer'));
 
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'expensereport', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
 
 	$topicmail = "SendExpenseReport";

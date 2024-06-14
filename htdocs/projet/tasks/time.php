@@ -1380,7 +1380,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&withproject=' . urlencode($withproject);
 		}
 		// Add $param from hooks
-		$parameters = array();
+		$parameters = array('param' => &$param);
 		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 

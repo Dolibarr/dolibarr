@@ -12103,6 +12103,13 @@ function getElementProperties($element_type)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
+	} elseif ($element_type == 'ccountry') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
@@ -12181,7 +12188,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
-
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
@@ -13353,7 +13359,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body" >';
+				$out .= '<div class="timeline-body wordbreak">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {

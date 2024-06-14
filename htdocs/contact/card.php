@@ -458,16 +458,13 @@ if (empty($reshook)) {
 						$no_email = GETPOST('no_email', 'int');
 						$result = $object->setNoEmail($no_email);
 						if ($result < 0) {
+							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
-							$action = 'edit';
 						}
 					}
-
-					$action = 'view';
 				} else {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
-					$action = 'edit';
 				}
 			}
 		}
@@ -477,6 +474,9 @@ if (empty($reshook)) {
 				header("Location: ".$backtopage);
 				exit;
 			}
+			$action = 'view';
+		} else {
+			$action = 'edit';
 		}
 	}
 
