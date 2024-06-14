@@ -59,39 +59,32 @@ Replace call to serialize_val with no bugged value
 
 
 
-TCPDF:
-------
+PHP TCPDF:
+----------
+* Modify in tcpdf.php: make TCPDF::_out public.
+  (htdocs/core/lib/pdf.lib.php uses it as a public method)
+
+  Change:
+      protected function _out($s)
+  to
+      public function _out($s)
+
+  Change in method's _out phpdoc:
+
+      * @protected
+  to
+      * @public
+
 * Replace in tcpdf.php:
-
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-                    unlink($file);
-                }
-            }
-with
-
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-				// DOL CHANGE If we keep this, source image files are physically destroyed
-				// unlink($file);
-                }
-            }
-
-* Replace in tcpdf.php
-
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
 			'cached_files',
-
 with
-
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -99,30 +92,24 @@ with
 			// @CHANGE DOL
 			'imagekeys',
 
-* Replace in tcpdf.php
-
-			if (!@TCPDF_STATIC::file_exists($file)) {
+* Replace in tcpdf.php:
+			if (!@this->fileExists($file)) {
 				return false;
 			}
-
 with
-
-			if (!@TCPDF_STATIC::file_exists($file)) {
+			if (!@this->fileExists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
-				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
-				//return false;	
+				//var_dump($file.' '.(!@this->fileExists($file)));
+				//return false;
                 $tfile = str_replace(' ', '%20', $file);
-				if (@TCPDF_STATIC::file_exists($tfile)) {
+				if (@this->fileExists($tfile)) {
 					$file = $tfile;
 				}
 			}
 
-* Replace in tcpdf.php
-
+* Replace in tcpdf.php:
 		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-
 with
-
 		// @CHANGE LDR Add support for src="file://..." links
 		if (strpos($imgsrc, 'file://') === 0) {
 			$imgsrc = str_replace('file://', '/', $imgsrc);
@@ -138,12 +125,10 @@ with
 		}
 		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 
-* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
 
+* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace:
 		if (strpos($filename, '://') === false) {
-
 with
-
         if (strpos($filename, '//') === 0) {
             // Share folder on a (windows) server
             // e.g.: "//[MyServerName]/[MySharedFolder]/"
@@ -152,36 +137,46 @@ with
         }
         elseif (strpos($filename, '://') === false)
 
-* To avoid to have QRcode changed because generated with a random mask, replace
+* In tecnickcom/tcpdf/include/barcodes/qrcode.php To avoid to have QRcode changed because generated with a random mask, replace:
 	define('QR_FIND_FROM_RANDOM', 2);
-	with:
+with
 	define('QR_FIND_FROM_RANDOM', false);
+
+* Change line:
+	imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+into
+	imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
 
 * Removed useless directories ("examples", "tools")
 
-* Optionnaly, removed all fonts except
-    dejavusans* (used by greek, arab, persan, romanian, turkish),
+* Optionally, removed all fonts except
+    dejavusans* (used by greek, arab, person, romanian, turkish),
     freemono* (russian),
     cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font if we removed courier
+* Optionally, made freemono the default monotype font if we removed courier
 In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
-* In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
-  of the function, replace:
+* Add this at begin of tcpdf_autoconfig.php
 
-	$roman = '';
-
-	with:
-
-	$roman = '';
-	if ($number >= 4000) {
-		// do not represent numbers above 4000 in Roman numerals
-		return strval($number);
+	// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
+		if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} else {
+			// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
+			$_SERVER['DOCUMENT_ROOT'] = '/';
+		}
+	}
+	$_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
+	if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
+		$_SERVER['DOCUMENT_ROOT'] .= '/';
 	}
 
 
