@@ -988,7 +988,6 @@ class ProductFournisseur extends Product
 		$thirdparty = new Fournisseur($this->db);
 		$thirdparty->fetch($this->fourn_id);
 		return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
-
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
