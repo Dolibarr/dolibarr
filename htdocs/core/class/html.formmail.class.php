@@ -1080,7 +1080,6 @@ class FormMail extends Form
 				$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			}
 		} else {
-			// print "<p>" . json_encode($this) . "</p>";exit;
 			// The free input of email
 			if (!empty($this->withtofree)) {
 				$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
