@@ -12891,7 +12891,7 @@ function newObjectByElement($element_type, &$errMsgCode = '')
  * @param	int<0,2>	$useCache 			If you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
  * @param	int			$maxCacheByType 	Number of object in cache for this element type
  * @param	string		$errMsgCode 		Error message
- * @return 	int<-1,0>|object 				object || 0 || <0 if error
+ * @return null|false|object 				object || null on not found || false if error
  * @see getElementProperties()
  * @see newObjectByElement()
  */
@@ -12925,7 +12925,7 @@ function loadObjectByElement($element_id, $element_type, $element_ref = '', $use
 	$ret = $objecttmp->fetch($element_id, $element_ref);
 	if ($ret == 0) {
 		$errMsgCode = 'ObjectNotFound';
-		return false;
+		return null;
 	}
 
 	if ($ret <= 0) {
