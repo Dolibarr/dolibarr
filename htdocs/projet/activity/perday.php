@@ -44,7 +44,7 @@ $mode = GETPOST("mode", 'alpha');
 $id = GETPOSTINT('id');
 $taskid = GETPOSTINT('taskid');
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perdaycard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'timespent';
 
 $mine = 0;
 if ($mode == 'mine') {
@@ -435,7 +435,7 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".
 $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%a").' ';
 $nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, ($conf->dol_optimize_smallscreen ? 0 : 1)).' ';
 $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp nobordertransp button_search"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
@@ -508,14 +508,21 @@ $moreforfilter = '';
 }*/
 
 // If the user can view user other than himself
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierarchyme';
 if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
-$moreforfilter .= '</div>';
+$selecteduser = $search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id;
+$moreforfiltertmp .= $form->select_dolusers($selecteduser, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"');
+	$moreforfilter .= $moreforfiltertmp;
+	$moreforfilter .= '</div>';
+} else {
+	$moreforfilter .= '<input type="hidden" name="search_usertoprocessid" value="'.$selecteduser.'">';
+}
 
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -604,7 +611,7 @@ $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
 	print '<th class="right minwidth75 maxwidth100 title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
@@ -621,7 +628,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask = ((!isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
+$restrictviewformytask = getDolGlobalInt('PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED', 2);
 
 $numendworkingday = 0;
 $numstartworkingday = 0;
@@ -679,7 +686,7 @@ print "</tr>\n";
 $colspan = 2 + (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : 2);
 
 if ($conf->use_javascript_ajax) {
-	print '<tr class="liste_total">';
+	print '<tr class="liste_total hideonsmartphone">';
 	print '<td class="liste_total" colspan="'.($colspan - 1 + $addcolspan).'">';
 	print $langs->trans("Total");
 	print '</td>';
