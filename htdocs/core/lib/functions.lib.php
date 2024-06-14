@@ -12792,6 +12792,44 @@ function getElementProperties($elementType)
 }
 
 /**
+ * Fetch an object from its id and element_type
+ * Inclusion of classes is automatic
+ *
+ * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
+ * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
+ * @param	string     	$element_ref 		Element ref (Use this or element_id but not both. If id and ref are empty, object with no fetch is returned)
+ * @param	int<0,2>	$useCache 			If you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
+ * @param	int			$maxCacheByType 	Number of object in cache for this element type
+ * @param	string		$errMsgCode			Error message
+ * @return 	int<-1,0>|object 				object || 0 not found || <0 if error
+ * @see getElementProperties()
+ * @see loadObjectByElement()
+ * @see newObjectByElement()
+ */
+function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
+{
+	global $db, $globalCacheForGetObjectFromCache;
+
+	$ret = 0;
+
+	if ($element_id > 0 || !empty($element_ref)) {
+		$objecttmp = loadObjectByElement($element_id, $element_type, $element_ref, $useCache, $maxCacheByType, $errMsgCode);
+		if (!$objecttmp && $errMsgCode === 'ObjectNotFound') {
+			return 0;
+		} elseif (!$objecttmp) {
+			return -1;
+		}
+	} else {
+		$objecttmp = newObjectByElement($element_type);
+		if (!$objecttmp) {
+			return -1;
+		}
+	}
+
+	return $objecttmp;
+}
+
+/**
  * Create a new instance of an object from its element_type
  * Inclusion of classes is automatic
  *
@@ -12906,44 +12944,6 @@ function loadObjectByElement($element_id, $element_type, $element_ref = '', $use
 		}
 
 		$globalCacheForGetObjectFromCache[$element_type][$element_id] = $objecttmp;
-	}
-
-	return $objecttmp;
-}
-
-/**
- * Fetch an object from its id and element_type
- * Inclusion of classes is automatic
- *
- * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
- * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
- * @param	string     	$element_ref 		Element ref (Use this or element_id but not both. If id and ref are empty, object with no fetch is returned)
- * @param	int<0,2>	$useCache 			If you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
- * @param	int			$maxCacheByType 	Number of object in cache for this element type
- * @param	string		$errMsgCode			Error message
- * @return 	int<-1,0>|object 				object || 0 not found || <0 if error
- * @see getElementProperties()
- * @see loadObjectByElement()
- * @see newObjectByElement()
- */
-function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
-{
-	global $db, $globalCacheForGetObjectFromCache;
-
-	$ret = 0;
-
-	if ($element_id > 0 || !empty($element_ref)) {
-		$objecttmp = loadObjectByElement($element_id, $element_type, $element_ref, $useCache, $maxCacheByType, $errMsgCode);
-		if (!$objecttmp && $errMsgCode === 'ObjectNotFound') {
-			return 0;
-		} elseif (!$objecttmp) {
-			return -1;
-		}
-	} else {
-		$objecttmp = newObjectByElement($element_type);
-		if (!$objecttmp) {
-			return -1;
-		}
 	}
 
 	return $objecttmp;
