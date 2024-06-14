@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php
  */
 class ProductFournisseur extends Product
 {
+
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -802,7 +803,7 @@ class ProductFournisseur extends Product
 	public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
 
 		if (empty($prodid)) {
 			dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
@@ -889,6 +890,20 @@ class ProductFournisseur extends Product
 							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
+
+					/* -------------------------------------------------------------------------------------*
+					 * VSPR let us recalculate the objects values. Based on the Modul Extra Discounts       *
+					* adding 4 more discounts to supplier                                                  */
+
+					global $action;
+					$parameters = array('id'=>$record["product_fourn_price_id"], 'getminprice' => &$result);
+					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+					        $result = $hookmanager->resPrint;
+					} else {
+					        $result .= $hookmanager->resPrint;
+					}
+
 					if ($fourn_unitprice < $min || $min == -1) {
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
@@ -914,6 +929,8 @@ class ProductFournisseur extends Product
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
 						$min = $fourn_unitprice;
 					}
+
+
 				}
 			}
 
@@ -979,6 +996,8 @@ class ProductFournisseur extends Product
 	 *	Display price of product
 	 *
 	 *  @param  int     $showunitprice    Show "Unit price" into output string
+         *                                    1=Show full string
+         *                                    2=Show only the discounted price as number e.g. 00,00
 	 *  @param  int     $showsuptitle     Show "Supplier" into output string
 	 *  @param  int     $maxlen           Max length of name
 	 *  @param  integer $notooltip        1=Disable tooltip
@@ -989,29 +1008,81 @@ class ProductFournisseur extends Product
 	public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$out = '';
 		$langs->load("suppliers");
-		if (count($productFournList) > 0) {
-			$out .= '<table class="nobordernopadding" width="100%">';
-			$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
-			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
-			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
-			$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
-			foreach ($productFournList as $productFourn) {
-				$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
-				$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
-				$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
-				$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
-			}
-			$out .= '</table>';
+
+		/* VSPR  Because calc is hardcoded we need a hook to override price display. Based on the Modul Extra Discounts adding 4 more discounts to supplier*/
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dispprice'));
+		$parameters = array('showunitprice'=>$showunitprice,
+			'showsuptitle'=>$showsuptitle,
+			'maxlen'=>$maxlen,
+			'thisid'=>$this->id,
+			'thisproductfournpriceid'=>$this->product_fourn_price_id,
+			'thisfournunitprice'=>$this->fourn_unitprice,
+			'thisfournremisepercent'=>$this->fourn_remise_percent,
+			'thisfournremise'=>$this->fourn_remise,
+			'thissupplier'=>$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip), 
+			'thisrefsupplier'=>$this->ref_supplier,
+			'notooltip'=>$notooltip
+		);
+		$reshook = $hookmanager->executeHooks('displaypriceproductfournisseur', $parameters, $productFournList, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
 		} else {
-			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
-			$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
-			$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+			$result .= $hookmanager->resPrint;
 		}
-		return $out;
+
+		// We only should handle things here, if return of hook is 0 
+		if ($reshook == 1) 
+		{
+			return $out.$result;
+		}
+		else
+		{
+		    /* VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function */
+			if (count($productFournList) > 0) 
+			{
+				if ( $showunitprice == 2)
+				{ 
+					return $productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise;
+				} 
+				else
+				{ 
+					$out .= '<table class="nobordernopadding" width="100%">';
+					$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
+		 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
+					$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
+					$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
+					foreach ($productFournList as $productFourn) 
+					{
+			   			$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
+						$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
+						$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
+						$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
+			    	}
+			   		$out .= '</table>';
+				} 
+			}
+			else 
+			{
+				if ( $showunitprice == 2)
+				{ 
+					return $this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise;
+				} 
+				else
+				{ 
+					$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
+					$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
+					$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+				} 
+			}
+
+		    return $out;
+		}
+             
 	}
 
 	/**
