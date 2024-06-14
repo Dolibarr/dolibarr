@@ -150,8 +150,8 @@ class ProductFournisseur extends Product
 	const STATUS_OPEN = 1;
 	const STATUS_CANCELED = 0;
 
-    // test für github
-    public $result;
+	// test für github
+	public $result;
 
 	/**
 	 *	Constructor
