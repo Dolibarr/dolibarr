@@ -321,9 +321,8 @@ class Lettering extends BookKeeping
 				// Remove normal lettering code if set partial lettering
 				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
 					if (!empty($obj->bookkeeping_ids)) $ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
-				}
-				// Delete partial lettering code if set normal lettering
-				elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
+				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
+					// Delete partial lettering code if set normal lettering
 					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 					$sql2 .= " lettering_code = NULL";
 					$sql2 .= ", date_lettering = NULL";
