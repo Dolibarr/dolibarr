@@ -892,7 +892,7 @@ class ProductFournisseur extends Product
 					}
 
 					/* -------------------------------------------------------------------------------------*
-					 * VSPR let us recalculate the objects values. Based on the Modul Extra Discounts       *
+					 * VSPR let us recalculate the objects values. Based on the Extra Discounts Addon      *
 					* adding 4 more discounts to supplier                                                  */
 
 					global $action;
@@ -1012,7 +1012,7 @@ class ProductFournisseur extends Product
 		$out = '';
 		$langs->load("suppliers");
 
-		/* VSPR  Because calc is hardcoded we need a hook to override price display. Based on the Modul Extra Discounts adding 4 more discounts to supplier*/
+		/* VSPR  Because calc is hardcoded we need a hook to override price display. Based on the Extra Discounts Addon adding 4 more discounts to supplier*/
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dispprice'));
 		$parameters = array('showunitprice'=>$showunitprice,
