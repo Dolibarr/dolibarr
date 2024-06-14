@@ -900,11 +900,14 @@ class ProductFournisseur extends Product
 					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook > 0) {
 					        $result = $hookmanager->resPrint;
-					} else {
+					}
+					else
+					{
 					        $result .= $hookmanager->resPrint;
 					}
 
-					if ($fourn_unitprice < $min || $min == -1) {
+					if ($fourn_unitprice < $min || $min == -1)
+					{
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
 						$this->ref_fourn                = $record["ref_fourn"]; // deprecated
@@ -929,11 +932,8 @@ class ProductFournisseur extends Product
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
 						$min = $fourn_unitprice;
 					}
-
-
 				}
 			}
-
 			$this->db->free($resql);
 			return 1;
 		} else {
@@ -987,8 +987,8 @@ class ProductFournisseur extends Product
 	{
 		$thirdparty = new Fournisseur($this->db);
 		$thirdparty->fetch($this->fourn_id);
-
 		return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
+
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1043,14 +1043,14 @@ class ProductFournisseur extends Product
 		else
 		{
 		    /* VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function */
-			if (count($productFournList) > 0) 
+			if (count($productFournList) > 0)
 			{
 				if ( $showunitprice == 2)
-				{ 
+				{
 					return $productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise;
-				} 
+				}
 				else
-				{ 
+				{
 					$out .= '<table class="nobordernopadding" width="100%">';
 					$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
 		 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
@@ -1062,27 +1062,25 @@ class ProductFournisseur extends Product
 						$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 						$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
 						$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
-			    	}
+					}
 			   		$out .= '</table>';
-				} 
+				}
 			}
-			else 
+			else
 			{
 				if ( $showunitprice == 2)
-				{ 
+				{
 					return $this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise;
 				} 
 				else
-				{ 
+				{
 					$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
 					$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
 					$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
 				} 
 			}
-
 		    return $out;
 		}
-             
 	}
 
 	/**
@@ -1143,19 +1141,21 @@ class ProductFournisseur extends Product
 		$sql .= " AND pfpl.fk_user = u.rowid";
 		$sql .= " AND pfp.rowid = pfpl.fk_product_fournisseur";
 		$sql .= " AND pfpl.fk_product_fournisseur = ".((int) $product_fourn_price_id);
-		if (empty($sortfield)) {
+		if (empty($sortfield))
+		{
 			$sql .= " ORDER BY pfpl.datec";
-		} else {
+		}
+		else
+		{
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		$sql .= $this->db->plimit($limit, $offset);
 		dol_syslog(get_class($this)."::list_product_fournisseur_price_log", LOG_DEBUG);
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$retarray = array();
-
-			while ($obj = $this->db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql))
+			{
 				$tmparray = array();
 				$tmparray['rowid'] = $obj->rowid;
 				$tmparray['supplier_ref'] = $obj->supplier_ref;
@@ -1168,10 +1168,8 @@ class ProductFournisseur extends Product
 				$tmparray['multicurrency_tx'] = $obj->multicurrency_tx;
 				$tmparray['multicurrency_price'] = $obj->multicurrency_price;
 				$tmparray['multicurrency_unitprice'] = $obj->multicurrency_unitprice;
-
 				$retarray[] = $tmparray;
 			}
-
 			$this->db->free($resql);
 			return $retarray;
 		} else {
