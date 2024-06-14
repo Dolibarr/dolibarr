@@ -57,8 +57,22 @@ class Productlot extends CommonObject
 	public $stats_contrat;
 	public $stats_facture;
 	public $stats_commande_fournisseur;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_expedition;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_reception;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
+	public $stats_supplier_order;
+
 	public $stats_mo;
 	public $stats_bom;
 	public $stats_mrptoconsume;
@@ -131,10 +145,30 @@ class Productlot extends CommonObject
 	 * @var string batch ref
 	 */
 	public $batch;
+
+	/**
+	 * @var int|string eatby
+	 */
 	public $eatby = '';
+
+	/**
+	 * @var int|string sellby
+	 */
 	public $sellby = '';
+
+	/**
+	 * @var int|string eal_date
+	 */
 	public $eol_date = '';
+
+	/**
+	 * @var int|string manufacturing_date
+	 */
 	public $manufacturing_date = '';
+
+	/**
+	 * @var int|string scrapping_date
+	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
 	public $qc_frequency = '';
@@ -155,8 +189,6 @@ class Productlot extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
-
-	public $stats_supplier_order = array();
 
 
 	/**
