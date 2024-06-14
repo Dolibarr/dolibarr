@@ -988,7 +988,7 @@ class ProductFournisseur extends Product
 		$thirdparty = new Fournisseur($this->db);
 		$thirdparty->fetch($this->fourn_id);
 		return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
-	} 
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1076,14 +1076,14 @@ class ProductFournisseur extends Product
 					$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
 					$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
 					$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
-				} 
+				}
 			}
 		    return $out;
 		}
 	}
 
 	/**
-	 * Function used to replace a thirdparty id with another one.
+	* Function used to replace a thirdparty id with another one.
 	 *
 	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id
