@@ -300,7 +300,7 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$affected_rows = 0;
 
-		// Generate a string with n char 'A' (for manuel/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
+		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
 		$this->db->begin();
