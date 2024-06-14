@@ -12792,7 +12792,7 @@ function getElementProperties($elementType)
 }
 
 /**
- * Fetch an object from its id and element_type
+ * Create a new instance of an object from its element_type
  * Inclusion of classes is automatic
  *
  * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
@@ -12855,6 +12855,7 @@ function newObjectByElement($element_type, &$errMsgCode = '')
  * @param	string		$errMsgCode 		Error message
  * @return 	int<-1,0>|object 				object || 0 || <0 if error
  * @see getElementProperties()
+ * @see newObjectByElement()
  */
 function loadObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
 {
