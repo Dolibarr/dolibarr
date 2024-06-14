@@ -12001,82 +12001,95 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
-	global $conf;
+	global $conf, $object, $action, $hookmanager;
 
 	$return = '';
 	$dolGetBadgeParams = array();
+	$parameters = array(
+		'statusLabel' => $statusLabel,
+		'statusLabelShort' => $statusLabelShort,
+		'html' => $html,
+		'statusType' => $statusType,
+		'displayMode' => $displayMode,
+		'params' => $params,
+	);
 
-	if (!empty($params['badgeParams'])) {
-		$dolGetBadgeParams = $params['badgeParams'];
-	}
+	$reshook = $hookmanager->executeHooks('dolGetStatus', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// TODO : add a hook
-	if ($displayMode == 0) {
-		$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
-	} elseif ($displayMode == 1) {
-		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
-	} elseif (getDolGlobalString('MAIN_STATUS_USES_IMAGES')) {
-		// Use status with images (for backward compatibility)
-		$return = '';
-		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
-		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
+	if (empty($reshook)) {
+		if (!empty($params['badgeParams'])) {
+			$dolGetBadgeParams = $params['badgeParams'];
+		}
+		if ($displayMode == 0) {
+			$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
+		} elseif ($displayMode == 1) {
+			$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
+		} elseif (getDolGlobalString('MAIN_STATUS_USES_IMAGES')) {
+			// Use status with images (for backward compatibility)
+			$return = '';
+			$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
+			$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
-		// For small screen, we always use the short label instead of long label.
-		if (!empty($conf->dol_optimize_smallscreen)) {
-			if ($displayMode == 0) {
-				$displayMode = 1;
-			} elseif ($displayMode == 4) {
-				$displayMode = 2;
-			} elseif ($displayMode == 6) {
-				$displayMode = 5;
+			// For small screen, we always use the short label instead of long label.
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				if ($displayMode == 0) {
+					$displayMode = 1;
+				} elseif ($displayMode == 4) {
+					$displayMode = 2;
+				} elseif ($displayMode == 6) {
+					$displayMode = 5;
+				}
+			}
+
+			// For backward compatibility. Image's filename are still in French, so we use this array to convert
+			$statusImg = array(
+				'status0' => 'statut0',
+				'status1' => 'statut1',
+				'status2' => 'statut2',
+				'status3' => 'statut3',
+				'status4' => 'statut4',
+				'status5' => 'statut5',
+				'status6' => 'statut6',
+				'status7' => 'statut7',
+				'status8' => 'statut8',
+				'status9' => 'statut9'
+			);
+
+			if (!empty($statusImg[$statusType])) {
+				$htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
+			} else {
+				$htmlImg = img_picto($statusLabel, $statusType);
+			}
+
+			if ($displayMode === 2) {
+				$return = $htmlImg.' '.$htmlLabelShort;
+			} elseif ($displayMode === 3) {
+				$return = $htmlImg;
+			} elseif ($displayMode === 4) {
+				$return = $htmlImg.' '.$htmlLabel;
+			} elseif ($displayMode === 5) {
+				$return = $htmlLabelShort.' '.$htmlImg;
+			} else { // $displayMode >= 6
+				$return = $htmlLabel.' '.$htmlImg;
+			}
+		} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
+			// Use new badge
+			$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
+
+			$dolGetBadgeParams['attr']['class'] = 'badge-status';
+			$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
+
+			if ($displayMode == 3) {
+				$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
+			} elseif ($displayMode === 5) {
+				$return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
+			} else {
+				$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
 			}
 		}
-
-		// For backward compatibility. Image's filename are still in French, so we use this array to convert
-		$statusImg = array(
-			'status0' => 'statut0',
-			'status1' => 'statut1',
-			'status2' => 'statut2',
-			'status3' => 'statut3',
-			'status4' => 'statut4',
-			'status5' => 'statut5',
-			'status6' => 'statut6',
-			'status7' => 'statut7',
-			'status8' => 'statut8',
-			'status9' => 'statut9'
-		);
-
-		if (!empty($statusImg[$statusType])) {
-			$htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
-		} else {
-			$htmlImg = img_picto($statusLabel, $statusType);
-		}
-
-		if ($displayMode === 2) {
-			$return = $htmlImg.' '.$htmlLabelShort;
-		} elseif ($displayMode === 3) {
-			$return = $htmlImg;
-		} elseif ($displayMode === 4) {
-			$return = $htmlImg.' '.$htmlLabel;
-		} elseif ($displayMode === 5) {
-			$return = $htmlLabelShort.' '.$htmlImg;
-		} else { // $displayMode >= 6
-			$return = $htmlLabel.' '.$htmlImg;
-		}
-	} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
-		// Use new badge
-		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
-
-		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
-
-		if ($displayMode == 3) {
-			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
-		} elseif ($displayMode === 5) {
-			$return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
-		} else {
-			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
-		}
+	} else {
+		return $hookmanager->resPrint;
 	}
 
 	return $return;
