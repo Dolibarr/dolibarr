@@ -375,7 +375,7 @@ if ($action === 'confirm_deletecombination') {
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
 
-	if ($prodstatic->fetch('', $dest_product) > 0) {
+	if ($prodstatic->fetch(0, $dest_product) > 0) {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
 			if ($prodcomb->copyAll($user, $object->id, $prodstatic) > 0) {
