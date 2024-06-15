@@ -21,6 +21,4 @@ date.timezone = ${PHP_INI_DATE_TIMEZONE:-UTC}
 memory_limit = ${PHP_INI_MEMORY_LIMIT:-256M}
 EOF
 
-cp /var/www/html/install/install.forced.docker.php /var/www/html/install/install.forced.php
-
 exec apache2-foreground
