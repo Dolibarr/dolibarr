@@ -206,7 +206,6 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$totalstatus = array(
-				'label' => 'Total',
 				'members_draft' => 0,
 				'members_pending' => 0,
 				'members_uptodate' => 0,
@@ -286,7 +285,6 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$totalstatus = array(
-				'label' => 'Total',
 				'members_draft' => 0,
 				'members_pending' => 0,
 				'members_uptodate' => 0,
