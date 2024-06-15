@@ -896,14 +896,11 @@ class ProductFournisseur extends Product
 					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook > 0) {
 					        $result = $hookmanager->resPrint;
-					}
-					else
-					{
+					} else {
 					        $result .= $hookmanager->resPrint;
 					}
 
-					if ($fourn_unitprice < $min || $min == -1)
-					{
+					if ($fourn_unitprice < $min || $min == -1) {
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
 						$this->ref_fourn                = $record["ref_fourn"]; // deprecated
