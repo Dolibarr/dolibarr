@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -523,7 +524,7 @@ if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $selecteduser = $search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id;
-$moreforfiltertmp .= $form->select_dolusers($selecteduser, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfiltertmp = $form->select_dolusers($selecteduser, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
