@@ -72,8 +72,7 @@ class ModeleImports
 	public $version = 'dolibarr';
 
 	/**
-	 * PHP minimal version required by driver
-	 * @var array<int:int>
+	 * @var array{0:int,1:int} PHP minimal version required by driver.
 	 */
 	public $phpmin = array();
 
