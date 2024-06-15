@@ -39,7 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php
  */
 class ProductFournisseur extends Product
 {
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -986,6 +985,7 @@ class ProductFournisseur extends Product
 	{
 		$thirdparty = new Fournisseur($this->db);
 		$thirdparty->fetch($this->fourn_id);
+
 		return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
 	}
 
