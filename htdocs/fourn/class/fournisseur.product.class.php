@@ -889,9 +889,7 @@ class ProductFournisseur extends Product
 						}
 					}
 
-					/* -------------------------------------------------------------------------------------*
-					 * VSPR let us recalculate the objects values. Based on the Extra Discounts Addon      *
-					* adding 4 more discounts to supplier                                                  */
+					// VSPR let us recalculate the objects values. Based on the Extra Discounts Addon
 
 					global $action;
 					$parameters = array('id'=>$record["product_fourn_price_id"], 'getminprice' => &$result);
@@ -932,6 +930,7 @@ class ProductFournisseur extends Product
 					}
 				}
 			}
+
 			$this->db->free($resql);
 			return 1;
 		} else {
