@@ -893,7 +893,7 @@ class ProductFournisseur extends Product
 
 					global $action;
 					$parameters = array('id'=>$record["product_fourn_price_id"], 'getminprice' => &$result);
-					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action);
 					if ($reshook > 0) {
 					        $result = $hookmanager->resPrint;
 					} else {
