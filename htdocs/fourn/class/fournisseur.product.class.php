@@ -150,9 +150,6 @@ class ProductFournisseur extends Product
 	const STATUS_OPEN = 1;
 	const STATUS_CANCELED = 0;
 
-	// test für github
-	public $result;
-
 	/**
 	 *	Constructor
 	 *
@@ -997,8 +994,8 @@ class ProductFournisseur extends Product
 	 *	Display price of product
 	 *
 	 *  @param  int     $showunitprice    Show "Unit price" into output string
-         *                                    1=Show full string
-         *                                    2=Show only the discounted price as number e.g. 00,00
+	 *                                    1=Show full string
+	 *                                    2=Show only the discounted price as number e.g. 00,00
 	 *  @param  int     $showsuptitle     Show "Supplier" into output string
 	 *  @param  int     $maxlen           Max length of name
 	 *  @param  integer $notooltip        1=Disable tooltip
@@ -1043,7 +1040,7 @@ class ProductFournisseur extends Product
 		}
 		else
 		{
-		    /* VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function */
+		    // VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function
 			if (count($productFournList) > 0)
 			{
 				if ( $showunitprice == 2)
