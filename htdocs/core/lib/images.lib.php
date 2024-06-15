@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -632,7 +633,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Before PHP8, img was a resource, With PHP8, it is a GdImage
-	if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
+	// if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
+	if (is_null($img) || $img === false) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
 	}
