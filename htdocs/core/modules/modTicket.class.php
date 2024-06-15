@@ -125,10 +125,11 @@ class modTicket extends DolibarrModules
 			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
 		);
 
-
+		/*
 		$this->tabs = array(
 			'thirdparty:+ticket:Tickets:ticket:$user->hasRight("ticket","read"):/ticket/list.php?socid=__ID__',
 		);
+		*/
 
 		// Dictionaries
 		if (!isset($conf->ticket->enabled)) {
