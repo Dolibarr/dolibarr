@@ -1018,18 +1018,16 @@ class ProductFournisseur extends Product
 			'thisfournunitprice'=>$this->fourn_unitprice,
 			'thisfournremisepercent'=>$this->fourn_remise_percent,
 			'thisfournremise'=>$this->fourn_remise,
-			'thissupplier'=>$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip), 
+			'thissupplier'=>$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip),
 			'thisrefsupplier'=>$this->ref_supplier,
 			'notooltip'=>$notooltip
 		);
 		$reshook = $hookmanager->executeHooks('displaypriceproductfournisseur', $parameters, $productFournList, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
 		}
 
-		// We only should handle things here, if return of hook is 0 
+		// We only should handle things here, if return of hook is 0
 		if ($reshook == 1) {
 			return $out.$result;
 		} else {
@@ -1043,7 +1041,7 @@ class ProductFournisseur extends Product
 		 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
 					$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 					$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
-					foreach ($productFournList as $productFourn) 
+					foreach ($productFournList as $productFourn)
 					{
 			 			$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 						$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
