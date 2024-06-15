@@ -1011,7 +1011,7 @@ class ProductFournisseur extends Product
 		$out = '';
 		$langs->load("suppliers");
 
-		/* VSPR  Because calc is hardcoded we need a hook to override price display. Based on the Extra Discounts Addon adding 4 more discounts to supplier*/
+		// VSPR  Because calc is hardcoded we need a hook to override price display. Based on the Extra Discounts Addon adding 4 more discounts to supplier
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dispprice'));
 		$parameters = array('showunitprice'=>$showunitprice,
@@ -1034,21 +1034,14 @@ class ProductFournisseur extends Product
 		}
 
 		// We only should handle things here, if return of hook is 0 
-		if ($reshook == 1) 
-		{
+		if ($reshook == 1) {
 			return $out.$result;
-		}
-		else
-		{
+		} else {
 		    // VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function
-			if (count($productFournList) > 0)
-			{
-				if ( $showunitprice == 2)
-				{
+			if (count($productFournList) > 0) {
+				if ( $showunitprice == 2) {
 					return $productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise;
-				}
-				else
-				{
+				} else {
 					$out .= '<table class="nobordernopadding" width="100%">';
 					$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
 		 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
@@ -1063,15 +1056,10 @@ class ProductFournisseur extends Product
 					}
 					$out .= '</table>';
 				}
-			}
-			else
-			{
-				if ( $showunitprice == 2)
-				{
+			} else {
+				if ( $showunitprice == 2) {
 					return $this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise;
-				} 
-				else
-				{
+				} else {
 					$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) - $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
 					$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
 					$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
