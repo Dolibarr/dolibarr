@@ -73,7 +73,7 @@ class ModeleImports
 
 	/**
 	 * PHP minimal version required by driver
-	 * @var array
+	 * @var array{0:int,1:int}
 	 */
 	public $phpmin = array();
 
