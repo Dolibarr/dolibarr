@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ if ($type == 'sub') {
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
 
-llxHeader('', $title_page, $help_url);
+llxHeader('', $title_page, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-'.(($type == 'sub') ? 'sub' : '').'balance');
 
 
 if ($action != 'export_csv') {
