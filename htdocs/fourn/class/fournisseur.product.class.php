@@ -1082,7 +1082,7 @@ class ProductFournisseur extends Product
 	}
 
 	/**
-	* Function used to replace a thirdparty id with another one.
+	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id
@@ -1139,21 +1139,18 @@ class ProductFournisseur extends Product
 		$sql .= " AND pfpl.fk_user = u.rowid";
 		$sql .= " AND pfp.rowid = pfpl.fk_product_fournisseur";
 		$sql .= " AND pfpl.fk_product_fournisseur = ".((int) $product_fourn_price_id);
-		if (empty($sortfield))
-		{
+		if (empty($sortfield)) {
 			$sql .= " ORDER BY pfpl.datec";
-		}
-		else
-		{
+		} else {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		$sql .= $this->db->plimit($limit, $offset);
 		dol_syslog(get_class($this)."::list_product_fournisseur_price_log", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$retarray = array();
-			while ($obj = $this->db->fetch_object($resql))
-			{
+			while ($obj = $this->db->fetch_object($resql)) {
 				$tmparray = array();
 				$tmparray['rowid'] = $obj->rowid;
 				$tmparray['supplier_ref'] = $obj->supplier_ref;
