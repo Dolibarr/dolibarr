@@ -465,20 +465,25 @@ if ($step == 2 && $datatoimport) {
 	foreach ($list as $key) {
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
-		$text = $objmodelimport->getDriverDescForKey($key);
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
+		$htmltext = $objmodelimport->getDriverDescForKey($key);
+		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $htmltext).'</td>';
 		print '<td style="text-align:center">';
-		$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
-		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"');
-		print $langs->trans("DownloadEmptyExampleShort");
-		print '</a>';
-		print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
+		if (empty($objmodelimport->drivererror[$key])) {
+			$filename = $langs->transnoentitiesnoconv("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
+			print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
+			print img_picto('', 'download', 'class="paddingright opacitymedium"');
+			print $langs->trans("DownloadEmptyExampleShort");
+			print '</a>';
+			print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
+		} else {
+			print dolPrintHtml($objmodelimport->drivererror[$key]);
+		}
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
-		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15"').'</a>';
+		if (empty($objmodelimport->drivererror[$key])) {
+			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15"').'</a>';
+		}
 		print '</td>';
 		print '</tr>';
 	}

@@ -94,7 +94,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
@@ -106,6 +106,14 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
