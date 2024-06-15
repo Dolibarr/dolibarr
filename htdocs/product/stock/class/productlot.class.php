@@ -1249,7 +1249,7 @@ class Productlot extends CommonObject
 
 		$this->entity = $conf->entity;
 		$this->fk_product = 0;
-		$this->batch = '';
+		$this->batch = 'ABCD123456';
 		$this->eatby = $now - 100000;
 		$this->sellby = $now - 100000;
 		$this->datec = $now - 3600;
