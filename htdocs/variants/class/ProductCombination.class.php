@@ -770,7 +770,7 @@ class ProductCombination
 
 		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
 			$existingProduct = new Product($this->db);
-			$result = $existingProduct->fetch('', $forced_refvar);
+			$result = $existingProduct->fetch(0, $forced_refvar);
 			if ($result > 0) {
 				$newproduct = $existingProduct;
 			} else {
