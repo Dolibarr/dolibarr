@@ -285,10 +285,11 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 				$staticcompany->id = $obj->socid;
 				$staticcompany->name = $obj->name;
 				$staticcompany->name_alias = $obj->name_alias;
-				$staticcompany->photo = 1;
+				$staticcompany->logo = $obj->logo;
 				$staticcompany->code_client = $obj->code_client;
 				$staticcompany->code_fournisseur = $obj->code_fournisseur;
 				$staticcompany->code_compta = $obj->code_compta;
+				$staticcompany->code_compta_client = $obj->code_compta;
 				$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 				$staticcompany->client = $obj->client;
 				$staticcompany->fournisseur = $obj->fournisseur;
