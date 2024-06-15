@@ -527,10 +527,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if (!empty($parent->oldcopy) && ($parent->status != $parent->oldcopy->status)) {
+		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if (!empty($parent->oldcopy) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 
@@ -747,7 +747,7 @@ class ProductCombination
 	 * @param User 				$user 			Object user
 	 * @param Product 			$product 		Parent product
 	 * @param array<int,int> 	$combinations 	Attribute and value combinations.
-	 * @param array<string,array<string,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations
+	 * @param array<int,array<int,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations (example: $variations[fk_product_attribute][fk_product_attribute_value]['weight'])
 	 * @param bool|array 		$price_var_percent 	Is the price variation a relative variation?
 	 * @param bool|float 		$forced_pricevar 	If the price variation is forced
 	 * @param bool|float 		$forced_weightvar 	If the weight variation is forced
@@ -770,7 +770,7 @@ class ProductCombination
 
 		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
 			$existingProduct = new Product($this->db);
-			$result = $existingProduct->fetch('', $forced_refvar);
+			$result = $existingProduct->fetch(0, $forced_refvar);
 			if ($result > 0) {
 				$newproduct = $existingProduct;
 			} else {

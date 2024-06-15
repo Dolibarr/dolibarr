@@ -87,12 +87,12 @@ class ImportCsv extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
 
-		$this->separator = (GETPOST('separator') ? GETPOST('separator') : (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
+		$this->separator = (GETPOST('separator') ? GETPOST('separator') : getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE', ','));
 		$this->enclosure = '"';
 		$this->escape = '"';
 
@@ -102,6 +102,14 @@ class ImportCsv extends ModeleImports
 		$this->extension = 'csv'; // Extension for generated file by this driver
 		$this->picto = 'mime/other'; // Picto
 		$this->version = '1.34'; // Driver version
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		$this->label_lib = 'Dolibarr';

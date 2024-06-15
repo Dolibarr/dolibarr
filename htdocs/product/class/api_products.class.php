@@ -1759,7 +1759,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->product->fetch('', $ref);
+		$result = $this->product->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
@@ -1881,7 +1881,7 @@ class Products extends DolibarrApi
 			}
 		}
 
-		$result = $this->product->fetch('', trim($ref));
+		$result = $this->product->fetch(0, trim($ref));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
