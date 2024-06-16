@@ -98,7 +98,7 @@ class ProductAttributeValue extends CommonObjectLine
 
 	/**
 	 * @var int		Attribute sorting position
-	 */	
+	 */
 	public $position;
 
 	/**
