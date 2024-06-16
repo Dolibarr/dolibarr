@@ -1169,6 +1169,7 @@ NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), yo
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
+TranslationKey=Translation key
 ValueOfConstantKey=Value of a configuration constant
 ConstantIsOn=Option %s is on
 NbOfDays=No. of days

@@ -322,7 +322,7 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 3px;
+	margin: 0 3px 0 1px;
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -1773,6 +1773,7 @@ maxscreenheightless200 {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
+.showonsmartphone { display: none; }
 .minwidth25 { min-width: 25px; }
 .minwidth50 { min-width: 50px; }
 .minwidth75 { min-width: 75px; }
@@ -5159,7 +5160,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
+table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
