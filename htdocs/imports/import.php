@@ -4,6 +4,7 @@
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -476,7 +477,7 @@ if ($step == 2 && $datatoimport) {
 			print '</a>';
 			print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 		} else {
-			print dolPrintHtml($objmodelimport->drivererror[$key]);
+			print dolPrintHTML($objmodelimport->drivererror[$key]);
 		}
 		print '</td>';
 		// Action button
