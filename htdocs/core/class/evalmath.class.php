@@ -214,7 +214,7 @@ class EvalMath
 	 *
 	 * @return array	Output
 	 */
-	private function funcs()
+	private function funcs() // @phpstan-ignore-line
 	{
 		$output = array();
 		foreach ($this->f as $fnn => $dat) {
