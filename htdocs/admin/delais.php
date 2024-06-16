@@ -211,6 +211,7 @@ print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'tit
 print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
+print "<br>\n";
 
 if ($action == 'edit') {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';

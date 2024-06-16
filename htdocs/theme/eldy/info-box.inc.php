@@ -577,6 +577,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
+@media only screen and (max-width: 570px)
+{
+	.box-flex-item {
+		margin: 3px 8px 3px 8px !important;
+	}
+}
+
 @media only screen and (max-width: 480px) {
 	.info-box-module {
 		min-width: 250px;
@@ -603,7 +610,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-container {
 		margin: 0 0 0 0px !important;
 		width: 100% !important;
-		justify-content: space-between;
+		/* justify-content: space-between; */
 	}
 	.info-box-module {
 		width: 100%;
