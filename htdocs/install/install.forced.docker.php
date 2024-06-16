@@ -20,7 +20,7 @@
 $force_install_nophpinfo = true;
 
 /** @var int	$force_install_noedit 				1 = Lock and hide environment variables, 2 = Lock all set variables */
-$force_install_noedit = 2;
+$force_install_noedit = 3;
 
 /** @var string	$force_install_message	 			Information message */
 $force_install_message = 'Welcome to your Dolibarr Docker install';

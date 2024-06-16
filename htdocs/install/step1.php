@@ -114,7 +114,7 @@ if (@file_exists($forcedfile)) {
 			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
-	if ($force_install_noedit == 2) {
+	if (($force_install_noedit == 2) || ($force_install_noedit == 3)) {
 		if (!empty($force_install_type)) {
 			$db_type = $force_install_type;
 		}
