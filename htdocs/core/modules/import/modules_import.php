@@ -60,11 +60,14 @@ class ModeleImports
 	public $id;
 
 	/**
-	 * @var string label
+	 * @var string label of driver
 	 */
 	public $label;
 
-	public $extension; // Extension of files imported by driver
+	/**
+	 * @var string Extension of files imported by driver
+	 */
+	public $extension;
 
 	/**
 	 * Dolibarr version of driver
