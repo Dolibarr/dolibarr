@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1050,7 +1051,7 @@ class FormWebPortal extends Form
 			if ($type == 'array') {
 				$value = implode('<br>', $value);
 			} else {
-				dol_syslog(__METHOD__ . 'ERROR unexpected type='.$type.' for array value='.((string) json_encode($value)), LOG_ERR);
+				dol_syslog(__METHOD__ . ' unexpected type: '.$type.' for array value='.((string) json_encode($value)), LOG_ERR);
 			}
 			//
 			// Then the cases where $value is not an array (hence string)
