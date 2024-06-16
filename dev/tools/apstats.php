@@ -883,7 +883,7 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
 	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
@@ -1019,11 +1019,13 @@ if ($fh) {
 
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
 		$tmpdate = strtotime($alert['created_at']);
 		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
-		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+
 		fwrite($fh, '</item>'."\n");
 	}
 

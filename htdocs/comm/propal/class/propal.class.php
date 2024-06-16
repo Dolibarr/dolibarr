@@ -3667,14 +3667,14 @@ class Propal extends CommonObject
 				}
 				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
 			}
-			if (!empty($this->ref_client)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			if (!empty($this->ref_customer)) {
+				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
 			}
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
-					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -3974,6 +3974,16 @@ class PropaleLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'propaldet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'propal';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_propal';
 
 	public $oldline;
 

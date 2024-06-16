@@ -706,7 +706,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 1px solid #888;
 	margin: 0 0.45em !important;
 }
 

@@ -2134,7 +2134,7 @@ class Form
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
 	 * @param int<0,1> 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
@@ -2174,6 +2174,8 @@ class Form
 			// Build list includeUsers to have only hierarchy and current user
 			$includeUsers = implode(",", $user->getAllChildIds(1));
 		}
+
+		$num = 0;
 
 		$out = '';
 		$outarray = array();
@@ -2387,6 +2389,8 @@ class Form
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->num = $num;
 
 		if ($outputmode == 2) {
 			return $outarray2;
@@ -10252,7 +10256,7 @@ class Form
 	 * @return	string								HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
-	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
+	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = 'minwidth200')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -10304,7 +10308,7 @@ class Form
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
-			$out .= '<select class="flat minwidth200' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
+			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;

@@ -580,10 +580,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					break;
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) {
-						setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
-					}
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 				}
 			}
 			// Automatically create intervention

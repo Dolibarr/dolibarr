@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -978,7 +978,7 @@ while ($i < $imaxinloop) {
 	// get event style for user owner
 	$event_owner_style = '';
 	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
-	if ($cache_user_list[$obj->fk_user_action]->color != '') {
+	if ($obj->fk_user_action > 0 && $cache_user_list[$obj->fk_user_action]->color != '') {
 		$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
 	}
 
@@ -1061,7 +1061,7 @@ while ($i < $imaxinloop) {
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+		if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {

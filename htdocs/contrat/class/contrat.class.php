@@ -2086,9 +2086,9 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
-					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -3008,6 +3008,16 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'contratdet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'contrat';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_contrat';
 
 	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().

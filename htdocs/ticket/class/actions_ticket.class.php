@@ -199,7 +199,7 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable margintable">';
+		print '<table class="border centpercent margintable bordertopimp">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -481,7 +481,7 @@ class ActionsTicket extends CommonHookActions
 
 		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
-				print '<div class="inline-block center marginbottomonly">';
+				print '<div class="inline-block center margintoponly marginbottomonly">';
 
 				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action

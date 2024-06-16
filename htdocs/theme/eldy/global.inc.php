@@ -506,7 +506,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg) !important;
+	border: 1px solid #888 !important;
 	margin: 0 0.45em !important;
 }
 
@@ -1978,9 +1978,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	.box-flex-item {
-		margin: 3px 2px 3px 2px !important;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ((int) $fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -4610,6 +4607,9 @@ table.tableforservicepart1 tr td {
 .paymenttable, .margintable {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
+}
+.bordertopimp {
+	border-top: 1px solid var(--colortopbordertitle1) !important;
 }
 table.noborder.paymenttable {
 	border-bottom: none !important;

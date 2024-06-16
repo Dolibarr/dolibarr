@@ -563,7 +563,9 @@ if ($resql) {
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
-				$invoicestatic->ref_supplier = $obj->ref_supplier;
+				if ($type == 'bank-transfer') {
+					$invoicestatic->ref_supplier = $obj->ref_supplier;
+				}
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->uid);
