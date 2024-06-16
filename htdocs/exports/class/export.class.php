@@ -35,7 +35,28 @@ class Export
 	 */
 	public $db;
 
+	/**
+	 * @var int
+	 */
+	public $id;
+
+	public $array_export_icon;
+
+	public $array_export_perms;
+
+
+	/**
+	 * @var string Last error message
+	 */
 	public $error;
+	/**
+	 * @var string Last error code
+	 */
+	public $errno;
+	/**
+	 * @var string[] Error messages
+	 */
+	public $errors;
 
 	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
 	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
@@ -81,7 +102,7 @@ class Export
 	 *
 	 *    @param  	User		$user      	Object user making export
 	 *    @param  	string		$filter    	Load a particular dataset only
-	 *    @return	int						<0 if KO, >0 if OK
+	 *    @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function load_arrays($user, $filter = '')
 	{
@@ -144,8 +165,10 @@ class Export
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
-											} else {
+											} elseif (!empty($perm[1])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
+											} else {
+												$bool = false;
 											}
 											if ($perm[0] == 'user' && $user->admin) {
 												$bool = true;
@@ -183,11 +206,11 @@ class Export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
-									// Table of fields to be filtered / Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
+									// Table of fields to be filtered (key=field, value1=data type) Verifies that the module has filters
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
-									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
+									// Table of entities to export (key=field, value=entity)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
-									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
+									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
 									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
@@ -196,13 +219,13 @@ class Export
 									// Array of help tooltips
 									$this->array_export_help[$i] = (!empty($module->export_help_array[$r]) ? $module->export_help_array[$r] : '');
 
-									// Requete sql du dataset
+									// SQL dataset query / Requete SQL du dataset
 									$this->array_export_sql_start[$i] = $module->export_sql_start[$r];
 									$this->array_export_sql_end[$i] = $module->export_sql_end[$r];
 									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ?count($module->export_fields_code[$r]) : ''));
+									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ? count($module->export_fields_code[$r]) : ''));
 									$i++;
 									//	          }
 								}
@@ -274,7 +297,7 @@ class Export
 			$sql .= $sqlWhere;
 		}
 
-		// Add the order
+		// Add the sort order
 		$sql .= $this->array_export_sql_order[$indice];
 
 		// Add the HAVING part.
@@ -292,7 +315,7 @@ class Export
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Build the conditionnal string from filter the query
+	 *      Build the conditional string from filter the query
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
@@ -453,11 +476,12 @@ class Export
 			case 'FormSelect':
 				//var_dump($NameField);
 				if ($InfoFieldList[1] == 'select_company') {
-					$szFilterField .= $form->select_company('', $NameField, '', 1);
+					$szFilterField .= $form->select_company('', $NameField, '', 1, 0, 0, [], 0, 'maxwidth200');
 				} elseif ($InfoFieldList[1] == 'selectcontacts') {
-					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+					//$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
+					$szFilterField .= $form->select_contact(0, '', $NameField, '&nbsp;', '', '', 0, 'minwidth100imp maxwidth200', true);
 				} elseif ($InfoFieldList[1] == 'select_dolusers') {
-					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+					$szFilterField .= $form->select_dolusers('', $NameField, 1, null, 0, '', '', '', 0, 0, "", 0, "", "maxwidth200");
 				}
 				break;
 			case 'List':
@@ -575,9 +599,10 @@ class Export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
-	 *      @return		int								<0 if KO, >0 if OK
+	 * 		@param		string		$separator			separator to fill $objmodel->separator with the new separator
+	 *      @return		int								Return integer <0 if KO, >0 if OK
 	 */
-	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
+	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '', $separator = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -601,6 +626,10 @@ class Export
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
 
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator)) {
+			$objmodel->separator = $separator;
+		}
+
 		if (!empty($sqlquery)) {
 			$sql = $sqlquery;
 		} else {
@@ -621,18 +650,18 @@ class Export
 			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);
 		}
 
-		// Run the sql
+		// Run the SQL
 		$this->sqlusedforexport = $sql;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			//$this->array_export_label[$indice]
-			if (!empty($conf->global->EXPORT_PREFIX_SPEC)) {
-				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
+			if (getDolGlobalString('EXPORT_PREFIX_SPEC')) {
+				$filename = getDolGlobalString('EXPORT_PREFIX_SPEC') . "_".$datatoexport;
 			} else {
 				$filename = "export_".$datatoexport;
 			}
-			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+			if (getDolGlobalString('EXPORT_NAME_WITH_DT')) {
 				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
 			}
 			$filename .= '.'.$objmodel->getDriverExtension();
@@ -645,10 +674,10 @@ class Export
 			$result = $objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 			if ($result >= 0) {
-				// Genere en-tete
+				// Generate header
 				$objmodel->write_header($outputlangs);
 
-				// Genere ligne de titre
+				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -695,12 +724,50 @@ class Export
 									$remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
+							} elseif (is_array($this->array_export_special[$indice][$key]) &&
+								!empty($this->array_export_special[$indice][$key]['rule']) &&
+								$this->array_export_special[$indice][$key]['rule'] == 'compute'
+							) {
+								// Custom compute
+								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
+								$value = '';
+								if (!empty($this->array_export_special[$indice][$key]['class']) &&
+									!empty($this->array_export_special[$indice][$key]['classfile']) &&
+									!empty($this->array_export_special[$indice][$key]['method'])
+								) {
+									if (!dol_include_once($this->array_export_special[$indice][$key]['classfile'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['classfile']} not found";
+										return -1;
+									}
+
+									if (!class_exists($this->array_export_special[$indice][$key]['class'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['class']} class doesn't exist";
+										return -1;
+									}
+
+									$className = $this->array_export_special[$indice][$key]['class'];
+									$tmpObject = new $className($this->db);
+									if (!method_exists($tmpObject, $this->array_export_special[$indice][$key]['method'])) {
+										$this->error = "Computed field bad configuration: {$this->array_export_special[$indice][$key]['method']} method doesn't exist";
+										return -1;
+									}
+
+									$methodName = $this->array_export_special[$indice][$key]['method'];
+									$params = [];
+									if (!empty($this->array_export_special[$indice][$key]['method_params'])) {
+										foreach ($this->array_export_special[$indice][$key]['method_params'] as $paramName) {
+											$params[] = $obj->$paramName ?? null;
+										}
+									}
+									$value = $tmpObject->$methodName(...$params);
+								}
+								$obj->$alias = $value;
 							} else {
 								// TODO FIXME
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0, '1');
+								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
@@ -712,7 +779,7 @@ class Export
 					$objmodel->write_record($array_selected, $obj, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 				}
 
-				// Genere en-tete
+				// Generate Footer
 				$objmodel->write_footer($outputlangs);
 
 				// Close file
@@ -734,12 +801,10 @@ class Export
 	 *  Save an export model in database
 	 *
 	 *  @param		User	$user 	Object user that save
-	 *  @return		int				<0 if KO, >0 if OK
+	 *  @return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Export.class.php::create");
 
 		$this->db->begin();
@@ -774,7 +839,7 @@ class Export
 	 *  Load an export profil from database
 	 *
 	 *  @param      int		$id		Id of profil to load
-	 *  @return     int				<0 if KO, >0 if OK
+	 *  @return     int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -811,7 +876,7 @@ class Export
 	 *
 	 *	@param      User		$user        	User that delete
 	 *  @param      int			$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return		int							<0 if KO, >0 if OK
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -826,7 +891,8 @@ class Export
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -846,7 +912,7 @@ class Export
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output list all export models
-	 *  TODO Move this into a class htmlxxx.class.php
+	 *  --TODO Move this into a class htmlxxx.class.php--
 	 *
 	 *	@return	void
 	 */
@@ -871,10 +937,10 @@ class Export
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';
-				// recuperation du nom de l'export
+				// recover export name / recuperation du nom de l'export
 
 				$string = $langs->trans($this->array_export_label[$keyModel]);
-				print ($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
+				print($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
 				print '</td>';
 				//print '<td>'.$obj->type.$keyModel.'</td>';
 				print '<td>'.str_replace(',', ' , ', $obj->field).'</td>';
@@ -883,7 +949,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['field']).'</td>';
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
-				// suppression de l'export
+				// remove export / suppression de l'export
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();

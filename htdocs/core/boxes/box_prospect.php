@@ -39,16 +39,7 @@ class box_prospect extends ModeleBoxes
 	public $boxlabel = "BoxLastProspects";
 	public $depends = array("societe");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,7 +54,7 @@ class box_prospect extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
@@ -84,7 +75,9 @@ class box_prospect extends ModeleBoxes
 
 		$thirdpartystatic = new Client($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedProspects", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=p&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>',
+		);
 
 		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -93,12 +86,12 @@ class box_prospect extends ModeleBoxes
 			$sql .= ", s.fk_stcomm";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (2, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks
@@ -160,8 +153,8 @@ class box_prospect extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center opacitymedium"',
-						'text'=> $langs->trans("NoRecordedProspects"),
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedProspects").'</span>'
 					);
 				}
 
@@ -175,8 +168,8 @@ class box_prospect extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

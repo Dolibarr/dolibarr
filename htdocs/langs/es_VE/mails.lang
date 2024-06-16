@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
 MailFrom=Emisor
+PhoneFrom=Emisor
 MailTo=Hacia

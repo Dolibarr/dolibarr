@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\MemoryCollector;
+use DebugBar\DataCollector\MemoryCollector;
 
 /**
  * DolMemoryCollector class
@@ -31,11 +31,11 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return value of indicator
 	 *
-	 *  @return array
+	 *  @return array       Array
 	 */
 	public function collect()
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$this->updatePeakUsage();
 		return array(
@@ -48,7 +48,7 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array
+	 *  @return array	Array
 	 */
 	public function getWidgets()
 	{

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
 /**
  *	Class to manage customer Bom numbering rules advanced
  */
-class mod_bom_advanced extends ModeleNumRefboms
+class mod_bom_advanced extends ModeleNumRefBoms
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -54,11 +54,12 @@ class mod_bom_advanced extends ModeleNumRefboms
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -81,7 +82,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskBom" value="'.getDolGlobalString('BOM_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -118,8 +119,8 @@ class mod_bom_advanced extends ModeleNumRefboms
 	 * 	Return next free value
 	 *
 	 *  @param	Product		$objprod    Object product
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  Bom			$object		Object we need next value for
+	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

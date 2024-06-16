@@ -17,7 +17,6 @@
 CREATE TABLE llx_bookcal_availabilities(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) NOT NULL, 
 	label varchar(255), 
 	description text, 
 	note_public text, 
@@ -32,10 +31,10 @@ CREATE TABLE llx_bookcal_availabilities(
 	status integer NOT NULL, 
 	start date NOT NULL, 
 	end date NOT NULL, 
-	type integer NOT NULL, 
 	duration integer DEFAULT 30 NOT NULL, 
 	startHour integer NOT NULL, 
-	endHour integer NOT NULL
+	endHour integer NOT NULL, 
+	fk_bookcal_calendar integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 

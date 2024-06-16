@@ -39,16 +39,7 @@ class box_external_rss extends ModeleBoxes
 	public $boxlabel = "BoxLastRssInfos";
 	public $depends = array("externalrss");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $paramdef; // Params of box definition (not user params)
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -89,7 +80,7 @@ class box_external_rss extends ModeleBoxes
 		$keyforparamtitle = "EXTERNAL_RSS_TITLE_".$site;
 
 		// Get RSS feed
-		$url = $conf->global->$keyforparamurl;
+		$url = getDolGlobalString($keyforparamurl);
 
 		$rssparser = new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
@@ -98,7 +89,7 @@ class box_external_rss extends ModeleBoxes
 		$description = $rssparser->getDescription();
 		$link = $rssparser->getLink();
 
-		$title = $langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
+		$title = $langs->trans("BoxTitleLastRssInfos", $max, getDolGlobalString($keyforparamtitle));
 		if ($result < 0 || !empty($rssparser->error)) {
 			// Show warning
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
@@ -154,28 +145,33 @@ class box_external_rss extends ModeleBoxes
 				//$item['modified']
 				//$item['atom_content']
 			}
+			if (!is_numeric($date)) {
+				$timestamp = strtotime($date);
+				if ($timestamp > 0) {
+					$date = $timestamp;
+				}
+			}
 			if (is_numeric($date)) {
 				$date = dol_print_date($date, "dayhour", 'tzuserrel');
 			}
 
 			$isutf8 = utf8_check($title);
 			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				$title = utf8_encode($title);
+				$title = mb_convert_encoding($title, 'UTF-8', 'ISO-8859-1');
 			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				$title = utf8_decode($title);
+				$title = mb_convert_encoding($title, 'ISO-8859-1');
 			}
 
-			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
-			$title = preg_replace("/^\s+/", "", $title); // Supprime espaces de debut
-			$this->info_box_contents["$href"] = "$title";
+			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Manage issue of quotes improperly (de)coded in utf-8
+			$title = preg_replace("/^\s+/", "", $title); // Remove leading whitespace
 
 			$tooltip = $title;
 			$description = !empty($item['description']) ? $item['description'] : '';
 			$isutf8 = utf8_check($description);
 			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				$description = utf8_encode($description);
+				$description = mb_convert_encoding($description, 'UTF-8', 'ISO-8859-1');
 			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				$description = utf8_decode($description);
+				$description = mb_convert_encoding($description, 'ISO-8859-1');
 			}
 			$description = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $description);
 			$description = preg_replace("/^\s+/", "", $description);
@@ -200,7 +196,7 @@ class box_external_rss extends ModeleBoxes
 			);
 
 			$this->info_box_contents[$line][2] = array(
-				'td' => 'class="right nowrap"',
+				'td' => 'class="right nowraponall"',
 				'text' => dol_escape_htmltag($date),
 			);
 		}

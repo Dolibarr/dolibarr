@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Gestionar y seguir campañas de contratación para nuevo
 # Admin page
 #
 RecruitmentSetup = Configuración de contratación
-Settings = Configuraciones
 RecruitmentSetupPage = Indique aquí la configuración de las principales opciones para el módulo de contratación
 RecruitmentArea=Área de contratación
 PublicInterfaceRecruitmentDesc=Las páginas públicas de trabajos son URL públicas para mostrar y responder a trabajos abiertos. Hay un enlace diferente para cada trabajo abierto, que se encuentra en cada registro de trabajo.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Habilitar páginas públicas de trabajos abiertos
 #
 # About page
 #
-About = Acerca de
 RecruitmentAbout = Acerca de contratación
 RecruitmentAboutPage = Información de contratación
 NbOfEmployeesExpected=Número de empleados esperado
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Campos adicionales (solicitudes de empleo)
 MakeOffer=Realizar un presupuesto
 WeAreRecruiting=Estamos reclutando. Esta es una lista de vacantes a cubrir...
 NoPositionOpen=No hay posiciones abiertas en este momento
+ConfirmClose=Confirmar cancelación
+ConfirmCloseAsk=¿Está seguro de que desea cancelar esta candidatura de contratación?
+recruitment=Contratación

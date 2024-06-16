@@ -19,7 +19,7 @@
 
 /**
  * \file       htdocs/core/lib/ecm.lib.php
- * \brief      Ensemble de fonctions de base pour le module ecm
+ * \brief      Ensemble de functions de base pour le module ecm
  * \ingroup    ecm
  */
 
@@ -54,7 +54,7 @@ function ecm_prepare_dasboard_head($object)
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
@@ -171,7 +171,7 @@ function ecm_prepare_head_fm($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array               head array with tabs
  */

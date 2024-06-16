@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('members', 'languages'));
 
-$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $ref = GETPOST('ref', 'alphanohtml');
@@ -216,7 +216,7 @@ if ($action == 'edit') {
 			$s = picto_from_langcode($key);
 			print '<br>';
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
@@ -226,7 +226,7 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			print '</td></tr>';
@@ -242,7 +242,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
@@ -279,7 +279,7 @@ if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="rowid" value="'.GETPOST("rowid", 'int').'">';
+	print '<input type="hidden" name="rowid" value="'.GETPOSTINT("rowid").'">';
 
 	print dol_get_fiche_head();
 
@@ -289,7 +289,7 @@ if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" class="minwidth300" value="'.dol_escape_htmltag(GETPOST("libelle", 'alphanohtml')).'"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

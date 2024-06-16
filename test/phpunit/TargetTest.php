@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@ global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/webhook/class/target.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -46,88 +48,8 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TargetTest extends PHPUnit\Framework\TestCase
+class TargetTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return TargetTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf, $user, $langs, $db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * Global test setup
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass() : void
-	{
-		global $conf, $user, $langs, $db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Unit test setup
-	 *
-	 * @return void
-	 */
-	protected function setUp() : void
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Unit test teardown
-	 *
-	 * @return void
-	 */
-	protected function tearDown() : void
-	{
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Global test teardown
-	 *
-	 * @return void
-	 */
-	public static function tearDownAfterClass() : void
-	{
-		global $conf, $user, $langs, $db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testTargetCreate
 	 *
@@ -141,7 +63,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new Target($this->savdb);
+		$localobject = new Target($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
@@ -163,13 +85,13 @@ class TargetTest extends PHPUnit\Framework\TestCase
 	public function testTargetFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new Target($this->savdb);
-		$result=$localobject->fetch($id);
+		$localobject = new Target($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -192,7 +114,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject->note_private='New note private after update';
+		$localobject->note_private = 'New note private after update';
 		$result = $localobject->update($user);
 
 		$this->assertLessThan($result, 0);
@@ -218,7 +140,7 @@ class TargetTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new Target($this->savdb);
+		$localobject = new Target($db);
 		$result = $localobject->fetch($id);
 		$result = $localobject->delete($user);
 

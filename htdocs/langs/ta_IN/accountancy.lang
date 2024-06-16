@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=ஏற்கனவே கணக்கியல் இத�
 NotYetInGeneralLedger=கணக்குப் பத்திரிக்கைகள் மற்றும் லெட்ஜருக்கு இன்னும் மாற்றப்படவில்லை
 GroupIsEmptyCheckSetup=குழு காலியாக உள்ளது, தனிப்பயனாக்கப்பட்ட கணக்கியல் குழுவின் அமைப்பைச் சரிபார்க்கவும்
 DetailByAccount=கணக்கு மூலம் விவரங்களைக் காட்டு
+DetailBy=Detail by
 AccountWithNonZeroValues=பூஜ்ஜியமற்ற மதிப்புகளைக் கொண்ட கணக்குகள்
 ListOfAccounts=கணக்குகளின் பட்டியல்
 CountriesInEEC=EEC இல் உள்ள நாடுகள்
@@ -51,14 +52,19 @@ AccountantFiles=மூல ஆவணங்களை ஏற்றுமதி ச�
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=உங்கள் பத்திரிகைகளை ஏற்றுமதி செய்ய, %s - %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=கணக்கு கணக்கு மூலம் பார்க்கவும்
 VueBySubAccountAccounting=கணக்கியல் துணைக் கணக்கு மூலம் பார்க்கவும்
 
-MainAccountForCustomersNotDefined=வாடிக்கையாளர்களுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSuppliersNotDefined=விற்பனையாளர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForUsersNotDefined=பயனர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForVatPaymentNotDefined=VAT செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSubscriptionPaymentNotDefined=சந்தா செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=கணக்கியல் பகுதி
@@ -112,6 +118,7 @@ MenuLoanAccounts=கடன் கணக்குகள்
 MenuProductsAccounts=தயாரிப்பு கணக்குகள்
 MenuClosureAccounts=மூடல் கணக்குகள்
 MenuAccountancyClosure=மூடல்
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=இயக்கங்களை சரிபார்க்கவும்
 ProductsBinding=தயாரிப்பு கணக்குகள்
 TransferInAccounting=கணக்கியலில் இடமாற்றம்
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=துணைக் கணக்கிற்கான �
 ACCOUNTING_DATE_START_BINDING=கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தைத் தொடங்குவதற்கான தேதியை வரையறுக்கவும். இந்த தேதிக்கு கீழே, பரிவர்த்தனைகள் கணக்கியலுக்கு மாற்றப்படாது.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=செலவு அறிக்கை இதழ்
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=புதிய ஜர்னல் உள்ளது
@@ -238,6 +245,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=நிதி இதழ்
 ExpenseReportsJournal=செலவு அறிக்கை இதழ்
+InventoryJournal=Inventory journal
 DescFinanceJournal=வங்கிக் கணக்கின் மூலம் அனைத்து வகையான பணம் செலுத்துதல்களையும் உள்ளடக்கிய நிதி இதழ்
 DescJournalOnlyBindedVisible=இது ஒரு கணக்கியல் கணக்கிற்குக் கட்டுப்பட்டு, ஜர்னல்கள் மற்றும் லெட்ஜரில் பதிவுசெய்யக்கூடிய பதிவின் பார்வையாகும்.
 VATAccountNotDefined=VATக்கான கணக்கு வரையறுக்கப்படவில்லை
@@ -294,7 +302,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=எழுதுதல், எழுதுதல் மற்றும் நீக்குதல் ஆகியவற்றில் ஏதேனும் மாற்றம் அல்லது நீக்குதல் தடைசெய்யப்படும். ஒரு பயிற்சிக்கான அனைத்து உள்ளீடுகளும் சரிபார்க்கப்பட வேண்டும் இல்லையெனில் மூடுவது சாத்தியமில்லை
 
 ValidateHistory=தானாக பிணைக்கவும்
@@ -343,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=விற்பனையில் கணக�
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=வாங்குதல்களில் கணக்கியலில் பிணைப்பு & பரிமாற்றத்தை முடக்கு (கணக்கில் விற்பனையாளர் இன்வாய்ஸ்கள் கணக்கில் எடுத்துக்கொள்ளப்படாது)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=செலவு அறிக்கைகள் மீதான கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தை முடக்கு (கணக்கில் செலவு அறிக்கைகள் கணக்கில் எடுத்துக்கொள்ளப்படாது)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=கணக்கியல் ஏற்றுமதி கோப்பின் தலைமுறையை உறுதிப்படுத்தவா?
@@ -380,7 +394,7 @@ ChartofaccountsId=கணக்கு ஐடியின் விளக்கப
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init கணக்கியல்
 InitAccountancyDesc=விற்பனை மற்றும் வாங்குதல்களுக்கு வரையறுக்கப்பட்ட கணக்கு கணக்கு இல்லாத தயாரிப்புகள் மற்றும் சேவைகளில் கணக்கியல் கணக்கைத் தொடங்க இந்தப் பக்கம் பயன்படுத்தப்படலாம்.
-DefaultBindingDesc=குறிப்பிட்ட கணக்கியல் கணக்கு ஏற்கனவே அமைக்கப்படாத நிலையில், கட்டணச் சம்பளம், நன்கொடை, வரி மற்றும் வாட் பற்றிய பரிவர்த்தனைகளின் பதிவை இணைக்க, இயல்புநிலை கணக்கை அமைக்க இந்தப் பக்கத்தைப் பயன்படுத்தலாம்.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=கணக்கியல் மூடல்களுக்குப் பயன்படுத்தப்படும் அளவுருக்களை அமைக்க இந்தப் பக்கத்தைப் பயன்படுத்தலாம்.
 Options=விருப்பங்கள்
 OptionModeProductSell=முறை விற்பனை
@@ -432,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=அமைவுக்கான சில கட்டாயப் படிகள் செய்யப்படவில்லை, தயவுசெய்து அவற்றை முடிக்கவும்
@@ -445,7 +459,7 @@ NoJournalDefined=எந்த பத்திரிகையும் வரை�
 Binded=கோடுகள் பிணைக்கப்பட்டுள்ளன
 ToBind=பிணைக்க வேண்டிய கோடுகள்
 UseMenuToSetBindindManualy=கோடுகள் இன்னும் பிணைக்கப்படவில்லை, கைமுறையாக பிணைப்பை உருவாக்க, மெனு <a href="%s"> %s </a> ஐப் பயன்படுத்தவும்
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=மன்னிக்கவும், இந்த மாட்யூல் சூழ்நிலை விலைப்பட்டியல்களின் சோதனை அம்சத்துடன் இணங்கவில்லை
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
@@ -475,9 +489,9 @@ FECFormatMulticurrencyAmount=மல்டிகரன்சி தொகை (ம
 FECFormatMulticurrencyCode=மல்டிகரன்சி குறியீடு (ஐடிவைஸ்)
 
 DateExport=தேதி ஏற்றுமதி
-WarningReportNotReliable=எச்சரிக்கை, இந்த அறிக்கை லெட்ஜரை அடிப்படையாகக் கொண்டது அல்ல, எனவே லெட்ஜரில் கைமுறையாக மாற்றப்பட்ட பரிவர்த்தனை இல்லை. உங்கள் ஜர்னலைசேஷன் புதுப்பித்த நிலையில் இருந்தால், புத்தக பராமரிப்பு பார்வை மிகவும் துல்லியமாக இருக்கும்.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=செலவு அறிக்கை இதழ்
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s கணக்குகள்

@@ -41,15 +41,17 @@
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
--- VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_civility ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_civility ALTER COLUMN rowid SET DEFAULT nextval('llx_c_civility_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_civility_rowid_seq', MAX(rowid)) FROM llx_c_civility;
 
--- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_entrepot ADD COLUMN barcode  varchar(180) DEFAULT NULL;
 ALTER TABLE llx_entrepot ADD COLUMN fk_barcode_type integer      DEFAULT NULL;
@@ -144,7 +146,7 @@ ALTER TABLE llx_societe_contacts DROP FOREIGN KEY fk_societe_contacts_fk_c_type_
 -- VMYSQL4.3 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_type_contact CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
--- VPGSQL8.2 CREATE SEQUENCE llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
@@ -710,6 +712,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 
 ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
 
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);
@@ -740,6 +743,9 @@ ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, da
 
 -- We need when upgrade 15 to 16 with Dolibarr v17+ for upgrade2 function migrate_user_photospath2()
 ALTER TABLE llx_user CHANGE COLUMN note note_private text;
+
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transkey, entity);
 
 
 -- Bank Thirdparty

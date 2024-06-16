@@ -26,7 +26,7 @@ CREATE TABLE llx_ecm_files
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filepath    		varchar(255) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
-  src_object_type   varchar(64),	         		-- Source object type ('proposal', 'invoice', ...)
+  src_object_type   varchar(64),	         		-- Source object type ('proposal', 'invoice', ...) - object->table_element
   src_object_id     integer,		             	-- Source object id
   fullpath_orig		varchar(750),	                -- full path of original filename, when file is uploaded from a local computer
   description		text,

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,7 @@ if (!function_exists('json_encode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_encode($elements)
 	{
@@ -57,14 +60,20 @@ function dol_json_encode($elements)
 			$num++;
 		}
 	} else {
-		$num = count($elements);
+		if (is_countable($elements)) {
+			$num = count($elements);
+		}
 	}
-	//var_dump($num);
 
 	// determine type
+	if (is_numeric($elements)) {
+		return $elements;
+	} elseif (is_string($elements)) {
+		return '"'.$elements.'"';
+	}
 	if (is_numeric(key($elements)) && key($elements) == 0) {
 		// indexed (list)
-		$keysofelements = array_keys($elements); // Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
+		$keysofelements = array_keys($elements); // Elements array must have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
 		for ($i = 0, $last = ($num - 1); $i < $num; $i++) {
 			if (!isset($elements[$keysofelements[$i]])) {
@@ -115,7 +124,7 @@ function dol_json_encode($elements)
  * Return text according to type
  *
  * @param 	mixed	$val	Value to show
- * @return	string			Formated value
+ * @return	string			Formatted value
  */
 function _val($val)
 {
@@ -226,6 +235,7 @@ if (!function_exists('json_decode')) {
 	 * @param	string	$json		Json encoded to PHP Object or Array
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_decode($json, $assoc = false)
 	{
@@ -244,14 +254,23 @@ if (!function_exists('json_decode')) {
  */
 function dol_json_decode($json, $assoc = false)
 {
-	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
+	dol_syslog("For better performance and security, enable the native json in your PHP", LOG_WARNING);
 
 	$comment = false;
 
 	$out = '';
 	$strLength = strlen($json); // Must stay strlen and not dol_strlen because we want technical length, not visible length
+
+	if (is_numeric($json)) {
+		return $json;
+	}
+
 	for ($i = 0; $i < $strLength; $i++) {
 		if (!$comment) {
+			if ($i == 0 && !in_array($json[$i], array('{', '[', '"', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))) {
+				// Not a json format
+				return false;
+			}
 			if (($json[$i] == '{') || ($json[$i] == '[')) {
 				$out .= 'array(';
 			} elseif (($json[$i] == '}') || ($json[$i] == ']')) {
@@ -264,7 +283,8 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
-		if ($json[$i] == '"' && $json[($i - 1)] != "\\") {
+		// @phan-suppress-next-line PhanCompatibleNegativeStringOffset
+		if ($i >= 1 && $json[$i] == '"' && $json[$i - 1] != "\\") {
 			$comment = !$comment;
 		}
 	}
@@ -276,7 +296,8 @@ function dol_json_decode($json, $assoc = false)
 	// Return an array
 	if ($out != '') {
 		try {
-			eval('$array = '.$out.';');
+			// @phan-suppress-next-line PhanPluginUnsafeEval
+			eval('$array = '.$out.';');		// not secured but this is no mode used as php json lib is always expected to be loaded now.
 		} catch (Exception $e) {
 			$array = array();
 		}
@@ -308,7 +329,7 @@ function dol_json_decode($json, $assoc = false)
  * Return text according to type
  *
  * @param   string  $val    Value to decode
- * @return  string          Formated value
+ * @return  string          Formatted value
  */
 function _unval($val)
 {
@@ -327,7 +348,7 @@ function _unval($val)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf16		UTF-16 character
  * @return   string  			UTF-8 character
@@ -370,7 +391,7 @@ function utf162utf8($utf16)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf8		UTF-8 character
  * @return   string  			UTF-16 character

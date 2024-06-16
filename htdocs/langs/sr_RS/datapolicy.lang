@@ -27,17 +27,17 @@ datapolicySetupPage = Depending of laws of your countries (Example <a href="http
 NB_MONTHS = %s months
 ONE_YEAR = 1 year
 NB_YEARS = %s years
-DATAPOLICY_TIERS_CLIENT = Klijent
-DATAPOLICY_TIERS_PROSPECT = Prospekt
+DATAPOLICY_TIERS_CLIENT = Customer
+DATAPOLICY_TIERS_PROSPECT = Prospect
 DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
 DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_TIERS_FOURNISSEUR = Dobavljač
-DATAPOLICY_CONTACT_CLIENT = Klijent
-DATAPOLICY_CONTACT_PROSPECT = Prospekt
+DATAPOLICY_TIERS_FOURNISSEUR = Supplier
+DATAPOLICY_CONTACT_CLIENT = Customer
+DATAPOLICY_CONTACT_PROSPECT = Prospect
 DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_CONTACT_FOURNISSEUR = Dobavljač
-DATAPOLICY_ADHERENT = Član
+DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
+DATAPOLICY_ADHERENT = Member
 DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
 DATAPOLICYMail = Emails Setup
 DATAPOLICYSUBJECTMAIL = Subject of email
@@ -63,7 +63,7 @@ DATAPOLICY_opposition_prospection = Opposes the processing of his personal data 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a third party
 DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
 
 #

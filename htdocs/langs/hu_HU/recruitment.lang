@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Kezelje és kövesse az új álláshelyekre vonatkozó t
 # Admin page
 #
 RecruitmentSetup = Toborzás beállítása
-Settings = Beállítások
 RecruitmentSetupPage = Adja meg itt a toborzási modul főbb beállításait
 RecruitmentArea=Toborzási terület
 PublicInterfaceRecruitmentDesc=A munkák nyilvános oldalai nyilvános URL-ek, amelyek megjelenítik és megválaszolják a nyitott munkákat. Minden egyes munkarekordon egy-egy hivatkozás található minden nyitott munkához.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=A nyitott munkák nyilvános oldalainak engedélyez
 #
 # About page
 #
-About = Névjegy
 RecruitmentAbout = Toborzási névjegy
 RecruitmentAboutPage = Toborzás névjegy oldala
 NbOfEmployeesExpected=A munkavállalók várható száma
@@ -66,7 +64,7 @@ ContractRefused=A szerződés elutasítva
 RecruitmentCandidature=Jelentkezés
 JobPositions=Munkakörök
 RecruitmentCandidatures=Alkalmazások
-InterviewToDo=Contacts to follow
+InterviewToDo=Követendő elérhetőségek
 AnswerCandidature=Jelentkezési válasz
 YourCandidature=Az Ön jelentkezése
 YourCandidatureAnswerMessage=Köszönjük jelentkezését.<br>...
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Kiegészítő tulajdonságok (munkapályázatok)
 MakeOffer=Tegyen ajánlatot
 WeAreRecruiting=Toborozunk. Ez a betöltendő pozíciók listája...
 NoPositionOpen=Jelenleg nincs nyitott pozíció
+ConfirmClose=Erősítse meg a törlést
+ConfirmCloseAsk=Biztosan visszavonja ezt a toborzási jelentkezést?
+recruitment=Toborzás

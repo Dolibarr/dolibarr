@@ -27,6 +27,9 @@ create table llx_socpeople
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
+  name_alias        varchar(255),
+  fk_parent         integer NULL,
+
   civility			varchar(6),
   lastname			varchar(50),
   firstname			varchar(50),
@@ -35,25 +38,22 @@ create table llx_socpeople
   town				varchar(255),
   fk_departement	integer,
   fk_pays			integer        DEFAULT 0,
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
   birthday			date,
   poste				varchar(255),
   phone				varchar(30),
   phone_perso		varchar(30),
   phone_mobile		varchar(30),
   fax				varchar(30),
+  url               varchar(255),                        		-- web site
   email				varchar(255),
 
   socialnetworks    text DEFAULT NULL,                          -- json with socialnetworks
-  --jabberid			varchar(255),
-  --skype				varchar(255),
-  --twitter			varchar(255),                        		--
-  --facebook			varchar(255),                        		--
-  --linkedin            			varchar(255),                       		--
-  --instagram                varchar(255),                        		--
-  --snapchat                 varchar(255),                        		--
-  --googleplus               varchar(255),                        		--
-  --youtube                  varchar(255),                        		--
-  --whatsapp                 varchar(255),                        		--
 
   photo				varchar(255),
   no_email			smallint NOT NULL DEFAULT 0,				-- deprecated. Use table llx_mailing_unsubscribe instead

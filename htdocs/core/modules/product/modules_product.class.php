@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,54 +28,15 @@
  *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -97,92 +60,19 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 /**
  * Class template for classes of numbering product
  */
-abstract class ModeleProductCode
+abstract class ModeleProductCode extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**     Returns the default description of the numbering pattern
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Descriptive text
-	 */
-	public function info($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**     Renvoi nom module
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Nom du module
-	 */
-	public function getNom($langs)
-	{
-		return empty($this->name) ? $this->nom : $this->name;
-	}
-
-
-	/**     Return an example of numbering
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Example
-	 */
-	public function getExample($langs)
-	{
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *      @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product		$objproduct		Object product
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Product|string	$objproduct	Object product
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
-	}
-
-
-	/**     Return version of module
-	 *
-	 *      @return     string      Version
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -230,13 +120,13 @@ abstract class ModeleProductCode
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("ProductCodeDesc").'<br>';
@@ -244,7 +134,7 @@ abstract class ModeleProductCode
 			$s .= $langs->trans("ServiceCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';

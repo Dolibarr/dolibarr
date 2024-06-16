@@ -40,8 +40,8 @@ require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 $mens = price2num(GETPOST('mens'));
 $capital = price2num(GETPOST('capital'));
 $rate = price2num(GETPOST('rate'));
-$echance = GETPOST('echeance', 'int');
-$nbterm = GETPOST('nbterm', 'int');
+$echance = GETPOSTINT('echeance');
+$nbterm = GETPOSTINT('nbterm');
 
 top_httphead();
 

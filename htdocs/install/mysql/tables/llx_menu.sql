@@ -36,7 +36,7 @@ CREATE TABLE llx_menu
 	url           varchar(255) NOT NULL,					-- Relative (or absolute) url to go
 	target        varchar(100) NULL,						-- Target of Url link
 	titre         varchar(255) NOT NULL,					-- Key for menu translation
-	prefix        varchar(255) NULL,					    -- prefix
+	prefix        varchar(255) NULL,					    -- picto
 	langs         varchar(100),								-- Lang file to load for translation
 	level         smallint,									-- Deprecated. Not used.
 	perms         text,										-- Condition to show enabled or disabled

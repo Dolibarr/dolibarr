@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +36,13 @@
 function expedition_prepare_head(Expedition $object)
 {
 	global $langs, $conf, $user;
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("shipping")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
 
 	$h = 0;
 	$head = array();
-	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 	$head[$h][1] = $langs->trans("Setup");
@@ -53,7 +53,7 @@ function expedition_prepare_head(Expedition $object)
 	$hselected = $h;
 	$h++;
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$h++;
@@ -67,7 +67,7 @@ function expedition_prepare_head(Expedition $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -88,7 +88,7 @@ function expedition_admin_prepare_head()
 	$h++;
 	*/
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
+	if (getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 		$extrafields->fetch_name_optionals_label('expedition');
 		$extrafields->fetch_name_optionals_label('expeditiondet');
 
@@ -121,7 +121,7 @@ function expedition_admin_prepare_head()
 	$head[$h][2] = 'receivings';
 	$h++;
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 		$extrafields->fetch_name_optionals_label('delivery');
 		$extrafields->fetch_name_optionals_label('deliverydet');
 

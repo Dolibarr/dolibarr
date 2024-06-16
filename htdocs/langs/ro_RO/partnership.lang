@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
 # Menu
 #
 NewPartnership=Parteneriat nou
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Solicitarea ta de parteneriat a fost adăugată cu succes. Te vom contacta în curând...
 ListOfPartnerships=Listă parteneriate
 
 #
@@ -38,10 +38,10 @@ ListOfPartnerships=Listă parteneriate
 PartnershipSetup=Setare parteneriat
 PartnershipAbout=Despre modulul Parteneriate
 PartnershipAboutPage=Pagină despre modulul Parteneriate
-partnershipforthirdpartyormember=Status-ul de partener trebuie setat pe un 'terţ' sau un 'membru'
+partnershipforthirdpartyormember=Statusul partenerului trebuie să fie setat ca 'terț' sau ca 'membru'
 PARTNERSHIP_IS_MANAGED_FOR=Parteneriat gestionat pentru
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlink-uri de verificat
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nr de zile înainte de anularea unui parteneriat când un abonament a expirat 
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Număr de zile înainte de anularea statutului unui parteneriat, când un abonament a expirat
 ReferingWebsiteCheck=Verificare referinţă website
 ReferingWebsiteCheckDesc=Poți activa o funcție pentru a verifica dacă partenerii tăi au adăugat un backlink către site-ul tău pe website-urile lor.\n 
 PublicFormRegistrationPartnerDesc=Sistemul vă poate oferi o adresă URL/un site web public pentru a permite vizitatorilor externi să solicite un parteneriat.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Parteneriat alocat acestui membru
 DatePartnershipStart=Dată începere
 DatePartnershipEnd=Dată încetare
 ReasonDecline=Motiv respingere
-ReasonDeclineOrCancel=Motiv respingere
+ReasonDeclineOrCancel=Motiv pentru refuz sau anulare
 PartnershipAlreadyExist=Parteneriatul există deja
 ManagePartnership=Administrare parteneriat
 BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=Parteneriat refuzat
 YourPartnershipAcceptedTopic=Parteneriat acceptat
 YourPartnershipCanceledTopic=Parteneriat anulat
 
-YourPartnershipWillSoonBeCanceledContent=Vă informăm că parteneriatul dvs. va fi anulat în curând (Backlink-ul nu a fost găsit)
-YourPartnershipRefusedContent=Vă informăm că solicitarea dvs. de parteneriat a fost respinsă.
-YourPartnershipAcceptedContent=Vă informăm că parteneriatul a fost acceptat.
-YourPartnershipCanceledContent=Vă informăm că parteneriatul dvs. a fost anulat. 
+YourPartnershipWillSoonBeCanceledContent=Dorim să te informăm că parteneriatul nostru va fi anulat în curând (nu am primit reînnoirea sau nu a fost îndeplinită o condiție prealabilă pentru parteneriat). Te rugăm să ne contactezi dacă ai primit acest lucru din cauza unei erori.
+YourPartnershipRefusedContent=Dorim să te informăm că solicitarea ta de parteneriat a fost refuzată. Cerințele preliminare nu au fost îndeplinite. Te rugăm să ne contactezi dacă ai nevoie de mai multe informații.
+YourPartnershipAcceptedContent=Dorim să te informăm că cererea ta de parteneriat a fost acceptată.
+YourPartnershipCanceledContent=Dorim să te informăm că parteneriatul nostru a fost anulat. Te rugăm să ne contactezi dacă ai nevoie de mai multe informații.
 
 CountLastUrlCheckError=Număr de erori pentru ultima verficare URL
 LastCheckBacklink=Data ultimei verificări URL
-ReasonDeclineOrCancel=Motiv respingere
 
 NewPartnershipRequest=Solicitare nouă de parteneriat
 NewPartnershipRequestDesc=Acest formular îţi permite să soliciţi un parteneriat. Dacă ai nevoie de ajutor pentru a completa acest formular, contactează-ne pe email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Această pagină trebuie să conțină cel puțin un link către unul dintre următoarele domenii: %s
+
+IPOfApplicant=IP aplicant
 

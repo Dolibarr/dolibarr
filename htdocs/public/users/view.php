@@ -49,7 +49,7 @@ $mode     = GETPOST('mode', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $backtopage = '';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekey = GETPOST('securekey', 'alpha');
 $suffix = GETPOST('suffix');
 
@@ -62,8 +62,8 @@ $object->fetch($id, '', '', 1);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-global $dolibarr_main_instance_unique_id;
-$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+global $conf;
+$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
 if ($encodedsecurekey != $securekey) {
 	httponly_accessforbidden('Bad value for securitykey or public profile not enabled');
 }
@@ -146,13 +146,14 @@ if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$object->user_mobile = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
-	$object->birth = '';
-}
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
-	$object->socialnetworks = '';
+	$object->socialnetworks = [];
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+// By default, personal address not visible
+if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+	$object->birth = null;
+}
+if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 	$object->address = '';
 	$object->town = '';
 	$object->zip = '';
@@ -187,8 +188,8 @@ if ($mode == 'vcard') {
 }
 
 $head = '';
-if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_USER_PROFILE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('MAIN_USER_PROFILE_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_USER_PROFILE_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -207,15 +208,25 @@ $arrayofcss = array();
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
+print '
+<style>
+@media (prefers-color-scheme: dark) {
+	form {
+		background-color: #CCC !important;
+	}
+}
+</style>
+';
+
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
+
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
-print '<!-- Form to view job -->'."\n";
 
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
@@ -244,9 +255,9 @@ print '</div>';
 print '</div>';
 
 
-if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
@@ -269,12 +280,7 @@ if ($showbarcode) {
 }
 
 
-// Me
-// Show photo
-if ($urllogo) {
-	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
-}
-
+// Me section
 
 $usersection = '';
 
@@ -312,6 +318,18 @@ if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $o
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
 	$usersection .= '</div>';
 }
+if (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) && !is_null($object->birth)) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'calendar', 'class="pictofixedwidth"');
+	$usersection .= dol_print_date($object->birth);
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'state', 'class="pictofixedwidth"');
+	$usersection .= dol_print_address(dol_format_address($object, 0, "\n", $langs), 'map', 'user', $object->id, 1);
+	$usersection .= '</div>';
+}
 
 // Social networks
 if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
@@ -325,6 +343,11 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 }
 
 if ($usersection) {
+	// Show photo
+	if ($urllogo) {
+		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	}
+
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 	// Output payment summary form
@@ -340,6 +363,11 @@ if ($usersection) {
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
+} else {
+	// Show photo
+	if ($urllogo) {
+		print '<br><center><img class="userphotopublicvcard" style="position: unset !important;" id="dolpaymentlogo" src="'.$urllogofull.'"></center>';
+	}
 }
 
 
@@ -387,10 +415,10 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$logosmall = $mysoc->logo_squarred_small ? $mysoc->logo_squarred_small : $mysoc->logo_small;
 	$logo = $mysoc->logo_squarred ? $mysoc->logo_squarred : $mysoc->logo;
 	$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
-		$logosmall = $conf->global->$paramlogo;
-	} elseif (!empty($conf->global->ONLINE_USER_LOGO)) {
-		$logosmall = $conf->global->ONLINE_USER_LOGO;
+	if (getDolGlobalString($paramlogo)) {
+		$logosmall = getDolGlobalString($paramlogo);
+	} elseif (getDolGlobalString('ONLINE_USER_LOGO')) {
+		$logosmall = getDolGlobalString('ONLINE_USER_LOGO');
 	}
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo

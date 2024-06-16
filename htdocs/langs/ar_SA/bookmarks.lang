@@ -1,23 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=إضافة الصفحة الحالية إلى الإشارات المرجعية
-Bookmark=احفظ
-Bookmarks=العناوين
-ListOfBookmarks=قائمة الإشارات المرجعية
-EditBookmarks=قائمة / تحرير الإشارات المرجعية
-NewBookmark=إشارة مرجعية جديدة
-ShowBookmark=وتظهر علامة
-OpenANewWindow=افتح علامة تبويب جديدة
-ReplaceWindow=استبدال علامة التبويب الحالية
-BookmarkTargetNewWindowShort=علامة تبويب جديدة
-BookmarkTargetReplaceWindowShort=علامة التبويب الحالية
-BookmarkTitle=اسم المرجعية
-UrlOrLink=العنوان
-BehaviourOnClick=السلوك عند تحديد عنوان للإشارة المرجعية
-CreateBookmark=إنشاء إشارة مرجعية
-SetHereATitleForLink=حدد اسمًا للإشارة المرجعية
-UseAnExternalHttpLinkOrRelativeDolibarrLink=استخدم رابطًا خارجيًا / مطلقًا (https://externalurl.com) أو رابطًا داخليًا / نسبيًا (/mypage.php). يمكنك أيضًا استخدام الهاتف مثل الهاتف: 0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=اختر ما إذا كان يجب فتح الصفحة المرتبطة في علامة التبويب الحالية أو علامة تبويب جديدة
-BookmarksManagement=إدارة الإشارات المرجعية
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=لم يتم تحديد إشارات مرجعية
-NoBookmarkFound=No bookmark found
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = إضافة الصفحة الحالية إلى الإشارات المرجعية
+BehaviourOnClick = السلوك عند تحديد عنوان URL للإشارة المرجعية
+Bookmark = احفظ
+Bookmarks = العناوين
+BookmarkTargetNewWindowShort = علامة تبويب جديدة
+BookmarkTargetReplaceWindowShort = علامة التبويب الحالية
+BookmarkTitle = اسم المرجعية
+BookmarksManagement = إدارة الإشارات المرجعية
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = اختر ما إذا كان يجب فتح الصفحة المرتبطة في علامة التبويب الحالية أو علامة تبويب جديدة
+CreateBookmark = إنشاء إشارة مرجعية
+EditBookmarks = قائمة / تحرير الإشارات المرجعية
+ListOfBookmarks = قائمة الإشارات المرجعية
+NewBookmark = إشارة مرجعية جديدة
+NoBookmarkFound = لم يتم العثور على إشارة مرجعية
+NoBookmarks = لم يتم تحديد إشارات مرجعية
+OpenANewWindow = افتح علامة تبويب جديدة
+ReplaceWindow = استبدال علامة التبويب الحالية
+SetHereATitleForLink = حدد اسمًا للإشارة المرجعية
+ShowBookmark = وتظهر علامة
+UrlOrLink = العنوان
+UseAnExternalHttpLinkOrRelativeDolibarrLink = استخدم رابطًا خارجيًا / مطلقًا (https://externalurl.com) أو رابطًا داخليًا / نسبيًا (/mypage.php). يمكنك أيضًا استخدام الهاتف مثل الهاتف: 0123456.

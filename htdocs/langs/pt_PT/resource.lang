@@ -5,7 +5,7 @@ DeleteResource=Apagar recurso
 ConfirmDeleteResourceElement=Confirme apagar o recurso para este elemento
 NoResourceInDatabase=Nenhum recurso na base de dados
 NoResourceLinked=Nenhum recurso interligado
-
+ActionsOnResource=Eventos sobre este recurso
 ResourcePageIndex=Lista de recursos
 ResourceSingular=Recurso
 ResourceCard=Ficha do recurso
@@ -34,3 +34,8 @@ IdResource=ID do recurso
 AssetNumber=Número de série
 ResourceTypeCode=Código do tipo de recurso
 ImportDataset_resource_1=Recursos
+
+ErrorResourcesAlreadyInUse=Alguns recursos estão em uso
+ErrorResourceUseInEvent=%s usado no evento %s
+
+MaxUsers=Maximum users (places, seats, etc.)

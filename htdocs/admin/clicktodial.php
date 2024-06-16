@@ -67,7 +67,7 @@ $form = new Form($db);
 $user->fetch_clicktodial();
 
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
-llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp);
+llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-clicktodial');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
@@ -89,7 +89,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
@@ -129,7 +129,6 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Url for CIDLookup
 //print '<div class="div-table-responsive-no-min">';
-//print $langs->trans("URLToLaunchCronJobs").':<br>';
 $url = $urlwithroot.'/public/clicktodial/cidlookup.php?securitykey='.getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP', 'ValueToDefine').'&phone=...';
 //print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 //print '</div>';
@@ -140,7 +139,7 @@ print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
 print '<br>'.$url;
 print '<br>';
 print '<br>';
-print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (!empty($conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP) ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -155,7 +154,7 @@ print $form->buttonsSaveCancel("Modify", '');
 print '</form><br><br>';
 
 
-if (!empty($conf->global->CLICKTODIAL_URL)) {
+if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
 	$phonefortest = $mysoc->phone;

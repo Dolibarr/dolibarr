@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook levande nyckel
 ONLINE_PAYMENT_WAREHOUSE=Lager som ska användas för lagerminskning när online betalning görs <br> (TODO När alternativet att minska lagret görs på en fakturahandling och online betalning genererar fakturaen?)
 StripeLiveEnabled=Stripe live enabled (annars test / sandbox-läge)
 StripeImportPayment=Importera Stripe betalningar
-ExampleOfTestCreditCard=Exempel på kreditkort för SEPA-test: %s => giltigt, %s => fel CVC, %s => löpt ut, %s => laddning misslyckas
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 ExampleOfTestBankAcountForSEPA=Exempel på bankkonto BAN för autogirotest: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)

@@ -39,11 +39,17 @@ create table llx_contrat
   fk_user_author			integer NOT NULL default 0,
   fk_user_modif				integer,
   fk_user_cloture			integer,
+
+  signed_status        		smallint DEFAULT NULL,          -- signed status NULL, 0 or 1
+  online_sign_ip			varchar(48),
+  online_sign_name			varchar(64),
+
   note_private				text,
   note_public				text,
+
   model_pdf					varchar(255),
   last_main_doc			    varchar(255),					-- relative filepath+filename of last main generated document
+
   import_key				varchar(14),
   extraparams				varchar(255)
 )ENGINE=innodb;
-

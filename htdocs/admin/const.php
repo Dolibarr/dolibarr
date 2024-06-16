@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-$rowid = GETPOST('rowid', 'int');
-$entity = GETPOST('entity', 'int');
+$rowid = GETPOSTINT('rowid');
+$entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
-$debug = GETPOST('debug', 'int');
+$debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -159,7 +159,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-const');
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax) {
@@ -186,6 +186,7 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 $param = '';
@@ -280,12 +281,12 @@ if ($result) {
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'">';
 		print '</td>';
 
 		// Date last change
@@ -294,7 +295,7 @@ if ($result) {
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (isModEnabled('multicompany') && !$user->entity) {
+		if (isModEnabled('multicompany') && empty($user->entity)) {
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
@@ -304,7 +305,7 @@ if ($result) {
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';

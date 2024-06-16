@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleBankAccountDoc extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -56,4 +51,15 @@ abstract class ModeleBankAccountDoc extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Write the document to disk
+	 *
+	 *	@param	Account		$object   		Object Account to generate
+	 *	@param	Translate	$outputlangs	Lang output object
+	 *	@return	int         				1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs);
+	// phpcs:enable
 }

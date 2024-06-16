@@ -32,18 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 $langs->loadLangs(['bills', 'boxes']);
 
 // Filter to show only result of one supplier
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $maxLatestEditCount = 5;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 
 // Security check
 restrictedArea($user, 'fournisseur', 0, '', 'facture');

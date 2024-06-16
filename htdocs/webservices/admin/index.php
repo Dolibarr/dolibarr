@@ -27,6 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $langs->load("admin");
 
@@ -36,7 +37,7 @@ if (!$user->admin) {
 
 $actionsave = GETPOST("save");
 
-// Sauvegardes parametres
+// Sauvegardes parameters
 if ($actionsave) {
 	$i = 0;
 
@@ -58,7 +59,7 @@ if ($actionsave) {
  *	View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-webservices page-admin_index');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -82,7 +83,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
-print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'.(GETPOST('WEBSERVICES_KEY') ?GETPOST('WEBSERVICES_KEY') : (!empty($conf->global->WEBSERVICES_KEY) ? $conf->global->WEBSERVICES_KEY : '')).'" size="40">';
+print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'.(GETPOST('WEBSERVICES_KEY') ? GETPOST('WEBSERVICES_KEY') : (getDolGlobalString('WEBSERVICES_KEY') ? $conf->global->WEBSERVICES_KEY : '')).'" size="40">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -104,11 +105,11 @@ $webservices = array(
 		'thirdparty'		=> 'isModEnabled("societe")',
 		'contact'			=> 'isModEnabled("societe")',
 		'productorservice'	=> '(isModEnabled("product") || isModEnabled("service"))',
-		'order'				=> 'isModEnabled("commande")',
-		'invoice'			=> 'isModEnabled("facture")',
+		'order'				=> 'isModEnabled("order")',
+		'invoice'			=> 'isModEnabled("invoice")',
 		'supplier_invoice'	=> 'isModEnabled("fournisseur")',
 		'actioncomm'		=> 'isModEnabled("agenda")',
-		'category'			=> 'isModEnabled("categorie")',
+		'category'			=> 'isModEnabled("category")',
 		'project'			=> 'isModEnabled("project")',
 		'other'				=> ''
 );

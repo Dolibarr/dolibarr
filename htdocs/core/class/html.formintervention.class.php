@@ -58,10 +58,10 @@ class FormIntervention
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line ('1' or string to show for empty line)
-	 *	@param	int		$draftonly	Show only drafts intervention
-	 *	@return int         		Nbre of project if OK, <0 if KO
+	 *	@param	bool	$draftonly	Show only drafts intervention
+	 *	@return string         		HTML code for the select list if OK, empty if KO
 	 */
-	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
+	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -81,7 +81,9 @@ class FormIntervention
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 		}
-		if ($draftonly) $sql .= " AND f.fk_statut = 0";
+		if ($draftonly) {
+			$sql .= " AND f.fk_statut = 0";
+		}
 
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -89,8 +91,11 @@ class FormIntervention
 			$out .= '<select id="interventionid" class="flat" name="'.dol_escape_htmltag($htmlname).'">';
 			if ($showempty) {
 				$out .= '<option value="0">';
-				if (!is_numeric($showempty)) $out .= $showempty;
-				else $out .= '&nbsp;';
+				if (!is_numeric($showempty)) {
+					$out .= $showempty;
+				} else {
+					$out .= '&nbsp;';
+				}
 				$out .= '</option>';
 			}
 			$num = $this->db->num_rows($resql);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    lib/bookcal_availabilities.lib.php
+ * \file    htdocs/bookcal/lib/bookcal_availabilities.lib.php
  * \ingroup bookcal
  * \brief   Library files with common functions for Availabilities
  */
@@ -33,21 +34,21 @@ function availabilitiesPrepareHead($object)
 
 	$langs->load("agenda");
 
-	$showtabofpagecontact = 1;
+	$showtabofpagecontact = 0;
 	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
-	$showtabofpageagenda = 1;
+	$showtabofpagedocument = 0;
+	$showtabofpageagenda = 0;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/bookcal/availabilities_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
 	if ($showtabofpagecontact) {
-		$head[$h][0] = dol_buildpath("/bookcal/availabilities_contact.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_contact.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
@@ -62,10 +63,10 @@ function availabilitiesPrepareHead($object)
 			if (!empty($object->note_public)) {
 				$nbNote++;
 			}
-			$head[$h][0] = dol_buildpath('/bookcal/availabilities_note.php', 1).'?id='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_note.php?id=' . $object->id;
 			$head[$h][1] = $langs->trans('Notes');
 			if ($nbNote > 0) {
-				$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+				$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
 			}
 			$head[$h][2] = 'note';
 			$h++;
@@ -73,22 +74,22 @@ function availabilitiesPrepareHead($object)
 	}
 
 	if ($showtabofpagedocument) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->bookcal->dir_output."/availabilities/".dol_sanitizeFileName($object->ref);
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+		$upload_dir = $conf->bookcal->dir_output . "/availabilities/" . dol_sanitizeFileName($object->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = dol_buildpath("/bookcal/availabilities_document.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_document.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Documents');
 		if (($nbFiles + $nbLinks) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 		}
 		$head[$h][2] = 'document';
 		$h++;
 	}
 
 	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/bookcal/availabilities_agenda.php", 1).'?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/bookcal/availabilities_agenda.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;

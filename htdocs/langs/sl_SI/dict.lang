@@ -137,7 +137,7 @@ CountryLV=Latvija
 CountryLB=Libanon
 CountryLS=Lesoto
 CountryLR=Liberija
-CountryLY=Libija
+CountryLY=Libya
 CountryLI=Lihtenštajn
 CountryLT=Litva
 CountryLU=Luksemburg
@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Črna Gora
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Ga.

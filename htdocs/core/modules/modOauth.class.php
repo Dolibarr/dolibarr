@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modOauth extends DolibarrModules
 {
-
 	/**
 	 *  Constructor
 	 *
@@ -88,9 +88,9 @@ class modOauth extends DolibarrModules
 
 		$r = 0;
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
@@ -102,7 +102,7 @@ class modOauth extends DolibarrModules
 		$this->rights[$r][4] = 'read';*/
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// This is to declare the Top Menu entry:

@@ -24,23 +24,19 @@
 /**
  *	\file       htdocs/core/modules/delivery/modules_delivery.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
- *				et la classe mere de numerotation des bons de livraisons
+ *	\brief      Fichier contenant la class mere de generation de bon de livraison en PDF
+ *				et la class mere de numerotation des bons de livraisons
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Classe mere des modeles de bon de livraison
+ *	Class mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -63,96 +59,10 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 }
 
 
-
 /**
- *  \class      ModeleNumRefDeliveryOrder
- *  \brief      Classe mere des modeles de numerotation des references de bon de livraison
+ *  Class mere des modeles de numerotation des references de bon de livraison
  */
-abstract class ModeleNumRefDeliveryOrder
+abstract class ModeleNumRefDeliveryOrder extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return      boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the default description of the numbering pattern
-	 *
-	 * @return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return an example of numbering
-	 *
-	 * @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 *	@param  Societe     $objsoc         Object third party
-	 *  @param  Object      $object         Object delivery
-	 *	@return string                      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 * Renvoi version du module numerotation
-	 *
-	 * @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	// No overload code
 }

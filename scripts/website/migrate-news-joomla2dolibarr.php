@@ -19,7 +19,7 @@
 /**
  * \file scripts/website/migrate_news_joomla2dolibarr.php
  * \ingroup scripts
- * \brief Migrate news from a Joomla databse into a Dolibarr website
+ * \brief Migrate news from a Joomla database into a Dolibarr website
  */
 
 if (!defined('NOSESSION')) {
@@ -33,7 +33,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -54,14 +54,16 @@ if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 	print '***** '.$script_file.' *****'."\n";
 	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla [nbmaxrecord]\n";
 	print "\n";
-	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
-	exit(-1);
+	print "Load joomla news and create them into Dolibarr database (if they don't already exist).\n";
+	exit(1);
 }
 
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -72,7 +74,7 @@ $langs->load('main');
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $joomlaserverinfoarray = preg_split('/(:|@|\/)/', $joomlaserverinfo);
@@ -88,7 +90,7 @@ $website = new Website($db);
 $result = $website->fetch(0, $websiteref);
 if ($result <= 0) {
 	print 'Error, web site '.$websiteref.' not found'."\n";
-	exit(-1);
+	exit(1);
 }
 $websiteid = $website->id;
 $importid = dol_print_date(dol_now(), 'dayhourlog');
@@ -96,7 +98,7 @@ $importid = dol_print_date(dol_now(), 'dayhourlog');
 $dbjoomla = getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
 if ($dbjoomla->error) {
 	dol_print_error($dbjoomla, "host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
-	exit(-1);
+	exit(1);
 }
 
 $sql = 'SELECT c.id, c.title, c.alias, c.created, c.introtext, `fulltext`, c.metadesc, c.metakey, c.language, c.created, c.publish_up, u.username FROM '.$joomlaprefix.'_content as c';
@@ -114,19 +116,21 @@ if (!$resql) {
 $blogpostheader = file_get_contents($path.'blogpost-header.txt');
 if ($blogpostheader === false) {
 	print "Error: Failed to load file content of 'blogpost-header.txt'\n";
-	exit(-1);
+	exit(1);
 }
 $blogpostfooter = file_get_contents($path.'blogpost-footer.txt');
 if ($blogpostfooter === false) {
 	print "Error: Failed to load file content of 'blogpost-footer.txt'\n";
-	exit(-1);
+	exit(1);
 }
 
 
 
 $db->begin();
 
-$i = 0; $nbimported = 0; $nbalreadyexists = 0;
+$i = 0;
+$nbimported = 0;
+$nbalreadyexists = 0;
 while ($obj = $dbjoomla->fetch_object($resql)) {
 	if ($obj) {
 		$i++;

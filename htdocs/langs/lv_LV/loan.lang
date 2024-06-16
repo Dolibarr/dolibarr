@@ -23,7 +23,7 @@ AddLoan=Izveidot aizdevumu
 FinancialCommitment=Finanšu saistības
 InterestAmount=Interese
 CapitalRemain=Kapitāls paliek
-TermPaidAllreadyPaid = Šis termiņš jau ir samaksāts
+TermPaidAllreadyPaid = Šis termiņš jau ir apmaksāts
 CantUseScheduleWithLoanStartedToPaid = Nevar ģenerēt laika grafiku aizdevumam ar sāktu maksājumu
 CantModifyInterestIfScheduleIsUsed = Jūs nevarat mainīt interesi, ja izmantojat grafiku
 # Admin

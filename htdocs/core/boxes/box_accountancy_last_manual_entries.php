@@ -33,20 +33,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_accountancy_last_manual_entries extends ModeleBoxes
 {
 	public $boxcode = "accountancy_last_manual_entries";
-	public $boximg = "accounting";
+	public $boximg = "accountancy";
 	public $boxlabel = "BoxLastManualEntries";
 	public $depends = array("accounting");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -60,7 +49,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->accounting->mouvements->lire);
+		$this->hidden = !$user->hasRight('accounting', 'mouvements', 'lire');
 	}
 
 	/**
@@ -79,7 +68,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-		if ($user->rights->accounting->mouvements->lire) {
+		if ($user->hasRight('accounting', 'mouvements', 'lire')) {
 			$sql = "SELECT DISTINCT b.piece_num";
 			$sql .= ", b.doc_date as date_movement";
 			$sql .= ", b.label_operation";

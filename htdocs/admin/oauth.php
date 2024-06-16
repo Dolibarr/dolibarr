@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
-// $supportedoauth2array is defined into oauth.lib.php
+$supportedoauth2array = getSupportedOauth2Array();
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -178,6 +178,8 @@ if ($action == 'confirm_delete') {
 			$callbacktodel .= '/core/modules/oauth/stripetest_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT') {
 			$callbacktodel .= '/core/modules/oauth/microsoft_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_MICROSOFT2') {
+			$callbacktodel .= '/core/modules/oauth/microsoft2_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_OTHER') {
 			$callbacktodel .= '/core/modules/oauth/generic_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		}
@@ -206,9 +208,13 @@ if ($action == 'delete_entry') {
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
+
+$title = $langs->trans('ConfigOAuth');
+$help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauth');
+
 // Confirmation of action process
 if ($action == 'delete') {
 	$formquestion = array();
@@ -218,7 +224,7 @@ if ($action == 'delete') {
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -234,6 +240,8 @@ print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProvider
 
 print '<select name="provider" id="provider" class="minwidth150">';
 print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
+$list = getAllOauth2Array();
+// TODO Make a loop directly on getSupportedOauth2Array() and remove getAllOauth2Array()
 foreach ($list as $key) {
 	$supported = 0;
 	$keyforsupportedoauth2array = $key[0];
@@ -245,7 +253,6 @@ foreach ($list as $key) {
 		continue; // show only supported
 	}
 
-	$i++;
 	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">'.$supportedoauth2array[$keyforsupportedoauth2array]['name'].'</option>'."\n";
 }
 print '</select>';
@@ -354,7 +361,7 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
 			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
 			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
 			print '</td>';

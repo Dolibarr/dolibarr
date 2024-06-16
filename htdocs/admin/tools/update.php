@@ -63,6 +63,13 @@ if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			libxml_disable_entity_loader(true);
+		}
+
 		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		$sfurl = 'xml_not_available';
@@ -75,7 +82,7 @@ if ($action == 'getlastversion') {
  */
 
 $wikihelp = 'EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
-llxHeader('', $langs->trans("Upgrade"), $wikihelp);
+llxHeader('', $langs->trans("Upgrade"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-tools_update');
 
 print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 

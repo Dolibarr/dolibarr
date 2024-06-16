@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Víctor Ortiz Pérez   <victor@accett.com.mx>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +43,11 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		return false;
 	}
 
-	if ($centimes && strlen($num) == 1) {
+	if ($centimes && strlen((string) $num) == 1) {
 		$num = $num * 10;
 	}
 
-	if (!empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
+	if (isModEnabled('numberwords')) {
 		if ($currency) {
 			$type = '1';
 		} else {
@@ -56,7 +57,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
 	} else {
-		$TNum = explode('.', $num);
+		$TNum = explode('.', (string) $num);
 
 		$num = (int) $TNum[0];
 		$words = array();
@@ -104,7 +105,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 			$langs->transnoentitiesnoconv('quadrillion')
 		);
 
-		$num_length = strlen($num);
+		$num_length = strlen((string) $num);
 		$levels = (int) (($num_length + 2) / 3);
 		$max_length = $levels * 3;
 		$num = substr('00'.$num, -$max_length);
@@ -163,7 +164,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
  * @param	float 	    $numero			Number to convert
  * @param	Translate	$langs			Language
  * @param	string	    $numorcurrency	'number' or 'amount'
- * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @return 	string|int  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
@@ -247,6 +248,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 		}
 		return $entexto;
 	}
+	return -1;
 }
 
 /**

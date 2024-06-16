@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil', 'int');
-$id = GETPOST('id', 'int');
+$codeventil = GETPOSTINT('codeventil');
+$id = GETPOSTINT('id');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -44,7 +44,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -84,8 +84,9 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 /*
  * View
  */
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader("", $langs->trans('FicheVentilation'));
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
@@ -101,7 +102,7 @@ $formaccounting = new FormAccounting($db);
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
 	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_sell as code_sell,";
 	} else {
 		$sql .= " p.accountancy_code_sell as code_sell,";
@@ -109,7 +110,7 @@ if (!empty($id)) {
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";

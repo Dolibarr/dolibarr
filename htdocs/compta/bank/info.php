@@ -34,8 +34,8 @@ $langs->loadLangs(array('banks', 'categories', 'companies'));
 
 
 // Get Parameters
-$id = GETPOST("rowid", 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = GETPOSTINT("rowid");
+$accountid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 
 
@@ -48,7 +48,7 @@ if ($user->socid) {
 }
 
 $result = restrictedArea($user, 'banque', $accountid, 'bank_account');
-if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
+if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 
@@ -66,6 +66,7 @@ $object->info($id);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("BankTransaction");
 $h++;
