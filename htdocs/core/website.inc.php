@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]) && is_object($conf) && empty($conf->brows
 	}
 }
 // Define $website
-if (!is_object($website)) {
+if (is_null($website)) {
 	$website = new Website($db);
 	$website->fetch(0, $websitekey);
 }
@@ -58,14 +59,14 @@ if (empty($pageid) && !empty($websitepagefile)) {
 		$pageid = $website->fk_default_home;
 	}
 }
-if (!is_object($websitepage)) {
+if (is_null($websitepage)) {
 	$websitepage = new WebsitePage($db);
 }
 // Define $weblangs
-if (!is_object($weblangs)) {
+if (is_null($weblangs)) {
 	$weblangs = new Translate('', $conf);
 }
-if (!is_object($pagelangs)) {
+if (is_null($pagelangs)) {
 	$pagelangs = new Translate('', $conf);
 }
 if (!empty($pageid) && $pageid > 0) {

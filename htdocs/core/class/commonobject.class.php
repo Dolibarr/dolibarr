@@ -9290,44 +9290,18 @@ abstract class CommonObject
 	}
 
 	/**
-	 * getDataToShowPhoto
+	 * Function used to get the logos or photos of an object
 	 *
 	 * @param 	string	$modulepart		Module part
-	 * @param 	string	$imagesize		Image size
+	 * @param 	string	$imagesize		Image size ('', 'mini' or 'small')
 	 * @return	array{dir:string,file:string,originalfile:string,altfile:string,email:string,capture:string}	Array of data to show photo
 	 */
 	public function getDataToShowPhoto($modulepart, $imagesize)
 	{
-		global $conf;
-
-		$file = '';
-		$originalfile = '';
-		$newmodulepart = $modulepart;
-		if ($modulepart == 'unknown' && !empty($this->module)) {
-			$newmodulepart = $this->module;
-		}
-
-		$id = $this->id;
-		$dir = $conf->$newmodulepart->dir_output ?? '';
-		if (!empty($this->photo)) {
-			if (dolIsAllowedForPreview($this->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_mini'));
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName(getImageFileNameForSize($this->photo, '_small'));
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
-				}
-				$originalfile = get_exdir(0, 0, 0, 0, $this, $newmodulepart) . 'photos/' . dol_sanitizeFileName($this->photo);
-			}
-		}
-
-		$altfile = '';
-		$email = empty($this->email) ? '' : $this->email;
-		$capture = '';
-
-		return array('dir' => $dir, 'file' => $file, 'originalfile' => $originalfile, 'altfile' => $altfile, 'email' => $email, 'capture' => $capture);
+		// See getDataToShowPhoto() implemented by Product for example.
+		return array('dir' => '', 'file' => '', 'originalfile' => '', 'altfile' => '', 'email' => '', 'capture' => '');
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -9501,8 +9475,8 @@ abstract class CommonObject
 						}
 						if ($showaction) {
 							$return .= '<br>';
-							// If $photo_vignette set, we add link to generate thumbs if file is an image and ->imgWidth or->imgHeight higher than limits
-							if ($photo_vignette && (image_format_supported($photo) > 0) && ((isset($this->imgWidth) && $this->imgWidth > $maxWidth) || (isset($this->imgHeight) && $this->imgHeight > $maxHeight))) {
+							// If $photo_vignette set, we add a link to generate thumbs if file is an image and width or height higher than limits
+							if ($photo_vignette && (image_format_supported($photo) > 0) && ((isset($imgarray['width']) && $imgarray['width'] > $maxWidth) || (isset($imgarray['width']) && $imgarray['width'] > $maxHeight))) {
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special case for product

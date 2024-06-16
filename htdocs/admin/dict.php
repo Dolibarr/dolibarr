@@ -2545,6 +2545,7 @@ if ($id > 0) {
 	print '<span class="opacitymedium">'.$langs->trans("DictionaryDesc");
 	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 	print '</span><br>';
+	print "<br>\n";
 
 	$lastlineisempty = false;
 
