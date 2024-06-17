@@ -77,7 +77,7 @@ class ProductAttributeValue extends CommonObjectLine
 	);
 
 	/**
- 	 * ID of the ProductAttributeValue
+	 * ID of the ProductAttributeValue
 	 * @var int
 	 */
 	public $id;
@@ -89,19 +89,19 @@ class ProductAttributeValue extends CommonObjectLine
 	public $fk_product_attribute;
 
 	/**
- 	 * Reference of the ProductAttributeValue (ex: "BLUE_1" or "RED_3")
+	 * Reference of the ProductAttributeValue (ex: "BLUE_1" or "RED_3")
 	 * @var string
 	 */
 	public $ref;
 
 	/**
- 	 * Label of the ProductAttributeValue (ex: "Dark blue" or "Chili Red")
+	 * Label of the ProductAttributeValue (ex: "Dark blue" or "Chili Red")
 	 * @var string
 	 */
 	public $value;
 
 	/**
- 	 * Sorting position of the ProductAttributeValue
+	 * Sorting position of the ProductAttributeValue
 	 * @var int
 	 */
 	public $position;
