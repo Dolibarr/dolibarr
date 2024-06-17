@@ -8238,6 +8238,7 @@ class Form
 		$classname = '';
 		$filter = '';  // Ensure filter has value (for static analysis)
 		$sortfield = '';  // Ensure filter has value (for static analysis)
+		$errMsgCode = '';
 
 		if ($objectfield) {	// We must retrieve the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package' or 'myobject@mymodule:options_myfield'
@@ -8292,7 +8293,6 @@ class Form
 			$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
 
 			// Load object according to $id and $element
-			$errMsgCode = '';
 			$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]), '', 0, 10, $errMsgCode);
 
 			// Fallback to another solution to get $objecttmp
