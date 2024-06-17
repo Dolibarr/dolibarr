@@ -628,7 +628,7 @@ if (isModEnabled('stock')) {
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
-			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$latestmovement .= "</table>";
