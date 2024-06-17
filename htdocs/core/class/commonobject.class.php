@@ -3995,7 +3995,7 @@ abstract class CommonObject
 						$this->total_tva = (float) price2num($this->total_tva - (float) $diff, '', 1);
 						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - (float) $diff, '', 1);
 						if ($base_price_type == 'TTC') {
-							$this->total_ht = (float) price2num($this->total_ht - $diff, '', 1);
+							$this->total_ht = (float) price2num($this->total_ht - (float) $diff, '', 1);
 							$total_ht_by_vats[$obj->vatrate] = (float) price2num($total_ht_by_vats[$obj->vatrate] - (float) $diff, '', 1);
 						} else {
 							$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
