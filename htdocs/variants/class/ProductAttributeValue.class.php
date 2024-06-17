@@ -75,10 +75,35 @@ class ProductAttributeValue extends CommonObjectLine
 		'value' => array('type' => 'varchar(255)', 'label' => 'Value', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'help' => "", 'showoncombobox' => 1,),
 		'position' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'default' => '0', 'position' => 200, 'notnull' => 1,),
 	);
+
+	/**
+	 * ID of the ProductAttributeValue
+	 * @var int
+	 */
 	public $id;
+
+	/**
+	 * ID of the parent attribute (ex: ID of the attribute "COLOR")
+	 * @var int
+	 */
 	public $fk_product_attribute;
+
+	/**
+	 * Reference of the ProductAttributeValue (ex: "BLUE_1" or "RED_3")
+	 * @var string
+	 */
 	public $ref;
+
+	/**
+	 * Label of the ProductAttributeValue (ex: "Dark blue" or "Chili Red")
+	 * @var string
+	 */
 	public $value;
+
+	/**
+	 * Sorting position of the ProductAttributeValue
+	 * @var int
+	 */
 	public $position;
 
 	/**
