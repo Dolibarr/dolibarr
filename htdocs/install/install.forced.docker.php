@@ -71,4 +71,4 @@ $force_install_dolibarrlogin = 'admin';
 $force_install_lockinstall = true;
 
 /** @var string $force_install_module				Enable module(s) (Comma separated class names list) */
-$force_install_module = 'modSociete,modFournisseur,modFacture';
+$force_install_module = '';

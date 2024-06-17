@@ -96,6 +96,8 @@ if (@file_exists($forcedfile)) {
 		if (!empty($argv[4])) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
+		// In mode 3 the main_url is custom
+		if ($force_install_noedit != 3) 
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
