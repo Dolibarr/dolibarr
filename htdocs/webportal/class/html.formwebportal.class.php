@@ -1051,7 +1051,7 @@ class FormWebPortal extends Form
 			if ($type == 'array') {
 				$value = implode('<br>', $value);
 			} else {
-				dol_syslog(__METHOD__ . ' unexpected type: '.$type.' for array value='.((string) json_encode($value)), LOG_ERR);
+				dol_syslog(__METHOD__."Unexpected type=".$type." for array value=".((string) json_encode($value)), LOG_ERR);
 			}
 			//
 			// Then the cases where $value is not an array (hence string)

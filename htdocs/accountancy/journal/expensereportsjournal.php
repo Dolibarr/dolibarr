@@ -383,7 +383,14 @@ if ($action == 'writebookkeeping' && !$error) {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+						}
+
 						$account_label = $accountingaccount->label;
 
 						// get compte id and label
@@ -686,8 +693,13 @@ if (empty($action) || $action == 'view') {
 
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(null, $k, true);
+			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $k, true);
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+			} else {
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+			}
 
 			if ($mt) {
 				print '<tr class="oddeven">';
