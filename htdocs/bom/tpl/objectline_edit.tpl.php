@@ -159,11 +159,9 @@ if ($filtertype != 1) {
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
 
-	if (getDolGlobalInt('BOM_ENABLE_FREEZE_SERVICE_QTY')) {
-		$coldisplay++;
-		print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOST('qty_frozen', 'int') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
-		print '</td>';
-	}
+	$coldisplay++;
+	print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOST('qty_frozen', 'int') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
+	print '</td>';
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation right">';

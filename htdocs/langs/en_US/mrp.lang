@@ -54,7 +54,6 @@ StatusMOProduced=Produced
 QtyFrozen=Frozen Qty
 QuantityFrozen=Frozen Quantity
 QuantityConsumedInvariable=When this flag is set, the quantity consumed is always the value defined and is not relative to the quantity produced.
-QtyFrozenOkForServices=Allow to freeze quantity for services
 DisableStockChange=Stock change disabled
 DisableStockChangeHelp=When this flag is set, there is no stock change on this product, whatever is the quantity consumed
 BomAndBomLines=Bills Of Material and lines

@@ -445,21 +445,6 @@ print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-// possibility to freeze qty in services to
-print '<tr class="oddeven">';
-print "<td>".$form->textwithpicto($langs->trans('QtyFrozenOkForServices'), $langs->trans("QuantityConsumedInvariable")) ."</td>";
-print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('BOM_ENABLE_FREEZE_SERVICE_QTY', array(), null, 0, 0, 0, 2, 0, 1);
-} else {
-	if (!getDolGlobalInt('BOM_ENABLE_FREEZE_SERVICE_QTY')) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&BOM_ENABLE_FREEZE_SERVICE_QTY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&BOM_ENABLE_FREEZE_SERVICE_QTY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-}
-print "</td><td>&nbsp;</td></tr>\n";
-
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';

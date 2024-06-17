@@ -54,7 +54,6 @@ StatusMOProduced=Fabriqué
 QtyFrozen=Qté bloquée
 QuantityFrozen=Quantité bloquée
 QuantityConsumedInvariable=Lorsque cet indicateur est défini, la quantité consommée est toujours la valeur définie et n'est pas relative à la quantité produite.
-QtyFrozenOkForServices=Autoriser le blocage de la quantité pour les services
 DisableStockChange=Modification de stock désactivé
 DisableStockChangeHelp=Lorsque cette propriété est définie, il n'y a pas de modification de stock sur ce produit, quelle que soit la quantité consommée
 BomAndBomLines=Nomenclatures et lignes

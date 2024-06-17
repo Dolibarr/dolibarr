@@ -89,9 +89,8 @@ if ($nolinesbefore) {
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	} else {
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-		if (getDolGlobalInt('BOM_ENABLE_FREEZE_SERVICE_QTY')) {
-			print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
-		}
+		print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+		
 		if (isModEnabled('workstation')) {
 			print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		}
@@ -189,11 +188,9 @@ if ($filtertype != 1) {
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
 	print '</td>';
 
-	if (getDolGlobalInt('BOM_ENABLE_FREEZE_SERVICE_QTY')) {
-		$coldisplay++;
-		print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
-		print '</td>';
-	}
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
+	print '</td>';
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
