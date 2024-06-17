@@ -2748,7 +2748,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} elseif ($object->element == 'bom') {
-		/** @var Bom $object */
+		/** @var BOM $object */
 		'@phan-var-force Bom $object';
 		$width = 80;
 		$cssclass = 'photowithmargin photoref';
