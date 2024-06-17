@@ -88,7 +88,7 @@ $socid = GETPOSTINT('socid');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
-$search_id = GETPOST('search_id', 'intcomma');
+$search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
