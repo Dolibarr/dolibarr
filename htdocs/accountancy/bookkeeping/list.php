@@ -513,7 +513,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// others mass actions
+	// mass actions on lettering
 	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		if ($massaction == 'letteringauto') {
 			$lettering = new Lettering($db);
@@ -1135,9 +1135,15 @@ while ($i < min($num, $limit)) {
 
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
-		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
-		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		if (empty($conf->cache['accountingjournal'][$line->code_journal])) {
+			$accountingjournal = new AccountingJournal($db);
+			$accountingjournal->fetch(0, $line->code_journal);
+			$conf->cache['accountingjournal'][$line->code_journal] = $accountingjournal;
+		} else {
+			$accountingjournal = $conf->cache['accountingjournal'][$line->code_journal];
+		}
+
+		$journaltoshow = (($accountingjournal->id > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1176,9 +1182,18 @@ while ($i < min($num, $limit)) {
 
 			$modulepart = 'invoice_supplier';
 			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+
+			//$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+			//$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+			$filedir = getMultidirOutput($objectstatic, '', 1).dol_sanitizeFileName($line->doc_ref);
+			$subdir = getMultidirOutput($objectstatic, '', 1, 'outputrel').dol_sanitizeFileName($line->doc_ref);
+			//var_dump($filedir); var_dump($subdir);
+
+			if ($objectstatic->id > 0) {
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			} else {
+				$documentlink = $line->doc_ref;
+			}
 		} elseif ($line->doc_type == 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
@@ -1201,6 +1216,7 @@ while ($i < min($num, $limit)) {
 
 		$labeltoshow = '';
 		$labeltoshowalt = '';
+		$classforlabel = '';
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
@@ -1214,9 +1230,10 @@ while ($i < min($num, $limit)) {
 		} else {
 			$labeltoshow .= $line->doc_ref;
 			$labeltoshowalt .= $line->doc_ref;
+			$classforlabel = 'tdoverflowmax250';
 		}
 
-		print '<td class="nowraponall tdoverflowmax250" title="'.dol_escape_htmltag($labeltoshowalt).'">';
+		print '<td class="nowraponall'.($classforlabel ? ' '.$classforlabel : '').'" title="'.dol_escape_htmltag($labeltoshowalt).'">';
 		print $labeltoshow;
 		print "</td>\n";
 		if (!$i) {

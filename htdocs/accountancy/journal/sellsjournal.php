@@ -418,12 +418,11 @@ if ($action == 'writebookkeeping' && !$error) {
 
 	$companystatic = new Societe($db);
 	$invoicestatic = new Facture($db);
-	$accountingaccountcustomer = new AccountingAccount($db);
 
+	$accountingaccountcustomer = new AccountingAccount($db);
 	$accountingaccountcustomer->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
 
 	$accountingaccountcustomerwarranty = new AccountingAccount($db);
-
 	$accountingaccountcustomerwarranty->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'), true);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
