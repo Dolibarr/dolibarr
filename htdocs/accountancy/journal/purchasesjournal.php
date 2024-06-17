@@ -329,15 +329,16 @@ if ($result) {
 			);
 
 		$i++;
+
+		// Check for too many lines.
+		if ($i > getDolGlobalInt('ACCOUNTANCY_MAX_TOO_MANY_LINES_TO_PROCESS', 10000)) {
+			$error++;
+			setEventMessages("ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+			break;
+		}
 	}
 } else {
 	dol_print_error($db);
-}
-
-// Check for too many invoices first.
-if (count($tabfac) > 10000) { // Global config in htdocs/admin/const.php???
-	$error++;
-	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
 }
 
 $errorforinvoice = array();
