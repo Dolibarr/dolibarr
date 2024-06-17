@@ -88,6 +88,7 @@ $socid = GETPOSTINT('socid');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
+$search_id = GETPOST('search_id', 'intcomma');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -173,6 +174,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	'c.rowid' => array('label' => "ID", 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10, 'searchall' => 1),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 20),
@@ -274,6 +276,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$search_id = '';
 		$search_ref = '';
 		$search_ref_customer = '';
 		$search_company = '';
@@ -656,6 +659,9 @@ if (empty($reshook)) {
 			if ($search_deliveryyear) {
 				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			}
+			if ($search_id) {
+				$param .= '&search_id='.urlencode((string) $search_id);
+			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
@@ -899,6 +905,9 @@ if (!$permissiontoreadallthirdparty) {
 	$sql .= ")";
 }
 
+if ($search_id > 0) {
+	$sql .= natural_search('c.rowid', $search_id);
+}
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
 }
@@ -1237,6 +1246,9 @@ if ($search_datedelivery_start) {
 if ($search_datedelivery_end) {
 	$param .= '&search_datedelivery_end_day='.dol_print_date($search_datedelivery_end, '%d').'&search_datedelivery_end_month='.dol_print_date($search_datedelivery_end, '%m').'&search_datedelivery_end_year='.dol_print_date($search_datedelivery_end, '%Y');
 }
+if ($search_id) {
+	$param .= '&search_id='.urlencode((string) $search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1560,6 +1572,13 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 
+// Line numbering
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
+
 // Ref
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1852,6 +1871,10 @@ print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -2156,6 +2179,14 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
