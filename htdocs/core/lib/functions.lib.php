@@ -12820,7 +12820,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			return -1;
 		}
 	} else {
-		$objecttmp = newObjectByElement($element_type);
+		$objecttmp = newObjectByElement($element_type, $errMsgCode);
 		if (!$objecttmp) {
 			return -1;
 		}

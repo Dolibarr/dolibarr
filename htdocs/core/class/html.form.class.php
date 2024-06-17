@@ -8292,7 +8292,8 @@ class Form
 			$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
 
 			// Load object according to $id and $element
-			$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
+			$errMsgCode = '';
+			$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]), '', 0, 10, $errMsgCode);
 
 			// Fallback to another solution to get $objecttmp
 			if (empty($objecttmp) && !empty($classpath)) {
@@ -8314,8 +8315,8 @@ class Form
 		);
 
 		if (!is_object($objecttmp)) {
-			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc, LOG_WARNING);
-			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc;
+			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc.', errMsgCode='.$errMsgCode, LOG_WARNING);
+			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc.', errMsgCode='.$errMsgCode;
 		}
 		'@phan-var-force CommonObject $objecttmp';
 
