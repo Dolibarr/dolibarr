@@ -738,7 +738,7 @@ if ($sql_select) {
 	}
 	print '<td class="right">'.$total_qty.'</td>';
 	print '<td class="right">'.price($total_ht ?? 0).'</td>';
-	print '<td class="right">'.price(price2num($total_ht ?? 0 / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';
+	print '<td class="right">'.price(price2num(($total_ht ?? 0) / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';
 	print "</table>";
 	print '</div>';
 
