@@ -1008,7 +1008,7 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 
 				$formmail = $this;
-				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
 				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");

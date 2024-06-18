@@ -852,8 +852,8 @@ if ($action == 'create') {
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
+	$formmail->withaiprompt = 'html';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
