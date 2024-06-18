@@ -667,7 +667,14 @@ if (!$error && $action == 'writebookkeeping') {
 			// Line into bank account
 			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt) {
-					$accountingaccount->fetch(null, $k, true);	// $k is accounting bank account. TODO We should use a cache here to avoid this fetch
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);	// $k is accounting account of the bank.
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
 					$account_label = $accountingaccount->label;
 
 					$reflabel = '';

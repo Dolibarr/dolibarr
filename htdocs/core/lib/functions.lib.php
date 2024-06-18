@@ -126,8 +126,8 @@ if (!function_exists('str_contains')) {
  * @param 	CommonObject 	$object 	Dolibarr common object
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' or 'temp' or 'version'
- * @return 	string|null					The path of the relative directory of the module
+ * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (for temporary files) or 'version' (dir for archived files)
+ * @return 	string|null					The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -144,14 +144,21 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	// Special case for backward compatibility
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
+	} elseif ($module == 'invoice_supplier') {
+		$module = 'supplier_invoice';
+	} elseif ($module == 'order_supplier') {
+		$module = 'supplier_order';
 	}
 
 	// Get the relative path of directory
-	if ($mode == 'output' || $mode == 'version') {
+	if ($mode == 'output' || $mode == 'outputrel' || $mode == 'version') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
-			$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+			$s = '';
+			if ($mode != 'outputrel') {
+				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+			}
 			if ($forobject && $object->id > 0) {
-				$s .= '/'.get_exdir(0, 0, 0, 0, $object);
+				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
 			}
 			return $s;
 		} else {
@@ -7568,34 +7575,49 @@ function yn($yesno, $case = 1, $color = 0)
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')     if multidir_output not defined.
- *  Example out with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example out with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  This function is called by getMultidirOutput
+ *  New usage:  $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
- *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
- *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
- * 	@param	int			$alpha		    0=Keep number only to forge path, 1=Use alpha part after the - (By default, use 0). (deprecated, global option will be used in future)
- *  @param  int			$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
- *  @param	?CommonObject	$object		Object to use to get ref to forge the path.
- *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
- *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
+ *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'
+ *  Example of output with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *
+ *	@param	string|int		$num            Id of object (deprecated, $object->id will be used in future)
+ *	@param  int				$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global setup will be used in future)
+ * 	@param	int				$alpha		    0=Keep number only to forge path, 1=Use alpha part after the - (By default, use 0). (deprecated, global option will be used in future)
+ *  @param  int				$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
+ *  @param	?CommonObject	$object			Object to use to get ref to forge the path.
+ *  @param	string			$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
+ *  @return	string							Dir to use ending. Example '' or '1/' or '1/2/'
  *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
-	if (empty($modulepart) && !empty($object->module)) {
-		$modulepart = $object->module;
+	if (empty($modulepart) && is_object($object)) {
+		if (!empty($object->module)) {
+			$modulepart = $object->module;
+		} elseif (!empty($object->element)) {
+			$modulepart = $object->element;
+		}
 	}
 
 	$path = '';
 
-	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
+	// Define $arrayforoldpath that is module path using a hierarchy on more than 1 level.
+	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'holiday' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
-		$arrayforoldpath[] = 'product';
+		$arrayforoldpath['product'] = 2;
 	}
-	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
+
+	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
+		$level = $arrayforoldpath[$modulepart];
+	}
+
+	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
+		if (empty($num) && is_object($object)) {
+			$num = $object->id;
+		}
 		if (empty($alpha)) {
 			$num = preg_replace('/([^0-9])/i', '', $num);
 		} else {

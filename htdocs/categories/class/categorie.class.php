@@ -1123,11 +1123,11 @@ class Categorie extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
-	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
-	 *                id = id de la categorie
-	 *                id_mere = id de la categorie mere
-	 *                id_children = tableau des id enfant
-	 *                label = nom de la categorie
+	 * Return an array of table('id','id_mere',...) sorted to have a human readable tree, with
+	 *                id = id of category
+	 *                id_mere = id of parent category
+	 *                id_children = array of child ids
+	 *                label = name of category
 	 *                fulllabel = Name with full path for the category
 	 *                fullpath = Full path built with the id's
 	 *

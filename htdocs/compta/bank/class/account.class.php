@@ -74,7 +74,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $type
 	 */
-	private $courant;
+	private $courant; // @phpstan-ignore-line
 
 	/**
 	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
@@ -278,7 +278,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $balance
 	 */
-	private $solde;
+	private $solde; // @phpstan-ignore-line
 
 	/**
 	 * Balance. Used in Account::create

@@ -153,7 +153,7 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
-		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		$arrayofcateg = $object->get_full_arbo('product', getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 1);
 		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
 			foreach ($arrayofcateg as $val) {
 				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];

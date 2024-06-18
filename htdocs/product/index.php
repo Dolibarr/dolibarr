@@ -525,7 +525,7 @@ if (isModEnabled('stock')) {
 
 
 $latestmovement = '';
-if (isModEnabled('product')) {
+if (isModEnabled('stock')) {
 	// Latest movements
 	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
@@ -628,7 +628,7 @@ if (isModEnabled('product')) {
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
-			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$latestmovement .= "</table>";
