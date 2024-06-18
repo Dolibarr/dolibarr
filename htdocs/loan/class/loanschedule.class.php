@@ -497,7 +497,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @return void
 	 */
-	private function transPayment()
+	private function transPayment() // @phpstan-ignore-line
 	{
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
