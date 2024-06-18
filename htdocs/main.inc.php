@@ -523,7 +523,7 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 			}
 		} else {
 			// Check HTTPS environment variable (Apache/mod_ssl only)
-			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
+			 if (!preg_match('/^https:/i',DOL_MAIN_URL_ROOT)) $newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
 	} else {
 		// Check HTTPS environment variable (Apache/mod_ssl only)
