@@ -204,7 +204,7 @@ class FormListWebPortal
 		if ($elementEn == "propal") {
 			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
 		}
-		
+
 		$object->fields = dol_sort_array($object->fields, 'position');
 		//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 		$arrayfields = dol_sort_array($arrayfields, 'position');
@@ -702,7 +702,7 @@ class FormListWebPortal
 			if ($elementEn == "propal") {
 				if (!empty($arrayfields['signature_link']['checked'])) {
 					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
-					if($object->fk_statut == Propal::STATUS_VALIDATED){
+					if ($object->fk_statut == Propal::STATUS_VALIDATED) {
 						$html .= $this->form->getSignatureLink('proposal', $object);
 					}
 					$html .= '</td>';
