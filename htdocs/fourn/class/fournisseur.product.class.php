@@ -1039,8 +1039,7 @@ class ProductFournisseur extends Product
 					$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
 					$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 					$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
-					foreach ($productFournList as $productFourn)
-					{
+					foreach ($productFournList as $productFourn) {
 						$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 						$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 						$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
