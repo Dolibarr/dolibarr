@@ -894,9 +894,9 @@ class ProductFournisseur extends Product
 					$parameters = array('id'=>$record["product_fourn_price_id"], 'getminprice' => &$result);
 					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action);
 					if ($reshook > 0) {
-					        $result = $hookmanager->resPrint;
+						$result = $hookmanager->resPrint;
 					} else {
-					        $result .= $hookmanager->resPrint;
+						$result .= $hookmanager->resPrint;
 					}
 
 					if ($fourn_unitprice < $min || $min == -1) {
@@ -1029,9 +1029,9 @@ class ProductFournisseur extends Product
 		if ($reshook == 1) {
 			return $out.$result;
 		} else {
-		    // VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function
+			// VSPR  adding the possibility on shownunitprice == 2 to be able to gat all prices in the function
 			if (count($productFournList) > 0) {
-				if ( $showunitprice == 2) {
+				if ($showunitprice == 2) {
 					return $productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise;
 				} else {
 					$out .= '<table class="nobordernopadding" width="100%">';
@@ -1057,7 +1057,7 @@ class ProductFournisseur extends Product
 					$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
 				}
 			}
-		return $out;
+			return $out;
 		}
 	}
 
