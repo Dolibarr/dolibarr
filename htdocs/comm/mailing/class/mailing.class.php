@@ -935,7 +935,7 @@ class Mailing extends CommonObject
 
 		$param = array();
 		if ($status == -1) {
-			$param = array('badgeParams'=>array('attr'=>array('title'=>$desc)));
+			$param = array('badgeParams' => array('attr' => array('title' => $desc)));
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', $param);
