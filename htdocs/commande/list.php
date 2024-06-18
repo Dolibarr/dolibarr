@@ -389,7 +389,7 @@ if (empty($reshook)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if(empty($objecttmp->note_public)){
+				if (empty($objecttmp->note_public)) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
