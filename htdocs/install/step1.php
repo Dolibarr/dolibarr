@@ -97,7 +97,7 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
 		// In mode 3 the main_url is custom
-		if ($force_install_noedit != 3) 
+		if ($force_install_noedit != 3)
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
@@ -874,7 +874,6 @@ function write_conf_file($conffile)
 		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
 		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
 		fwrite($fp, '//'."\n");
-
 		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
 		fwrite($fp, "\n");
 
