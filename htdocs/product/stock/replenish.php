@@ -481,7 +481,7 @@ if ($usevirtualstock) {
 
 	$sql .= ' HAVING (';
 	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
-		$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL OR s.fk_entrepot <> " . $fk_entrepot, "0", "s.reel") . ')';
+		$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL OR s.fk_entrepot <> " . (int) $fk_entrepot, "0", "s.reel") . ')';
 	} else {
 		$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
 	}
