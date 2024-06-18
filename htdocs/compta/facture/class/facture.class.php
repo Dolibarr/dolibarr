@@ -6723,13 +6723,14 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of the previous line.
+	 * Returns situation_percent of the previous line. Used when INVOICE_USE_SITUATION = 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
-	 */
+	 * @see get_allprev_progress()
+	 **/
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
@@ -6784,6 +6785,79 @@ class FactureLigne extends CommonInvoiceLine
 				$this->db->rollback();
 				return -1;
 			}
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
+	 *
+	 * @param  int     $invoiceid      Invoice id
+	 * @param  bool    $include_credit_note		Include credit note or not
+	 * @return int                     >= 0
+	 * @see get_prev_progress()
+	 */
+	public function get_allprev_progress($invoiceid, $include_credit_note = true)
+	{
+		// phpcs:enable
+		global $invoicecache;
+
+		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
+			return 0;
+		} else {
+			// If invoice is not a situation invoice, this->fk_prev_id is used for something else
+			if (!isset($invoicecache[$invoiceid])) {
+				$invoicecache[$invoiceid] = new Facture($this->db);
+				$invoicecache[$invoiceid]->fetch($invoiceid);
+			}
+			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+				return 0;
+			}
+
+			$all_found = false;
+			$lastprevid = $this->fk_prev_id;
+			$cumulated_percent = 0;
+
+			while (!$all_found) {
+				$sql = "SELECT situation_percent, fk_prev_id FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $lastprevid);
+				$resql = $this->db->query($sql);
+
+				if ($resql && $this->db->num_rows($resql) > 0) {
+					$obj = $this->db->fetch_object($resql);
+					$cumulated_percent += floatval($obj->situation_percent);
+
+					if ($include_credit_note) {
+						$sql_credit_note = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
+						$sql_credit_note .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
+						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
+						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
+						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+
+						$res_credit_note = $this->db->query($sql_credit_note);
+						if ($res_credit_note) {
+							while ($cn = $this->db->fetch_object($res_credit_note)) {
+								$cumulated_percent = $cumulated_percent + floatval($cn->situation_percent);
+							}
+						} else {
+							dol_print_error($this->db);
+						}
+					}
+
+					// Si fk_prev_id, on continue
+					if ($obj->fk_prev_id) {
+						$lastprevid = $obj->fk_prev_id;
+					} else { // Sinon on stoppe la boucle
+						$all_found = true;
+					}
+				} else {
+					$this->error = $this->db->error();
+					dol_syslog(get_class($this)."::select Error ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			return $cumulated_percent;
 		}
 	}
 }
