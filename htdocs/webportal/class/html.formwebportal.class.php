@@ -345,7 +345,7 @@ class FormWebPortal extends Form
 	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
 	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
-	 * @param Object $object
+	 * @param Object $object Object linked to the document to be signed
 	 * @param string $morecss Add more css to the download picto
 	 * @return    string                Output string with HTML link of signature (might be empty string).
 	 */
