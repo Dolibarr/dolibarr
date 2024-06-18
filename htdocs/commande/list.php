@@ -389,6 +389,10 @@ if (empty($reshook)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
+				if(empty($objecttmp->note_public)){
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
+				}
+
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
 					$datefacture = dol_now();
@@ -553,7 +557,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$objecttmp->note_public .= $cmd->ref . ' (' . dol_print_date($cmd->date_commande, 'day') . ')<br>';
+			$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')').(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')').' ');
 			$objecttmp->update($user);
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
