@@ -3709,7 +3709,7 @@ abstract class CommonObject
 
 				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on foreign currency
 					if ($base_price_type == 'TTC') {
-						$tmpvat = price2num($total_ttc_by_vats[$obj->vatrate] - $total_ht_by_vats[$obj->vatrate], 'MT', 1);
+						$tmpvat = price2num($total_ttc_by_vats[$obj->vatrate] * $obj->vatrate / (100 + $obj->vatrate), 'MT', 1);
 					} else {
 						$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
 					}
@@ -3725,7 +3725,7 @@ abstract class CommonObject
 							break;
 						}
 						if ($base_price_type == 'TTC') {
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
@@ -3741,8 +3741,8 @@ abstract class CommonObject
 						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
 						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
 						if ($base_price_type == 'TTC') {
-							$this->total_ht = (float) price2num($this->total_ht - (float) $diff, '', 1);
-							$total_ht_by_vats[$obj->vatrate] = (float) price2num($total_ht_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+							$this->total_ht = (float) price2num($this->total_ht + (float) $diff, '', 1);
+							$total_ht_by_vats[$obj->vatrate] = (float) price2num($total_ht_by_vats[$obj->vatrate] + (float) $diff, '', 1);
 						} else {
 							$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
 							$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
