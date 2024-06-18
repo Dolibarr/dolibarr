@@ -65,7 +65,7 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
-	 * @var string Name of classe line
+	 * @var string Name of class line
 	 */
 	public $class_element_line = 'CommandeFournisseurLigne';
 
