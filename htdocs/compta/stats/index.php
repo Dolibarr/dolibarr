@@ -527,9 +527,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				$total_ht[$annee] += (empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case]);
 			}
 			if (empty($total[$annee])) {
-				$total[$annee] = empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
+				$total[$annee] = empty($cumulative[$case]) ? 0 : $cumulative[$case];
 			} else {
-				$total[$annee] += empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
+				$total[$annee] += empty($cumulative[$case]) ? 0 : $cumulative[$case];
 			}
 		}
 	}
