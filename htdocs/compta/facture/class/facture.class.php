@@ -7020,13 +7020,14 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of the previous line.
+	 * Returns situation_percent of the previous line. Used when INVOICE_USE_SITUATION = 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
-	 */
+	 * @see get_allprev_progress()
+	 **/
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
@@ -7086,12 +7087,13 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line.
+	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return int                     >= 0
+	 * @see get_prev_progress()
 	 */
 	public function get_allprev_progress($invoiceid, $include_credit_note = true)
 	{
