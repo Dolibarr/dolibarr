@@ -65,6 +65,11 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
+	 * @var string Name of classe line
+	 */
+	public $class_element_line = 'CommandeFournisseurLigne';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
