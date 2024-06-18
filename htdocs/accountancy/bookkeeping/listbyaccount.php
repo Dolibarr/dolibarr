@@ -78,14 +78,14 @@ $search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int'
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 // Due date start
-$search_date_due_start_day =  GETPOSTINT('search_date_due_start_day');
-$search_date_due_start_month =  GETPOSTINT('search_date_due_start_month');
-$search_date_due_start_year =  GETPOSTINT('search_date_due_start_year');
+$search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
+$search_date_due_start_month = GETPOSTINT('search_date_due_start_month');
+$search_date_due_start_year = GETPOSTINT('search_date_due_start_year');
 $search_date_due_start = dol_mktime(0, 0, 0, $search_date_due_start_month, $search_date_due_start_day, $search_date_due_start_year);
 // Due date end
-$search_date_due_end_day =  GETPOSTINT('search_date_due_end_day');
-$search_date_due_end_month =  GETPOSTINT('search_date_due_end_month');
-$search_date_due_end_year =  GETPOSTINT('search_date_due_end_year');
+$search_date_due_end_day = GETPOSTINT('search_date_due_end_day');
+$search_date_due_end_month = GETPOSTINT('search_date_due_end_month');
+$search_date_due_end_year = GETPOSTINT('search_date_due_end_year');
 $search_date_due_end = dol_mktime(23, 59, 59, $search_date_due_end_month, $search_date_due_end_day, $search_date_due_end_year);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
@@ -180,7 +180,7 @@ $arrayfields = array(
 	't.balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>-1),
 	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>-1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>0),
+	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => 0),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>-1, 'position'=>1100),
 );
 
@@ -932,10 +932,10 @@ if (!empty($arrayfields['t.date_validated']['checked'])) {
 // Due date start and end
 if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_due_start, 'search_date_due_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_due_end, 'search_date_due_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -1058,7 +1058,9 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
 	// Due date
-	if (!empty($arrayfields['t.date_lim_reglement']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
+		$colspanend++;
+	}
 	if (!empty($arrayfields['t.import_key']['checked'])) { $colspanend++; }
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspanend++;
@@ -1324,7 +1326,7 @@ while ($i < min($num, $limit)) {
 
 	// Due date
 	if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_lim_reglement, 'day', 'tzuserrel').'</td>';
+		print '<td class="center">'.dol_print_date($line->date_lim_reglement, 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

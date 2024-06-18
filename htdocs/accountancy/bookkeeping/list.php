@@ -94,14 +94,14 @@ $search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int'
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 // Due date start
-$search_date_due_start_day =  GETPOSTINT('search_date_due_start_day');
-$search_date_due_start_month =  GETPOSTINT('search_date_due_start_month');
-$search_date_due_start_year =  GETPOSTINT('search_date_due_start_year');
+$search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
+$search_date_due_start_month = GETPOSTINT('search_date_due_start_month');
+$search_date_due_start_year = GETPOSTINT('search_date_due_start_year');
 $search_date_due_start = dol_mktime(0, 0, 0, $search_date_due_start_month, $search_date_due_start_day, $search_date_due_start_year);
 // Due date end
-$search_date_due_end_day =  GETPOSTINT('search_date_due_end_day');
-$search_date_due_end_month =  GETPOSTINT('search_date_due_end_month');
-$search_date_due_end_year =  GETPOSTINT('search_date_due_end_year');
+$search_date_due_end_day = GETPOSTINT('search_date_due_end_day');
+$search_date_due_end_month = GETPOSTINT('search_date_due_end_month');
+$search_date_due_end_year = GETPOSTINT('search_date_due_end_year');
 $search_date_due_end = dol_mktime(23, 59, 59, $search_date_due_end_month, $search_date_due_end_day, $search_date_due_end_year);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
@@ -204,7 +204,7 @@ $arrayfields = array(
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
 	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>0, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>0),
+	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => 0),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -449,7 +449,6 @@ if (empty($reshook)) {
 	// Due date end
 	if (!empty($search_date_due_end)) {
 		$filter['t.date_lim_reglement<='] = $search_date_due_end;
-		$tmp = dol_getdate($search_date_due_end);
 		$param .= '&search_date_due_end_day='.$search_date_due_end_day.'&search_date_due_end_month='.$search_date_due_end_month.'&search_date_due_end_year='.$search_date_due_end_year;
 	}
 	if (!empty($search_debit)) {
@@ -667,8 +666,10 @@ if (count($filter) > 0) {
 			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.date_lim_reglement>=' || $key == 't.date_lim_reglement<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
+		} elseif ($key == 't.date_lim_reglement>=') {
+			$sqlwhere[] = "t.date_lim_reglement >= '".$db->idate($value)."'";
+		} elseif ($key == 't.date_lim_reglement<=') {
+			$sqlwhere[] = "t.date_lim_reglement <= '".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -996,10 +997,10 @@ if (!empty($arrayfields['t.date_validated']['checked'])) {
 // Due date start and end
 if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_due_start, 'search_date_due_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_due_end, 'search_date_due_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';

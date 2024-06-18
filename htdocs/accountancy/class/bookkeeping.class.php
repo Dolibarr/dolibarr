@@ -939,8 +939,10 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
-				} elseif ($key == 't.date_lim_reglement>=' || $key == 't.date_lim_reglement<=') {
-					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
+				} elseif ($key == 't.date_lim_reglement>=') {
+					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_lim_reglement<=') {
+					$sqlwhere[] = 't.date_lim_reglement<=\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
@@ -1794,8 +1796,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
-		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
-		$sql .= ", date_lim_reglement";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
 			$sql .= ", date_export";
