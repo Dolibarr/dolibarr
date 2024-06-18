@@ -555,7 +555,7 @@ if (empty($reshook)) {
 
 			$objecttmp->note_public .= $cmd->ref . ' (' . dol_print_date($cmd->date_commande, 'day') . ')<br>';
 			$objecttmp->update($user);
-			
+
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
 
 			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
