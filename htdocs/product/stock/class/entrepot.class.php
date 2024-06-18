@@ -910,8 +910,6 @@ class Entrepot extends CommonObject
 	public function get_full_arbo()
 	{
 		// phpcs:enable
-		global $user, $langs, $conf;
-
 		$TArbo = array($this->label);
 
 		$protection = 100; // We limit depth of warehouses to 100
@@ -921,7 +919,9 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = "SELECT fk_parent FROM ".$this->db->prefix()."entrepot WHERE rowid = ".((int) $parentid);
+			$sql = "SELECT fk_parent FROM ".$this->db->prefix()."entrepot";
+			$sql .= " WHERE rowid = ".((int) $parentid);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);

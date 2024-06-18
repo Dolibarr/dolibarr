@@ -230,6 +230,7 @@ AmountOfBillsByMonthHT=Amount of invoices by month (net of tax)
 UseSituationInvoices=Allow situation invoice
 UseSituationInvoicesCreditNote=Allow situation invoice credit note
 Retainedwarranty=Retained warranty
+RetainedWarrantyShort=Ret. warranty
 AllowedInvoiceForRetainedWarranty=Retained warranty usable on the following types of invoices
 RetainedwarrantyDefaultPercent=Retained warranty default percent
 RetainedwarrantyOnlyForSituation=Make "retained warranty" available only for situation invoices
