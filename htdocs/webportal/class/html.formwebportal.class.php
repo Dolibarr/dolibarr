@@ -340,6 +340,29 @@ class FormWebPortal extends Form
 	}
 
 	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = ''){
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if(!empty($url)){
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= "Signer";
+			$out .= '</a>';
+		}
+		return $out;
+	}
+
+	/**
 	 * Generic method to select a component from a combo list.
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
