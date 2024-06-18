@@ -269,6 +269,7 @@ if (isModEnabled('accounting') && !empty($line->fk_accounting_account) && $line-
 }
 
 print '</td>';
+
 // Vendor price ref
 if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
