@@ -1932,7 +1932,7 @@ class BookKeeping extends CommonObject
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
-		$sql .= ", date_lim_reglement";
+		//$sql .= ", date_lim_reglement";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
 			$sql .= ", date_export";
@@ -1974,7 +1974,7 @@ class BookKeeping extends CommonObject
 					$line->date_export = $obj->date_export;
 				}
 				$line->date_validation = $obj->date_validation;
-				$this->date_lim_reglement = $obj->date_lim_reglement;
+				//$this->date_lim_reglement = $obj->date_lim_reglement;
 
 				$this->linesmvt[] = $line;
 			}
