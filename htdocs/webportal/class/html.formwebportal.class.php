@@ -349,11 +349,12 @@ class FormWebPortal extends Form
 	 * @param string $morecss Add more css to the download picto
 	 * @return    string                Output string with HTML link of signature (might be empty string).
 	 */
-	public function getSignatureLink($modulepart, $object, $morecss = ''){
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
 		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
-		if(!empty($url)){
+		if (!empty($url)) {
 			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
 			$out .= '<i class="fa fa-file-signature"></i>';
 			$out .= "Signer";
