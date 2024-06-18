@@ -15,7 +15,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
@@ -3559,7 +3559,14 @@ class Facture extends CommonInvoice
 					$final = true;
 					$nboflines = count($this->lines);
 					while (($i < $nboflines) && $final) {
-						$final = ($this->lines[$i]->situation_percent == 100);
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+							$previousprogress = $this->lines[$i]->get_allprev_progress($this->lines[$i]->fk_facture);
+							$current_progress = floatval($this->lines[$i]->situation_percent);
+							$full_progress = $previousprogress + $current_progress;
+							$final = ($full_progress == 100);
+						} else {
+							$final = ($this->lines[$i]->situation_percent == 100);
+						}
 						$i++;
 					}
 
@@ -4321,8 +4328,15 @@ class Facture extends CommonInvoice
 		if ($percent > 100) {
 			$percent = 100;
 		}
-		$line->situation_percent = $percent;
-		$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $percent);
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$current_progress = $percent - $previous_progress;
+			$line->situation_percent = $current_progress;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $current_progress);
+		} else {
+			$line->situation_percent = $percent;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $percent);
+		}
 		$line->total_ht = $tabprice[0];
 		$line->total_tva = $tabprice[1];
 		$line->total_ttc = $tabprice[2];
@@ -6756,7 +6770,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($resql && $this->db->num_rows($resql) > 0) {
 				$returnPercent = 0;
 
-				$obj = $this->db->fetch_ojbect($resql);
+				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$returnPercent = (float) $obj->situation_percent;
 				}
