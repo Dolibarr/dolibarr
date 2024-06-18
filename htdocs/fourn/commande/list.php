@@ -428,10 +428,10 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
-				if(empty($objecttmp->note_public)){
+				if (empty($objecttmp->note_public)) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
-				
+
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 				$sql .= "fk_source";
 				$sql .= ", sourcetype";
