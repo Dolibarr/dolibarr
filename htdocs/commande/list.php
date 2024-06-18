@@ -557,7 +557,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')').(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')').' ');
+			$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
 			$objecttmp->update($user);
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
