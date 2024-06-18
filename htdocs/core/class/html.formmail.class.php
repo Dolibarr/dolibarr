@@ -1008,7 +1008,7 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 
 				$formmail = $this;
-				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor;
+				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
 				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
 				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
@@ -1525,10 +1525,12 @@ class FormMail extends Form
 		$templates = array(
 			'empty' => 'empty',
 			'basic' => 'basic',
-			'news'  => 'news',
-			'commerce' => 'commerce',
-			//'text' => 'text'
 		);
+		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
+			$templates['news'] = 'news';
+			$templates['commerce'] = 'commerce';
+			//$templates['text'] = 'text';
+		//}
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);

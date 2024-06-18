@@ -415,9 +415,9 @@ if (empty($reshook)) {
 					$sellbydate = str_replace('/', '-', $sellby);
 
 					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), GETPOSTINT($qty), $array_options[$i], GETPOSTINT($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOSTINT($batch), GETPOSTFLOAT($cost_price, 'MU'));
+						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch), GETPOSTFLOAT($cost_price, 'MU'));
 					} else {
-						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), GETPOSTINT($qty), $array_options[$i], GETPOSTINT($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOSTINT($batch));
+						$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOST($qty), 'MS'), $array_options[$i], GETPOST($comment), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch));
 					}
 					if ($ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -1007,7 +1007,7 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$paramSuffix.'month'), GETPOSTINT('dluo_'.$paramSuffix.'day'), GETPOSTINT('dluo_'.$paramSuffix.'year'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$paramSuffix.'month'), GETPOSTINT('dlc_'.$paramSuffix.'day'), GETPOSTINT('dlc_'.$paramSuffix.'year'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('paramSuffix' => $paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOSTINT($lot));
+					$dispatchLines[$numAsked] = array('paramSuffix' => $paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOST($lot));
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occurred

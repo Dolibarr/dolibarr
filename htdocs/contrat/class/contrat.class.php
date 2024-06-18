@@ -1195,7 +1195,8 @@ class Contrat extends CommonObject
 	 */
 	public function delete($user)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -1223,44 +1224,6 @@ class Contrat extends CommonObject
 			$res = $this->deleteObjectLinked();
 			if ($res < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// Delete contratdet_log
-			/*
-			$sql = "DELETE cdl";
-			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
-			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".((int) $this->id);
-			*/
-			$sql = "SELECT cdl.rowid as cdlrowid ";
-			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
-			$sql .= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".((int) $this->id);
-
-			dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->error();
-				$error++;
-			}
-			$numressql = $this->db->num_rows($resql);
-			if (!$error && $numressql) {
-				$tab_resql = array();
-				for ($i = 0; $i < $numressql; $i++) {
-					$objresql = $this->db->fetch_object($resql);
-					$tab_resql[] = $objresql->cdlrowid;
-				}
-				$this->db->free($resql);
-
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
-
-				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->error = $this->db->error();
-					$error++;
-				}
 			}
 		}
 

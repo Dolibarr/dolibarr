@@ -1145,7 +1145,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
-		print '<div class="underbanner clearboth"></div>';
+		//print '<div class="underbanner clearboth"></div>';
 
 		// View Original message
 		$actionobject->viewTicketOriginalMessage($user, $action, $object);

@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inoveasya.solutions>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -513,7 +513,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// others mass actions
+	// mass actions on lettering
 	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		if ($massaction == 'letteringauto') {
 			$lettering = new Lettering($db);
@@ -658,9 +658,9 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.date_export<=') {
 			$sqlwhere[] = "t.date_export <= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=') {
-			$sqlwhere[] = "t;date_validate >= '".$db->idate($value)."'";
+			$sqlwhere[] = "t.date_validated >= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated<=') {
-			$sqlwhere[] = "t;date_validate <= '".$db->idate($value)."'";
+			$sqlwhere[] = "t.date_validated <= '".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -734,7 +734,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 // Output page
 // --------------------------------------------------------------------
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
-llxHeader('', $title_page, $help_url);
+llxHeader('', $title_page, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-journal');
 
 $formconfirm = '';
 
@@ -1135,9 +1135,15 @@ while ($i < min($num, $limit)) {
 
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
-		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
-		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		if (empty($conf->cache['accountingjournal'][$line->code_journal])) {
+			$accountingjournal = new AccountingJournal($db);
+			$accountingjournal->fetch(0, $line->code_journal);
+			$conf->cache['accountingjournal'][$line->code_journal] = $accountingjournal;
+		} else {
+			$accountingjournal = $conf->cache['accountingjournal'][$line->code_journal];
+		}
+
+		$journaltoshow = (($accountingjournal->id > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1176,9 +1182,18 @@ while ($i < min($num, $limit)) {
 
 			$modulepart = 'invoice_supplier';
 			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+
+			//$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+			//$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+			$filedir = getMultidirOutput($objectstatic, '', 1).dol_sanitizeFileName($line->doc_ref);
+			$subdir = getMultidirOutput($objectstatic, '', 1, 'outputrel').dol_sanitizeFileName($line->doc_ref);
+			//var_dump($filedir); var_dump($subdir);
+
+			if ($objectstatic->id > 0) {
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			} else {
+				$documentlink = $line->doc_ref;
+			}
 		} elseif ($line->doc_type == 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
@@ -1201,6 +1216,7 @@ while ($i < min($num, $limit)) {
 
 		$labeltoshow = '';
 		$labeltoshowalt = '';
+		$classforlabel = '';
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
@@ -1214,9 +1230,10 @@ while ($i < min($num, $limit)) {
 		} else {
 			$labeltoshow .= $line->doc_ref;
 			$labeltoshowalt .= $line->doc_ref;
+			$classforlabel = 'tdoverflowmax250';
 		}
 
-		print '<td class="nowraponall tdoverflowmax250" title="'.dol_escape_htmltag($labeltoshowalt).'">';
+		print '<td class="nowraponall'.($classforlabel ? ' '.$classforlabel : '').'" title="'.dol_escape_htmltag($labeltoshowalt).'">';
 		print $labeltoshow;
 		print "</td>\n";
 		if (!$i) {

@@ -706,7 +706,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 1px solid #888;
 	margin: 0 0.45em !important;
 }
 
@@ -843,7 +843,7 @@ input:-webkit-autofill {
 }
 
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 3px;
+	margin: 0 3px 0 1px;
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -1933,8 +1933,12 @@ tr.nobottom td {
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
+
 .clearboth  { clear:both; }
+
 .hideobject { display: none; }
+.showonsmartphone { display: none; }
+
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
@@ -5149,7 +5153,7 @@ div.titre {
 table.centpercent.notopnoleftnoright.table-fiche-title {
 	margin-bottom: 10px !important;
 }
-table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
+table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
