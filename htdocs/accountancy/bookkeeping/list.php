@@ -690,9 +690,9 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.date_export<=') {
 			$sqlwhere[] = "t.date_export <= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=') {
-			$sqlwhere[] = "t;date_validate >= '".$db->idate($value)."'";
+			$sqlwhere[] = "t.date_validated >= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated<=') {
-			$sqlwhere[] = "t;date_validate <= '".$db->idate($value)."'";
+			$sqlwhere[] = "t.date_validated <= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_lim_reglement>=') {
 			$sqlwhere[] = "t.date_lim_reglement >= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_lim_reglement<=') {

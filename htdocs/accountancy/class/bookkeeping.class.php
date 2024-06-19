@@ -927,9 +927,9 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.date_export<=') {
 					$sqlwhere[] = 't.date_export <= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated>=') {
-					$sqlwhere[] = 't;date_validate >= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = 't.date_validated >= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated<=') {
-					$sqlwhere[] = 't;date_validate <= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = 't.date_validated <= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_lim_reglement>=') {
 					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_lim_reglement<=') {
