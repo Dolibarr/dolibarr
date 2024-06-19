@@ -405,6 +405,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #755114 !important;
 }
 
+/* Disable colors on left vmenu */
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* color: unset !important; */
+	color: var(--colortextbackvmenu) !important;
+}
+
 .infobox-adherent, .infobox-member {
 	color: #79633f;
 }

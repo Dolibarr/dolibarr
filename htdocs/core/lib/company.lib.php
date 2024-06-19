@@ -2339,7 +2339,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Linked object
-			$out .= '<td class="nowraponall">';
+			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
 					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];
