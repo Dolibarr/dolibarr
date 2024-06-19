@@ -543,7 +543,8 @@ class Product extends CommonObject
 	/**
 	 * If this Product is within a kit:
 	 * Quantity of this Product within this kit
-	 * @var $float
+	 * 
+	 * @var float
 	 * @see Product::is_sousproduit()		To set this property
 	 * @see Product::add_sousproduit()
 	 * @see Product::update_sousproduit()
@@ -554,6 +555,7 @@ class Product extends CommonObject
 	 * If this Product is within a kit:
 	 * 1 = modify the stock of this child Product upon modification of the stock of its parent Product
 	 * ("incdec" stands for increase/decrease)
+	 *
 	 * @var 0|1
 	 * @see Product::is_sousproduit()		To set this property
 	 * @see Product::add_sousproduit()
