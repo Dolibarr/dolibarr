@@ -605,6 +605,7 @@ if (!empty($force_install_noedit)) {
 </table>
 </div>
 
+
 <script type="text/javascript">
 function init_needroot()
 {
@@ -736,4 +737,5 @@ jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to 
 // $db->close();	Not database connection yet
 
 dolibarr_install_syslog("- fileconf: end");
+
 pFooter($err, $setuplang, 'jscheckparam');
