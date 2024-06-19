@@ -882,7 +882,12 @@ if ($action == 'create') {
 
 			$soc = $objectsrc->thirdparty;
 
-			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : GETPOST('ref_client', 'alpha'));
+			
+			if (!empty($conf->global->INTERVENTION_SET_CUSTOMER_PROPOSAL_REF_WITH_CUSTOMER_INTERVENTION_REF)) {
+			  $ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : GETPOST('ref_client', 'alpha'));
+			} else {
+		      $ref_client = GETPOST('ref_client', 'alpha');
+			}
 			$note_private = (!empty($objectsrc->note) ? $objectsrc->note : (!empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private', 'restricthtml')));
 			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public', 'restricthtml'));
 
