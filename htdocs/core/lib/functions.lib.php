@@ -11872,7 +11872,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
-	global $conf;
+	global $conf, $db, $hookmanager;
 
 	$regs = array();
 
