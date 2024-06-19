@@ -74,6 +74,7 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+	$langs->load("mrp");
 }
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -971,6 +972,7 @@ if (empty($reshook)) {
 								$clone->fk_default_bom = $bomclone->id;
 								$clone->update($id, $user);
 								$bomclone->fk_product = $id;
+								$bomclone->label = $langs->trans('BOMofRef', $clone->ref);
 								$bomclone->update($user);
 								$bomclone->validate($user);
 							}

@@ -16,6 +16,7 @@ ListOfManufacturingOrders=Ordres Fabrication
 NewBOM=Nouveau BOM
 ProductBOMHelp=Produit à créer (ou désassembler) avec cette nomenclature. <br> Remarque: les produits avec la propriété 'Nature de produit' = 'Matière première' ne sont pas visibles dans cette liste.
 CloneBomProduct=Cloner la nomenclature par défaut du produit
+BOMofRef=Nomenclature de %s
 ErrorProductCloneBom=Erreur : Impossible de cloner la nomenclature par défaut du produit
 BOMsNumberingModules=Modèles de numérotation de BOMs
 BOMsModelModule=Modèles de documents de BOMs
