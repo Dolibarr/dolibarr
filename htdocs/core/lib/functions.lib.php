@@ -12808,7 +12808,7 @@ function getElementProperties($elementType)
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
 {
-	global $db, $globalCacheForGetObjectFromCache;
+	global $db;
 
 	$ret = 0;
 
@@ -12897,7 +12897,7 @@ function newObjectByElement($element_type, &$errMsgCode = '')
  */
 function loadObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10, &$errMsgCode = '')
 {
-	global $db, $globalCacheForGetObjectFromCache;
+	global $db, $conf;
 
 	$ret = 0;
 
@@ -12915,11 +12915,11 @@ function loadObjectByElement($element_id, $element_type, $element_ref = '', $use
 	}
 
 	if ($useCache === 1
-		&& !empty($globalCacheForGetObjectFromCache[$element_type])
-		&& !empty($globalCacheForGetObjectFromCache[$element_type][$element_id])
-		&& is_object($globalCacheForGetObjectFromCache[$element_type][$element_id])
+		&& !empty($conf->cache['CacheForGetObjectFromCache'][$element_type])
+		&& !empty($conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id])
+		&& is_object($conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id])
 	) {
-		return $globalCacheForGetObjectFromCache[$element_type][$element_id];
+		return $conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id];
 	}
 
 	$ret = $objecttmp->fetch($element_id, $element_ref);
@@ -12934,16 +12934,16 @@ function loadObjectByElement($element_id, $element_type, $element_ref = '', $use
 	}
 
 	if ($useCache > 0) {
-		if (!isset($globalCacheForGetObjectFromCache[$element_type])) {
-			$globalCacheForGetObjectFromCache[$element_type] = [];
+		if (!isset($conf->cache['CacheForGetObjectFromCache'][$element_type])) {
+			$conf->cache['CacheForGetObjectFromCache'][$element_type] = [];
 		}
 
 		// Manage cache limit
-		if (! empty($globalCacheForGetObjectFromCache[$element_type]) && is_array($globalCacheForGetObjectFromCache[$element_type]) && count($globalCacheForGetObjectFromCache[$element_type]) >= $maxCacheByType) {
-			array_shift($globalCacheForGetObjectFromCache[$element_type]);
+		if (! empty($conf->cache['CacheForGetObjectFromCache'][$element_type]) && is_array($conf->cache['CacheForGetObjectFromCache'][$element_type]) && count($conf->cache['CacheForGetObjectFromCache'][$element_type]) >= $maxCacheByType) {
+			array_shift($conf->cache['CacheForGetObjectFromCache'][$element_type]);
 		}
 
-		$globalCacheForGetObjectFromCache[$element_type][$element_id] = $objecttmp;
+		$conf->cache['CacheForGetObjectFromCache'][$element_type][$element_id] = $objecttmp;
 	}
 
 	return $objecttmp;
