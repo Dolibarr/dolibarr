@@ -852,8 +852,8 @@ if ($action == 'create') {
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
+	$formmail->withaiprompt = 'html';
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
 
@@ -976,7 +976,7 @@ if ($action == 'create') {
 
 					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
-						$text .= $langs->trans("MailingNeedCommand");
+						$text .= '<u>'.$langs->trans("AdvancedAlternative").':</u> '.$langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
 					}
 
@@ -1164,7 +1164,7 @@ if ($action == 'create') {
 
 				if (($object->status == 0 || $object->status == 1 || $object->status == 2) && $user->hasRight('mailing', 'creer')) {
 					if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && $object->messtype != 'sms') {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditHTML").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edittxt&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
 					}
