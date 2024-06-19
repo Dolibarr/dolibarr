@@ -3832,7 +3832,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 	Previous situation line id reference
 	 */
 	public $fk_prev_id;
 
