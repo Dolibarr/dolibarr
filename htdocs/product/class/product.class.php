@@ -543,7 +543,7 @@ class Product extends CommonObject
 	/**
 	 * If this Product is within a kit:
 	 * Quantity of this Product within this kit
-	 * 
+	 *
 	 * @var float
 	 * @see Product::is_sousproduit()		To set this property
 	 * @see Product::add_sousproduit()
