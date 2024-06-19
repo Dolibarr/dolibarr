@@ -3561,7 +3561,7 @@ class Facture extends CommonInvoice
 					while (($i < $nboflines) && $final) {
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 							$previousprogress = $this->lines[$i]->get_allprev_progress($this->lines[$i]->fk_facture);
-							$current_progress = floatval($this->lines[$i]->situation_percent);
+							$current_progress = intval($this->lines[$i]->situation_percent);
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
 						} else {
