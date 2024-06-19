@@ -3827,12 +3827,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int 	Situation progress percentage
+	 * @var float 	Situation progress percentage
 	 */
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 	Previous situation line id reference
 	 */
 	public $fk_prev_id;
 

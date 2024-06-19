@@ -1971,9 +1971,13 @@ class Mo extends CommonObject
 		}
 		if (!empty($arraydata['product'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			if (property_exists($this, 'qty')) {
+				$return .= ' <span class="info-box-label">('.$langs->trans("Qty").' '.$this->qty.')</span>';
+			}
+		} else {
+			if (property_exists($this, 'qty')) {
+				$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

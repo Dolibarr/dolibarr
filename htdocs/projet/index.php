@@ -309,6 +309,11 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
+if (empty($sortfield)) {
+	$sortfield = 'nb';
+	$sortorder = 'desc';
+}
+
 // List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";

@@ -105,15 +105,13 @@ print '<br>';
 
 print '<section class="setupsection">';
 
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('export', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('import', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
 }
 
 // Show info setup module

@@ -96,6 +96,8 @@ if (@file_exists($forcedfile)) {
 		if (!empty($argv[4])) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
+		// In mode 3 the main_url is custom
+		if ($force_install_noedit != 3)
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
@@ -114,7 +116,7 @@ if (@file_exists($forcedfile)) {
 			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
-	if ($force_install_noedit == 2) {
+	if (($force_install_noedit == 2) || ($force_install_noedit == 3)) {
 		if (!empty($force_install_type)) {
 			$db_type = $force_install_type;
 		}
@@ -872,7 +874,6 @@ function write_conf_file($conffile)
 		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
 		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
 		fwrite($fp, '//'."\n");
-
 		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
 		fwrite($fp, "\n");
 
