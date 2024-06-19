@@ -1689,6 +1689,9 @@ if ($resql) {
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
 				}
+				if ($links[$key]['type'] == 'payment_expensereport') {
+					$type_link = 'payment_expensereport';
+				}
 
 				if ($links[$key]['type'] == 'company') {
 					$companylinked_id = $links[$key]['url_id'];
@@ -1704,7 +1707,8 @@ if ($resql) {
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && $user->hasRight('salaries', 'read'))
-						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire')))) {
+						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire'))
+						|| ($type_link == 'payment_expensereport' && $user->hasRight('expensereport', 'lire')))) {
 				// Get object user from cache or load it
 				if (!empty($conf->cache['user'][$userlinked_id])) {
 					$tmpuser = $conf->cache['user'][$userlinked_id];
