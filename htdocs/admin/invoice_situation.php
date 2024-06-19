@@ -72,7 +72,7 @@ $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 
 //$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY')
 //	->setAsYesNo()
-//	->nameText = $langs->trans('Retainedwarranty');
+//	->nameText = $langs->trans('RetainedWarranty');
 
 
 $item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
