@@ -115,7 +115,7 @@ if ($id > 0 || !empty($ref)) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl, '', '', 0, 0, '', '', '', 'mod-product page-stats_facturerec');
+	llxHeader('', $title, $helpurl, '', '', 0, 0, '', '', 'mod-product page-stats_facturerec');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);

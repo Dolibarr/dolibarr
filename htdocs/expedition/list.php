@@ -128,7 +128,7 @@ $arrayfields = array(
 	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 2),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 3),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1, 'position' => 4),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1, 'position' => 5),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => -1, 'position' => 5),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0, 'position' => 6),
 	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0, 'position' => 7),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers, 'position' => 8),
