@@ -3560,7 +3560,7 @@ class Facture extends CommonInvoice
 					$nboflines = count($this->lines);
 					while (($i < $nboflines) && $final) {
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$previousprogress = $this->lines[$i]->get_allprev_progress($this->lines[$i]->fk_facture);
+							$previousprogress = $this->lines[$i]->getAllPrevProgress($this->lines[$i]->fk_facture);
 							$current_progress = floatval($this->lines[$i]->situation_percent);
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
@@ -4329,7 +4329,7 @@ class Facture extends CommonInvoice
 			$percent = 100;
 		}
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $current_progress);
@@ -6742,8 +6742,8 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
-	 * @see get_allprev_progress()
+	 * @return float|int                     	Return previous situation percent, 0 or -1 if error
+	 * @see getAllPrevProgress()
 	 **/
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
@@ -6802,19 +6802,17 @@ class FactureLigne extends CommonInvoiceLine
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
-	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @param  int     $invoiceid           Invoice id
+	 * @param  bool    $include_credit_note	Include credit note or not
+	 * @return float                        >= 0
 	 * @see get_prev_progress()
 	 */
-	public function get_allprev_progress($invoiceid, $include_credit_note = true)
+	public function getAllPrevProgress($invoiceid, $include_credit_note = true)
 	{
-		// phpcs:enable
 		global $invoicecache;
 
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
@@ -6831,7 +6829,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			$all_found = false;
 			$lastprevid = $this->fk_prev_id;
-			$cumulated_percent = 0;
+			$cumulated_percent = 0.0;
 
 			while (!$all_found) {
 				$sql = "SELECT situation_percent, fk_prev_id FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $lastprevid);
