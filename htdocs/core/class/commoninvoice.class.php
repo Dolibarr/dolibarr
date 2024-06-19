@@ -231,7 +231,7 @@ abstract class CommonInvoice extends CommonObject
 		$alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
 		$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
-		if ($this->statut == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+		if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 			$remaintopay = 0.0;
 		}
 		return $remaintopay;
@@ -560,7 +560,7 @@ abstract class CommonInvoice extends CommonObject
 		// We check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
 
-		if ($this->statut == self::STATUS_DRAFT && $tmppart === 'PROV') { // If draft invoice and ref not yet defined
+		if ($this->status == self::STATUS_DRAFT && $tmppart === 'PROV') { // If draft invoice and ref not yet defined
 			return 1;
 		}
 
@@ -779,7 +779,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
