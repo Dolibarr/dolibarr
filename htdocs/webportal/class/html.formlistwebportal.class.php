@@ -201,7 +201,7 @@ class FormListWebPortal
 			$arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10000, 'help' => '',);
 		}
 		$arrayfields['download_link'] = array('label' => 'File', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10001, 'help' => '',);
-		if ($elementEn == "propal") {
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
 		}
 
@@ -518,7 +518,7 @@ class FormListWebPortal
 		}
 		$html .= '</tr>';
 		// Signature link
-		if ($elementEn == "propal") {
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			if (!empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
 				$html .= '</td>';
@@ -567,7 +567,7 @@ class FormListWebPortal
 			$totalarray['nbfield']++;
 		}
 		// Signature link
-		if ($elementEn == "propal") {
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			if (!empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<th scope="col">';
 				$html .= $langs->trans($arrayfields['signature_link']['label']);
@@ -699,7 +699,7 @@ class FormListWebPortal
 				}
 			}
 			// Signature link
-			if ($elementEn == "propal") {
+			if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 				if (!empty($arrayfields['signature_link']['checked'])) {
 					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
 					if ($object->fk_statut == Propal::STATUS_VALIDATED) {
