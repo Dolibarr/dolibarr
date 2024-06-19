@@ -2317,6 +2317,13 @@ td.showDragHandle {
 	vertical-align: top;
 }
 #id-top {
+<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
+	display:none;
+<?php } else { ?>
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	border-bottom: 1px solid rgba(0,0,0,0.2);	/* must be same than border-right of .side-nav */
+	<?php } ?>
+<?php } ?>
 }
 #id-left {
 	min-height: 100%;
@@ -2869,6 +2876,9 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li#mainmenutd_home {
+	margin-left: 5px;
+}
 li.tmenusel::after, li.tmenusel:hover::after {
 	content: "";
 	position: absolute;
@@ -3025,6 +3035,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
+	opacity: 0.9;
 }
 
 div.mainmenu {
@@ -3039,7 +3050,6 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 	outline: none;
 }
 
-
 div.mainmenu.home{
 	background-position-x: center;
 }
@@ -3049,6 +3059,58 @@ div.mainmenu.menu {
 	left: 1px;
 }
 
+
+/* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
+
+/* Text hidden by default */
+<?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
+.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
+	 display: none;
+	 /* opacity: 0; To show text after transition */
+}
+a.tmenuimage:not(.menuhider), a.tmenuimage:not(.menuhider)::before,
+div.tmenuimage:not(.menuhider), div.tmenuimage:not(.menuhider)::before,
+span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
+	font-size: 1.3em;
+	margin-top: 8px !important;
+}
+<?php } ?>
+
+/* Test of picto visible on hover, for all picto */
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
+.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
+	opacity: 1;
+	display: initial !important;
+	line-height: 0.6em !important;
+	height: 1em !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: var(--colortextbackhmenu);
+	top: 0px;
+}
+.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
+	margin-top: 0px !important;
+}
+<?php } ?>
+
+/* Text of picto visible on hover, for the picto only */
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
+li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider)::before {
+	display: initial !important;
+}
+li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menuhider):before {
+	font-size: 1.1em !important;
+	margin-top: 0px !important;
+}
+<?php } ?>
 
 
 /* Do not load menu img if hidden to save bandwidth */
@@ -3314,7 +3376,7 @@ div.login_block {
 	top: -1000px;
 }
 div.login_block a {
-	color: var(--colortexthmenu);
+	color: var(--colortextbackvmenu);
 	display: inline-block;
 }
 div.login_block a .atoploginusername {
@@ -3325,7 +3387,7 @@ div.login_block a .atoploginusername {
 	text-overflow: ellipsis;
 }
 div.login_block span.aversion {
-	color: var(--colortexthmenu);
+	color: var(--colortextbackvmenu);
 	filter: contrast(0.7);
 }
 div.login_block table {
@@ -3384,7 +3446,7 @@ a.aversion {
 }
 
 .atoplogin, .atoplogin:hover {
-	color: var(--colortexthmenu) !important;
+	color: var(--colortextbackvmenu) !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -6455,6 +6517,9 @@ input.select2-input {
 {
 	background-color: unset;
 }
+#blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: var(--colortextbackvmenu);
+}
 .select2-container--default .select2-selection--single .select2-selection__rendered {
 	color: unset;
 }
@@ -7912,6 +7977,7 @@ table.jPicker {
 {
 	div.tmenucenter {
 		max-width: 56px;	/* size of viewport */
+		width: 52px;
 		white-space: nowrap;
 		  overflow: hidden;
 		  text-overflow: ellipsis;
