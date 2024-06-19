@@ -6100,14 +6100,15 @@ class FactureLigne extends CommonInvoiceLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int Situation advance percentage
+	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 		Previous situation line id reference
 	 */
 	public $fk_prev_id;
+
 
 	/**
 	 *      Constructor
@@ -6742,7 +6743,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
+	 * @return float|int                     	Return previous situation percent, 0 or -1 if error
 	 * @see get_allprev_progress()
 	 **/
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
@@ -6809,7 +6810,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @return float                   >= 0
 	 * @see get_prev_progress()
 	 */
 	public function get_allprev_progress($invoiceid, $include_credit_note = true)
@@ -6831,7 +6832,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			$all_found = false;
 			$lastprevid = $this->fk_prev_id;
-			$cumulated_percent = 0;
+			$cumulated_percent = 0.0;
 
 			while (!$all_found) {
 				$sql = "SELECT situation_percent, fk_prev_id FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $lastprevid);
