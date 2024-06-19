@@ -15,19 +15,25 @@
 --
 
 --
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
+-- Do not place a comment at the end of the line, this file is parsed when
+-- during installation and all '--' acronyms are removed.
 --
 
 --
--- Valeur des timbres fiscaux
--- Source des taux: ...
+-- Value of tax stamps
+-- Source of rates: ...
 --
 
 delete from llx_c_revenuestamp;
 
 -- TUNISIA (id country=10) --
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (101, 10, 0.4, 'fixed', 'Revenue stamp tunisia', 1);
+
+-- GREECE (id country=102) --
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1021, 102, 1.2, 'percent', 'Συντελεστής 1,2 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1022, 102, 2.4, 'percent', 'Συντελεστής 2,4 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1023, 102, 3.6, 'percent', 'Συντελεστής 3,6 %', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
 
 
 -- MEXICO (id country=154) --
