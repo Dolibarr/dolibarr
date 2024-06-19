@@ -6100,7 +6100,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int Situation advance percentage
+	 * @var float Situation advance percentage
 	 */
 	public $situation_percent;
 
