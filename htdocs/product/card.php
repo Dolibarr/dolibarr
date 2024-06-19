@@ -962,6 +962,19 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write') && GETPOST('clone_bom') && $object->fk_default_bom > 0) {
+							$bomstatic = new BOM($db);
+							$bomclone = $bomstatic->createFromClone($user, $object->fk_default_bom);
+							if ((int) $result < 0) {
+								setEventMessages($langs->trans('ErrorProductClone').' : '.$langs->trans('ErrorProductCloneBom'), null, 'warnings');
+							} else {
+								$clone->fk_default_bom = $bomclone->id;
+								$clone->update($id, $user);
+								$bomclone->fk_product = $id;
+								$bomclone->update($user);
+								$bomclone->validate($user);
+							}
+						}
 						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
@@ -2889,7 +2902,9 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
-
+	if (isModEnabled('bom') && $user->hasRight('bom', 'write') && $object->fk_default_bom > 0) {
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_bom', 'label' => $langs->trans("CloneBomProduct"), 'value' => 1);
+	}
 	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 

@@ -15,6 +15,8 @@ ListOfBOMs=Bills of material - BOM
 ListOfManufacturingOrders=Manufacturing Orders
 NewBOM=New bill of materials
 ProductBOMHelp=Product to create (or disassemble) with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
+CloneBomProduct=Clone product's default BOM
+ErrorProductCloneBom=Error : Impossible to clone product's default BOM
 BOMsNumberingModules=BOM numbering templates
 BOMsModelModule=BOM document templates
 MOsNumberingModules=MO numbering templates
