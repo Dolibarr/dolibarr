@@ -977,7 +977,7 @@ class ProductFournisseur extends Product
 						}
 					}
 
-					// VSPR let us recalculate the objects values. Based on the Extra Discounts Addon
+					// VSPR - let us recalculate the objects values. Based on the Extra Discounts Addon
 					global $action;
 					$parameters = array('id'=>$record["product_fourn_price_id"], 'getminprice' => &$result);
 					$reshook = $hookmanager->executeHooks('getminpurchaseprice', $parameters, $this, $action);
