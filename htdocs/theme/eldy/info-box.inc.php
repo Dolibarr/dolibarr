@@ -406,8 +406,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 /* Disable colors on left vmenu */
-a.vmenu span {
-	color: unset !important;
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* color: unset !important; */
+	color: var(--colortextbackvmenu) !important;
 }
 
 .infobox-adherent, .infobox-member {

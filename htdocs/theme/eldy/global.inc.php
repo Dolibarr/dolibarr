@@ -5009,6 +5009,7 @@ div.info {
 	margin: 1em 0em 1em 0em;
 	background: #eff8fc;
 	color: #558;
+	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5020,6 +5021,7 @@ div.warning {
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
 	background: #fcf8e3;
+	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: var(--colortextlink);
@@ -5033,7 +5035,8 @@ div.error {
 	padding-right: 4px;
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
-  background: #EFCFCF;
+	background: #EFCFCF;
+	border-radius: 3px;
 }
 
 
