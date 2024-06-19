@@ -3561,7 +3561,7 @@ class Facture extends CommonInvoice
 					while (($i < $nboflines) && $final) {
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 							$previousprogress = $this->lines[$i]->get_allprev_progress($this->lines[$i]->fk_facture);
-							$current_progress = intval($this->lines[$i]->situation_percent);
+							$current_progress = floatval($this->lines[$i]->situation_percent);
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
 						} else {
@@ -6809,7 +6809,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 * @param  int     $invoiceid      Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return int                     >= 0
+	 * @return float                   >= 0
 	 * @see get_prev_progress()
 	 */
 	public function get_allprev_progress($invoiceid, $include_credit_note = true)
