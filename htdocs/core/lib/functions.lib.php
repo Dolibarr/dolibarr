@@ -12136,8 +12136,7 @@ function getElementProperties($element_type)
 	}
 	$dir_output .= $subdir;
 
-	$parameters = array(
-		'element_type' => $element_type,
+	$elementProperties = array(
 		'module' => $module,
 		'element' => $element,
 		'table_element' => $table_element,
@@ -12148,27 +12147,35 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	$element_properties = array(
-		'module' => $module,
-		'element' => $element,
-		'table_element' => $table_element,
-		'subelement' => $subelement,
-		'classpath' => $classpath,
-		'classfile' => $classfile,
-		'classname' => $classname,
-		'dir_output' => $dir_output
+
+	// Add  hook
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	$hookmanager->initHooks(array('elementproperties'));
+
+
+	// Hook params
+	$parameters = array(
+		'elementType' => $element_type,
+		'elementProperties' => $elementProperties
 	);
 
 	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
-	if ($reshook < 0) {
-		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	} elseif ($reshook > 0) {
-		$element_properties = $hookmanager->resArray;
-	} elseif ($reshook == 0) {
-		$element_properties = array_merge($element_properties, $hookmanager->resArray);
+
+	if ($reshook) {
+		$elementProperties = $hookmanager->resArray;
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
 	}
 
-	return $element_properties;
+	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties context is equal to all
+	if (($key = array_search('elementproperties', $hookmanager->contextarray)) !== false) {
+		unset($hookmanager->contextarray[$key]);
+	}
+
+	return $elementProperties;
 }
 
 /**
