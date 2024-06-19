@@ -698,7 +698,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 // Message header
-//$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
@@ -711,7 +710,6 @@ print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp
 print '</td></tr>';
 
 // Message footer
-//$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailFooterText'));
 $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';
