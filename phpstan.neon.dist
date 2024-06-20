@@ -28,7 +28,7 @@ parameters:
 	checkAlwaysTrueCheckTypeFunctionCall: false
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
-	checkClassCaseSensitivity: false
+	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: false
 	checkFunctionNameCase: true
 	checkArgumentsPassedByReference: false
@@ -36,7 +36,7 @@ parameters:
 	checkNullables: false
 	checkThisOnly: true
 	checkUnionTypes: false
-	checkExplicitMixedMissingReturn: false
+	checkExplicitMixedMissingReturn: true
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false

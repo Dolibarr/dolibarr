@@ -84,7 +84,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'text' => $langs->trans("NumberOfLinesInSuspenseAccount").':'
+					'text' => $langs->trans("NumberOfLinesInSuspenseAccount")
 				);
 
 				$this->info_box_contents[0][1] = array(

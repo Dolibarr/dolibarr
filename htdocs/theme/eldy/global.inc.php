@@ -322,7 +322,7 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 3px;
+	margin: 0 3px 0 1px;
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -506,7 +506,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg) !important;
+	border: 1px solid #888 !important;
 	margin: 0 0.45em !important;
 }
 
@@ -1773,6 +1773,7 @@ maxscreenheightless200 {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
+.showonsmartphone { display: none; }
 .minwidth25 { min-width: 25px; }
 .minwidth50 { min-width: 50px; }
 .minwidth75 { min-width: 75px; }
@@ -1977,9 +1978,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	.box-flex-item {
-		margin: 3px 2px 3px 2px !important;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ((int) $fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -2721,7 +2719,9 @@ img.photorefnoborder {
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
 	/* background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1)); */
-	/* box-shadow: 0px 0px 5px #eee; */
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	box-shadow: 0px 0px 4px #ddd;
+	<?php } ?>
 <?php } ?>
 }
 
@@ -2763,7 +2763,6 @@ div.tmenudiv {
 	margin: 0px 0px 0px 0px;	/* t r b l */
 	font-size: 13px;
 	font-weight: normal;
-	color: #000000;
 	text-decoration: none;
 <?php } ?>
 }
@@ -2816,6 +2815,9 @@ ul.tmenu {	/* t r b l */
 }
 ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
 }
+li#mainmenutd_home {
+	margin-left: 5px;
+}
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu ? 'min-width: '.$minwidthtmenu.'px;' : ''; ?>
 	text-align: center;
@@ -2865,6 +2867,7 @@ div.tmenucenter
 {
 	padding-left: 2px;
 	padding-right: 2px;
+	color: var(--colortextbackhmenu);
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -2891,6 +2894,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
+	opacity: 0.8;
 }
 
 div.mainmenu {
@@ -2929,8 +2933,9 @@ a.tmenuimage:hover{
 }
 
 
-/* To show text of top menu on hover only (THEME_TOPMENU_DISABLE_IMAGE == 2) */
+/* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
+/* Text hidden by default */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
 	 display: none;
@@ -2943,7 +2948,14 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	margin-top: 8px !important;
 }
 
+div.tmenucenter {	/* we must have a field length of top menu to avoid size to change when in mode text on hover */
+	width: 80px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 <?php } ?>
+
+/* Test of picto visible on hover, for all picto */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
 .tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
 	display: block;
@@ -2961,14 +2973,14 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	color: var(--colortextbackhmenu);
 	top: 0px;
 }
-
 .tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
 	/* For transition transition-delay: 1000ms;
 	transition-property: all; */
 	margin-top: 0px !important;
 }
-
 <?php } ?>
+
+/* Text of picto visible on hover the picto only */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
 li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: initial !important;
@@ -4610,6 +4622,9 @@ table.tableforservicepart1 tr td {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
+.bordertopimp {
+	border-top: 1px solid var(--colortopbordertitle1) !important;
+}
 table.noborder.paymenttable {
 	border-bottom: none !important;
 }
@@ -4994,6 +5009,7 @@ div.info {
 	margin: 1em 0em 1em 0em;
 	background: #eff8fc;
 	color: #558;
+	border-radius: 3px;
 }
 
 /* Warning message */
@@ -5005,6 +5021,7 @@ div.warning {
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
 	background: #fcf8e3;
+	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: var(--colortextlink);
@@ -5018,7 +5035,8 @@ div.error {
 	padding-right: 4px;
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
-  background: #EFCFCF;
+	background: #EFCFCF;
+	border-radius: 3px;
 }
 
 
@@ -5159,7 +5177,7 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
+table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {

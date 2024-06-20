@@ -15,7 +15,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
@@ -1923,12 +1923,12 @@ class Facture extends CommonInvoice
 			$datas['picto'] .= '&nbsp;'.$this->getLibType(1);
 
 			// Complete datas
-			if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-				// Load the alreadypaid field
-				$this->alreadypaid = $this->getSommePaiement(0);
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+				// Load the totalpaid field
+				$this->totalpaid = $this->getSommePaiement(0);
 			}
-			if (isset($this->status) && isset($this->alreadypaid)) {
-				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+			if (isset($this->status) && isset($this->totalpaid)) {
+				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 			}
 			if ($moretitle) {
 				$datas['picto'] .= ' - '.$moretitle;
@@ -3559,7 +3559,14 @@ class Facture extends CommonInvoice
 					$final = true;
 					$nboflines = count($this->lines);
 					while (($i < $nboflines) && $final) {
-						$final = ($this->lines[$i]->situation_percent == 100);
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+							$previousprogress = $this->lines[$i]->get_allprev_progress($this->lines[$i]->fk_facture);
+							$current_progress = floatval($this->lines[$i]->situation_percent);
+							$full_progress = $previousprogress + $current_progress;
+							$final = ($full_progress == 100);
+						} else {
+							$final = ($this->lines[$i]->situation_percent == 100);
+						}
 						$i++;
 					}
 
@@ -4321,8 +4328,15 @@ class Facture extends CommonInvoice
 		if ($percent > 100) {
 			$percent = 100;
 		}
-		$line->situation_percent = $percent;
-		$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $percent);
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$current_progress = $percent - $previous_progress;
+			$line->situation_percent = $current_progress;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $current_progress);
+		} else {
+			$line->situation_percent = $percent;
+			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $percent);
+		}
 		$line->total_ht = $tabprice[0];
 		$line->total_tva = $tabprice[1];
 		$line->total_ttc = $tabprice[2];
@@ -6086,14 +6100,15 @@ class FactureLigne extends CommonInvoiceLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int Situation advance percentage
+	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 		Previous situation line id reference
 	 */
 	public $fk_prev_id;
+
 
 	/**
 	 *      Constructor
@@ -6723,13 +6738,14 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of the previous line.
+	 * Returns situation_percent of the previous line. Used when INVOICE_USE_SITUATION = 1.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return float|int                     	Reurrn previous situation percent, 0 or -1 if error
-	 */
+	 * @return float|int                     	Return previous situation percent, 0 or -1 if error
+	 * @see get_allprev_progress()
+	 **/
 	public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
 		// phpcs:enable
@@ -6755,7 +6771,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($resql && $this->db->num_rows($resql) > 0) {
 				$returnPercent = 0;
 
-				$obj = $this->db->fetch_ojbect($resql);
+				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$returnPercent = (float) $obj->situation_percent;
 				}
@@ -6784,6 +6800,79 @@ class FactureLigne extends CommonInvoiceLine
 				$this->db->rollback();
 				return -1;
 			}
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
+	 *
+	 * @param  int     $invoiceid      Invoice id
+	 * @param  bool    $include_credit_note		Include credit note or not
+	 * @return float                   >= 0
+	 * @see get_prev_progress()
+	 */
+	public function get_allprev_progress($invoiceid, $include_credit_note = true)
+	{
+		// phpcs:enable
+		global $invoicecache;
+
+		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
+			return 0;
+		} else {
+			// If invoice is not a situation invoice, this->fk_prev_id is used for something else
+			if (!isset($invoicecache[$invoiceid])) {
+				$invoicecache[$invoiceid] = new Facture($this->db);
+				$invoicecache[$invoiceid]->fetch($invoiceid);
+			}
+			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+				return 0;
+			}
+
+			$all_found = false;
+			$lastprevid = $this->fk_prev_id;
+			$cumulated_percent = 0.0;
+
+			while (!$all_found) {
+				$sql = "SELECT situation_percent, fk_prev_id FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $lastprevid);
+				$resql = $this->db->query($sql);
+
+				if ($resql && $this->db->num_rows($resql) > 0) {
+					$obj = $this->db->fetch_object($resql);
+					$cumulated_percent += floatval($obj->situation_percent);
+
+					if ($include_credit_note) {
+						$sql_credit_note = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
+						$sql_credit_note .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
+						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
+						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
+						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+
+						$res_credit_note = $this->db->query($sql_credit_note);
+						if ($res_credit_note) {
+							while ($cn = $this->db->fetch_object($res_credit_note)) {
+								$cumulated_percent = $cumulated_percent + floatval($cn->situation_percent);
+							}
+						} else {
+							dol_print_error($this->db);
+						}
+					}
+
+					// Si fk_prev_id, on continue
+					if ($obj->fk_prev_id) {
+						$lastprevid = $obj->fk_prev_id;
+					} else { // Sinon on stoppe la boucle
+						$all_found = true;
+					}
+				} else {
+					$this->error = $this->db->error();
+					dol_syslog(get_class($this)."::select Error ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			return $cumulated_percent;
 		}
 	}
 }

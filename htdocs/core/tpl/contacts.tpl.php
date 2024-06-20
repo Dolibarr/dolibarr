@@ -141,7 +141,7 @@ if ($permission) {
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth400'); ?></div>
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
@@ -186,7 +186,7 @@ if ($permission) {
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth400'); ?>
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
