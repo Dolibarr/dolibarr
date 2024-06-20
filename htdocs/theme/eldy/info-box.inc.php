@@ -557,6 +557,18 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	line-height: 1.4em;
 }
 
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
+
 .info-box-title {
 	width: calc(100% - 20px);
 }
