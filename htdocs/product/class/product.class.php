@@ -3482,7 +3482,7 @@ class Product extends CommonObject
 		$sql .= " WHERE m.rowid = mp.fk_mo";
 		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'mrp').")";
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
-		$sql .= " AND mp.disable_stock_change IN (0)";
+		$sql .= " AND (mp.disable_stock_change IN (0) OR mp.disable_stock_change IS NULL)";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
