@@ -1042,7 +1042,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$error = 0;
-		$originentity = GETPOST('originentity');
+		$originentity = GETPOSTINT('originentity');
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -1967,7 +1967,7 @@ if (empty($reshook)) {
 						if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 							$retained_warranty = GETPOSTINT('retained_warranty');
 							if (price2num($retained_warranty) > 0) {
-								$object->retained_warranty = price2num($retained_warranty);
+								$object->retained_warranty = (float) price2num($retained_warranty);
 							}
 
 							if (GETPOSTINT('retained_warranty_fk_cond_reglement') > 0) {
@@ -3447,7 +3447,7 @@ if ($action == 'create') {
 	print '<input name="force_fk_account" type="hidden" value="0">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
-	print '<input type="hidden" name="originentity" value="'.GETPOST('originentity').'">';
+	print '<input type="hidden" name="originentity" value="'.GETPOSTINT('originentity').'">';
 	if (!empty($currency_tx)) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
