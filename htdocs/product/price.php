@@ -77,7 +77,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Clean param
 if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
-	getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT') = 5;
+	$conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
