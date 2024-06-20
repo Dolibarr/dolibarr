@@ -609,6 +609,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	line-height: 1.4em;
 }
 
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
+
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
