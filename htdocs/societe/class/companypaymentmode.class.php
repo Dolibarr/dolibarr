@@ -301,6 +301,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
+		$this->date_modification = $this->tmps;
 
 		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;

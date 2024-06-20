@@ -420,13 +420,13 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
 if (!empty($object->ext_payment_id)) {
 	// External payment ID
-	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
 		if (!empty($tmp1[1])) {
@@ -529,7 +529,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Invoice
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
 
