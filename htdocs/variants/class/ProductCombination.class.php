@@ -204,7 +204,8 @@ class ProductCombination
 			if ($fk_price_level > 0) {
 				$combination_price_levels[$fk_price_level] = ProductCombinationLevel::createFromParent($this->db, $this, $fk_price_level);
 			} else {
-				for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					$combination_price_levels[$i] = ProductCombinationLevel::createFromParent($this->db, $this, $i);
 				}
 			}
@@ -553,7 +554,8 @@ class ProductCombination
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
@@ -847,7 +849,8 @@ class ProductCombination
 
 				// Manage Price levels
 				if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-					for ($i = 2; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					for ($i = 2; $i <= $produit_multiprices_limit; $i++) {
 						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
@@ -875,7 +878,8 @@ class ProductCombination
 
 		// Init price level
 		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+			$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
