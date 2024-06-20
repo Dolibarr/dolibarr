@@ -3,7 +3,7 @@
 # See README.md to know how to create a Dolibarr env with docker
 
 usermod -u "${HOST_USER_ID}" www-data
-groupmod -g "${HOST_USER_ID}" www-data
+groupmod -g "${HOST_GROUP_ID}" www-data
 
 chgrp -hR www-data /var/www/html
 chmod g+rwx /var/www/html/conf
