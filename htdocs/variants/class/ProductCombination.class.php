@@ -748,8 +748,8 @@ class ProductCombination
 	 * @param Product                   $product                Parent Product
 	 * @param array<int,int>            $combinations           Attribute and value combinations.
 	 * @param array<int,array<int,array{weight:string|float,price:string|float}>> $variations 	Price and weight variations (example: $variations[fk_product_attribute][fk_product_attribute_value]['weight'])
-	 * @param bool                      $price_var_percent      Is the price variation value a relative variation (in %)?
-	 * @param false|float|float[]       $forced_pricevar        Value of the price variation if it is forced ; in currency or percent ; and an array if "PRODUIT_MULTIPRICES" is on.
+	 * @param bool|bool[]               $price_var_percent      Is the price variation value a relative variation (in %)? (it is an array if global constant "PRODUIT_MULTIPRICES" is on)
+	 * @param false|float|float[]       $forced_pricevar        Value of the price variation if it is forced ; in currency or percent. (it is an array if global constant "PRODUIT_MULTIPRICES" is on)
 	 * @param false|float               $forced_weightvar       Value of the weight variation if it is forced
 	 * @param false|string              $forced_refvar          Value of the reference if it is forced
 	 * @param string                    $ref_ext                External reference
