@@ -121,11 +121,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
 					// Activate the autocomplete to execute the GET
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
-    					source: function( request, response ) {
-    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
-								if (data != null)
-								{
-									response($.map( data, function(item) {
+						function(request, response) {
+							var maxResults = '.(getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') ? getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') : '10').'; // Dynamically set maxResults
+							$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
+								if (data != null) {
+									response($.map(data.slice(0, maxResults), function(item) {
 										if (autoselect == 1 && data.length == 1) {
 											$("#search_'.$htmlnamejquery.'").val(item.value);
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
