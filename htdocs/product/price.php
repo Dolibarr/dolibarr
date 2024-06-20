@@ -77,7 +77,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Clean param
 if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
-	$conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+	getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT') = 5;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -205,7 +205,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 					// Force the update of the price of the product using the new VAT
 					if ($object->multiprices_base_type[$i] == 'HT') {
 						$oldprice = $object->multiprices[$i];
@@ -298,7 +298,7 @@ if (empty($reshook)) {
 			//Shall we generate prices using price rules?
 			$object->price_autogen = (int) (GETPOST('usePriceRules') == 'on');
 
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+			for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 				if (!isset($newprice[$i])) {
 					continue;
 				}
@@ -1069,7 +1069,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		print '<td style="text-align: right">'.$langs->trans("MinPrice").'</td>';
 		print '</tr>';
 
-		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+		for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 			print '<tr class="oddeven">';
 
 			// Label of price
@@ -1086,7 +1086,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				print '</form>';
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
-				if (!empty($conf->global->$keyforlabel)) {
+				if (!empty(getDolGlobalString('$keyforlabel'))) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 			}
@@ -1119,7 +1119,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			// Price by quantity
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {      // TODO Fix the form included into a tr instead of a td
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
-				if (!empty($conf->global->$keyforlabel)) {
+				if (!empty(getDolGlobalString('$keyforlabel'))) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				print '</td><td colspan="2">';
@@ -1611,7 +1611,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		print '<tbody>';
 
-		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+		for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
