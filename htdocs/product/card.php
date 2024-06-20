@@ -982,7 +982,7 @@ if (empty($reshook)) {
 							}
 							if (GETPOST('clone_otherboms')) {
 								$bomstatic = new BOM($db);
-								$bomlist = $bomstatic->fetchAll("", "", 0, 0,'fk_product:=:'.(int) $object->id);
+								$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
 								if (is_array($bomlist)) {
 									foreach ($bomlist as $bom2clone) {
 										if ($bom2clone->id != $defbomidac) { // to avoid cloning same BOM twice
