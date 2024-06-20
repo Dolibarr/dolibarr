@@ -19,13 +19,14 @@
 
 /**
  *      \file       htdocs/core/login/functions_openid_connect.php
- *      \ingroup    core
+ *      \ingroup    openid_connect
  *      \brief      OpenID Connect: Authorization Code flow authentication
  *
  *      See https://github.com/Dolibarr/dolibarr/issues/22740 for more information about setup openid_connect
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+dol_include_once('/core/lib/openid_connect.lib.php');
 
 /**
  * Check validity of user/password/entity
@@ -38,15 +39,19 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  */
 function check_user_password_openid_connect($usertotest, $passwordtotest, $entitytotest)
 {
-	global $db, $conf, $langs;
+	global $db;
+
+	if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) <= 0) {
+		$_SESSION["dol_loginmesg"] = "OpenID Connect is disabled";
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect Module disabled");
+		return false;
+	}
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
 	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
-
-	$login = '';
 
 	dol_syslog("functions_openid_connect::check_user_password_openid_connect usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
@@ -56,92 +61,122 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		// OIDC does not require credentials here: pass on to next auth handler
 		$_SESSION["dol_loginmesg"] = "Not an OpenID Connect flow";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect not an OIDC flow");
+		return false;
 	} elseif (!GETPOSTISSET('state')) {
 		// No state received
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (no state received)";
-	} elseif (GETPOSTISSET('code')) {
-		$auth_code = GETPOST('code', 'aZ09');
-		$state = GETPOST('state', 'aZ09');
-		dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
-
-		if ($state === hash('sha256', session_id())) {
-			// Step 2: turn the authorization code into an access token, using client_secret
-			$auth_param = [
-				'grant_type'    => 'authorization_code',
-				'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
-				'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
-				'code'          => $auth_code,
-				'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
-			];
-
-			$token_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_TOKEN_URL, 'POST', http_build_query($auth_param));
-			$token_content = json_decode($token_response['content']);
-			dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
-
-			if (property_exists($token_content, 'access_token')) {
-				// Step 3: retrieve user info using token
-				$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
-				$userinfo_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_USERINFO_URL, 'GET', '', 1, $userinfo_headers);
-				$userinfo_content = json_decode($userinfo_response['content']);
-
-				dol_syslog("functions_openid_connect::check_user_password_openid_connect /userinfo=".print_r($userinfo_response, true), LOG_DEBUG);
-
-				// Get the user attribute (claim) matching the Dolibarr login
-				$login_claim = 'email'; // default
-				if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
-					$login_claim = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM');
-				}
-
-				if (property_exists($userinfo_content, $login_claim)) {
-					// Success: retrieve claim to return to Dolibarr as login
-					$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
-					$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-					$sql .= " WHERE login = '".$db->escape($userinfo_content->$login_claim)."'";
-					$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
-
-					dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
-
-					$resql = $db->query($sql);
-					if ($resql) {
-						$obj = $db->fetch_object($resql);
-						if ($obj) {
-							// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
-							$login = $obj->login;
-						}
-					}
-				} elseif ($userinfo_content->error) {
-					// Got user info response but content is an error
-					$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$userinfo_content->error_description.")";
-				} elseif ($userinfo_response['http_code'] == 200) {
-					// Claim does not exist
-					$_SESSION["dol_loginmesg"] = "OpenID Connect claim not found: ".$login_claim;
-				} elseif ($userinfo_response['curl_error_no']) {
-					// User info request error
-					$_SESSION["dol_loginmesg"] = "Network error: ".$userinfo_response['curl_error_msg']." (".$userinfo_response['curl_error_no'].")";
-				} else {
-					// Other user info request error
-					$_SESSION["dol_loginmesg"] = "Userinfo request error (".$userinfo_response['http_code'].")";
-				}
-			} elseif ($token_content->error) {
-				// Got token response but content is an error
-				$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
-			} elseif ($token_response['curl_error_no']) {
-				// Token request error
-				$_SESSION["dol_loginmesg"] = "Network error: ".$token_response['curl_error_msg']." (".$token_response['curl_error_no'].")";
-			} else {
-				// Other token request error
-				$_SESSION["dol_loginmesg"] = "Token request error (".$token_response['http_code'].")";
-			}
-		} else {
-			// No code received
-			$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (state does not match)";
-		}
-	} else {
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif (!GETPOSTISSET('code')) {
 		// No code received
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (no code received)";
+		dol_syslog(''); // ToDo
+		return false;
 	}
 
-	dol_syslog("functions_openid_connect::check_user_password_openid_connect END");
+	$auth_code = GETPOST('code', 'aZ09');
+	$state = GETPOST('state', 'aZ09');
+	dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
 
-	return !empty($login) ? $login : false;
+	if ($state !== openid_connect_get_state()) {
+		// State does not match
+		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (state does not match)";
+		dol_syslog(''); // ToDo
+		return false;
+	}
+
+	// Step 2: turn the authorization code into an access token, using client_secret
+	$auth_param = [
+		'grant_type'    => 'authorization_code',
+		'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
+		'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
+		'code'          => $auth_code,
+		'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
+	];
+
+	$token_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL'), 'POST', http_build_query($auth_param), 1, null, array('https'), 2);
+	$token_content = json_decode($token_response['content']);
+	dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
+
+	if ($token_response['curl_error_no']) {
+		// Token request error
+		$_SESSION["dol_loginmesg"] = "Network error: ".$token_response['curl_error_msg']." (".$token_response['curl_error_no'].")";
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif ($token_response['http_code'] >= 400 && $token_response['http_code'] < 500) {
+		// HTTP Error
+		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_response['content'].")";
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif ($token_content->error) {
+		// Got token response but content is an error
+		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif (!property_exists($token_content, 'access_token')) {
+		// Other token request error
+		$_SESSION["dol_loginmesg"] = "Token request error (".$token_response['http_code'].")";
+		dol_syslog(''); // ToDo
+		return false;
+	}
+
+	// Step 3: retrieve user info using token
+	$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
+	$userinfo_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_USERINFO_URL'), 'GET', '', 1, $userinfo_headers, array('https'), 2);
+	$userinfo_content = json_decode($userinfo_response['content']);
+
+	dol_syslog("functions_openid_connect::check_user_password_openid_connect /userinfo=".print_r($userinfo_response, true), LOG_DEBUG);
+
+	// Get the user attribute (claim) matching the Dolibarr login
+	$login_claim = 'email'; // default
+	if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
+		$login_claim = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM');
+	}
+
+	if ($userinfo_response['curl_error_no']) {
+		// User info request error
+		$_SESSION["dol_loginmesg"] = "Network error: ".$userinfo_response['curl_error_msg']." (".$userinfo_response['curl_error_no'].")";
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif ($userinfo_response['http_code'] >= 400 && $userinfo_response['http_code'] < 500) {
+		// HTTP Error
+		$_SESSION["dol_loginmesg"] = "OpenID Connect user info error: " . $userinfo_response['content'];
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif ($userinfo_content->error) {
+		// Got user info response but content is an error
+		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$userinfo_content->error_description.")";
+		dol_syslog(''); // ToDo
+		return false;
+	} elseif (!property_exists($userinfo_content, $login_claim)) {
+		// Other user info request error
+		$_SESSION["dol_loginmesg"] = "Userinfo request error (".$userinfo_response['http_code'].")";
+		dol_syslog(''); // ToDo
+		return false;
+	}
+
+	// Success: retrieve claim to return to Dolibarr as login
+	$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
+	$sql .= " WHERE login = '".$db->escape($userinfo_content->$login_claim)."'";
+	$sql .= ' AND entity IN (0,'.(array_key_exists('dol_entity', $_SESSION) ? ((int) $_SESSION["dol_entity"]) : 1).')';
+
+	dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog(''); // ToDo
+		return false;
+	}
+	$obj = $db->fetch_object($resql);
+	if (!$obj) {
+		dol_syslog(''); // ToDo
+		return false;
+	}
+
+	$_SESSION['OPENID_CONNECT'] = true;
+
+	// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+	dol_syslog("functions_openid_connect::check_user_password_openid_connect END");
+	return $obj->login;
 }
