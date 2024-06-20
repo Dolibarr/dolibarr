@@ -1,6 +1,6 @@
 # Security Policy
 
-This file contains some policies about the security reports on Dolibarr ERP CRM project, one of the most popular Open Source ERP and CRM in the world.
+This file contains some policies about the security reports on Dolibarr ERP CRM project, a popular Open Source ERP and CRM used by millions of users.
 
 
 ## Supported Versions for security reports
