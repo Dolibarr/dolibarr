@@ -6948,7 +6948,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 
 			// Situations totals
-			if (! empty($this->situation_cycle_ref) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits') && $this->type != $this::TYPE_CREDIT_NOTE) {
+			if (! empty($this->situation_cycle_ref) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits') && $this->type != Facture::TYPE_CREDIT_NOTE) {
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 					$prev_sits = $this->get_prev_sits();
 
