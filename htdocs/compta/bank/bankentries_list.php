@@ -1310,7 +1310,6 @@ if ($resql) {
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
-		
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
@@ -1694,9 +1693,9 @@ if ($resql) {
 					$paymentdonationstatic->fetch($links[$key]['url_id']);
 					$donstatic->fetch($paymentdonationstatic->fk_donation);
 					$companylinked_id = $donstatic->socid;
-					if(!$companylinked_id) {
-						$thirdstr = ($donstatic->societe !== "" ? 
-									$donstatic->societe : 
+					if (!$companylinked_id) {
+						$thirdstr = ($donstatic->societe !== "" ?
+									$donstatic->societe :
 									$donstatic->firstname." ".$donstatic->lastname);
 					}
 				}
@@ -1729,7 +1728,7 @@ if ($resql) {
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
 				print $tmpuser->getNomUrl(-1);
-			} elseif($thirdstr) {
+			} elseif ($thirdstr) {
 				print $thirdstr;
 			} else {
 				print '&nbsp;';
