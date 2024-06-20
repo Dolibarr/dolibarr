@@ -2500,7 +2500,8 @@ class Project extends CommonObject
 		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
 			$return .= '</div><div class="inline-block valignmiddle">';
-			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'marginleftonly');
+			$phone = (string) $this->thirdparty->phone;
+			$return .= dol_print_phone($phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $phone, 0, 'marginleftonly');
 			$return .= '</div>';
 		}
 		if (!empty($arraydata['assignedusers'])) {
