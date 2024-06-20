@@ -688,7 +688,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!$ref && getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
+			if (!$ref && getDolGlobalInt('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 				// Generate ref...
 				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
