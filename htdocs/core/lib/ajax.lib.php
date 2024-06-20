@@ -121,7 +121,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
 					// Activate the autocomplete to execute the GET
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
-						function(request, response) {
+						source: function(request, response) {
 							var maxResults = '.(getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') ? getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') : '10').'; // Dynamically set maxResults
 							$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
 								if (data != null) {
