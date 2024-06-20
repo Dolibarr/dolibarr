@@ -140,6 +140,7 @@ if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php'
 }
 $result = dol_include_once('/core/modules/product/'.$module.'.php');
 if ($result > 0) {
+	'@phan-var ModeleProductCode $modCodeProduct';
 	$modCodeProduct = new $module();
 }
 
@@ -688,7 +689,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!$ref && getDolGlobalInt('PRODUCT_GENERATE_REF_AFTER_FORM')) {
+			if (!$ref && getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 				// Generate ref...
 				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
