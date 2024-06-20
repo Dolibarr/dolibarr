@@ -672,7 +672,8 @@ if (empty($reshook)) {
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				for ($i = 2; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 2; $i <= $produit_multiprices_limit; $i++) {
 					if (GETPOSTISSET("price_".$i)) {
 						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
 						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
