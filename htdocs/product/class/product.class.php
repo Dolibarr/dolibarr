@@ -5922,7 +5922,7 @@ class Product extends CommonObject
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
 		if (isModEnabled("supplier_order")) {
-			$filterStatus = !getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK') ? '3,4' : getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK');
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
