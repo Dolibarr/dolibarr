@@ -293,7 +293,8 @@ $arrayfields = array(
 
 // MultiPrices
 if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-	for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 		if (!empty(getDolGlobalString('$keyforlabel'))) {
 			$labelp = $i.' - '.$langs->transnoentitiesnoconv(getDolGlobalString('$keyforlabel'));
