@@ -70,14 +70,11 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = new Adherent($this->db);
 		if ($id == 0) {
-			$result = $member->initAsSpecimen();
+			$member = new Adherent($this->db);
+			$member->initAsSpecimen();
 		} else {
-			$result = $member->fetch($id);
-		}
-		if (!$result) {
-			throw new RestException(404, 'member not found');
+			$member = $this->getMember($id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id) && $id > 0) {
@@ -107,11 +104,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember(0, '', $thirdparty);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -140,17 +133,9 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-		if (!$result) {
-			throw new RestException(404, 'thirdparty not found');
-		}
+		$thirdparty = $this->getThirdparty('', $email);
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember(0, '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -179,17 +164,9 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', $barcode);
-		if (!$result) {
-			throw new RestException(404, 'thirdparty not found');
-		}
+		$thirdparty = $this->getThirdparty($barcode);
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember(0, '', $thirdparty->id);
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -330,11 +307,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -391,7 +364,7 @@ class Members extends DolibarrApi
 	/**
 	 * Delete member
 	 *
-	 * @param int $id   member ID
+	 * @param int $id member ID
 	 * @return array
 	 *
 	 * @throws	RestException	403		Access denied
@@ -403,11 +376,8 @@ class Members extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
 			throw new RestException(403);
 		}
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+
+		$member = $this->getMember($id);
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -544,11 +514,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		$obj_ret = array();
 		foreach ($member->subscriptions as $subscription) {
@@ -578,23 +544,20 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'member not found');
-		}
+		$member = $this->getMember($id);
 
 		return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
 	}
 
+
 	/**
 	 * Get categories for a member
 	 *
-	 * @param int		$id         ID of member
-	 * @param string		$sortfield	Sort field
-	 * @param string		$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
+	 * @param int $id ID of member
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int $limit Limit for list
+	 * @param int $page Page number
 	 *
 	 * @return mixed
 	 *
@@ -610,6 +573,8 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		$member = $this->getMember($id);
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
@@ -621,6 +586,57 @@ class Members extends DolibarrApi
 		return $result;
 	}
 
+	/**
+	 * Get Adherent object
+	 *
+	 * @param int $id ID of member
+	 * @param string $ref reference of member
+	 * @param int $fk_soc ID of third party
+	 *
+	 * @return Adherent
+	 *
+	 * @throws RestException
+	 */
+	private function getMember($id = 0, $ref = '', $fk_soc = 0)
+	{
+		$member = new Adherent($this->db);
+		$fetchResult = $member->fetch($id, $ref, $fk_soc);
+
+		if (0 === $fetchResult) {
+			throw new RestException(404, 'member not found');
+		}
+
+		if ($fetchResult < 0) {
+			throw new RestException(503, 'Error when retrieve member : '.$this->db->lasterror());
+		}
+
+		return $member;
+	}
+
+	/**
+	 * Get Societe object
+	 *
+	 * @param string $barcode Barcode of third party to load
+	 * @param string $email Email of third party (Warning, this can return several records)
+	 *
+	 * @return Societe
+	 *
+	 * @throws RestException
+	 */
+	private function getThirdparty($barcode = '', $email = '')
+	{
+		$thirdparty = new Societe($this->db);
+		$fetchResult = $thirdparty->fetch('', '', '', $barcode, '', '', '', '', '', '', $email);
+		if (0 === $fetchResult) {
+			throw new RestException(404, 'thirdparty not found');
+		}
+
+		if ($fetchResult < 0) {
+			throw new RestException(503, 'Error when retrieve thirdparty : ' . $this->db->lasterror());
+		}
+
+		return $thirdparty;
+	}
 
 
 
