@@ -16,6 +16,7 @@
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,9 +103,13 @@ $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
 $searchCategorySupplierOperator = 0;
+$searchCategoryCustomerChilds = 1;
+$searchCategorySupplierChilds = 1;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
-	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
+	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+	$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
+	$searchCategoryCustomerChilds = GETPOSTINT('search_category_customer_childs');
+	$searchCategorySupplierChilds = GETPOSTINT('search_category_supplier_childs');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	$searchCategorySupplierOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
@@ -397,6 +402,8 @@ if (empty($reshook)) {
 		$search_categ_sup = 0;
 		$searchCategoryCustomerOperator = 0;
 		$searchCategorySupplierOperator = 0;
+		$searchCategoryCustomerChilds = 1;
+		$searchCategorySupplierChilds = 1;
 		$searchCategoryCustomerList = array();
 		$searchCategorySupplierList = array();
 		$search_sale = '';
@@ -504,6 +511,17 @@ $formcompany = new FormCompany($db);
 $prospectstatic = new Client($db);
 $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$catCust = new Categorie($db);
+	$catCust->getFullArbo(Categorie::TYPE_CUSTOMER);
+	$enableSearchCategoryCustomerChilds = $catCust->maxDeepLevel > 0;
+} else $enableSearchCategoryCustomerChilds = false;
+
+if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$catFourn = new Categorie($db);
+	$catFourn->getFullArbo(Categorie::TYPE_SUPPLIER);
+	$enableSearchCategorySupplierChilds = $catFourn->maxDeepLevel > 0;
+} else $enableSearchCategorySupplierChilds = false;
 
 $now = dol_now();
 
@@ -601,60 +619,18 @@ if ($search_sale && $search_sale != '-1') {
 }
 
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-if (!empty($searchCategoryCustomerList)) {
-	$searchCategoryCustomerSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
-		if (intval($searchCategoryCustomer) == -2) {
-			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
-		} elseif (intval($searchCategoryCustomer) > 0) {
-			if ($searchCategoryCustomerOperator == 0) {
-				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategoryCustomerOperator == 1) {
-		if (!empty($searchCategoryCustomerSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategoryCustomerSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
-		}
+if (is_object($catCust) && !empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSql = $catCust->getSqlSearch(Categorie::TYPE_CUSTOMER, 's.rowid', $searchCategoryCustomerList, $searchCategoryCustomerOperator, $searchCategoryCustomerChilds);
+	if (!empty($searchCategoryCustomerSql)) {
+		$sql .= " AND $searchCategoryCustomerSql ";
 	}
 }
 
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
-if (!empty($searchCategorySupplierList)) {
-	$searchCategorySupplierSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
-		if (intval($searchCategorySupplier) == -2) {
-			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
-		} elseif (intval($searchCategorySupplier) > 0) {
-			if ($searchCategorySupplierOperator == 0) {
-				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategorySupplierOperator == 1) {
-		if (!empty($searchCategorySupplierSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategorySupplierSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategorySupplierSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategorySupplierSqlList).")";
-		}
+if (is_object($catFourn) && !empty($searchCategorySupplierList)) {
+	$searchCategorySupplierSql = $catFourn->getSqlSearch(Categorie::TYPE_SUPPLIER, 's.rowid', $searchCategorySupplierList, $searchCategorySupplierOperator, $searchCategorySupplierChilds);
+	if (!empty($searchCategorySupplierSql)) {
+		$sql .= " AND $searchCategorySupplierSql ";
 	}
 }
 if ($search_all) {
@@ -915,6 +891,12 @@ if ($searchCategoryCustomerOperator == 1) {
 }
 if ($searchCategorySupplierOperator == 1) {
 	$param .= "&search_category_supplier_operator=".urlencode((string) ($searchCategorySupplierOperator));
+}
+if ($searchCategoryCustomerChilds == 1) {
+	$param .= "&search_category_customer_childs=".urlencode((string) ($searchCategoryCustomerChilds));
+}
+if ($searchCategorySupplierChilds == 1) {
+	$param .= "&search_category_supplier_childs=".urlencode((string) ($searchCategorySupplierChilds));
 }
 foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
@@ -1231,14 +1213,14 @@ $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
 	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0, 1, 1, '', $enableSearchCategoryCustomerChilds ? $searchCategoryCustomerChilds : -1);
 	}
 }
 
 if (empty($type) || $type == 'f') {
 	if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0, 1, 1, '', $enableSearchCategorySupplierChilds ? $searchCategorySupplierChilds : -1);
 	}
 }
 

@@ -18,6 +18,7 @@ AccountsCategoriesArea=Bereich für Bankkonto-Schlagwörter/Kategorien
 ProjectsCategoriesArea=Bereich Projekt-Schlagwörter/Kategorien
 UsersCategoriesArea=Bereich Benutzer-Schlagwörter/Kategorien
 SubCats=Unterkategorie(n)
+SearchInSubCats=Auch in Unterkategorie(n) suchen
 CatList=Liste der Kategorien
 CatListAll=Liste der Schlagwörter/Kategorien (alle Typen)
 NewCategory=Neue Kategorie

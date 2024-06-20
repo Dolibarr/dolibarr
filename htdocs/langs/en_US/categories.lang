@@ -18,6 +18,7 @@ AccountsCategoriesArea=Bank account tags/categories area
 ProjectsCategoriesArea=Project tags/categories area
 UsersCategoriesArea=User tags/categories area
 SubCats=Sub-categories
+SearchInSubCats=Search in sub-categories of the selection to
 CatList=List of tags/categories
 CatListAll=List of tags/categories (all types)
 NewCategory=New tag/category

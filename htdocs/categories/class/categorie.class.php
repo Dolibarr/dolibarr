@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent Maury	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,6 +260,25 @@ class Categorie extends CommonObject
 	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
 	 */
 	public $cats = array();
+
+	/**
+	 *
+	 * @var int		Max deep level of cats arbo (0 means no leaf)
+	 */
+	public $maxDeepLevel = 0;
+
+	/** Full Arbo of cat type
+	 * to avoid several DB access and/or tree processing
+	 *
+	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
+	 */
+	private $catsFullArbo = array();
+
+	/**
+	 *
+	 * @var array<int>	Max deep level of cats arbo by type
+	 */
+	private $maxDeepLevelByType = array();
 
 	/**
 	 * @var array Mother of table
@@ -1120,7 +1140,77 @@ class Categorie extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/** return sql where condition to search object linked to categories
+	 *
+	 * @param   string              $type					Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   string              $mainTableRowid			sql main table rowid id like p.rowid (product,project), s.rowid etc...
+	 * @param	array				$searchCategoryList		array of categories to look for
+	 * @param	int					$searchCategoryOperator	0:AND, 1:OR
+	 * @param	int					$searchCategoryChilds	0: don't search in children; 1: search in children
+	 * @return  int|string			-1 if error; sql search
+	 */
+	public function getSqlSearch($type, $mainTableRowid, $searchCategoryList, $searchCategoryOperator = 0, $searchCategoryChilds = 1)
+	{
+		$fkName = 'fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
+		$tableName = MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
+
+		$searchCategorySql = '';
+		$arrayofcategoryid = [];
+		foreach ($searchCategoryList as $searchCategory) {
+			if (intval($searchCategory) == -2) {
+				$searchCategorySql = "NOT EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName)";
+			} elseif (intval($searchCategory) > 0) {
+				$arrayofcategoryid[] = (int) $searchCategory;
+			}
+		}
+		if (count($arrayofcategoryid) > 0) {
+			if ($searchCategoryOperator == 1) { // OR operator
+				if ($searchCategoryChilds) { // include children
+					$cat = new Categorie($this->db);
+					$arrayofcategoryid = $cat->getChilds($type, $arrayofcategoryid);
+				}
+				$searchCategorySql = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayofcategoryid))."))";
+			} else {
+				$arraySearchCategorySql = [];
+				foreach ($arrayofcategoryid as $categoryid) {
+					if ($searchCategoryChilds) { // include children
+						$cat = new Categorie($this->db);
+						$arrayofcatchilds = $cat->getChilds($type, $categoryid);
+						if (is_array($arrayofcatchilds)) {
+							$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayofcatchilds))."))";
+						} else return -1;
+					} else {
+						$arraySearchCategorySql[] = " EXISTS (SELECT ck.$fkName FROM $tableName as ck WHERE $mainTableRowid = ck.$fkName AND ck.fk_categorie = ".(int) $categoryid.") ";
+					}
+				}
+				$searchCategorySql = implode(' AND ', $arraySearchCategorySql);
+			}
+		}
+		return $searchCategorySql;
+	}
+
+	/** get all children of a category or array of categories, including themselves
+	 *
+	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   int|string|array	$fromid        		Keep only all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
+	 *                                                  - int (id of category)
+	 *                                                  - string (categories ids separated by comma)
+	 *                                                  - array (list of categories ids)
+	 * @return int<-1,-1>|array Array of children categories including their parents
+	 */
+	public function getChilds($type, $fromid = 0)
+	{
+		$retraw = $this->getFullArbo($type, $fromid, 1);
+		$ret = [];
+		if (is_array($retraw)) {
+			foreach ($retraw as $catid) {
+				$ret[] = $catid['id'];
+			}
+			return $ret;
+		} else return $retraw;
+	}
+
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) sorted to have a human readable tree, with
@@ -1138,11 +1228,10 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
-	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats, this->maxDeepLevel and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	public function getFullArbo($type, $fromid = 0, $include = 0)
 	{
-		// phpcs:enable
 		global $langs;
 
 		if (!is_numeric($type)) {
@@ -1165,57 +1254,63 @@ class Categorie extends CommonObject
 			$fromid = array();
 		}
 
-		$this->cats = array();
-		$nbcateg = 0;
+		if (empty($this->catsFullArbo[$type])) { // we do this to avoid making lot of queries and computation several times
+			$this->cats = array();
+			$nbcateg = 0;
 
-		// Init this->motherof that is array(id_son=>id_parent, ...)
-		$this->load_motherof();
-		$current_lang = $langs->getDefaultLang();
+			// Init this->motherof that is array(id_son=>id_parent, ...)
+			$this->load_motherof();
+			$current_lang = $langs->getDefaultLang();
 
-		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= ", t.label as label_trans, t.description as description_trans";
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
-		}
-		$sql .= " WHERE c.entity IN (".getEntity('category').")";
-		$sql .= " AND c.type = ".(int) $type;
-
-		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$nbcateg = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['position'] = $obj->position;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId
-				$this->cats[$obj->rowid]['fullpath'] = '';
-				$this->cats[$obj->rowid]['fulllabel'] = '';
-				$i++;
+			$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				$sql .= ", t.label as label_trans, t.description as description_trans";
 			}
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
+			$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
+			}
+			$sql .= " WHERE c.entity IN (".getEntity('category').")";
+			$sql .= " AND c.type = ".(int) $type;
 
-		// We add the fullpath property to each elements of first level (no parent exists)
-		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
-		foreach ($this->cats as $key => $val) {
-			//print 'key='.$key.'<br>'."\n";
-			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
+			dol_syslog(get_class($this)."::getFullArbo get category list", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$i = 0;
+				$nbcateg = $this->db->num_rows($resql);
+
+				while ($obj = $this->db->fetch_object($resql)) {
+					$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
+					$this->cats[$obj->rowid]['id'] = $obj->rowid;
+					$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+					$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
+					$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
+					$this->cats[$obj->rowid]['color'] = $obj->color;
+					$this->cats[$obj->rowid]['position'] = $obj->position;
+					$this->cats[$obj->rowid]['visible'] = $obj->visible;
+					$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
+					$this->cats[$obj->rowid]['picto'] = 'category';
+					// fields are filled with buildPathFromId
+					$this->cats[$obj->rowid]['fullpath'] = '';
+					$this->cats[$obj->rowid]['fulllabel'] = '';
+					$i++;
+				}
+				// We add the fullpath property to each elements of first level (no parent exists)
+				dol_syslog(get_class($this)."::getFullArbo call to buildPathFromId", LOG_DEBUG);
+				foreach ($this->cats as $key => $val) {
+					//print 'key='.$key.'<br>'."\n";
+					$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
+				}
+			} else {
+				dol_print_error($this->db);
+				return -1;
+			}
+			$this->catsFullArbo[$type] = $this->cats;
+			$this->maxDeepLevelByType[$type] = $this->maxDeepLevel;
+		} else {
+			dol_syslog(get_class($this)."::getFullArbo this->catsFullArbo[$type] was still in memory", LOG_DEBUG);
+			$this->cats = $this->catsFullArbo[$type];
+			$this->maxDeepLevel = $this->maxDeepLevelByType[$type];
 		}
 
 		// Include or exclude leaf (including $fromid) from tree
@@ -1238,21 +1333,48 @@ class Categorie extends CommonObject
 			}
 		}
 
-		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getFullArbo dol_sort_array", LOG_DEBUG);
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		return $this->cats;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * add to be deprecated : use getFullArbo instead
+	 * Rebuilding the category tree as an array
+	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
+	 *                id = id de la categorie
+	 *                id_mere = id de la categorie mere
+	 *                id_children = tableau des id enfant
+	 *                label = nom de la categorie
+	 *                fulllabel = Name with full path for the category
+	 *                fullpath = Full path built with the id's
+	 *
+	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   int|string|array	$fromid        		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
+	 *                                                  - int (id of category)
+	 *                                                  - string (categories ids separated by comma)
+	 *                                                  - array (list of categories ids)
+	 * @param   int                 $include            [=0] Removed or 1=Keep only
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 */
+	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	{
+		// phpcs:enable
+		return $this->getFullArbo($type, $fromid, $include);
+	}
+
 	/**
 	 *	For category id_categ and its children available in this->cats, define property fullpath and fulllabel.
-	 *  It is called by get_full_arbo()
+	 *  It is called by getFullArbo()
 	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		int<-1,1>				Return integer <0 if KO, >0 if OK
-	 *  @see get_full_arbo()
+	 *  @see getFullArbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
 	{
@@ -1288,7 +1410,7 @@ class Categorie extends CommonObject
 		// We count number of _ to have level
 		$nbunderscore = substr_count($this->cats[$id_categ]['fullpath'], '_');
 		$this->cats[$id_categ]['level'] = ($nbunderscore ? $nbunderscore : null);
-
+		$this->maxDeepLevel = max((int) $this->maxDeepLevel, (int) $nbunderscore - 1);
 		return 1;
 	}
 

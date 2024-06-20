@@ -16,6 +16,7 @@
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Vincent Maury	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,8 +87,10 @@ $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
+
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
+	$searchCategoryProductChilds = GETPOSTINT('search_category_product_childs');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
@@ -161,6 +164,11 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formproduct = new FormProduct($db);
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$cat = new Categorie($db);
+	$cat->getFullArbo(Categorie::TYPE_PRODUCT);
+	$enableSearchCategoryProductChilds = $cat->maxDeepLevel > 0;
+} else $enableSearchCategoryProductChilds = false;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -359,6 +367,7 @@ if (empty($reshook)) {
 		$search_default_workstation = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
+		$searchCategoryProductChilds = 1;
 		$searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
@@ -574,30 +583,10 @@ if (dol_strlen($canvas) > 0) {
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 if (!empty($searchCategoryProductList)) {
-	$searchCategoryProductSqlList = array();
-	$listofcategoryid = '';
-	foreach ($searchCategoryProductList as $searchCategoryProduct) {
-		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product)";
-		} elseif (intval($searchCategoryProduct) > 0) {
-			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
-			} else {
-				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
-			}
-		}
-	}
-	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
-	}
-	if ($searchCategoryProductOperator == 1) {
-		if (!empty($searchCategoryProductSqlList)) {
-			$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
-		}
-	} else {
-		if (!empty($searchCategoryProductSqlList)) {
-			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
-		}
+	$searchCategoryProductSql = $cat->getSqlSearch(Categorie::TYPE_PRODUCT, 'p.rowid', $searchCategoryProductList, $searchCategoryProductOperator, $searchCategoryProductChilds);
+	if (!empty($searchCategoryProductSql)) {
+		//echo $searchCategoryProductSql;
+		$sql .= " AND ".$searchCategoryProductSql;
 	}
 }
 if ($fourn_id > 0) {
@@ -762,7 +751,10 @@ if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
 if ($searchCategoryProductOperator == 1) {
-	$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
+	$param .= "&search_category_product_operator=1";
+}
+if ($searchCategoryProductChilds == 1) {
+	$param .= "&search_category_product_childs=1";
 }
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
@@ -946,7 +938,7 @@ if ($search_all) {
 $moreforfilter = '';
 if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0, 1, 1, '', $enableSearchCategoryProductChilds ? $searchCategoryProductChilds : -1);
 }
 
 // Show/hide child variant products
