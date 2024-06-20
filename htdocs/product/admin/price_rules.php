@@ -46,7 +46,8 @@ if ($action == 'update') {
 	$var_min_percent = GETPOST('var_min_percent', 'array');
 	$fk_level = GETPOST('fk_level', 'array');
 
-	for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$check = isset($var_min_percent[$i]);
 
 		if ($i != 1) {
@@ -71,7 +72,7 @@ if ($action == 'update') {
 			$check1 = true;
 			$check2 = $i_var_min_percent;
 		} else {
-			$check1 = $i_fk_level >= 1 && $i_fk_level <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			$check1 = $i_fk_level >= 1 && $i_fk_level <= $produit_multiprices_limit;
 			$check2 = $i_var_percent && ($i_var_min_percent || (string) $i_var_min_percent === '0');
 		}
 
@@ -145,7 +146,8 @@ print '<span class="opacitymedium">'.$langs->trans("MultiPriceRuleDesc").'</span
 // Array that contains the number of prices available
 $price_options = array();
 
-for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
 ?>
@@ -160,7 +162,7 @@ for ($i = 1; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 			<td></td>
 			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo price(isset($rules[1]) ? $rules[1]->var_min_percent : 0, 2) ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
 		</tr>
-		<?php for ($i = 2; $i <= getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'); $i++) : ?>
+		<?php for ($i = 2; $i <= $produit_multiprices_limit; $i++) : ?>
 			<tr>
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;
