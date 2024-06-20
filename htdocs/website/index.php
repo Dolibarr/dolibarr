@@ -4625,7 +4625,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$formmail->withlayout = 1;
 	$showlinktolayout = $formmail->withlayout;
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
-	if ($action == 'createcontainer' && $showlinktolayout && $showlinktoai) {
+	if (($action == 'createcontainer' && $showlinktolayout) || ($action == 'createcontainer' && $showlinktoai)) {
 		print '<tr><td class="titlefield tdtop">';
 		if ($conf->browser->layout == 'phone') {
 			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
