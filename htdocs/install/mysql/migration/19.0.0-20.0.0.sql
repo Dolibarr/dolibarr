@@ -333,6 +333,7 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values (
 
 
 DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_user NOT IN (SELECT rowid from llx_user)
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
