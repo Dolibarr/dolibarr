@@ -1985,7 +1985,11 @@ if (empty($reshook)) {
 						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
-						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+							$line->situation_percent = $line->get_allprev_progress($object->id);; // get good progress including credit note
+						} else {
+							$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+						}
 
 						// The $line->situation_percent has been modified, so we must recalculate all amounts
 						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $line->situation_percent);
