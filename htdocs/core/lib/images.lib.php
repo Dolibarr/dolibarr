@@ -1,4 +1,6 @@
 <?php
+use RectorPrefix202310\Nette\Utils\Image;
+
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -515,7 +517,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	global $conf, $langs;
+	global $langs;
 
 	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." outdir=".$outdir." targetformat=".$targetformat);
 
@@ -813,4 +815,19 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	imagedestroy($imgThumb);
 
 	return $imgThumbName;
+}
+
+
+/**
+ * Beautify an image by adding a link edit and delete on image
+ *
+ * @param	string		$htmlid			ID of HTML img tag
+ * @param	string		$urledit		URL to submit to edit Image
+ * @param	string		$urldelete		URL to call when deleting the image
+ * @return	string						HTML and JS code to manage the update/delete of image.
+ */
+function imgAddEditDeleteButton($htmlid, $urledit, $urldelete)
+{
+	// TODO
+	return '';
 }

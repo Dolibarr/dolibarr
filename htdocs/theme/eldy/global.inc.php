@@ -4168,7 +4168,7 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	height: 28px;
 }
 table.liste tr.trkanban td {
-	padding: 10px 12px 10px 12px;			/* t r b l */
+	padding: 12px 15px 12px 15px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -4789,6 +4789,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-right: 0!important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+	table.liste tr.trkanban td {
+		padding: 10px 6px 10px 6px;			/* t r b l */
 	}
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
