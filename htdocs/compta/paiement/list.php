@@ -486,7 +486,7 @@ if (!empty($arrayfields['p.num_paiement']['checked'])) {
 // Filter: Bank account
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 
