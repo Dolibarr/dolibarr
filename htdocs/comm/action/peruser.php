@@ -510,6 +510,9 @@ print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, 
 $link = '';
 //print load_fiche_titre('', $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
 
+
+$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
+
 // Local calendar
 $newtitle = '<div class="nowrap clear inline-block minheight30">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
@@ -517,6 +520,17 @@ $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
 
 $s = $newtitle;
+
+// Calendars from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
+if (empty($reshook)) {
+	$s .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$s = $hookmanager->resPrint;
+}
+
+$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 
 print $s;
 
