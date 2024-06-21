@@ -4001,17 +4001,19 @@ abstract class CommonObject
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					$prev_sits = $this->get_prev_sits();
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+						$prev_sits = $this->get_prev_sits();
 
-					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
-						$this->total_ht -= $sit->total_ht;
-						$this->total_tva -= $sit->total_tva;
-						$this->total_localtax1 -= $sit->total_localtax1;
-						$this->total_localtax2 -= $sit->total_localtax2;
-						$this->total_ttc -= $sit->total_ttc;
-						$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
-						$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
-						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
+							$this->total_ht -= $sit->total_ht;
+							$this->total_tva -= $sit->total_tva;
+							$this->total_localtax1 -= $sit->total_localtax1;
+							$this->total_localtax2 -= $sit->total_localtax2;
+							$this->total_ttc -= $sit->total_ttc;
+							$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+							$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+							$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						}
 					}
 				}
 			}
