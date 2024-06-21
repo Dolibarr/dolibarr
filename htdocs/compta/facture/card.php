@@ -16,8 +16,9 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2849,7 +2850,11 @@ if (empty($reshook)) {
 		if (GETPOST('all_progress') != "") {
 			$all_progress = GETPOSTINT('all_progress');
 			foreach ($object->lines as $line) {
-				$percent = $line->get_prev_progress($object->id);
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					$percent = $line->get_allprev_progress($object->id);
+				} else {
+					$percent = $line->get_prev_progress($object->id);
+				}
 				if ((float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
