@@ -2496,7 +2496,7 @@ ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
 ZapierDescription=Interface with Zapier
 ZapierAbout=About the module Zapier
 ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
-TestWebhookTarget=Test triggerable event
+TestWebhookTarget=Test WebHook
 DataToSendTrigger=Data sent to Url
 SendToUrl=Send to Url
 WebsiteTemplateWasCopied=The website template(s) "%s" provided by this module has been saved into the directory of website templates (/doctemplates/websites) and is ready to be imported as a new web site.
