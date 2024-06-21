@@ -2091,6 +2091,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		padding-right: 10px !important;
 	}
 
+	table.liste tr.trkanban td {
+		padding: 10px 6px 10px 6px;			/* t r b l */
+	}
+
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
 	.showonsmartphone { display: block !important; }
@@ -4268,7 +4272,7 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	height: 22px;
 }
 table.liste tr.trkanban td {
-	padding: 10px 14px 10px 14px;			/* t r b l */
+	padding: 12px 15px 12px 15px;			/* t r b l */
 }
 
 form.tagtable {
