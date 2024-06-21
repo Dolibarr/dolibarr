@@ -12882,7 +12882,7 @@ function newObjectByElement($element_type, &$errMsgCode = '')
 
 
 /**
- * Fetch an object from its id and element_type
+ * Load and Fetch an object from its id and element_type
  * Inclusion of classes is automatic
  *
  * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
