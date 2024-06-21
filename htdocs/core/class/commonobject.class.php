@@ -7065,7 +7065,7 @@ abstract class CommonObject
 
 			if (!$error) {
 				$parameters = array('key'=>$key);
-				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters,$this, $action);
+				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters, $this, $action);
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
