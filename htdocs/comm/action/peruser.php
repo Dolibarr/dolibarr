@@ -834,28 +834,12 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
 
 	if ($canedit && $mode == 'show_peruser') {
-		// Filter on hours
-		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
-		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">'.$langs->trans("Hours").'</span>';
-		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
-		if (empty($conf->dol_use_jmobile)) {
-			print ' - ';
-		} else {
-			print '</div><div class="ui-block-b">';
-		}
-		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		if (empty($conf->dol_use_jmobile)) {
-			print ' '.$langs->trans("H");
-		}
-		print '</div></div>';
-
-		print '<br>';
-
 		// Filter on days
-		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
-		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">';
+		print img_picto('', 'clock', 'class="fawidth30 inline-block marginleftonly"');
+		print $langs->trans("DaysOfWeek").'</span>';
+		print "\n";
+		print '<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
@@ -887,7 +871,27 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo "</tr>\n";
 
 	echo '<tr class="liste_titre">';
-	echo '<td></td>';
+	echo '<td>';
+
+	// Filter on hours
+	print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">';
+	print img_picto('', 'clock', 'class="fawidth30 inline-block marginleftonly"');
+	print $langs->trans("Hours").'</span>';
+	print "\n";
+	print '<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
+	print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+	if (empty($conf->dol_use_jmobile)) {
+		print ' - ';
+	} else {
+		print '</div><div class="ui-block-b">';
+	}
+	print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+	if (empty($conf->dol_use_jmobile)) {
+		print ' '.$langs->trans("H");
+	}
+	print '</div></div>';
+
+	echo '</td>';
 	$i = 0;
 	while ($i < 7) {
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d) {
@@ -997,9 +1001,12 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		//if ($username->login != 'admin') continue;
 
 		$var = !$var;
+
 		echo "<tr>";
 		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
+		print '<span class="paddingrightimp">';
 		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
+		print '</span>';
 		print '</td>';
 		$tmpday = $sav;
 
