@@ -1298,7 +1298,20 @@ class FormFile
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
-					$filepath = $relativepath.$file['name'];
+
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+
+					if (empty($relativepath) || empty($modulepart)) {
+						$filepath = $file['level1name'].'/'.$file['name'];
+					} else {
+						$filepath = $relativepath.$file['name'];
+					}
+					if (empty($modulepart)) {
+						$modulepart = basename(dirname($file['path']));
+					}
+					if (empty($relativepath)) {
+						$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					}
 
 					$editline = 0;
 					$nboflines++;
@@ -1333,7 +1346,7 @@ class FormFile
 						print $relativepath;
 					}
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha'))&& $file['level1name'] == dirname(GETPOST('urlfile', 'alpha'))) {
+					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha')) && dirname($filepath) == dirname(GETPOST('urlfile', 'alpha'))) {
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
 						if (!preg_match('/\/$/', $section_dir)) {
@@ -1531,7 +1544,7 @@ class FormFile
 						}
 					} else {
 						print '<td class="right">';
-						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
+						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
 						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
