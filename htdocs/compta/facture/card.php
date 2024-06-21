@@ -4931,7 +4931,7 @@ if ($action == 'create') {
 				print $langs->trans('RetainedWarranty');
 				print '</td>';
 				if ($action != 'editretainedwarranty' && $user->hasRight('facture', 'creer') && $object->status == Facture::STATUS_DRAFT) {
-					print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
+					print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setRetainedWarranty'), 1).'</a></td>';
 				}
 
 				print '</tr></table>';
@@ -4991,7 +4991,7 @@ if ($action == 'create') {
 				print $langs->trans('RetainedWarrantyDateLimit');
 				print '</td>';
 				if ($action != 'editretainedwarrantydatelimit' && $user->hasRight('facture', 'creer') && $object->status == Facture::STATUS_DRAFT) {
-					print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarrantyDateLimit'), 1).'</a></td>';
+					print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setRetainedWarrantyDateLimit'), 1).'</a></td>';
 				}
 
 				print '</tr></table>';
