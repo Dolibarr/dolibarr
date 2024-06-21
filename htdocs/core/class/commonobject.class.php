@@ -6797,7 +6797,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -7060,6 +7060,14 @@ abstract class CommonObject
 				$result = $this->insertExtraFields('', $user);
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error) {
+				$parameters = array('key'=>$key);
+				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters,$this, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 			}
 
