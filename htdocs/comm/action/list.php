@@ -402,9 +402,9 @@ $paramnoactionodate = $param;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'set_all_events_to_todo' => $langs->trans("SetAllEventsToTodo"),
-	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
-	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
+	'set_all_events_to_todo' => img_picto('', 'circle', 'class="pictofixedwidth font-status1"').$langs->trans("SetAllEventsToTodo"),
+	'set_all_events_to_in_progress' => img_picto('', 'stop-circle', 'class="pictofixedwidth font-status2"').$langs->trans("SetAllEventsToInProgress"),
+	'set_all_events_to_finished' => img_picto('', 'stop-circle', 'class="pictofixedwidth badge-status5"').$langs->trans("SetAllEventsToFinished"),
 );
 if ($user->hasRight('agenda', 'allactions', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");

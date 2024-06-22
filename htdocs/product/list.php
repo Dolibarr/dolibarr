@@ -1011,7 +1011,7 @@ if (!empty($arrayfields['thumbnail']['checked'])) {
 }
 if (!empty($arrayfields['p.label']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
+	print '<input class="flat width100" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
 // Type
