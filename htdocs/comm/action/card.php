@@ -1610,7 +1610,7 @@ if ($action == 'create') {
 		$hasPermissionOnLinkedObject = 0;
 
 		$elProp = getElementProperties($origin);
-		if ($user->hasRight($elProp['module'], 'read')) {
+		if ($user->hasRight($elProp['module'], 'read') || $user->hasRight($elProp['module'], $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
