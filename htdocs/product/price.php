@@ -1089,7 +1089,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				print '</form>';
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
-				if (!empty(getDolGlobalString('$keyforlabel'))) {
+				if (getDolGlobalString($keyforlabel)) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 			}
@@ -1122,7 +1122,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			// Price by quantity
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {      // TODO Fix the form included into a tr instead of a td
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
-				if (!empty(getDolGlobalString('$keyforlabel'))) {
+				if (getDolGlobalString($keyforlabel)) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				print '</td><td colspan="2">';

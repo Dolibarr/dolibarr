@@ -296,8 +296,8 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty(getDolGlobalString('$keyforlabel'))) {
-			$labelp = $i.' - '.$langs->transnoentitiesnoconv(getDolGlobalString('$keyforlabel'));
+		if (getDolGlobalString($keyforlabel)) {
+			$labelp = $i.' - '.$langs->transnoentitiesnoconv(getDolGlobalString($keyforlabel));
 		} else {
 			$labelp = $langs->transnoentitiesnoconv("SellingPrice")." ".$i;
 		}

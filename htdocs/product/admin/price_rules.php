@@ -168,7 +168,7 @@ for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					echo $langs->trans('SellingPrice').' '.$i;
 					// Label of price
 					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-				if (!empty(getDolGlobalString('$keyforlabel'))) {
+				if (getDolGlobalString($keyforlabel)) {
 					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				?>
