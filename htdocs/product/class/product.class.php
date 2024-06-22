@@ -231,8 +231,20 @@ class Product extends CommonObject
 	public $packaging;
 
 
-	public $lifetime;	// In seconds
+	/**
+	 * Lifetime (in seconds)
+	 *
+	 * @var int|null
+	 * @see ProductLot
+	 */
+	public $lifetime;
 
+	/**
+	 * Quality control frequency (in days ?)
+	 *
+	 * @var int|null
+	 * @see ProductLot
+	 */
 	public $qc_frequency;
 
 	/**
