@@ -2305,6 +2305,9 @@ div.vmenu, td.vmenu {
 
 
 .menuhider { display: none !important; }
+.menuhider .mainmenu.menu.topmenuimage {
+	margin-top: 0px !important;
+}
 
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
