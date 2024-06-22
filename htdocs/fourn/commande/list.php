@@ -383,7 +383,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
-
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -392,6 +392,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created supplier invoice.
 			} else {
 				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
@@ -552,8 +553,10 @@ if (empty($reshook)) {
 				}
 			}
 
-			$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
-			$objecttmp->update($user);
+			if($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)){
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
+				$objecttmp->update($user);
+			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
 
