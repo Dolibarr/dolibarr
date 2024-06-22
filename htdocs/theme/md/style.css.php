@@ -2368,7 +2368,7 @@ td.showDragHandle {
 	display: none;
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
-	border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2);
+	/* border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2); */
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
