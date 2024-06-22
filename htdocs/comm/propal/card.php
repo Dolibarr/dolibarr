@@ -1794,7 +1794,7 @@ if ($action == 'create') {
 	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 	$fk_account = GETPOSTINT('fk_account');
 	$datepropal = (empty($datepropal) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepropal);
-	
+
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
