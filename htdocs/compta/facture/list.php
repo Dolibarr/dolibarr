@@ -1322,7 +1322,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_late">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_late" id="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
