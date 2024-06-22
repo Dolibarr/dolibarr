@@ -2763,13 +2763,14 @@ function top_menu_quickadd()
 		}
 	}
 
-	$html .= '<!-- div for quick add link -->
+	if (!empty($conf->use_javascript_ajax)) {
+		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
         <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
-	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {    // This may be set by some pages that use different jquery version to avoid errors
-		$html .= '
+		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
+			$html .= '
         <!-- Code to show/hide the user drop-down for the quick add -->
         <script>
         jQuery(document).ready(function() {
@@ -2808,7 +2809,9 @@ function top_menu_quickadd()
         });
         </script>
         ';
+		}
 	}
+
 	return $html;
 }
 
