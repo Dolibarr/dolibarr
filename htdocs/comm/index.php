@@ -116,12 +116,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $tmp = getCustomerProposalPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 $tmp = getCustomerOrderPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 
 /*
