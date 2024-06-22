@@ -149,8 +149,8 @@ if ($action == 'add') {
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOSTINT('nb_gen_max') ? GETPOSTINT('nb_gen_max') : 0);
-	if (GETPOST('frequency')) {
+	$nb_gen_max = GETPOSTINT('nb_gen_max');
+	if ($frequency) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
@@ -158,7 +158,7 @@ if ($action == 'add') {
 		} else {
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
-		if ($nb_gen_max === '') {
+		if ($nb_gen_max === 0) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -485,6 +485,7 @@ if ($action == 'create') {
 
 	print '<input type="hidden" name="action" value="createfrommodel">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $form->buttonsSaveCancel("CreateDraftIntervention", '');
 
 	print '</form>';
@@ -576,7 +577,7 @@ if ($action == 'create') {
 				print $langs->trans('Contract');
 				print '</td>';
 				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
 					print img_edit($langs->trans('SetContract'), 1);
 					print '</a></td>';
 				}
