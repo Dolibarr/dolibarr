@@ -1847,7 +1847,7 @@ class ActionComm extends CommonObject
 	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
 		global $conf;
 
