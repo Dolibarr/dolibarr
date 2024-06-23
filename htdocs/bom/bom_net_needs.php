@@ -115,6 +115,8 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
+	$TChildBom = array();
 	if ($action == 'treeview') {
 		$object->getNetNeedsTree($TChildBom, 1);
 	} else {
@@ -221,6 +223,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
 	}
 	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
+	print '<td></td>';	// For unit
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
@@ -252,6 +255,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					}
 					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
+					print '<td>';
+					print '</td>';
 					print '<td class="linecolstock right"></td>';
 					print '<td class="linecoltheoricalstock right"></td>';
 					print '</tr>';
@@ -274,6 +279,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<td></td>';
 						}
 						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
+						print '<td>';
+						print '</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 						print '</tr>';
@@ -281,7 +288,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		} else {
-			foreach ($TChildBom as $fk_product => $qty) {
+			foreach ($TChildBom as $fk_product => $elem) {
 				$prod = new Product($db);
 				$prod->fetch($fk_product);
 				$prod->load_virtual_stock();
@@ -290,7 +297,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
-				print '<td class="linecolqty right">'.$qty.'</td>';
+				print '<td class="linecolqty right">'.$elem['qty'].'</td>';
+				print '<td>';
+				$useunit = (($prod->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($prod->type == Product::TYPE_SERVICE) && ($elem['fk_unit'])));
+				if ($useunit) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$unit = new CUnits($db);
+					$unit->fetch($elem['fk_unit']);
+					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+				}
+				print '</td>';
 				print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 				print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 				print '</tr>';

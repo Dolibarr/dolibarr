@@ -529,16 +529,16 @@ class FormProduct
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default            Preselected value
+	 *  @param  string		$selected            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
 	 *  @deprecated
 	 */
-	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0)
 	{
 		//phpcs:enable
-		print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
+		print $this->selectMeasuringUnits($name, $measuring_style, $selected, $adddefault, $mode);
 	}
 
 	/**
@@ -547,15 +547,15 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default             Preselected value
+	 *  @param  string		$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
 	 *  @return string|-1
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
 	{
-		global $langs, $conf, $mysoc, $db;
+		global $langs, $db;
 
 		$langs->load("other");
 
@@ -584,7 +584,7 @@ class FormProduct
 		} else {
 			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
-				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
+				$return .= '<option value="0"'.($selected === '0' ? ' selected' : '').'>'.($adddefault ? '('.$langs->trans("Default").')' : '').'</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines) {
@@ -597,11 +597,11 @@ class FormProduct
 					$return .= $lines->id;
 				}
 				$return .= '"';
-				if ($mode == 1 && $lines->short_label == $default) {
+				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $default) {
+				} elseif ($mode == 2 && $lines->scale == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 0 && $lines->id == $default) {
+				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
 				$return .= '>';

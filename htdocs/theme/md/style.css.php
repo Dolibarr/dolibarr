@@ -748,6 +748,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.linecoldescription.bomline {
+	width: 400px;
+}
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;

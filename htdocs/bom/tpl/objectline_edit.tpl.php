@@ -132,7 +132,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom nowrap linecolunit right">';
+		print '<td class="nobottom nowrap linecolunit">';
 		print  $formproduct->selectMeasuringUnits("fk_unit", '', (($line->fk_unit) ? $line->fk_unit : ''), 0, 0);
 		print '</td>';
 	}
@@ -154,12 +154,12 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolunit right">';
+	print '<td class="nobottom nowrap linecolunit">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolworkstation right">';
+	print '<td class="nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 

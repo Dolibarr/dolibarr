@@ -1012,7 +1012,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						$suffix = '_' . $line->id;
-						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						print '<!-- Line to dispatch ' . $suffix . ' (line edited) -->' . "\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $line->qty . '">';
 						// Duration - Time spent
@@ -1027,10 +1027,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Qty
 						print '<td class="right nowraponall">';
-						print '<input class="width40" name="qty_lineProduce" value="'. $line->qty.'">';
+						print '<input class="width40 right" name="qty_lineProduce" value="'. $line->qty.'">';
 						print '</td>';
 						// Unit
-						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
+						if ($useunit) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1059,16 +1060,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						*/
 
 						// Action delete line
-						print '<td colspan="2">';
+						print '<td colspan="'.($permissiontodelete ? 4 : 3).'">';
 						print '<input type="submit" class="button buttongen button-add small nominwidth" name="save" value="' . $langs->trans("Save") . '">';
 						print '<input type="submit" class="button buttongen button-cancel small nominwidth" name="cancel" value="' . $langs->trans("Cancel") . '">';
 						print '</td>';
 
-						// Action delete line
-						if ($permissiontodelete) {
-							print '<td></td>';
-						}
-						print '<td></td>';
 						print '</tr>';
 
 						// Extrafields Line
@@ -1107,8 +1103,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print price2num($line->qty, 'MS');
 						print '</td>';
+
 						// Unit
-						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
+						if ($useunit) {
 							print '<td class="right nowraponall">';
 							print measuringUnitString($line->fk_unit, '', '', 1);
 							print '</td>';
@@ -1557,7 +1555,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 
 					$suffix = '_'.$line->id;
-					print '<!-- Line to dispatch '.$suffix.' -->'."\n";
+					print '<!-- Line to dispatch '.$suffix.' (toproduce) -->'."\n";
 					// hidden fields for js function
 					print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
 					print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
