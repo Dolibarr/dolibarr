@@ -3173,7 +3173,7 @@ class pdf_octopus extends ModelePDFFactures
 		// Find the previous line of the line you are on
 		foreach ($facDerniereSituation->lines as $l) {
 			if ($l->rowid == $current_line->fk_prev_id) {
-				// Récupération du total_ht sans prendre en compte la progression (pour la colonne "sommes")
+				// Recovery of total_ht without taking progress into account (for the "sums" column)
 				$ltvatx = sprintf("%01.3f", $l->tva_tx);
 				$tabprice = calcul_price_total($l->qty, $l->subprice, $l->remise_percent, $ltvatx, $l->localtax1_tx, $l->localtax2_tx, 0, 'HT', $l->info_bits, $l->product_type);
 				$total_ht  = $tabprice[0];
@@ -3259,14 +3259,14 @@ class pdf_octopus extends ModelePDFFactures
 			$ret['date_derniere_situation'] = $facDerniereSituation->date;
 		}
 
-		//Parcours des lignes de la facture en cours pour récupérer toutes les données
+		// Scroll through the lines of the current invoice to retrieve all data
 		foreach ($object->lines as $k => $l) {
 			$total_ht = floatval($l->total_ht);
 			if (empty($total_ht)) {
 				continue;
 			}
 
-			//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
+			// Modification of VAT format, special case of imports or others which may have 20.0000
 			$ltvatx = sprintf("%01.3f", $l->tva_tx);
 
 			$ret[$ltvatx]['TVA'] += $l->total_tva;
