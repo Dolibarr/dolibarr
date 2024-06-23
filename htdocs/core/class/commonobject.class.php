@@ -9807,7 +9807,7 @@ abstract class CommonObject
 						if (empty($obj->$field)) {
 							$this->$field = null;
 						} else {
-							$this->$field = (float) $obj->$field;
+							$this->$field = (int) $obj->$field;
 						}
 					} else {
 						if (isset($obj->$field) && (!is_null($obj->$field) || (array_key_exists('notnull', $info) && $info['notnull'] == 1))) {
