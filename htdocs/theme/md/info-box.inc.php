@@ -93,8 +93,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
-	/* color: unset !important; */
-	color: var(--colortextbackvmenu) !important;
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
 }
 div.login_block_other a {
 	color: var(--colortextbackvmenu);
@@ -608,6 +608,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
 
 @media only screen and (max-width: 767px)
 {
