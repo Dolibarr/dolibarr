@@ -895,7 +895,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -1443,7 +1443,7 @@ class Account extends CommonObject
 	 */
 	public function countAccountToReconcile()
 	{
-		global $db, $conf, $user;
+		global $user;
 
 		//Protection against external users
 		if ($user->socid) {
@@ -1459,6 +1459,7 @@ class Account extends CommonObject
 		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			$sql .= " AND ba.courant != " . Account::TYPE_CASH;
 		}
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

@@ -639,6 +639,7 @@ function ajax_event($htmlname, $events)
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
  * 	@return string
+ *  @see ajax_object_onoff() to update the status of an object
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block')
 {
@@ -720,6 +721,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call
  *  @return string              html for button on/off
+ *  @see ajax_constantonoff() to update that value of a constant
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0)
 {
@@ -732,7 +734,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
 	$out = '';
 
-	if (!empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax) && empty($forcenojs)) {
 		$out .= '<script>
         $(function() {
             var input = '.json_encode($input).';

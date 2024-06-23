@@ -309,7 +309,11 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).' ';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC">';
+	print '<span class="badge">...</span>';
+	print '</a>';
+	print '</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num) {

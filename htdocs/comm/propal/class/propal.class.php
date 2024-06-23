@@ -4330,7 +4330,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice, 'MU') : "null").",";
-		$sql .= " ".price2num($this->remise_percent, 3).",";
+		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
 		$sql .= " ".price2num($this->total_tva, 'MT').",";

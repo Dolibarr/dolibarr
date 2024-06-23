@@ -407,8 +407,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
-	/* color: unset !important; */
-	color: var(--colortextbackvmenu) !important;
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
 }
 
 .infobox-adherent, .infobox-member {
@@ -556,6 +556,18 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
 
 .info-box-title {
 	width: calc(100% - 20px);
