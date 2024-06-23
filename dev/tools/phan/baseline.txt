@@ -716,6 +716,7 @@ return [
         'htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanPluginEmptyStatementIf', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/mod_facture_mercure.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/facture/modules_facture.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
         'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
