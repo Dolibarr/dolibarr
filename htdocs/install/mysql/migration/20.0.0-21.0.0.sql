@@ -37,3 +37,5 @@ DROP TABLE llx_contratdet_log;
 
 -- add billable attribute to project task
 ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
+
+ALTER TABLE llx_inventory DROP COLUMN datec;

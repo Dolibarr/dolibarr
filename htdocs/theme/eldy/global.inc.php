@@ -2305,6 +2305,9 @@ div.vmenu, td.vmenu {
 
 
 .menuhider { display: none !important; }
+.menuhider .mainmenu.menu.topmenuimage {
+	margin-top: 0px !important;
+}
 
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
@@ -2894,7 +2897,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 div.mainmenu {
@@ -3792,7 +3795,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-top: 1px solid transparent;
 	/*border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important; */
+
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	border-bottom: 3px solid var(--colortextbackhmenu) !important;
+	<?php } else { ?>
 	border-bottom: 3px solid var(--colorbackhmenu1) !important;
+	<?php } ?>
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
