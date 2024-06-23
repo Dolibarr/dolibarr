@@ -147,7 +147,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 	/**
-	 * @var array of document table columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
@@ -160,12 +160,16 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Situation invoices
 	 *
-	 * @var [type]
+	 * @var array	Data of situation
 	 */
 	public $TDataSituation;
 
-
+	/**
+	 * @var int position x for description
+	 */
 	public $posxdesc;
+
+
 	public $posxpicture;
 	public $posxtva;
 	public $posxunit;
