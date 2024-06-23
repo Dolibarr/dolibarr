@@ -103,7 +103,7 @@ function print_actions_filter(
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
@@ -156,7 +156,7 @@ function print_actions_filter(
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("Status"), 'setup', 'class="pictofixedwidth inline-block"');
+		print img_picto($langs->trans("Status"), 'status', 'class="pictofixedwidth inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}
