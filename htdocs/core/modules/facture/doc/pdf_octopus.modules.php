@@ -3307,7 +3307,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *  @param  Translate	$outputlangsbis Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
+	public function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{
 		global $conf, $mysoc, $hookmanager;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -3467,7 +3467,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$total_ht = ($conf->multicurrency->enabled && $invoice->mylticurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
 			$pdf->SetXY($posx+$width, $posy);
-			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (! empty($invoice->remise)?$invoice->remise:0)), 0, $outputlangs), 0, 'R', 1);
+			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (!empty($invoice->remise)?$invoice->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 			$tvas = array();
 			$nblines = count($invoice->lines);
@@ -3675,7 +3675,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				$pageposafter=$pageposbefore;
 				$pdf->AddPage('', '', true);
-				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				$pdf->setPage($pageposafter+1);
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -3683,7 +3683,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $tab_top_newpage + 1;
 			} else {
 				$idinv++;
-				$remain_to_pay -= ($sign * ($total_ht + (! empty($invoice->remise) ? $invoice->remise : 0)));
+				$remain_to_pay -= ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
 
 				$rem = 0;
 				if (count($invoice->lines)) {
