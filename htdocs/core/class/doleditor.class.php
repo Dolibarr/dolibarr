@@ -97,6 +97,9 @@ class DolEditor
 			$this->tool = 'ace';
 		}
 		//if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
+		if (empty($conf->use_javascript_ajax)) {	// If no javascript, we force use of textarea
+			$this->tool = 'textarea';
+		}
 
 		if ( isset($poscursor['find']) ) {
 			$posy = 0;
