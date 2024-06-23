@@ -122,61 +122,63 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					// Activate the autocomplete to execute the GET
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
 						source: function(request, response) {
-							var maxResults = '.(getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') ? getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') : '10').'; // Dynamically set maxResults
-							$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
-								if (data != null) {
-									response($.map(data.slice(0, maxResults), function(item) {
-										if (autoselect == 1 && data.length == 1) {
-											$("#search_'.$htmlnamejquery.'").val(item.value);
-											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
-										}
-										var label = "";
-										if (item.label != null) {
-											label = item.label.toString();
-										}
-										var update = {};
-										if (options.update) {
-											$.each(options.update, function(key, value) {
-												update[key] = item[value];
-											});
-										}
-										var textarea = {};
-										if (options.update_textarea) {
-											$.each(options.update_textarea, function(key, value) {
-												textarea[key] = item[value];
-											});
-										}
-
-										console.log("Return value from GET to the rest of code");
-										return { label: label,
-												 value: item.value,
-												 id: item.key,
-												 disabled: item.disabled,
-												 update: update,
-												 textarea: textarea,
-												 pbq: item.pbq,
-												 type: item.type,
-												 qty: item.qty,
-												 discount: item.discount,
-												 pricebasetype: item.pricebasetype,
-												 price_ht: item.price_ht,
-												 price_ttc: item.price_ttc,
-												 price_unit_ht: item.price_unit_ht,
-												 price_unit_ht_locale: item.price_unit_ht_locale,
-												 multicurrency_code: item.multicurrency_code,
-												 multicurrency_unitprice: item.multicurrency_unitprice,
-												 description : item.description,
-												 ref_customer: item.ref_customer,
-												 tva_tx: item.tva_tx,
-												 default_vat_code: item.default_vat_code,
-												 supplier_ref: item.supplier_ref
-										}
-									}));
-								} else {
-									console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
-								}
-							}, "json");
-						},
+					        var maxResults = '.(getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') ? getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') : '0').'; // Définir maxResults par défaut à 0
+					        $.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
+					            if (data != null) {
+					                var results = (maxResults > 0) ? data.slice(0, maxResults) : data;
+					                response($.map(results, function(item) {
+					                    if (autoselect == 1 && data.length == 1) {
+					                        $("#search_'+$htmlnamejquery+'").val(item.value);
+					                        $("#'+$htmlnamejquery+'").val(item.key).trigger("change");
+					                    }
+					                    var label = "";
+					                    if (item.label != null) {
+					                        label = item.label.toString();
+					                    }
+					                    var update = {};
+					                    if (options.update) {
+					                        $.each(options.update, function(key, value) {
+					                            update[key] = item[value];
+					                        });
+					                    }
+					                    var textarea = {};
+					                    if (options.update_textarea) {
+					                        $.each(options.update_textarea, function(key, value) {
+					                            textarea[key] = item[value];
+					                        });
+					                    }
+					
+					                    console.log("Return value from GET to the rest of code");
+					                    return {
+					                        label: label,
+					                        value: item.value,
+					                        id: item.key,
+					                        disabled: item.disabled,
+					                        update: update,
+					                        textarea: textarea,
+					                        pbq: item.pbq,
+					                        type: item.type,
+					                        qty: item.qty,
+					                        discount: item.discount,
+					                        pricebasetype: item.pricebasetype,
+					                        price_ht: item.price_ht,
+					                        price_ttc: item.price_ttc,
+					                        price_unit_ht: item.price_unit_ht,
+					                        price_unit_ht_locale: item.price_unit_ht_locale,
+					                        multicurrency_code: item.multicurrency_code,
+					                        multicurrency_unitprice: item.multicurrency_unitprice,
+					                        description: item.description,
+					                        ref_customer: item.ref_customer,
+					                        tva_tx: item.tva_tx,
+					                        default_vat_code: item.default_vat_code,
+					                        supplier_ref: item.supplier_ref
+					                    };
+					                }));
+					            } else {
+					                console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
+					            }
+					        }, "json");
+					    }
 						dataType: "json",
     					minLength: '.((int) $minLength).',
     					select: function( event, ui ) {		// Function ran once a new value has been selected into the javascript combo
