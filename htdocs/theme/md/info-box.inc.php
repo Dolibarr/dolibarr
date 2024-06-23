@@ -91,6 +91,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #755114  !important;
 }
 
+/* Disable colors on left vmenu */
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
+}
+div.login_block_other a {
+	color: var(--colortextbackvmenu);
+}
 
 .infobox-adherent, .infobox-member {
 	color: #79633f;
@@ -600,6 +608,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
 
 @media only screen and (max-width: 767px)
 {
