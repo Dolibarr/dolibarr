@@ -1673,8 +1673,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Note (private, no output on invoices, propales...)
-			//if (!empty(getDolGlobalString('MAIN_DISABLE_NOTES_TAB')))       available in create mode
-			//{
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
