@@ -2305,6 +2305,9 @@ div.vmenu, td.vmenu {
 
 
 .menuhider { display: none !important; }
+.menuhider .mainmenu.menu.topmenuimage {
+	margin-top: 0px !important;
+}
 
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
@@ -2894,7 +2897,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 div.mainmenu {
@@ -3792,7 +3795,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-top: 1px solid transparent;
 	/*border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important; */
+
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	border-bottom: 3px solid var(--colortextbackhmenu) !important;
+	<?php } else { ?>
 	border-bottom: 3px solid var(--colorbackhmenu1) !important;
+	<?php } ?>
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
@@ -5417,7 +5425,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 
 
 /* ============================================================================== */
-/* Calendar                                                                       */
+/* Calendar picker                                                                */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5429,6 +5437,9 @@ html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
+select.ui-datepicker-year {
+	margin-left: 2px !important;
+}
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -5682,7 +5693,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px !important; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -5716,13 +5727,16 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
 table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
 a.dayevent-aday {
-	padding-left: 8px;
+	margin-left: 8px;
+}
+td.small.cal_event {
+	font-size: 0.9em;
 }
 
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.8;
+	opacity: 0.7;
 }
 
 td.event-past span  {
@@ -5870,9 +5884,37 @@ td.event-past span  {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+div.jPicker table.jPicker {
+	padding-bottom: 20px;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+.jPicker .Move {
+	background: unset !important;
+	border: unset !important;
+}
+.jPicker .Preview div span {
+	border: unset !important;
+	width: unset !important;
+	height: 50% !important;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
+	background-color: #f4f4f4 !important;
+	box-shadow: 0px 0px 10px #ccc;
+}
+.jPicker .Grid {
+	background-image: unset !important;
+}
+.jPicker .Grid span.QuickColor {
+	border: unset !important;
+}
+.jPicker td.Radio {
+	min-width: 34px;
+}
+.jPicker td.Text {
+	white-space: nowrap;
 }
 A.color, A.color:active, A.color:visited {
  position : relative;
@@ -5955,9 +5997,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 /* Style to overwrites JQuery styles */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	border: 1px solid #888;
+	/* border: 1px solid #888; */
 	background: var(--colorbacktitle1);
 	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: #007fff !important;
+	color: #ffffff !important;
 }
 
 .ui-menu .ui-menu-item a {

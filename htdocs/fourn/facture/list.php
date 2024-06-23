@@ -200,7 +200,7 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'position' => 209, 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'position' => 210, 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => 0, 'position' => 211, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
-	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 500),
+	'u.login' => array('label' => "Author", 'checked' => -1, 'position' => 500),
 	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 502),
 	'f.nb_docs' => array('label' => "Documents", 'checked' => -1, 'position' => 510),
