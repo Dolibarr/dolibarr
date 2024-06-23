@@ -987,8 +987,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$costprice = 0;
 							}
 						}
-						$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');	// price for line for all quantities
-						$bomcostupdated += price2num(($line->qty * $costprice) / $object->qty, 'MU');	// same but with full accuracy
+
+						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
+
+						if ($useunit && $line->fk_unit > 0) {
+							$reg = [];
+							$qtyhourservice = 0;
+							if (preg_match('/^(\d+)([a-z]+)$/', $tmpproduct->duration, $reg)) {
+								$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+							}
+							$qtyhourforline = 0;
+							if ($line->fk_unit) {
+								$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+							}
+
+							if ($qtyhourservice && $qtyhourforline) {
+								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
+								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
+							} else {
+								$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');	// price for line for all quantities
+								$bomcostupdated += price2num(($line->qty * $costprice) / $object->qty, 'MU');	// same but with full accuracy
+							}
+						} else {
+							$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');	// price for line for all quantities
+							$bomcostupdated += price2num(($line->qty * $costprice) / $object->qty, 'MU');	// same but with full accuracy
+						}
 					}
 
 					$bomcostupdated = price2num($bomcostupdated, 'MU');
