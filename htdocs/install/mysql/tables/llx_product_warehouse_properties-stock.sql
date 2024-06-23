@@ -18,6 +18,8 @@
 --
 -- ============================================================================
 
+-- Table used when STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE is set.
+
 create table llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
@@ -28,4 +30,3 @@ create table llx_product_warehouse_properties
   desiredstock    		float DEFAULT '0',
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
-
