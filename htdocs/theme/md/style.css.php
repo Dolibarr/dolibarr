@@ -3082,7 +3082,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 
 /* Test of picto visible on hover, for all picto */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+ul.tmenu:hover .tmenulabel:not(.menuhider), ul.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: block;
 	position: relative;
 	overflow: hidden;
@@ -3098,7 +3098,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	color: var(--colortextbackhmenu);
 	top: 0px;
 }
-.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+ul.tmenu:hover .tmenuimage:not(.menuhider), ul.tmenu:hover .tmenuimage:not(.menuhider)::before {
 	/* For transition transition-delay: 1000ms;
 	transition-property: all; */
 	margin-top: 0px !important;
