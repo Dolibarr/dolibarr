@@ -53,8 +53,9 @@ $massaction  = GETPOST('massaction', 'aZ09');
 $lineid      = GETPOSTINT('lineid');
 
 $msid  = GETPOSTINT('msid');
-$year  = GETPOSTINT("year");
-$month = GETPOSTINT("month");
+
+$year  = GETPOST("year");		// TODO Rename into search_year
+$month = GETPOST("month");		// TODO Rename into search_month
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement", 'alpha');
@@ -198,7 +199,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = "";
 	$search_batch = "";
 	$search_qty = '';
-	$sall = "";
+	$search_all = "";
 	$toselect = array();
 	$search_array_options = array();
 }
