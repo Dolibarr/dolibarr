@@ -841,9 +841,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		// Unit
-		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			print '<td class="right">' . $langs->trans("Unit") . '</td>';
-		}
+		print '<td></td>';
 		// Cost price
 		if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
@@ -912,9 +910,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				print '<td></td>';
-			}
+			// Unit
+			print '<td></td>';
 			// Cost price
 			if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 				print '<td></td>';
@@ -1029,20 +1026,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						print '<input class="width40 right" name="qty_lineProduce" value="'. $line->qty.'">';
 						print '</td>';
+
 						// Unit
+						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print '<td class="right nowraponall">';
-							print measuringUnitString($line->fk_unit, '', '', 1);
-							print '</td>';
+							print measuringUnitString($line->fk_unit, '', '', 2);
 						}
+						print '</td>';
+
 						// Qty consumed
 						print '<td class="right">';
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
+
 						// Entrepot
-						print '<td class="right">';
+						print '<td>';
 						print '</td>';
+
 						// Stock
 						print '<td class="nowraponall right">';
 						if ($tmpproduct->isStockManaged()) {
@@ -1085,14 +1086,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . $alreadyconsumed . '">';
 
 						print '<tr data-line-id="' . $line->id . '">';
+
 						// Product
 						print '<td>' . $tmpproduct->getNomUrl(1);
 						print '<br><div class="opacitymedium small tdoverflowmax150" title="' . dol_escape_htmltag($tmpproduct->label) . '">' . $tmpproduct->label . '</div>';
 						print '</td>';
+
 						// Qty
 						print '<td class="right nowraponall">';
 						$help = '';
-						$picto = 'help';
 						if ($line->qty_frozen) {
 							$help = ($help ? '<br>' : '') . '<strong>' . $langs->trans("QuantityFrozen") . '</strong>: ' . yn(1) . ' (' . $langs->trans("QuantityConsumedInvariable") . ')';
 							print $form->textwithpicto('', $help, -1, 'lock') . ' ';
@@ -1105,18 +1107,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 
 						// Unit
+						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print '<td class="right nowraponall">';
-							print measuringUnitString($line->fk_unit, '', '', 1);
-							print '</td>';
+							print measuringUnitString($line->fk_unit, '', '', 2);
 						}
+						print '</td>';
+
 						// Cost price
 						if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 							print '<td class="right nowraponall">';
 							print price($linecost);
 							print '</td>';
 						}
+
 						// Already consumed
 						print '<td class="right">';
 						if ($alreadyconsumed) {
@@ -1194,7 +1198,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($object->status == Mo::STATUS_DRAFT) {
 							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line->id);
 							print '<td class="center">';
-							print '<a class="reposition" href="' . $href . '">';
+							print '<a class="reposition editfielda" href="' . $href . '">';
 							print img_picto($langs->trans('TooltipEditAndRevertStockMovement'), 'edit');
 							print '</a>';
 							print '</td>';
