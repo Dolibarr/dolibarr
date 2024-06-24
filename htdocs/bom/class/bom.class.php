@@ -1524,7 +1524,7 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array<int,float|int>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param array<int,array{qty:float,fk_unit:int}>	$TNetNeeds	Array of ChildBom and infos linked to
 	 * @param float					$qty		qty needed (used as a factor to produce 1 unit)
 	 * @return void
 	 */
@@ -1538,7 +1538,7 @@ class BOM extends CommonObject
 					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
-						$TNetNeeds[$line->fk_product]['qty'] = 0;
+						$TNetNeeds[$line->fk_product]['qty'] = 0.0;
 					}
 					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
 					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
