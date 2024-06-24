@@ -206,7 +206,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
-	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
+	$where = ' WHERE f.entity IN ('.getEntity('intervention').')';
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
 } elseif ($type_element == 'invoice') { 	// Customer : show products from invoices

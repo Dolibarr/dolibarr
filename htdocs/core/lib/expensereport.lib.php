@@ -81,7 +81,7 @@ function expensereport_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'external');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
 

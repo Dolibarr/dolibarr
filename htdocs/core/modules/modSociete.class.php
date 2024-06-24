@@ -314,7 +314,8 @@ class modSociete extends DolibarrModules
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Text",
 			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
-			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_private'=>"Text", 's.note_public'=>"Text",
+			's.tva_intra'=>"Text", 's.capital'=>"Numeric",
+			's.note_private'=>"Text", 's.note_public'=>"Text",
 			't.code'=>"List:c_typent:libelle:code",
 			'ce.code'=>"List:c_effectif:libelle:code",
 			"cfj.libelle"=>"Text",
@@ -368,11 +369,13 @@ class modSociete extends DolibarrModules
 			'c.rowid'=>"IdContact", 'c.civility'=>"CivilityCode", 'c.lastname'=>'Lastname', 'c.firstname'=>'Firstname', 'c.poste'=>'PostOrFunction',
 			'c.datec'=>"DateCreation", 'c.tms'=>"DateLastModification", 'c.priv'=>"ContactPrivate", 'c.address'=>"Address", 'c.zip'=>"Zip", 'c.town'=>"Town",
 			'd.nom'=>'State', 'r.nom'=>'Region', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
+			'c.note_private'=>'NotePrivate', 'c.note_public'=>"NotePublic",
 			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
 			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
+			's.note_private'=>'NotePrivate', 's.note_public'=>"NotePublic",
 			't.code'=>"ThirdPartyType"
 		);
 		// Add multicompany field

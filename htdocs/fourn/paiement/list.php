@@ -68,6 +68,7 @@ $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
+$search_sale = GETPOST('search_sale', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'aZ09comma');
@@ -112,6 +113,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
+
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
 
 // Security check
 if ($user->socid) {
@@ -176,33 +181,32 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $paymentfournstatic = new PaiementFourn($db);
 
-$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
-$sql .= ', s.rowid as socid, s.nom as name, s.email';
+$sql = 'SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
-$sql .= ', SUM(pf.amount)';
+$sql .= ', s.rowid as socid, s.nom as name, s.email';
+// We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
+// so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
+$sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";
+
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
+
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
+
+$sql .= ' WHERE f.entity IN ('.getEntity('supplier_invoice').')';		// TODO We should use p.entity that does not exists yet in this table
+if ($socid > 0) {
+	$sql .= " AND EXISTS (SELECT f.fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+	$sql .= " WHERE p.rowid = pf.fk_paiementfourn AND pf.fk_facturefourn = f.rowid AND f.fk_soc = ".((int) $socid).")";
 }
 
-$sql .= ' WHERE f.entity = '.$conf->entity;
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
-}
-if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.((int) $socid);
-}
+// Search criteria
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
@@ -217,13 +221,16 @@ if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_payment_type != '') {
-	$sql .= " AND c.code='".$db->escape($search_payment_type)."'";
+	$sql .= " AND c.code = '".$db->escape($search_payment_type)."'";
 }
 if ($search_cheque_num != '') {
 	$sql .= natural_search('p.num_paiement', $search_cheque_num);
 }
 if ($search_amount) {
-	$sql .= natural_search('p.amount', $search_amount, 1);
+	$sql .= " AND (".natural_search('p.amount', $search_amount, 1, 1);
+	$sql .= " OR ";
+	$sql .= natural_search('pf.amount', $search_amount, 1, 1);
+	$sql .= ")";
 }
 if ($search_bank_account > 0) {
 	$sql .= ' AND b.fk_account = '.((int) $search_bank_account);
@@ -231,29 +238,48 @@ if ($search_bank_account > 0) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
+$sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {		// if total resultset is smaller then paging size (filtering), goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT p.rowid) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -476,6 +502,7 @@ while ($i < min($num, $limit)) {
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
 	$paymentfournstatic->datepaye = $db->jdate($objp->datep);
+	$paymentfournstatic->amount = $objp->amount;
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -493,7 +520,9 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowraponall">'.$paymentfournstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">';
+		print $paymentfournstatic->getNomUrl(1);
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -566,12 +595,17 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
+		print '<td class="right">';
+		if ($objp->nbinvoices > 1 || ($objp->totalamount && $objp->amount != $objp->totalamount)) {
+			print $form->textwithpicto('', $langs->trans("PaymentMadeForSeveralInvoices"));
+		}
+		print '<span class="amount">'.price($objp->amount).'</span>';
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->pamount;
+		$totalarray['val']['amount'] += $objp->amount;
 	}
 
 	// Buttons

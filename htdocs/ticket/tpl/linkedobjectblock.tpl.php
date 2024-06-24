@@ -47,7 +47,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	?>
 	<tr class="<?php echo $trclass; ?>" >
 		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Ticket"); ?>
-		<?php if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		<?php if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 		} ?>
 		</td>

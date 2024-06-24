@@ -165,6 +165,10 @@ class Login
 			$token = $tmpuser->api_key;
 		}
 
+		if (!ascii_check($token)) {
+			throw new RestException(500, 'Error the token for this user has not an hexa format. Try first to reset it.');
+		}
+
 		//return token
 		return array(
 			'success' => array(

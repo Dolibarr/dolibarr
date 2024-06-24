@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $result = $contact->fetch($id);
 if ($result <= 0) {
-	dol_print_error($contact->error);
+	dol_print_error($db, $contact->error);
 	exit;
 }
 

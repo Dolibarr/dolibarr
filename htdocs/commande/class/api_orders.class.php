@@ -297,7 +297,7 @@ class Orders extends DolibarrApi
 			throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
 		}
 
-		return $this->commande->id;
+		return ((int) $this->commande->id);
 	}
 
 	/**

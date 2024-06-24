@@ -128,7 +128,9 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
-	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
+	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."'";
+	$sql .= " AND ar.status = 0";
+	$sql .= " AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
 	$sql .= $db->order('datep', 'ASC');
 	$sql .= $db->plimit(10); // Avoid too many notification at once
 

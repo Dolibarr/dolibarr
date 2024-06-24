@@ -129,6 +129,7 @@ MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
 PAIDInDolibarr=%s paid
 ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Canceled
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date

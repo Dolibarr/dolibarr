@@ -960,6 +960,16 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
+		$s = 'new abc->invoke(\'whoami\')';
+		$result=dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new abc__forbiddenstring__(\'whoami\')', $result);
+
+		$s = 'new ReflectionFunction(\'abc\')';
+		$result=dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new __forbiddenstring__(\'abc\')', $result);
+
 		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);

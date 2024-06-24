@@ -1303,15 +1303,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 		}
 	}
-	// Show page nb only on iso languages (so default Helvetica font)
-	// if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
-		// $pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
-		// $pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0); // doesn't works with all fonts
-		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); // works with $pdf->Cell
-		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();
-		$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
-	// }
+
+	// Show page nb and apply correction for some font.
+	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
+	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
+	$fontRenderCorrection = 0;
+	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
+		$fontRenderCorrection = 10;
+	}
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {

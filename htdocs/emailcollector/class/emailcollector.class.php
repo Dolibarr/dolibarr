@@ -1128,6 +1128,8 @@ class EmailCollector extends CommonObject
 		$this->fetchFilters();
 		$this->fetchActions();
 
+		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
+
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
@@ -1233,7 +1235,6 @@ class EmailCollector extends CommonObject
 				return -2;
 			}
 			$sourcedir = $this->source_directory;
-			$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 			$connectstringserver = $this->getConnectStringIMAP();
 			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
@@ -1267,6 +1268,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1398,6 +1401,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1630,7 +1635,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag($this->uidAsString($imapemail))." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -2352,10 +2357,25 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											$errorforactions++;
-											$langs->load("errors");
-											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
-											$this->errors[] = $this->error;
+											//search into contacts of thirdparty
+											$resultContact = $contactstatic->fetch('', '', '', $emailtouseforthirdparty);
+											if ($resultContact > 0) {
+												$idtouseforthirdparty = $contactstatic->socid;
+												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
+												if ($result > 0) {
+													dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was found thanks to linked contact search");
+												} else {
+													$errorforactions++;
+													$langs->load("errors");
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+													$this->errors[] = $this->error;
+												}
+											} else {
+												$errorforactions++;
+												$langs->load("errors");
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+												$this->errors[] = $this->error;
+											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found. We try to create it.");
 
@@ -2738,7 +2758,7 @@ class EmailCollector extends CommonObject
 									$sql .= ' FROM ' . MAIN_DB_PREFIX . $objectdesc['table'] . ' AS t';
 									$sql .= ' WHERE ';
 									foreach ($objectdesc['fields'] as $field) {
-										$sql .= "'" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') OR ";
+										$sql .= "('" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') AND t." . $field . "<>'') OR ";
 									}
 									$sql = substr($sql, 0, -4);
 
@@ -3186,8 +3206,8 @@ class EmailCollector extends CommonObject
 								$imapemail->move($targetdir);
 							}
 						} else {
-							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
-							$operationslog .= '<br>Move mail '.((string) $imapemail).' - '.$msgid;
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".($this->uidAsString($imapemail))." to ".$connectstringtarget, LOG_DEBUG);
+							$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid;
 
 							$arrayofemailtodelete[$imapemail] = $msgid;
 						}
@@ -3195,7 +3215,7 @@ class EmailCollector extends CommonObject
 						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
-							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." was set to read", LOG_DEBUG);
 						}
 					}
 				} else {
@@ -3549,5 +3569,20 @@ class EmailCollector extends CommonObject
 		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
 
 		return $text;
+	}
+
+	/**
+	 * Get UID of message as a string
+	 *
+	 * @param int|Webklex\PHPIMAP\Message	$imapemail		UID as int (if native IMAP) or as object (if external library)
+	 * @return string						UID as string
+	 */
+	protected function uidAsString($imapemail)
+	{
+		if (is_object($imapemail)) {
+			return $imapemail->getAttributes()["uid"];
+		} else {
+			return (string) $imapemail;
+		}
 	}
 }

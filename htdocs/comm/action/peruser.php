@@ -921,6 +921,9 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		$sql .= " AND u.statut = 1";
+		if ($filtert > 0) {
+			$sql .= " AND u.rowid = ".((int) $filtert);
+		}
 		if ($usergroup > 0)	{
 			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 		}

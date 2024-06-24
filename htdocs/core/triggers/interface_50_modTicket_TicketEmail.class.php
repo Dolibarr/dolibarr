@@ -246,13 +246,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && !empty($conf->global->TICKET_NOTIFY_AT_CLOSING) && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
-						$linked_contacts[] = $object->thirdparty->email;
+						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
 					$contactid = GETPOST('contactid', 'int');
 					$res = 0;
 
 					if ($contactid > 0) {
+						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						// Refuse email if not
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 						if (! in_array($contact, $linked_contacts)) {
@@ -417,7 +419,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$message = dol_nl2br($message);
 		}
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
-		$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+
+		$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
 		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 

@@ -72,7 +72,7 @@ if ($reshook < 0) {
 }
 
 // Define url to go after disconnect
-$urlfrom = empty($_SESSION["urlfrom"]) ? '' : $_SESSION["urlfrom"];
+$urlfrom = empty($_SESSION["urlfrom"]) ? GETPOST('urlfrom') : $_SESSION["urlfrom"];
 
 // Define url to go
 $url = DOL_URL_ROOT."/index.php"; // By default go to login page

@@ -1739,13 +1739,25 @@ class BOMLine extends CommonObjectLine
 	 * @var string description
 	 */
 	public $description;
+
+	/**
+	 * @var double qty
+	 */
 	public $qty;
 
 	/**
 	 * @var int qty frozen
 	 */
 	public $qty_frozen;
+
+	/**
+	 * @var int disable stock change
+	 */
 	public $disable_stock_change;
+
+	/**
+	 * @var double efficiency
+	 */
 	public $efficiency;
 
 	/**
@@ -1769,11 +1781,15 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $unit_cost = 0;
 
-
 	/**
 	 * @var Bom     array of Bom in line
 	 */
 	public $childBom = array();
+
+	/**
+	 * @var int Service unit
+	 */
+	public $fk_unit;
 
 	/**
 	 * @var int Service Workstation

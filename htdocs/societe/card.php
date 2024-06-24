@@ -472,7 +472,7 @@ if (empty($reshook)) {
 			}
 			$object->entity					= (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
-			$object->parent					= GETPOST('parent_company_id', 'int');
+			$object->parent					= GETPOSTISSET('parent_company_id') ? GETPOST('parent_company_id', 'int') : $object->parent;
 			$object->address				= GETPOST('address', 'alphanohtml');
 			$object->zip					= GETPOST('zipcode', 'alphanohtml');
 			$object->town					= GETPOST('town', 'alphanohtml');
@@ -1261,7 +1261,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
-						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+						var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
@@ -1269,7 +1269,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+								if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1883,7 +1883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
+		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : array($user->id)));
 		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td></tr>';
 
@@ -2124,7 +2124,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
-				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+				var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
@@ -2132,7 +2132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -3016,7 +3016,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Tags / categories
 		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
-			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
+			if ($object->prospect || $object->client || getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT')) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);

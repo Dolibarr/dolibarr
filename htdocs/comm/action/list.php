@@ -348,41 +348,41 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday_dtstart', 'int')) {
-	$param .= '&datestartday_dtstart='.GETPOST('datestartday_dtstart', 'int');
+if (GETPOST('datestart_dtstartday', 'int')) {
+	$param .= '&datestart_dtstartday='.GETPOST('datestart_dtstartday', 'int');
 }
-if (GETPOST('datestartmonth_dtstart', 'int')) {
-	$param .= '&datestartmonth_dtstart='.GETPOST('datestartmonth_dtstart', 'int');
+if (GETPOST('datestart_dtstartmonth', 'int')) {
+	$param .= '&datestart_dtstartmonth='.GETPOST('datestart_dtstartmonth', 'int');
 }
-if (GETPOST('datestartyear_dtstart', 'int')) {
-	$param .= '&datestartyear_dtstart='.GETPOST('datestartyear_dtstart', 'int');
+if (GETPOST('datestart_dtstartyear', 'int')) {
+	$param .= '&datestart_dtstartyear='.GETPOST('datestart_dtstartyear', 'int');
 }
-if (GETPOST('datestartday_dtend', 'int')) {
-	$param .= '&datestartday_dtend='.GETPOST('datestartday_dtend', 'int');
+if (GETPOST('datestart_dtendday', 'int')) {
+	$param .= '&datestart_dtendday='.GETPOST('datestart_dtendday', 'int');
 }
-if (GETPOST('datestartmonth_dtend', 'int')) {
-	$param .= '&datestartmonth_dtend='.GETPOST('datestartmonth_dtend', 'int');
+if (GETPOST('datestart_dtendmonth', 'int')) {
+	$param .= '&datestart_dtendmonth='.GETPOST('datestart_dtendmonth', 'int');
 }
-if (GETPOST('datestartyear_dtend', 'int')) {
-	$param .= '&datestartyear_dtend='.GETPOST('datestartyear_dtend', 'int');
+if (GETPOST('datestart_dtendyear', 'int')) {
+	$param .= '&datestart_dtendyear='.GETPOST('datestart_dtendyear', 'int');
 }
-if (GETPOST('dateendday_dtstart', 'int')) {
-	$param .= '&dateendday_dtstart='.GETPOST('dateendday_dtstart', 'int');
+if (GETPOST('dateend_dtstartday', 'int')) {
+	$param .= '&dateend_dtstartday='.GETPOST('dateend_dtstartday', 'int');
 }
-if (GETPOST('dateendmonth_dtstart', 'int')) {
-	$param .= '&dateendmonth_dtstart='.GETPOST('dateendmonth_dtstart', 'int');
+if (GETPOST('dateend_dtstartmonth', 'int')) {
+	$param .= '&dateend_dtstartmonth='.GETPOST('dateend_dtstartmonth', 'int');
 }
-if (GETPOST('dateendyear_dtstart', 'int')) {
-	$param .= '&dateendyear_dtstart='.GETPOST('dateendyear_dtstart', 'int');
+if (GETPOST('dateend_dtstartyear', 'int')) {
+	$param .= '&dateend_dtstartyear='.GETPOST('dateend_dtstartyear', 'int');
 }
-if (GETPOST('dateendday_dtend', 'int')) {
-	$param .= '&dateendday_dtend='.GETPOST('dateendday_dtend', 'int');
+if (GETPOST('dateend_dtendday', 'int')) {
+	$param .= '&dateend_dtendday='.GETPOST('dateend_dtendday', 'int');
 }
-if (GETPOST('dateendmonth_dtend', 'int')) {
-	$param .= '&dateendmonth_dtend='.GETPOST('dateendmonth_dtend', 'int');
+if (GETPOST('dateend_dtendmonth', 'int')) {
+	$param .= '&dateend_dtendmonth='.GETPOST('dateend_dtendmonth', 'int');
 }
-if (GETPOST('dateendyear_dtend', 'int')) {
-	$param .= '&dateendyear_dtend='.GETPOST('dateendyear_dtend', 'int');
+if (GETPOST('dateend_dtendyear', 'int')) {
+	$param .= '&dateend_dtendyear='.GETPOST('dateend_dtendyear', 'int');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

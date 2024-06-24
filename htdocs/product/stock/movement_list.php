@@ -1109,7 +1109,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 if (!empty($arrayfields['m.rowid']['checked'])) {
 	// Ref
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth40" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['m.datem']['checked'])) {
@@ -1611,7 +1611,7 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 	//print '</td></tr>';
 }
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;
