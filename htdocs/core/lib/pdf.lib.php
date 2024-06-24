@@ -1449,7 +1449,11 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
-		//var_dump($labelproductservice);exit;
+		if (getDolGlobalString('MARGIN_TOP_ZERO_UL')) {
+			$pdf->setListIndentWidth(5);
+			$TMarginList = ['ul' => [['h'=>0.1, ],['h'=>0.1, ]], 'li' => [['h'=>0.1, ],],];
+			$pdf->setHtmlVSpace($TMarginList);
+		}
 
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
@@ -2439,7 +2443,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if ($object->lines[$i]->situation_percent > 0) {
+			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
 				$progress = 1;

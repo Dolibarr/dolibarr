@@ -6161,7 +6161,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC', 'ZAR');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -11872,7 +11872,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
-	global $conf, $hookmanager;
+	global $conf, $db, $hookmanager;
 
 	$regs = array();
 
@@ -11900,7 +11900,7 @@ function getElementProperties($element_type)
 	}
 
 	// For compatibility and to work with non standard path
-	if ($element_type == "action") {
+	if ($element_type == "action" || $element_type == "actioncomm") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
@@ -12102,6 +12102,13 @@ function getElementProperties($element_type)
 		$classfile = 'emailsenderprofile';
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
+		$subelement = '';
+	} elseif ($element_type == 'ccountry') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'ccountry';
+		$classname = 'Ccountry';
+		$table_element = 'c_country';
 		$subelement = '';
 	}
 
@@ -13377,7 +13384,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body" style="word-wrap: break-word; word-break: break-all;" >';
+				$out .= '<div class="timeline-body wordbreak">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {

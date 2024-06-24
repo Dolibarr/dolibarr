@@ -760,7 +760,7 @@ print $examplecsprule;
 print '")</span><br>';
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' "strict-origin-when-cross-origin")</span><br>';
+print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";

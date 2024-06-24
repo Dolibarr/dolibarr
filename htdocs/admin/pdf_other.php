@@ -275,7 +275,7 @@ if (isModEnabled('facture')) {
 		'1'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes1"),
 		'2'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes2")
 	);
-	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, getDolGlobalString('INVOICE_CATEGORY_OF_OPERATION'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';

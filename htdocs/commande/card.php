@@ -14,7 +14,7 @@
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022	    Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2878,8 +2878,6 @@ if ($action == 'create' && $usercancreate) {
 				$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 			}
 
-			$numlines = count($object->lines);
-
 			/*
 			 * Form to add new line
 			 */
@@ -2919,6 +2917,8 @@ if ($action == 'create' && $usercancreate) {
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
+				$numlines = count($object->lines);
+
 				// Reopen a closed order
 				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
@@ -2949,11 +2949,12 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				$arrayforbutaction = array();
-
 				// Create a purchase order
-				$arrayforbutaction[] = array('lang'=>'orders', 'enabled'=>(isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0), 'perm'=>$usercancreatepurchaseorder, 'label'=>'AddPurchaseOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+				if (getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER') == 0) {
+					$arrayforbutaction[] = array('lang'=>'orders', 'enabled'=>(isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbLinesProductOrServiceOnBuy(getDolGlobalInt('COMMANDE_ADD_PURCHASE_ORDER_IGNORE_FREE_PRODUCTS')) > 0), 'perm'=>$usercancreatepurchaseorder, 'label'=>'AddPurchaseOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+				}
 				/*if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {
-					if ($usercancreatepurchaseorder) {
+					if ($usercancreatepurchaseorder) { isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0
 						print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id, '');
 					}
 				}*/

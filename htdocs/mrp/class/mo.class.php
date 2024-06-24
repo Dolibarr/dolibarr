@@ -380,12 +380,19 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// We make $object->lines empty to sort it without produced and consumed lines
+		$TLines = $object->lines;
+		$object->lines = array();
+
 		// Remove produced and consumed lines
-		foreach ($object->lines as $key => $line) {
+		foreach ($TLines as $key => $line) {
 			if (in_array($line->role, array('consumed', 'produced'))) {
 				unset($object->lines[$key]);
+			} else {
+				$object->lines[] = $line;
 			}
 		}
+
 
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
@@ -2035,8 +2042,8 @@ class MoLine extends CommonObjectLine
 		'fk_product' =>array('type'=>'integer', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'qty' =>array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
-		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
+		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'notnull' => 1, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
+		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'notnull' => 1, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'role' =>array('type'=>'varchar(10)', 'label'=>'Role', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'fk_mrp_production' =>array('type'=>'integer', 'label'=>'Fk mrp production', 'enabled'=>1, 'visible'=>-1, 'position'=>150),

@@ -29,6 +29,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
+				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
+					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
 				} else {
 					$value = (!empty($obj->$tmpkey) ? $obj->$tmpkey : '');
 				}

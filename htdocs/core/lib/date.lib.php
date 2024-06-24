@@ -3,8 +3,10 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
-*
+ * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2024	     MDW					        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -894,7 +896,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Ascension (thursday)
 			}
 
-			if (in_array('pentecote', $specialdayrule)) {
+			if (in_array('pentecost', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_pentecote = $date_paques + (3600 * 24 * 49);
