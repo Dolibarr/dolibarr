@@ -65,7 +65,7 @@ class PriceParser
 		$langs->load("errors");
 		/*
 		-No arg
-		 9, an unexpected error occured
+		 9, an unexpected error occurred
 		14, division by zero
 		19, expression not found
 		20, empty expression
@@ -108,8 +108,7 @@ class PriceParser
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
 			return $langs->trans("ErrorPriceExpressionInternal", $code);
-		} else //Unknown errors
-		{
+		} else { //Unknown errors
 			return $langs->trans("ErrorPriceExpressionUnknown", $code);
 		}
 	}
@@ -124,15 +123,15 @@ class PriceParser
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
-		global $user;
-		global $hookmanager;
+		global $user, $hookmanager, $extrafields;
+
 		$action = 'PARSEEXPRESSION';
-		if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
-								'expression' =>$expression,
-								'product' => $product,
-								'values' => $values
+		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
+								'expression' => &$expression,
+								'product' => &$product,
+								'values' => &$values
 		), $this, $action)) {
-			return $result;
+			return $hookmanager->resArray['return'];
 		}
 		//Check if empty
 		$expression = trim($expression);
@@ -150,11 +149,16 @@ class PriceParser
 			"length" => $product->length,
 			"surface" => $product->surface,
 			"price_min" => $product->price_min,
+			"cost_price" => $product->cost_price,
+			"pmp" => $product->pmp,
 		));
 
-		//Retrieve all extrafield for product and add it to values
-		$extrafields = new ExtraFields($this->db);
-		$extrafields->fetch_name_optionals_label('product', true);
+		// Retrieve all extrafields if not already not know (should not happen)
+		if (! is_object($extrafields)) {
+			$extrafields = new ExtraFields($this->db);
+			$extrafields->fetch_name_optionals_label($product->table_element);
+		}
+
 		$product->fetch_optionals();
 		if (is_array($extrafields->attributes[$product->table_element]['label'])) {
 			foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
@@ -209,7 +213,7 @@ class PriceParser
 			return -6;
 		}
 
-		//Iterate over each expression splitted by $separator_chr
+		//Iterate over each expression split by $separator_chr
 		$expressions = explode($this->separator_chr, $expression);
 		$expressions = array_slice($expressions, 0, $this->limit);
 		foreach ($expressions as $expr) {
@@ -242,7 +246,7 @@ class PriceParser
 	 *	Calculates product price based on product id and associated expression
 	 *
 	 *	@param	Product				$product    	The Product object to get information
-	 *	@param	array 				$extra_values   Any aditional values for expression
+	 *	@param	array 				$extra_values   Any additional values for expression
 	 *	@return int 						> 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
@@ -263,13 +267,16 @@ class PriceParser
 			return -1;
 		} elseif ($res == 0) {
 			$supplier_min_price = 0;
+			$supplier_min_price_with_discount = 0;
 		} else {
-			 $supplier_min_price = $productFournisseur->fourn_unitprice;
+			$supplier_min_price = $productFournisseur->fourn_unitprice;
+			$supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
 		}
 
 		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
+			"supplier_min_price_with_discount" => $supplier_min_price_with_discount,
 		));
 
 		//Parse the expression and return the price, if not error occurred check if price is higher than min
@@ -286,7 +293,7 @@ class PriceParser
 	 *	Calculates supplier product price based on product supplier price and associated expression
 	 *
 	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
-	 *	@param	array 				$extra_values       Any aditional values for expression
+	 *	@param	array 				$extra_values       Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_supplier, $extra_values = array())
@@ -317,7 +324,7 @@ class PriceParser
 	 *
 	 *  @param  int					$product_id    	The Product id to get information
 	 *  @param  string 				$expression     The expression to parse
-	 *  @param  array 				$extra_values   Any aditional values for expression
+	 *  @param  array 				$extra_values   Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function testExpression($product_id, $expression, $extra_values = array())
@@ -329,12 +336,13 @@ class PriceParser
 		//Values for product expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => 1,
+			"supplier_min_price_with_discount" => 2,
 		));
 
 		//Values for supplier product expressions
 		$extra_values = array_merge($extra_values, array(
-			"supplier_quantity" => 2,
-			"supplier_tva_tx" => 3,
+			"supplier_quantity" => 3,
+			"supplier_tva_tx" => 4,
 		));
 		return $this->parseExpression($product, $expression, $extra_values);
 	}

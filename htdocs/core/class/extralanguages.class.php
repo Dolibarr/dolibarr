@@ -99,8 +99,8 @@ class ExtraLanguages
 
 
 		$array_name_label = array();
-		if (!empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
-			$tmpelement = explode(';', $conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR);
+		if (getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR')) {
+			$tmpelement = explode(';', getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR'));
 			foreach ($tmpelement as $elementstring) {
 				$reg = array();
 				preg_match('/^(.*):(.*)$/', $elementstring, $reg);
@@ -129,12 +129,12 @@ class ExtraLanguages
 	 * @param  string  $key            			Key of attribute
 	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
-	 * @param  string  $moreparam      			To add more parametes on html input tag
+	 * @param  string  $moreparam      			To add more parameters on html input tag
 	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int     $objectid       			Current object id
-	 * @param  string  $mode                    1=Used for search filters
+	 * @param  int	   $mode                    1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $extrafieldsobjectkey, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $mode = 0)
@@ -163,7 +163,7 @@ class ExtraLanguages
 	 * @param   string	$value          		Value to show
 	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function showOutputField($key, $value, $extrafieldsobjectkey, $moreparam = '')
 	{

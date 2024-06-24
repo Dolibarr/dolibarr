@@ -61,35 +61,10 @@ License: GPL-3+
 
 ------------------------------------------------------------
 
-Files: htdocs/includes/adodbtime/*
-Copyright: 2003-2005, John Lim
-           unknown, jackbbs
-License: BSD-3-Clause
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions
- are met:
- .
- Redistributions of source code must retain the above copyright notice,
- this list of conditions and the following disclaimer.
- .
- Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
- .
- Neither the name of the John Lim nor the names of its contributors may be
- used to endorse or promote products derived from this software without
- specific prior written permission.
-Comment:
- Those files are not shipped in the binary package since we use
- the library as packaged in "libphp-adodb".
-
-
-------------------------------------------------------------
-
 Files: htdocs/includes/ckeditor/*
 Copyright: 2003-2012 CKSource - Frederico Knabben
 License: GPL-2+
- The ckeditor is tripple licensed under the GNU General Public License (GPL),
+ The ckeditor is triple licensed under the GNU General Public License (GPL),
  GNU Lesser General Public License (LGPL), and Mozilla Public License (MPL).
  In Debian, it is distributed under the GNU General Public License (GPL).
  .

@@ -6,9 +6,14 @@ on:
   - cron: "0 21 * * *"
   issue_comment:
     types: [created]
+  workflow_dispatch:
+
+permissions: {} # none
 
 jobs:
   stale:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     steps:
     - uses: Dolibarr/stale@staleunstale
@@ -21,4 +26,3 @@ jobs:
         days-before-close: 10
         operations-per-run: 100
         dry-run: false
-        

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
- * UUID Utility
+ * UUID Utility.
  *
  * This class has static methods to generate and validate UUID's.
  * UUIDs are used a decent amount within various *DAV standards, so it made
@@ -13,18 +15,19 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class UUIDUtil {
-
+class UUIDUtil
+{
     /**
-     * Returns a pseudo-random v4 UUID
+     * Returns a pseudo-random v4 UUID.
      *
      * This function is based on a comment by Andrew Moore on php.net
      *
      * @see http://www.php.net/manual/en/function.uniqid.php#94959
+     *
      * @return string
      */
-    static function getUUID() {
-
+    public static function getUUID()
+    {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
             mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -50,15 +53,14 @@ class UUIDUtil {
      * Checks if a string is a valid UUID.
      *
      * @param string $uuid
+     *
      * @return bool
      */
-    static function validateUUID($uuid) {
-
-        return preg_match(
+    public static function validateUUID($uuid)
+    {
+        return 0 !== preg_match(
             '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i',
             $uuid
-        ) !== 0;
-
+        );
     }
-
 }

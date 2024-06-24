@@ -3,21 +3,23 @@
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
 	<arg name="tab-width" value="4"/>
+	<arg name="extensions" value="php" />
 
-	<exclude-pattern type="relative">build/html</exclude-pattern>
-	<exclude-pattern type="relative">build/aps</exclude-pattern>
-	<exclude-pattern type="relative">dev/tools/test/namespacemig</exclude-pattern>
-	<!-- <exclude-pattern type="relative">dev/initdata/dbf/includes</exclude-pattern> -->
-	<exclude-pattern type="relative">documents</exclude-pattern>
-	<exclude-pattern type="relative">htdocs/core/class/lessc.class.php</exclude-pattern>
-	<exclude-pattern type="relative">htdocs/custom</exclude-pattern>
-	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
-	<exclude-pattern type="relative">htdocs/install/doctemplates/websites</exclude-pattern>
-	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
-	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
-	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
-	<exclude-pattern type="relative">source</exclude-pattern>
-	<exclude-pattern type="relative">.git</exclude-pattern>
+	<!-- info: '*' is replaced with '.*', so better use '+' in some cases -->
+	<!-- info: 'relative' paths are relative to the examined file, so not ok. -->
+	<exclude-pattern>/build/(html|aps)/</exclude-pattern>
+	<exclude-pattern>/dev/tools/test/namespacemig/</exclude-pattern>
+	<exclude-pattern>/dev/tools/phan/stubs/</exclude-pattern>
+	<!-- <exclude-pattern>dev/initdata/dbf/includes</exclude-pattern> -->
+	<exclude-pattern>/documents/</exclude-pattern>
+	<exclude-pattern>/htdocs/core/class/lessc\.class\.php</exclude-pattern>
+	<exclude-pattern>/htdocs/(custom|includes)/</exclude-pattern>
+	<exclude-pattern>/htdocs/install/doctemplates/websites</exclude-pattern>
+	<exclude-pattern>/htdocs/([^/]+/)?conf\.php</exclude-pattern>
+	<exclude-pattern>*/nltechno*</exclude-pattern>
+	<exclude-pattern>/source/</exclude-pattern>
+	<exclude-pattern>/\.git/</exclude-pattern>
+	<exclude-pattern>/\.cache/</exclude-pattern>
 
 	<!-- List of all tests -->
 
@@ -31,51 +33,62 @@
 
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIf"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElse"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElseif"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedForeach"/>
-    </rule>
+	<exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIf"/>
+	<exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElse"/>
+	<exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElseif"/>
+	<exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch"/>
+	<exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedForeach"/>
+	</rule>
 
-    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />
-    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
+	<rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />
+	<rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
 
-    <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
+	<rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
 
-    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
+	<rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
 
-    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
+	<rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
 
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
 		<severity>0</severity>
-    </rule>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed">
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed">
 		<severity>0</severity>
-    </rule>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
 		<severity>0</severity>
-    </rule>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass">
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass">
 		<severity>0</severity>
-    </rule>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed">
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed">
 		<severity>0</severity>
-    </rule>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed">
+	</rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed">
 		<severity>0</severity>
+	</rule>
+
+    <!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
+    <rule ref="Generic.Files.LineLength.TooLong">
+		<severity>4</severity>
+    </rule>
+    <rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
+		<severity>4</severity>
+    </rule>
+    <rule ref="Generic.Metrics.NestingLevel.TooHigh">
+		<severity>4</severity>
     </rule>
 
 
-    <!-- Warnings on TODO -->
-    <!-- Disabled: We want to keep TODO as normal
-    <rule ref="Generic.Commenting.Todo" />
-    -->
+	<!-- Warnings on TODO -->
+	<!-- Disabled: We want to keep TODO as normal
+	<rule ref="Generic.Commenting.Todo" />
+	-->
 
 
-    <!-- PHP code MUST use only UTF-8 without BOM. -->
-    <rule ref="Generic.Files.ByteOrderMark"/>
+	<!-- PHP code MUST use only UTF-8 without BOM. -->
+	<rule ref="Generic.Files.ByteOrderMark"/>
 
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
@@ -93,57 +106,57 @@
 	</rule>
 
 
-    <!-- Disallow several statements on same line -->
+	<!-- Disallow several statements on same line -->
 
 	<!-- Warning if action on same line than if -->
-	<!-- Disabled: We want to allow this for better code compacity and readability
-		<rule ref="Generic.ControlStructures.InlineControlStructure">
+	<!-- Disabled: We want to allow this for better code compactness and readability
+	<rule ref="Generic.ControlStructures.InlineControlStructure">
 		<properties>
 			<property name="error" value="false"/>
 		</properties>
-		</rule>
+	</rule>
 	-->
-	<!--  We want to allow 'if () { ...small code... }' on same line for better code compacity and readability -->
+	<!--  We want to allow 'if () { ...small code... }' on a single line for better code compactness and readability -->
 	<!-- <rule ref="Generic.Formatting.DisallowMultipleStatements">
 		<severity>0</severity>
 	</rule> -->
 
 
-	<!-- Check assignement have the = align on each line. Have 20 chars padding maximum and always show as errors -->
+	<!-- Check that assignments have the = aligned on each line. Have 20 chars padding maximum and always show as errors -->
 	<!--  Disabled: Report some false warning
-		<rule ref="Generic.Formatting.MultipleStatementAlignment">
+	<rule ref="Generic.Formatting.MultipleStatementAlignment">
 		<properties>
-		<property name="maxPadding" value="20"/>
-		<property name="ignoreMultiLine" value="true"/>
-		</properties>
-		</rule>
+			<property name="maxPadding" value="20"/>
+			<property name="ignoreMultiLine" value="true"/>
+			</properties>
+	</rule>
 	-->
 
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
-    <rule ref="Generic.Functions.CallTimePassByReference" />
+	<rule ref="Generic.Functions.CallTimePassByReference" />
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 
-    <!-- Disallow several spaces after comma -->
+	<!-- Disallow several spaces after comma -->
 	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
 		<severity>0</severity>
 	</rule>
 
-    <!-- Tweaks to metrics -->
-    <rule ref="Generic.Metrics.CyclomaticComplexity">
-        <properties>
-            <property name="complexity" value="250" />
-            <property name="absoluteComplexity" value="300" />
-        </properties>
-    </rule>
-    <rule ref="Generic.Metrics.NestingLevel">
-        <properties>
-            <property name="nestingLevel" value="12" />
-            <property name="absoluteNestingLevel" value="50" />
-        </properties>
-    </rule>
+	<!-- Tweaks to metrics -->
+	<rule ref="Generic.Metrics.CyclomaticComplexity">
+	<properties>
+		<property name="complexity" value="250" />
+		<property name="absoluteComplexity" value="500" />
+	</properties>
+	</rule>
+	<rule ref="Generic.Metrics.NestingLevel">
+	<properties>
+		<property name="nestingLevel" value="12" />
+		<property name="absoluteNestingLevel" value="50" />
+	</properties>
+	</rule>
 
 	<rule ref="Generic.NamingConventions.ConstructorName" />
 	<!-- Check if we use PHP4 constructor instead of __construct() -->
@@ -151,20 +164,20 @@
 
 	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 
-    <rule ref="Generic.PHP.DeprecatedFunctions" />
-    <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
-        <severity>0</severity>
-    </rule>
+	<rule ref="Generic.PHP.DeprecatedFunctions" />
+	<rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
+		<severity>0</severity>
+	</rule>
 
 	<rule ref="Generic.PHP.DisallowShortOpenTag" />
 
-    <rule ref="Generic.PHP.ForbiddenFunctions" />
+	<rule ref="Generic.PHP.ForbiddenFunctions" />
 
-    <!-- Warning when using @ before functions -->
-    <!-- We want this. Some features need this -->
-    <rule ref="Generic.PHP.NoSilencedErrors">
-        <severity>0</severity>
-    </rule>
+	<!-- Disable warning when using @ before functions -->
+	<!-- We want the '@' symbols. Some features need this. -->
+	<rule ref="Generic.PHP.NoSilencedErrors">
+		<severity>0</severity>
+	</rule>
 
 	<!-- Say if null, true, false must be uppercase (Rule 2.5 of PSR2 https://www.php-fig.org/psr/psr-2/) -->
 	<rule ref="Generic.PHP.LowerCaseConstant" />
@@ -182,123 +195,122 @@
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
-	  <properties>
-	    <property name="indent" value="4"/>
-	    <property name="tabIndent" value="true"/>
-	  </properties>
+		<properties>
+			<property name="indent" value="4"/>
+			<property name="tabIndent" value="true"/>
+		</properties>
 	</rule>
 
-    <!-- Check for duplicate class names -->
-    <!-- Disabled: We need this for dependency injection.
-    <rule ref="Generic.Classes.DuplicateClassName" />
-    -->
+	<!-- Check for duplicate class names -->
+	<!-- Disabled: We need this for dependency injection.
+	<rule ref="Generic.Classes.DuplicateClassName" />
+	-->
 
 
- 	<!-- Rules from Squiz Standard -->
+	<!-- Rules from Squiz Standard -->
 
-    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
+	<rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
 
-    <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
-        <properties>
-            <property name="ignoreBlankLines" value="false"/>
-        </properties>
-    </rule>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile" />
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile" />
-    <!-- Disabled: We want to have 2 empty line as separator sometimes -->
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines" >
-        <severity>0</severity>
-    </rule>
-
-    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
-    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
-
-    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis" />
-    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
-    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword" />
-
-    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
-    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
-
-    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
-	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction">
+	<!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+		<properties>
+			<property name="ignoreBlankLines" value="false"/>
+		</properties>
 	</rule>
-    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
-        <properties>
-            <property name="equalsSpacing" value="1"/>
-        </properties>
-    </rule>
-    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterHint">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.Scope.MethodScope.Missing" />
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile" />
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile" />
+	<!-- Disabled: We want to have 2 empty line as separator sometimes -->
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines" >
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
+	<rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+
+	<rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis" />
+	<rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
+	<rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword" />
+
+	<rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
+	<rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
+
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction" />
+	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+		<properties>
+			<property name="equalsSpacing" value="1"/>
+		</properties>
+	</rule>
+	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterHint">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Squiz.Scope.MethodScope.Missing" />
 
 
-    <!-- Rules from PEAR Standard -->
+	<!-- Rules from PEAR Standard -->
 
-    <rule ref="PEAR.Classes.ClassDeclaration" />
+	<rule ref="PEAR.Classes.ClassDeclaration" />
 
-    <rule ref="PEAR.Commenting.ClassComment" />
+	<rule ref="PEAR.Commenting.ClassComment" />
 
-    <rule ref="PEAR.Commenting.ClassComment.Missing" />
+	<rule ref="PEAR.Commenting.ClassComment.Missing" />
 
-    <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
+	<rule ref="PEAR.Commenting.ClassComment.MissingTag" />
 
-    <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
-        <severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
+		<severity>0</severity>
+	</rule>
 
-    <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
-        <severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
+		<severity>0</severity>
+	</rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment" />
+	<rule ref="PEAR.Commenting.FunctionComment" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.Empty" />
+	<rule ref="PEAR.Commenting.FunctionComment.Empty" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
-        <severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
+		<severity>0</severity>
+	</rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
+	<rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.WrongStyle" />
+	<rule ref="PEAR.Commenting.FunctionComment.WrongStyle" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongType">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongName">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParams">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.ParameterCommentsNotAligned">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.ParameterNamesNotAligned">
-        <severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongType">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongName">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParams">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.ParameterCommentsNotAligned">
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.Commenting.FunctionComment.ParameterNamesNotAligned">
+		<severity>0</severity>
+	</rule>
 
-    <rule ref="PEAR.Commenting.InlineComment" />
+	<rule ref="PEAR.Commenting.InlineComment" />
 
 	<!-- Check position of { after a control structure like if (), while (), etc... -->
 	<!--
@@ -311,37 +323,37 @@
 	<rule ref="PEAR.Files.IncludingFile" />
 
 	<!-- We disable this: We must be able to make require inside if -->
-    <rule ref="PEAR.Files.IncludingFile.UseInclude">
-        <severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Files.IncludingFile.UseInclude">
+		<severity>0</severity>
+	</rule>
 
-    <!-- We disable this. We must be allowed to use strict require instead of non strict include anywhere -->
-    <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
-        <severity>0</severity>
-    </rule>
+	<!-- We disable this. We must be allowed to use strict require instead of non strict include anywhere -->
+	<rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
+		<severity>0</severity>
+	</rule>
 
-    <rule ref="PEAR.Files.IncludingFile.UseRequire">
-     	<severity>0</severity>
-    </rule>
+	<rule ref="PEAR.Files.IncludingFile.UseRequire">
+		<severity>0</severity>
+	</rule>
 
-    <!-- We disable this: We want to allow include_once -->
-    <rule ref="PEAR.Files.IncludingFile.UseRequireOnce">
-        <severity>0</severity>
-    </rule>
+	<!-- We disable this: We want to allow include_once -->
+	<rule ref="PEAR.Files.IncludingFile.UseRequireOnce">
+		<severity>0</severity>
+	</rule>
 
 	<rule ref="PEAR.Formatting.MultiLineAssignment" />
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
-    <!-- We disable this: It returns a lot of false positive -->
-    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
-        <severity>0</severity>
-    </rule>
+	<!-- We disable this: It returns a lot of false positive -->
+	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+		<severity>0</severity>
+	</rule>
 
-    <!-- We disable this: We want to allow small function on 1 line -->
-    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
-        <severity>0</severity>
-    </rule>
+	<!-- We disable this: We want to allow small function on 1 line -->
+	<rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+		<severity>0</severity>
+	</rule>
 
 	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine" />
 
@@ -350,14 +362,14 @@
 		<severity>0</severity>
 	</rule>
 
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket" />
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket" />
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket" />
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket" />
 
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
 	<rule ref="PEAR.NamingConventions.ValidClassName" />
 	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 
 	<!-- We disable this: there is a lot of existing method not starting with a capital letter (class modXxxx, ...) -->
@@ -366,7 +378,7 @@
 	</rule>
 	<!-- some phpcs have a typo error in rule, so we add it this rule too with term "Captial" instead of "Capital" -->
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
@@ -374,26 +386,26 @@
 
 	<!-- We disable this: there is a lot of existing function not starting with a capital letter (class modXxxx, ...) -->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCapital">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 	<!-- some phpcs have a typo error in rule, so we add it this rule too with term "Captial" instead of "Capital" -->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 
-    <!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
-        <severity>0</severity>
-    </rule>-->
+	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
+		<severity>0</severity>
+	</rule>-->
 	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>-->
 
 	<!-- We disable this: We don't want to have private methods prefixed with an underscore -->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
-        <severity>0</severity>
+		<severity>0</severity>
 	</rule>
 
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
@@ -401,35 +413,35 @@
 	<!-- This is not in PSR2 -->
 	<!-- We disable this: We don't want to have private methods prefixed with an underscore -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
-        <severity>0</severity>
-    </rule>
+		<severity>0</severity>
+	</rule>
 
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
 	<!-- Need to be commented to be disabled
 	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
-        <severity>0</severity>
-    </rule>
+		<severity>0</severity>
+	</rule>
+	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
+		<severity>0</severity>
+	</rule>
 	-->
 
-    <!-- Already found as a Generic rule -->
+	<!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
 
 
 	<!--  Rules PSR 2 -->
-    <rule ref="PSR2.Classes.ClassDeclaration" />
-    <rule ref="PSR2.Methods.FunctionClosingBrace" />
-    <rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed" />
-    <rule ref="PSR2.Classes.ClassDeclaration" />
-    <rule ref="PSR2.Methods.FunctionClosingBrace" />
-    <rule ref="PSR2.Files.EndFileNewline.TooMany" />
+	<rule ref="PSR2.Classes.ClassDeclaration" />
+	<rule ref="PSR2.Methods.FunctionClosingBrace" />
+	<rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed" />
+	<rule ref="PSR2.Classes.ClassDeclaration" />
+	<rule ref="PSR2.Methods.FunctionClosingBrace" />
+	<rule ref="PSR2.Files.EndFileNewline.TooMany" />
 	<rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 	<rule ref="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket" />
 	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
-    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-    <rule ref="PSR2.Files.ClosingTag"/>
+	<!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
+	<rule ref="PSR2.Files.ClosingTag"/>
 
 </ruleset>

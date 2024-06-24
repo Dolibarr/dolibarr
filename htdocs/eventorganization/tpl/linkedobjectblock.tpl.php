@@ -20,10 +20,10 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
-echo "<!-- BEGIN PHP TEMPLATE eventorganization/tpl/linkedopjectblock.tpl.php -->\n";
+echo "<!-- BEGIN PHP TEMPLATE eventorganization/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 

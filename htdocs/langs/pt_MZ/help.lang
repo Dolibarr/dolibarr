@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Fórum/Wiki suporte
+EMailSupport=E-mails de suporte
+RemoteControlSupport=Suporte online em tempo real/remoto
+OtherSupport=Outros suportes
+ToSeeListOfAvailableRessources=Entrar em contato com/consulte os recursos disponíveis:
+HelpCenter=Central de ajuda
+Efficiency=eficiência
+TypeHelpOnly=Somente ajuda
+TypeHelpDev=Ajuda+Desenvolvimento
+PossibleLanguages=Os idiomas suportados
+SeeOfficalSupport=Para obter suporte oficial do Dolibarr no seu idioma:  <br><b><a href="%s" target="_blank">%s</a></b>

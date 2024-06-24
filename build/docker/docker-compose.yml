@@ -1,60 +1,28 @@
-version: '3'
-
-networks:
-    internal-pod:
-        internal: true
-    external-pod:
-        internal: false
+version: "3"
 
 services:
-    mariadb:
+    mariadb-prod:
+        container_name: dolibarr-mariadb-prod
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: dolibarr
-        ports:
-            - "3306:3306"
-        networks:
-            - internal-pod
-            - external-pod
-
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        environment:
-            PMA_HOST: mariadb
-        depends_on:
-            - mariadb
-        ports:
-            - "8080:80"
-        networks:
-            - internal-pod
-            - external-pod
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PWD
+            MYSQL_DATABASE: "dolibarr-prod"
 
     web:
+        container_name: dolibarr-web-prod
         build: .
+
+        volumes:
+         - ../../htdocs:/var/www/html/
+         - ../../documents:/var/www/html/documents
+
+        depends_on:
+            - mariadb-prod
         environment:
             HOST_USER_ID: $HOST_USER_ID
-        volumes:
-            - ../../htdocs:/var/www/html/
-            - ../../documents:/var/documents
+            HOST_GROUP_ID: $HOST_GROUP_ID
+            DOLI_ROOT_PASSWORD: $MYSQL_ROOT_PWD
+            DOLI_DATABASE: "dolibarr-prod"
+            DOLI_DB_SERVER: "mariadb-prod"
         ports:
-            - "80:80"
-            - "9000:9000"
-        depends_on:
-            - mariadb
-            - mail
-        networks:
-            - internal-pod
-            - external-pod
-        extra_hosts:
-            - "localhost.localdomain:127.0.0.1"
-            - "host.docker.internal:host-gateway"
-
-    mail:
-        image: maildev/maildev
-        ports:
-            - "8081:80"
-            - "25:25"
-        networks:
-            - internal-pod
-            - external-pod
+            - "8080:80"

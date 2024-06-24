@@ -4,7 +4,7 @@ BLOCKED LOG
 ## Feature
  
 This module tracks, in real time, some events into a non reversible log (that you can't modify once recorded) into a block chain. 
-This module provides compatibility with requirements of laws of some countries (like France with the law Fincance 2016 - Norme NF535).
+This module provides compatibility with requirements of laws of some countries (like France with the law Finance 2016 - Norme NF525).
 
 
 **The tracked events are:**

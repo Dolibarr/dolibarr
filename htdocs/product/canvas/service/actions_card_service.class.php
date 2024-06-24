@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +25,38 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Class with controller methods for product canvas
+ *	Class with controller methods for service canvas
  */
 class ActionsCardService
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $dirmodule;
+	public $module;
+	public $label;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
 	public $targetmodule;
 	public $canvas;
 	public $card;
 
+	public $name;
+	public $definition;
+	public $fieldListName;
+	public $next_prev_filter;
+
+	//! Object container
+	public $object;
+
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
-	public $list_datas = array();
 
 	public $id;
 	public $ref;
@@ -46,18 +65,30 @@ class ActionsCardService
 	public $price;
 	public $price_min;
 
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 
 	/**
 	 *    Constructor
 	 *
-	 *    @param   DoliDB	$db             Handler acces base de donnees
-	 *    @param   string	$targetmodule   Name of directory of module where canvas is stored
+	 *    @param	DoliDB	$db             Database handler
+	 *    @param	string	$dirmodule		Name of directory of module
+	 *    @param	string	$targetmodule	Name of directory where canvas is stored
 	 *    @param   string	$canvas         Name of canvas
 	 *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	public function __construct($db, $targetmodule, $canvas, $card)
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
 		$this->db = $db;
+		$this->dirmodule = $dirmodule;
 		$this->targetmodule = $targetmodule;
 		$this->canvas           = $canvas;
 		$this->card             = $card;
@@ -82,17 +113,14 @@ class ActionsCardService
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
-		global $form, $formproduct;
+		global $form;
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {
 			$tmpobject->fetch($id, $ref);
 		}
 		$this->object = $tmpobject;
-
-		//parent::assign_values($action);
 
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
@@ -155,7 +183,7 @@ class ActionsCardService
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		// Duration
@@ -213,10 +241,6 @@ class ActionsCardService
 
 			$this->tpl['fiche_end'] = dol_get_fiche_end();
 		}
-
-		if ($action == 'list') {
-			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
 	}
 
 
@@ -225,7 +249,7 @@ class ActionsCardService
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 
@@ -265,99 +289,6 @@ class ActionsCardService
 			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db, $sql);
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		// phpcs:enable
-		global $conf;
-		global $search_categ, $sall, $sref, $search_barcode, $snom, $catid;
-
-		$this->getFieldListCanvas();
-
-		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
-		$sql .= ' p.fk_product_type, p.tms as datem,';
-		$sql .= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		// We'll need this table joined to the select in order to filter by categ
-		if ($search_categ) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-		}
-		$fourn_id = 0;
-		if (GETPOST("fourn_id", 'int') > 0) {
-			$fourn_id = GETPOST("fourn_id", 'int');
-			$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-		}
-		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		if ($search_categ) {
-			$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
-		}
-		if ($sall) {
-			$sql .= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
-		}
-		if ($sref) {
-			$sql .= " AND p.ref LIKE '%".$this->db->escape($sref)."%'";
-		}
-		if ($search_barcode) {
-			$sql .= " AND p.barcode LIKE '%".$this->db->escape($search_barcode)."%'";
-		}
-		if ($snom) {
-			$sql .= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
-		}
-		if (GETPOSTISSET("tosell")) {
-			$sql .= " AND p.tosell = ".((int) GETPOST("tosell", 'int'));
-		}
-		if (GETPOSTISSET("canvas")) {
-			$sql .= " AND p.canvas = '".$this->db->escape(GETPOST("canvas"))."'";
-		}
-		if ($catid) {
-			$sql .= " AND cp.fk_categorie = ".((int) $catid);
-		}
-		if ($fourn_id > 0) {
-			$sql .= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".((int) $fourn_id);
-		}
-		// Insert categ filter
-		if ($search_categ) {
-			$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
-		}
-		$sql .= $this->db->order($sortfield, $sortorder);
-		$sql .= $this->db->plimit($limit + 1, $offset);
-
-		$this->list_datas = array();
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < min($num, $limit)) {
-				$datas = array();
-				$obj = $this->db->fetch_object($resql);
-
-				$datas["id"]        = $obj->rowid;
-				$datas["ref"]       = $obj->ref;
-				$datas["label"]     = $obj->label;
-				$datas["barcode"]   = $obj->barcode;
-				$datas["statut"]    = $obj->statut;
-
-				array_push($this->list_datas, $datas);
-
-				$i++;
-			}
-			$this->db->free($resql);
-		} else {
-			print $sql;
 		}
 	}
 }

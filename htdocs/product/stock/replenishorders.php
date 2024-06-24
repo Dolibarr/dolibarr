@@ -25,6 +25,7 @@
  *  \brief      Page to list replenishment orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -44,14 +45,15 @@ $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$search_product = GETPOST('search_product', 'int');
-$search_dateyear = GETPOST('search_dateyear', 'int');
-$search_datemonth = GETPOST('search_datemonth', 'int');
-$search_dateday = GETPOST('search_dateday', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$search_product = GETPOSTINT('search_product');
+$search_dateyear = GETPOSTINT('search_dateyear');
+$search_datemonth = GETPOSTINT('search_datemonth');
+$search_dateday = GETPOSTINT('search_dateday');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortorder) {
@@ -60,7 +62,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = 'cf.date_creation';
 }
-$page = GETPOST('page', 'int') ? GETPOST('page', 'int') : 0;
+$page = GETPOSTINT('page') ? GETPOSTINT('page') : 0;
 if ($page < 0) {
 	$page = 0;
 }
@@ -101,7 +103,7 @@ $form = new Form($db);
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
-llxHeader('', $texte, $helpurl, '');
+llxHeader('', $texte, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_replenishorders');
 
 print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
@@ -124,19 +126,19 @@ $sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql .= ' u.login';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON cf.fk_user_author = u.rowid';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
 $sql .= ' AND cf.entity = '.$conf->entity;
-if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
 	$sql .= ' AND cf.fk_statut < 3';
-} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 	$sql .= ' AND cf.fk_statut < 6'; // We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
 	$sql .= ' AND cf.fk_statut < 5';
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($sref) {
@@ -158,8 +160,8 @@ if ($sall) {
 if (!empty($socid)) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (GETPOST('statut', 'int')) {
-	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');
+if (GETPOSTINT('statut')) {
+	$sql .= ' AND fk_statut = '.GETPOSTINT('statut');
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
@@ -185,7 +187,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sref) {
 		$param .= '&search_ref='.urlencode($sref);
@@ -200,13 +202,13 @@ if ($resql) {
 		$param .= '&search_ttc='.urlencode($sttc);
 	}
 	if ($search_dateyear) {
-		$param .= '&search_dateyear='.urlencode($search_dateyear);
+		$param .= '&search_dateyear='.urlencode((string) ($search_dateyear));
 	}
 	if ($search_datemonth) {
-		$param .= '&search_datemonth='.urlencode($search_datemonth);
+		$param .= '&search_datemonth='.urlencode((string) ($search_datemonth));
 	}
 	if ($search_dateday) {
-		$param .= '&search_dateday='.urlencode($search_dateday);
+		$param .= '&search_dateday='.urlencode((string) ($search_dateday));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -217,18 +219,18 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '');
 	print '</td>';
 	print '<td class="liste_titre right">';
@@ -276,7 +278,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'right '
 	);
 	print_liste_field_titre(
 		'OrderCreation',
@@ -286,7 +289,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'center '
 	);
 	print_liste_field_titre(
 		'Status',
@@ -320,7 +324,7 @@ if ($resql) {
 
 			// Company
 			$href = DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid;
-			print '<td><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name).'"><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
 
 			// Author
 			$userstatic->id = $obj->fk_user_author;
@@ -333,15 +337,15 @@ if ($resql) {
 			print '<td>'.$txt.'</td>';
 
 			// Amount
-			print '<td>'.price($obj->total_ttc).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 			// Date
 			if ($obj->dc) {
-				$date = dol_print_date($db->jdate($obj->dc), 'dayhour');
+				$date = dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel');
 			} else {
 				$date = '-';
 			}
-			print '<td>'.$date.'</td>';
+			print '<td class="center">'.$date.'</td>';
 
 			// Statut
 			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';

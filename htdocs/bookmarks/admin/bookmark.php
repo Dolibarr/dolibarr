@@ -22,6 +22,7 @@
  *		\brief      Page to setup bookmark module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -56,7 +57,7 @@ if ($action == 'setvalue') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-admin_bookmark');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BookmarkSetup"), $linkback, 'title_setup');
@@ -76,7 +77,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("NbOfBoomarkToShow").'</td><td>';
-print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
+print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="' . getDolGlobalString('BOOKMARKS_SHOW_IN_MENU').'">';
 print '</td></tr>';
 print '</table><br><div class="center"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></div></form>';
 

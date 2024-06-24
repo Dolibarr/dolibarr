@@ -3,6 +3,8 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +25,14 @@
  * \ingroup resource
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
+
 /**
  * Class Ctyperesource
- *
- * Put here description of your class
- *
- * @see CommonObject
  */
-class Ctyperesource
+class Ctyperesource extends CommonDict
 {
 	/**
 	 * @var string Id to identify managed objects
@@ -47,20 +49,11 @@ class Ctyperesource
 	 */
 	public $lines = array();
 
-	public $code;
-
-	/**
-	 * @var string Type resource label
-	 */
-	public $label;
-
-	public $active;
-
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -71,11 +64,10 @@ class Ctyperesource
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -84,35 +76,24 @@ class Ctyperesource
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
-
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
-
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 		$sql .= 'code,';
 		$sql .= 'label';
 		$sql .= 'active';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active);
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -125,14 +106,14 @@ class Ctyperesource
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change CTYPERESOURCE to your own tag if you
 			// want this action to call a trigger.
 			//if (!$notrigger) {
 
 			//  // Call triggers
-			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  $result=$this->call_trigger('CTYPERESOURCE_CREATE',$user);
 			//  if ($result < 0) $error++;
 			//  // End call triggers
 			//}
@@ -157,18 +138,18 @@ class Ctyperesource
 	 * @param string $code code
 	 * @param string $label Label
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
 			$sql .= " WHERE t.id = ".((int) $id);
 		} elseif ($code) {
@@ -176,7 +157,6 @@ class Ctyperesource
 		} elseif ($label) {
 			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
 		}
-
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -215,37 +195,58 @@ class Ctyperesource
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int    		$limit     		Limit
+	 * @param int    		$offset    		Offset limit
+	 * @param string|array  $filter    		filter array
+	 * @param string 		$filtermode 	filter mode (AND or OR)
+	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE 1 = 1";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 't.active' || $key == 't.code') {
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} elseif (strpos($key, 'date') !== false) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+					} elseif ($key == 't.label') {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
 
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -280,12 +281,11 @@ class Ctyperesource
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -294,26 +294,23 @@ class Ctyperesource
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
-
-
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
@@ -325,12 +322,12 @@ class Ctyperesource
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_MODIFY',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}
@@ -350,12 +347,11 @@ class Ctyperesource
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param User 	$user      	User that deletes
+	 * @param int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -363,12 +359,12 @@ class Ctyperesource
 
 		$this->db->begin();
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_DELETE',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}
@@ -376,7 +372,7 @@ class Ctyperesource
 		// If you need to delete child tables to, you can insert them here
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
@@ -452,7 +448,7 @@ class Ctyperesource
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -460,7 +456,9 @@ class Ctyperesource
 
 		$this->code = '';
 		$this->label = '';
-		$this->active = '';
+		$this->active = 0;
+
+		return 1;
 	}
 }
 
@@ -485,8 +483,4 @@ class CtyperesourceLine
 	public $label;
 
 	public $active;
-
-	/**
-	 * @var mixed Sample line property 2
-	 */
 }

@@ -64,24 +64,24 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 }
 
 if ($action == 'remises') {
-	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', GETPOST('MARGIN_METHODE_FOR_DISCOUNT'), 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'typemarges') {
-	if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	if (dolibarr_set_const($db, 'MARGIN_TYPE', GETPOST('MARGIN_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'contact') {
-	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0) {
-		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
 	}
@@ -119,21 +119,21 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1') {
+if (getDolGlobalString('MARGIN_TYPE') == '1') {
 	print 'checked ';
 }
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
 print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') {
+if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 	print 'checked ';
 }
 print '/> ';
 print $langs->trans('MargeType2');
 print '<br>';
 print ' <input type="radio" name="MARGIN_TYPE" value="costprice" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
+if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 	print 'checked ';
 }
 print '/> ';
@@ -154,7 +154,7 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
 } else {
-	if (empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (!getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -171,7 +171,7 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
 } else {
-	if (empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (!getDolGlobalString('DISPLAY_MARK_RATES')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -188,7 +188,7 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
 } else {
-	if (empty($conf->global->ForceBuyingPriceIfNull)) {
+	if (!getDolGlobalString('ForceBuyingPriceIfNull')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -212,7 +212,7 @@ print '<input type="hidden" name="action" value="remises">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td class="left">';
-print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
+print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT'));
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
@@ -230,7 +230,7 @@ print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td class="left">';
 $formcompany = new FormCompany($db);
 $facture = new Facture($db);
-print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE", "internal", "code", 1, "maxwidth250");
+print $formcompany->selectTypeContact($facture, getDolGlobalString('AGENT_CONTACT_TYPE'), "AGENT_CONTACT_TYPE", "internal", "code", 1, "maxwidth250");
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';

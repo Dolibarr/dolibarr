@@ -1,7 +1,0 @@
-https://en.wikipedia.org/wiki/VAT_identification_number
-
-terms
-(en) VAT = Value Added Tax
-(fr) TVA = Taxe sur la Valeur Ajouté
-(es) NIF / CIF
-(de) USt / MwSt

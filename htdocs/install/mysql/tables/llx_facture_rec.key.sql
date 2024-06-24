@@ -24,6 +24,7 @@ ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre, en
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_soc (fk_soc);
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_user_author (fk_user_author);
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_projet (fk_projet);
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_datec(datec);
 
 ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);

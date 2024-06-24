@@ -25,7 +25,7 @@ create table llx_commande_fournisseurdet
   fk_commande                integer      NOT NULL,
   fk_parent_line             integer      NULL,
   fk_product                 integer,
-  ref                        varchar(50),               -- supplier product ref
+  ref                        varchar(128),              -- supplier product ref
   label                      varchar(255),              -- product label
   description                text,
   vat_src_code               varchar(10)  DEFAULT '',   -- Vat code used as source of vat fields. Not strict foreign key here.

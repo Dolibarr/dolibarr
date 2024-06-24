@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -19,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/multicompany_page.php
+ *       \file       htdocs/core/multicompany_page.php
  *       \brief      File to return a page with the list of all entities user can switch to
  */
 
@@ -41,8 +42,8 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 
-$action = GETPOST('action', 'aZ09');
-$entityid = GETPOST('entity', 'int');
+$action = GETPOST('action', 'aZ');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;
@@ -63,7 +64,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * Actions
  */
 
-if (GETPOST('acction', 'aZ') == 'switchentity') {
+if ($action == 'switchentity') {
 	if (is_object($mc)) {
 		$mc->switchEntity($entityid);
 	}
@@ -92,7 +93,8 @@ print '<div>';
 //print '<br>';
 
 
-if (empty($conf->multicompany->enabled)) {
+$bookmarkList = '';
+if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
 	$bookmarkList .= '<br><br>';
@@ -107,6 +109,8 @@ if (empty($conf->multicompany->enabled)) {
 
 	if (is_object($mc)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
+	} else {
+		$listofentities = array();
 	}
 
 	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
@@ -128,7 +132,7 @@ if (empty($conf->multicompany->enabled)) {
 
 
 	// Execute hook printBookmarks
-	$parameters = array('multicompany'=>$multicompanyList);
+	$parameters = array('multicompany' => $multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		$multicompanyList .= $hookmanager->resPrint;

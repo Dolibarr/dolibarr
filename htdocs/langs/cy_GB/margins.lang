@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Ymylon
+Margins=Ymylon
+TotalMargin=Cyfanswm Ymyl
+MarginOnProducts=Ymyl / Cynhyrchion
+MarginOnServices=Ymyl / Gwasanaethau
+MarginRate=Cyfradd ymyl
+MarkRate=Cyfradd marcio
+DisplayMarginRates=Arddangos cyfraddau ymyl
+DisplayMarkRates=Arddangos cyfraddau marciau
+InputPrice=Pris mewnbwn
+margin=Rheoli maint yr elw
+margesSetup=Gosodiad rheoli elw
+MarginDetails=Manylion ymyl
+ProductMargins=Ymylon cynnyrch
+CustomerMargins=Ffiniau cwsmeriaid
+SalesRepresentativeMargins=Elw cynrychiolydd gwerthu
+ContactOfInvoice=Cyswllt yr anfoneb
+UserMargins=Ymylon defnyddwyr
+ProductService=Cynnyrch neu Wasanaeth
+AllProducts=Pob cynnyrch a gwasanaeth
+ChooseProduct/Service=Dewiswch gynnyrch neu wasanaeth
+ForceBuyingPriceIfNull=Gorfodi pris prynu/costio i bris gwerthu os nad yw wedi'i ddiffinio
+ForceBuyingPriceIfNullDetails=Os na ddarperir pris prynu / cost pan fyddwn yn ychwanegu llinell newydd, a bod yr opsiwn hwn "YMLAEN", yr ymyl fydd 0%% ar y llinell newydd (pris prynu / cost = pris gwerthu). Os yw'r opsiwn hwn "OFF" (argymhellir), bydd yr ymyl yn hafal i'r gwerth a awgrymir yn ddiofyn (a gall fod yn 100%% os na ellir dod o hyd i werth rhagosodedig).
+MARGIN_METHODE_FOR_DISCOUNT=Dull ymyl ar gyfer gostyngiadau byd-eang
+UseDiscountAsProduct=Fel cynnyrch
+UseDiscountAsService=Fel gwasanaeth
+UseDiscountOnTotal=Ar is-gyfanswm
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Yn diffinio a yw disgownt byd-eang yn cael ei drin fel cynnyrch, gwasanaeth, neu dim ond ar is-gyfanswm ar gyfer cyfrifo'r elw.
+MARGIN_TYPE=Awgrymir pris prynu/cost yn ddiofyn ar gyfer cyfrifo'r elw
+MargeType1=Gorswm ar y Pris Gwerthwr Gorau
+MargeType2=Elw ar Bris Cyfartalog Pwysol (WAP)
+MargeType3=Gorswm ar Bris Cost
+MarginTypeDesc=* Ymyl ar y pris prynu gorau = Pris gwerthu - Pris gwerthwr gorau wedi'i ddiffinio ar gerdyn cynnyrch <br> * Ymyl y Pris Cyfartalog Pwysol (WAP) = Pris gwerthu - Pris Cyfartalog Pwysoli Cynnyrch (WAP) neu'r pris gwerthwr gorau os nad yw WAP wedi'i ddiffinio eto <br> * Ymyl ar bris cost = pris gwerthu - pris cost wedi'i ddiffinio ar gerdyn cynnyrch neu WAP os nad yw'r pris cost wedi'i ddiffinio, neu'r pris gwerthwr gorau os nad yw WAP wedi'i ddiffinio eto
+CostPrice=Pris cost
+UnitCharges=Costau uned
+Charges=Taliadau
+AgentContactType=Math cyswllt asiant masnachol
+AgentContactTypeDetails=Diffinio pa fath o gyswllt (yn gysylltiedig ar anfonebau) a ddefnyddir ar gyfer adroddiad ymyl fesul cyswllt/cyfeiriad. Sylwch nad yw darllen ystadegau ar gyswllt yn ddibynadwy oherwydd yn y rhan fwyaf o achosion efallai na fydd y cyswllt wedi'i ddiffinio'n benodol ar yr anfonebau.
+rateMustBeNumeric=Rhaid i'r gyfradd fod yn werth rhifol
+markRateShouldBeLesserThan100=Dylai cyfradd y marciau fod yn is na 100
+ShowMarginInfos=Dangos gwybodaeth ymyl
+CheckMargins=Manylion ymylon
+MarginPerSaleRepresentativeWarning=Mae'r adroddiad elw fesul defnyddiwr yn defnyddio'r cyswllt rhwng trydydd parti a chynrychiolwyr gwerthu i gyfrifo ffin pob cynrychiolydd gwerthu. Oherwydd ei bod yn bosibl na fydd gan rai trydydd partïon unrhyw gynrychiolydd gwerthu penodol ac y gallai rhai trydydd partïon fod yn gysylltiedig â sawl un, efallai na fydd rhai symiau’n cael eu cynnwys yn yr adroddiad hwn (os nad oes cynrychiolydd gwerthu) a gall rhai ymddangos ar linellau gwahanol (ar gyfer pob cynrychiolydd gwerthu) .

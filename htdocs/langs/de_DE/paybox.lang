@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox-Moduleinstellungen
-PayBoxDesc=Dieses Modul erlaubt die Annahme von Zahlungen über <a href="http://www.paybox.com" target="_blank">Paybox</a>. Sie können damit Zahlungen zu Objekten innerhalb des Systems (Rechnungen, Bestellungen, ...) erfassen.
+PayBoxDesc=Dieses Modul bietet Online-Zahlungsseiten, um Kunden die Bezahlung mittels <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> zu ermöglichen. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung bezogen auf ein bestimmtes Dolibarr-Objekt (Rechnung, Bestellung, ...) verwendet werden.
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
 PaymentForm=Zahlungsformular
 WelcomeOnPaymentPage=Willkommen auf unserer Online-Bezahlseite
-ThisScreenAllowsYouToPay=Über dieses Fenster können Sie Online-Zahlungen an %s vornehmen.
+ThisScreenAllowsYouToPay=Über diese Seite können Sie Online-Zahlungen vornehmen an: %s
 ThisIsInformationOnPayment=Informationen zu der vorzunehmenden Zahlung
 ToComplete=Vervollständigen
 YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
@@ -14,13 +14,12 @@ PayBoxDoPayment=Zahlen Sie mit Paybox
 YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
 Continue=Fortfahren
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie Ihre Paybox mit der URL <b> %s </b> ein, damit die Zahlung bei der Validierung durch Paybox automatisch erstellt wird.
-YourPaymentHasBeenRecorded=Hiermit Bestätigen wir, dass die Zahlung ausgeführt wurde. Vielen Dank.
+YourPaymentHasBeenRecorded=Ihre Zahlung wurde erfasst, vielen Dank!
 YourPaymentHasNotBeenRecorded=Ihre Zahlung wurde NICHT erfasst und die Transaktion wurde abgebrochen. Vielen Dank.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
 InformationToFindParameters=Hilfe für das Finden der %s Kontoinformationen
 PAYBOX_CGI_URL_V2=URL für das Paybox Zahlungsmodul "CGI Modul"
-VendorName=Name des Lieferanten
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 NewPayboxPaymentReceived=Neue Paybox-Zahlung erhalten
 NewPayboxPaymentFailed=Neue Paybox-Zahlungen probiert, aber fehlgeschlagen

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +34,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
 $warehouse = new Entrepot($db);
@@ -47,16 +43,23 @@ $barcode = GETPOST("barcode", "aZ09");
 $product = GETPOST("product");
 $response = "";
 
-$fk_entrepot = GETPOST("fk_entrepot", "int");
-$fk_inventory = GETPOST("fk_inventory", "int");
-$fk_product = GETPOST("fk_product", "int");
-$reelqty = GETPOST("reelqty", "int");
-$batch = GETPOST("batch", "int");
+$fk_entrepot = GETPOSTINT("fk_entrepot");
+$fk_inventory = GETPOSTINT("fk_inventory");
+$fk_product = GETPOSTINT("fk_product");
+$reelqty = GETPOSTINT("reelqty");
+$batch = GETPOSTINT("batch");
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
+
+
+/*
+ * View
+ */
+
+top_httphead('application/json');
 
 if ($action == "existbarcode" && !empty($barcode)) {
 	if (!empty($mode) && $mode == "lotserial") {

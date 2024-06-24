@@ -24,16 +24,13 @@
  *  \brief      Index page for menu editor
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $dirstandard = array();
 $dirsmartphone = array();
@@ -46,12 +43,10 @@ foreach ($dirmenus as $dirmenu) {
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-$menu_handler_top = $conf->global->MAIN_MENU_STANDARD;
-$menu_handler_smartphone = $conf->global->MAIN_MENU_SMARTPHONE;
+//$menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
+$menu_handler_top = 'all';
 $menu_handler_top = preg_replace('/(_backoffice\.php|_menu\.php)/i', '', $menu_handler_top);
 $menu_handler_top = preg_replace('/(_frontoffice\.php|_menu\.php)/i', '', $menu_handler_top);
-$menu_handler_smartphone = preg_replace('/(_backoffice\.php|_menu\.php)/i', '', $menu_handler_smartphone);
-$menu_handler_smartphone = preg_replace('/(_frontoffice\.php|_menu\.php)/i', '', $menu_handler_smartphone);
 
 $menu_handler = $menu_handler_top;
 
@@ -63,6 +58,10 @@ if (GETPOST("menu_handler")) {
 }
 
 $menu_handler_to_search = preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i', '', $menu_handler);
+
+if (empty($user->admin)) {
+	accessforbidden();
+}
 
 
 /*
@@ -76,7 +75,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -93,7 +92,7 @@ if ($action == 'up') {
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -127,7 +126,7 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -144,7 +143,7 @@ if ($action == 'up') {
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -175,7 +174,7 @@ if ($action == 'up') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE rowid = ".GETPOSTINT('menuId');
 	$resql = $db->query($sql);
 	if ($resql) {
 		$db->commit();
@@ -203,13 +202,14 @@ $formadmin = new FormAdmin($db);
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-admin page-menus_index');
 
 
 print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
 
 $h = 0;
+$head = array();
 
 $head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
 $head[$h][1] = $langs->trans("MenuHandlers");
@@ -223,7 +223,7 @@ $h++;
 
 print dol_get_fiche_head($head, 'editor', '', -1);
 
-print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";
 
 
@@ -231,11 +231,11 @@ print "<br>\n";
 if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE m.rowid = ".GETPOSTINT('menuId');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
@@ -247,7 +247,7 @@ print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
-print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
+print ' &nbsp; <input type="submit" class="button small" value="'.$langs->trans("Refresh").'">';
 
 print '<div class="floatright">';
 print $newcardbutton;
@@ -257,142 +257,139 @@ print '</form>';
 
 print '<br>';
 
+
+// MENU TREE
+
+
+/*-------------------- MAIN -----------------------
+Array of the menu tree:
+- Is an array in with 2 dimensions.
+- A single line represents an item : data[$x]
+- Each line has 3 data items:
+  - The index of the item;
+  - The index of the item's parent;
+  - The string to show
+i.e.: data[]= array (index, parent index, string )
+*/
+
+// First the root item of the tree must be declared:
+
+$data = array();
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+
+// Then all child items must be declared
+
+$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
+$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+$sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
+$sql .= " AND entity = ".$conf->entity;
+//$sql.= " AND fk_menu >= 0";
+$sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
+
+$res  = $db->query($sql);
+if ($res) {
+	$num = $db->num_rows($res);
+
+	$i = 1;
+	while ($menu = $db->fetch_array($res)) {
+		if (!empty($menu['langs'])) {
+			$langs->load($menu['langs']);
+		}
+		$titre = $langs->trans($menu['titre']);
+
+		$entry = '<table class="nobordernopadding centpercent"><tr><td class="tdoverflowmax200">';
+		$entry .= '<strong class="paddingleft"><a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
+		$entry .= '</td>';
+		$entry .= '<td class="right nowraponall">';
+		$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+		$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+		$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+		$entry .= '&nbsp; ';
+		$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+		$entry .= '</td></tr></table>';
+
+		$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+		$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+		$buttons .= '&nbsp; ';
+		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+
+		$data[] = array(
+			'rowid' => $menu['rowid'],
+			'module' => $menu['module'],
+			'fk_menu' => $menu['fk_menu'],
+			'title' => $titre,
+			'mainmenu' => $menu['mainmenu'],
+			'leftmenu' => $menu['leftmenu'],
+			'fk_mainmenu' => $menu['fk_mainmenu'],
+			'fk_leftmenu' => $menu['fk_leftmenu'],
+			'position' => $menu['position'],
+			'entry' => $entry,
+			'buttons' => $buttons
+		);
+		$i++;
+	}
+}
+
+global $tree_recur_alreadyadded; // This var was def into tree_recur
+
+//var_dump($data);
+
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div></td>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto($langs->trans("UndoExpandAll"), 'folder', 'class="paddingright"').'</a>';
+print ' | <a href="#">'.img_picto($langs->trans("ExpandAll"), 'folder-open', 'class="paddingright"').'</a></div></td>';
 print '</tr>';
 
 print '<tr>';
 print '<td colspan="2">';
 
-// ARBORESCENCE
 
-$rangLast = 0;
-$idLast = -1;
-if ($conf->use_javascript_ajax) {
-	/*-------------------- MAIN -----------------------
-	tableau des elements de l'arbre:
-	c'est un tableau a 2 dimensions.
-	Une ligne represente un element : data[$x]
-	chaque ligne est decomposee en 3 donnees:
-	  - l'index de l'élément
-	  - l'index de l'élément parent
-	  - la chaine a afficher
-	ie: data[]= array (index, index parent, chaine )
-	*/
+//tree_recur($data, $data[0], 0, 'iddivjstree', 0, 1);  // use this to get info on name and foreign keys of menu entry
+tree_recur($data, $data[0], 0, 'iddivjstree', 0, 0); // $data[0] is virtual record 'racine'
 
-	//il faut d'abord declarer un element racine de l'arbre
 
-	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+print '</td>';
+print '</tr>';
 
-	//puis tous les elements enfants
+print '</table>';
+print '</div>';
 
-	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
-	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND entity = ".$conf->entity;
-	//$sql.= " AND fk_menu >= 0";
-	$sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
-
-	$res  = $db->query($sql);
-	if ($res) {
-		$num = $db->num_rows($res);
-
-		$i = 1;
-		while ($menu = $db->fetch_array($res)) {
-			if (!empty($menu['langs'])) {
-				$langs->load($menu['langs']);
-			}
-			$titre = $langs->trans($menu['titre']);
-
-			$entry = '<table class="nobordernopadding centpercent"><tr><td>';
-			$entry .= '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
-			$entry .= '</td><td class="right">';
-			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$entry .= '&nbsp; ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
-			$entry .= '</td></tr></table>';
-
-			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$buttons .= '&nbsp; ';
-			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
-
-			$data[] = array(
-				'rowid'=>$menu['rowid'],
-				'module'=>$menu['module'],
-				'fk_menu'=>$menu['fk_menu'],
-				'title'=>$titre,
-				'mainmenu'=>$menu['mainmenu'],
-				'leftmenu'=>$menu['leftmenu'],
-				'fk_mainmenu'=>$menu['fk_mainmenu'],
-				'fk_leftmenu'=>$menu['fk_leftmenu'],
-				'position'=>$menu['position'],
-				'entry'=>$entry,
-				'buttons'=>$buttons
-			);
-			$i++;
-		}
+// Process remaining records (records that are not linked to root by any path)
+$remainingdata = array();
+foreach ($data as $datar) {
+	if (empty($datar['rowid']) || !empty($tree_recur_alreadyadded[$datar['rowid']])) {
+		continue;
 	}
+	$remainingdata[] = $datar;
+}
 
-	global $tree_recur_alreadyadded; // This var was def into tree_recur
+if (count($remainingdata)) {
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
 
-	//var_dump($data);
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+	print '<td class="right"></td>';
+	print '</tr>';
 
-	// Appelle de la fonction recursive (ammorce) avec recherche depuis la racine.
-	//tree_recur($data, $data[0], 0, 'iddivjstree', 0, 1);  // use this to get info on name and foreign keys of menu entry
-	tree_recur($data, $data[0], 0, 'iddivjstree', 0, 0); // $data[0] is virtual record 'racine'
-
+	print '<tr>';
+	print '<td colspan="2">';
+	foreach ($remainingdata as $datar) {
+		$father = array('rowid' => $datar['rowid'], 'title' => "???", 'mainmenu' => $datar['fk_mainmenu'], 'leftmenu' => $datar['fk_leftmenu'], 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+		//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+		tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+	}
 
 	print '</td>';
 
 	print '</tr>';
 
 	print '</table>';
-
-
-	// Process remaining records (records that are not linked to root by any path)
-	$remainingdata = array();
-	foreach ($data as $datar) {
-		if (empty($datar['rowid']) || !empty($tree_recur_alreadyadded[$datar['rowid']])) {
-			continue;
-		}
-		$remainingdata[] = $datar;
-	}
-
-	if (count($remainingdata)) {
-		print '<table class="noborder centpercent">';
-
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
-		print '<td class="right"></td>';
-		print '</tr>';
-
-		print '<tr>';
-		print '<td colspan="2">';
-		foreach ($remainingdata as $datar) {
-			$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
-			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
-		}
-
-		print '</td>';
-
-		print '</tr>';
-
-		print '</table>';
-	}
-
 	print '</div>';
-} else {
-	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }
 
 print '<br>';

@@ -26,29 +26,34 @@ ModuleKnowledgeManagementDesc=Gerir uma «Gestão de Conhecimento» (KM) ou base
 # Admin page
 #
 KnowledgeManagementSetup = Configurar Sistema de Gestão de Conhecimento
-Settings = Definições
 KnowledgeManagementSetupPage = Página de configuração do Sistema de Gestão de Conhecimento
 
 
 #
 # About page
 #
-About = Sobre
 KnowledgeManagementAbout = Sobre Gestão de Conhecimento
 KnowledgeManagementAboutPage = Página de sobre a Gestão de Conhecimento
 
 KnowledgeManagementArea = Gestão de Conhecimento
 MenuKnowledgeRecord = Base conhecimento
+MenuKnowledgeRecordShort = Base conhecimento
 ListKnowledgeRecord = Lista de artigos
 NewKnowledgeRecord = Novo artigo
 ValidateReply = Validar solução
 KnowledgeRecords = Artigos
 KnowledgeRecord = Artigo
 KnowledgeRecordExtraFields = Campos extra para o Artigo
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+GroupOfTicket=Grupo de ingressos
+YouCanLinkArticleToATicketCategory=Você pode hiperligação, conexão o artigo em um grupo de tickets (assim o artigo será destacado em todos os tickets deste grupo)
+SuggestedForTicketsInGroup=Sugerido na criação de tickets
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Definir como obsoleto
+ConfirmCloseKM=Você confirma o fechamento deste artigo como obsoleto?
+ConfirmReopenKM=Deseja restaurar este artigo para o status "Validado"?
+BoxLastKnowledgerecordDescription=Últimos artigos %s
+BoxLastKnowledgerecord=Últimos artigos
+BoxLastKnowledgerecordContent=Últimos artigos
+BoxLastKnowledgerecordModifiedContent=Últimos artigos modificado
+BoxLastModifiedKnowledgerecordDescription=Últimos artigos %s modificado
+BoxLastModifiedKnowledgerecord=Últimos artigos modificado

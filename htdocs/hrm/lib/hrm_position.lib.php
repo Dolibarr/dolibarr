@@ -31,7 +31,7 @@
  * @param	Position	$object		Position
  * @return 	array					Array of tabs
  */
-function PositionCardPrepareHead($object)
+function positionCardPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
@@ -41,7 +41,7 @@ function PositionCardPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/hrm/position_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("PositionCard");
+	$head[$h][1] = $langs->trans("EmployeePosition");
 	$head[$h][2] = 'position';
 	$h++;
 
@@ -56,7 +56,7 @@ function PositionCardPrepareHead($object)
 		$head[$h][0] = dol_buildpath('/hrm/position_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

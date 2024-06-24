@@ -146,6 +146,7 @@ oop.inherits(Mode, TextMode);
       return false;
    };
     this.$id = "ace/mode/tex";
+    this.snippetFileId = "ace/snippets/tex";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

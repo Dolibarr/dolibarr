@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Piano dei conti usato per utenti di soggetti terzi
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codice contabile predefinito per i pagamenti degli stipendi
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Per impostazione predefinita, lascia vuota l'opzione "Crea automaticamente un pagamento totale" quando crei uno stipendio
 Salary=Stipendio
@@ -24,4 +24,4 @@ SalariesStatistics=Statistiche stipendi
 SalariesAndPayments=Stipendi e pagamenti
 ConfirmDeleteSalaryPayment=Vuoi eliminare questo pagamento di stipendio?
 FillFieldFirst=Compila prima il campo dipendente
-UpdateAmountWithLastSalary=Imposta importo con ultimo stipendio
+UpdateAmountWithLastSalary=Set amount of last salary

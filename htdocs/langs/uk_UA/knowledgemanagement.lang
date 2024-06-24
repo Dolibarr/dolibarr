@@ -18,37 +18,42 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Система управління знаннями
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Керуйте базою управління знаннями (KM) або Help-Desk
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Налаштування
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Налаштування системи управління знаннями
+KnowledgeManagementSetupPage = Сторінка налаштування системи управління знаннями
 
 
 #
 # About page
 #
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Про управління знаннями
+KnowledgeManagementAboutPage = Управління знаннями про сторінку
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeManagementArea = Управління знаннями
+MenuKnowledgeRecord = База знань
+MenuKnowledgeRecordShort = База знань
+ListKnowledgeRecord = Список статей
+NewKnowledgeRecord = Нова стаття
+ValidateReply = Перевірте рішення
+KnowledgeRecords = статті
+KnowledgeRecord = стаття
+KnowledgeRecordExtraFields = Додаткові поля для ст
+GroupOfTicket=Група квитків
+YouCanLinkArticleToATicketCategory=Ви можете прив’язати статтю до групи заявок (тому стаття буде виділена на будь-яких заявках у цій групі)
+SuggestedForTicketsInGroup=Пропонується при створенні квитка
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Встановити як застаріле
+ConfirmCloseKM=Ви підтверджуєте закриття цієї статті як застарілу?
+ConfirmReopenKM=Ви бажаєте відновити цю статтю до статусу «Перевірено»?
+BoxLastKnowledgerecordDescription=Останні %s статті
+BoxLastKnowledgerecord=Останні статті
+BoxLastKnowledgerecordContent=Останні статті
+BoxLastKnowledgerecordModifiedContent=Останні змінені статті
+BoxLastModifiedKnowledgerecordDescription=Останні %s змінені статті
+BoxLastModifiedKnowledgerecord=Останні змінені статті

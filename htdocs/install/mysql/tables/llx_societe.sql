@@ -5,6 +5,7 @@
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 -- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+-- Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +30,6 @@ create table llx_societe
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
@@ -43,13 +43,21 @@ create table llx_societe
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
-  fk_departement           integer        DEFAULT 0,            		--
-  fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		--
+  fk_departement           integer        DEFAULT 0,            		-- state
+  fk_pays                  integer        DEFAULT 0,            		-- country
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
   phone                    varchar(20),                         		-- phone number
+  phone_mobile             varchar(20),                         		-- mobile phone number
   fax                      varchar(20),                         		-- fax number
-  url                      varchar(255),                        		--
-  email                    varchar(128),                        		--
+  url                      varchar(255),                        		-- web site
+  email                    varchar(128),                        		-- main email
+
+  fk_account               integer        DEFAULT 0,                    -- default bank account
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
 
@@ -68,7 +76,8 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				   varchar(255),
+  model_pdf				         varchar(255),
+  last_main_doc			       varchar(255),					-- relative filepath+filename of last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -83,12 +92,14 @@ create table llx_societe
   remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
   mode_reglement           tinyint,                             		-- payment mode customer
   cond_reglement           tinyint,                             		-- payment term customer
+  deposit_percent          varchar(63) DEFAULT NULL,                    -- default deposit % if payment term needs it
   transport_mode           tinyint,                             		-- transport mode customer (Intracomm report)
   mode_reglement_supplier  tinyint,                             		-- payment mode supplier
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
   transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
+  tva_assuj                tinyint        DEFAULT 1,	        		-- assujetti ou non a la TVA
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
   localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2

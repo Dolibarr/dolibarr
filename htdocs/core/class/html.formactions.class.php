@@ -79,30 +79,29 @@ class FormActions
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
-			print "<script type=\"text/javascript\">
+			print '<script nonce="'.getNonce().'" type="text/javascript">';
+			print "
                 var htmlname = '".$htmlname."';
 
                 $(document).ready(function () {
                 	select_status();
 
                     $('#select' + htmlname).change(function() {
+						console.log('We change field select '+htmlname);
                         select_status();
                     });
-                    // FIXME use another method for update combobox
-                    //$('#val' + htmlname).change(function() {
-                        //select_status();
-                    //});
                 });
 
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
+					console.log('val='+defaultvalue);
                     var percentage = $('input[name=percentage]');
                     var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
 
-                    if (defaultvalue == -1) {
+                    if (defaultvalue == 'na' || defaultvalue == -1) {
 						percentage.prop('disabled', true);
                         $('.hideifna').hide();
                     }
@@ -117,7 +116,7 @@ class FormActions
                         $('.hideifna').show();
                     }
                     else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50); }
                     	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
@@ -131,7 +130,7 @@ class FormActions
 			}
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
@@ -144,7 +143,7 @@ class FormActions
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname);
+			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
 				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
@@ -167,11 +166,12 @@ class FormActions
 	 *  @param	int		$max					Max number of record
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
-	 *	@return	int								<0 if KO, >=0 if OK
+	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
+	 *	@return	int								Return integer <0 if KO, >=0 if OK
 	 */
-	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '')
+	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -186,35 +186,11 @@ class FormActions
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($this->db);
-		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'propal') {
-				$title = $langs->trans('ActionsOnPropal');
-			} elseif ($typeelement == 'supplier_proposal') {
-				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'shipping') {
-				$title = $langs->trans('ActionsOnShipping');
-			} elseif ($typeelement == 'fichinter') {
-				$title = $langs->trans('ActionsOnFicheInter');
-			} elseif ($typeelement == 'project') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'task') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'member') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} else {
-				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
-			}
+			$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 
 			$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage ? '&'.$moreparambacktopage : '');
 
@@ -227,14 +203,49 @@ class FormActions
 				$taskid = $object->id;
 			}
 
-			$newcardbutton = '';
-			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create)) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
-				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
+			$usercanaddaction = 0;
+			if (empty($assignedtouser) || $assignedtouser == $user->id) {
+				$usercanaddaction = $user->hasRight('agenda', 'myactions', 'create');
+				$assignedtouser = 0;
+			} else {
+				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
 			}
 
-			print '<!-- formactions->showactions -->'."\n";
-			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
+			$url = '';
+			$morehtmlright = '';
+			if (isModEnabled('agenda') && $usercanaddaction) {
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
+				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
+				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
+				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
+				$url .= '&backtopage='.urlencode($urlbacktopage);
+				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
+			}
+
+			$parameters = array(
+				'title' => &$title,
+				'morehtmlright' => &$morehtmlright,
+				'morehtmlcenter' => &$morehtmlcenter,
+				'usercanaddaction' => $usercanaddaction,
+				'url' => &$url,
+				'typeelement' => $typeelement,
+				'projectid' => $projectid,
+				'assignedtouser' => $assignedtouser,
+				'taskid' => $taskid,
+				'urlbacktopage' => $urlbacktopage
+			);
+
+			$reshook = $hookmanager->executeHooks('showActionsLoadFicheTitre', $parameters, $object);
+
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			$error = 0;
+			if (empty($reshook)) {
+				print '<!-- formactions->showactions -->' . "\n";
+				print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $morehtmlcenter);
+			}
 
 			$page = 0;
 			$param = '';
@@ -243,10 +254,10 @@ class FormActions
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
 			print "\n";
@@ -260,15 +271,27 @@ class FormActions
 						break;
 					}
 
-					$ref = $actioncomm->getNomUrl(1, -1);
-					$label = $actioncomm->getNomUrl(0, 36);
-
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$ref.'</td>';
+					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
-					// Onwer
+					// Date
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					if ($actioncomm->datef) {
+						$tmpa = dol_getdate($actioncomm->datep);
+						$tmpb = dol_getdate($actioncomm->datef);
+						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
+							}
+						} else {
+							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+						}
+					}
+					print '</td>';
+
+					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
@@ -285,12 +308,17 @@ class FormActions
 					print '</td>';
 
 					$actionstatic = $actioncomm;
+
+					// Example: Email sent from invoice card
+					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
+					//$actionstatic->type_code = 'AC_OTHER_AUTO'
+
 					// Type
 					$labeltype = $actionstatic->type_code;
-					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+					if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
-					if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 						$labeltype = $langs->trans("Message");
 					} else {
 						if (!empty($arraylist[$labeltype])) {
@@ -300,28 +328,17 @@ class FormActions
 							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 						}
 					}
-					print '<td class="tdoverflowmax100" title="'.$labeltype.'">';
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';
 
 					// Label
-					print '<td>'.$label.'</td>';
-
-					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
-					if ($actioncomm->datef) {
-						$tmpa = dol_getdate($actioncomm->datep);
-						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-							}
-						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
-						}
-					}
+					print '<td class="tdoverflowmax200">';
+					print $actioncomm->getNomUrl(0);
 					print '</td>';
+
+					// Status
 					print '<td class="right">';
 					print $actioncomm->getLibStatut(3);
 					print '</td>';
@@ -330,11 +347,11 @@ class FormActions
 					$cursorevent++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			if ($max && $num > $max) {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("More").'...</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("More").'...</span></td></tr>';
 			}
 
 			print '</table>';
@@ -362,7 +379,7 @@ class FormActions
 	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
-		global $langs, $user, $form, $conf;
+		global $langs, $user, $form;
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -387,19 +404,29 @@ class FormActions
 			$selected = 'AC_OTH_AUTO';
 		}
 
-		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) {
+		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
 			unset($arraylist['AC_OTH_AUTO']);
 		}
 
 		$out = '';
 
+		// Reformat the array
+		$newarraylist = array();
+		foreach ($arraylist as $key => $value) {
+			$disabled = '';
+			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
+				$disabled = 'disabled';
+			}
+			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
+		}
+
 		if (!empty($multiselect)) {
 			if (!is_array($selected) && !empty($selected)) {
 				$selected = explode(',', $selected);
 			}
-			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+			$out .= $form->selectarray($htmlname, $newarraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

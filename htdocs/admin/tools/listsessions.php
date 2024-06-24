@@ -26,6 +26,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -46,10 +47,10 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -93,7 +94,7 @@ if ($action == 'confirm_unlock' && $user->admin) {
 *	View
 */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_listsessions');
 
 $form = new Form($db);
 
@@ -103,7 +104,7 @@ $usefilter = 0;
 $listofsessions = listOfSessions();
 $num = count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num ? $num : ''), 'setup'); // Do not show numer (0) if no session found (it means we can't know)
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num ? $num : ''), 'setup'); // Do not show number (0) if no session found (it means we can't know)
 
 $savehandler = ini_get("session.save_handler");
 $savepath = ini_get("session.save_path");
@@ -189,7 +190,7 @@ if ($savehandler == 'files') {
 print '<div class="tabsAction">';
 
 
-if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
+if (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock&token='.newToken().'">'.$langs->trans("LockNewSessions").'</a>';
 } else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock&token='.newToken().'">'.$langs->trans("UnlockNewSessions").'</a>';

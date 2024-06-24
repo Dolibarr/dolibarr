@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Hel
 # Admin page
 #
 KnowledgeManagementSetup = Oppsett av Kunnskapsstyringssystem
-Settings = Innstillinger
 KnowledgeManagementSetupPage = Kunnskapsstyringssystemets oppsettside
 
 
 #
 # About page
 #
-About = Om
 KnowledgeManagementAbout = Om kunnskapsadministrasjon
 KnowledgeManagementAboutPage = Om Kunnskapsadministrasjon side
 
 KnowledgeManagementArea = Kunnskapsadministrasjon
 MenuKnowledgeRecord = Kunnskapsbase
+MenuKnowledgeRecordShort = Kunnskapsbase
 ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikkel
 ValidateReply = Valider løsningen
@@ -46,9 +45,15 @@ KnowledgeRecords = Artikler
 KnowledgeRecord = Artikkel
 KnowledgeRecordExtraFields = Ekstra felt for artikkel
 GroupOfTicket=Billettgrupper
-YouCanLinkArticleToATicketCategory=Du kan koble en artikkel til en billettgruppe (artikkelen vil bli foreslått under kvalifisering av nye billetter)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=Du kan koble artikkelen til en billettgruppe (slik at artikkelen vil bli uthevet på alle billetter i denne gruppen)
+SuggestedForTicketsInGroup=Foreslått billettoppretting
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Angi som foreldet
+ConfirmCloseKM=Bekrefter du at avslutningen av denne artikkelen som foreldet?
+ConfirmReopenKM=Vil du gjenopprette denne artikkelen til status "Validert"?
+BoxLastKnowledgerecordDescription=Siste %s artikler
+BoxLastKnowledgerecord=Siste artikler
+BoxLastKnowledgerecordContent=Siste artikler
+BoxLastKnowledgerecordModifiedContent=Sist endrede artikler
+BoxLastModifiedKnowledgerecordDescription=Siste %s endrede artikler
+BoxLastModifiedKnowledgerecord=Sist endrede artikler

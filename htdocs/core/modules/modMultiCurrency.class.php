@@ -40,7 +40,7 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -88,7 +88,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicurrency");
 
@@ -111,9 +111,9 @@ class modMultiCurrency extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -131,22 +131,7 @@ class modMultiCurrency extends DolibarrModules
 			$conf->multicurrency->enabled = 0;
 		}
 		$this->dictionaries = array();
-		/* Example:
-		if (! isset($conf->multicurrency->enabled)) $conf->multicurrency->enabled=0;	// This is to avoid warnings
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@multicurrency',
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-			// Sort order
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->multicurrency->enabled,$conf->multicurrency->enabled,$conf->multicurrency->enabled)												// Condition to show each dictionary
-		);
-		*/
+
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -157,6 +142,30 @@ class modMultiCurrency extends DolibarrModules
 		//    1=>array('file'=>'myboxb.php@multicurrency','note'=>''),
 		//    2=>array('file'=>'myboxc.php@multicurrency','note'=>'')
 		//);
+
+		// Cronjobs (List of cron jobs entries to add when module is enabled)
+		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+		$statusatinstall=1;
+		$arraydate=dol_getdate(dol_now());
+		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+
+		$this->cronjobs = array(
+			0 => array(
+				'priority'=>61,
+				'label'=>'MutltiCurrencyAutoUpdateCurrencies',
+				'jobtype'=>'method',
+				'class'=>'multicurrency/class/multicurrency.class.php',
+				'objectname'=>'MultiCurrency',
+				'method'=>'syncRates',
+				'parameters'=>'0,0,cron',
+				'comment'=>'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page',
+				'frequency'=>1,
+				'unitfrequency'=>2678400,
+				'status'=>$statusatinstall,
+				'test'=>'isModEnabled("cron")',
+				'datestart'=>$datestart
+			),
+		);
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
@@ -170,6 +179,30 @@ class modMultiCurrency extends DolibarrModules
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
+
+		$this->rights[$r][0] = 40001;
+		$this->rights[$r][1] = 'Read currencies and their rates';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'read';
+		$r++;
+
+		$this->rights[$r][0] = 40002;
+		$this->rights[$r][1] = 'Create/Update currencies and their rates';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'write';
+		$r++;
+
+		$this->rights[$r][0] = 40003;
+		$this->rights[$r][1] = 'Delete currencies and their rates';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'currency';
+		$this->rights[$r][5] = 'delete';
+		$r++;
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
@@ -301,7 +334,7 @@ class modMultiCurrency extends DolibarrModules
 
 		$multicurrency = new MultiCurrency($this->db);
 
-		if (!$multicurrency->checkCodeAlreadyExists($conf->currency)) {
+		if (! $multicurrency->checkCodeAlreadyExists($conf->currency)) {
 			$langs->loadCacheCurrencies('');
 
 			$multicurrency->code = $conf->currency;
@@ -310,7 +343,10 @@ class modMultiCurrency extends DolibarrModules
 
 			if ($r > 0) {
 				$multicurrency->addRate(1);
+			} else {
+				return 0;
 			}
 		}
+		return 1;
 	}
 }

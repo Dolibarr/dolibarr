@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2007-2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +83,11 @@ class Events // extends CommonObject
 	public $user_agent;
 
 	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
@@ -89,6 +96,12 @@ class Events // extends CommonObject
 	 * @var string	Prefix session obtained with method dol_getprefix()
 	 */
 	public $prefix_session;
+
+	/**
+	 * @var string	Authentication method used for USER_LOGIN with success
+	 */
+	public $authentication_method;
+
 
 	// List of all Audit/Security events supported by triggers
 	public $eventstolog = array(
@@ -133,7 +146,7 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
-	 *   @return     int                <0 if KO, >0 if OK
+	 *   @return     int                Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -152,7 +165,7 @@ class Events // extends CommonObject
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
+		$sql = "INSERT INTO ".$this->db->prefix()."events(";
 		$sql .= "type,";
 		$sql .= "entity,";
 		$sql .= "ip,";
@@ -167,7 +180,7 @@ class Events // extends CommonObject
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";
-		$sql .= " ".($user->id ? "'".$this->db->escape($user->id)."'" : 'NULL').",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : 'NULL').",";
 		$sql .= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
 		$sql .= " '".$this->db->escape(dol_getprefix())."'";
 		$sql .= ")";
@@ -175,7 +188,7 @@ class Events // extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."events");
 			return $this->id;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -189,7 +202,7 @@ class Events // extends CommonObject
 	 *
 	 * @param	User    $user        	User that modify
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -202,7 +215,7 @@ class Events // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
+		$sql = "UPDATE ".$this->db->prefix()."events SET";
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
@@ -223,7 +236,7 @@ class Events // extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -237,7 +250,7 @@ class Events // extends CommonObject
 		$sql .= " t.ip,";
 		$sql .= " t.user_agent,";
 		$sql .= " t.prefix_session";
-		$sql .= " FROM ".MAIN_DB_PREFIX."events as t";
+		$sql .= " FROM ".$this->db->prefix()."events as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -270,11 +283,11 @@ class Events // extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
+		$sql = "DELETE FROM ".$this->db->prefix()."events";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -293,7 +306,7 @@ class Events // extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -306,5 +319,7 @@ class Events // extends CommonObject
 		$this->ip = '1.2.3.4';
 		$this->user_agent = 'Mozilla specimen User Agent X.Y';
 		$this->prefix_session = dol_getprefix();
+
+		return 1;
 	}
 }

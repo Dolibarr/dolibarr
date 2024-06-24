@@ -20,6 +20,7 @@
  *		\brief      Page with web server system information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -42,7 +43,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("InfoWebServer"));
+llxHeader('', $langs->trans("InfoWebServer"), '', '', 0, 0, '', '', '', 'mod-admin page-system_web');
 
 print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 
@@ -68,11 +69,12 @@ if ($labeluser && $labelgroup) {
 }
 // Web user group real (detected by 'id' external command)
 if (function_exists('exec')) {
-	$arrayout = array(); $varout = 0;
+	$arrayout = array();
+	$varout = 0;
 	exec('id', $arrayout, $varout);
 	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print join(',', $arrayout);
+		print implode(',', $arrayout);
 	} else {
 		$langs->load("errors");
 		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';
