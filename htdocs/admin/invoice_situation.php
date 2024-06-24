@@ -72,7 +72,7 @@ $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 
 //$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY')
 //	->setAsYesNo()
-//	->nameText = $langs->trans('Retainedwarranty');
+//	->nameText = $langs->trans('RetainedWarranty');
 
 
 $item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
@@ -90,15 +90,15 @@ if ($action == 'edit') {
 }
 
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
-//$item->nameText = $langs->trans('RetainedwarrantyOnlyForSituation');
+//$item->nameText = $langs->trans('RetainedWarrantyOnlyForSituation');
 
 $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')
 	->setAsYesNo()
-	->nameText = $langs->trans('RetainedwarrantyOnlyForSituationFinal');
+	->nameText = $langs->trans('RetainedWarrantyOnlyForSituationFinal');
 
 
 $item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
-$item->nameText = $langs->trans('RetainedwarrantyDefaultPercent');
+$item->nameText = $langs->trans('RetainedWarrantyDefaultPercent');
 $item->fieldAttr = array(
 	'type' => 'number',
 	'step' => '0.01',

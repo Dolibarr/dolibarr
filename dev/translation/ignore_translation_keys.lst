@@ -236,7 +236,6 @@ Control
 Convert
 Core
 Count
-CreateFichInter
 CreateRemoteOrder
 CreateRepeatableIntervention
 Created
@@ -607,7 +606,6 @@ NoTypeOfPagePleaseEditDictionary
 NoURL
 No_record_on_multicurrency_rate
 NobodyHasPermissionToValidateExpenseReport
-NotARecurringInterventionalTemplate
 NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated
 NotEnoughForAllOrders
 NotFound

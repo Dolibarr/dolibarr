@@ -231,8 +231,20 @@ class Product extends CommonObject
 	public $packaging;
 
 
-	public $lifetime;	// In seconds
+	/**
+	 * Lifetime (in seconds)
+	 *
+	 * @var int|null
+	 * @see ProductLot
+	 */
+	public $lifetime;
 
+	/**
+	 * Quality control frequency (in days ?)
+	 *
+	 * @var int|null
+	 * @see ProductLot
+	 */
 	public $qc_frequency;
 
 	/**
@@ -540,7 +552,27 @@ class Product extends CommonObject
 	 */
 	public $is_object_used;
 
+	/**
+	 * If this Product is within a kit:
+	 * Quantity of this Product within this kit
+	 *
+	 * @var float
+	 * @see Product::is_sousproduit()		To set this property
+	 * @see Product::add_sousproduit()
+	 * @see Product::update_sousproduit()
+	 */
 	public $is_sousproduit_qty;
+
+	/**
+	 * If this Product is within a kit:
+	 * 1 = modify the stock of this child Product upon modification of the stock of its parent Product
+	 * ("incdec" stands for increase/decrease)
+	 *
+	 * @var 0|1
+	 * @see Product::is_sousproduit()		To set this property
+	 * @see Product::add_sousproduit()
+	 * @see Product::update_sousproduit()
+	 */
 	public $is_sousproduit_incdec;
 
 	public $mandatory_period;
@@ -1035,7 +1067,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
-			$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+			$module = strtolower(getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM'));
 
 			$dirsociete = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 			foreach ($dirsociete as $dirroot) {
@@ -1178,7 +1210,7 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			if (empty($this->oldcopy)) {
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
 				$this->oldcopy = dol_clone($this, 1);
 			}
 			// Test if batch management is activated on existing product
@@ -2750,7 +2782,8 @@ class Product extends CommonObject
 
 				// Load multiprices array
 				if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($ignore_price_load)) {                // prices per segment
-					for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql .= " ,price_label";
@@ -2866,7 +2899,8 @@ class Product extends CommonObject
 						return -1;
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && empty($ignore_price_load)) {    // prices per customer and quantity
-					for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql .= " FROM ".$this->db->prefix()."product_price";
@@ -3570,7 +3604,7 @@ class Product extends CommonObject
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE m.rowid = mp.fk_mo";
-		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'mrp').")";
+		$sql .= " AND m.entity IN (".getEntity(($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE')) ? 'stock' : 'mrp').")";
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
 		$sql .= " AND mp.disable_stock_change IN (0)";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
@@ -4495,7 +4529,7 @@ class Product extends CommonObject
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
 				$sql = "INSERT INTO ".$this->db->prefix()."product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)";
-				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".price2num($qty, 'MS').", ".price2num($incdec, 'MS').", ".((int) $rank).")";
+				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".price2num($qty, 'MS').", ".((int) $incdec).", ".((int) $rank).")";
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
@@ -4552,7 +4586,7 @@ class Product extends CommonObject
 
 		$sql = 'UPDATE '.$this->db->prefix().'product_association SET ';
 		$sql .= 'qty = '.price2num($qty, 'MS');
-		$sql .= ',incdec = '.price2num($incdec, 'MS');
+		$sql .= ',incdec = '.((int) $incdec);
 		$sql .= ' WHERE fk_product_pere = '.((int) $id_pere).' AND fk_product_fils = '.((int) $id_fils);
 
 		if (!$this->db->query($sql)) {
@@ -5922,7 +5956,7 @@ class Product extends CommonObject
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
 		if (isModEnabled("supplier_order")) {
-			$filterStatus = !getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK') ? '3,4' : $conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK;
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
@@ -6481,7 +6515,7 @@ class Product extends CommonObject
 					}
 				}
 
-				$maxpricesupplier *= $conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE;
+				$maxpricesupplier *= getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE');
 			}
 		}
 

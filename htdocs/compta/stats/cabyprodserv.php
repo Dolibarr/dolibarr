@@ -335,7 +335,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 		$searchCategoryProductList = array();
 		foreach ($TListOfCats as $key => $cat) {
-			$searchCategoryProductList[] = $cat['rowid'];
+			$searchCategoryProductList[] = $cat['id'];
 		}
 	}
 	if (!empty($searchCategoryProductList)) {

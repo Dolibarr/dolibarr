@@ -266,9 +266,9 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Add a groupby field. Set $groupby and $groupbyvalues.
 // TODO Move this into a inc file
+$groupbyvalues = array();
 if ($mode == 'kanban') {
 	$groupbyold = null;
-	$groupbyvalues = array();
 	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
@@ -1105,7 +1105,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+print '<input type="hidden" name="groupby" value="'.$groupby.'">';
 
 // Show description of content
 $texthelp = '';
@@ -1654,7 +1654,12 @@ while ($i < $imaxinloop) {
 				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns
 			}
 			// Start kanban column
-			if ($groupbyold !== $obj->$groupbyfield) {
+			if (is_null($obj->$groupbyfield)) {
+				$groupbyvalue = 'undefined';
+			} else {
+				$groupbyvalue = $obj->$groupbyfield;
+			}
+			if ($groupbyold !== $groupbyvalue) {
 				if (!is_null($groupbyold)) {
 					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
@@ -1662,9 +1667,9 @@ while ($i < $imaxinloop) {
 				//
 				//var_dump($groupbyvalues);
 				//var_dump($obj->$groupbyfield);
-				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';	// Start new column
+				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'">';	// Start new column
 			}
-			$groupbyold = $obj->$groupbyfield;
+			$groupbyold = $groupbyvalue;
 		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
@@ -1679,7 +1684,7 @@ while ($i < $imaxinloop) {
 		}
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
-		print $object->getKanbanView('', $arrayofdata);
+		print $object->getKanbanView('', $arrayofdata, ($groupby ? 'small' : ''));
 
 		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {

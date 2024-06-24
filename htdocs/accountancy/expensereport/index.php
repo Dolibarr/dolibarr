@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,7 +179,7 @@ if ($action == 'validatehistory') {
  */
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-list');
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';

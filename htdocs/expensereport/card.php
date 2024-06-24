@@ -2038,7 +2038,7 @@ if ($action == 'create') {
 			print '</div>';
 			print '</div>';
 
-			print '<div class="clearboth"></div><br>';
+			print '<div class="clearboth"></div><br><br>';
 
 			print '<div style="clear: both;"></div>';
 
@@ -2155,7 +2155,47 @@ if ($action == 'create') {
 						print '<td class="left linecolcomment">'.dol_nl2br($line->comments).'</td>';
 
 						// VAT rate
-						print '<td class="right linecolvatrate">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+						$senderissupplier = 0;
+						$tooltiponprice = '';
+						$tooltiponpriceend = '';
+						if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+							$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+							$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+							if (is_object($object->thirdparty)) {
+								if ($senderissupplier) {
+									$seller = $object->thirdparty;
+									$buyer = $mysoc;
+								} else {
+									$seller = $mysoc;
+									$buyer = $object->thirdparty;
+								}
+
+								if ($mysoc->useLocalTax(1)) {
+									if (($seller->country_code == $buyer->country_code) || $line->total_localtax1 || $seller->useLocalTax(1)) {
+										$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->total_localtax1);
+									} else {
+										$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+									}
+								}
+								if ($mysoc->useLocalTax(2)) {
+									if ((isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
+										$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2);
+									} else {
+										$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+									}
+								}
+							}
+							$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+
+							$tooltiponprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
+							$tooltiponpriceend = '</span>';
+						}
+
+						print '<td class="right linecolvatrate">';
+						print $tooltiponprice;
+						print vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true);
+						print $tooltiponpriceend;
+						print '</td>';
 
 						// Unit price HT
 						print '<td class="right linecolunitht">';

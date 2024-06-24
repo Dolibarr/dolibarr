@@ -2134,7 +2134,7 @@ class Form
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
 	 * @param int<0,1> 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
@@ -2174,6 +2174,8 @@ class Form
 			// Build list includeUsers to have only hierarchy and current user
 			$includeUsers = implode(",", $user->getAllChildIds(1));
 		}
+
+		$num = 0;
 
 		$out = '';
 		$outarray = array();
@@ -2387,6 +2389,8 @@ class Form
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->num = $num;
 
 		if ($outputmode == 2) {
 			return $outarray2;
@@ -7026,9 +7030,9 @@ class Form
 			$syear = '';
 			$smonth = '';
 			$sday = '';
-			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? ($h == -1 ? '23' : '') : $conf->global->MAIN_DEFAULT_DATE_HOUR;
-			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
-			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
+			$shour = getDolGlobalString('MAIN_DEFAULT_DATE_HOUR', ($h == -1 ? '23' : ''));
+			$smin = getDolGlobalString('MAIN_DEFAULT_DATE_MIN', ($h == -1 ? '59' : ''));
+			$ssec = getDolGlobalString('MAIN_DEFAULT_DATE_SEC', ($h == -1 ? '59' : ''));
 		}
 		if ($h == 3 || $h == 4) {
 			$shour = '';
@@ -7063,7 +7067,7 @@ class Form
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
 					// Input area to enter date manually
-					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate" maxlength="11" value="' . $formated_date . '"';
+					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formated_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . $prefix . '\',\'' . $langs->trans("FormatDateShortJavaInput") . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
@@ -7117,9 +7121,9 @@ class Form
 						$retstring .= "</script>";
 					}
 
-					// Zone de saisie manuelle de la date
+					// Input area to enter date manually
 					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate center" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript

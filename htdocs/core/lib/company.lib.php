@@ -304,6 +304,41 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 
+	// Notifications
+	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
+		//$langs->load('ticket');
+		$nbTicket = 0;
+		// Enable caching of thirdparty count notifications
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_ticket_thirdparty_'.$object->id;
+		$nbticketretreived = dol_getcache($cachekey);
+		if (!is_null($nbticketretreived)) {
+			$nbTicket = $nbticketretreived;
+		} else {
+			// List of notifications enabled for contacts of the third party
+			$sql = "SELECT COUNT(t.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbTicket = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?socid='.urlencode((string) ($object->id));
+		$head[$h][1] = $langs->trans("Tickets");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTicket.'</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -2304,7 +2339,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Linked object
-			$out .= '<td class="nowraponall">';
+			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
 					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];

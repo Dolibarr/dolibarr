@@ -1169,6 +1169,7 @@ NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), yo
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
+TranslationKey=Translation key
 ValueOfConstantKey=Value of a configuration constant
 ConstantIsOn=Option %s is on
 NbOfDays=No. of days
@@ -2103,6 +2104,7 @@ BaseCurrency=Reference currency of the company (go into setup of company to chan
 WarningNoteModuleInvoiceForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016) because module Non Reversible Logs is automatically activated.
 WarningInstallationMayBecomeNotCompliantWithLaw=You are trying to install module %s that is an external module. Activating an external module means you trust the publisher of that module and that you are sure that this module does not adversely impact the behavior of your application, and is compliant with laws of your country (%s). If the module introduces an illegal feature, you become responsible for the use of illegal software.
+WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you're using the experimental mode for status invoices, you'll need to update your data to switch to the official mode. Contact a preferred partner who will help you with this task. List of preferred partners available by following <a href="https://www.dolibarr.org/partners.php?lang=fr&l=fr#countryid_1" target="_blank">this link</a>
 
 MAIN_PDF_MARGIN_LEFT=Left margin on PDF
 MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
@@ -2142,6 +2144,8 @@ YouCanDeleteFileOnServerWith=You can delete this file on the server with Command
 ChartLoaded=Chart of account loaded
 SocialNetworkSetup=Setup of module Social Networks
 EnableFeatureFor=Enable features for <strong>%s</strong>
+EnableModuleX=Enable module %s
+SetupModuleX=Setup module %s
 VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>Off</strong> in the menu %s - %s, so Sales tax or Vat used will always be 0 for sales.
 SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
 FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields and combo lists only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
@@ -2493,7 +2497,7 @@ ZapierForDolibarrSetup=Setup of Zapier for Dolibarr
 ZapierDescription=Interface with Zapier
 ZapierAbout=About the module Zapier
 ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
-TestWebhookTarget=Test triggerable event
+TestWebhookTarget=Test WebHook
 DataToSendTrigger=Data sent to Url
 SendToUrl=Send to Url
 WebsiteTemplateWasCopied=The website template(s) "%s" provided by this module has been saved into the directory of website templates (/doctemplates/websites) and is ready to be imported as a new web site.

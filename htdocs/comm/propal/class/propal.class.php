@@ -3667,14 +3667,14 @@ class Propal extends CommonObject
 				}
 				$datas['customer'] = '<br><b>'.$langs->trans('Customer').':</b> '.$this->thirdparty->getNomUrl(1, '', 0, 1);
 			}
-			if (!empty($this->ref_client)) {
-				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			if (!empty($this->ref_customer)) {
+				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
 			}
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
-					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -4330,7 +4330,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice, 'MU') : "null").",";
-		$sql .= " ".price2num($this->remise_percent, 3).",";
+		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
 		$sql .= " ".price2num($this->total_tva, 'MT').",";

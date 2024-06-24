@@ -340,8 +340,8 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div></td>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto($langs->trans("UndoExpandAll"), 'folder', 'class="paddingright"').'</a>';
+print ' | <a href="#">'.img_picto($langs->trans("ExpandAll"), 'folder-open', 'class="paddingright"').'</a></div></td>';
 print '</tr>';
 
 print '<tr>';

@@ -3280,7 +3280,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
+				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage', 1);
 			}
 			//print '</div>';
 			print '</span>';
@@ -4625,7 +4625,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$formmail->withlayout = 1;
 	$showlinktolayout = $formmail->withlayout;
 	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationwebpage' : '';
-	if ($action == 'createcontainer' && $showlinktolayout && $showlinktoai) {
+	if (($action == 'createcontainer' && $showlinktolayout) || ($action == 'createcontainer' && $showlinktoai)) {
 		print '<tr><td class="titlefield tdtop">';
 		if ($conf->browser->layout == 'phone') {
 			print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');

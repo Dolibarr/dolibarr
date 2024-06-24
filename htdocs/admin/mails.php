@@ -447,18 +447,24 @@ if ($action == 'edit') {
 	// Auth mode
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		print '<tr class="oddeven smtp_auth_method"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>';
+		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
-			print '<input type="radio" id="radio_pw" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="LOGIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
+			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
-			print '&nbsp; &nbsp; &nbsp;';
-			print '<input type="radio" id="radio_plain" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="PLAIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<br>';
+			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype, 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
 			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
-			print '&nbsp; &nbsp; &nbsp;';
-			print '<input type="radio" id="radio_oauth" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="XOAUTH2"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') == 'XOAUTH2' ? ' checked' : '').'> ';
+			print '<br>';
+			print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'> ';
 			print '<label for="radio_oauth" >'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
+			if (!isModEnabled('oauth')) {
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword=oauth">'.$langs->trans("EnableModuleX", "OAuth").'</a>';
+			} else {
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/oauth.php">'.$langs->trans("SetupModuleX", " OAuth").'</a>';
+			}
 		} else {
-			$value = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
+			$value = getDolGlobalString($vartosmtpstype, 'LOGIN');
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE"), $htmltext, 1, 'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTPS_AUTH_TYPE" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="'.$value.'">';
@@ -592,7 +598,7 @@ if ($action == 'edit') {
 
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
@@ -831,7 +837,7 @@ if ($action == 'edit') {
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
 		// Disable
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
