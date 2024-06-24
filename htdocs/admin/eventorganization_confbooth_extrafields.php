@@ -56,6 +56,9 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("ConferenceOrBooth");
+
+
 $help_url = '';
 $page_name = "EventOrganizationSetup";
 

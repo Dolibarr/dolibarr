@@ -152,7 +152,7 @@ $productstatic = new Product($db);
 
 $form = new Form($db);
 
-$title = $langs->trans("Margins");
+$title = $langs->trans("MarginDetails");
 
 llxHeader('', $title);
 
@@ -251,7 +251,7 @@ if ($result) {
 
 	print '<br>';
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';
