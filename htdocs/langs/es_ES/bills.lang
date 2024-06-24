@@ -188,7 +188,7 @@ SuppliersDraftInvoices=Facturas de proveedores borrador
 Unpaid=Pendientes
 ErrorNoPaymentDefined=Error Sin pago definido
 ConfirmDeleteBill=¿Está seguro de querer eliminar esta factura?
-ConfirmValidateBill=¿Estás seguro de que deseas validar esta factura con la referencia <b>%s<span class='notranslate'></b></span? >?
+ConfirmValidateBill=¿Estás seguro de que deseas validar esta factura con la referencia <b>%s</b>?
 ConfirmUnvalidateBill=¿Está seguro de querer cambiar el estado de la factura <b>%s</b> a borrador?
 ConfirmClassifyPaidBill=¿Está seguro de querer cambiar el estado de la factura <b>%s</b> a pagado?
 ConfirmCancelBill=¿Está seguro de querer anular la factura <b>%s</b>?

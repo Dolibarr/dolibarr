@@ -465,6 +465,7 @@ if (empty($reshook)) {
 
 					$action = 'view';
 				} else {
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'edit';
 				}
@@ -572,7 +573,9 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $co
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+if (empty($object->id)) {
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+}
 
 llxHeader('', $title, $help_url);
 
@@ -1457,7 +1460,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled("propal")) {
 			print '<tr><td class="titlefield tdoverflow">'.$langs->trans("ContactForProposals").'</td><td>';
-			print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
+			print $object->ref_propal ? $object->ref_propal : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'<span>';
 			print '</td></tr>';
 		}
 
@@ -1469,9 +1472,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td>';
-			$none = $langs->trans("NoContactForAnyOrder");
+			$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>';
 			if (isModEnabled("expedition")) {
-				$none = $langs->trans("NoContactForAnyOrderOrShipments");
+				$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrderOrShipments").'</span>';
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
 			print '</td></tr>';
@@ -1479,13 +1482,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled('contrat')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
-			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
+			print $object->ref_contrat ? $object->ref_contrat : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>';
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('facture')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
-			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+			print $object->ref_facturation ? $object->ref_facturation : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>';
 			print '</td></tr>';
 		}
 

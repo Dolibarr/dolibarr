@@ -1594,7 +1594,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
- *  @return     string     		 				Escaped string for json content.
+ *  @return     string     		 				Escaped string for JSON content.
  */
 function dol_escape_json($stringtoescape)
 {
@@ -1605,8 +1605,8 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
- *  @return     string     		 				Escaped string for json content.
+ *  @param		int<1,2>	$stringforquotes	2=String for doublequotes, 1=String for simple quotes
+ *  @return     string     		 				Escaped string for PHP content.
  */
 function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
@@ -1625,8 +1625,19 @@ function dol_escape_php($stringtoescape, $stringforquotes = 2)
 }
 
 /**
- * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can simply only dol_escape_htmltag()
+ *  Returns text escaped for inclusion into a XML string
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for XML content.
+ */
+function dol_escape_xml($stringtoescape)
+{
+	return $stringtoescape;
+}
+
+/**
+ * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page
+ * To use text that is not HTML content inside an attribute, use can simply only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -4448,7 +4459,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
-				'stock', 'resize', 'service', 'stats', 'trip',
+				'stock', 'resize', 'service', 'stats',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -4458,7 +4469,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
 				'stamp', 'signature'
@@ -4508,7 +4519,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'service'=>'concierge-bell',
 				'skill'=>'shapes', 'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
-				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+				'timespent'=>'clock', 'tick' => 'check', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'url'=>'external-link-alt', 'vat'=>'money-check-alt', 'vcard'=>'arrow-alt-circle-down',
 				'jabber'=>'comment-o',
@@ -4615,7 +4626,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'other'=>'#ddd', 'world'=>'#986c6a',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
-				'security'=>'#999', 'square'=>'#888', 'stop-circle'=>'#888', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
+				'security'=>'#999', 'square'=>'#888', 'stop-circle'=>'#888', 'stats'=>'#444', 'switch_off'=>'#999',
+				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
@@ -8309,12 +8321,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_PHONEPRO__'] = (isset($object->phone_perso) ? dol_print_phone($object->phone_perso) : '');
 				$substitutionarray['__MEMBER_PHONEMOBILE__'] = (isset($object->phone_mobile) ? dol_print_phone($object->phone_mobile) : '');
 				$substitutionarray['__MEMBER_TYPE__'] = (isset($object->type) ? $object->type : '');
-				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
-				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = (isset($object->first_subscription_date_start) ? dol_print_date($object->first_subscription_date_start, 'dayrfc') : '');
-				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = (isset($object->first_subscription_date_end) ? dol_print_date($object->first_subscription_date_end, 'dayrfc') : '');
-				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE__']        = dol_print_date($object->last_subscription_date, 'dayrfc');
-				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_START__']  = dol_print_date($object->last_subscription_date_start, 'dayrfc');
-				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_END__']    = dol_print_date($object->last_subscription_date_end, 'dayrfc');
+				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'day');
+				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = (isset($object->first_subscription_date_start) ? dol_print_date($object->first_subscription_date_start, 'day') : '');
+				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = (isset($object->first_subscription_date_end) ? dol_print_date($object->first_subscription_date_end, 'day') : '');
+				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE__']        = dol_print_date($object->last_subscription_date, 'day');
+				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_START__']  = dol_print_date($object->last_subscription_date_start, 'day');
+				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_END__']    = dol_print_date($object->last_subscription_date_end, 'day');
 			}
 
 			if (is_object($object) && $object->element == 'societe') {
@@ -8429,9 +8441,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 						$datenextexpiration = $line->date_end;
 					}
 				}
-				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
+				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'day');
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
-				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'day');
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
 			}
 			// add substition variable for ticket
@@ -11860,7 +11872,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	$regs = array();
 
@@ -12124,7 +12136,7 @@ function getElementProperties($element_type)
 	}
 	$dir_output .= $subdir;
 
-	$element_properties = array(
+	$elementProperties = array(
 		'module' => $module,
 		'element' => $element,
 		'table_element' => $table_element,
@@ -12135,8 +12147,35 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	//var_dump($element_properties);
-	return $element_properties;
+
+	// Add  hook
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	$hookmanager->initHooks(array('elementproperties'));
+
+
+	// Hook params
+	$parameters = array(
+		'elementType' => $element_type,
+		'elementProperties' => $elementProperties
+	);
+
+	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
+
+	if ($reshook) {
+		$elementProperties = $hookmanager->resArray;
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
+	}
+
+	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties context is equal to all
+	if (($key = array_search('elementproperties', $hookmanager->contextarray)) !== false) {
+		unset($hookmanager->contextarray[$key]);
+	}
+
+	return $elementProperties;
 }
 
 /**
@@ -13338,8 +13377,24 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body" >';
-				$out .= $histo[$key]['message'];
+				$out .= '<div class="timeline-body" style="word-wrap: break-word; word-break: break-all;" >';
+				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
+				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
+				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
+					$out .= '<div class="readmore-block --closed" >';
+					$out .= '	<div class="readmore-block__excerpt" >';
+					$out .= 	$truncatedText ;
+					$out .= ' 	<a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
+					$out .= '	</div>';
+					$out .= '	<div class="readmore-block__full-text" >';
+					$out .= $histo[$key]['message'];
+					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> '.$langs->trans("ReadLess").'</a>';
+					$out .= '	</div>';
+					$out .= '</div>';
+				} else {
+					$out .= $histo[$key]['message'];
+				}
+
 				$out .= '</div>';
 			}
 
@@ -13434,6 +13489,26 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		}
 
 		$out .= "</ul>\n";
+
+		$out .= '<script>
+				jQuery(document).ready(function () {
+				   $(document).on("click", "[data-read-more-action]", function(e){
+					   let readMoreBloc = $(this).closest(".readmore-block");
+					   if(readMoreBloc.length > 0){
+							e.preventDefault();
+							if($(this).attr("data-read-more-action") == "close"){
+								readMoreBloc.addClass("--closed").removeClass("--open");
+								 $("html, body").animate({
+									scrollTop: readMoreBloc.offset().top - 200
+								}, 100);
+							}else{
+								readMoreBloc.addClass("--open").removeClass("--closed");
+							}
+					   }
+					});
+				});
+			</script>';
+
 
 		if (empty($histo)) {
 			$out .= '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';

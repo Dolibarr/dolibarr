@@ -223,7 +223,9 @@ print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
 print '</form>';
 
 print '<br><br>';
-print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span> - <a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'</a>';
+print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span>';
+print ' - ';
+print '<a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.$langs->trans('JumpToBoxes').'</a>';
 print '<br><br>';
 
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
@@ -281,7 +283,7 @@ if ($resql) {
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 		if ($result > 0 && empty($rss->error)) {
-			print '<span class="ok">'.$langs->trans("Online").'</div>';
+			print '<span class="ok">'.img_picto($langs->trans("Online"), 'tick', 'class="pictofixedwidth"').$langs->trans("Online").'</div>';
 		} else {
 			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
@@ -320,7 +322,11 @@ if ($resql) {
 		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
-		print '<td>'.yn($active).'</td>';
+		print '<td>'.yn($active);
+		print ' &nbsp; - &nbsp; <a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
+		print $langs->trans("JumpToBoxes");
+		print '</a>';
+		print '</td>';
 		print '</tr>'."\n";
 
 		print '</table>'."\n";
