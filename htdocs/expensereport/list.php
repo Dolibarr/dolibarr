@@ -681,7 +681,7 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['d.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
+	print $formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
