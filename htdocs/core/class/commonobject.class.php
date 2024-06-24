@@ -8497,7 +8497,7 @@ abstract class CommonObject
 			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
 				$lastIsFetchableError = $validate->error;
 
-				// from V19 of Dolibarr, In some cases link use element instead of class example project_task
+				// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
 				if ($validate->isFetchableElement($fieldValue, $classname)) {
 					return true;
 				}
