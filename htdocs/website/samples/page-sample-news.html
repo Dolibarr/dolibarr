@@ -13,11 +13,11 @@ This is an example of a section to show the list of latest 5 articles (container
 	<h2>Latest Blog posts</h2>
     <div class="center">
     <?php
-            $keyword = 'mykeyword';
+            $keyword = '';
             $weblangs->loadLangs(array("main"));
             $websitepage = new WebsitePage($db);
             $fuser = new User($db);
-            $arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', 5, 0, array('type_container'=>'blogpost', 'keywords'=>$keyword));
+            $arrayofblogs = $websitepage->fetchAll(0, 'DESC', 'date_creation', 5, 0, array('type_container'=>'blogpost', 'keywords'=>$keyword));
             if (is_numeric($arrayofblogs) && $arrayofblogs < 0)
             {
                 print '<div class="error">'.$weblangs->trans($websitepage->error).'</div>';
