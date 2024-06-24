@@ -1525,7 +1525,7 @@ class BOM extends CommonObject
 	 * Get Net needs by product
 	 *
 	 * @param array<int,float|int>	$TNetNeeds	Array of ChildBom and infos linked to
-	 * @param float					$qty		qty needed
+	 * @param float					$qty		qty needed (used as a factor to produce 1 unit)
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1537,20 +1537,23 @@ class BOM extends CommonObject
 						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
 					}
 				} else {
-					if (empty($TNetNeeds[$line->fk_product])) {
-						$TNetNeeds[$line->fk_product] = 0;
+					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
+						$TNetNeeds[$line->fk_product]['qty'] = 0;
 					}
-					$TNetNeeds[$line->fk_product] += $line->qty * $qty;
+					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+					$TNetNeeds[$line->fk_product]['fk_unit'] = $line->fk_unit;
+					$TNetNeeds[$line->fk_product]['qty'] += $line->qty * $qty;
 				}
 			}
 		}
 	}
 
 	/**
-	 * Get Net needs Tree by product or bom
+	 * Get/add Net needs Tree by product or bom
 	 *
 	 * @param array<int,array{bom:BOM,parent_id:int,qty:float,level:int}> $TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
+	 * @param float	$qty       qty needed (used as a factor to produce 1 unit)
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
@@ -1562,11 +1565,17 @@ class BOM extends CommonObject
 					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
+						// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+						// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
 					}
 				} else {
+					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
 					if (isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
 						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					} else {
@@ -1775,6 +1784,18 @@ class BOMLine extends CommonObjectLine
 	public $efficiency;
 
 	/**
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
+	 */
+	public $fk_unit;
+
+	/**
+	 * @var int Service Workstation
+	 */
+	public $fk_default_workstation;
+
+	/**
 	 * @var int position of line
 	 */
 	public $position;
@@ -1800,18 +1821,6 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
-	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
-	 * @see measuringUnitString()
-	 * @see getLabelOfUnit()
-	 */
-	public $fk_unit;
-
-	/**
-	 * @var int Service Workstation
-	 */
-	public $fk_default_workstation;
-
 
 
 	/**
@@ -1821,7 +1830,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 

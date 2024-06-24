@@ -333,6 +333,7 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values (
 
 
 DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_user NOT IN (SELECT rowid FROM llx_user);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
@@ -399,3 +400,5 @@ INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active)
 INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
 
 ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+
+UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';

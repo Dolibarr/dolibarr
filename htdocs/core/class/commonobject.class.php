@@ -4001,17 +4001,19 @@ abstract class CommonObject
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					$prev_sits = $this->get_prev_sits();
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+						$prev_sits = $this->get_prev_sits();
 
-					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
-						$this->total_ht -= $sit->total_ht;
-						$this->total_tva -= $sit->total_tva;
-						$this->total_localtax1 -= $sit->total_localtax1;
-						$this->total_localtax2 -= $sit->total_localtax2;
-						$this->total_ttc -= $sit->total_ttc;
-						$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
-						$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
-						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
+							$this->total_ht -= $sit->total_ht;
+							$this->total_tva -= $sit->total_tva;
+							$this->total_localtax1 -= $sit->total_localtax1;
+							$this->total_localtax2 -= $sit->total_localtax2;
+							$this->total_ttc -= $sit->total_ttc;
+							$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+							$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+							$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						}
 					}
 				}
 			}
@@ -6934,7 +6936,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -7197,6 +7199,14 @@ abstract class CommonObject
 				$result = $this->insertExtraFields('', $user);
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error) {
+				$parameters = array('key'=>$key);
+				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters, $this, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 			}
 
@@ -7463,7 +7473,8 @@ abstract class CommonObject
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				if (!empty($param['options'])) {
-					$out .= "<br>";
+					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
 					$out .= "<script>";
 					$out .= '
@@ -8865,6 +8876,8 @@ abstract class CommonObject
 								} else {
 									$value = $getposttemp;
 								}
+							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
+								$value =( !empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0' ) ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
@@ -9804,7 +9817,7 @@ abstract class CommonObject
 						if (empty($obj->$field)) {
 							$this->$field = null;
 						} else {
-							$this->$field = (float) $obj->$field;
+							$this->$field = (int) $obj->$field;
 						}
 					} else {
 						if (isset($obj->$field) && (!is_null($obj->$field) || (array_key_exists('notnull', $info) && $info['notnull'] == 1))) {

@@ -61,7 +61,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  */
 
 $title = $langs->trans('ProductLotSetup');
-$textobject = $langs->trans("Batch");
+$textobject = $langs->transnoentitiesnoconv("Batch");
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 $help_url = '';
