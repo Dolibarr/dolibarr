@@ -1579,6 +1579,9 @@ class BOM extends CommonObject
 						$TNetNeeds[$this->id]['product'] = array();
 					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
+					if (empty($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
+						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] = 0.0;
+					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
 				}
