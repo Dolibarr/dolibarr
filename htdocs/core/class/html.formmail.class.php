@@ -138,6 +138,13 @@ class FormMail extends Form
 	public $withtopic;
 	public $witherrorsto;
 
+
+	/**
+	 * @var string|array 		email address (string) used as pre selected destination or list of desintation (array)
+	 * @see findToDefaultDestination()
+	 */
+	public $withtopreselected;
+
 	/**
 	 * @var int|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
@@ -1097,7 +1104,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTo()
 	{
-		global $langs, $form, $object;
+		global $langs, $form;
 		$out = '<tr><td class="fieldrequired">';
 		if ($this->withtofree) {
 			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
@@ -1169,25 +1176,7 @@ class FormMail extends Form
 					//if empty, search if one of them is default contact for that type of document ?
 					//first step: default role on object, then if empty switch back on default role on thirdpart
 					if (empty($withtoselected)) {
-						$withtoselected = $object->getIdContact('external', null);
-					}
-					if (empty($withtoselected)) {
-						$element = $object->element;
-						if (empty($element)) {
-							$element = substr($this->param["models"], 0, strpos($this->param["models"], '_'));
-						}
-						require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-						$contact = new Contact($this->db);
-						foreach ($this->withto as $key => $value) {
-							if ($contact->fetch($key, null, '', '', 1)) {
-								foreach ($contact->roles as $roleid => $role) {
-									//TODO: how to find current needed role for that mail ? && $role['code'] == 'BILLING') {
-									if ($role['element'] == $element) {
-										$withtoselected[] = $key;
-									}
-								}
-							}
-						}
+						$withtoselected = $this->withtopreselected;
 					}
 				}
 
@@ -2008,6 +1997,39 @@ class FormMail extends Form
 		}
 
 		return $tmparray;
+	}
+
+
+	/**
+	 * Get list of substitution keys available for emails. This is used for tooltips help.
+	 * This include the complete_substitutions_array.
+	 *
+	 * @param	Object	$object	 Dolibarr Object
+	 *
+	 * @return	void
+	 */
+	public function findToDefaultDestination($object)
+	{
+		if (is_object($object)) {
+			$this->withtopreselected = $object->getIdContact('external', null);
+			if (empty($this->withtopreselected)) {
+				$element = $object->element;
+				if (empty($element)) {
+					$element = substr($this->param["models"], 0, strpos($this->param["models"], '_'));
+				}
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				$contact = new Contact($this->db);
+				foreach ($this->withto as $key => $value) {
+					if ($contact->fetch($key, null, '', '', 1)) {
+						foreach ($contact->roles as $roleid => $role) {
+							if ($role['element'] == $element) {
+								$this->withtopreselected[] = $key;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
