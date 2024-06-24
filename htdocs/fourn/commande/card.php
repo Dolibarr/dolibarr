@@ -2560,7 +2560,7 @@ if ($action == 'create') {
 
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&token='.newToken().'">';
 						print $tmpbuttonlabel;
-						print '</a>';.
+						print '</a>';
 					}
 				}
 				// Create event
