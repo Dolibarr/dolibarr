@@ -552,7 +552,27 @@ class Product extends CommonObject
 	 */
 	public $is_object_used;
 
+	/**
+	 * If this Product is within a kit:
+	 * Quantity of this Product within this kit
+	 *
+	 * @var float
+	 * @see Product::is_sousproduit()		To set this property
+	 * @see Product::add_sousproduit()
+	 * @see Product::update_sousproduit()
+	 */
 	public $is_sousproduit_qty;
+
+	/**
+	 * If this Product is within a kit:
+	 * 1 = modify the stock of this child Product upon modification of the stock of its parent Product
+	 * ("incdec" stands for increase/decrease)
+	 *
+	 * @var 0|1
+	 * @see Product::is_sousproduit()		To set this property
+	 * @see Product::add_sousproduit()
+	 * @see Product::update_sousproduit()
+	 */
 	public $is_sousproduit_incdec;
 
 	public $mandatory_period;
@@ -4509,7 +4529,7 @@ class Product extends CommonObject
 				$rank = $obj->max_rank + 1;
 				//Addition of a product with the highest rank +1
 				$sql = "INSERT INTO ".$this->db->prefix()."product_association(fk_product_pere,fk_product_fils,qty,incdec,rang)";
-				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".price2num($qty, 'MS').", ".price2num($incdec, 'MS').", ".((int) $rank).")";
+				$sql .= " VALUES (".((int) $id_pere).", ".((int) $id_fils).", ".price2num($qty, 'MS').", ".((int) $incdec).", ".((int) $rank).")";
 				if (! $this->db->query($sql)) {
 					dol_print_error($this->db);
 					return -1;
@@ -4566,7 +4586,7 @@ class Product extends CommonObject
 
 		$sql = 'UPDATE '.$this->db->prefix().'product_association SET ';
 		$sql .= 'qty = '.price2num($qty, 'MS');
-		$sql .= ',incdec = '.price2num($incdec, 'MS');
+		$sql .= ',incdec = '.((int) $incdec);
 		$sql .= ' WHERE fk_product_pere = '.((int) $id_pere).' AND fk_product_fils = '.((int) $id_fils);
 
 		if (!$this->db->query($sql)) {
