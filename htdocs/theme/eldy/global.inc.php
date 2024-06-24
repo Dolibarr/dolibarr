@@ -550,6 +550,10 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.linecoldescription.bomline {
+	width: 400px;
+}
+
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 	white-space: nowrap;
@@ -2960,7 +2964,7 @@ div.tmenucenter {	/* we must have a field length of top menu to avoid size to ch
 
 /* Test of picto visible on hover, for all picto */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+ul.tmenu:hover .tmenulabel:not(.menuhider), .ul.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: block;
 	position: relative;
 	overflow: hidden;
@@ -2976,7 +2980,7 @@ div.tmenucenter {	/* we must have a field length of top menu to avoid size to ch
 	color: var(--colortextbackhmenu);
 	top: 0px;
 }
-.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+ul.tmenu:hover .tmenuimage:not(.menuhider), ul.tmenu:hover .tmenuimage:not(.menuhider)::before {
 	/* For transition transition-delay: 1000ms;
 	transition-property: all; */
 	margin-top: 0px !important;
@@ -8184,9 +8188,6 @@ table.jPicker {
 @media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-	.tmenudiv .tmenulabel span.mainmenuaspan {
-		display: none !important;
-	}
 	.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
 		margin-top: 8px !important;
 	}
