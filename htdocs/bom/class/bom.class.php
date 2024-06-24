@@ -1552,7 +1552,7 @@ class BOM extends CommonObject
 	/**
 	 * Get/add Net needs Tree by product or bom
 	 *
-	 * @param array<int,array{bom:BOM,parent_id:int,qty:float,level:int,?fk_unit:?int}> $TNetNeeds Array of ChildBom and infos linked to
+	 * @param array<int,array{bom:BOM,parentid:int,qty:float,level:int,fk_unit:?int}> $TNetNeeds Array of ChildBom and infos linked to
 	 * @param float	$qty       qty needed (used as a factor to produce 1 unit)
 	 * @param int   $level     level of recursivity
 	 * @return void
