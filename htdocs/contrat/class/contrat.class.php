@@ -1621,7 +1621,8 @@ class Contrat extends CommonObject
 					$contractline->id = $contractlineid;
 					$result = $contractline->insertExtraFields();
 					if ($result < 0) {
-						$this->error[] = $contractline->error;
+						$this->errors[] = $contractline->error;
+						$this->error = $contractline->error;
 						$error++;
 					}
 				}
