@@ -347,6 +347,7 @@ class Validate
 	 */
 	public function isFetchableElement($id, $element_type)
 	{
+		// TODO use newObjectByElement() introduce in V20 by PR #30036 for better errors management
 		$elementProperty = getElementProperties($element_type);
 		return $this->isFetchable($id, $elementProperty['classname'], $elementProperty['classpath'].'/'.$elementProperty['classfile'].'.class.php');
 	}
