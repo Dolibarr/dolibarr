@@ -1576,7 +1576,7 @@ class BOM extends CommonObject
 					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
 					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
-					if (isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
+					if (isset($TNetNeeds[$this->id]['product']) && isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
 						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					} else {
 						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] = $line->qty * $qty;
