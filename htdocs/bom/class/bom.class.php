@@ -1524,8 +1524,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array<int,array{qty:float,fk_unit:int}>	$TNetNeeds	Array of ChildBom and infos linked to
-	 * @param float					$qty		qty needed (used as a factor to produce 1 unit)
+	 * @param array<int,array{qty:float,fk_unit:?int}>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float										$qty		qty needed (used as a factor to produce 1 unit)
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
