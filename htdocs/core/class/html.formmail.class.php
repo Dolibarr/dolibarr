@@ -8,6 +8,7 @@
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Éric Seigne				<eric.seigne@cap-rel.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1096,7 +1097,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTo()
 	{
-		global $langs, $form;
+		global $langs, $form, $object;
 		$out = '<tr><td class="fieldrequired">';
 		if ($this->withtofree) {
 			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
@@ -1163,6 +1164,30 @@ class FormMail extends Form
 				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
+					}
+
+					//if empty, search if one of them is default contact for that type of document ?
+					//first step: default role on object, then if empty switch back on default role on thirdpart
+					if (empty($withtoselected)) {
+						$withtoselected = $object->getIdContact('external', null);
+					}
+					if (empty($withtoselected)) {
+						$element = $object->element;
+						if (empty($element)) {
+							$element = substr($this->param["models"], 0, strpos($this->param["models"], '_'));
+						}
+						require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+						$contact = new Contact($this->db);
+						foreach ($this->withto as $key => $value) {
+							if ($contact->fetch($key, null, '', '', 1)) {
+								foreach ($contact->roles as $roleid => $role) {
+									//TODO: how to find current needed role for that mail ? && $role['code'] == 'BILLING') {
+									if ($role['element'] == $element) {
+										$withtoselected[] = $key;
+									}
+								}
+							}
+						}
 					}
 				}
 
