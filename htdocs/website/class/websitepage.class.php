@@ -373,7 +373,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      	$filtermode   	No more used
 	 * @return WebSitePage[]|int<-1,-1>    	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($websiteid = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -405,7 +405,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.object_type,";
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if ($websiteid != 0) {
+		if (!empty($websiteid)) {
 			$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
 		}
 
@@ -440,7 +440,7 @@ class WebsitePage extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				if ($websiteid != 0) {
+				if (!empty($websiteid)) {
 					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 				} else {
 					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
