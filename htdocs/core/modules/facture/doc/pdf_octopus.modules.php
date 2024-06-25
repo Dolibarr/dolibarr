@@ -224,9 +224,9 @@ class pdf_octopus extends ModelePDFFactures
 		$this->atleastonediscount = 0;
 		$this->situationinvoice = true;
 		if (!empty($object)) {
-			$this->TDataSituation = $this->_getDataSituation($object);
+			$this->TDataSituation = $this->getDataSituation($object);
 		} else {
-			dol_syslog("object is empty, do not call _getDataSituation...");
+			dol_syslog("object is empty, do not call getDataSituation...");
 		}
 	}
 
@@ -1103,7 +1103,7 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->AliasNbPages();
 				}
 
-				$this->_resumeLastPage($pdf, $object, 0, $tab_top, $outputlangs, $outputlangsbis);
+				$this->resumeLastPage($pdf, $object, 0, $tab_top, $outputlangs, $outputlangsbis);
 				$bottomlasttab=$this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
@@ -2909,7 +2909,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * 			  S2 with l1 (tp), l2 (tp), l3 (ts)
 	 * 			  S3 with l1 (tp), l2 (tp), l3 (tp), l4 (ts)
 	 *
-	 * @param   $object  Facture
+	 * @param   Facture $object  Facture
 	 *
 	 * @return  array
 	 *
@@ -2920,7 +2920,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * current: current status invoice data
 	 *
 	 */
-	public function _getDataSituation(&$object)
+	public function getDataSituation(&$object)
 	{
 		global $conf, $db;
 
@@ -3076,7 +3076,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Display retained Warranty
 	 *
-	 * @param   $object  Facture
+	 * @param   Facture $object  Facture
 	 * @return	bool
 	 */
 	public function displayRetainedWarranty($object)
@@ -3267,9 +3267,9 @@ class pdf_octopus extends ModelePDFFactures
 	 *	@param	int			$posy           Position depart
 	 *	@param	Translate	$outputlangs    Object langs
 	 *  @param  Translate	$outputlangsbis Object lang for output bis
-	 *	@return int							Position pour suite
+	 *	@return void
 	 */
-	public function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
+	public function resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{
 		global $conf, $mysoc, $hookmanager;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -3642,7 +3642,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->setPage($pageposafter+1);
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-				$posy = $tab_top_newpage + 1;
+				$posy = $this->tab_top_newpage + 1;
 			} else {
 				$idinv++;
 				$remain_to_pay -= ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
