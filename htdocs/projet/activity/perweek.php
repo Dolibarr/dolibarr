@@ -711,7 +711,8 @@ if ($conf->use_javascript_ajax) {
 	print '<tr class="liste_total hideonsmartphone">';
 	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
-	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+	$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+	print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 	print '</td>';
 	if (!empty($arrayfields['timeconsumed']['checked'])) {
 		print '<td class="liste_total"></td>';
@@ -735,7 +736,7 @@ if ($conf->use_javascript_ajax) {
 		}
 		print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
-	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+	print '<td class="liste_total center"></td>';
 	print '</tr>';
 }
 
@@ -828,7 +829,8 @@ if (count($tasksarray) > 0) {
 		print '<tr class="liste_total">';
 		print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 		print $langs->trans("Total");
-		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+		$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+		print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 		print '</td>';
 		if (!empty($arrayfields['timeconsumed']['checked'])) {
 			print '<td class="liste_total"></td>';
@@ -854,7 +856,7 @@ if (count($tasksarray) > 0) {
 
 			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
-		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+		print '<td class="liste_total center"></td>';
 		print '</tr>';
 	}
 } else {
