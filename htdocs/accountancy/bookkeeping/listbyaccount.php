@@ -619,12 +619,15 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	}
 }
 
+$num = 0;
 if (!$error) {
 	if ($type == 'sub') {
 		$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 1);
 	} else {
 		$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 0);
 	}
+	//$num = count($object->lines);
+	$num = $result;						// $result is total nb of lines, or limit + 1, but $object->lines is always limited to $limit
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -632,8 +635,6 @@ if (!$error) {
 }
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-
-$num = count($object->lines);
 
 
 ///if ($action == 'delbookkeepingyear') {
