@@ -685,7 +685,7 @@ print "</tr>\n";
 
 $colspan = 2 + (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : 2);
 
-if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax && count($tasksarray) >= getDolGlobalInt('NBLINES_TO_DUPLICATE_TOTAL_TIMESPENT_ON_TOP', 10)) {
 	print '<tr class="liste_total hideonsmartphone">';
 	print '<td class="liste_total" colspan="'.($colspan - 1 + $addcolspan).'">';
 	print $langs->trans("Total");
@@ -757,7 +757,7 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 		}
 		print '<td class="leftborder"></td>';
-		print '<td class="center">';
+		print '<td class="right">';
 		$timeonothertasks = ($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
 		//if ($timeonothertasks)
 		//{
@@ -768,7 +768,7 @@ if (count($tasksarray) > 0) {
 		print '"></span>';
 		//}
 		print '</td>';
-		print ' <td class="liste_total"></td>';
+		print ' <td class="liste_total borderleft"></td>';
 		print ' <td class="liste_total"></td>';
 		print '</tr>';
 	}
@@ -782,7 +782,7 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
-		print '<td class="liste_total leftborder">';
+		print '<td class="liste_total leftborder borderleft">';
 		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 		print '</td>';
 
