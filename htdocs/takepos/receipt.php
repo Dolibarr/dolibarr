@@ -104,9 +104,9 @@ if (!empty($hookmanager->resPrint)) {
 }
 </style>
 <center>
-<div style="font-size: 1.5em">
+<font size="4">
 <?php echo '<b>'.$mysoc->name.'</b>'; ?>
-</div>
+</font>
 </center>
 <br>
 <p class="left">
