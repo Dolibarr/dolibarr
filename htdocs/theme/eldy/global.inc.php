@@ -5200,7 +5200,10 @@ table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-r
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
+}
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
 }
 
 
