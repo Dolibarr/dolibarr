@@ -736,7 +736,7 @@ td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
