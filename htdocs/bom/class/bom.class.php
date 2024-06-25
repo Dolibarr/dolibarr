@@ -1553,8 +1553,8 @@ class BOM extends CommonObject
 	 * Get/add Net needs Tree by product or bom
 	 *
 	 * @param array<int,array{bom:BOM,parentid:int,qty:float,level:int,fk_unit:?int}> $TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed (used as a factor to produce 1 unit)
-	 * @param int   $level     level of recursivity
+	 * @param float		$qty       qty needed (used as a factor to produce 1 unit)
+	 * @param int   	$level     level of recursivity
 	 * @return void
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
@@ -1582,7 +1582,7 @@ class BOM extends CommonObject
 						$TNetNeeds[$this->id]['product'][$line->fk_product] = array();
 					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
-					if (empty($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
+					if (!isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
 						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] = 0.0;
 					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
