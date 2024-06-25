@@ -1310,7 +1310,6 @@ if ($resql) {
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
-
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
@@ -1680,6 +1679,7 @@ if ($resql) {
 			$companylinked_id = 0;
 			$userlinked_id = 0;
 			$type_link = "";
+			$thirdstr = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {
@@ -1688,6 +1688,16 @@ if ($resql) {
 				}
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
+				}
+				if ($links[$key]['type'] == 'payment_donation') {
+					$paymentdonationstatic->fetch($links[$key]['url_id']);
+					$donstatic->fetch($paymentdonationstatic->fk_donation);
+					$companylinked_id = $donstatic->socid;
+					if (!$companylinked_id) {
+						$thirdstr = ($donstatic->societe !== "" ?
+									$donstatic->societe :
+									$donstatic->firstname." ".$donstatic->lastname);
+					}
 				}
 				if ($links[$key]['type'] == 'payment_expensereport') {
 					$type_link = 'payment_expensereport';
@@ -1719,6 +1729,8 @@ if ($resql) {
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
 				print $tmpuser->getNomUrl(-1);
+			} elseif ($thirdstr) {
+				print $thirdstr;
 			} else {
 				print '&nbsp;';
 			}
