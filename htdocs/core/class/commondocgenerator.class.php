@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var Extrafields object
+	 * @var ?Extrafields object
 	 */
 	public $extrafieldsCache;
 
@@ -721,9 +721,9 @@ abstract class CommonDocGenerator
 	 *	Define array with couple substitution key => substitution value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  CommonObjectLine $line				Object line
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
+	 *	@param  CommonObjectLine	$line			Object line
+	 *	@param  Translate			$outputlangs    Translate object to use for output
+	 *  @param  int					$linenumber		The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
@@ -1343,9 +1343,9 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     		Common object
-	 *  @param	string		$extrafieldKey    	The extrafield key
-	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
+	 *  @param	CommonObject	$object     		Common object
+	 *  @param	string			$extrafieldKey    	The extrafield key
+	 *  @param	Translate		$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
 	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
@@ -1368,7 +1368,7 @@ abstract class CommonDocGenerator
 
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1408,10 +1408,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	object		$object    		line of common object
-	 *  @param 	Translate 	$outputlangs    Output language
-	 *  @param 	array 		$params    		array of additional parameters
-	 *  @return	string  					Html string
+	 *  @param	CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 			$outputlangs    Output language
+	 *  @param 	array 				$params    		array of additional parameters
+	 *  @return	string  							Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{
@@ -1422,7 +1422,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extrafields if not already done
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1713,7 +1713,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

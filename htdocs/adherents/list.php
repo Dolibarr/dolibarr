@@ -5,8 +5,8 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2023	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,7 @@ $mode 		= GETPOST('mode', 'alpha');
 
 // Search fields
 $search 			= GETPOST("search", 'alpha');
+$search_id = GETPOST('search_id', 'int');
 $search_ref 		= GETPOST("search_ref", 'alpha');
 $search_lastname 	= GETPOST("search_lastname", 'alpha');
 $search_firstname 	= GETPOST("search_firstname", 'alpha');
@@ -153,6 +154,7 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
+	'd.rowid' => array('label' => 'ID', 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'd.ref' => array('label' => "Ref", 'checked' => 1),
 	'd.civility' => array('label' => "Civility", 'checked' => 0),
 	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
@@ -242,6 +244,7 @@ if (empty($reshook)) {
 		$filter = '';
 
 		$search = "";
+		$search_id = '';
 		$search_ref = "";
 		$search_lastname = "";
 		$search_firstname = "";
@@ -504,6 +507,9 @@ if ($search_status != '') {
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
+}
+if ($search_id) {
+	$sql .= natural_search("d.rowid", $search_id);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -865,8 +871,10 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Line numbering
-if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-	print '<td class="liste_titre">&nbsp;</td>';
+if (!empty($arrayfields['d.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
 }
 
 // Ref
@@ -1078,8 +1086,8 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 	$totalarray['nbfield']++;
 }
-if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['d.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['d.rowid']['label'], $_SERVER["PHP_SELF"], 'd.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
@@ -1276,7 +1284,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Technical ID
-		if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
+		if (!empty($arrayfields['d.rowid']['checked'])) {
 			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

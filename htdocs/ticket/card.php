@@ -691,7 +691,7 @@ $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
 $title = $actionobject->getTitle($action);
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card');
 
 if ($action == 'create' || $action == 'presend') {
 	if (empty($permissiontoadd)) {
@@ -1145,7 +1145,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
-		print '<div class="underbanner clearboth"></div>';
+		//print '<div class="underbanner clearboth"></div>';
 
 		// View Original message
 		$actionobject->viewTicketOriginalMessage($user, $action, $object);

@@ -143,7 +143,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('ProductLot'), '');
+llxHeader('', $langs->trans('ProductLot'), '', '', 0, 0, '', '', '', 'mod-product page-stock_productlot_document');
 
 
 if ($object->id) {

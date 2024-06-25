@@ -334,11 +334,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -744,7 +744,6 @@ class Mo extends CommonObject
 				$error++;
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
@@ -1971,9 +1970,13 @@ class Mo extends CommonObject
 		}
 		if (!empty($arraydata['product'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			if (property_exists($this, 'qty')) {
+				$return .= ' <span class="info-box-label">('.$langs->trans("Qty").' '.$this->qty.')</span>';
+			}
+		} else {
+			if (property_exists($this, 'qty')) {
+				$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -2000,6 +2003,16 @@ class MoLine extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mrp_production';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'mo';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_mo';
 
 	/**
 	 *  'type' field format:
@@ -2150,7 +2163,7 @@ class MoLine extends CommonObjectLine
 	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
-			$this->error = 'BadValueForQty';
+			$this->error = 'ErrorEmptyValueForQty';
 			return -1;
 		}
 

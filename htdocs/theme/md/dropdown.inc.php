@@ -27,7 +27,7 @@ button.dropdown-item.global-search-item {
 
 
 #topmenu-global-search-dropdown a.login-dropdown-a, #topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
-	color: #fff;
+	color: var(--colortextbackhmenu);
 }
 
 div#topmenu-global-search-dropdown {

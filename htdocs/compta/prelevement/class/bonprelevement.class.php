@@ -1707,7 +1707,7 @@ class BonPrelevement extends CommonObject
 		dol_syslog(get_class($this) . "::generate build file=" . $this->filename . " type=" . $type);
 
 		$this->file = fopen($this->filename, "w");
-		if (empty($this->file)) {
+		if ($this->file == false) {
 			$this->error = $langs->trans('ErrorFailedToOpenFile', $this->filename);
 			return -1;
 		}

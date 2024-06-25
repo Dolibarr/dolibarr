@@ -68,6 +68,10 @@ class SupplierProposal extends CommonObject
 	public $table_element_line = 'supplier_proposaldet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'SupplierProposalLine';
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_supplier_proposal';
@@ -2814,6 +2818,16 @@ class SupplierProposalLine extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'supplier_proposaldet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'supplier_proposal';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_supplier_proposal';
 
 	public $oldline;
 

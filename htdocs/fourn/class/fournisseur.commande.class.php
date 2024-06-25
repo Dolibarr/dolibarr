@@ -65,6 +65,11 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'CommandeFournisseurLigne';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
@@ -3740,6 +3745,16 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'commande_fournisseurdet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'commande_fournisseur';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_commande_fournisseur';
 
 	public $oldline;
 
