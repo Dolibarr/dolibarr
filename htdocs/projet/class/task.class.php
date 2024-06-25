@@ -933,7 +933,7 @@ class Task extends CommonObjectLine
 		$this->priority = 0;
 		$this->note_private = 'This is a specimen private note';
 		$this->note_public = 'This is a specimen public note';
-		$this->billable = 0;
+		$this->billable = 1;
 
 		return 1;
 	}
