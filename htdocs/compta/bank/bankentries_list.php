@@ -1701,6 +1701,7 @@ if ($resql) {
 				}
 			}
 
+			// Show more information in the column thirdparty.
 			if ($companylinked_id) {
 				// TODO Add a cache of loaded companies here ?
 				$companystatic->fetch($companylinked_id);
