@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos Garcia           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
@@ -79,37 +79,6 @@ class pdf_octopus extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	/**
 	 * @var int heightforinfotot
 	 */
 	public $heightforinfotot;
@@ -164,18 +133,6 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public $TDataSituation;
 
-	/**
-	 * @var int position x for description
-	 */
-	public $posxdesc;
-
-
-	public $posxpicture;
-	public $posxtva;
-	public $posxunit;
-	public $posxqty;
-	public $posxup;
-	public $posxdiscount;
 	public $posxsommes;
 	public $posxprogress_current;
 	public $posxprogress_prec;
@@ -187,6 +144,11 @@ class pdf_octopus extends ModelePDFFactures
 	public $posx_current;
 	public $defaultContentsFieldsStyle;
 	public $defaultTitlesFieldsStyle;
+
+	/**
+	 * @var int is rg
+	 */
+	public $is_rg;
 
 	/**
 	 *	Constructor
@@ -312,7 +274,7 @@ class pdf_octopus extends ModelePDFFactures
 			return 1;
 		}
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
 		}
 
@@ -934,7 +896,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->_getInfosLineLastSituation($object, $object->lines[$i]);
+					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
 
 					// Sum
 					$columkey = 'btpsomme';
@@ -3158,11 +3120,11 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Get info line of the last situation
 	 *
-	 * @param  Facture	$object			Object
-	 * @param  int		$current_line	Id of the current line
+	 * @param  Facture	$object		Object
+	 * @param  FactureLigne			$current_line	current line
 	 * @return bool
 	 */
-	public function _getInfosLineLastSituation(&$object, &$current_line)
+	public function getInfosLineLastSituation(&$object, &$current_line)
 	{
 		if (empty($object->situation_cycle_ref) || $object->situation_counter <= 1) {
 			return;
