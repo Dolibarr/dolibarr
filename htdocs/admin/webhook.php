@@ -158,8 +158,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = webhookAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
+print '<br>';
+
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'</span><br><br>';
+print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->transnoentitiesnoconv("Targets")).'...</span><br><br>';
 
 
 if ($action == 'edit') {

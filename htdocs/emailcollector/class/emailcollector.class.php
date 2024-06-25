@@ -1104,6 +1104,7 @@ class EmailCollector extends CommonObject
 		$searchfilterexcludebodyarray = array();
 		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
+		$rulesreplyto = array();
 
 		$now = dol_now();
 
@@ -1390,6 +1391,7 @@ class EmailCollector extends CommonObject
 
 				if ($rule['type'] == 'replyto') {
 					$searchfilterreplyto++;
+					$rulesreplyto[] = $rule['rulevalue'];
 					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
@@ -1531,6 +1533,7 @@ class EmailCollector extends CommonObject
 
 				if ($rule['type'] == 'replyto') {
 					$searchfilterreplyto++;
+					$rulesreplyto[] = $rule['rulevalue'];
 					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
@@ -1759,6 +1762,22 @@ class EmailCollector extends CommonObject
 						if ($isanswer) {
 							$nbemailprocessed++;
 							dol_syslog(" Discarded - Email is an answer");
+							continue; // Exclude email
+						}
+					}
+				}
+				if ($searchfilterreplyto > 0) {
+					if (!empty($headers['Reply-To'])) {
+						$isreplytook = 0;
+						foreach ($rulesreplyto as $key => $rulereplyto) {
+							if (preg_match('/'.preg_quote($rulereplyto, '/').'/', $headers['Reply-To'])) {
+								$isreplytook ++;
+							}
+						}
+
+						if (!$isreplytook || $isreplytook != count($rulesreplyto)) {
+							$nbemailprocessed++;
+							dol_syslog(" Discarded - Reply-to does not match");
 							continue; // Exclude email
 						}
 					}

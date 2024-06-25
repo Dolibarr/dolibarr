@@ -2248,7 +2248,12 @@ if ($action == 'create' && $usercancreate) {
 				}
 			}
 			if ($nbMandated > 0) {
-				$text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+				if (getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
+					setEventMessages($langs->trans("mandatoryPeriodNeedTobeSetMsgValidate"), null, 'errors');
+					$error++;
+				} else {
+					$text .= '<div><span class="clearboth nowraponall warning">'.img_warning().$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+				}
 			}
 
 			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
@@ -2361,7 +2366,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			if (!$error) {
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
 			}
 		}
 
@@ -3084,7 +3089,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Clone
 				if ($usercancreate) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&amp;token='.newToken().'&amp;id='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id.'&socid='.$object->socid, '');
 				}
 
 				// Cancel order

@@ -1966,7 +1966,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
 			}
-			print '<div class="nowraponall">' . $langs->trans('at') . ' ';
+			print '<div class="nowraponall">' . $langs->trans('to') . ' ';
 			print $form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text', 0, 1);
 			print '</div>';
 

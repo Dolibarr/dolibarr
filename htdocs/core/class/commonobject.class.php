@@ -7203,7 +7203,8 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
-				$parameters = array('key'=>$key);
+				$parameters = array('key' => $key);
+				global $action;
 				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters, $this, $action);
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -8738,7 +8739,14 @@ abstract class CommonObject
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
 			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
-				$this->setFieldError($fieldKey, $validate->error);
+				$lastIsFetchableError = $validate->error;
+
+				// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
+				if ($validate->isFetchableElement($fieldValue, $classname)) {
+					return true;
+				}
+
+				$this->setFieldError($fieldKey, $lastIsFetchableError);
 				return false;
 			} else {
 				return true;
