@@ -1542,26 +1542,62 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
+		// $out .= '<script type="text/javascript">
+		// 		$(document).ready(function() {
+		// 			$(".template-option").click(function() {
+		// 				var template = $(this).data("template");
+
+		// 				console.log("We choose a layout for email template "+template);
+
+		// 				$(".template-option").removeClass("selected");
+		// 				$(this).addClass("selected");
+
+		// 				var contentHtml = $(this).data("content");
+
+		// 				jQuery("#'.$htmlContent.'").val(contentHtml);
+		// 				var editorInstance = CKEDITOR.instances.'.$htmlContent.';
+		// 				if (editorInstance) {
+		// 					editorInstance.setData(contentHtml);
+		// 				}
+		// 			});
+		// 		});
+		// </script>';
 		$out .= '<script type="text/javascript">
-				$(document).ready(function() {
-					$(".template-option").click(function() {
-						var template = $(this).data("template");
+        $(document).ready(function() {
+            // Initialiser CKEditor
+            var editorInstance = CKEDITOR.replace("'.$htmlContent.'");
 
-						console.log("We choose a layout for email template "+template);
+            editorInstance.on("instanceReady", function() {
+                console.log("CKEditor is ready");
 
-						$(".template-option").removeClass("selected");
-						$(this).addClass("selected");
+                function loadCKEditorContent(template) {
+                $.get("/core/lib/load_template.lib.php", { template: template }, function(data) {
+                        console.log("Data loaded from template: ", data); 
 
-						var contentHtml = $(this).data("content");
+                        var contentHtml = data; 
+						
+                        if (editorInstance) {
+                            editorInstance.setData(contentHtml, function() {
+                                console.log("Content successfully set in CKEditor");
+                            });
+                        }
+                    }).fail(function() {
+                        console.error("Failed to load template: " + template);
+                    });
+                }
 
-						jQuery("#'.$htmlContent.'").val(contentHtml);
-						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
-						if (editorInstance) {
-							editorInstance.setData(contentHtml);
-						}
-					});
-				});
-		</script>';
+                $(".template-option").on("click", function() {
+                    $(".template-option").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    var template = $(this).data("template");
+                    loadCKEditorContent(template);
+                });
+
+            });
+        });
+    </script>';
+
 
 		return $out;
 	}
