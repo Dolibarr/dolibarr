@@ -221,6 +221,7 @@ $error = 0;
 
 $filter = array();
 $param = '';
+$url_param = '';
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
