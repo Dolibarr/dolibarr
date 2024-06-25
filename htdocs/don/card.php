@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
@@ -411,6 +412,8 @@ if (empty($reshook)) {
 /*
  * View
  */
+
+$bankaccountstatic = new Account($db);
 
 $title = $langs->trans("Donation");
 
@@ -842,8 +845,10 @@ if (!empty($id) && $action != 'edit') {
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql .= "c.code as type_code,c.libelle as paiement_type";
+	$sql .= " c.code as type_code, c.libelle as paiement_type,";
+	$sql .= " b.fk_account";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.rowid = ".((int) $id);
@@ -857,13 +862,16 @@ if (!empty($id) && $action != 'edit') {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$total = 0;
+
 		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
+		if (isModEnabled("bank")) {
+			print '<td>'.$langs->trans("BankAccount").'</td>';
+		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
@@ -875,6 +883,28 @@ if (!empty($id) && $action != 'edit') {
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 			$labeltype = ($langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+			if (isModEnabled("bank")) {
+				$bankaccountstatic->fetch($objp->fk_account);
+				/*$bankaccountstatic->id = $objp->fk_bank;
+				$bankaccountstatic->ref = $objp->baref;
+				$bankaccountstatic->label = $objp->baref;
+				$bankaccountstatic->number = $objp->banumber;
+				$bankaccountstatic->currency_code = $objp->bacurrency_code;
+
+				if (isModEnabled('accounting')) {
+					$bankaccountstatic->account_number = $objp->account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($objp->fk_accountancy_journal);
+					$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+				}
+				*/
+				print '<td class="nowraponall">';
+				if ($bankaccountstatic->id) {
+					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
+				print '</td>';
+			}
 			print '<td class="right">'.price($objp->amount)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;
@@ -882,12 +912,17 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		if ($object->paid == 0) {
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+			$colspan = 3;
+			if (isModEnabled("bank")) {
+				$colspan++;
+			}
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
+			$resteapayeraffiche = $remaintopay;
 
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
 			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
