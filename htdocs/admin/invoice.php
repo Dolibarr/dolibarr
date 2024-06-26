@@ -463,6 +463,7 @@ print '</div>';
 /*
  *  Document templates generators
  */
+
 print '<br>';
 print load_fiche_titre($langs->trans("BillsPDFModules"), '', '');
 
@@ -532,6 +533,9 @@ foreach ($dirmodels as $reldir) {
 								$modulequalified = 0;
 							}
 							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'disabled') {
 								$modulequalified = 0;
 							}
 

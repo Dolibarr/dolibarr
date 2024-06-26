@@ -76,7 +76,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';
+	public $version = 'disabled';	// Disabled by default. Enabled in constructor if option INVOICE_USE_SITUATION is 2.
 
 	/**
 	 * @var int height for info total
@@ -175,11 +175,17 @@ class pdf_octopus extends ModelePDFFactures
 	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc, $object;
+
 		// for retro compatibility
 		if (getDolGlobalString('INVOICE_USE_SITUATION_RETAINED_WARRANTY') && !getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			// before it was only for final situation invoice
 			$conf->global->INVOICE_USE_RETAINED_WARRANTY = $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY;
 			$conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL = 1;
+		}
+
+		// If hidden option INVOICE_USE_SITUATION is set to 2, we can show the invoice situation template
+		if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+			$this->version = 'dolibarr';
 		}
 
 		// Translations
