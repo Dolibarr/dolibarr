@@ -2790,7 +2790,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$i = -8;
 		foreach ($form->cache_vatrates as $TVatInfo) {
-			$tva_tx_formated = (float) sprintf("%01.3f", $TVatInfo['txtva']);
+			$tva_tx_formated = sprintf("%01.3f", (float) $TVatInfo['txtva']);
 			// print "<p>Un taux de tva ... $tva_tx_formated :: " . json_encode($this->TDataSituation['current'][$tva_tx_formated]) . "</p>";
 			if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 				continue;
@@ -2853,7 +2853,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$i = -8;
 			foreach ($form->cache_vatrates as $TVatInfo) {
-				$tva_tx_formated = (float) sprintf("%01.3f", $TVatInfo['txtva']);
+				$tva_tx_formated = sprintf("%01.3f", (float) $TVatInfo['txtva']);
 				if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 					continue;
 				}
@@ -3126,7 +3126,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @param  Facture	$object		Object
 	 * @param  FactureLigne			$current_line	current line
-	 * @return array{progress_prec:float,total_ht_without_progress:float,total_ht:float}
+	 * @return void|array{progress_prec:float,total_ht_without_progress:float,total_ht:float}
 	 */
 	public function getInfosLineLastSituation(&$object, &$current_line)
 	{
@@ -3486,7 +3486,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx+$width, $posy + $height * $index);
 			$pdf->MultiCell($width2, $height, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 
-			$retainedWarrantyRate = $object->retained_warranty ? price2num($object->retained_warranty) : price2num(getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', 0));
+			$retainedWarrantyRate = (float) ($object->retained_warranty ? price2num($object->retained_warranty) : price2num(getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', 0)));
 
 			$total_ht_rg = 0;
 			$total_ttc_rg = 0;
