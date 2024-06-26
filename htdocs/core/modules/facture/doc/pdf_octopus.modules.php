@@ -128,7 +128,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Situation invoices
 	 *
-	 * @var array{derniere_situation:Facture,date_derniere_situation:int}	Data of situation
+	 * @var array{derniere_situation:Facture,date_derniere_situation:int,current:array}	Data of situation
 	 */
 	public $TDataSituation;
 
