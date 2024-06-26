@@ -1666,7 +1666,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Clone
 			if ($user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&amp;token='.newToken().'&amp;id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}

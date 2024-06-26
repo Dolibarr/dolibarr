@@ -736,7 +736,7 @@ td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
@@ -748,6 +748,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.linecoldescription.bomline {
+	width: 400px;
+}
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
@@ -2091,6 +2094,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		padding-right: 10px !important;
 	}
 
+	table.liste tr.trkanban td {
+		padding: 10px 6px 10px 6px;			/* t r b l */
+	}
+
 	.hideonsmartphone { display: none; }
 	.hideonsmartphoneimp { display: none !important; }
 	.showonsmartphone { display: block !important; }
@@ -2364,7 +2371,7 @@ td.showDragHandle {
 	display: none;
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
-	border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2);
+	/* border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2); */
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
@@ -3078,7 +3085,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 
 /* Test of picto visible on hover, for all picto */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+ul.tmenu:hover .tmenulabel:not(.menuhider), ul.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: block;
 	position: relative;
 	overflow: hidden;
@@ -3094,7 +3101,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	color: var(--colortextbackhmenu);
 	top: 0px;
 }
-.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+ul.tmenu:hover .tmenuimage:not(.menuhider), ul.tmenu:hover .tmenuimage:not(.menuhider)::before {
 	/* For transition transition-delay: 1000ms;
 	transition-property: all; */
 	margin-top: 0px !important;
@@ -4268,7 +4275,7 @@ table.liste td, table.noborder td, div.noborder form div, table.tableforservicep
 	height: 22px;
 }
 table.liste tr.trkanban td {
-	padding: 10px 14px 10px 14px;			/* t r b l */
+	padding: 12px 15px 12px 15px;			/* t r b l */
 }
 
 form.tagtable {
@@ -4369,8 +4376,8 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 6px;
-  padding-bottom: 5px;
+  /* padding-top: 6px;
+  padding-bottom: 5px; */
 }
 .pagination {
   display: inline-block;
@@ -5215,9 +5222,14 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.centpercent.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 10px !important;
+table.notopnoleftnoright.table-fiche-title {
+	margin-bottom: 14px;
 }
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
+}
+
+
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
@@ -5427,7 +5439,7 @@ div.ui-tooltip.mytooltip {
 
 
 /* ============================================================================== */
-/* Calendar                                                                       */
+/* Calendar picker                                                                */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5439,6 +5451,9 @@ html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
+select.ui-datepicker-year {
+	margin-left: 2px !important;
+}
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -5693,7 +5708,7 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -5706,7 +5721,7 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
-div.event { margin: 8px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
+div.event { margin-top: 4px; margin-bottom: 4px; margin-left: 2px; margin-right: 2px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 3px; border-radius: 3px; min-height: 20px;	}
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
@@ -5718,6 +5733,12 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
+a.dayevent-aday {
+	margin-left: 8px;
+}
+td.small.cal_event {
+	font-size: 0.9em;
+}
 
 .calendarviewcontainertr { height: 100px; }
 
@@ -5726,7 +5747,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 }
 
 td.cal_other_month {
-	opacity: 0.8;
+	opacity: 0.7;
 }
 
 .cal_available { background: #0060d450; }
@@ -5873,10 +5894,39 @@ td.gtaskname {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+div.jPicker table.jPicker {
+	padding-bottom: 20px;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+.jPicker .Move {
+	background: unset !important;
+	border: unset !important;
+}
+.jPicker .Preview div span {
+	border: unset !important;
+	width: unset !important;
+	height: 50% !important;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
+	background-color: #f4f4f4 !important;
+	box-shadow: 0px 0px 10px #ccc;
 }
+.jPicker .Grid {
+	background-image: unset !important;
+}
+.jPicker .Grid span.QuickColor {
+	border: unset !important;
+}
+.jPicker td.Radio {
+	min-width: 34px;
+}
+.jPicker td.Text {
+	white-space: nowrap;
+}
+
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5959,9 +6009,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 /* Style to overwrites JQuery styles */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	border: 1px solid #888;
+	/* border: 1px solid #888; */
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: #007fff !important;
+	color: #ffffff !important;
 }
 
 .ui-menu .ui-menu-item a {

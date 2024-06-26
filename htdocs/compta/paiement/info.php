@@ -67,6 +67,8 @@ if ($socid && $socid != $object->thirdparty->id) {
  * View
  */
 
+$form = new Form($db);	// Used in dol_banner_tab
+
 llxHeader('', $langs->trans("Payment"));
 
 $object->info($object->id);

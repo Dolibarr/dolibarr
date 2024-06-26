@@ -2452,15 +2452,24 @@ class Project extends CommonObject
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *  @param		string		$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
+	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '', $arraydata = null)
+	public function getKanbanView($option = '', $arraydata = null, $size = '')
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		if (empty($size)) {
+			if (empty($conf->dol_optimize_smallscreen)) {
+				$size = 'large';
+			} else {
+				$size = 'small';
+			}
+		}
+
+		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->public ? 'projectpub' : $this->picto);
@@ -2488,11 +2497,14 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty) && $this->thirdparty instanceof Societe) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
-			$return .= '</div><div class="inline-block valignmiddle">';
-			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
 			$return .= '</div>';
+			if (!empty($this->thirdparty->phone)) {
+				$return .= '<div class="inline-block valignmiddle">';
+				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'marginleftonly');
+				$return .= '</div>';
+			}
 		}
 		if (!empty($arraydata['assignedusers'])) {
 			$return .= '<br>';

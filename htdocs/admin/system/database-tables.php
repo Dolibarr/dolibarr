@@ -138,7 +138,7 @@ if (!$base) {
 				print '<tr class="oddeven">';
 
 				print '<td>'.($i+1).'</td>';
-				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
+				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->Name).'"><a href="dbtable.php?table='.urlencode($obj->Name).'">'.$obj->Name.'</a>';
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
 
 				if (in_array($tablename.'.sql', $arrayoffiles)) {

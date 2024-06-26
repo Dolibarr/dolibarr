@@ -1567,7 +1567,7 @@ class FormTicket
 			if (empty($topic)) {
 				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
 			} else {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+				print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
 			}
 			print '</td></tr>';
 

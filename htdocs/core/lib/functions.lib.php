@@ -1970,7 +1970,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				// For case of tag with attribute
 				$reg = array();
 				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
-					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must never have [ ] inside the attribute string
+					$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);
+					$tmpattributes = str_ireplace('href="https:', '__HREFHTTPSA', $tmpattributes);
 					$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
@@ -1997,6 +1999,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
 
+			$result = str_ireplace('__HREFHTTPA', 'href="http:', $result);
+			$result = str_ireplace('__HREFHTTPSA', 'href="https:', $result);
 			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
 			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
 			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
@@ -3964,9 +3968,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
+ *  @param	string	$morecss		Add more css
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0)
+function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = '')
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -3983,7 +3988,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	}
 
 	// Short format for small screens
-	if ($conf->dol_optimize_smallscreen) {
+	if (!empty($conf->dol_optimize_smallscreen) && $separ != 'hidenum') {
 		$separ = '';
 	}
 
@@ -4269,9 +4274,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 		if ($adddivfloat == 1) {
-			$rep .= '<div class="nospan float" style="margin-right: 10px">';
+			$rep .= '<div class="nospan float'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">';
 		} elseif (empty($adddivfloat)) {
-			$rep .= '<span style="margin-right: 10px;">';
+			$rep .= '<span'.($morecss ? ' class="'.$morecss.'"' : '').' style="margin-right: 10px;">';
 		}
 
 		$rep .= $newphoneastart;
@@ -4865,7 +4870,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
-				'check-circle', 'check-square', 'currency', 'multicurrency',
+				'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
 				'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
 				'commercial', 'companies',
@@ -4889,7 +4894,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
@@ -4942,8 +4947,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
 				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
 				'service' => 'concierge-bell',
-				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch', 'stripe' => 'stripe-s',
-				'supplier' => 'building',
+				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
+				'status' => 'stop-circle',
+				'stripe' => 'stripe-s',	'supplier' => 'building',
 				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
 				'title_agenda' => 'calendar-alt',
 				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
@@ -5030,7 +5036,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'propal' => 'infobox-propal', 'proposal' => 'infobox-propal','private' => 'infobox-project',
 				'reception' => 'flip infobox-order_supplier', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
+				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'stripe' => 'infobox-bank_account', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier', 'supplier_order' => 'infobox-order_supplier', 'supplier_proposal' => 'infobox-supplier_proposal',
 				'ticket' => 'infobox-contrat', 'title_accountancy' => 'infobox-bank_account', 'title_hrm' => 'infobox-holiday', 'expensereport' => 'infobox-expensereport', 'trip' => 'infobox-expensereport', 'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
@@ -6377,7 +6383,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 
 	if (empty($hidenavigation)) {
 		if ((int) $limit > 0 && empty($hideselectlimit)) {
-			$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
+			$pagesizechoices = '10:10,15:15,20:20,25:25,50:50,100:100,250:250,500:500,1000:1000';
 			$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
 			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 			//$pagesizechoices.=',2:2';
@@ -12743,6 +12749,13 @@ function getElementProperties($elementType)
 		$classfile = 'ccountry';
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
+		$subelement = '';
+	} elseif ($elementType == 'knowledgerecord') {
+		$module = '';
+		$classpath = 'knowledgemanagement/class';
+		$classfile = 'knowledgerecord';
+		$classname = 'KnowledgeRecord';
+		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	}
 

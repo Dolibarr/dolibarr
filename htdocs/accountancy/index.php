@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016-2020  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2016-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2019-2021  Frédéric France			<frederic.france@netlogic.fr>
+/* Copyright (C) 2016-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,9 @@ if (isModEnabled('accounting')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+		$messagewarning = $langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices");
+		$messagewarning .= ' '.$langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org');
+		print info_admin($messagewarning);
 		print "<br>";
 	}
 
