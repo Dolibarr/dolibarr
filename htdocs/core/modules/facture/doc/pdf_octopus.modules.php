@@ -79,29 +79,29 @@ class pdf_octopus extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int heightforinfotot
+	 * @var int height for info total
 	 */
-	public $heightforinfotot;
+	public int $heightforinfotot;
 
 	/**
-	 * @var int heightforfreetext
+	 * @var int height for free text
 	 */
-	public $heightforfreetext;
+	public int $heightforfreetext;
 
 	/**
-	 * @var int heightforfooter
+	 * @var int height for footer
 	 */
-	public $heightforfooter;
+	public int $heightforfooter;
 
 	/**
 	 * @var int tab_top
 	 */
-	public $tab_top;
+	public int $tab_top;
 
 	/**
 	 * @var int tab_top_newpage
 	 */
-	public $tab_top_newpage;
+	public int $tab_top_newpage;
 
 	/**
 	 * Issuer
@@ -112,7 +112,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var bool Situation invoice type
 	 */
-	public $situationinvoice;
+	public bool $situationinvoice;
 
 
 	/**
@@ -123,7 +123,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var int Category of operation
 	 */
-	public $categoryOfOperation = -1; // unknown by default
+	public int $categoryOfOperation = -1; // unknown by default
 
 
 	/**
@@ -131,24 +131,20 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @var array	Data of situation
 	 */
-	public $TDataSituation;
+	public array $TDataSituation;
 
-	public $posxsommes;
-	public $posxprogress_current;
-	public $posxprogress_prec;
-	public $posxcurrent_prec;
 	public $postotalht;
 	public $tabTitleHeight;
-	public $posx_cumul_anterieur;
-	public $posx_new_cumul;
-	public $posx_current;
+	public int $posx_cumul_anterieur;
+	public int $posx_new_cumul;
+	public int $posx_current;
 	public $defaultContentsFieldsStyle;
 	public $defaultTitlesFieldsStyle;
 
 	/**
 	 * @var int is rg
 	 */
-	public $is_rg;
+	public int $is_rg;
 
 	/**
 	 *	Constructor
@@ -188,19 +184,17 @@ class pdf_octopus extends ModelePDFFactures
 		$this->posx_new_cumul = 130;
 		$this->posx_current = 166;
 
-		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1;	  // Affiche code produit-service
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 1; // Displays if there has been a discount
 		$this->option_credit_note = 1; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
-		$this->franchise=!$mysoc->tva_assuj;
+		$this->franchise = !$mysoc->tva_assuj;
 
 		// Get source company
 		$this->emetteur = $mysoc;
