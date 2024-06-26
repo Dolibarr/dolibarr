@@ -1685,13 +1685,16 @@ class EmailCollector extends CommonObject
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+					$msgid = str_replace(array('<', '>'), '', $overview['message_id']);
 				} else {
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
-				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - MsgId: ".$msgid." - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
 				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
@@ -1700,7 +1703,8 @@ class EmailCollector extends CommonObject
 				$trackidfoundintorecipientid = 0;
 				$reg = array();
 				// See also later list of all supported tags...
-				// Note: "th[i]" to avoid matching a codespell suggestion to convert to this.
+				// Note: "th[i]" to avoid matching a codespell suggestion to convert to "this".
+				// TODO Add host after the @'.preg_quote($host, '/')
 				if (preg_match('/\+(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
 					$trackidfoundintorecipienttype = $reg[1];
 					$trackidfoundintorecipientid = $reg[2];
@@ -1709,9 +1713,23 @@ class EmailCollector extends CommonObject
 					$trackidfoundintorecipientid = $reg[1];
 				}
 
-				// If there is a filter on trackid
+				$trackidfoundintomsgidtype = '';
+				$trackidfoundintomsgidid = 0;
+				$reg = array();
+				// See also later list of all supported tags...
+				// Note: "th[i]" to avoid matching a codespell suggestion to convert to "this".
+				// TODO Add host after the @
+				if (preg_match('/\+(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $msgid, $reg)) {
+					$trackidfoundintomsgidtype = $reg[1];
+					$trackidfoundintomsgidid = $reg[2];
+				} elseif (preg_match('/\+emailing-(\w+)@/', $msgid, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
+					$trackidfoundintomsgidtype = 'emailing';
+					$trackidfoundintomsgidid = $reg[1];
+				}
+
+				// If there is an emailcollecter filter on trackid
 				if ($searchfilterdoltrackid > 0) {
-					if (empty($trackidfoundintorecipienttype)) {
+					if (empty($trackidfoundintorecipienttype) && empty($trackidfoundintomsgidtype)) {
 						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 							$nbemailprocessed++;
 							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
@@ -1720,7 +1738,7 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
-					if (!empty($trackidfoundintorecipienttype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
+					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
 						$nbemailprocessed++;
 						dol_syslog(" Discarded - Suffix found into email or Header References found and matching signature of application so with a trackid");
 						continue; // Exclude email
@@ -1932,7 +1950,6 @@ class EmailCollector extends CommonObject
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
 					$date = $overview['date'];
-					$msgid = str_replace(array('<', '>'), '', $overview['message_id']);
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
@@ -1943,7 +1960,6 @@ class EmailCollector extends CommonObject
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$date = $overview[0]->udate;
-					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 					$subject = $overview[0]->subject;
 					//var_dump($msgid);exit;
 				}
@@ -1977,6 +1993,7 @@ class EmailCollector extends CommonObject
 				$fk_element_id = 0;
 				$fk_element_type = '';
 
+
 				$this->db->begin();
 
 				$contactid = 0;
@@ -1984,7 +2001,8 @@ class EmailCollector extends CommonObject
 				$projectid = 0;
 				$ticketid = 0;
 
-				// Analyze TrackId in field References. For example:
+				// Analyze TrackId in field References (already analyzed previously into the "To:" and "Message-Id").
+				// For example:
 				// References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
 				// References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
 				// References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
@@ -1997,22 +2015,27 @@ class EmailCollector extends CommonObject
 					$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
 					// var_dump($headers['References']);
 					// var_dump($arrayofreferences);
+					//$arrayofreferences = array_merge($msgid);
 
 					foreach ($arrayofreferences as $reference) {
 						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
 						if (!empty($trackidfoundintorecipienttype)) {
-							$resultsearchtrackid = -1;
+							$resultsearchtrackid = -1;		// trackid found
 							$reg[1] = $trackidfoundintorecipienttype;
 							$reg[2] = $trackidfoundintorecipientid;
+						} elseif (!empty($trackidfoundintomsgidtype)) {
+							$resultsearchtrackid = -1;		// trackid found
+							$reg[1] = $trackidfoundintomsgidtype;
+							$reg[2] = $trackidfoundintomsgidid;
 						} else {
-							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);	// trackid found or not
 							if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
-								$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+								$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);	// trackid found
 							}
 						}
 
 						if (!empty($resultsearchtrackid)) {
-							// We found a tracker (in recipient email or into a Reference matching the Dolibarr server)
+							// We found a tracker (in recipient email or msgid or into a Reference matching the Dolibarr server)
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
