@@ -1696,7 +1696,7 @@ class EmailCollector extends CommonObject
 				}
 				$operationslog .= " - MsgId: ".$msgid." - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -1719,10 +1719,10 @@ class EmailCollector extends CommonObject
 				// See also later list of all supported tags...
 				// Note: "th[i]" to avoid matching a codespell suggestion to convert to "this".
 				// TODO Add host after the @
-				if (preg_match('/\+(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $msgid, $reg)) {
+				if (preg_match('/(?:[\+\-])(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $msgid, $reg)) {
 					$trackidfoundintomsgidtype = $reg[1];
 					$trackidfoundintomsgidid = $reg[2];
-				} elseif (preg_match('/\+emailing-(\w+)@/', $msgid, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
+				} elseif (preg_match('/(?:[\+\-])emailing-(\w+)@/', $msgid, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
 					$trackidfoundintomsgidtype = 'emailing';
 					$trackidfoundintomsgidid = $reg[1];
 				}
@@ -2011,245 +2011,250 @@ class EmailCollector extends CommonObject
 				$objectemail = null;
 
 				$reg = array();
+				$arrayofreferences = array();
 				if (!empty($headers['References'])) {
 					$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
-					// var_dump($headers['References']);
-					// var_dump($arrayofreferences);
-					//$arrayofreferences = array_merge($msgid);
+				}
+				if (!in_array('<'.$msgid.'>', $arrayofreferences)) {
+					$arrayofreferences = array_merge($arrayofreferences, array('<'.$msgid.'>'));
+				}
+				// var_dump($headers['References']);
+				// var_dump($arrayofreferences);
 
-					foreach ($arrayofreferences as $reference) {
-						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
-						if (!empty($trackidfoundintorecipienttype)) {
-							$resultsearchtrackid = -1;		// trackid found
-							$reg[1] = $trackidfoundintorecipienttype;
-							$reg[2] = $trackidfoundintorecipientid;
-						} elseif (!empty($trackidfoundintomsgidtype)) {
-							$resultsearchtrackid = -1;		// trackid found
-							$reg[1] = $trackidfoundintomsgidtype;
-							$reg[2] = $trackidfoundintomsgidid;
-						} else {
-							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);	// trackid found or not
-							if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
-								$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);	// trackid found
+				foreach ($arrayofreferences as $reference) {
+					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
+					if (!empty($trackidfoundintorecipienttype)) {
+						$resultsearchtrackid = -1;		// trackid found
+						$reg[1] = $trackidfoundintorecipienttype;
+						$reg[2] = $trackidfoundintorecipientid;
+					} elseif (!empty($trackidfoundintomsgidtype)) {
+						$resultsearchtrackid = -1;		// trackid found
+						$reg[1] = $trackidfoundintomsgidtype;
+						$reg[2] = $trackidfoundintomsgidid;
+					} else {
+						$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);	// trackid found or not
+						if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);	// trackid found
+						}
+					}
+
+					if (!empty($resultsearchtrackid)) {
+						// We found a tracker (in recipient email or msgid or into a Reference matching the Dolibarr server)
+						$trackid = $reg[1].$reg[2];
+
+						$objectid = $reg[2];
+						// See also list into interface_50_modAgenda_ActionsAuto
+						if ($reg[1] == 'thi') {   // Third-party
+							$objectemail = new Societe($this->db);
+						}
+						if ($reg[1] == 'ctc') {   // Contact
+							$objectemail = new Contact($this->db);
+						}
+						if ($reg[1] == 'inv') {   // Customer Invoice
+							$objectemail = new Facture($this->db);
+						}
+						if ($reg[1] == 'sinv') {   // Supplier Invoice
+							$objectemail = new FactureFournisseur($this->db);
+						}
+						if ($reg[1] == 'pro') {   // Customer Proposal
+							$objectemail = new Propal($this->db);
+						}
+						if ($reg[1] == 'ord') {   // Sale Order
+							$objectemail = new Commande($this->db);
+						}
+						if ($reg[1] == 'shi') {   // Shipment
+							$objectemail = new Expedition($this->db);
+						}
+						if ($reg[1] == 'spro') {   // Supplier Proposal
+							$objectemail = new SupplierProposal($this->db);
+						}
+						if ($reg[1] == 'sord') {   // Supplier Order
+							$objectemail = new CommandeFournisseur($this->db);
+						}
+						if ($reg[1] == 'rec') {   // Reception
+							$objectemail = new Reception($this->db);
+						}
+						if ($reg[1] == 'proj') {   // Project
+							$objectemail = new Project($this->db);
+							$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'tas') {   // Task
+							$objectemail = new Task($this->db);
+						}
+						if ($reg[1] == 'con') {   // Contact
+							$objectemail = new Contact($this->db);
+						}
+						if ($reg[1] == 'use') {   // User
+							$objectemail = new User($this->db);
+						}
+						if ($reg[1] == 'tic') {   // Ticket
+							$objectemail = new Ticket($this->db);
+							$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
+							$objectemail = new RecruitmentCandidature($this->db);
+							$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'mem') {   // Member
+							$objectemail = new Adherent($this->db);
+						}
+						/*if ($reg[1] == 'leav') {   // Leave / Holiday
+							$objectemail = new Holiday($db);
+						}
+						if ($reg[1] == 'exp') {   // ExpenseReport
+							$objectemail = new ExpenseReport($db);
+						}*/
+					} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
+						// This is an external reference, we check if we have it in our database
+						if (is_null($objectemail) && isModEnabled('ticket')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
+							$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new Ticket($this->db);
+									$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								}
+							} else {
+								$errorforemail++;
 							}
 						}
 
-						if (!empty($resultsearchtrackid)) {
-							// We found a tracker (in recipient email or msgid or into a Reference matching the Dolibarr server)
-							$trackid = $reg[1].$reg[2];
-
-							$objectid = $reg[2];
-							// See also list into interface_50_modAgenda_ActionsAuto
-							if ($reg[1] == 'thi') {   // Third-party
-								$objectemail = new Societe($this->db);
-							}
-							if ($reg[1] == 'ctc') {   // Contact
-								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'inv') {   // Customer Invoice
-								$objectemail = new Facture($this->db);
-							}
-							if ($reg[1] == 'sinv') {   // Supplier Invoice
-								$objectemail = new FactureFournisseur($this->db);
-							}
-							if ($reg[1] == 'pro') {   // Customer Proposal
-								$objectemail = new Propal($this->db);
-							}
-							if ($reg[1] == 'ord') {   // Sale Order
-								$objectemail = new Commande($this->db);
-							}
-							if ($reg[1] == 'shi') {   // Shipment
-								$objectemail = new Expedition($this->db);
-							}
-							if ($reg[1] == 'spro') {   // Supplier Proposal
-								$objectemail = new SupplierProposal($this->db);
-							}
-							if ($reg[1] == 'sord') {   // Supplier Order
-								$objectemail = new CommandeFournisseur($this->db);
-							}
-							if ($reg[1] == 'rec') {   // Reception
-								$objectemail = new Reception($this->db);
-							}
-							if ($reg[1] == 'proj') {   // Project
-								$objectemail = new Project($this->db);
-								$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'tas') {   // Task
-								$objectemail = new Task($this->db);
-							}
-							if ($reg[1] == 'con') {   // Contact
-								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'use') {   // User
-								$objectemail = new User($this->db);
-							}
-							if ($reg[1] == 'tic') {   // Ticket
-								$objectemail = new Ticket($this->db);
-								$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
-								$objectemail = new RecruitmentCandidature($this->db);
-								$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'mem') {   // Member
-								$objectemail = new Adherent($this->db);
-							}
-							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-								$objectemail = new Holiday($db);
-							}
-							if ($reg[1] == 'exp') {   // ExpenseReport
-								$objectemail = new ExpenseReport($db);
-							}*/
-						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
-							// This is an external reference, we check if we have it in our database
-							if (is_null($objectemail) && isModEnabled('ticket')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
-								$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new Ticket($this->db);
-										$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
+						if (!is_object($objectemail) && isModEnabled('project')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new Project($this->db);
+									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								}
-							}
-
-							if (!is_object($objectemail) && isModEnabled('project')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new Project($this->db);
-										$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
-								}
-							}
-
-							if (!is_object($objectemail) && isModEnabled('recruitment')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new RecruitmentCandidature($this->db);
-										$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
-								}
+							} else {
+								$errorforemail++;
 							}
 						}
 
-						// Load object linked to email
-						if (is_object($objectemail)) {
-							$result = $objectemail->fetch($objectid);
-							if ($result > 0) {
-								$fk_element_id = $objectemail->id;
-								$fk_element_type = $objectemail->element;
-								// Fix fk_element_type
-								if ($fk_element_type == 'facture') {
-									$fk_element_type = 'invoice';
+						if (!is_object($objectemail) && isModEnabled('recruitment')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new RecruitmentCandidature($this->db);
+									$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								}
+							} else {
+								$errorforemail++;
+							}
+						}
+					}
 
-								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
+					// Load object linked to email
+					if (is_object($objectemail)) {
+						$result = $objectemail->fetch($objectid);
+						if ($result > 0) {
+							$fk_element_id = $objectemail->id;
+							$fk_element_type = $objectemail->element;
+							// Fix fk_element_type
+							if ($fk_element_type == 'facture') {
+								$fk_element_type = 'invoice';
+							}
+
+							if (get_class($objectemail) != 'Societe') {
+								$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
+							} else {
+								$thirdpartyid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) != 'Contact') {
+								$contactid = $objectemail->fk_socpeople;
+							} else {
+								$contactid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) != 'Project') {
+								$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+							} else {
+								$projectid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) == 'Ticket') {
+								$ticketid = $objectemail->id;
+
+								$changeonticket_references = false;
+								if (empty($trackid)) {
+									$trackid = $objectemail->track_id;
+								}
+								if (empty($objectemail->origin_references)) {
+									$objectemail->origin_references = $headers['References'];
+									$changeonticket_references = true;
 								} else {
-									$thirdpartyid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) != 'Contact') {
-									$contactid = $objectemail->fk_socpeople;
-								} else {
-									$contactid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) != 'Project') {
-									$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
-								} else {
-									$projectid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) == 'Ticket') {
-									$changeonticket_references = false;
-									if (empty($trackid)) {
-										$trackid = $objectemail->track_id;
-									}
-									if (empty($objectemail->origin_references)) {
-										$objectemail->origin_references = $headers['References'];
-										$changeonticket_references = true;
-									} else {
-										foreach ($arrayofreferences as $key => $referencetmp) {
-											if (!str_contains($objectemail->origin_references, $referencetmp)) {
-												$objectemail->origin_references.= " ".$referencetmp;
-												$changeonticket_references = true;
-											}
+									foreach ($arrayofreferences as $key => $referencetmp) {
+										if (!str_contains($objectemail->origin_references, $referencetmp)) {
+											$objectemail->origin_references.= " ".$referencetmp;
+											$changeonticket_references = true;
 										}
 									}
-									if ($changeonticket_references) {
-										$objectemail->update($user);
-									}
+								}
+								if ($changeonticket_references) {
+									$objectemail->update($user);
 								}
 							}
 						}
+					}
 
-						// Project
-						if ($projectid > 0) {
-							$result = $projectstatic->fetch($projectid);
-							if ($result <= 0) {
-								$projectstatic->id = 0;
-							} else {
-								$projectid = $projectstatic->id;
-								if ($trackid) {
-									$projectfoundby = 'trackid ('.$trackid.')';
-								}
-								if (empty($contactid)) {
-									$contactid = $projectstatic->fk_contact;
-								}
-								if (empty($thirdpartyid)) {
-									$thirdpartyid = $projectstatic->fk_soc;
-								}
+					// Project
+					if ($projectid > 0) {
+						$result = $projectstatic->fetch($projectid);
+						if ($result <= 0) {
+							$projectstatic->id = 0;
+						} else {
+							$projectid = $projectstatic->id;
+							if ($trackid) {
+								$projectfoundby = 'trackid ('.$trackid.')';
+							}
+							if (empty($contactid)) {
+								$contactid = $projectstatic->fk_contact;
+							}
+							if (empty($thirdpartyid)) {
+								$thirdpartyid = $projectstatic->fk_soc;
 							}
 						}
-						// Contact
-						if ($contactid > 0) {
-							$result = $contactstatic->fetch($contactid);
-							if ($result <= 0) {
-								$contactstatic->id = 0;
-							} else {
-								$contactid = $contactstatic->id;
-								if ($trackid) {
-									$contactfoundby = 'trackid ('.$trackid.')';
-								}
-								if (empty($thirdpartyid)) {
-									$thirdpartyid = $contactstatic->fk_soc;
-								}
+					}
+					// Contact
+					if ($contactid > 0) {
+						$result = $contactstatic->fetch($contactid);
+						if ($result <= 0) {
+							$contactstatic->id = 0;
+						} else {
+							$contactid = $contactstatic->id;
+							if ($trackid) {
+								$contactfoundby = 'trackid ('.$trackid.')';
+							}
+							if (empty($thirdpartyid)) {
+								$thirdpartyid = $contactstatic->fk_soc;
 							}
 						}
-						// Thirdparty
-						if ($thirdpartyid > 0) {
-							$result = $thirdpartystatic->fetch($thirdpartyid);
-							if ($result <= 0) {
-								$thirdpartystatic->id = 0;
-							} else {
-								$thirdpartyid = $thirdpartystatic->id;
-								if ($trackid) {
-									$thirdpartyfoundby = 'trackid ('.$trackid.')';
-								}
+					}
+					// Thirdparty
+					if ($thirdpartyid > 0) {
+						$result = $thirdpartystatic->fetch($thirdpartyid);
+						if ($result <= 0) {
+							$thirdpartystatic->id = 0;
+						} else {
+							$thirdpartyid = $thirdpartystatic->id;
+							if ($trackid) {
+								$thirdpartyfoundby = 'trackid ('.$trackid.')';
 							}
 						}
+					}
 
-						if (is_object($objectemail)) {
-							break; // Exit loop of references. We already found an accurate reference
-						}
+					if (is_object($objectemail)) {
+						break; // Exit loop of references. We already found an accurate reference
 					}
 				}
 
@@ -3412,7 +3417,7 @@ class EmailCollector extends CommonObject
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
 
 							if (empty($mode)) {	// $mode > 0 is test
-								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid;
+								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' to '.$targetdir;
 								$imapemail->move($targetdir);
 							} else {
 								$operationslog .= '<br>Do not move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' (test mode)';
