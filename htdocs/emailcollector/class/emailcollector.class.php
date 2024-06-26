@@ -3470,7 +3470,11 @@ class EmailCollector extends CommonObject
 
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
-		$this->debuginfo .= 'IMAP search string used : '.$search;
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+			$this->debuginfo .= 'IMAP search array used : '.$search;
+		} else {
+			$this->debuginfo .= 'IMAP search string used : '.$search;
+		}
 		if ($searchhead) {
 			$this->debuginfo .= '<br>Then search string into email header : '.dol_escape_htmltag($searchhead);
 		}
