@@ -158,6 +158,11 @@ class pdf_octopus extends ModelePDFFactures
 	public $franchise;
 
 	/**
+	 * @var int
+	 */
+	public $tplidx;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -416,7 +421,7 @@ class pdf_octopus extends ModelePDFFactures
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
-					$tplidx = $pdf->importPage(1);
+					$this->tplidx = $pdf->importPage(1);
 				}
 
 				$pdf->Open();
@@ -491,8 +496,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) {
-					$pdf->useTemplate($tplidx);
+				if (!empty($this->tplidx)) {
+					$pdf->useTemplate($this->tplidx);
 				}
 				$pagenb++;
 
@@ -640,8 +645,8 @@ class pdf_octopus extends ModelePDFFactures
 						while ($pagenb < $pageposafternote) {
 							$pdf->AddPage();
 							$pagenb++;
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -697,8 +702,8 @@ class pdf_octopus extends ModelePDFFactures
 
 						// apply note frame to last page
 						$pdf->setPage($pageposafternote);
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -719,8 +724,8 @@ class pdf_octopus extends ModelePDFFactures
 							$pagenb++;
 							$pageposafternote++;
 							$pdf->setPage($pageposafternote);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -773,8 +778,8 @@ class pdf_octopus extends ModelePDFFactures
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($posy + $imglinesize['height']) > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot))) {	// If photo too high, we moved completely on new page
 							$pdf->AddPage('', '', true);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							$pdf->setPage($pageposbefore + 1);
 
@@ -815,8 +820,8 @@ class pdf_octopus extends ModelePDFFactures
 							if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
+									if (!empty($this->tplidx)) {
+										$pdf->useTemplate($this->tplidx);
 									}
 									$pdf->setPage($pageposafter + 1);
 								}
@@ -1054,8 +1059,8 @@ class pdf_octopus extends ModelePDFFactures
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 					}
 
@@ -1072,8 +1077,8 @@ class pdf_octopus extends ModelePDFFactures
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 						$pagenb++;
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
@@ -3285,8 +3290,8 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		$pdf->AddPage();
-		if (!empty($tplidx)) {
-			$pdf->useTemplate($tplidx);
+		if (!empty($this->tplidx)) {
+			$pdf->useTemplate($this->tplidx);
 		}
 
 		$pagehead = $this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -3642,7 +3647,9 @@ class pdf_octopus extends ModelePDFFactures
 
 				$pageposafter=$pageposbefore;
 				$pdf->AddPage('', '', true);
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($this->tplidx)) {
+					$pdf->useTemplate($this->tplidx);
+				}
 				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				$pdf->setPage($pageposafter+1);
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
