@@ -3499,8 +3499,8 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetFillColor(241, 241, 241);
 				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RetainedWarrantyShort", $retainedWarrantyRate), $useborder, 'L', 1);
 
-				$total_ht_rg = price2num(price($total_ht * $retainedWarrantyRate/100), 'MT');
-				$total_ttc_rg = price2num(price($total_ttc * $retainedWarrantyRate/100), 'MT');
+				$total_ht_rg = (float) price2num(price($total_ht * $retainedWarrantyRate/100), 'MT');
+				$total_ttc_rg = (float) price2num(price($total_ttc * $retainedWarrantyRate/100), 'MT');
 
 				$pdf->SetXY($posx+$width, $posy + $height * $index);
 				$pdf->MultiCell($width2, $height, price(-$sign * $total_ht_rg, 0, $outputlangs), $useborder, 'R', 1);
@@ -3608,7 +3608,7 @@ class pdf_octopus extends ModelePDFFactures
 				$y=$height-1;
 
 				$pdf->SetFont('', '', $default_font_size - 4);
-
+				/** @var Facture $invoice */
 				$payments = $invoice->getListOfPayments();
 
 				if (count($payments)) {
