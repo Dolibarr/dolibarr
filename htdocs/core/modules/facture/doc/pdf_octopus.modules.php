@@ -153,14 +153,19 @@ class pdf_octopus extends ModelePDFFactures
 	public $tabTitleHeight;
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents fields Style
+	 * @var int posx_cumul_anterieur
 	 */
-	public $defaultContentsFieldsStyle;
+	public $posx_cumul_anterieur;
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents titles style
+	 * @var int posx_new_cumul
 	 */
-	public $defaultTitlesFieldsStyle;
+	public $posx_new_cumul;
+
+	/**
+	 * @var int posx_current
+	 */
+	public $posx_current;
 
 	/**
 	 * @var int is rg
