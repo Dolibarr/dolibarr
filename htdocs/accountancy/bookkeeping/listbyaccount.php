@@ -221,6 +221,7 @@ $error = 0;
 
 $filter = array();
 $param = '';
+$url_param = '';
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -618,12 +619,15 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	}
 }
 
+$num = 0;
 if (!$error) {
 	if ($type == 'sub') {
 		$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 1);
 	} else {
 		$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 0);
 	}
+	//$num = count($object->lines);
+	$num = $result;						// $result is total nb of lines, or limit + 1, but $object->lines is always limited to $limit
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -631,8 +635,6 @@ if (!$error) {
 }
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-
-$num = count($object->lines);
 
 
 ///if ($action == 'delbookkeepingyear') {
@@ -738,7 +740,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($massaction == 'preunletteringauto') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringAuto"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringauto", null, '', 0, 200, 500, 1);

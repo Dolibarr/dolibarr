@@ -5,7 +5,8 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,16 @@ if (getDolGlobalString('MAIN_MOTD')) {
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text -->\n";
 	}
+}
+
+/*
+ * Show specific warnings
+ */
+
+// Specific warning to propose to upgrade invoice situation to progressive mode
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 ) {
+	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode"));
+	print "<br>";
 }
 
 /*

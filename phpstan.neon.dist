@@ -59,7 +59,7 @@ parameters:
 		- '#Sprain\\SwissQrBill\\#'
 		- '#Constructor of class .* has an unused parameter #'
 		- '#Dead catch - Exception is never thrown in the try block#'
-		- '#.*phan-var-force #'
+		- '#.*phan-var#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512

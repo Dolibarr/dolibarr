@@ -168,6 +168,10 @@ class EmailCollector extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string description
+	*/
+	public $description;
 
 	/**
 	 * @var int Status
@@ -795,7 +799,7 @@ class EmailCollector extends CommonObject
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
-		if (strpos($this->login, '/') != false) {
+		if (!empty($this->login) && strpos($this->login, '/') != false) {
 			$partofauth = explode('/', $this->login);
 			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
 		}
@@ -1104,6 +1108,7 @@ class EmailCollector extends CommonObject
 		$searchfilterexcludebodyarray = array();
 		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
+		$rulesreplyto = array();
 
 		$now = dol_now();
 
@@ -1390,6 +1395,7 @@ class EmailCollector extends CommonObject
 
 				if ($rule['type'] == 'replyto') {
 					$searchfilterreplyto++;
+					$rulesreplyto[] = $rule['rulevalue'];
 					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
@@ -1420,7 +1426,7 @@ class EmailCollector extends CommonObject
 				// See https://www.rfc-editor.org/rfc/rfc3501
 
 				$not = '';
-				if (strpos($rule['rulevalue'], '!') === 0) {
+				if (!empty($rule['rulevalue']) && strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
 					// Then remove the ! from the string for next filters
@@ -1531,6 +1537,7 @@ class EmailCollector extends CommonObject
 
 				if ($rule['type'] == 'replyto') {
 					$searchfilterreplyto++;
+					$rulesreplyto[] = $rule['rulevalue'];
 					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
@@ -1763,6 +1770,22 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
+				if ($searchfilterreplyto > 0) {
+					if (!empty($headers['Reply-To'])) {
+						$isreplytook = 0;
+						foreach ($rulesreplyto as $key => $rulereplyto) {
+							if (preg_match('/'.preg_quote($rulereplyto, '/').'/', $headers['Reply-To'])) {
+								$isreplytook ++;
+							}
+						}
+
+						if (!$isreplytook || $isreplytook != count($rulesreplyto)) {
+							$nbemailprocessed++;
+							dol_syslog(" Discarded - Reply-to does not match");
+							continue; // Exclude email
+						}
+					}
+				}
 
 				//print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." selected<br>\n";
 
@@ -1913,7 +1936,7 @@ class EmailCollector extends CommonObject
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
-					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
+					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
 					$to = $overview[0]->to;

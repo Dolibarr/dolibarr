@@ -22,9 +22,8 @@
 
 /**
  * \file    htdocs/product/stock/class/productstockentrepot.class.php
- * \ingroup ProductEntrepot
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \ingroup ProductStockEntrepot
+ * \brief   Table used to store limit of stock of product per warehouse
  */
 
 // Put here all includes required by your class file
@@ -32,10 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class ProductStockEntrepot
- *
- * Put here description of your class
  *
  * @see CommonObject
  */
@@ -508,13 +506,9 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
-		global $langs, $conf, $db;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
-
+		global $langs;
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("MyModule").'</u>';
 		$label .= '<div width="100%">';
@@ -532,6 +526,7 @@ class ProductStockEntrepot extends CommonObject
 			}
 		}
 		$result .= $link.$this->ref.$linkend;
+
 		return $result;
 	}
 
