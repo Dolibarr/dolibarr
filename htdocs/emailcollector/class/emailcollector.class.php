@@ -2331,19 +2331,22 @@ class EmailCollector extends CommonObject
 							// Verify if ticket already exists to fall back on the right operation
 							$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
-							$alreadycreated1 = 0;
+							$alreadycreated = 0;
 							if (!empty($trackid)) {
-								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
+							if ($alreadycreated == 0 && !empty($msgid)) {
+								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
+							}
+							if ($alreadycreated < 0) {
+								$errorfetchticket++;
 							}
 							if (empty($errorfetchticket)) {
 								if ($alreadycreated == 0) {
+									$operationslog .= '<br>Ticket not found using trackid='.$trackid.' or msgid='.$msgid;
 									$ticketalreadyexists = 0;
 								} else {
+									$operationslog .= '<br>Ticket already found using trackid='.$trackid.' or msgid='.$msgid;	// We change the operation type to do
 									$ticketalreadyexists = 1;
 									$operation['type'] = 'recordevent';
 								}
@@ -2351,6 +2354,8 @@ class EmailCollector extends CommonObject
 								$ticketalreadyexists = -1;
 							}
 						}
+
+						// Process now the operation type
 
 						// Search and create thirdparty
 						if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty') {
@@ -2679,6 +2684,8 @@ class EmailCollector extends CommonObject
 
 							$alreadycreated = $actioncomm->fetch(0, '', '', $msgid);
 							if ($alreadycreated == 0) {
+								$operationslog .= '<br>We did not find existing actionmail with msgid='.$msgid;
+
 								if ($projectstatic->id > 0) {
 									if ($projectfoundby) {
 										$descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
@@ -3202,7 +3209,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
 									} else {
-										// Create project
+										// Create ticket
 										$result = $tickettocreate->create($user);
 										if ($result <= 0) {
 											$errorforactions++;
