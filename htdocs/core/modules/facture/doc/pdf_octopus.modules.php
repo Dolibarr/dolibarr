@@ -3127,7 +3127,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @param  Facture	$object		Object
 	 * @param  FactureLigne			$current_line	current line
-	 * @return bool
+	 * @return array{progress_prec:float,total_ht_without_progress:float,total_ht:float}
 	 */
 	public function getInfosLineLastSituation(&$object, &$current_line)
 	{
@@ -3149,11 +3149,11 @@ class pdf_octopus extends ModelePDFFactures
 				$total_localtax1 = $tabprice[9];
 				$total_localtax2 = $tabprice[10];
 				$pu_ht = $tabprice[3];
-				//var_dump($tabprice);
+
 				return array(
-					'progress_prec'=>$l->situation_percent
-					,'total_ht_without_progress'=>$total_ht
-					,'total_ht'=>$l->total_ht
+					'progress_prec' => $l->situation_percent,
+					'total_ht_without_progress' => $total_ht,
+					'total_ht' => $l->total_ht,
 				);
 			}
 		}
