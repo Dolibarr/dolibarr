@@ -3325,13 +3325,15 @@ abstract class CommonObject
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+			$grandchild = getDolGlobalInt('CARE_GRANDCHILD');
+			$grandchild = empty($grandchild) ? 0 : getDolGlobalInt('CARE_GRANDCHILD');
 			if ($resql) {
 				$i = 0;
 				$num = $this->db->num_rows($resql);
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0]);
+					$children = $this->getChildrenOfLine($row[0], $grandchild);
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
