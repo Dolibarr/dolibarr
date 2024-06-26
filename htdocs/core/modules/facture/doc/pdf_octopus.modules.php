@@ -81,27 +81,27 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var int height for info total
 	 */
-	public int $heightforinfotot;
+	public $heightforinfotot;
 
 	/**
 	 * @var int height for free text
 	 */
-	public int $heightforfreetext;
+	public $heightforfreetext;
 
 	/**
 	 * @var int height for footer
 	 */
-	public int $heightforfooter;
+	public $heightforfooter;
 
 	/**
 	 * @var int tab_top
 	 */
-	public int $tab_top;
+	public $tab_top;
 
 	/**
 	 * @var int tab_top_newpage
 	 */
-	public int $tab_top_newpage;
+	public $tab_top_newpage;
 
 	/**
 	 * Issuer
@@ -112,7 +112,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var bool Situation invoice type
 	 */
-	public bool $situationinvoice;
+	public $situationinvoice;
 
 
 	/**
@@ -123,8 +123,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var int Category of operation
 	 */
-	public int $categoryOfOperation = -1; // unknown by default
-
+	public $categoryOfOperation = -1; // unknown by default
 
 	/**
 	 * Situation invoices
@@ -133,18 +132,30 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public array $TDataSituation;
 
-	public $postotalht;
-	public $tabTitleHeight;
-	public int $posx_cumul_anterieur;
-	public int $posx_new_cumul;
-	public int $posx_current;
-	public $defaultContentsFieldsStyle;
-	public $defaultTitlesFieldsStyle;
+	/**
+	 * @var int posx new anterieur
+	 */
+	public $posx_cumul_anterieur;
+
+	/**
+	 * @var int posx new cumul
+	 */
+	public $posx_new_cumul;
+
+	/**
+	 * @var int posx current
+	 */
+	public $posx_current;
 
 	/**
 	 * @var int is rg
 	 */
-	public int $is_rg;
+	public $is_rg;
+
+	/**
+	 * @var int franchise
+	 */
+	public $franchise;
 
 	/**
 	 *	Constructor
