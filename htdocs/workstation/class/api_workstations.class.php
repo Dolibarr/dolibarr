@@ -88,7 +88,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function getByRef($ref)
 	{
-		return $this->_fetch('', $ref);
+		return $this->_fetch(0, $ref);
 	}
 
 	/**
