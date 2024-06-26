@@ -3387,8 +3387,12 @@ class EmailCollector extends CommonObject
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
+
 							if (empty($mode)) {	// $mode > 0 is test
+								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid;
 								$imapemail->move($targetdir);
+							} else {
+								$operationslog .= '<br>Do not move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' (test mode)';
 							}
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($this->uidAsString($imapemail))." to ".$connectstringtarget, LOG_DEBUG);
