@@ -148,6 +148,21 @@ class pdf_octopus extends ModelePDFFactures
 	public $posx_current;
 
 	/**
+	 * @var int tabTitleHeight
+	 */
+	public $tabTitleHeight;
+
+	/**
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents fields Style
+	 */
+	public $defaultContentsFieldsStyle;
+
+	/**
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents titles style
+	 */
+	public $defaultTitlesFieldsStyle;
+
+	/**
 	 * @var int is rg
 	 */
 	public $is_rg;
