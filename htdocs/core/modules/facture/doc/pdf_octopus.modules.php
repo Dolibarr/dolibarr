@@ -2790,7 +2790,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$i = -8;
 		foreach ($form->cache_vatrates as $TVatInfo) {
-			$tva_tx_formated = sprintf("%01.3f", $TVatInfo['txtva']);
+			$tva_tx_formated = (float) sprintf("%01.3f", $TVatInfo['txtva']);
 			// print "<p>Un taux de tva ... $tva_tx_formated :: " . json_encode($this->TDataSituation['current'][$tva_tx_formated]) . "</p>";
 			if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 				continue;
@@ -2853,7 +2853,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$i = -8;
 			foreach ($form->cache_vatrates as $TVatInfo) {
-				$tva_tx_formated = sprintf("%01.3f", $TVatInfo['txtva']);
+				$tva_tx_formated = (float) sprintf("%01.3f", $TVatInfo['txtva']);
 				if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 					continue;
 				}
@@ -3053,10 +3053,10 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Calculates the sum of two arrays, key by key, taking into account nested arrays
 	 *
-	 * @param   [type]  $a  [$a description]
-	 * @param   [type]  $b  [$b description]
+	 * @param   array  $a  [$a description]
+	 * @param   array  $b  [$b description]
 	 *
-	 * @return  [type]	  [return description]
+	 * @return  array	  [return description]
 	 */
 	public function sumSituation($a, $b)
 	{
