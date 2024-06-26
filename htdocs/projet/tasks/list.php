@@ -75,8 +75,8 @@ $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
 // Set search_project_user and search_task_user to current user if not already set
 if (empty($search_project_user) && empty($search_task_user)) {
-    $search_project_user = $user->id;
-    $search_task_user = $user->id;
+	$search_project_user = $user->id;
+	$search_task_user = $user->id;
 }
 
 
