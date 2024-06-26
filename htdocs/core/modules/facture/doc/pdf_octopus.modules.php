@@ -112,7 +112,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var bool Situation invoice type
 	 */
-	public bool $situationinvoice;
+	public $situationinvoice;
 
 
 	/**
@@ -123,7 +123,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var int Category of operation
 	 */
-	public int $categoryOfOperation = -1; // unknown by default
+	public $categoryOfOperation = -1; // unknown by default
 
 
 	/**
@@ -134,11 +134,35 @@ class pdf_octopus extends ModelePDFFactures
 	public $TDataSituation;
 
 	public $postotalht;
+
+	/**
+	 * @var int tabTitleHeight
+	 */
 	public $tabTitleHeight;
+
+	/**
+	 * @var int posx_cumul_anterieur
+	 */
 	public $posx_cumul_anterieur;
+
+	/**
+	 * @var int posx_new_cumul
+	 */
 	public $posx_new_cumul;
+
+	/**
+	 * @var int posx_current
+	 */
 	public $posx_current;
+
+	/**
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents fields Style
+	 */
 	public $defaultContentsFieldsStyle;
+
+	/**
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents titles style
+	 */
 	public $defaultTitlesFieldsStyle;
 
 	/**
