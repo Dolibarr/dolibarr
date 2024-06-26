@@ -1572,7 +1572,7 @@ class FormMail extends Form
 
                 function loadCKEditorContent(template) {
                 $.get("/core/lib/load_template.lib.php", { template: template }, function(data) {
-                        console.log("Data loaded from template: ", data); 
+                        console.log("Data loaded from template: ", data);
 
                         var contentHtml = data; 
 						
