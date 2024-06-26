@@ -1986,7 +1986,7 @@ if (empty($reshook)) {
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$line->situation_percent = $line->get_allprev_progress($object->id);; // get good progress including credit note
+							$line->situation_percent = $line->getAllPrevProgress($object->id);; // get good progress including credit note
 						} else {
 							$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
 						}
@@ -2855,7 +2855,7 @@ if (empty($reshook)) {
 			$all_progress = GETPOSTINT('all_progress');
 			foreach ($object->lines as $line) {
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-					$percent = $line->get_allprev_progress($object->id);
+					$percent = $line->getAllPrevProgress($object->id);
 				} else {
 					$percent = $line->get_prev_progress($object->id);
 				}
