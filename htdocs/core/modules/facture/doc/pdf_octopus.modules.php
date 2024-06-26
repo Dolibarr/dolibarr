@@ -133,7 +133,7 @@ class pdf_octopus extends ModelePDFFactures
 	public $TDataSituation;
 
 	/**
-	 * @var int posx new anterieur
+	 * @var int posx cumul anterieur
 	 */
 	public $posx_cumul_anterieur;
 
@@ -151,21 +151,6 @@ class pdf_octopus extends ModelePDFFactures
 	 * @var int tabTitleHeight
 	 */
 	public $tabTitleHeight;
-
-	/**
-	 * @var int posx_cumul_anterieur
-	 */
-	public $posx_cumul_anterieur;
-
-	/**
-	 * @var int posx_new_cumul
-	 */
-	public $posx_new_cumul;
-
-	/**
-	 * @var int posx_current
-	 */
-	public $posx_current;
 
 	/**
 	 * @var int is rg
