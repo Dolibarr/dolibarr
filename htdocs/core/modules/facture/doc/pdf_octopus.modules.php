@@ -125,35 +125,32 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public $categoryOfOperation = -1; // unknown by default
 
-
 	/**
 	 * Situation invoices
 	 *
-	 * @var array	Data of situation
+	 * @var array{derniere_situation:Facture,date_derniere_situation:int,current:array}	Data of situation
 	 */
 	public $TDataSituation;
 
-	public $postotalht;
+	/**
+	 * @var int posx new anterieur
+	 */
+	public $posx_cumul_anterieur;
+
+	/**
+	 * @var int posx new cumul
+	 */
+	public $posx_new_cumul;
+
+	/**
+	 * @var int posx current
+	 */
+	public $posx_current;
 
 	/**
 	 * @var int tabTitleHeight
 	 */
 	public $tabTitleHeight;
-
-	/**
-	 * @var int posx_cumul_anterieur
-	 */
-	public $posx_cumul_anterieur;
-
-	/**
-	 * @var int posx_new_cumul
-	 */
-	public $posx_new_cumul;
-
-	/**
-	 * @var int posx_current
-	 */
-	public $posx_current;
 
 	/**
 	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of contents fields Style
@@ -169,6 +166,16 @@ class pdf_octopus extends ModelePDFFactures
 	 * @var int is rg
 	 */
 	public $is_rg;
+
+	/**
+	 * @var bool franchise
+	 */
+	public $franchise;
+
+	/**
+	 * @var int
+	 */
+	public $tplidx;
 
 	/**
 	 *	Constructor
@@ -218,7 +225,7 @@ class pdf_octopus extends ModelePDFFactures
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
-		$this->franchise = !$mysoc->tva_assuj;
+		$this->franchise = !$mysoc->tva_assuj; // not used ?
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -429,7 +436,7 @@ class pdf_octopus extends ModelePDFFactures
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
-					$tplidx = $pdf->importPage(1);
+					$this->tplidx = $pdf->importPage(1);
 				}
 
 				$pdf->Open();
@@ -504,8 +511,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) {
-					$pdf->useTemplate($tplidx);
+				if (!empty($this->tplidx)) {
+					$pdf->useTemplate($this->tplidx);
 				}
 				$pagenb++;
 
@@ -653,8 +660,8 @@ class pdf_octopus extends ModelePDFFactures
 						while ($pagenb < $pageposafternote) {
 							$pdf->AddPage();
 							$pagenb++;
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -710,8 +717,8 @@ class pdf_octopus extends ModelePDFFactures
 
 						// apply note frame to last page
 						$pdf->setPage($pageposafternote);
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -732,8 +739,8 @@ class pdf_octopus extends ModelePDFFactures
 							$pagenb++;
 							$pageposafternote++;
 							$pdf->setPage($pageposafternote);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -786,8 +793,8 @@ class pdf_octopus extends ModelePDFFactures
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($posy + $imglinesize['height']) > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot))) {	// If photo too high, we moved completely on new page
 							$pdf->AddPage('', '', true);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
+							if (!empty($this->tplidx)) {
+								$pdf->useTemplate($this->tplidx);
 							}
 							$pdf->setPage($pageposbefore + 1);
 
@@ -828,8 +835,8 @@ class pdf_octopus extends ModelePDFFactures
 							if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
+									if (!empty($this->tplidx)) {
+										$pdf->useTemplate($this->tplidx);
 									}
 									$pdf->setPage($pageposafter + 1);
 								}
@@ -1067,8 +1074,8 @@ class pdf_octopus extends ModelePDFFactures
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 					}
 
@@ -1085,8 +1092,8 @@ class pdf_octopus extends ModelePDFFactures
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+						if (!empty($this->tplidx)) {
+							$pdf->useTemplate($this->tplidx);
 						}
 						$pagenb++;
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
@@ -1099,7 +1106,7 @@ class pdf_octopus extends ModelePDFFactures
 				// special for situation invoices
 				$tabtop = $this->tab_top_newpage;
 				$tabhauteur = $this->page_hauteur - $tabtop - $this->heightforfooter - $this->heightforinfotot - $this->heightforfreetext;
-				$tabTitleHeight = '';
+				$tabTitleHeight = 0;
 				$this->_tableau($pdf, $tabtop, $tabhauteur, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 
 				$bottomlasttab = $tabtop + $tabhauteur + $tabTitleHeight + 10;
@@ -1472,7 +1479,7 @@ class pdf_octopus extends ModelePDFFactures
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// If payment mode unregulated or payment mode forced to CHQ
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
-					$diffsizetitle = getDolGlobalString('PDF_DIFFSIZE_TITLE', 3);
+					$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 
 					if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 						$account = new Account($this->db);
@@ -1919,8 +1926,8 @@ class pdf_octopus extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int 		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -1946,7 +1953,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		if (empty($hidetop)) {
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			// MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
@@ -1969,17 +1976,17 @@ class pdf_octopus extends ModelePDFFactures
 			if (!$this->getColumnStatus($colKey)) {
 				continue;
 			}
-
+			$xstartpos = (int) ($colDef['xStartPos'] ?? 0);
 			//is there any overtitle ?
-			$overtitle = $colDef['overtitle']['textkey'] ?? '';
-			if ($overtitle) {
+			if (!empty($colDef['overtitle']) && is_array($colDef['overtitle'])) {
 				$overtitle_top = $tab_top - 4;
-				$textWidth = $colDef['overtitle']['width'];
-				$pdf->SetXY($colDef['xStartPos'] + $colDef['overtitle']['padding'][3], $overtitle_top);
+				$overtitle = $colDef['overtitle']['textkey'] ?? '';
+				$textWidth = $colDef['overtitle']['width'] ?? 0;
+				$pdf->SetXY($xstartpos + $colDef['overtitle']['padding'][3], $overtitle_top);
 				$pdf->MultiCell($textWidth, 2, $overtitle, '', $colDef['overtitle']['align']);
-				$pdf->line($colDef['xStartPos'], $overtitle_top, $colDef['xStartPos'], $overtitle_top + 4); //left
-				$pdf->line($colDef['xStartPos'], $overtitle_top, $colDef['xStartPos'] + $textWidth, $overtitle_top); //top
-				$pdf->line($colDef['xStartPos'] + $textWidth, $overtitle_top, $colDef['xStartPos'] + $textWidth, $overtitle_top + 4); //right
+				$pdf->line($xstartpos, $overtitle_top, $xstartpos, $overtitle_top + 4); //left
+				$pdf->line($xstartpos, $overtitle_top, $xstartpos + $textWidth, $overtitle_top); //top
+				$pdf->line($xstartpos + $textWidth, $overtitle_top, $xstartpos + $textWidth, $overtitle_top + 4); //right
 			}
 
 			// get title label
@@ -1987,11 +1994,11 @@ class pdf_octopus extends ModelePDFFactures
 
 			// Add column separator
 			if (!empty($colDef['border-left'])) {
-				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+				$pdf->line($xstartpos, $tab_top, $xstartpos, $tab_top + $tab_height);
 			}
 
 			if (empty($hidetop)) {
-				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
+				$pdf->SetXY($xstartpos + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 				$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
@@ -2702,8 +2709,8 @@ class pdf_octopus extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf	 		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int  		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -2803,7 +2810,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$i = -8;
 		foreach ($form->cache_vatrates as $TVatInfo) {
-			$tva_tx_formated = sprintf("%01.3f", $TVatInfo['txtva']);
+			$tva_tx_formated = sprintf("%01.3f", (float) $TVatInfo['txtva']);
 			// print "<p>Un taux de tva ... $tva_tx_formated :: " . json_encode($this->TDataSituation['current'][$tva_tx_formated]) . "</p>";
 			if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 				continue;
@@ -2866,7 +2873,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$i = -8;
 			foreach ($form->cache_vatrates as $TVatInfo) {
-				$tva_tx_formated = sprintf("%01.3f", $TVatInfo['txtva']);
+				$tva_tx_formated = sprintf("%01.3f", (float) $TVatInfo['txtva']);
 				if (empty($this->TDataSituation['current'][$tva_tx_formated])) {
 					continue;
 				}
@@ -2962,7 +2969,8 @@ class pdf_octopus extends ModelePDFFactures
 			$TDataSituation['date_derniere_situation'] = $facDerniereSituation->date;
 		}
 
-		$retenue_garantie = $retenue_garantie_anterieure = 0;
+		$retenue_garantie = 0;
+		$retenue_garantie_anterieure = 0;
 		// Init tous les champs à 0
 		$TDataSituation['cumul_anterieur'] = array(
 			'HT' => 0,	//montant HT normal
@@ -3003,7 +3011,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					$calc_ht = $l->total_ht;
 					//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
-					$ltvatx = sprintf("%01.3f", $l->tva_tx);
+					$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
 					//1ere ligne
 					$amounttva = $calc_ht * ($ltvatx/100);
@@ -3058,18 +3066,16 @@ class pdf_octopus extends ModelePDFFactures
 		//Le nouveau cumul = cumul antérieur + current
 		$TDataSituation['nouveau_cumul'] = $this->sumSituation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
 
-		//erics
-		// print "<p>" . json_encode($TDataSituation['cumul_anterieur']) ."</p>";
 		return $TDataSituation;
 	}
 
 	/**
 	 * Calculates the sum of two arrays, key by key, taking into account nested arrays
 	 *
-	 * @param   [type]  $a  [$a description]
-	 * @param   [type]  $b  [$b description]
+	 * @param   array  $a  [$a description]
+	 * @param   array  $b  [$b description]
 	 *
-	 * @return  [type]	  [return description]
+	 * @return  array	  [return description]
 	 */
 	public function sumSituation($a, $b)
 	{
@@ -3088,6 +3094,7 @@ class pdf_octopus extends ModelePDFFactures
 		} else {
 			dol_syslog("sumSituation first arg is not an array");
 		}
+
 		return $ret;
 	}
 
@@ -3140,7 +3147,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @param  Facture	$object		Object
 	 * @param  FactureLigne			$current_line	current line
-	 * @return bool
+	 * @return void|array{progress_prec:float,total_ht_without_progress:float,total_ht:float}
 	 */
 	public function getInfosLineLastSituation(&$object, &$current_line)
 	{
@@ -3154,7 +3161,7 @@ class pdf_octopus extends ModelePDFFactures
 		foreach ($facDerniereSituation->lines as $l) {
 			if ($l->rowid == $current_line->fk_prev_id) {
 				// Recovery of total_ht without taking progress into account (for the "sums" column)
-				$ltvatx = sprintf("%01.3f", $l->tva_tx);
+				$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 				$tabprice = calcul_price_total($l->qty, $l->subprice, $l->remise_percent, $ltvatx, $l->localtax1_tx, $l->localtax2_tx, 0, 'HT', $l->info_bits, $l->product_type);
 				$total_ht  = $tabprice[0];
 				$total_tva = $tabprice[1];
@@ -3162,11 +3169,11 @@ class pdf_octopus extends ModelePDFFactures
 				$total_localtax1 = $tabprice[9];
 				$total_localtax2 = $tabprice[10];
 				$pu_ht = $tabprice[3];
-				//var_dump($tabprice);
+
 				return array(
-					'progress_prec'=>$l->situation_percent
-					,'total_ht_without_progress'=>$total_ht
-					,'total_ht'=>$l->total_ht
+					'progress_prec' => $l->situation_percent,
+					'total_ht_without_progress' => $total_ht,
+					'total_ht' => $l->total_ht,
 				);
 			}
 		}
@@ -3247,7 +3254,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Modification of VAT format, special case of imports or others which may have 20.0000
-			$ltvatx = sprintf("%01.3f", $l->tva_tx);
+			$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
 			$ret[$ltvatx]['TVA'] += $l->total_tva;
 			$ret[$ltvatx]['HT'] += $l->total_ht;
@@ -3298,8 +3305,8 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		$pdf->AddPage();
-		if (!empty($tplidx)) {
-			$pdf->useTemplate($tplidx);
+		if (!empty($this->tplidx)) {
+			$pdf->useTemplate($this->tplidx);
 		}
 
 		$pagehead = $this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
@@ -3500,7 +3507,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx+$width, $posy + $height * $index);
 			$pdf->MultiCell($width2, $height, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 
-			$retainedWarrantyRate = $object->retained_warranty ? price2num($object->retained_warranty) : price2num(getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', 0));
+			$retainedWarrantyRate = (float) ($object->retained_warranty ? price2num($object->retained_warranty) : price2num(getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', 0)));
 
 			$total_ht_rg = 0;
 			$total_ttc_rg = 0;
@@ -3513,8 +3520,8 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetFillColor(241, 241, 241);
 				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RetainedWarrantyShort", $retainedWarrantyRate), $useborder, 'L', 1);
 
-				$total_ht_rg = price2num(price($total_ht * $retainedWarrantyRate/100), 'MT');
-				$total_ttc_rg = price2num(price($total_ttc * $retainedWarrantyRate/100), 'MT');
+				$total_ht_rg = (float) price2num(price($total_ht * $retainedWarrantyRate/100), 'MT');
+				$total_ttc_rg = (float) price2num(price($total_ttc * $retainedWarrantyRate/100), 'MT');
 
 				$pdf->SetXY($posx+$width, $posy + $height * $index);
 				$pdf->MultiCell($width2, $height, price(-$sign * $total_ht_rg, 0, $outputlangs), $useborder, 'R', 1);
@@ -3622,7 +3629,7 @@ class pdf_octopus extends ModelePDFFactures
 				$y=$height-1;
 
 				$pdf->SetFont('', '', $default_font_size - 4);
-
+				/** @var Facture $invoice */
 				$payments = $invoice->getListOfPayments();
 
 				if (count($payments)) {
@@ -3655,7 +3662,9 @@ class pdf_octopus extends ModelePDFFactures
 
 				$pageposafter=$pageposbefore;
 				$pdf->AddPage('', '', true);
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($this->tplidx)) {
+					$pdf->useTemplate($this->tplidx);
+				}
 				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				$pdf->setPage($pageposafter+1);
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
