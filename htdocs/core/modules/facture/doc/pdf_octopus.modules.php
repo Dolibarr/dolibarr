@@ -128,7 +128,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Situation invoices
 	 *
-	 * @var array	Data of situation
+	 * @var array{derniere_situation:Facture,date_derniere_situation:int}	Data of situation
 	 */
 	public $TDataSituation;
 
@@ -2949,7 +2949,8 @@ class pdf_octopus extends ModelePDFFactures
 			$TDataSituation['date_derniere_situation'] = $facDerniereSituation->date;
 		}
 
-		$retenue_garantie = $retenue_garantie_anterieure = 0;
+		$retenue_garantie = 0;
+		$retenue_garantie_anterieure = 0;
 		// Init tous les champs à 0
 		$TDataSituation['cumul_anterieur'] = array(
 			'HT' => 0,	//montant HT normal
