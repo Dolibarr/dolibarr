@@ -1956,17 +1956,17 @@ class pdf_octopus extends ModelePDFFactures
 			if (!$this->getColumnStatus($colKey)) {
 				continue;
 			}
-
+			$xstartpos = (int) ($colDef['xStartPos'] ?? 0);
 			//is there any overtitle ?
 			if (!empty($colDef['overtitle']) && is_array($colDef['overtitle'])) {
 				$overtitle_top = $tab_top - 4;
 				$overtitle = $colDef['overtitle']['textkey'] ?? '';
 				$textWidth = $colDef['overtitle']['width'] ?? 0;
-				$pdf->SetXY($colDef['xStartPos'] + $colDef['overtitle']['padding'][3], $overtitle_top);
+				$pdf->SetXY($xstartpos + $colDef['overtitle']['padding'][3], $overtitle_top);
 				$pdf->MultiCell($textWidth, 2, $overtitle, '', $colDef['overtitle']['align']);
-				$pdf->line($colDef['xStartPos'], $overtitle_top, $colDef['xStartPos'], $overtitle_top + 4); //left
-				$pdf->line($colDef['xStartPos'], $overtitle_top, $colDef['xStartPos'] + $textWidth, $overtitle_top); //top
-				$pdf->line($colDef['xStartPos'] + $textWidth, $overtitle_top, $colDef['xStartPos'] + $textWidth, $overtitle_top + 4); //right
+				$pdf->line($xstartpos, $overtitle_top, $xstartpos, $overtitle_top + 4); //left
+				$pdf->line($xstartpos, $overtitle_top, $xstartpos + $textWidth, $overtitle_top); //top
+				$pdf->line($xstartpos + $textWidth, $overtitle_top, $xstartpos + $textWidth, $overtitle_top + 4); //right
 			}
 
 			// get title label
@@ -1974,11 +1974,11 @@ class pdf_octopus extends ModelePDFFactures
 
 			// Add column separator
 			if (!empty($colDef['border-left'])) {
-				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+				$pdf->line($xstartpos, $tab_top, $xstartpos, $tab_top + $tab_height);
 			}
 
 			if (empty($hidetop)) {
-				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
+				$pdf->SetXY($xstartpos + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 				$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
@@ -2689,8 +2689,8 @@ class pdf_octopus extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf	 		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		int  		$tab_top		Top position of table
+	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
