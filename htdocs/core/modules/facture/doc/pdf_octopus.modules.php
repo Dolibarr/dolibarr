@@ -81,27 +81,27 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * @var int height for info total
 	 */
-	public int $heightforinfotot;
+	public $heightforinfotot;
 
 	/**
 	 * @var int height for free text
 	 */
-	public int $heightforfreetext;
+	public $heightforfreetext;
 
 	/**
 	 * @var int height for footer
 	 */
-	public int $heightforfooter;
+	public $heightforfooter;
 
 	/**
 	 * @var int tab_top
 	 */
-	public int $tab_top;
+	public $tab_top;
 
 	/**
 	 * @var int tab_top_newpage
 	 */
-	public int $tab_top_newpage;
+	public $tab_top_newpage;
 
 	/**
 	 * Issuer
@@ -131,20 +131,20 @@ class pdf_octopus extends ModelePDFFactures
 	 *
 	 * @var array	Data of situation
 	 */
-	public array $TDataSituation;
+	public $TDataSituation;
 
 	public $postotalht;
 	public $tabTitleHeight;
-	public int $posx_cumul_anterieur;
-	public int $posx_new_cumul;
-	public int $posx_current;
+	public $posx_cumul_anterieur;
+	public $posx_new_cumul;
+	public $posx_current;
 	public $defaultContentsFieldsStyle;
 	public $defaultTitlesFieldsStyle;
 
 	/**
 	 * @var int is rg
 	 */
-	public int $is_rg;
+	public $is_rg;
 
 	/**
 	 *	Constructor
