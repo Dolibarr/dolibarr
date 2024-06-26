@@ -153,7 +153,7 @@ class pdf_octopus extends ModelePDFFactures
 	public $is_rg;
 
 	/**
-	 * @var int franchise
+	 * @var bool franchise
 	 */
 	public $franchise;
 
@@ -205,7 +205,7 @@ class pdf_octopus extends ModelePDFFactures
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
-		$this->franchise = !$mysoc->tva_assuj;
+		$this->franchise = !$mysoc->tva_assuj; // not used ?
 
 		// Get source company
 		$this->emetteur = $mysoc;
