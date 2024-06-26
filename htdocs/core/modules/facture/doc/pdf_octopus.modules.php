@@ -3045,8 +3045,6 @@ class pdf_octopus extends ModelePDFFactures
 		//Le nouveau cumul = cumul antérieur + current
 		$TDataSituation['nouveau_cumul'] = $this->sumSituation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
 
-		//erics
-		// print "<p>" . json_encode($TDataSituation['cumul_anterieur']) ."</p>";
 		return $TDataSituation;
 	}
 
@@ -3075,6 +3073,7 @@ class pdf_octopus extends ModelePDFFactures
 		} else {
 			dol_syslog("sumSituation first arg is not an array");
 		}
+
 		return $ret;
 	}
 
@@ -3234,7 +3233,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Modification of VAT format, special case of imports or others which may have 20.0000
-			$ltvatx = sprintf("%01.3f", $l->tva_tx);
+			$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
 			$ret[$ltvatx]['TVA'] += $l->total_tva;
 			$ret[$ltvatx]['HT'] += $l->total_ht;
