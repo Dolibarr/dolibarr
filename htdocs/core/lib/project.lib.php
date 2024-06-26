@@ -1675,7 +1675,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 
 				// Select hour
-				print '<td class="nowraponall leftborder center minwidth150imp">';
+				print '<td class="nowraponall leftborder center minwidth150imp borderleft">';
 				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
 				print $tableCell;
 				print '</td>';
@@ -2076,7 +2076,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				// Fields to show current time
 				$tableCell = '';
 				$modeinput = 'hours';
+				$j = 0;
 				for ($idw = 0; $idw < 7; $idw++) {
+					$j++;
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 					if (!isset($totalforeachday[$tmpday])) {
 						$totalforeachday[$tmpday] = 0;
@@ -2112,7 +2114,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						$disabledtaskday = 1;
 					}
 
-					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'">';
 					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
 					if ($alreadyspent) {
@@ -2389,7 +2391,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$firstdaytoshowarray = dol_getdate($firstdaytoshow);
 				$year = $firstdaytoshowarray['year'];
 				$month = $firstdaytoshowarray['mon'];
+				$j = 0;
 				foreach ($TWeek as $weekIndex => $weekNb) {
+					$j++;
 					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
 					if (!isset($totalforeachweek[$weekNb])) {
 						$totalforeachweek[$weekNb] = 0;
@@ -2409,7 +2413,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 						$disabledtaskweek = 1;
 					}
 
-					$tableCell = '<td class="center hide weekend">';
+					$tableCell = '<td class="center hide'.($j <= 1 ? ' borderleft' : '').'">';
 					$placeholder = '';
 					if ($alreadyspent) {
 						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';

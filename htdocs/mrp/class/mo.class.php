@@ -334,11 +334,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -744,7 +744,6 @@ class Mo extends CommonObject
 				$error++;
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
@@ -2164,7 +2163,7 @@ class MoLine extends CommonObjectLine
 	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
-			$this->error = 'BadValueForQty';
+			$this->error = 'ErrorEmptyValueForQty';
 			return -1;
 		}
 
