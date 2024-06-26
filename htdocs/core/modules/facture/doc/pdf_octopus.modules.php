@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos Garcia           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
@@ -79,37 +79,6 @@ class pdf_octopus extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	/**
 	 * @var int heightforinfotot
 	 */
 	public $heightforinfotot;
@@ -164,18 +133,6 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public $TDataSituation;
 
-	/**
-	 * @var int position x for description
-	 */
-	public $posxdesc;
-
-
-	public $posxpicture;
-	public $posxtva;
-	public $posxunit;
-	public $posxqty;
-	public $posxup;
-	public $posxdiscount;
 	public $posxsommes;
 	public $posxprogress_current;
 	public $posxprogress_prec;
@@ -187,6 +144,11 @@ class pdf_octopus extends ModelePDFFactures
 	public $posx_current;
 	public $defaultContentsFieldsStyle;
 	public $defaultTitlesFieldsStyle;
+
+	/**
+	 * @var int is rg
+	 */
+	public $is_rg;
 
 	/**
 	 *	Constructor
@@ -262,9 +224,9 @@ class pdf_octopus extends ModelePDFFactures
 		$this->atleastonediscount = 0;
 		$this->situationinvoice = true;
 		if (!empty($object)) {
-			$this->TDataSituation = $this->_getDataSituation($object);
+			$this->TDataSituation = $this->getDataSituation($object);
 		} else {
-			dol_syslog("object is empty, do not call _getDataSituation...");
+			dol_syslog("object is empty, do not call getDataSituation...");
 		}
 	}
 
@@ -312,7 +274,7 @@ class pdf_octopus extends ModelePDFFactures
 			return 1;
 		}
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
 		}
 
@@ -934,7 +896,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->_getInfosLineLastSituation($object, $object->lines[$i]);
+					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
 
 					// Sum
 					$columkey = 'btpsomme';
@@ -1141,7 +1103,7 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->AliasNbPages();
 				}
 
-				$this->_resumeLastPage($pdf, $object, 0, $tab_top, $outputlangs, $outputlangsbis);
+				$this->resumeLastPage($pdf, $object, 0, $tab_top, $outputlangs, $outputlangsbis);
 				$bottomlasttab=$this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
@@ -2947,7 +2909,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * 			  S2 with l1 (tp), l2 (tp), l3 (ts)
 	 * 			  S3 with l1 (tp), l2 (tp), l3 (tp), l4 (ts)
 	 *
-	 * @param   $object  Facture
+	 * @param   Facture $object  Facture
 	 *
 	 * @return  array
 	 *
@@ -2958,7 +2920,7 @@ class pdf_octopus extends ModelePDFFactures
 	 * current: current status invoice data
 	 *
 	 */
-	public function _getDataSituation(&$object)
+	public function getDataSituation(&$object)
 	{
 		global $conf, $db;
 
@@ -3114,7 +3076,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Display retained Warranty
 	 *
-	 * @param   $object  Facture
+	 * @param   Facture $object  Facture
 	 * @return	bool
 	 */
 	public function displayRetainedWarranty($object)
@@ -3158,11 +3120,11 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Get info line of the last situation
 	 *
-	 * @param  Facture	$object			Object
-	 * @param  int		$current_line	Id of the current line
+	 * @param  Facture	$object		Object
+	 * @param  FactureLigne			$current_line	current line
 	 * @return bool
 	 */
-	public function _getInfosLineLastSituation(&$object, &$current_line)
+	public function getInfosLineLastSituation(&$object, &$current_line)
 	{
 		if (empty($object->situation_cycle_ref) || $object->situation_counter <= 1) {
 			return;
@@ -3305,9 +3267,9 @@ class pdf_octopus extends ModelePDFFactures
 	 *	@param	int			$posy           Position depart
 	 *	@param	Translate	$outputlangs    Object langs
 	 *  @param  Translate	$outputlangsbis Object lang for output bis
-	 *	@return int							Position pour suite
+	 *	@return void
 	 */
-	public function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
+	public function resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{
 		global $conf, $mysoc, $hookmanager;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -3680,7 +3642,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->setPage($pageposafter+1);
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-				$posy = $tab_top_newpage + 1;
+				$posy = $this->tab_top_newpage + 1;
 			} else {
 				$idinv++;
 				$remain_to_pay -= ($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)));
