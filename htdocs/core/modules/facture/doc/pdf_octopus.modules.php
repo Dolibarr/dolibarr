@@ -2990,7 +2990,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					$calc_ht = $l->total_ht;
 					//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
-					$ltvatx = sprintf("%01.3f", $l->tva_tx);
+					$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
 					//1ere ligne
 					$amounttva = $calc_ht * ($ltvatx/100);
@@ -3141,7 +3141,7 @@ class pdf_octopus extends ModelePDFFactures
 		foreach ($facDerniereSituation->lines as $l) {
 			if ($l->rowid == $current_line->fk_prev_id) {
 				// Recovery of total_ht without taking progress into account (for the "sums" column)
-				$ltvatx = sprintf("%01.3f", $l->tva_tx);
+				$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 				$tabprice = calcul_price_total($l->qty, $l->subprice, $l->remise_percent, $ltvatx, $l->localtax1_tx, $l->localtax2_tx, 0, 'HT', $l->info_bits, $l->product_type);
 				$total_ht  = $tabprice[0];
 				$total_tva = $tabprice[1];
