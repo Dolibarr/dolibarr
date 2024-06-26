@@ -1958,10 +1958,10 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			//is there any overtitle ?
-			$overtitle = $colDef['overtitle']['textkey'] ?? '';
-			if ($overtitle) {
+			if (!empty($colDef['overtitle']) && is_array($colDef['overtitle'])) {
 				$overtitle_top = $tab_top - 4;
-				$textWidth = $colDef['overtitle']['width'];
+				$overtitle = $colDef['overtitle']['textkey'] ?? '';
+				$textWidth = $colDef['overtitle']['width'] ?? 0;
 				$pdf->SetXY($colDef['xStartPos'] + $colDef['overtitle']['padding'][3], $overtitle_top);
 				$pdf->MultiCell($textWidth, 2, $overtitle, '', $colDef['overtitle']['align']);
 				$pdf->line($colDef['xStartPos'], $overtitle_top, $colDef['xStartPos'], $overtitle_top + 4); //left
