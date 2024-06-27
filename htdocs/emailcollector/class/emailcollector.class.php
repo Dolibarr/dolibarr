@@ -128,8 +128,8 @@ class EmailCollector extends CommonObject
 		'login'         => array('type' => 'varchar(128)', 'label' => 'Login', 'visible' => -1, 'enabled' => 1, 'position' => 102, 'notnull' => -1, 'index' => 1, 'comment' => "IMAP login", 'help' => 'Example: myaccount@gmail.com'),
 		'password'      => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => "1", 'position' => 103, 'notnull' => -1, 'comment' => "IMAP password", 'help' => 'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type' => 'varchar(128)', 'label' => 'oauthService', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 104, 'notnull' => 0, 'index' => 1, 'comment' => "IMAP login oauthService", 'arrayofkeyval' => array(), 'help' => 'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxSourceDirectory', 'visible' => -1, 'enabled' => 1, 'position' => 109, 'notnull' => 1, 'default' => 'Inbox', 'help' => 'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
-		'target_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxTargetDirectory', 'visible' => 1, 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'help' => "EmailCollectorTargetDir"),
+		'source_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxSourceDirectory', 'visible' => -1, 'enabled' => 1, 'position' => 109, 'notnull' => 1, 'default' => 'Inbox', 'csslist' => 'tdoverflowmax100', 'help' => 'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
+		'target_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxTargetDirectory', 'visible' => 1, 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'csslist' => 'tdoverflowmax100', 'help' => "EmailCollectorTargetDir"),
 		'maxemailpercollect' => array('type' => 'integer', 'label' => 'MaxEmailCollectPerCollect', 'visible' => -1, 'enabled' => 1, 'position' => 111, 'default' => 50),
 		'datelastresult' => array('type' => 'datetime', 'label' => 'DateLastCollectResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 121, 'notnull' => -1, 'csslist' => 'nowraponall'),
 		'codelastresult' => array('type' => 'varchar(16)', 'label' => 'CodeLastResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 122, 'notnull' => -1,),
@@ -170,7 +170,7 @@ class EmailCollector extends CommonObject
 
 	/**
 	 * @var string description
-	*/
+	 */
 	public $description;
 
 	/**
@@ -1156,16 +1156,16 @@ class EmailCollector extends CommonObject
 				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
-					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
 				}
 
-				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-				//dol_syslog($debugtext);
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+					//dol_syslog($debugtext);
 
-				$token = '';
+					$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1178,11 +1178,12 @@ class EmailCollector extends CommonObject
 					// }
 					// Token expired so we refresh it
 					if (is_object($tokenobj) && $expire) {
+						$this->debuginfo .= 'Refresh token<br>';
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-						);
+							);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1207,17 +1208,17 @@ class EmailCollector extends CommonObject
 					return -1;
 				}
 
-				$cm = new ClientManager();
-				$client = $cm->make([
-					'host'           => $this->host,
-					'port'           => $this->port,
-					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
-					'validate_cert'  => true,
-					'protocol'       => 'imap',
-					'username'       => $this->login,
-					'password'       => $token,
-					'authentication' => "oauth",
-				]);
+					$cm = new ClientManager();
+					$client = $cm->make([
+						'host'           => $this->host,
+						'port'           => $this->port,
+						'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
+						'validate_cert'  => true,
+						'protocol'       => 'imap',
+						'username'       => $this->login,
+						'password'       => $token,
+						'authentication' => "oauth",
+					]);
 			} else {
 				// Mode LOGIN (login/pass) with PHP-IMAP
 				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
@@ -1255,8 +1256,13 @@ class EmailCollector extends CommonObject
 			}
 
 			$connectstringserver = $this->getConnectStringIMAP();
-			$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
-			$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+			if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+				$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
+				$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+			} else {
+				$connectstringsource = $connectstringserver.$sourcedir;
+				$connectstringtarget = $connectstringserver.$targetdir;
+			}
 
 			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
@@ -1564,21 +1570,31 @@ class EmailCollector extends CommonObject
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			try {
-				//$criteria = [['ALL']];
-				//$Query = $client->getFolders()[0]->messages()->where($criteria);
-
 				// Uncomment this to output debug info
 				//$client->getConnection()->enableDebug();
 
-				$f = $client->getFolders(false, $sourcedir);
+				$tmpsourcedir = $sourcedir;
+				if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+					$tmpsourcedir = $this->getEncodedUtf7($sourcedir);
+				}
+
+				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria);
 					} else {
+						$error++;
+						$this->error = "Source directory ".$sourcedir." not found";
+						$this->errors[] = $this->error;
+						dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_WARNING);
 						return -1;
 					}
 				} else {
+					$error++;
+					$this->error = "Failed to execute getfolders";
+					$this->errors[] = $this->error;
+					dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} catch (InvalidWhereQueryCriteriaException $e) {
@@ -1607,7 +1623,7 @@ class EmailCollector extends CommonObject
 				return -1;
 			}
 		} else {
-			// Scan IMAP inbox (for native IMAP, the source dir is inside the $connection variable)
+			// Scan IMAP dir (for native IMAP, the source dir is inside the $connection variable)
 			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
 
 			if ($arrayofemail === false) {
@@ -3418,7 +3434,19 @@ class EmailCollector extends CommonObject
 
 							if (empty($mode)) {	// $mode > 0 is test
 								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' to '.$targetdir;
-								$imapemail->move($targetdir);
+
+								$tmptargetdir = $targetdir;
+								if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+									$tmptargetdir = $this->getEncodedUtf7($targetdir);
+								}
+
+								$result = $imapemail->move($tmptargetdir);
+
+								if (empty($result)) {
+									dol_syslog("Failed to move email into target directory ".$targetdir);
+									$operationslog .= '<br>Failed to move email into target directory '.$targetdir;
+									$errorforemail++;
+								}
 							} else {
 								$operationslog .= '<br>Do not move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' (test mode)';
 							}
