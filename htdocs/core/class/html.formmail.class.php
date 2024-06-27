@@ -1542,62 +1542,38 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
-		// $out .= '<script type="text/javascript">
-		// 		$(document).ready(function() {
-		// 			$(".template-option").click(function() {
-		// 				var template = $(this).data("template");
-
-		// 				console.log("We choose a layout for email template "+template);
-
-		// 				$(".template-option").removeClass("selected");
-		// 				$(this).addClass("selected");
-
-		// 				var contentHtml = $(this).data("content");
-
-		// 				jQuery("#'.$htmlContent.'").val(contentHtml);
-		// 				var editorInstance = CKEDITOR.instances.'.$htmlContent.';
-		// 				if (editorInstance) {
-		// 					editorInstance.setData(contentHtml);
-		// 				}
-		// 			});
-		// 		});
-		// </script>';
 		$out .= '<script type="text/javascript">
-        $(document).ready(function() {
-            // Initialiser CKEditor
-            var editorInstance = CKEDITOR.replace("'.$htmlContent.'");
+			$(document).ready(function() {
+				$(".template-option").click(function() {
+					var template = $(this).data("template");
 
-            editorInstance.on("instanceReady", function() {
-                console.log("CKEditor is ready");
+					console.log("We choose a layout for email template " + template);
 
-                function loadCKEditorContent(template) {
-                $.get("/core/lib/load_template.lib.php", { template: template }, function(data) {
-                        console.log("Data loaded from template: ", data); 
+					$(".template-option").removeClass("selected");
+					$(this).addClass("selected");
 
-                        var contentHtml = data; 
-						
-                        if (editorInstance) {
-                            editorInstance.setData(contentHtml, function() {
-                                console.log("Content successfully set in CKEditor");
-                            });
-                        }
-                    }).fail(function() {
-                        console.error("Failed to load template: " + template);
-                    });
-                }
+					var contentHtml = $(this).data("content");
+					var csrfToken = "'.newToken().'";
 
-                $(".template-option").on("click", function() {
-                    $(".template-option").removeClass("selected");
-                    $(this).addClass("selected");
-
-                    var template = $(this).data("template");
-                    loadCKEditorContent(template);
-                });
-
-            });
-        });
-    </script>';
-
+					// Envoyer le contenu HTML à process_template.php pour traitement PHP
+					$.ajax({
+						type: "POST",
+						url: "/core/lib/process_template.lib.php",
+						data: { content: contentHtml, token: csrfToken },
+						success: function(response) {
+							jQuery("#'.$htmlContent.'").val(response);
+							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+							if (editorInstance) {
+								editorInstance.setData(response);
+							}
+						},
+						error: function(xhr, status, error) {
+							console.error("An error occurred: " + xhr.responseText);
+						}
+					});
+				});
+			});
+		</script>';
 
 		return $out;
 	}
