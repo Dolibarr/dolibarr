@@ -3324,6 +3324,7 @@ abstract class CommonObject
 			$sql .= " ORDER BY " . $fieldposition . " ASC, rowid " . $rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
+			$grandchild = getDolGlobalInt('CARE_GRANDCHILD');
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$i = 0;
@@ -3331,7 +3332,7 @@ abstract class CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0]);
+					$children = $this->getChildrenOfLine($row[0], $grandchild);
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
