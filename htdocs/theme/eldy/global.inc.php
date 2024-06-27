@@ -8106,6 +8106,10 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
 }
 
 @media only screen and (max-width: 1024px)

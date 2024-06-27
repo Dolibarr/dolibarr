@@ -170,7 +170,7 @@ class EmailCollector extends CommonObject
 
 	/**
 	 * @var string description
-	*/
+	 */
 	public $description;
 
 	/**
@@ -1156,16 +1156,16 @@ class EmailCollector extends CommonObject
 				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
-					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
 				}
 
-				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-				//dol_syslog($debugtext);
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+					//dol_syslog($debugtext);
 
-				$token = '';
+					$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1183,7 +1183,7 @@ class EmailCollector extends CommonObject
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-						);
+							);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1208,17 +1208,17 @@ class EmailCollector extends CommonObject
 					return -1;
 				}
 
-				$cm = new ClientManager();
-				$client = $cm->make([
-					'host'           => $this->host,
-					'port'           => $this->port,
-					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
-					'validate_cert'  => true,
-					'protocol'       => 'imap',
-					'username'       => $this->login,
-					'password'       => $token,
-					'authentication' => "oauth",
-				]);
+					$cm = new ClientManager();
+					$client = $cm->make([
+						'host'           => $this->host,
+						'port'           => $this->port,
+						'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
+						'validate_cert'  => true,
+						'protocol'       => 'imap',
+						'username'       => $this->login,
+						'password'       => $token,
+						'authentication' => "oauth",
+					]);
 			} else {
 				// Mode LOGIN (login/pass) with PHP-IMAP
 				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
