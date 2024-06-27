@@ -128,8 +128,8 @@ class EmailCollector extends CommonObject
 		'login'         => array('type' => 'varchar(128)', 'label' => 'Login', 'visible' => -1, 'enabled' => 1, 'position' => 102, 'notnull' => -1, 'index' => 1, 'comment' => "IMAP login", 'help' => 'Example: myaccount@gmail.com'),
 		'password'      => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => "1", 'position' => 103, 'notnull' => -1, 'comment' => "IMAP password", 'help' => 'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type' => 'varchar(128)', 'label' => 'oauthService', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 104, 'notnull' => 0, 'index' => 1, 'comment' => "IMAP login oauthService", 'arrayofkeyval' => array(), 'help' => 'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxSourceDirectory', 'visible' => -1, 'enabled' => 1, 'position' => 109, 'notnull' => 1, 'default' => 'Inbox', 'help' => 'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
-		'target_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxTargetDirectory', 'visible' => 1, 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'help' => "EmailCollectorTargetDir"),
+		'source_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxSourceDirectory', 'visible' => -1, 'enabled' => 1, 'position' => 109, 'notnull' => 1, 'default' => 'Inbox', 'csslist' => 'tdoverflowmax100', 'help' => 'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
+		'target_directory' => array('type' => 'varchar(255)', 'label' => 'MailboxTargetDirectory', 'visible' => 1, 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'csslist' => 'tdoverflowmax100', 'help' => "EmailCollectorTargetDir"),
 		'maxemailpercollect' => array('type' => 'integer', 'label' => 'MaxEmailCollectPerCollect', 'visible' => -1, 'enabled' => 1, 'position' => 111, 'default' => 50),
 		'datelastresult' => array('type' => 'datetime', 'label' => 'DateLastCollectResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 121, 'notnull' => -1, 'csslist' => 'nowraponall'),
 		'codelastresult' => array('type' => 'varchar(16)', 'label' => 'CodeLastResult', 'visible' => 1, 'enabled' => '$action != "create" && $action != "edit"', 'position' => 122, 'notnull' => -1,),
@@ -168,6 +168,10 @@ class EmailCollector extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string description
+	 */
+	public $description;
 
 	/**
 	 * @var int Status
@@ -795,7 +799,7 @@ class EmailCollector extends CommonObject
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
-		if (strpos($this->login, '/') != false) {
+		if (!empty($this->login) && strpos($this->login, '/') != false) {
 			$partofauth = explode('/', $this->login);
 			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
 		}
@@ -1152,16 +1156,16 @@ class EmailCollector extends CommonObject
 				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
-					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
 				}
 
-				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-				//dol_syslog($debugtext);
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+					//dol_syslog($debugtext);
 
-				$token = '';
+					$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+					$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1174,11 +1178,12 @@ class EmailCollector extends CommonObject
 					// }
 					// Token expired so we refresh it
 					if (is_object($tokenobj) && $expire) {
+						$this->debuginfo .= 'Refresh token<br>';
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-						);
+							);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1203,17 +1208,17 @@ class EmailCollector extends CommonObject
 					return -1;
 				}
 
-				$cm = new ClientManager();
-				$client = $cm->make([
-					'host'           => $this->host,
-					'port'           => $this->port,
-					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
-					'validate_cert'  => true,
-					'protocol'       => 'imap',
-					'username'       => $this->login,
-					'password'       => $token,
-					'authentication' => "oauth",
-				]);
+					$cm = new ClientManager();
+					$client = $cm->make([
+						'host'           => $this->host,
+						'port'           => $this->port,
+						'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
+						'validate_cert'  => true,
+						'protocol'       => 'imap',
+						'username'       => $this->login,
+						'password'       => $token,
+						'authentication' => "oauth",
+					]);
 			} else {
 				// Mode LOGIN (login/pass) with PHP-IMAP
 				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
@@ -1251,8 +1256,13 @@ class EmailCollector extends CommonObject
 			}
 
 			$connectstringserver = $this->getConnectStringIMAP();
-			$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
-			$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+			if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+				$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
+				$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+			} else {
+				$connectstringsource = $connectstringserver.$sourcedir;
+				$connectstringtarget = $connectstringserver.$targetdir;
+			}
 
 			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
@@ -1422,7 +1432,7 @@ class EmailCollector extends CommonObject
 				// See https://www.rfc-editor.org/rfc/rfc3501
 
 				$not = '';
-				if (strpos($rule['rulevalue'], '!') === 0) {
+				if (!empty($rule['rulevalue']) && strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
 					// Then remove the ! from the string for next filters
@@ -1560,21 +1570,31 @@ class EmailCollector extends CommonObject
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			try {
-				//$criteria = [['ALL']];
-				//$Query = $client->getFolders()[0]->messages()->where($criteria);
-
 				// Uncomment this to output debug info
 				//$client->getConnection()->enableDebug();
 
-				$f = $client->getFolders(false, $sourcedir);
+				$tmpsourcedir = $sourcedir;
+				if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+					$tmpsourcedir = $this->getEncodedUtf7($sourcedir);
+				}
+
+				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria);
 					} else {
+						$error++;
+						$this->error = "Source directory ".$sourcedir." not found";
+						$this->errors[] = $this->error;
+						dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_WARNING);
 						return -1;
 					}
 				} else {
+					$error++;
+					$this->error = "Failed to execute getfolders";
+					$this->errors[] = $this->error;
+					dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} catch (InvalidWhereQueryCriteriaException $e) {
@@ -1603,7 +1623,7 @@ class EmailCollector extends CommonObject
 				return -1;
 			}
 		} else {
-			// Scan IMAP inbox (for native IMAP, the source dir is inside the $connection variable)
+			// Scan IMAP dir (for native IMAP, the source dir is inside the $connection variable)
 			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
 
 			if ($arrayofemail === false) {
@@ -1681,22 +1701,26 @@ class EmailCollector extends CommonObject
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+					$msgid = str_replace(array('<', '>'), '', $overview['message_id']);
 				} else {
 					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 				}
-				$operationslog .= " - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= " - MsgId: ".$msgid." - References: ".dol_escape_htmltag($headers['References'] ?? '')." - Subject: ".dol_escape_htmltag($headers['Subject']);
 
-				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
+				dol_syslog("-- Process email ".$iforemailloop." References: ".($headers['References'] ?? '')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
 				$trackidfoundintorecipientid = 0;
 				$reg = array();
 				// See also later list of all supported tags...
-				// Note: "th[i]" to avoid matching a codespell suggestion to convert to this.
+				// Note: "th[i]" to avoid matching a codespell suggestion to convert to "this".
+				// TODO Add host after the @'.preg_quote($host, '/')
 				if (preg_match('/\+(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
 					$trackidfoundintorecipienttype = $reg[1];
 					$trackidfoundintorecipientid = $reg[2];
@@ -1705,9 +1729,23 @@ class EmailCollector extends CommonObject
 					$trackidfoundintorecipientid = $reg[1];
 				}
 
-				// If there is a filter on trackid
+				$trackidfoundintomsgidtype = '';
+				$trackidfoundintomsgidid = 0;
+				$reg = array();
+				// See also later list of all supported tags...
+				// Note: "th[i]" to avoid matching a codespell suggestion to convert to "this".
+				// TODO Add host after the @
+				if (preg_match('/(?:[\+\-])(th[i]|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $msgid, $reg)) {
+					$trackidfoundintomsgidtype = $reg[1];
+					$trackidfoundintomsgidid = $reg[2];
+				} elseif (preg_match('/(?:[\+\-])emailing-(\w+)@/', $msgid, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
+					$trackidfoundintomsgidtype = 'emailing';
+					$trackidfoundintomsgidid = $reg[1];
+				}
+
+				// If there is an emailcollecter filter on trackid
 				if ($searchfilterdoltrackid > 0) {
-					if (empty($trackidfoundintorecipienttype)) {
+					if (empty($trackidfoundintorecipienttype) && empty($trackidfoundintomsgidtype)) {
 						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 							$nbemailprocessed++;
 							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching the signature of the application, so with a trackid coming from the application");
@@ -1716,7 +1754,7 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
-					if (!empty($trackidfoundintorecipienttype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
+					if (!empty($trackidfoundintorecipienttype) || !empty($trackidfoundintomsgidtype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
 						$nbemailprocessed++;
 						dol_syslog(" Discarded - Suffix found into email or Header References found and matching signature of application so with a trackid");
 						continue; // Exclude email
@@ -1928,18 +1966,16 @@ class EmailCollector extends CommonObject
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
 					$date = $overview['date'];
-					$msgid = str_replace(array('<', '>'), '', $overview['message_id']);
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
-					$replytostring = empty($overview['in_reply-to']) ? $headers['Reply-To'] : $overview['in_reply-to'];
+					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
 					$to = $overview[0]->to;
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$date = $overview[0]->udate;
-					$msgid = str_replace(array('<', '>'), '', $overview[0]->message_id);
 					$subject = $overview[0]->subject;
 					//var_dump($msgid);exit;
 				}
@@ -1973,6 +2009,7 @@ class EmailCollector extends CommonObject
 				$fk_element_id = 0;
 				$fk_element_type = '';
 
+
 				$this->db->begin();
 
 				$contactid = 0;
@@ -1980,7 +2017,8 @@ class EmailCollector extends CommonObject
 				$projectid = 0;
 				$ticketid = 0;
 
-				// Analyze TrackId in field References. For example:
+				// Analyze TrackId in field References (already analyzed previously into the "To:" and "Message-Id").
+				// For example:
 				// References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
 				// References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
 				// References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
@@ -1989,240 +2027,250 @@ class EmailCollector extends CommonObject
 				$objectemail = null;
 
 				$reg = array();
+				$arrayofreferences = array();
 				if (!empty($headers['References'])) {
 					$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
-					// var_dump($headers['References']);
-					// var_dump($arrayofreferences);
+				}
+				if (!in_array('<'.$msgid.'>', $arrayofreferences)) {
+					$arrayofreferences = array_merge($arrayofreferences, array('<'.$msgid.'>'));
+				}
+				// var_dump($headers['References']);
+				// var_dump($arrayofreferences);
 
-					foreach ($arrayofreferences as $reference) {
-						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
-						if (!empty($trackidfoundintorecipienttype)) {
-							$resultsearchtrackid = -1;
-							$reg[1] = $trackidfoundintorecipienttype;
-							$reg[2] = $trackidfoundintorecipientid;
-						} else {
-							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
-							if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
-								$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+				foreach ($arrayofreferences as $reference) {
+					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
+					if (!empty($trackidfoundintorecipienttype)) {
+						$resultsearchtrackid = -1;		// trackid found
+						$reg[1] = $trackidfoundintorecipienttype;
+						$reg[2] = $trackidfoundintorecipientid;
+					} elseif (!empty($trackidfoundintomsgidtype)) {
+						$resultsearchtrackid = -1;		// trackid found
+						$reg[1] = $trackidfoundintomsgidtype;
+						$reg[2] = $trackidfoundintomsgidid;
+					} else {
+						$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);	// trackid found or not
+						if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);	// trackid found
+						}
+					}
+
+					if (!empty($resultsearchtrackid)) {
+						// We found a tracker (in recipient email or msgid or into a Reference matching the Dolibarr server)
+						$trackid = $reg[1].$reg[2];
+
+						$objectid = $reg[2];
+						// See also list into interface_50_modAgenda_ActionsAuto
+						if ($reg[1] == 'thi') {   // Third-party
+							$objectemail = new Societe($this->db);
+						}
+						if ($reg[1] == 'ctc') {   // Contact
+							$objectemail = new Contact($this->db);
+						}
+						if ($reg[1] == 'inv') {   // Customer Invoice
+							$objectemail = new Facture($this->db);
+						}
+						if ($reg[1] == 'sinv') {   // Supplier Invoice
+							$objectemail = new FactureFournisseur($this->db);
+						}
+						if ($reg[1] == 'pro') {   // Customer Proposal
+							$objectemail = new Propal($this->db);
+						}
+						if ($reg[1] == 'ord') {   // Sale Order
+							$objectemail = new Commande($this->db);
+						}
+						if ($reg[1] == 'shi') {   // Shipment
+							$objectemail = new Expedition($this->db);
+						}
+						if ($reg[1] == 'spro') {   // Supplier Proposal
+							$objectemail = new SupplierProposal($this->db);
+						}
+						if ($reg[1] == 'sord') {   // Supplier Order
+							$objectemail = new CommandeFournisseur($this->db);
+						}
+						if ($reg[1] == 'rec') {   // Reception
+							$objectemail = new Reception($this->db);
+						}
+						if ($reg[1] == 'proj') {   // Project
+							$objectemail = new Project($this->db);
+							$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'tas') {   // Task
+							$objectemail = new Task($this->db);
+						}
+						if ($reg[1] == 'con') {   // Contact
+							$objectemail = new Contact($this->db);
+						}
+						if ($reg[1] == 'use') {   // User
+							$objectemail = new User($this->db);
+						}
+						if ($reg[1] == 'tic') {   // Ticket
+							$objectemail = new Ticket($this->db);
+							$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
+							$objectemail = new RecruitmentCandidature($this->db);
+							$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
+						}
+						if ($reg[1] == 'mem') {   // Member
+							$objectemail = new Adherent($this->db);
+						}
+						/*if ($reg[1] == 'leav') {   // Leave / Holiday
+						 $objectemail = new Holiday($db);
+						 }
+						 if ($reg[1] == 'exp') {   // ExpenseReport
+						 $objectemail = new ExpenseReport($db);
+						 }*/
+					} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
+						// This is an external reference, we check if we have it in our database
+						if (is_null($objectemail) && isModEnabled('ticket')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
+							$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new Ticket($this->db);
+									$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								}
+							} else {
+								$errorforemail++;
 							}
 						}
 
-						if (!empty($resultsearchtrackid)) {
-							// We found a tracker (in recipient email or into a Reference matching the Dolibarr server)
-							$trackid = $reg[1].$reg[2];
-
-							$objectid = $reg[2];
-							// See also list into interface_50_modAgenda_ActionsAuto
-							if ($reg[1] == 'thi') {   // Third-party
-								$objectemail = new Societe($this->db);
-							}
-							if ($reg[1] == 'ctc') {   // Contact
-								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'inv') {   // Customer Invoice
-								$objectemail = new Facture($this->db);
-							}
-							if ($reg[1] == 'sinv') {   // Supplier Invoice
-								$objectemail = new FactureFournisseur($this->db);
-							}
-							if ($reg[1] == 'pro') {   // Customer Proposal
-								$objectemail = new Propal($this->db);
-							}
-							if ($reg[1] == 'ord') {   // Sale Order
-								$objectemail = new Commande($this->db);
-							}
-							if ($reg[1] == 'shi') {   // Shipment
-								$objectemail = new Expedition($this->db);
-							}
-							if ($reg[1] == 'spro') {   // Supplier Proposal
-								$objectemail = new SupplierProposal($this->db);
-							}
-							if ($reg[1] == 'sord') {   // Supplier Order
-								$objectemail = new CommandeFournisseur($this->db);
-							}
-							if ($reg[1] == 'rec') {   // Reception
-								$objectemail = new Reception($this->db);
-							}
-							if ($reg[1] == 'proj') {   // Project
-								$objectemail = new Project($this->db);
-								$projectfoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'tas') {   // Task
-								$objectemail = new Task($this->db);
-							}
-							if ($reg[1] == 'con') {   // Contact
-								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'use') {   // User
-								$objectemail = new User($this->db);
-							}
-							if ($reg[1] == 'tic') {   // Ticket
-								$objectemail = new Ticket($this->db);
-								$ticketfoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
-								$objectemail = new RecruitmentCandidature($this->db);
-								$candidaturefoundby = 'TrackID dolibarr-'.$trackid.'@...';
-							}
-							if ($reg[1] == 'mem') {   // Member
-								$objectemail = new Adherent($this->db);
-							}
-							/*if ($reg[1] == 'leav') {   // Leave / Holiday
-								$objectemail = new Holiday($db);
-							}
-							if ($reg[1] == 'exp') {   // ExpenseReport
-								$objectemail = new ExpenseReport($db);
-							}*/
-						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
-							// This is an external reference, we check if we have it in our database
-							if (is_null($objectemail) && isModEnabled('ticket')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
-								$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new Ticket($this->db);
-										$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
+						if (!is_object($objectemail) && isModEnabled('project')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new Project($this->db);
+									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								}
-							}
-
-							if (!is_object($objectemail) && isModEnabled('project')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new Project($this->db);
-										$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
-								}
-							}
-
-							if (!is_object($objectemail) && isModEnabled('recruitment')) {
-								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
-								$resql = $this->db->query($sql);
-								if ($resql) {
-									$obj = $this->db->fetch_object($resql);
-									if ($obj) {
-										$objectid = $obj->rowid;
-										$objectemail = new RecruitmentCandidature($this->db);
-										$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
-									}
-								} else {
-									$errorforemail++;
-								}
+							} else {
+								$errorforemail++;
 							}
 						}
 
-						// Load object linked to email
-						if (is_object($objectemail)) {
-							$result = $objectemail->fetch($objectid);
-							if ($result > 0) {
-								$fk_element_id = $objectemail->id;
-								$fk_element_type = $objectemail->element;
-								// Fix fk_element_type
-								if ($fk_element_type == 'facture') {
-									$fk_element_type = 'invoice';
+						if (!is_object($objectemail) && isModEnabled('recruitment')) {
+							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+								if ($obj) {
+									$objectid = $obj->rowid;
+									$objectemail = new RecruitmentCandidature($this->db);
+									$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								}
+							} else {
+								$errorforemail++;
+							}
+						}
+					}
 
-								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
+					// Load object linked to email
+					if (is_object($objectemail)) {
+						$result = $objectemail->fetch($objectid);
+						if ($result > 0) {
+							$fk_element_id = $objectemail->id;
+							$fk_element_type = $objectemail->element;
+							// Fix fk_element_type
+							if ($fk_element_type == 'facture') {
+								$fk_element_type = 'invoice';
+							}
+
+							if (get_class($objectemail) != 'Societe') {
+								$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
+							} else {
+								$thirdpartyid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) != 'Contact') {
+								$contactid = $objectemail->fk_socpeople;
+							} else {
+								$contactid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) != 'Project') {
+								$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+							} else {
+								$projectid = $objectemail->id;
+							}
+
+							if (get_class($objectemail) == 'Ticket') {
+								$ticketid = $objectemail->id;
+
+								$changeonticket_references = false;
+								if (empty($trackid)) {
+									$trackid = $objectemail->track_id;
+								}
+								if (empty($objectemail->origin_references)) {
+									$objectemail->origin_references = $headers['References'];
+									$changeonticket_references = true;
 								} else {
-									$thirdpartyid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) != 'Contact') {
-									$contactid = $objectemail->fk_socpeople;
-								} else {
-									$contactid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) != 'Project') {
-									$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
-								} else {
-									$projectid = $objectemail->id;
-								}
-
-								if (get_class($objectemail) == 'Ticket') {
-									$changeonticket_references = false;
-									if (empty($trackid)) {
-										$trackid = $objectemail->track_id;
-									}
-									if (empty($objectemail->origin_references)) {
-										$objectemail->origin_references = $headers['References'];
-										$changeonticket_references = true;
-									} else {
-										foreach ($arrayofreferences as $key => $referencetmp) {
-											if (!str_contains($objectemail->origin_references, $referencetmp)) {
-												$objectemail->origin_references.= " ".$referencetmp;
-												$changeonticket_references = true;
-											}
+									foreach ($arrayofreferences as $key => $referencetmp) {
+										if (!str_contains($objectemail->origin_references, $referencetmp)) {
+											$objectemail->origin_references.= " ".$referencetmp;
+											$changeonticket_references = true;
 										}
 									}
-									if ($changeonticket_references) {
-										$objectemail->update($user);
-									}
+								}
+								if ($changeonticket_references) {
+									$objectemail->update($user);
 								}
 							}
 						}
+					}
 
-						// Project
-						if ($projectid > 0) {
-							$result = $projectstatic->fetch($projectid);
-							if ($result <= 0) {
-								$projectstatic->id = 0;
-							} else {
-								$projectid = $projectstatic->id;
-								if ($trackid) {
-									$projectfoundby = 'trackid ('.$trackid.')';
-								}
-								if (empty($contactid)) {
-									$contactid = $projectstatic->fk_contact;
-								}
-								if (empty($thirdpartyid)) {
-									$thirdpartyid = $projectstatic->fk_soc;
-								}
+					// Project
+					if ($projectid > 0) {
+						$result = $projectstatic->fetch($projectid);
+						if ($result <= 0) {
+							$projectstatic->id = 0;
+						} else {
+							$projectid = $projectstatic->id;
+							if ($trackid) {
+								$projectfoundby = 'trackid ('.$trackid.')';
+							}
+							if (empty($contactid)) {
+								$contactid = $projectstatic->fk_contact;
+							}
+							if (empty($thirdpartyid)) {
+								$thirdpartyid = $projectstatic->fk_soc;
 							}
 						}
-						// Contact
-						if ($contactid > 0) {
-							$result = $contactstatic->fetch($contactid);
-							if ($result <= 0) {
-								$contactstatic->id = 0;
-							} else {
-								$contactid = $contactstatic->id;
-								if ($trackid) {
-									$contactfoundby = 'trackid ('.$trackid.')';
-								}
-								if (empty($thirdpartyid)) {
-									$thirdpartyid = $contactstatic->fk_soc;
-								}
+					}
+					// Contact
+					if ($contactid > 0) {
+						$result = $contactstatic->fetch($contactid);
+						if ($result <= 0) {
+							$contactstatic->id = 0;
+						} else {
+							$contactid = $contactstatic->id;
+							if ($trackid) {
+								$contactfoundby = 'trackid ('.$trackid.')';
+							}
+							if (empty($thirdpartyid)) {
+								$thirdpartyid = $contactstatic->fk_soc;
 							}
 						}
-						// Thirdparty
-						if ($thirdpartyid > 0) {
-							$result = $thirdpartystatic->fetch($thirdpartyid);
-							if ($result <= 0) {
-								$thirdpartystatic->id = 0;
-							} else {
-								$thirdpartyid = $thirdpartystatic->id;
-								if ($trackid) {
-									$thirdpartyfoundby = 'trackid ('.$trackid.')';
-								}
+					}
+					// Thirdparty
+					if ($thirdpartyid > 0) {
+						$result = $thirdpartystatic->fetch($thirdpartyid);
+						if ($result <= 0) {
+							$thirdpartystatic->id = 0;
+						} else {
+							$thirdpartyid = $thirdpartystatic->id;
+							if ($trackid) {
+								$thirdpartyfoundby = 'trackid ('.$trackid.')';
 							}
 						}
+					}
 
-						if (is_object($objectemail)) {
-							break; // Exit loop of references. We already found an accurate reference
-						}
+					if (is_object($objectemail)) {
+						break; // Exit loop of references. We already found an accurate reference
 					}
 				}
 
@@ -2327,19 +2375,22 @@ class EmailCollector extends CommonObject
 							// Verify if ticket already exists to fall back on the right operation
 							$tickettocreate = new Ticket($this->db);
 							$errorfetchticket = 0;
-							$alreadycreated1 = 0;
+							$alreadycreated = 0;
 							if (!empty($trackid)) {
-								$alreadycreated1 = $tickettocreate->fetch(0, '', $trackid);
+								$alreadycreated = $tickettocreate->fetch(0, '', $trackid);
 							}
-							$alreadycreated2 = $tickettocreate->fetch(0, '', '', $msgid);
-							$alreadycreated = $alreadycreated1 + $alreadycreated2;
-							if ($alreadycreated1 < 0 || $alreadycreated2 < 0) {
-								$errorfetchticket ++;
+							if ($alreadycreated == 0 && !empty($msgid)) {
+								$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
+							}
+							if ($alreadycreated < 0) {
+								$errorfetchticket++;
 							}
 							if (empty($errorfetchticket)) {
 								if ($alreadycreated == 0) {
+									$operationslog .= '<br>Ticket not found using trackid='.$trackid.' or msgid='.$msgid;
 									$ticketalreadyexists = 0;
 								} else {
+									$operationslog .= '<br>Ticket already found using trackid='.$trackid.' or msgid='.$msgid;	// We change the operation type to do
 									$ticketalreadyexists = 1;
 									$operation['type'] = 'recordevent';
 								}
@@ -2347,6 +2398,8 @@ class EmailCollector extends CommonObject
 								$ticketalreadyexists = -1;
 							}
 						}
+
+						// Process now the operation type
 
 						// Search and create thirdparty
 						if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty') {
@@ -2675,6 +2728,8 @@ class EmailCollector extends CommonObject
 
 							$alreadycreated = $actioncomm->fetch(0, '', '', $msgid);
 							if ($alreadycreated == 0) {
+								$operationslog .= '<br>We did not find existing actionmail with msgid='.$msgid;
+
 								if ($projectstatic->id > 0) {
 									if ($projectfoundby) {
 										$descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
@@ -3198,7 +3253,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
 									} else {
-										// Create project
+										// Create ticket
 										$result = $tickettocreate->create($user);
 										if ($result <= 0) {
 											$errorforactions++;
@@ -3376,8 +3431,24 @@ class EmailCollector extends CommonObject
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
+
 							if (empty($mode)) {	// $mode > 0 is test
-								$imapemail->move($targetdir);
+								$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' to '.$targetdir;
+
+								$tmptargetdir = $targetdir;
+								if (!getDolGlobalString('MAIL_DISABLE_UTF7_ENCODE_OF_DIR')) {
+									$tmptargetdir = $this->getEncodedUtf7($targetdir);
+								}
+
+								$result = $imapemail->move($tmptargetdir);
+
+								if (empty($result)) {
+									dol_syslog("Failed to move email into target directory ".$targetdir);
+									$operationslog .= '<br>Failed to move email into target directory '.$targetdir;
+									$errorforemail++;
+								}
+							} else {
+								$operationslog .= '<br>Do not move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' (test mode)';
 							}
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($this->uidAsString($imapemail))." to ".$connectstringtarget, LOG_DEBUG);
