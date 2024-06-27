@@ -3182,11 +3182,12 @@ if (!GETPOST('hide_websitemenu')) {
     		</Directory>';
 
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
-			$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
+			$htmltext .= '<div class="quatrevingtpercent exampleapachesetup" spellcheck="false">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
 
 			$htmltext .= '<br>';
-			$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
-			$htmltext .= '<br>';
+			$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS");
+			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
+			$htmltext .= ajax_autoselect("cliphpserver");
 			$htmltext .= '<br>';
 			$htmltext .= $langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
@@ -4362,7 +4363,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						jQuery(".trpublicauthor").hide();
 					}
 					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'service\' || jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'library\') {
-						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_");
 						jQuery(".spanprefix").show();
 					} else {
 						jQuery(".spanprefix").hide();
@@ -4384,18 +4385,19 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
 	print '<span class="opacitymedium spanprefix hidden"></span> ';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_page_/', '', (string) $pageurl)).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_/', '', (string) $pageurl)).'">';
 	print '</td></tr>';
 
 	print '<script type="text/javascript">
 			$(document).ready(function() {
+				console.log("Manage prefix for service or library");
 				if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
-					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_");
 					$(".spanprefix").show();
 				}
 				$(".websiteformtoolbar").on("submit", function(event) {
 					if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
-						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_";
+						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_";
 						var userInput = $("#WEBSITE_PAGENAME").val();
 						var $inputField = $("#WEBSITE_PAGENAME");
 						if (userInput.indexOf(prefix) !== 0) {
