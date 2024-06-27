@@ -979,9 +979,9 @@ if (empty($text)) {
 print $text;
 
 // Output payment summary form
-print '<tr><td align="center">';
-print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="center">';	// class=center does not have the payment button centered so we keep align here.
+print '<table class="centpercent left" id="tablepublicpayment">';
+print '<tr class="hideonsmartphone"><td colspan="2" align="left" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found = false;
 $error = 0;
