@@ -1965,7 +1965,21 @@ class EmailCollector extends CommonObject
 					$to = $overview['to'];
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
+
+					$tmpdate = $overview['date']->toDate();
+					$tmptimezone = $tmpdate->getTimezone()->getName();
+
 					$dateemail = dol_stringtotime((string) $overview['date'], 'gmt');    // if $overview['timezone'] is "+00:00"
+					if (preg_match('/^([+\-])(\d\d):(\d\d)/', $tmptimezone, $reg)) {
+						if ($reg[1] == '+' && ($reg[2] != '00' || $reg[3] != '00')) {
+							$dateemail -= (3600 * (int) $reg[2]);
+							$dateemail -= (60 * (int) $reg[3]);
+						}
+						if ($reg[1] == '-' && ($reg[2] != '00' || $reg[3] != '00')) {
+							$dateemail += (3600 * (int) $reg[2]);
+							$dateemail += (60 * (int) $reg[3]);
+						}
+					}
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
@@ -2348,11 +2362,20 @@ class EmailCollector extends CommonObject
 						dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
 						dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
+						// Try to guess if this is an email in or out.
 						$actioncode = 'EMAIL_IN';
 						// If we scan the Sent box, we use the code for out email
 						if (preg_match('/Sent$/', $sourcedir)) {
 							$actioncode = 'EMAIL_OUT';
 						}
+						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
+						$arrayofemailtoconsideresender = explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'));
+						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
+							if (preg_match('/'.preg_quote($emailtoconsidersender, '/').'/', $fromstring)) {
+								$actioncode = 'EMAIL_OUT';
+							}
+						}
+						$operationslog .= '<br>Email will have actioncode='.$actioncode;
 
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
@@ -2816,7 +2839,7 @@ class EmailCollector extends CommonObject
 													$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
 												} else {
 													$errorforactions++;
-													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+													$this->error = 'Error while changing the ticket status -> ref='.$objectemail->ref;
 													$this->errors[] = $this->error;
 												}
 											}
