@@ -832,11 +832,11 @@ class Mos extends DolibarrApi
 				$moline->fk_mo = $this->mo->id;
 				$moline->position = $pos;
 				$moline->fk_product = $tmpproduct->id;
-				$moline->fk_warehouse = $idstockmove > 0 ? $fk_warehousetoprocess : NULL;
+				$moline->fk_warehouse = $idstockmove > 0 ? $fk_warehousetoprocess : null;
 				$moline->qty = $qtytoprocess;
 				$moline->batch = '';
 				$moline->fk_mrp_production = $molinetoprocess->id;
-				$moline->fk_stock_movement = $idstockmove > 0 ? $idstockmove : NULL;
+				$moline->fk_stock_movement = $idstockmove > 0 ? $idstockmove : null;
 				$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
 				if ($arrayname == "arraytoconsume") {
