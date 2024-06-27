@@ -2365,14 +2365,14 @@ class EmailCollector extends CommonObject
 						// Try to guess if this is an email in or out.
 						$actioncode = 'EMAIL_IN';
 						// If we scan the Sent box, we use the code for out email
-						if (preg_match('/Sent$/', $sourcedir)) {
-							$actioncode = 'EMAIL_OUT';
+						if (preg_match('/Sent$/', $sourcedir) || preg_match('/envoyés$/i', $sourcedir)) {
+							$actioncode = 'EMAIL';
 						}
 						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
 						$arrayofemailtoconsideresender = explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'));
 						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
 							if (preg_match('/'.preg_quote($emailtoconsidersender, '/').'/', $fromstring)) {
-								$actioncode = 'EMAIL_OUT';
+								$actioncode = 'EMAIL';
 							}
 						}
 						$operationslog .= '<br>Email will have actioncode='.$actioncode;
