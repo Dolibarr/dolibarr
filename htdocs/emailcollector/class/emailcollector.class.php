@@ -1965,7 +1965,7 @@ class EmailCollector extends CommonObject
 					$to = $overview['to'];
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
-					$date = $overview['date'];
+					$dateemail = dol_stringtotime((string) $overview['date'], 'gmt');    // if $overview['timezone'] is "+00:00"
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
@@ -1975,7 +1975,7 @@ class EmailCollector extends CommonObject
 					$to = $overview[0]->to;
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
-					$date = $overview[0]->udate;
+					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$subject = $overview[0]->subject;
 					//var_dump($msgid);exit;
 				}
@@ -2038,7 +2038,7 @@ class EmailCollector extends CommonObject
 				// var_dump($arrayofreferences);
 
 				foreach ($arrayofreferences as $reference) {
-					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
+					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($dateemail, 'dayhour', 'gmt').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
 					if (!empty($trackidfoundintorecipienttype)) {
 						$resultsearchtrackid = -1;		// trackid found
 						$reg[1] = $trackidfoundintorecipienttype;
@@ -2358,7 +2358,7 @@ class EmailCollector extends CommonObject
 
 						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
-						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($date, "dayhourtext")));
+						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($dateemail, "dayhourtext", "gmt")));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
@@ -2764,8 +2764,8 @@ class EmailCollector extends CommonObject
 								$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 								$actioncomm->note_private = $descriptionfull;
 								$actioncomm->fk_project  = $projectstatic->id;
-								$actioncomm->datep       = $date;	// date of email
-								$actioncomm->datef       = $date;	// date of email
+								$actioncomm->datep       = $dateemail;	// date of email
+								$actioncomm->datef       = $dateemail;	// date of email
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
@@ -3440,8 +3440,11 @@ class EmailCollector extends CommonObject
 									$tmptargetdir = $this->getEncodedUtf7($targetdir);
 								}
 
-								$result = $imapemail->move($tmptargetdir);
-
+								try {
+									$result = $imapemail->move($tmptargetdir);
+								} catch (Exception $e) {
+									// Nothing to do. $result will remain 0
+								}
 								if (empty($result)) {
 									dol_syslog("Failed to move email into target directory ".$targetdir);
 									$operationslog .= '<br>Failed to move email into target directory '.$targetdir;
