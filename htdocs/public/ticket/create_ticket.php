@@ -541,11 +541,13 @@ if ($action != "infos_success") {
 		print '</div>';
 	} else {
 		//print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm(0, 'edit', 1, $with_contact);
+		$formticket->showForm(0, 'edit', 1, $with_contact, '', $object);
 	}
 }
 
 print '</div>';
+
+print '<br>';
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page

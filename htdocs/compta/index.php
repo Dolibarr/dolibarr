@@ -102,7 +102,12 @@ llxHeader("", $langs->trans("InvoicesArea"));
 print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 if (isModEnabled('invoice')) {
 	print getNumberInvoicesPieChart('customers');
@@ -124,7 +129,8 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
-print '</div><div class="fichetwothirdright">';
+
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 // Latest modified customer invoices
@@ -765,7 +771,7 @@ if ($sql) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook

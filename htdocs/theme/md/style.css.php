@@ -736,7 +736,7 @@ td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
@@ -4376,8 +4376,8 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 6px;
-  padding-bottom: 5px;
+  /* padding-top: 6px;
+  padding-bottom: 5px; */
 }
 .pagination {
   display: inline-block;
@@ -5222,9 +5222,14 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.centpercent.notopnoleftnoright.table-fiche-title {
-	margin-bottom: 10px !important;
+table.notopnoleftnoright.table-fiche-title {
+	margin-bottom: 14px;
 }
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
+}
+
+
 table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }

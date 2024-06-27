@@ -533,11 +533,15 @@ td.onholidayallday:not(.weekend) input {
 	background-color: #f8f7f0;
 }
 td.weekend {	/* must be after td.onholidayallday */
-	background-color: #eee;
+	background-color: #f8f4f4;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
+tr:hover td.weekend {
+	background: var(--colorbacklinepairhover) !important;
+}
+
 /*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
@@ -5196,7 +5200,10 @@ table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-r
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
+}
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
 }
 
 
@@ -8098,6 +8105,10 @@ table.jPicker {
 	#bookinghoursection {
 		font-size: small;
 		width: 122px;
+	}
+
+	#dolpublictable {
+		padding: 10px;
 	}
 }
 
