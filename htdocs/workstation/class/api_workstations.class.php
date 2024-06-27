@@ -68,7 +68,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
+		return $this->_fetch($id, '');
 	}
 
 	/**
