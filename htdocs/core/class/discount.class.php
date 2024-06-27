@@ -4,6 +4,7 @@
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,10 +428,12 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
 	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
 	 *	@return		int<-3,1>				Return integer <0 if KO, >0 if OK
 	 */
-	public function link_to_invoice($rowidline, $rowidinvoice)
+	public function link_to_invoice($rowidline, $rowidinvoice, $notrigger = 0)
 	{
+		global $user;
 		// phpcs:enable
 		// Check parameters
 		if (!$rowidline && !$rowidinvoice) {
@@ -470,6 +473,14 @@ class DiscountAbsolute extends CommonObject
 				$this->fk_facture_line = $rowidline;
 				$this->fk_facture = $rowidinvoice;
 			}
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_LINK_TO_INVOICE', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -483,9 +494,10 @@ class DiscountAbsolute extends CommonObject
 	 *	Link the discount to a particular invoice line or a particular invoice.
 	 *	Do not call this if discount is linked to a reconcialiated invoice
 	 *
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
 	 *	@return		int<-3,1>					Return integer <0 if KO, >0 if OK
 	 */
-	public function unlink_invoice()
+	public function unlink_invoice($notrigger = 0)
 	{
 		// phpcs:enable
 		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
@@ -499,6 +511,14 @@ class DiscountAbsolute extends CommonObject
 		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_UNLINK_INVOICE', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->error();
