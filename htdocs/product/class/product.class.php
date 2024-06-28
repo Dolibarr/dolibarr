@@ -1036,7 +1036,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (isModEnabled('barcode') && getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
-			$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+			$module = strtolower(getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM'));
 
 			$dirsociete = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 			foreach ($dirsociete as $dirroot) {
