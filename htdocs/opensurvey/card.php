@@ -101,8 +101,8 @@ if (empty($reshook)) {
 		$object->update($user);
 	}
 
-	// Reopend
-	if ($action == 'reopen') {
+	// Valid or Reopend
+	if ($action == 'reopen' || $action == 'validate') {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
@@ -375,6 +375,11 @@ print '<div class="tabsAction">';
 if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
+
+	if ($object->status == Opensurveysondage::STATUS_DRAFT) {
+		// Validate button
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Valid").'</a>';
+	}
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		// Close button
