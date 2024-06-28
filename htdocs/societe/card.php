@@ -380,12 +380,12 @@ if (empty($reshook)) {
 			$object->typent_code			= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code'); // Force typent_code too so check in verify() will be done on new type
 
 			// Calculate the type of the thirdparty
-			$customer = GETPOSTINT('customer') > 0 ? 1 : 0;
-			$prospect = GETPOSTINT('prospect') > 0 ? 2 : 0;
+			$customer = (GETPOSTINT('customer') > 0 ? 1 : 0);
+			$prospect = (GETPOSTINT('prospect') > 0 ? 2 : 0);
 			$prospectcustomer = $customer + $prospect;
 
 			$object->client					= $prospectcustomer;
-			$object->fournisseur			= GETPOSTINT('supplier');
+			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
 
 			$object->commercial_id			= GETPOSTINT('commercial_id');
 			$object->default_lang			= GETPOST('default_lang');
