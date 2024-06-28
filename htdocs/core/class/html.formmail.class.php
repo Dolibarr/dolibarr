@@ -1555,6 +1555,13 @@ class FormMail extends Form
 					var contentHtml = $(this).data("content");
 					var csrfToken = "'.newToken().'";
 
+					// get value of sujet input 
+					var subject = $("#sujet").val();
+
+					// Remplacer la variable de substitution dans le contenu HTML
+					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+
 					// Envoyer le contenu HTML à process_template.php pour traitement PHP
 					$.ajax({
 						type: "POST",
