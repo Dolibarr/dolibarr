@@ -47,11 +47,6 @@ if (empty($forceall)) {
 if (empty($filtertype)) {
 	$filtertype = 0;
 }
-// TODO: This can't work $object->element is always 'bom' and getDolGlobalString('STOCK_SUPPORT_SERVICES') are incorrect, 'STOCK_SUPPORTS_SERVICES' is right.
-// $filtertype with value -1 is not supported in the further course.
-if (!empty($object->element) && $object->element == 'contrat' && !getDolGlobalString('STOCK_SUPPORT_SERVICES')) {
-	$filtertype = -1;
-}
 
 $formproduct = new FormProduct($object->db);
 
@@ -76,23 +71,33 @@ if ($nolinesbefore) {
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
-	if ($filtertype != 1) {
+	if ($filtertype != 1) { // Product
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
 			print '</span></td>';
 		}
-		print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
-		print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
-		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
-	} else {
+	} else { // Service
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-		if (isModEnabled('workstation')) {
-			print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
-		}
-		print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
 	}
+	if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+		// Qty frozen
+		print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
+		// Disable stock change
+		print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
+
+		// Efficiency
+		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
+	}
+
+	// Service and workstations are active
+	if ($filtertype == 1 && isModEnabled('workstation')) {
+		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+	}
+	// Cost
+	print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
 
 	print '<td class="linecoledit" colspan="' . $colspan . '">&nbsp;</td>';
 	print '</tr>';
@@ -154,7 +159,9 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="bordertop nobottom nowrap linecoluseunit left">';
+		// TODO: integrate selection for Units by creating (similar as by Service)
+		// print  $formproduct->selectMeasuringUnits("fk_unit", "", $fk_unit_default, 0, 0);
 		print '</td>';
 	}
 } else { // Service
