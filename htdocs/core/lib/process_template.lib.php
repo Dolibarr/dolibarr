@@ -1,7 +1,6 @@
 <?php
 
-
-error_reporting(E_ALL);
+// Just for display errors in editor
 ini_set('display_errors', 1);
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -22,6 +21,8 @@ if (!defined('NOREQUIRESOC')) {
 require_once '../../main.inc.php';
 require_once './files.lib.php';
 
+top_httphead();
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
 	$content = $_POST['content'];
 
@@ -40,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
 	} while (file_exists($filePath));
 
 	file_put_contents($filePath, $content);
+
+	$output = '';
 
 	ob_start();
 	try {
