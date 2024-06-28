@@ -47,6 +47,8 @@ if (empty($forceall)) {
 if (empty($filtertype)) {
 	$filtertype = 0;
 }
+// TODO: This can't work $object->element is always 'bom' and getDolGlobalString('STOCK_SUPPORT_SERVICES') are incorrect, 'STOCK_SUPPORTS_SERVICES' is right.
+// $filtertype with value -1 is not supported in the further course.
 if (!empty($object->element) && $object->element == 'contrat' && !getDolGlobalString('STOCK_SUPPORT_SERVICES')) {
 	$filtertype = -1;
 }
@@ -149,32 +151,13 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if ($filtertype != 1) {
+if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';
 	}
-
-	$coldisplay++;
-	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
-	print '</td>';
-
-
-	$coldisplay++;
-	print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '') . '">';
-	print '</td>';
-
-	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecollost right">';
-	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . ((GETPOSTISSET("efficiency") && $action == 'addline') ? GETPOST("efficiency", 'alpha') : 1) . '">';
-	print '</td>';
-
-	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolcost right">';
-	print '&nbsp;';
-	print '</td>';
-} else {
+} else { // Service
 	$coldisplay++;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$cUnit = new CUnits($this->db);
@@ -182,23 +165,44 @@ if ($filtertype != 1) {
 	print '<td class="bordertop nobottom nowrap linecolunit right">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
 	print '</td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+	// Qty frozen
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
+	print '</td>';
 
+	// Disable stock change
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '') . '">';
+	print '</td>';
+
+	// Efficiency
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecollost right">';
+	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . ((GETPOSTISSET("efficiency") && $action == 'addline') ? GETPOST("efficiency", 'alpha') : 1) . '">';
+	print '</td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
 	print $formproduct->selectWorkstations('', 'idworkstations', 1);
 	print '</td>';
-
-	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolcost right">';
-	print '&nbsp;';
-	print '</td>';
 }
 
-	$coldisplay += $colspan;
-	print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="' . $colspan . '">';
-	print '<input type="submit" class="button button-add" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
-	print '</td>';
-	print '</tr>';
+// Cost
+$coldisplay++;
+print '<td class="bordertop nobottom nowrap linecolcost right">';
+print '&nbsp;';
+print '</td>';
+
+$coldisplay += $colspan;
+print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="' . $colspan . '">';
+print '<input type="submit" class="button button-add" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
+print '</td>';
+print '</tr>';
 
 ?>
 

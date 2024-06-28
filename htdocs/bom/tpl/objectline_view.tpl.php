@@ -130,7 +130,7 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if ($filtertype != 1) {
+if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = measuringUnitString($line->fk_unit, '', '', 1);
@@ -139,21 +139,7 @@ if ($filtertype != 1) {
 		}
 		print '</td>';
 	}
-
-	print '<td class="linecolqtyfrozen nowrap right">';
-	$coldisplay++;
-	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-	print '</td>';
-	print '<td class="linecoldisablestockchange nowrap right">';
-	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
-	print '</td>';
-
-	print '<td class="linecolefficiency nowrap right">';
-	$coldisplay++;
-	echo $line->efficiency;
-	print '</td>';
-} else {
+} else { // Service
 	// Unit
 	print '<td class="linecolunit nowrap right">';
 	$coldisplay++;
@@ -166,19 +152,38 @@ if ($filtertype != 1) {
 	}
 
 	print '</td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+	// Qty frozen
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
+	print '</td>';
+	print '<td class="linecoldisablestockchange nowrap right">';
 
-	// Work station
-	if (isModEnabled('workstation')) {
-		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($line->fk_default_workstation);
+	// Disable stock change
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print '</td>';
 
-		print '<td class="linecolworkstation nowrap right">';
-		$coldisplay++;
-		if ($res > 0) {
-			echo $workstation->getNomUrl(1);
-		}
-		print '</td>';
+	// Efficiency
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
+	$workstation = new Workstation($object->db);
+	$res = $workstation->fetch($line->fk_default_workstation);
+
+	print '<td class="linecolworkstation nowrap right">';
+	$coldisplay++;
+	if ($res > 0) {
+		echo $workstation->getNomUrl(1);
 	}
+	print '</td>';
 }
 
 // Cost
