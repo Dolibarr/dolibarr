@@ -8,13 +8,14 @@
 
 
     $keyword = '';
-    //$weblangs->loadLangs(array("main"));
+    $weblangs = new Translate($db,$conf);
+    $weblangs->loadLangs(array("main"));
     $websitepage = new WebsitePage($db);
     $fuser = new User($db);
-    $arrayofblogs = $websitepage->fetchAll(32, 'DESC', 'date_creation', 5, 0, array('type_container'=>'blogpost', 'keywords'=>$keyword));
+    $arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 5, 0, array('type_container'=>'blogpost', 'keywords'=>$keyword));
     if (is_numeric($arrayofblogs) && $arrayofblogs < 0)
     {
-        //print '<div class="error">'.$weblangs->trans($websitepage->error).'</div>';
+        print '<div class="error">'.$weblangs->trans($websitepage->error).'</div>';
         }
         elseif (is_array($arrayofblogs) && ! empty($arrayofblogs))
         {
@@ -39,7 +40,7 @@
     } else{
         print '<div class="row justify-content-sm-center row-40">';
         print '<div class="container blog-box centpercent" style="padding: 20px; transition: .3s all ease;">';
-        // print $weblangs->trans("NoArticlesFoundForTheKeyword", $keyword);
+        print $weblangs->trans("NoArticlesFoundForTheKeyword", $keyword);
         print '</div>';
         print '</div>';
 
