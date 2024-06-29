@@ -1581,7 +1581,7 @@ while ($i < $imaxinloop) {
 		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
 		if ((isModEnabled('stock') && $user->hasRight('stock', 'lire') && $search_type != 1) || getDolGlobalString('STOCK_DISABLE_OPTIM_LOAD')) {	// To optimize call of load_stock
 			if ($product_static->type != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {    // Not a service
-				$option = 'nobatch';
+				$option = 'nobatch,warehouseopen';
 				if (empty($arrayfields['stock_virtual']['checked'])) {
 					$option .= ',novirtual';
 				}

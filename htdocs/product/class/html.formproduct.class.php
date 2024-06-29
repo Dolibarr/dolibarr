@@ -85,13 +85,14 @@ class FormProduct
 		$warehouseStatus = array();
 
 		if (preg_match('/warehouseclosed/', $status)) {
-			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
+			$warehouseStatus[Entrepot::STATUS_CLOSED] = Entrepot::STATUS_CLOSED;
 		}
 		if (preg_match('/warehouseopen/', $status)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
+			$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
 		}
 		if (preg_match('/warehouseinternal/', $status)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
+			$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
+			$warehouseStatus[Entrepot::STATUS_OPENEXT_ALL] = Entrepot::STATUS_OPENEXT_ALL;
 		}
 
 		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";

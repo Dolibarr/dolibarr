@@ -175,6 +175,7 @@ NoPendingReceptionOnSupplierOrder=No pending reception due to open purchase orde
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAnyMovement=Open (all movement)
 OpenInternal=Open (only internal movement)
+OpenExtAll=Open (omitted from stock calculation)
 UseDispatchStatus=Use a dispatch status (approve/refuse) for product lines on purchase order reception
 OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a product has several selling price so value for sell can't be calculated
 ProductStockWarehouseCreated=Stock limit for alert and desired optimal stock correctly created
