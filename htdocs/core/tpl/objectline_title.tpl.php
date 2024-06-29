@@ -167,7 +167,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
-		if ($user->hasRight("propal", "creer")) {
+		if ($object->status == $object::STATUS_DRAFT && $user->hasRight("propal", "creer")) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
 				print '<div class="classmarginforalllines inline-block nowraponall">';
