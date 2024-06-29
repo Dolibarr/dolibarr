@@ -150,7 +150,7 @@ class Propal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|string $date_creation;
+	 * @var integer|'' $date_creation;
 	 */
 	public $date_creation;
 
@@ -161,12 +161,12 @@ class Propal extends CommonObject
 	public $datev;
 
 	/**
-	 * @var integer|string $date_validation;
+	 * @var integer|'' $date_validation;
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|string $date_signature;
+	 * @var integer|'' $date_signature;
 	 */
 	public $date_signature;
 
@@ -176,7 +176,7 @@ class Propal extends CommonObject
 	public $user_signature;
 
 	/**
-	 * @var integer|string date of the quote;
+	 * @var integer|'' date of the quote;
 	 */
 	public $date;
 
@@ -187,13 +187,16 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|string 	$delivery_date;
+	 * @var integer|'' 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 
 	public $fin_validite;
 
+	/**
+	 * @var int ID of user author
+	 */
 	public $user_author_id;
 
 	/**
@@ -201,6 +204,7 @@ class Propal extends CommonObject
 	 * @see $total_ht
 	 */
 	public $price;
+
 	/**
 	 * @deprecated
 	 * @see $total_tva
@@ -254,10 +258,24 @@ class Propal extends CommonObject
 
 	public $duree_validite;
 
-	public $demand_reason_id;		// id
-	public $demand_reason_code;		// code
-	public $demand_reason;			// label
+	/**
+	 * @var int ID demand reason
+	 */
+	public $demand_reason_id;
 
+	/**
+	 * @var string ID demand reason code
+	 */
+	public $demand_reason_code;
+
+	/**
+	 * @var string ID demand reason label
+	 */
+	public $demand_reason;
+
+	/**
+	 * @var int ID of warehouse
+	 */
 	public $warehouse_id;
 
 	public $extraparams = array();

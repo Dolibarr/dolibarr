@@ -956,7 +956,7 @@ class Task extends CommonObjectLine
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
 		$this->fk_user_creat = $user->id;
-		$this->progress = '25';
+		$this->progress = 25;
 		$this->status = 0;
 		$this->priority = 0;
 		$this->note_private = 'This is a specimen private note';
