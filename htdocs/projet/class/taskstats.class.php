@@ -26,7 +26,15 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class TaskStats extends Stats
 {
 	private $project; // @phpstan-ignore-line
+
+	/**
+	 * @var int ID of User
+	 */
 	public $userid;
+
+	/**
+	 * @var int ID of Societe
+	 */
 	public $socid;
 
 	/**
