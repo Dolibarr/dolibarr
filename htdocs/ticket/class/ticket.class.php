@@ -233,7 +233,7 @@ class Ticket extends CommonObject
 	public $email_msgid;
 
 	/**
-	 * @var int|string 	Email Date
+	 * @var null|int|'' 	Email Date
 	 */
 	public $email_date;
 
@@ -556,7 +556,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? ((int) $user->id) : 'NULL') : ($this->fk_user_create > 0 ? ((int) $this->fk_user_create) : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? ((int) $this->fk_user_assign) : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
-			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
+			$sql .= " ".(!isDolTms($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
 			$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
