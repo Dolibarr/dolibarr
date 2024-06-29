@@ -113,6 +113,12 @@ if ($action == 'update') {
 	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES')) {
+		dolibarr_set_const($db, "INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES", GETPOSTINT("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES"), 'chaine', 0, '', $conf->entity);
+		if (GETPOSTINT('INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES') == 1) {
+			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+		}
+	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -315,6 +321,17 @@ if (isModEnabled('invoice')) {
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->INVOICE_SHOW_SHIPPING_ADDRESS);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES"), $langs->trans("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICESMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES", $arrval, getDolGlobalString('INVOICE_NO_TRUNCATE_IBAN_FOR_PDF_INVOICES'));
 	}
 	print '</td></tr>';
 
