@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2015  Florian HENRY               <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class TaskStats extends Stats
 {
-	private $project;
+	private $project; // @phpstan-ignore-line
+
+	/**
+	 * @var int ID of User
+	 */
 	public $userid;
+
+	/**
+	 * @var int ID of Societe
+	 */
 	public $socid;
 
 	/**
