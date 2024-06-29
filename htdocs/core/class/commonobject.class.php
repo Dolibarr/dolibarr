@@ -9078,7 +9078,7 @@ abstract class CommonObject
 						}
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-						$out .= ($display_type == 'card' ? '</tr>' : '</div>');
+						$out .= ($display_type == 'card' ? '</tr>'."\n" : '</div>');
 						$e++;
 					}
 				}

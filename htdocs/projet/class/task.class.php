@@ -81,23 +81,51 @@ class Task extends CommonObjectLine
 	 */
 	public $description;
 
-	public $duration_effective; // total of time spent on this task
+	/**
+	 * @var float|'' total of time spent on this task
+	 */
+	public $duration_effective;
+
+	/**
+	 * @var float|'' planned workload
+	 */
 	public $planned_workload;
+
+	/**
+	 * @var null|int|'' date creation
+	 * @see isDolTms()
+	 */
 	public $date_c;
+
+	/**
+	 * @var int|'' progress
+	 */
 	public $progress;
 
 	/**
+	 * @var null|int|'' start date
+	 * @see isDolTms()
 	 * @deprecated Use date_start instead
 	 */
 	public $dateo;
 
+	/**
+	 * @var null|int|'' start date
+	 * @see isDolTms()
+	 */
 	public $date_start;
 
 	/**
+	 * @var null|int|'' end date
+	 * @see isDolTms()
 	 * @deprecated Use date_end instead
 	 */
 	public $datee;
 
+	/**
+	 * @var null|int|'' end date
+	 * @see isDolTms()
+	 */
 	public $date_end;
 
 	/**
@@ -111,6 +139,9 @@ class Task extends CommonObjectLine
 	 */
 	public $status;
 
+	/**
+	 * @var int priority
+	 */
 	public $priority;
 
 	/**
@@ -151,6 +182,10 @@ class Task extends CommonObjectLine
 
 	// Properties calculated from sum of llx_element_time linked to task
 	public $tobill;
+
+	/**
+	 * @var int is task billed
+	 */
 	public $billed;
 
 	// Properties to store project information
@@ -279,8 +314,8 @@ class Task extends CommonObjectLine
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : 'null');
-		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : 'null');
+		$sql .= ", ".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null');
+		$sql .= ", ".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
@@ -398,7 +433,7 @@ class Task extends CommonObjectLine
 				$this->planned_workload = $obj->planned_workload;
 				$this->date_c = $this->db->jdate($obj->datec);
 				$this->date_start = $this->db->jdate($obj->date_start);
-				$this->date_end				= $this->db->jdate($obj->date_end);
+				$this->date_end = $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut		    = $obj->status;
@@ -496,8 +531,8 @@ class Task extends CommonObjectLine
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " duration_effective=".(isset($this->duration_effective) ? $this->duration_effective : "null").",";
 		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? $this->planned_workload : "null").",";
-		$sql .= " dateo=".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
-		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
+		$sql .= " dateo=".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
+		$sql .= " datee=".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? ((int) $this->rang) : "0").",";
@@ -921,7 +956,7 @@ class Task extends CommonObjectLine
 		$this->label = 'Specimen task TK01';
 		$this->duration_effective = '';
 		$this->fk_user_creat = $user->id;
-		$this->progress = '25';
+		$this->progress = 25;
 		$this->status = 0;
 		$this->priority = 0;
 		$this->note_private = 'This is a specimen private note';
