@@ -19,6 +19,7 @@
 CREATE TABLE llx_hrm_evaluation(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity INTEGER DEFAULT 1 NOT NULL,     -- multi company id
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
 	label varchar(255),
 	description text,

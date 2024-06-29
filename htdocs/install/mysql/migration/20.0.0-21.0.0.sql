@@ -32,6 +32,18 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+DROP TABLE llx_contratdet_log;
+
 
 -- add billable attribute to project task
 ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
+
+ALTER TABLE llx_inventory DROP COLUMN datec;
+
+
+ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN localtax2 double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;

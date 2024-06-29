@@ -1333,6 +1333,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$top_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
+		$posx = $posx+10;
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
