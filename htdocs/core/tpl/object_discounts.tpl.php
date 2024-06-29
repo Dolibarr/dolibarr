@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ if ($isNewObject) {
 if ($absolute_discount > 0) {
 	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = empty($discount_type) ? 'CompanyHasDownPaymentOrCommercialDiscount' : 'HasDownPaymentOrCommercialDiscountFromSupplier';
-		$text = $langs->trans($translationKey, price($absolute_discount, 1, $outlangs, 1, -1, -1, $conf->currency)).'.';
+		$text = $langs->trans($translationKey, price($absolute_discount, 1, $langs, 1, -1, -1, $conf->currency)).'.';
 
 		if ($isInvoice && !$isNewObject && $object->statut > $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('AbsoluteDiscountUse'));
