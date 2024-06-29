@@ -278,8 +278,6 @@ class Propal extends CommonObject
 	 */
 	public $warehouse_id;
 
-	public $extraparams = array();
-
 	/**
 	 * @var PropaleLigne[]
 	 */
