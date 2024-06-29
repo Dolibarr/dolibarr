@@ -150,7 +150,7 @@ class Propal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|string $date_creation;
+	 * @var integer|'' $date_creation;
 	 */
 	public $date_creation;
 
@@ -161,12 +161,12 @@ class Propal extends CommonObject
 	public $datev;
 
 	/**
-	 * @var integer|string $date_validation;
+	 * @var integer|'' $date_validation;
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|string $date_signature;
+	 * @var integer|'' $date_signature;
 	 */
 	public $date_signature;
 
@@ -176,7 +176,7 @@ class Propal extends CommonObject
 	public $user_signature;
 
 	/**
-	 * @var integer|string date of the quote;
+	 * @var integer|'' date of the quote;
 	 */
 	public $date;
 
@@ -187,13 +187,19 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|string 	$delivery_date;
+	 * @var integer|'' 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 
+	/**
+	 * @var integer|'' 	end of validity
+	 */
 	public $fin_validite;
 
+	/**
+	 * @var int ID of user author
+	 */
 	public $user_author_id;
 
 	/**
@@ -201,6 +207,7 @@ class Propal extends CommonObject
 	 * @see $total_ht
 	 */
 	public $price;
+
 	/**
 	 * @deprecated
 	 * @see $total_tva
@@ -254,13 +261,25 @@ class Propal extends CommonObject
 
 	public $duree_validite;
 
-	public $demand_reason_id;		// id
-	public $demand_reason_code;		// code
-	public $demand_reason;			// label
+	/**
+	 * @var int ID demand reason
+	 */
+	public $demand_reason_id;
 
+	/**
+	 * @var string ID demand reason code
+	 */
+	public $demand_reason_code;
+
+	/**
+	 * @var string ID demand reason label
+	 */
+	public $demand_reason;
+
+	/**
+	 * @var int ID of warehouse
+	 */
 	public $warehouse_id;
-
-	public $extraparams = array();
 
 	/**
 	 * @var PropaleLigne[]
@@ -1001,7 +1020,7 @@ class Propal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$line = new PropaleLigne($this->db);
@@ -1162,7 +1181,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
 		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
-		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
+		$sql .= ", ".(!isDolTms($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
 		$sql .= ", ".$this->availability_id;
@@ -1409,6 +1428,7 @@ class Propal extends CommonObject
 
 			// reset ref_client
 			$object->ref_client = '';
+			$object->ref_customer = '';
 
 			// TODO Change product price if multi-prices
 		} else {
@@ -1484,6 +1504,7 @@ class Propal extends CommonObject
 		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$object->ref_client = '';
+			$object->ref_customer = '';
 		}
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
 			$object->note_private = '';
@@ -1764,7 +1785,7 @@ class Propal extends CommonObject
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
@@ -1967,7 +1988,7 @@ class Propal extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -2283,7 +2304,7 @@ class Propal extends CommonObject
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2326,7 +2347,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -2346,7 +2367,7 @@ class Propal extends CommonObject
 	public function set_demand_reason($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2391,7 +2412,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -2615,8 +2636,8 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->statut;
-				$this->status = $this->oldcopy->statut;
+				$this->statut = $this->oldcopy->status;
+				$this->status = $this->oldcopy->status;
 				$this->date_signature = $this->oldcopy->date_signature;
 				$this->note_private = $this->oldcopy->note_private;
 
@@ -2689,6 +2710,7 @@ class Propal extends CommonObject
 
 			$this->oldcopy = clone $this;
 			$this->statut = self::STATUS_BILLED;
+			$this->status = self::STATUS_BILLED;
 			$this->date_cloture = $now;
 			$this->note_private = $newprivatenote;
 		}
@@ -2745,6 +2767,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->statut = self::STATUS_CANCELED;
+				$this->status = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2776,7 +2799,7 @@ class Propal extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -3125,7 +3148,7 @@ class Propal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -3167,7 +3190,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -3231,7 +3254,7 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Propal status do not meet requirement '.$this->statut;
+			$error_str = 'Propal status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -3293,7 +3316,7 @@ class Propal extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
