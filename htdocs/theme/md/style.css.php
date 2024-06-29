@@ -2181,6 +2181,9 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
+	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
+		height: 28px !important;
+	}
 
 	div.tabs div.tab a.tab  {
 		max-width: 200px;
@@ -2230,7 +2233,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth400imp { min-width: 150px !important; }
 	.minwidth500imp { min-width: 250px !important; }
 	.titlefield { width: auto; min-width: unset; }
-	.titlefieldcreate { width: auto; }
+	.titlefieldcreate { min-width: 125px; /* width: auto !important; */ }
 
 	#tooltip {
 		position: absolute;
