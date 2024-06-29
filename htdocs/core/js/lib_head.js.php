@@ -563,7 +563,7 @@ function hideMessage(fieldId,message) {
  * @param	string	code		Code
  * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set

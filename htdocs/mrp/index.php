@@ -57,7 +57,11 @@ llxHeader('', $langs->trans("MRP"), '');
 print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 
 /*
@@ -151,7 +155,7 @@ if ($conf->use_javascript_ajax) {
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 /*
@@ -266,7 +270,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $object = new stdClass();
 $parameters = array(
