@@ -917,7 +917,11 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 	}
 } else {
 	print '<br><br>';
-	print $langs->trans("ConferenceIsNotConfirmed");
+	if ($project->status == $project::STATUS_DRAFT) {
+		print $langs->trans("ConferenceIsNotConfirmed");
+	} else {
+		print $langs->trans("EventRegistrationAreClosed");
+	}
 	print '<br><br>';
 }
 
