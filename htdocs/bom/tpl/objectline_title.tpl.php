@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -73,7 +73,7 @@ print '<td class="linecolqty width100 right">'.$form->textwithpicto($langs->tran
 
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit">' . $langs->trans('Unit') . '</td>';
+		print '<td class="linecoluseunit"></td>';
 	}
 
 	// Qty frozen
@@ -88,7 +88,7 @@ if ($filtertype != 1) {
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 } else {
-	print '<td class="linecolunit">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+	print '<td class="linecolunit"></td>';
 
 	// Qty frozen
 	print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
@@ -105,7 +105,7 @@ if ($filtertype != 1) {
 
 
 
-print '<td class="linecoledit"></td>'; // No width to allow autodim
+print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';
 

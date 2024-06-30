@@ -52,7 +52,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks('hrmindex');
@@ -112,7 +112,12 @@ if (!empty($setupcompanynotcomplete)) {
 }
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This is useless due to the global search combo
 	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
@@ -185,8 +190,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
-
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 // Latest modified leave requests
@@ -439,9 +443,9 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	}
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 

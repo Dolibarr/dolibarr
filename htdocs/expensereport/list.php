@@ -136,7 +136,7 @@ if ($search_user == '') {
 	$search_user = -1;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ExpenseReport($db);
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
@@ -681,7 +681,7 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['d.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
+	print $formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column

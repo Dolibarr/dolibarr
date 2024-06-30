@@ -86,7 +86,8 @@ class Product extends CommonObject
 		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
-		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo')
 	);
 
 	/**
@@ -427,7 +428,7 @@ class Product extends CommonObject
 	public $accountancy_code_buy_export;
 
 	/**
-	 * @var string|int	Main Barcode value, -1 for auto code
+	 * @var string|int	Main Barcode value, -1 or 'auto' for auto code
 	 */
 	public $barcode;
 
@@ -459,16 +460,6 @@ class Product extends CommonObject
 	//! Size of image
 	public $imgWidth;
 	public $imgHeight;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
 
 	//! Id du fournisseur
 	public $product_fourn_id;
@@ -686,11 +677,11 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Insert product into database
+	 * Insert product into database
 	 *
-	 * @param  User $user      User making insert
-	 * @param  int  $notrigger Disable triggers
-	 * @return int                         Id of product/service if OK, < 0 if KO
+	 * @param  User 	$user      		User making insert
+	 * @param  int  	$notrigger 		Disable triggers
+	 * @return int                      Id of product/service if OK, < 0 if KO
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -825,7 +816,7 @@ class Product extends CommonObject
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-		if ($this->barcode == -1) {
+		if ($this->barcode == '-1' || $this->barcode == 'auto') {
 			$this->barcode = $this->get_barcode($this, $this->barcode_type_code);
 		}
 

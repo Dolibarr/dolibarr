@@ -158,7 +158,7 @@ if ($sortfield == "") {
 	$sortfield = "t.piece_num,t.rowid";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array('bookkeepinglist'));
 
@@ -996,7 +996,7 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 	print $form->selectDate($search_date_modification_start, 'search_date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -1214,7 +1214,7 @@ while ($i < min($num, $limit)) {
 	// Document ref
 	$modulepart = '';
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
-		if ($line->doc_type == 'customer_invoice') {
+		if ($line->doc_type === 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1226,7 +1226,7 @@ while ($i < min($num, $limit)) {
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		} elseif ($line->doc_type == 'supplier_invoice') {
+		} elseif ($line->doc_type === 'supplier_invoice') {
 			$langs->loadLangs(array('bills'));
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -1247,7 +1247,7 @@ while ($i < min($num, $limit)) {
 			} else {
 				$documentlink = $line->doc_ref;
 			}
-		} elseif ($line->doc_type == 'expense_report') {
+		} elseif ($line->doc_type === 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -1259,7 +1259,7 @@ while ($i < min($num, $limit)) {
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		} elseif ($line->doc_type == 'bank') {
+		} elseif ($line->doc_type === 'bank') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
 			$objectstatic->fetch($line->fk_doc);
@@ -1270,11 +1270,11 @@ while ($i < min($num, $limit)) {
 		$labeltoshow = '';
 		$labeltoshowalt = '';
 		$classforlabel = '';
-		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
+		if ($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
 			$labeltoshowalt .= $objectstatic->ref;
-		} elseif ($line->doc_type == 'bank') {
+		} elseif ($line->doc_type === 'bank') {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');

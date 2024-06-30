@@ -52,7 +52,7 @@ if (!$sortorder) {
 	$sortorder = "asc";
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
 $form = new Form($db);
 $object = new stdClass();

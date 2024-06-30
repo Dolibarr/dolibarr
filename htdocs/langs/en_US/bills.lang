@@ -327,6 +327,7 @@ ShowDiscount=Show discount
 ShowReduc=Show the discount
 ShowSourceInvoice=Show the source invoice
 RelativeDiscount=Relative discount
+AbsoluteDiscount=Absolute discount
 GlobalDiscount=Global discount
 CreditNote=Credit note
 CreditNotes=Credit notes

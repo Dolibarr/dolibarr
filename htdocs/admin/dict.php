@@ -133,7 +133,7 @@ if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == DI
 	$search_country_id = $mysoc->country_id;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin'));
 
 $allowed = $user->admin;
@@ -2159,7 +2159,7 @@ if ($id > 0) {
 						$canbedisabled = 0;
 					}
 				}
-				if ($id == DICT_TYPE_CONTAINER && in_array($obj->code, array('banner', 'blogpost', 'menu', 'page', 'other'))) {
+				if ($id == DICT_TYPE_CONTAINER && in_array($obj->code, array('banner', 'blogpost', 'menu', 'page', 'other', 'service', 'library'))) {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					if (in_array($obj->code, array('banner'))) {

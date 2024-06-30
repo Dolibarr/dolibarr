@@ -50,7 +50,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Deplacement($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
 
 $permissionnote = $user->hasRight('deplacement', 'creer'); // Used by the include of actions_setnotes.inc.php
