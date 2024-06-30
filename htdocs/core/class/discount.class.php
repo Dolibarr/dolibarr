@@ -433,8 +433,9 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function link_to_invoice($rowidline, $rowidinvoice, $notrigger = 0)
 	{
-		global $user;
 		// phpcs:enable
+		global $user;
+
 		// Check parameters
 		if (!$rowidline && !$rowidinvoice) {
 			$this->error = 'ErrorBadParameters';
@@ -499,9 +500,9 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function unlink_invoice($notrigger = 0)
 	{
+		// phpcs:enable
 		global $user;
 		
-		// phpcs:enable
 		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			$sql .= " SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
