@@ -5863,7 +5863,6 @@ class Product extends CommonObject
 		if (preg_match('/warehouseinternal/', $option)) {
 			if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 				$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
-				$warehouseStatus[Entrepot::STATUS_OPENEXT_ALL] = Entrepot::STATUS_OPENEXT_ALL;
 			} else {
 				$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
 			}

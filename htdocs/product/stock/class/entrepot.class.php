@@ -201,7 +201,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
 	 */
-	const STATUS_OPENEXT_ALL = 3;
+	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
 
 
 
@@ -220,7 +220,6 @@ class Entrepot extends CommonObject
 		if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 			$this->labelStatus[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
 			$this->labelStatus[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
-			$this->labelStatus[self::STATUS_OPENEXT_ALL] = 'OpenExtAll';
 		} else {
 			$this->labelStatus[self::STATUS_OPEN_ALL] = 'Opened';
 		}
