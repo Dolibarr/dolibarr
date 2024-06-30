@@ -22,7 +22,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 /**
- * \file    class/api_workstations.class.php
+ * \file    htdocs/workstation/class/api_workstations.class.php
  * \ingroup workstation
  * \brief   File for API management of Workstations.
  */
@@ -68,7 +68,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
+		return $this->_fetch($id);
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function getByRef($ref)
 	{
-		return $this->_fetch('', $ref);
+		return $this->_fetch(0, $ref);
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Workstations extends DolibarrApi
 	 * @param  int    $page					Page number
 	 * @param  string $sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param string  $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array						Array of product objects
+	 * @return array						Array of workstation objects
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -128,7 +128,7 @@ class Workstations extends DolibarrApi
 			}
 		}
 
-		//this query will return total products with the filters given
+		// this query will return total products with the filters given
 		$sqlTotals =  str_replace('SELECT t.rowid, t.ref', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -148,13 +148,9 @@ class Workstations extends DolibarrApi
 			$i = 0;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
-				if (!$ids_only) {
-					$workstation_static = new Workstation($this->db);
-					if ($workstation_static->fetch($obj->rowid)) {
-						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($workstation_static), $properties);
-					}
-				} else {
-					$obj_ret[] = $obj->rowid;
+				$workstation_static = new Workstation($this->db);
+				if ($workstation_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($workstation_static), $properties);
 				}
 				$i++;
 			}
@@ -163,7 +159,7 @@ class Workstations extends DolibarrApi
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
-		if ($pagination_data) {
+		if ($page > 0) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
 

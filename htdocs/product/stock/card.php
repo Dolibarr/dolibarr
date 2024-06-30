@@ -508,7 +508,7 @@ if ($action == 'create') {
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			// Warehouse usage
-			if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
+			if (getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")) {
 				$labelusagestring = $object->fields['warehouse_usage']['arrayofkeyval'][empty($object->warehouse_usage) ? 1 : $object->warehouse_usage];
 				$labelusage = $labelusagestring ? $langs->trans($labelusagestring) : 'Unknown';
 				print '<td class="titlefield tdtop">'.$langs->trans("WarehouseUsage").'</td><td>'.dol_htmlentitiesbr($labelusage).'</td></tr>';
