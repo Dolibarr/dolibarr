@@ -87,21 +87,22 @@ class StockTransfer extends CommonObject
 	public $date_creation;
 
 	/**
-	 * @var null|string outgoing date (sql date)
+	 * @var null|int|'' outgoing date (sql date)
 	 */
 	public $date_prevue_depart;
 
 	/**
-	 * @var null|string incoming date (sql date)
+	 * @var null|int|'' incoming date (sql date)
 	 */
 	public $date_prevue_arrivee;
+
 	/**
-	 * @var null|string effective outgoing date (sql date)
+	 * @var null|int|'' effective outgoing date (sql date)
 	 */
 	public $date_reelle_depart;
 
 	/**
-	 * @var null|string effective incoming date (sql date)
+	 * @var null|int|'' effective incoming date (sql date)
 	 */
 	public $date_reelle_arrivee;
 
