@@ -73,7 +73,7 @@ if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewleadcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);

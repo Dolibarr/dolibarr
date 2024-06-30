@@ -181,7 +181,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Propal($db);
 $hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);

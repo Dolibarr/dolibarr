@@ -144,7 +144,7 @@ if (!empty($socid)) {
 
 $diroutputmassaction = $conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new SupplierProposal($db);
 $hookmanager->initHooks(array('supplier_proposallist'));
 $extrafields = new ExtraFields($db);

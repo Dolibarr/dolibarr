@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $id 	= GETPOSTINT('id');
 
-// Initialize technical objects
+// Initialize a technical objects
 $form = new Form($db);
 $object = new Position($db);
 $res = $object->fetch($id);
@@ -87,7 +87,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //	$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 //$object = new Position($db);
 //$res = $object->fetch($id);
 /*if ($res < 0) {

@@ -51,7 +51,7 @@ if (!empty($backtopagejsfields)) {
 
 $error = 0;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Fiscalyear($db);
 $extrafields = new ExtraFields($db);
 

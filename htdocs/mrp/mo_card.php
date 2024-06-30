@@ -56,7 +56,7 @@ $TBomLineId = GETPOST('bomlineid', 'array');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
 

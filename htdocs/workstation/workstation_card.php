@@ -59,7 +59,7 @@ $groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
 //$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 
 //$extrafields = new ExtraFields($db);

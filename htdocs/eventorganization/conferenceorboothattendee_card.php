@@ -54,7 +54,7 @@ $conf_or_booth_id = GETPOSTINT('conforboothid');
 $fk_project = GETPOSTINT('fk_project');
 $withproject = 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);

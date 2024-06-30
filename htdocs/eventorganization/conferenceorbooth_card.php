@@ -53,7 +53,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOSTINT('withproject');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);

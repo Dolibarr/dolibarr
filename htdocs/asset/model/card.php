@@ -44,7 +44,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'as
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new AssetModel($db);
 $assetdepreciationoptions = new AssetDepreciationOptions($db);
 $assetaccountancycodes = new AssetAccountancyCodes($db);

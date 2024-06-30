@@ -51,7 +51,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object 		= new Partnership($db);
 $extrafields 	= new ExtraFields($db);
 $adht 			= new AdherentType($db);

@@ -61,7 +61,7 @@ $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user')
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
 
 

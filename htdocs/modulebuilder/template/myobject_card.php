@@ -105,7 +105,7 @@ if (!empty($backtopagejsfields)) {
 	$dol_openinpopup = $tmpbacktopagejsfields[0];
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;

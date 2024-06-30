@@ -43,11 +43,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bo
 $backtopage  = GETPOST('backtopage', 'alpha');
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 
-// Initialize technical objects for hooks
+// Initialize a technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
 
 // Massaction

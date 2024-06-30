@@ -54,7 +54,7 @@ if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
 $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price level from thirdparty.

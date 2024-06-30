@@ -84,7 +84,7 @@ if (GETPOST('actioncode', 'array')) {
 }
 
 
-// Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketcard', 'globalcard'));
 
 $object = new Ticket($db);

@@ -75,7 +75,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));

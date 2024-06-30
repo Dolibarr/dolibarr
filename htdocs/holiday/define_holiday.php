@@ -66,7 +66,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
 $extrafields = new ExtraFields($db);
 
