@@ -32,7 +32,7 @@
 /**
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
- *	\brief      Payment page for supplier invoices
+ *	\brief      Payment page for supplier/purchase invoices
  */
 
 // Load Dolibarr environment
