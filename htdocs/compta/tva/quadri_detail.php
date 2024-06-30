@@ -404,7 +404,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["type"] = 'vat';
 
 	$object = array(&$x_coll, &$x_paye, &$x_both);
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 

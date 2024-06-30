@@ -91,7 +91,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('bankaccountlist'));

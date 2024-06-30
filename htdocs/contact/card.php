@@ -64,7 +64,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOSTINT('id');
 $socid = GETPOSTINT('socid');
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
@@ -83,7 +83,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
 if ($id > 0) {

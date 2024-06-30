@@ -45,7 +45,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Partnership($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
@@ -71,7 +71,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $permissiontoread 		= $user->hasRight('partnership', 'read');

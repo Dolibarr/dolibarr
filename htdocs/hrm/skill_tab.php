@@ -66,7 +66,7 @@ if (empty($objecttype)) {
 $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
 
-// Initialize technical objects
+// Initialize a technical objects
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		$object = new Job($db);
@@ -80,7 +80,7 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if (method_exists($object, 'loadPersonalConf')) {
 	$object->loadPersonalConf();
 }

@@ -62,7 +62,7 @@ $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
 $rel = GETPOST("rel", 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && !empty($dvid)) {
@@ -101,7 +101,7 @@ if ($id > 0 || !empty($ref)) {
 	$id = $object->id; // Force the search field on id of account
 }
 
-// Initialize technical object to manage context to save list fields
+// Initialize a technical object to manage context to save list fields
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 
 // Security check

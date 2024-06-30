@@ -65,7 +65,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->productbatch->dir_output.'/temp/massgeneration/'.$user->id;

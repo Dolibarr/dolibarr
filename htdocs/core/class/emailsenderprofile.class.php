@@ -116,11 +116,6 @@ class EmailSenderProfile extends CommonObject
 
 	public $email;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
 	public $private;
 	public $signature;
 	public $position;
