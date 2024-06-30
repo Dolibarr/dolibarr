@@ -35,7 +35,7 @@ $hookmanager = new HookManager($db);
 
 $socid = GETPOSTINT('socid');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('sendingindex'));
 
 // Load translation files required by the page

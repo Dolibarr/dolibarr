@@ -80,7 +80,7 @@ if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CU
 	$conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productpricecard', 'globalcard'));
 
 if ($object->id > 0) {

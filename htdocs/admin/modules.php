@@ -112,7 +112,7 @@ if (!GETPOST('buttonreset', 'alpha')) {
 $dirins = DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules = 'https://www.dolistore.com/';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
 // Increase limit of time. Works only if we are not in safe mode
@@ -464,7 +464,7 @@ foreach ($modulesdir as $dir) {
 								}
 								ksort($arrayofnatures);
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
 
