@@ -295,7 +295,7 @@ if (empty($conf->db->user)) {
 	$conf->db->user = '';
 }
 
-// Define array of document root directories
+// Define an array of document root directories
 $conf->file->dol_document_root = array(DOL_DOCUMENT_ROOT);
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt contains several directories
