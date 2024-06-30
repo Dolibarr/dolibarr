@@ -162,7 +162,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be 'include', not 'include_once'
 
 	// Action setdraft object
 	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {

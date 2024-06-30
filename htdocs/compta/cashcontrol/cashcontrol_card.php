@@ -90,7 +90,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user

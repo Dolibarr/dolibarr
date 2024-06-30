@@ -56,7 +56,7 @@ $object = new Fiscalyear($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
 static $tmpstatus2label = array(
