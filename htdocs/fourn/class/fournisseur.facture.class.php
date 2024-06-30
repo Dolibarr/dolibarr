@@ -68,6 +68,10 @@ class FactureFournisseur extends CommonInvoice
 	public $table_element_line = 'facture_fourn_det';
 
 	/**
+	 * @var string	Name of class line
+	 */
+	public $class_element_line = 'SupplierInvoiceLine';
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture_fourn';
@@ -2781,8 +2785,8 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$alreadypaid = -1;
-			if (isset($this->alreadypaid)) {
-				$alreadypaid = $this->alreadypaid;
+			if (isset($this->totalpaid)) {
+				$alreadypaid = $this->totalpaid;
 			}
 
 			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);

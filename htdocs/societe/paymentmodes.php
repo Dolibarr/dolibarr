@@ -1308,7 +1308,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $s;
 							print '</td>';
 							print '<td>';
-							print dol_print_date($companypaymentmodetemp->tms, 'dayhour', 'tzuserrel');
+							print dol_print_date($companypaymentmodetemp->date_modification, 'dayhour', 'tzuserrel');
 							print '</td>';
 							// Fields from hook
 							$parameters = array('arrayfields' => array(), 'obj' => $obj, 'linetype' => 'stripecard');

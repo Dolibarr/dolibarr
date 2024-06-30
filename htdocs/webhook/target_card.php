@@ -602,7 +602,7 @@ if ($action == "test") {
 			$.ajax({
 				method: \'GET\',
 				url:  \''.DOL_URL_ROOT.'/webhook/ajax/webhook.php\',
-				data: { action: "getjsonformtrigger", triggercode: triggercode },
+				data: { action: "getjsonformtrigger", triggercode: triggercode , token:"'.currentToken().'"},
 				success: function(response) {
 					obj = JSON.stringify(response);
 					$("#jsondata").val(obj);

@@ -12750,6 +12750,13 @@ function getElementProperties($elementType)
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
 		$subelement = '';
+	} elseif ($elementType == 'knowledgerecord') {
+		$module = '';
+		$classpath = 'knowledgemanagement/class';
+		$classfile = 'knowledgerecord';
+		$classname = 'KnowledgeRecord';
+		$table_element = 'knowledgemanagement_knowledgerecord';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {

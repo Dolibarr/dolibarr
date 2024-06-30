@@ -8,6 +8,7 @@
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +89,8 @@ if ($nolinesbefore) {
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	} else {
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+		print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
 		if (isModEnabled('workstation')) {
 			print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		}
@@ -183,6 +186,10 @@ if ($filtertype != 1) {
 	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
 	print '<td class="bordertop nobottom nowrap linecolunit">';
 	print $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 1);
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
 	print '</td>';
 
 	$coldisplay++;

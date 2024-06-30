@@ -409,6 +409,7 @@ Formula=Formula
 ## Reconcile
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
+LetteringPartial=Reconcile partial
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual

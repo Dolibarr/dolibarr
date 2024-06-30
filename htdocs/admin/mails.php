@@ -598,7 +598,7 @@ if ($action == 'edit') {
 
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
@@ -839,7 +839,7 @@ if ($action == 'edit') {
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';

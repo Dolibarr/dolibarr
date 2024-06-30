@@ -1793,6 +1793,7 @@ if ($action == 'create') {
 	$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
 	$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 	$fk_account = GETPOSTINT('fk_account');
+	$datepropal = (empty($datepropal) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE_PROPOSAL') ? -1 : '') : $datepropal);
 
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
@@ -1983,10 +1984,11 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		$newdatepropal = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');
 		// Date
 		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate('', '', 0, 0, 0, "addprop", 1, 1);
+		print $form->selectDate($newdatepropal ? $newdatepropal : $datepropal, '', 0, 0, 0, "addprop", 1, 1);
 		print '</td></tr>';
 
 		// Validaty duration

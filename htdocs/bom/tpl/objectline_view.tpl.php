@@ -176,6 +176,12 @@ if ($filtertype != 1) {
 
 	print '</td>';
 
+	// Qty frozen
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
+	print '</td>';
+
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
