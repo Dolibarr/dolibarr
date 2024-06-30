@@ -146,6 +146,10 @@ if ($search_invoice_date_end) {
 	$param .= '&search_invoice_date_end_day='.dol_print_date($search_invoice_date_end, '%d').'&search_invoice_date_end_month='.dol_print_date($search_invoice_date_end, '%m').'&search_invoice_date_end_year='.dol_print_date($search_invoice_date_end, '%Y');
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
+
 if ($socid > 0) {
 	$object = new Societe($db);
 	$object->fetch($socid);
