@@ -108,7 +108,6 @@ class Job extends CommonObject
 	public $ref;
 	public $label;
 	public $description;
-	public $date_creation;
 
 	public $deplacement;
 	public $fk_user_creat;

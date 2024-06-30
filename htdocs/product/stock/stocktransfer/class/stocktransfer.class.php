@@ -82,11 +82,6 @@ class StockTransfer extends CommonObject
 	public $picto = 'stock';
 
 	/**
-	 * @var null|int|'' creation date (sql datetime)
-	 */
-	public $date_creation;
-
-	/**
 	 * @var null|int|'' outgoing date (sql date)
 	 */
 	public $date_prevue_depart;

@@ -130,7 +130,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $amount;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
