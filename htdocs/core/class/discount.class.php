@@ -232,7 +232,7 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		$this->amount_ht = price2num($this->amount_ht);
@@ -372,6 +372,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " AND fk_invoice_supplier IS NULL)"; // Not used as credit note and not used as deposit
 
 		dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
+
 		require_once DOL_DOCUMENT_ROOT. '/core/class/commoninvoice.class.php';
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -741,7 +742,6 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->fk_soc         = 1;
 		$this->socid          = 1;
 		$this->amount_ht      = 10;
 		$this->amount_tva     = 1.96;
