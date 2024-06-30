@@ -110,7 +110,6 @@ class SkillRank extends CommonObject
 	public $fk_skill;
 	public $rank;
 	public $fk_object;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $objecttype;

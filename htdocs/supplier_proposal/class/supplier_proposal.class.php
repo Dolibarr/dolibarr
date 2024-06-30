@@ -125,21 +125,10 @@ class SupplierProposal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @deprecated
 	 * @see $date_validation
 	 */
 	public $datev;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 
 	public $user_author_id;
 

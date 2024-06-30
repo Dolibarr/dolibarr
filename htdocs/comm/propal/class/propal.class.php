@@ -150,11 +150,6 @@ class Propal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|'' $date_creation;
-	 */
-	public $date_creation;
-
-	/**
 	 * @deprecated
 	 * @see $date_validation
 	 */

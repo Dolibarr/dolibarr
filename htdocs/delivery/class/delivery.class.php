@@ -94,11 +94,6 @@ class Delivery extends CommonObject
 	public $date_delivery;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_valid
 	 */
 	public $date_valid;

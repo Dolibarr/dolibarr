@@ -561,26 +561,12 @@ class Societe extends CommonObject
 	 */
 	public $name_bis;
 
-	//Log data
-
-	/**
-	 * Date of last update
-	 * @var integer|string
-	 */
-	public $date_modification;
-
 	/**
 	 * User that made last update
 	 * @var User
 	 * @deprecated
 	 */
 	public $user_modification;
-
-	/**
-	 * Date of creation
-	 * @var integer|string
-	 */
-	public $date_creation;
 
 	/**
 	 * User that created the thirdparty

@@ -154,21 +154,6 @@ class Contrat extends CommonObject
 	public $user_cloture;
 
 	/**
-	 * @var integer|string		Date of creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string		Date of last modification. Not filled until you call ->info()
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string		Date of validation
-	 */
-	public $date_validation;
-
-	/**
 	 * @var integer|string		Date when contract was signed
 	 */
 	public $date_contrat;

@@ -75,21 +75,6 @@ class ChargeSociales extends CommonObject
 	public $period;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string $date_validation
-	 */
-	public $date_validation;
-
-	/**
 	 * @deprecated Use label instead
 	 */
 	public $lib;
