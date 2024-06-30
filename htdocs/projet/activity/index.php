@@ -66,6 +66,7 @@ $day = $tmp['mday'];
 $month = $tmp['mon'];
 $year = $tmp['year'];
 
+$form = new Form($db);
 $projectstatic = new Project($db);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1); // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic = new Task($db);
