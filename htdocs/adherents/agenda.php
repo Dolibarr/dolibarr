@@ -72,7 +72,7 @@ $search_agenda_label = GETPOST('search_agenda_label');
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $objcanvas = null;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('memberagenda', 'globalcard'));
 
 // Security check

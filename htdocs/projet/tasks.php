@@ -142,7 +142,7 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');

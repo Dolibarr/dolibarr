@@ -65,7 +65,7 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
 // Initialize technical objects
