@@ -9,8 +9,8 @@ postgresql
 
 # Name of contributores
 noe
-Udo
-Tim
+udo
+tim
 
 # Inside email
 ba
