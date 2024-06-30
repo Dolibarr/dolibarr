@@ -23,7 +23,7 @@
 /**
  *     \file        htdocs/admin/ticket.php
  *     \ingroup     ticket
- *     \brief       Page to setup module ticket
+ *     \brief       Page to setup the module ticket
  */
 
 // Load Dolibarr environment

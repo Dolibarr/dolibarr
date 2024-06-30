@@ -7,6 +7,8 @@ postgresql
 
 # Name of contributores
 noe
+Udo
+Tim
 # Inside email
 ba
 blacklist
