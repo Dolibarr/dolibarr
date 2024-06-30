@@ -475,7 +475,7 @@ class DiscountAbsolute extends CommonObject
 			}
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('DISCOUNT_LINK_TO_INVOICE', $user);
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
 				if ($result < 0) {
 					return -2;
 				}
@@ -513,7 +513,7 @@ class DiscountAbsolute extends CommonObject
 		if ($resql) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('DISCOUNT_UNLINK_INVOICE', $user);
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
 				if ($result < 0) {
 					return -2;
 				}
