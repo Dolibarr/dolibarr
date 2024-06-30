@@ -5,6 +5,8 @@ provid
 # PostgreSQL
 postgresql
 
+# Name of contributores
+noe
 # Inside email
 ba
 blacklist
