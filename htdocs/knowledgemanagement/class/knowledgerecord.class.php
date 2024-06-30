@@ -112,7 +112,6 @@ class KnowledgeRecord extends CommonObject
 	public $rowid;
 	public $ref;
 	public $entity;
-	public $date_creation;
 	public $last_main_doc;
 	public $fk_user_creat;
 	public $fk_user_modif;
