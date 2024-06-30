@@ -3855,11 +3855,9 @@ abstract class CommonObject
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
-			// force rounding mode to 1
-			// otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1
-			// you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%)
-			// on the first line you got 5,17 on HT total
-			// when you got 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total (see #30051)
+			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.
+			// For example, if you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%), on the first line you got 5,17 on HT total
+			// and 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total on second line (see #30051).
 			$forcedroundingmode = '0';
 			$fieldup = 'value_unit';
 			$base_price_type = 'TTC';
