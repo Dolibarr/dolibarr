@@ -63,12 +63,7 @@ class StockTransfer extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var int    Name of subtable line
-	 */
-	public $table_element_line = 'stocktransfer_stocktransferline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
+	 * @var string    Field with ID of parent key if this object has a parent
 	 */
 	public $fk_element = 'fk_stocktransfer';
 
