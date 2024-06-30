@@ -499,6 +499,8 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function unlink_invoice($notrigger = 0)
 	{
+		global $user;
+		
 		// phpcs:enable
 		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
