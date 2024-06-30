@@ -53,18 +53,7 @@ class StockTransfer extends CommonObject
 	public $table_element_line = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
-	 * @var string    Field name with contain ID of parent key if this object has a parent
+	 * @var string    Field name which stores ID of parent key if this object has a parent
 	 */
 	public $fk_element = 'fk_stocktransfer';
 
