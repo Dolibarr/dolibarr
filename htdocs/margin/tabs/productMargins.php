@@ -75,8 +75,8 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 $totalMargin = 0;
-$marginRate = 0;
-$markRate = 0;
+$marginRate = '';
+$markRate = '';
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
@@ -198,7 +198,7 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'left ');
 				print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
