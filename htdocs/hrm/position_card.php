@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $id 	= GETPOSTINT('id');
 
-// Initialize technical objects
+// Initialize a technical objects
 $form = new Form($db);
 $object = new Position($db);
 $res = $object->fetch($id);
@@ -87,7 +87,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //	$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 //$object = new Position($db);
 //$res = $object->fetch($id);
 /*if ($res < 0) {
@@ -118,7 +118,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 /*

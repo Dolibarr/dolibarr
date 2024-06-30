@@ -156,7 +156,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,loca
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1022, 102,  24, 0, '0', 0, '0', 0, 'Κανονικός Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1023, 102,  13, 0, '0', 0, '0', 0, 'Μειωμένος Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1024, 102,   6, 0, '0', 0, '0', 0, 'Υπερμειωμένος Φ.Π.Α.', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1025, 102,  16, 0, '0', 0, '0', 0, 'Νήσων κανονικός Φ.Π.Α.', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1025, 102,   3, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1026, 102,   9, 0, '0', 0, '0', 0, 'Νήσων μειωμένος Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1027, 102,   4, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1028, 102,  17, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1);

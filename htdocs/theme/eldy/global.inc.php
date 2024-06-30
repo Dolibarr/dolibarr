@@ -533,11 +533,15 @@ td.onholidayallday:not(.weekend) input {
 	background-color: #f8f7f0;
 }
 td.weekend {	/* must be after td.onholidayallday */
-	background-color: #eee;
+	background-color: #f8f4f4;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
+tr:hover td.weekend {
+	background: var(--colorbacklinepairhover) !important;
+}
+
 /*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
@@ -548,6 +552,10 @@ td.leftborder, td.hide6 {
 */
 td.rightborder {
 	border-right: 1px solid #ccc;
+}
+
+td.linecoldescription.bomline {
+	width: 400px;
 }
 
 td.amount, span.amount, div.amount, b.amount {
@@ -2007,9 +2015,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td,
+	div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
+	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
+		height: 28px !important;
+	}
+
 
 	div.tabs div.tab a.tab  {
 		max-width: 200px;
@@ -2062,8 +2075,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 200px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; min-width: unset; }
-	.titlefieldcreate { width: auto !important; }
+	.titlefield { width: auto; min-width: 125px; }
+	.titlefieldcreate { width: auto !important; min-width: 125px; }
 
 	#tooltip {
 		position: absolute;
@@ -5192,7 +5205,10 @@ table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-r
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
+}
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
 }
 
 
@@ -8095,6 +8111,10 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8184,9 +8204,6 @@ table.jPicker {
 @media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-	.tmenudiv .tmenulabel span.mainmenuaspan {
-		display: none !important;
-	}
 	.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
 		margin-top: 8px !important;
 	}

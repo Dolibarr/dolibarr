@@ -203,7 +203,7 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-// Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical objects to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));

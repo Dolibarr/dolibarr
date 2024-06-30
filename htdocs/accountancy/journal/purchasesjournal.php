@@ -84,7 +84,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action);
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get information of journal
+// Get information of a journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -230,7 +230,7 @@ if ($result) {
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_counterpart_tva_npr = getDolGlobalString('ACCOUNTING_COUNTERPART_VAT_NPR', 'NotDefined');
 
-		// Define array to display all VAT rates that use this accounting account $compta_tva
+		// Define an array to display all VAT rates that use this accounting account $compta_tva
 		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
@@ -408,7 +408,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		$totalcredit = 0;
 		$totaldebit = 0;
 
-		$db->begin();		// We accept transaction into loop so if we hang, we can continue transfer from last error
+		$db->begin();		// We accept transaction into loop, so if we hang, we can continue transfer from the last error
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -425,7 +425,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -796,7 +796,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -1049,7 +1049,7 @@ if (empty($action) || $action == 'view') {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;

@@ -67,10 +67,10 @@ if (!$sortfield) {
 	$sortfield = 'lang,transkey';
 }
 if (!$sortorder) {
-	$sortorder = 'ASC';
+	$sortorder = 'ASC,ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
 
 
@@ -291,7 +291,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode; // The 2 dirname is to go up in dir for 2 levels
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
-	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', "name", SORT_ASC, 1);
 
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));

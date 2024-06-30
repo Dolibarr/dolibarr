@@ -53,7 +53,7 @@ if (empty($dolibarr_main_demo)) {
 	httponly_accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $res = $hookmanager->initHooks(array('demo'));
 
 $demoprofiles = array();
