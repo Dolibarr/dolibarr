@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_TRANSFERED, $id);
 				$object->status = $object::STATUS_TRANSFERED;
-				$object->date_reelle_depart = date('Y-m-d');
+				$object->date_reelle_depart = dol_now();
 				$object->update($user);
 				setEventMessage('StockStransferDecremented');
 			}
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_CLOSED, $id);
 				$object->status = $object::STATUS_CLOSED;
-				$object->date_reelle_arrivee = date('Y-m-d');
+				$object->date_reelle_arrivee = dol_now();
 				$object->update($user);
 				setEventMessage('StockStransferIncrementedShort');
 			}
