@@ -37,7 +37,7 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('interventionindex'));
 
 // Load translation files required by the page
