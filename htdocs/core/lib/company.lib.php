@@ -1798,7 +1798,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	$sql = '';
 
 	if (isModEnabled('agenda')) {
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
 		// Recherche histo sur actioncomm
@@ -2674,7 +2674,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center centpercent opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

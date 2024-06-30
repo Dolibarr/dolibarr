@@ -58,7 +58,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
@@ -297,6 +297,9 @@ if (is_array($listofcateg)) {
 	}
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {

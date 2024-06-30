@@ -1185,8 +1185,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1205,8 +1205,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Decode html entities
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -14347,6 +14347,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
  */
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
+	$m = array();
 	if ($hourTime === 'getpost') {
 		$hour   = GETPOSTINT($prefix . 'hour');
 		$minute = GETPOSTINT($prefix . 'minute');
@@ -14370,11 +14371,11 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
  * request.
  *
- * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param ?int $timestamp If null, the timestamp will be created from request data
- * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @return string Portion of URL with query parameters for the specified date
+ * @param 	string $prefix 		Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param 	?int $timestamp 	If null, the timestamp will be created from request data
+ * @param 	string $hourTime 	If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param 	string $gm 			If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return 	string 				Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
@@ -14450,7 +14451,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

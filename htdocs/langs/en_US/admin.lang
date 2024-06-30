@@ -2104,8 +2104,7 @@ BaseCurrency=Reference currency of the company (go into setup of company to chan
 WarningNoteModuleInvoiceForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016) because module Non Reversible Logs is automatically activated.
 WarningInstallationMayBecomeNotCompliantWithLaw=You are trying to install module %s that is an external module. Activating an external module means you trust the publisher of that module and that you are sure that this module does not adversely impact the behavior of your application, and is compliant with laws of your country (%s). If the module introduces an illegal feature, you become responsible for the use of illegal software.
-WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you are using the experimental mode for situation invoices, you'll need to update your data to switch from the experimental mode to the official mode. Contact a preferred partner who will help you with this task. List of preferred partners available by following <a href="%s" target="_blank">this link</a>
-
+WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you are using the experimental mode for situation invoices, you will need to update your data to switch from the experimental mode to the official mode. You can contact a partner to help you with this task. A list of preferred partners is available by following <a href="%s" target="_blank">this link</a>
 MAIN_PDF_MARGIN_LEFT=Left margin on PDF
 MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
 MAIN_PDF_MARGIN_TOP=Top margin on PDF

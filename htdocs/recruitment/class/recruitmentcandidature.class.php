@@ -130,9 +130,6 @@ class RecruitmentCandidature extends CommonObject
 	public $ref;
 	public $fk_recruitmentjobposition;
 	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_user;
@@ -1050,7 +1047,7 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
+		global $mysoc;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1068,21 +1065,21 @@ class RecruitmentCandidature extends CommonObject
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">';
 			//$return .= $langs->trans('Job').'</span> : ';
-			$return .= '<span class="info-box-label">';
+			$return .= '<div class="info-box-label tdoverflowmax150">';
 			$tmpjob = new RecruitmentJobPosition($this->db);
 			$tmpjob->fetch($this->fk_recruitmentjobposition);
 			//$return .= $this->fk_recruitmentjobposition;
-			$return .= $tmpjob->label;
-			$return .= '</span>';
+			$return .= dolPrintHTML($tmpjob->label);
+			$return .= '</div>';
 		}
 		if (property_exists($this, 'phone') && $this->phone) {
-			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'phone').' '.$this->phone.'</span>';
+			$return .= '<div class="info-box-label small">'.dol_print_phone($this->phone, $mysoc->country_code, 0, 0, 'AC_TEL', '&nbsp;', 'phone').'</div>';
 		}
 		if (property_exists($this, 'email') && $this->email) {
-			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
+			$return .= '<div class="info-box-label small">'.dol_print_email($this->email, 0, 0, 1, 64, 1, 1).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -334,7 +334,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
