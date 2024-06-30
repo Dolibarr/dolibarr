@@ -502,7 +502,7 @@ class DiscountAbsolute extends CommonObject
 	{
 		// phpcs:enable
 		global $user;
-		
+
 		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			$sql .= " SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
