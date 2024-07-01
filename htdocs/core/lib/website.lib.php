@@ -1099,10 +1099,10 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 }
 
 /**
- * Return Liste of public files of object.
+ * Return list of public files of a given object.
  *
  * @param	Object	$object			Object
- * @return  array					Liste of public files of object
+ * @return  array					List of public files of object
  */
 function getPublicFilesOfObject($object)
 {
