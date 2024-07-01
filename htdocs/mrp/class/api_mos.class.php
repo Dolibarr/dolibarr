@@ -785,13 +785,14 @@ class Mos extends DolibarrApi
 				}
 				$qtytoprocess = $value["qty"];
 
+				$fk_warehousetoprocess = 0;
 				if ($molinetoprocess->disable_stock_change == false) {
 					if (isset($value["fk_warehouse"])) {    // If there is a warehouse to set
 						if (!($value["fk_warehouse"] > 0)) {    // If there is no warehouse set.
 							throw new RestException(500, "Field fk_warehouse required in " . $arrayname);
 						}
 					}
-					$fk_warehousetoprocess = $value["fk_warehouse"];
+					$fk_warehousetoprocess = (int) $value["fk_warehouse"];
 				}
 
 				$pricetoproduce = 0;
