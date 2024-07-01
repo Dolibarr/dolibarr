@@ -1034,6 +1034,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddinglarge {
+	padding: 6px !important;
+}
 .nowidthimp {
 	width: unset !important;
 }
@@ -2220,7 +2223,7 @@ td.showDragHandle {
 */
 
 
-<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
@@ -2235,7 +2238,13 @@ td.showDragHandle {
 }
 
 .side-nav {
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
+	position: sticky;
+	top: 50px;
+	display: block;
+<?php } else { ?>
 	display: table-cell;
+<?php } ?>
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);

@@ -1431,12 +1431,10 @@ class CMailFile
 			fclose($fp);
 			dolChmod($outputfile);
 
-			// Move dolibarr_mail.log into a dolibarr_mail.YYYYMMDD.log
-			if (getDolGlobalString('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
-				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".log";
-
+			// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
+			if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				dol_move($outputfile, $destfile, 0, 1, 0, 0);
+				archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
 			}
 		}
 	}

@@ -72,7 +72,7 @@ $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries

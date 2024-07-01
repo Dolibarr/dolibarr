@@ -43,7 +43,7 @@ class FactureStats extends Stats
 
 	public $from;
 	public $field;
-	public $where;
+	public $where = '';
 	public $join;
 
 
@@ -82,8 +82,7 @@ class FactureStats extends Stats
 			$this->field_line = 'total_ht';
 		}
 
-
-		$this->where = " f.fk_statut >= 0";
+		$this->where .= ($this->where ? ' AND ' : '')." f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

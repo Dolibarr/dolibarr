@@ -96,7 +96,7 @@ if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productreassortlist'));
 
 if ($user->socid) {

@@ -190,7 +190,7 @@ if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
@@ -1716,7 +1716,7 @@ while ($i < $imaxinloop) {
 
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';

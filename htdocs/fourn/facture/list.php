@@ -144,7 +144,7 @@ $diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgenera
 
 $now = dol_now();
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
@@ -1636,7 +1636,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? 'opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

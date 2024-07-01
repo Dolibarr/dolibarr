@@ -111,7 +111,7 @@ if (!$sortorder) {
 
 $childids = $user->getAllChildIds(1);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 //$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttasktime', 'globalcard'));
 
@@ -496,8 +496,9 @@ if ($action == 'confirm_generateinvoice') {
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
 							// We set unit price to 0 to force the use of the rate saved during recording
 							$pu_ht = 0;
-						} else {
+						} elseif ($idprod <= 0) {
 							// We want to sell all the time spent with the last hourly rate of user
+							// -> but what about choice user selected ? add idprod test
 							$pu_ht = $fuser->thm;
 						}
 
@@ -517,7 +518,7 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax2line = $localtax2;
 
 						// If a particular product/service was defined for the task
-						if (!empty($fk_product) && $fk_product !== $idprod) {
+						if (!empty($fk_product) && ($fk_product > 0) && ($fk_product !== $idprod)) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -1240,7 +1241,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
-		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+		// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
 
 		$formconfirm = '';
