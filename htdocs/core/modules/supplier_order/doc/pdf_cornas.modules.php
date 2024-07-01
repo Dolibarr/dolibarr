@@ -911,7 +911,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  SupplierOrder	$object         Object invoice
+	 *	@param  CommandeFournisseur	$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
@@ -1465,7 +1465,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	CommandeFournisseur	$object    	common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
