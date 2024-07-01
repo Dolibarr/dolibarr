@@ -60,7 +60,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="linkedcol-amount right"><?php
 		$total += $objectlink->budget_amount;
 		echo price($objectlink->budget_amount);
-		 ?></td>
+		?></td>
 		<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
 		<td class="linkedcol-action right">
 		<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
