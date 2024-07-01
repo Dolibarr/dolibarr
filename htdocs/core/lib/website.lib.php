@@ -1098,6 +1098,56 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	return $image_path;
 }
 
+/**
+ * Return Liste of public files of object.
+ *
+ * @param	Object	$object			Object
+ * @return  array					Liste of public files of object
+ */
+function getPublicFilesOfObject($object)
+{
+	global $db;
+
+	$files = array();
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '/('.$regexforimg.')$/i';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (!empty($obj->share)) {
+					$files[$obj->rowid]['filename'] = $obj->filename;
+					$files[$obj->rowid]['position'] = $obj->position;
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						if (preg_match($regexforimg, $obj->filename)) {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+						} else {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/document.php?hashp='.urlencode($obj->share);
+						}
+					} else {
+						$files[$obj->rowid]['url'] = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
+				}
+			}
+			$i++;
+		}
+	}
+
+	return $files;
+}
+
 
 /**
  * Return list of containers object that match a criteria.
