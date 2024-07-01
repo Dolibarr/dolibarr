@@ -156,7 +156,7 @@ if ((string) $type == '0') {
 	}
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
 $hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
@@ -210,9 +210,9 @@ if (isModEnabled('barcode')) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
 	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
-// Personalized search criteria. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
+// Personalized search criteria. Example: getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS') = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 if (getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS')) {
-	$fieldstosearchall = dolExplodeIntoArray($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS);
+	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS'));
 }
 
 if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -307,10 +307,11 @@ if (! empty($conf->stock->enabled)) {
 
 // MultiPrices
 if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+	$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) {
-			$labelp = $i.' - '.$langs->transnoentitiesnoconv($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			$labelp = $i.' - '.$langs->transnoentitiesnoconv(getDolGlobalString($keyforlabel));
 		} else {
 			$labelp = $langs->transnoentitiesnoconv("SellingPrice")." ".$i;
 		}
@@ -1032,7 +1033,7 @@ if (!empty($arrayfields['thumbnail']['checked'])) {
 }
 if (!empty($arrayfields['p.label']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
+	print '<input class="flat width100" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
 // Type

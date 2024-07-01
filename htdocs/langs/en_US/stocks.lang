@@ -278,6 +278,7 @@ QtyWasAddedToTheScannedBarcode=Success !! The quantity was added to all the requ
 StockChangeDisabled=Stock change disabled
 NoWarehouseDefinedForTerminal=No warehouse defined for terminal
 ClearQtys=Clear all quantities
+ProductValuesUsedBecauseNoValuesForThisWarehouse=No value has been defined for this warehouse so we assume it is zero (no need for this product into the warehouse)
 ModuleStockTransferName=Advanced Stock Transfer
 ModuleStockTransferDesc=Advanced management of Stock Transfer, with generation of transfer sheet
 StockTransferNew=New stock transfer

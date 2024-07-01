@@ -145,16 +145,6 @@ class Inventory extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -799,6 +789,16 @@ class InventoryLine extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'inventorydet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'inventory';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_inventory';
 
 	/**
 	 * @var string String with name of icon for inventory

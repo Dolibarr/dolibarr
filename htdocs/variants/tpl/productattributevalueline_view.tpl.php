@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -62,7 +63,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoledit center width25">';
 	$coldisplay++;
 	if (empty($disableedit)) { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -70,7 +71,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoldelete center width25">';
 	$coldisplay++;
 	if (empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}

@@ -75,6 +75,9 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
+	/**
+	 * @var null|int|'' datem date
+	 */
 	public $datem = '';
 	public $price;
 
@@ -114,14 +117,27 @@ class MouvementStock extends CommonObject
 	public $line_id_oject_src;
 	public $line_id_oject_origin;
 
-
+	/**
+	 * @var string inventory code
+	 */
 	public $inventorycode;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 
 	public $line_id_object_src;
 	public $line_id_object_origin;
 
+	/**
+	 * @var null|int|'' eatby date
+	 */
 	public $eatby;
+
+	/**
+	 * @var null|int|'' sellby date
+	 */
 	public $sellby;
 
 

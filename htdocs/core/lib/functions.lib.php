@@ -126,8 +126,8 @@ if (!function_exists('str_contains')) {
  * @param 	CommonObject 	$object 	Dolibarr common object
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' or 'temp' or 'version'
- * @return 	string|null					The path of the relative directory of the module
+ * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (for temporary files) or 'version' (dir for archived files)
+ * @return 	string|null					The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
 function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'output')
@@ -144,14 +144,21 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 	// Special case for backward compatibility
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
+	} elseif ($module == 'invoice_supplier') {
+		$module = 'supplier_invoice';
+	} elseif ($module == 'order_supplier') {
+		$module = 'supplier_order';
 	}
 
 	// Get the relative path of directory
-	if ($mode == 'output' || $mode == 'version') {
+	if ($mode == 'output' || $mode == 'outputrel' || $mode == 'version') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
-			$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+			$s = '';
+			if ($mode != 'outputrel') {
+				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+			}
 			if ($forobject && $object->id > 0) {
-				$s .= '/'.get_exdir(0, 0, 0, 0, $object);
+				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
 			}
 			return $s;
 		} else {
@@ -1178,8 +1185,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1198,8 +1205,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Decode html entities
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1963,7 +1970,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				// For case of tag with attribute
 				$reg = array();
 				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
-					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must never have [ ] inside the attribute string
+					$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);
+					$tmpattributes = str_ireplace('href="https:', '__HREFHTTPSA', $tmpattributes);
 					$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
@@ -1990,6 +1999,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
 
+			$result = str_ireplace('__HREFHTTPA', 'href="http:', $result);
+			$result = str_ireplace('__HREFHTTPSA', 'href="https:', $result);
 			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
 			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
 			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
@@ -2741,7 +2752,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} elseif ($object->element == 'bom') {
-		/** @var Bom $object */
+		/** @var BOM $object */
 		'@phan-var-force Bom $object';
 		$width = 80;
 		$cssclass = 'photowithmargin photoref';
@@ -3957,9 +3968,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
+ *  @param	string	$morecss		Add more css
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0)
+function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = '')
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -3976,7 +3988,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	}
 
 	// Short format for small screens
-	if ($conf->dol_optimize_smallscreen) {
+	if (!empty($conf->dol_optimize_smallscreen) && $separ != 'hidenum') {
 		$separ = '';
 	}
 
@@ -4262,9 +4274,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 		if ($adddivfloat == 1) {
-			$rep .= '<div class="nospan float" style="margin-right: 10px">';
+			$rep .= '<div class="nospan float'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">';
 		} elseif (empty($adddivfloat)) {
-			$rep .= '<span style="margin-right: 10px;">';
+			$rep .= '<span'.($morecss ? ' class="'.$morecss.'"' : '').' style="margin-right: 10px;">';
 		}
 
 		$rep .= $newphoneastart;
@@ -4858,8 +4870,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
-				'check-circle', 'check-square', 'currency', 'multicurrency',
-				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
+				'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
+				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
+				'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
+				'commercial', 'companies',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
@@ -4880,7 +4894,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
@@ -4907,6 +4921,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
 				'bom' => 'shapes',
 				'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
+				'chevron-double-left' => 'angle-double-left', 'chevron-double-right' => 'angle-double-right', 'chevron-double-down' => 'angle-double-down', 'chevron-double-top' => 'angle-double-up',
 				'donation' => 'file-alt', 'dynamicprice' => 'hand-holding-usd',
 				'setup' => 'cog', 'companies' => 'building', 'products' => 'cube', 'commercial' => 'suitcase', 'invoicing' => 'coins',
 				'accounting' => 'search-dollar', 'category' => 'tag', 'dollyrevert' => 'dolly',
@@ -4932,8 +4947,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
 				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
 				'service' => 'concierge-bell',
-				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch', 'stripe' => 'stripe-s',
-				'supplier' => 'building',
+				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
+				'status' => 'stop-circle',
+				'stripe' => 'stripe-s',	'supplier' => 'building',
 				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
 				'title_agenda' => 'calendar-alt',
 				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
@@ -5020,7 +5036,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'propal' => 'infobox-propal', 'proposal' => 'infobox-propal','private' => 'infobox-project',
 				'reception' => 'flip infobox-order_supplier', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
+				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'stripe' => 'infobox-bank_account', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier', 'supplier_order' => 'infobox-order_supplier', 'supplier_proposal' => 'infobox-supplier_proposal',
 				'ticket' => 'infobox-contrat', 'title_accountancy' => 'infobox-bank_account', 'title_hrm' => 'infobox-holiday', 'expensereport' => 'infobox-expensereport', 'trip' => 'infobox-expensereport', 'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
@@ -6367,7 +6383,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 
 	if (empty($hidenavigation)) {
 		if ((int) $limit > 0 && empty($hideselectlimit)) {
-			$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
+			$pagesizechoices = '10:10,15:15,20:20,25:25,50:50,100:100,250:250,500:500,1000:1000';
 			$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
 			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 			//$pagesizechoices.=',2:2';
@@ -7565,34 +7581,49 @@ function yn($yesno, $case = 1, $color = 0)
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')     if multidir_output not defined.
- *  Example out with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example out with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  This function is called by getMultidirOutput
+ *  New usage:  $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
- *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
- *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
- * 	@param	int			$alpha		    0=Keep number only to forge path, 1=Use alpha part after the - (By default, use 0). (deprecated, global option will be used in future)
- *  @param  int			$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
- *  @param	?CommonObject	$object		Object to use to get ref to forge the path.
- *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
- *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
+ *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'
+ *  Example of output with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *
+ *	@param	string|int		$num            Id of object (deprecated, $object->id will be used in future)
+ *	@param  int				$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global setup will be used in future)
+ * 	@param	int				$alpha		    0=Keep number only to forge path, 1=Use alpha part after the - (By default, use 0). (deprecated, global option will be used in future)
+ *  @param  int				$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
+ *  @param	?CommonObject	$object			Object to use to get ref to forge the path.
+ *  @param	string			$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
+ *  @return	string							Dir to use ending. Example '' or '1/' or '1/2/'
  *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
-	if (empty($modulepart) && !empty($object->module)) {
-		$modulepart = $object->module;
+	if (empty($modulepart) && is_object($object)) {
+		if (!empty($object->module)) {
+			$modulepart = $object->module;
+		} elseif (!empty($object->element)) {
+			$modulepart = $object->element;
+		}
 	}
 
 	$path = '';
 
-	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
+	// Define $arrayforoldpath that is module path using a hierarchy on more than 1 level.
+	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'holiday' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
-		$arrayforoldpath[] = 'product';
+		$arrayforoldpath['product'] = 2;
 	}
-	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
+
+	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
+		$level = $arrayforoldpath[$modulepart];
+	}
+
+	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
+		if (empty($num) && is_object($object)) {
+			$num = $object->id;
+		}
 		if (empty($alpha)) {
 			$num = preg_replace('/([^0-9])/i', '', $num);
 		} else {
@@ -10267,7 +10298,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy")); // more dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
 
@@ -11987,14 +12018,14 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 /**
  * Output the badge of a status.
  *
- * @param   string  $statusLabel		Label of badge no html : use in alt attribute for accessibility
- * @param   string  $statusLabelShort	Short label of badge no html
- * @param   string  $html				Optional : label of badge with html
- * @param   string  $statusType			status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
- * @param   int<0,6>	$displayMode	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
- * @param   string  $url				The url for link
- * @param   array<string,mixed>	$params	Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
- * @return  string						Html status string
+ * @param   string  			$statusLabel		Label of badge no html : use in alt attribute for accessibility
+ * @param   string  			$statusLabelShort	Short label of badge no html
+ * @param   string  			$html				Optional : label of badge with html
+ * @param   string  			$statusType			status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
+ * @param   int<0,6>			$displayMode		0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+ * @param   string  			$url				The url for link
+ * @param   array<string,mixed>	$params				Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
+ * @return  string									Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
@@ -12065,7 +12096,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
+		if (empty($dolGetBadgeParams['attr']['title'])) {
+			$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
+		} else {	// If a title was forced from $params['badgeParams']['attr']['title'], we set the class to get it as a tooltip.
+			$dolGetBadgeParams['attr']['class'] .= ' classfortooltip';
+			// And if we use tooltip, we can output title in HTML
+			$dolGetBadgeParams['attr']['title'] = dol_htmlentitiesbr($dolGetBadgeParams['attr']['title'], 1);
+		}
 
 		if ($displayMode == 3) {
 			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
@@ -12712,6 +12749,13 @@ function getElementProperties($elementType)
 		$classfile = 'ccountry';
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
+		$subelement = '';
+	} elseif ($elementType == 'knowledgerecord') {
+		$module = '';
+		$classpath = 'knowledgemanagement/class';
+		$classfile = 'knowledgerecord';
+		$classname = 'KnowledgeRecord';
+		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	}
 
@@ -14303,6 +14347,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
  */
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
+	$m = array();
 	if ($hourTime === 'getpost') {
 		$hour   = GETPOSTINT($prefix . 'hour');
 		$minute = GETPOSTINT($prefix . 'minute');
@@ -14326,11 +14371,11 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
  * request.
  *
- * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param ?int $timestamp If null, the timestamp will be created from request data
- * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @return string Portion of URL with query parameters for the specified date
+ * @param 	string $prefix 		Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param 	?int $timestamp 	If null, the timestamp will be created from request data
+ * @param 	string $hourTime 	If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param 	string $gm 			If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return 	string 				Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
@@ -14406,7 +14451,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

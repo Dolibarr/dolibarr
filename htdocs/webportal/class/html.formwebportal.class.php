@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,6 +336,31 @@ class FormWebPortal extends Form
 			}
 		}
 
+		return $out;
+	}
+
+	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object Object linked to the document to be signed
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if (!empty($url)) {
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= $langs->trans("Sign");
+			$out .= '</a>';
+		}
 		return $out;
 	}
 
@@ -910,7 +936,11 @@ class FormWebPortal extends Form
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-					$data = $this->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categorytype = $InfoFieldList[5];
+					if (is_numeric($categorytype)) {
+						$categorytype = Categorie::$MAP_ID_TO_CODE[$categorytype]; // For backward compatibility
+					}
+					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="' . $data_key . '"';
@@ -1046,7 +1076,7 @@ class FormWebPortal extends Form
 			if ($type == 'array') {
 				$value = implode('<br>', $value);
 			} else {
-				dol_syslog(__METHOD__ . 'ERROR unexpected type=$type for array value='.((string) json_encode($value)), LOG_ERR);
+				dol_syslog(__METHOD__."Unexpected type=".$type." for array value=".((string) json_encode($value)), LOG_ERR);
 			}
 			//
 			// Then the cases where $value is not an array (hence string)

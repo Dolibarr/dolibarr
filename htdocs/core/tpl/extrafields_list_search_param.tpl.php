@@ -11,7 +11,9 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 	if (empty($search_options_pattern)) {
 		$search_options_pattern = 'search_options_';
 	}
-
+	if (empty($extrafieldsobjectkey) && is_object($object)) {
+		$extrafieldsobjectkey = $object->table_element;
+	}
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
@@ -37,6 +39,12 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 					$param .= '&'.$search_options_pattern.$tmpkey.'[]='.urlencode($val2);
 				}
 			} else {
+				// test if we have checkbox  type , we add the _multiselect needed into param
+				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey], array('checkbox', 'chkbxlst'))) {
+					$param .= '&'.$search_options_pattern.$tmpkey.'_multiselect='.urlencode($val);
+				}
+
 				$param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
 			}
 		}

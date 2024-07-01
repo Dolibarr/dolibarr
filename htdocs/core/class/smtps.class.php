@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +210,7 @@ class SMTPs
 	 * If '$_transportType' is set to '1', then this variable is used
 	 * to define the UNIX file system path to the sendmail executable
 	 */
-	private $_mailPath = '/usr/lib/sendmail';
+	private $_mailPath = '/usr/lib/sendmail'; // @phpstan-ignore-line
 
 	/**
 	 * Sets the SMTP server timeout in seconds.
@@ -233,7 +234,7 @@ class SMTPs
 	 *  2 - message generation logging
 	 *  3 - detail logging
 	 */
-	private $_log_level = 0;
+	private $_log_level = 0; // @phpstan-ignore-line
 
 	/**
 	 * Place Class in" debug" mode

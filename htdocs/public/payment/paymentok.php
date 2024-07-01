@@ -134,20 +134,21 @@ if ($ws) {
 	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
-$validpaymentmethod = array();
-if (isModEnabled('paypal')) {
-	$validpaymentmethod['paypal'] = 'paypal';
-}
-if (isModEnabled('paybox')) {
-	$validpaymentmethod['paybox'] = 'paybox';
-}
-if (isModEnabled('stripe')) {
-	$validpaymentmethod['stripe'] = 'stripe';
-}
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 // Security check
 if (empty($validpaymentmethod)) {
 	httponly_accessforbidden('No valid payment mode');
+}
+
+// Common variables
+$creditor = $mysoc->name;
+$paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
+$paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
+if (getDolGlobalString($paramcreditorlong)) {
+	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
+} elseif (getDolGlobalString($paramcreditor)) {
+	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
 
@@ -246,6 +247,12 @@ if (empty($doactionsthenredirect)) {
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
+		print '</div>';
+	} elseif ($creditor) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print $creditor;
+		print '</div>';
 		print '</div>';
 	}
 	if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {

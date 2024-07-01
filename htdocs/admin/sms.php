@@ -153,6 +153,7 @@ print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("SmsDesc")."</span><br>\n";
 print "<br>\n";
+print "<br>\n";
 
 // List of sending methods
 $listofmethods = (is_array($conf->modules_parts['sms']) ? $conf->modules_parts['sms'] : array());

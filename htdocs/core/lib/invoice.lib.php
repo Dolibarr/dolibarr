@@ -710,7 +710,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$facturesupplierstatic->ref_supplier = $obj->ref_supplier;
 					$facturesupplierstatic->type = $obj->type;
 					$facturesupplierstatic->statut = $obj->status;
-					$facturesupplierstatic->statusi = $obj->status;
+					$facturesupplierstatic->status = $obj->status;
 					$facturesupplierstatic->paye = $obj->paye;
 					$facturesupplierstatic->paid = $obj->paye;
 
@@ -911,7 +911,11 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 	$result .= '<tr class="liste_titre">';
-	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).'</th>';
+	$result .= '<th colspan="3">'.$langs->trans("BoxTitleLastSupplierBills", $maxCount).' ';
+	$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC">';
+	$result .= '<span class="badge">...</span>';
+	$result .= '</a>';
+	$result .= '</th>';
 	$result .= '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	$result .= '<th class="right"></th>';
 	$result .= '</tr>';

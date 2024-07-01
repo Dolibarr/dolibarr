@@ -541,19 +541,19 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', getDolGlobalString("ONLINE_PAYMENT_MESSAGE_FORM"), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', getDolGlobalString("ONLINE_PAYMENT_MESSAGE_OK"), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
+$doleditor = new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', getDolGlobalString("ONLINE_PAYMENT_MESSAGE_KO"), '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 

@@ -182,11 +182,6 @@ class Expedition extends CommonObject
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_valid
 	 */
 	public $date_valid;
@@ -2660,6 +2655,15 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element = 'expeditiondet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'expedition';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_expedition';
 
 	/**
 	 * Id of the line. Duplicate of $id.

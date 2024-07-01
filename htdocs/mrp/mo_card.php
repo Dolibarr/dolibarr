@@ -56,7 +56,7 @@ $TBomLineId = GETPOST('bomlineid', 'array');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
 
@@ -83,7 +83,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 if (GETPOSTINT('fk_bom') > 0) {
 	$objectbom->fetch(GETPOSTINT('fk_bom'));
@@ -282,7 +282,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {

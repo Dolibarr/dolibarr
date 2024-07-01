@@ -53,6 +53,16 @@ class EvaluationLine extends CommonObjectLine
 	public $table_element = 'hrm_evaluationdet';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'hrm_evaluation';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_evaluation';
+
+	/**
 	 * @var string String with name of icon for evaluationdet. Must be the part after the 'object_' into object_evaluationdet.png
 	 */
 	public $picto = 'evaluationdet@hrm';
@@ -106,7 +116,6 @@ class EvaluationLine extends CommonObjectLine
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
 	public $rowid;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_skill;

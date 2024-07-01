@@ -154,21 +154,6 @@ class Contrat extends CommonObject
 	public $user_cloture;
 
 	/**
-	 * @var integer|string		Date of creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string		Date of last modification. Not filled until you call ->info()
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string		Date of validation
-	 */
-	public $date_validation;
-
-	/**
 	 * @var integer|string		Date when contract was signed
 	 */
 	public $date_contrat;
@@ -1195,7 +1180,8 @@ class Contrat extends CommonObject
 	 */
 	public function delete($user)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -1223,44 +1209,6 @@ class Contrat extends CommonObject
 			$res = $this->deleteObjectLinked();
 			if ($res < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// Delete contratdet_log
-			/*
-			$sql = "DELETE cdl";
-			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
-			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".((int) $this->id);
-			*/
-			$sql = "SELECT cdl.rowid as cdlrowid ";
-			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
-			$sql .= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".((int) $this->id);
-
-			dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->error();
-				$error++;
-			}
-			$numressql = $this->db->num_rows($resql);
-			if (!$error && $numressql) {
-				$tab_resql = array();
-				for ($i = 0; $i < $numressql; $i++) {
-					$objresql = $this->db->fetch_object($resql);
-					$tab_resql[] = $objresql->cdlrowid;
-				}
-				$this->db->free($resql);
-
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
-
-				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->error = $this->db->error();
-					$error++;
-				}
 			}
 		}
 
@@ -1677,7 +1625,8 @@ class Contrat extends CommonObject
 					$contractline->id = $contractlineid;
 					$result = $contractline->insertExtraFields();
 					if ($result < 0) {
-						$this->errors[] = $contractline->error;
+						$this->errors = array_merge($this->errors, $contractline->errors);
+						$this->error = $contractline->error;
 						$error++;
 					}
 				}
@@ -2086,9 +2035,9 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
-					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -3008,6 +2957,16 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'contratdet';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'contrat';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_contrat';
 
 	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().

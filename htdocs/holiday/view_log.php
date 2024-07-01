@@ -80,7 +80,7 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;

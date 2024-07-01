@@ -4,6 +4,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +50,6 @@ class ImportXlsx extends ModeleImports
 	public $id;
 
 	/**
-	 * @var string label
-	 */
-	public $label;
-
-	public $extension; // Extension of files imported by driver
-
-	/**
 	 * Dolibarr version of driver
 	 * @var string
 	 */
@@ -94,7 +88,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
@@ -106,6 +100,14 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
@@ -406,7 +408,7 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
+				// Define an array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key);

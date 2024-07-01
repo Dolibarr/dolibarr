@@ -1407,9 +1407,9 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 	$restrictBefore = null;
 
-	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
@@ -1662,7 +1662,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 
 				// Select hour
-				print '<td class="nowraponall leftborder center minwidth150imp">';
+				print '<td class="nowraponall leftborder center minwidth150imp borderleft">';
 				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
 				print $tableCell;
 				print '</td>';
@@ -1806,9 +1806,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	$restrictBefore = null;
 
-	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -2063,7 +2063,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				// Fields to show current time
 				$tableCell = '';
 				$modeinput = 'hours';
+				$j = 0;
 				for ($idw = 0; $idw < 7; $idw++) {
+					$j++;
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 					if (!isset($totalforeachday[$tmpday])) {
 						$totalforeachday[$tmpday] = 0;
@@ -2099,7 +2101,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						$disabledtaskday = 1;
 					}
 
-					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'">';
 					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
 					if ($alreadyspent) {
@@ -2172,9 +2174,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$TWeek					Array of week numbers
+ * @param	array		$arrayfields		    Array of additional column
+ * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
-function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $TWeek = array())
+function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $TWeek = array(), $arrayfields = array(), $extrafields = null)
 {
 	global $conf, $db, $user, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -2203,9 +2207,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 	$restrictBefore = null;
 
-	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -2307,40 +2311,46 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td class="leftborder plannedworkload right">';
-				if ($lines[$i]->planned_workload) {
-					print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-				} else {
-					print '--:--';
+				if (!empty($arrayfields['t.planned_workload']['checked'])) {
+					print '<td class="leftborder plannedworkload right">';
+					if ($lines[$i]->planned_workload) {
+						print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+					} else {
+						print '--:--';
+					}
+					print '</td>';
 				}
-				print '</td>';
 
 				// Progress declared %
-				print '<td class="right">';
-				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
-				print '</td>';
+				if (!empty($arrayfields['t.progress']['checked'])) {
+					print '<td class="right">';
+					print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
+					print '</td>';
+				}
 
 				// Time spent by everybody
-				print '<td class="right">';
-				// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-				if ($lines[$i]->duration_effective) {
-					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
-					print '</a>';
-				} else {
-					print '--:--';
-				}
-				print "</td>\n";
+				if (!empty($arrayfields['timeconsumed']['checked'])) {
+					print '<td class="right">';
+					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+					if ($lines[$i]->duration_effective) {
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
+						print '</a>';
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 
-				// Time spent by user
-				print '<td class="right">';
-				$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) {
-					print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-				} else {
-					print '--:--';
+					// Time spent by user
+					print '<td class="right">';
+					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+					if ($tmptimespent['total_duration']) {
+						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 				}
-				print "</td>\n";
 
 				$disabledproject = 1;
 				$disabledtask = 1;
@@ -2368,7 +2378,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$firstdaytoshowarray = dol_getdate($firstdaytoshow);
 				$year = $firstdaytoshowarray['year'];
 				$month = $firstdaytoshowarray['mon'];
+				$j = 0;
 				foreach ($TWeek as $weekIndex => $weekNb) {
+					$j++;
 					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
 					if (!isset($totalforeachweek[$weekNb])) {
 						$totalforeachweek[$weekNb] = 0;
@@ -2388,7 +2400,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 						$disabledtaskweek = 1;
 					}
 
-					$tableCell = '<td class="center hide weekend">';
+					$tableCell = '<td class="center hide'.($j <= 1 ? ' borderleft' : '').'">';
 					$placeholder = '';
 					if ($alreadyspent) {
 						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';

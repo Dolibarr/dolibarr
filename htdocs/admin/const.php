@@ -187,6 +187,7 @@ print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
 print "<br>\n";
+print "<br>\n";
 
 $param = '';
 

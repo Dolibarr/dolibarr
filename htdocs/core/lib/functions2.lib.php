@@ -2694,6 +2694,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'workstations') {
+		$moduledirforclass = 'workstation';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {

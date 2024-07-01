@@ -304,6 +304,41 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 
+	// Notifications
+	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
+		//$langs->load('ticket');
+		$nbTicket = 0;
+		// Enable caching of thirdparty count notifications
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_ticket_thirdparty_'.$object->id;
+		$nbticketretreived = dol_getcache($cachekey);
+		if (!is_null($nbticketretreived)) {
+			$nbTicket = $nbticketretreived;
+		} else {
+			// List of notifications enabled for contacts of the third party
+			$sql = "SELECT COUNT(t.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbTicket = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?socid='.urlencode((string) ($object->id));
+		$head[$h][1] = $langs->trans("Tickets");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTicket.'</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -1191,6 +1226,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => 1, 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => 0, 'position' => 45),
 		't.statut' => array('label' => "Status", 'checked' => 1, 'position' => 50, 'class' => 'center'),
+		'u.user'=>array('label'=>"DolibarrLogin", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
 	// Extra fields
 	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
@@ -1763,7 +1799,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	$sql = '';
 
 	if (isModEnabled('agenda')) {
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
 		// Recherche histo sur actioncomm
@@ -2304,7 +2340,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Linked object
-			$out .= '<td class="nowraponall">';
+			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
 					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];
@@ -2639,7 +2675,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center centpercent opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
