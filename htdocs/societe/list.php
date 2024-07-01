@@ -99,7 +99,7 @@ $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
 if (GETPOSTISARRAY('search_sale')) {
 	$search_sale = GETPOST('search_sale', 'array:int');
-} else if (GETPOSTISSET('search_sale')) {
+} elseif (GETPOSTISSET('search_sale')) {
 	$search_sale = array(GETPOSTINT('search_sale'));
 }
 $search_categ_cus = GETPOSTINT("search_categ_cus");
