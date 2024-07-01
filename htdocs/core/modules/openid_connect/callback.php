@@ -37,7 +37,7 @@ $arrayofjs = array(
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
-print top_htmlhead('', '', 0, 0, $arrayofjs, array(), 0);
+print top_htmlhead('', '', 0, 0, $arrayofjs);
 
 $prefix = dol_getprefix('');
 $rollback_url = $_COOKIE["DOL_rollback_url_$prefix"];
