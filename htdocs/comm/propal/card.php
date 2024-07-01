@@ -113,7 +113,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('propalcard', 'globalcard'));
 
 $usercanread = $user->hasRight("propal", "lire");
@@ -178,9 +178,9 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {

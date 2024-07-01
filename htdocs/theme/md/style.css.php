@@ -2448,7 +2448,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other
 {
 	display: none;
 }
-<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;

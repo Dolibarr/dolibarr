@@ -182,7 +182,7 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|'' 	$delivery_date;
+	 * @var null|int|'' 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
@@ -2247,7 +2247,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
+			$sql .= " SET date_livraison = ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);

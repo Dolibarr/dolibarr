@@ -71,7 +71,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Product($db);
 $hookmanager->initHooks(array('marginproductlist'));
 

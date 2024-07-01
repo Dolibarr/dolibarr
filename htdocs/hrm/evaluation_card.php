@@ -53,7 +53,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Evaluation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
@@ -78,7 +78,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');

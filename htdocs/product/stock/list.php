@@ -68,7 +68,7 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-// Initialize technical objects
+// Initialize a technical objects
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -79,7 +79,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
