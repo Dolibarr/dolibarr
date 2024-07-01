@@ -61,6 +61,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv('ManufacturingOrder');
 
 llxHeader('', $langs->trans("MrpSetupPage"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-mrp_extrafields');
 

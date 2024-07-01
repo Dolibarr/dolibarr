@@ -710,7 +710,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 					$facturesupplierstatic->ref_supplier = $obj->ref_supplier;
 					$facturesupplierstatic->type = $obj->type;
 					$facturesupplierstatic->statut = $obj->status;
-					$facturesupplierstatic->statusi = $obj->status;
+					$facturesupplierstatic->status = $obj->status;
 					$facturesupplierstatic->paye = $obj->paye;
 					$facturesupplierstatic->paid = $obj->paye;
 
