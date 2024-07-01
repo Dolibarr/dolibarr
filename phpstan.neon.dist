@@ -94,6 +94,7 @@ parameters:
 		- '#expects object#'
 		- '#expects Adherent#'
 		- '#expects Expedition#'
+		- '#expects LDAP\\Connection#'
 		- '#expects MultiCurrency#'
 		- '#expects Product#'
 		- '#expects Facture#'
