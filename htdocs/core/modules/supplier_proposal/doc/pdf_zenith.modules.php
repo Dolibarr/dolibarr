@@ -1167,7 +1167,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommandeFournisseur		$object     	Object to show
+	 *  @param  SupplierProposal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	float|int                   Return topshift value
@@ -1435,7 +1435,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	CommandeFournisseur		$object				Object to show
+	 * 		@param	SupplierProposal		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1451,7 +1451,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Object			$object    		common object
+	 *   	@param	SupplierProposal			$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
