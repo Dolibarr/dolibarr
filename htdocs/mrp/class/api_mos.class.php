@@ -665,7 +665,7 @@ class Mos extends DolibarrApi
 	 *     {
 	 *       "objectid": "123",  -- rowid of MoLine
 	 *       "qty": "2",
-	 *       "fk_warehouse": "789"
+	 *       "fk_warehouse": "789" -- "0" or empty, if stock change is disabled.
 	 *     }
 	 *   ],
 	 *   "arraytoproduce": [
@@ -769,12 +769,14 @@ class Mos extends DolibarrApi
 				}
 				$qtytoprocess = $value["qty"];
 
-				if (isset($value["fk_warehouse"])) {    // If there is a warehouse to set
-					if (!($value["fk_warehouse"] > 0)) {    // If there is no warehouse set.
-						throw new RestException(500, "Field fk_warehouse required in " . $arrayname);
+				if ($molinetoprocess->disable_stock_change == false) {
+					if (isset($value["fk_warehouse"])) {    // If there is a warehouse to set
+						if (!($value["fk_warehouse"] > 0)) {    // If there is no warehouse set.
+							throw new RestException(500, "Field fk_warehouse required in " . $arrayname);
+						}
 					}
+					$fk_warehousetoprocess = $value["fk_warehouse"];
 				}
-				$fk_warehousetoprocess = $value["fk_warehouse"];
 
 				$pricetoproduce = 0;
 				if (isset($value["pricetoproduce"])) {    // If there is a price to produce set.
@@ -785,25 +787,27 @@ class Mos extends DolibarrApi
 
 				$idstockmove = 0;
 
-				// Record stock movement
-				$id_product_batch = 0;
-				$stockmove->origin_type = 'mo';
-				$stockmove->origin_id = $this->mo->id;
-				if ($arrayname == "arraytoconsume") {
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+				if ($molinetoprocess->disable_stock_change == false) {
+					// Record stock movement
+					$id_product_batch = 0;
+					$stockmove->origin_type = 'mo';
+					$stockmove->origin_id = $this->mo->id;
+					if ($arrayname == "arraytoconsume") {
+						if ($qtytoprocess >= 0) {
+							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+						} else {
+							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+						}
 					} else {
-						$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+						if ($qtytoprocess >= 0) {
+							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, $pricetoproduce, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+						} else {
+							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+						}
 					}
-				} else {
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, $pricetoproduce, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
-					} else {
-						$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+					if ($idstockmove <= 0) {
+						throw new RestException(500, $stockmove->error);
 					}
-				}
-				if ($idstockmove <= 0) {
-					throw new RestException(500, $stockmove->error);
 				}
 
 				// Record consumption
@@ -811,11 +815,11 @@ class Mos extends DolibarrApi
 				$moline->fk_mo = $this->mo->id;
 				$moline->position = $pos;
 				$moline->fk_product = $tmpproduct->id;
-				$moline->fk_warehouse = $fk_warehousetoprocess;
+				$moline->fk_warehouse = $idstockmove > 0 ? $fk_warehousetoprocess : null;
 				$moline->qty = $qtytoprocess;
 				$moline->batch = '';
 				$moline->fk_mrp_production = $molinetoprocess->id;
-				$moline->fk_stock_movement = $idstockmove;
+				$moline->fk_stock_movement = $idstockmove > 0 ? $idstockmove : null;
 				$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
 				if ($arrayname == "arraytoconsume") {
