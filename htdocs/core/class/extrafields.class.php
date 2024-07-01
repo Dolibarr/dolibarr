@@ -833,7 +833,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $langs;
 
 		if (empty($elementtype)) {
 			return array();
@@ -883,7 +883,7 @@ class ExtraFields
 					}
 
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
-					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
+					$this->attributes[$tab->elementtype]['label'][$tab->name] = $langs->transnoentities($tab->label);
 					$this->attributes[$tab->elementtype]['size'][$tab->name] = $tab->size;
 					$this->attributes[$tab->elementtype]['elementtype'][$tab->name] = $tab->elementtype;
 					$this->attributes[$tab->elementtype]['default'][$tab->name] = $tab->fielddefault;
