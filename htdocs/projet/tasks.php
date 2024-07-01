@@ -173,11 +173,11 @@ $arrayfields = array(
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 10),
 	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 11),
 	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 12),
-	't.billable' => array('label' => "Billable", 'checked' => 1, 'position' => 13),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
 	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
+	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => 1, 'position' => 13);
 }
 
 // Extra fields
