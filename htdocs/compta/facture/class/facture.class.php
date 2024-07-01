@@ -120,7 +120,7 @@ class Facture extends CommonInvoice
 	public $datem;
 
 	/**
-	 * @var int	Date expected for delivery
+	 * @var null|int|''	Date expected for delivery
 	 */
 	public $delivery_date; // Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 
