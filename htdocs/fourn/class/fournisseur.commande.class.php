@@ -165,7 +165,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Expected Delivery Date
+	 *  @var null|int|'' Expected Delivery Date
 	 */
 	public $delivery_date;
 
