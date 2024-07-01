@@ -132,6 +132,10 @@ class Project extends CommonObject
 	public $date_close;
 
 	public $socid; // To store id of thirdparty
+
+	/**
+	 * @var string thirdparty name
+	 */
 	public $thirdparty_name; // To store name of thirdparty (defined only in some cases)
 
 	public $user_author_id; //!< Id of project creator. Not defined if shared project.
@@ -189,17 +193,35 @@ class Project extends CommonObject
 	public $price_booth;
 
 	/**
-	 * @var int|string Max attendees (may be empty/need cast to iint)
+	 * @var int|'' Max attendees (may be empty/need cast to int)
 	 */
 	public $max_attendees;
 
+	/**
+	 * @var int status
+	 * @deprecated
+	 * @see $status
+	 */
 	public $statut; // 0=draft, 1=opened, 2=closed
 
 	public $opp_status; // opportunity status, into table llx_c_lead_status
 	public $opp_status_code;
+
+	/**
+	 * @var int opportunity status
+	 */
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
+
+	/**
+	 * @var float|'' opportunity amount
+	 */
 	public $opp_amount; // opportunity amount
+
+	/**
+	 * @var float|'' opportunity percent
+	 */
 	public $opp_percent; // opportunity probability
+
 	public $opp_weighted_amount; // opportunity weighted amount
 
 	public $email_msgid;
@@ -475,7 +497,7 @@ class Project extends CommonObject
 		$sql .= ", '".$this->db->escape($this->description)."'";
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".(is_numeric($this->statut) ? ((int) $this->statut) : '0');
+		$sql .= ", ".(is_numeric($this->status) ? ((int) $this->status) : '0');
 		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
 		$sql .= ", ".(is_numeric($this->opp_percent) ? ((int) $this->opp_percent) : 'NULL');
 		$sql .= ", ".($this->public ? 1 : 0);
@@ -587,7 +609,7 @@ class Project extends CommonObject
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
-			$sql .= ", fk_statut = ".((int) $this->statut);
+			$sql .= ", fk_statut = ".((int) $this->status);
 			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
 			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
@@ -954,14 +976,19 @@ class Project extends CommonObject
 
 		// Set fk_projet into elements to null
 		$listoftables = array(
-			'propal' => 'fk_projet', 'commande' => 'fk_projet', 'facture' => 'fk_projet',
-			'supplier_proposal' => 'fk_projet', 'commande_fournisseur' => 'fk_projet', 'facture_fourn' => 'fk_projet',
-			'expensereport_det' => 'fk_projet', 'contrat' => 'fk_projet',
+			'propal' => 'fk_projet',
+			'commande' => 'fk_projet',
+			'facture' => 'fk_projet',
+			'supplier_proposal' => 'fk_projet',
+			'commande_fournisseur' => 'fk_projet',
+			'facture_fourn' => 'fk_projet',
+			'expensereport_det' => 'fk_projet',
+			'contrat' => 'fk_projet',
 			'fichinter' => 'fk_projet',
 			'don' => array('field' => 'fk_projet', 'module' => 'don'),
 			'actioncomm' => 'fk_project',
 			'mrp_mo' => 'fk_project',
-			'entrepot' => 'fk_project'
+			'entrepot' => 'fk_project',
 		);
 		foreach ($listoftables as $key => $value) {
 			if (is_array($value)) {
@@ -1205,7 +1232,7 @@ class Project extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = 1;
+				$this->status = 1;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1233,7 +1260,7 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != self::STATUS_CLOSED) {
+		if ($this->status != self::STATUS_CLOSED) {
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
@@ -1256,7 +1283,7 @@ class Project extends CommonObject
 				// End call triggers
 
 				if (!$error) {
-					$this->statut = 2;
+					$this->status = 2;
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1283,7 +1310,7 @@ class Project extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
+		return $this->LibStatut(isset($this->status) ? $this->status : $this->statut, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2266,6 +2293,7 @@ class Project extends CommonObject
 				$response->nbtodo++;
 
 				$project_static->statut = $obj->status;
+				$project_static->status = $obj->status;
 				$project_static->opp_status = $obj->fk_opp_status;
 				$project_static->date_end = $this->db->jdate($obj->datee);
 
@@ -2343,7 +2371,7 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (!($this->statut == self::STATUS_VALIDATED)) {
+		if (!($this->status == self::STATUS_VALIDATED)) {
 			return false;
 		}
 		if (!$this->date_end) {
