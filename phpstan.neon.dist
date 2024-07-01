@@ -29,7 +29,7 @@ parameters:
 	checkAlwaysTrueInstanceof: false
 	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
-	checkFunctionArgumentTypes: false
+	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
 	checkArgumentsPassedByReference: false
 	checkMaybeUndefinedVariables: false
@@ -60,6 +60,26 @@ parameters:
 		- '#Constructor of class .* has an unused parameter #'
 		- '#Dead catch - Exception is never thrown in the try block#'
 		- '#.*phan-var#'
+		- '#\$httpStatusCode of class Luracast\\Restler\\RestException constructor expects string, int given.#'
+		- '#expects bool, int given.#'
+		- '#expects int<-2, 2>, bool given.#'
+		- '#expects int<0, 1>, false given.#'
+		- '#expects int, string given.#'
+		- '#expects int, float given.#'
+		- '#expects int, bool given.#'
+		- '#expects int, array\|string given.#'
+		- '#expects int<0, 1>, '' given.#'
+		- '#expects string, int given.#'
+		- '#expects string, \(float\|int\) given.#'
+		- '#expects string, array given.#'
+		- '#expects string, float given.#'
+		- '#expects string, true given.#'
+		- '#expects string, int<0, 10> given.#'
+		- '#expects string, DateTime given.#'
+		- '#expects array, string given.#'
+		- '#expects array, null given.#'
+		- '#expects array<string>, null given.#'
+		- '#expects array<string>, string given.#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
