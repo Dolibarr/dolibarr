@@ -58,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_start, 'day'); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_stop, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
-		$total = $total + $objectlink->budget_amount;
+		$total += $objectlink->budget_amount;
 		echo price($objectlink->budget_amount);
 		 ?></td>
 		<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
