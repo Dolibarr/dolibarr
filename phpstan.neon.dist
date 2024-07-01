@@ -93,6 +93,7 @@ parameters:
 		- '#expects resource, object given.#'
 		- '#expects object#'
 		- '#expects Adherent#'
+		- '#expects BOM#'
 		- '#expects Commande#'
 		- '#expects Contrat#'
 		- '#expects Expedition#'
