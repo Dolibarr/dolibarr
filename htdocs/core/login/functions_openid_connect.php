@@ -79,7 +79,6 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	$state = GETPOST('state', 'aZ09');
 	dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
 
-
 	if ($state !== openid_connect_get_state()) {
 		// State does not match
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (state does not match)";

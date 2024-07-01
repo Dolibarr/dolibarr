@@ -1,4 +1,4 @@
-<?php
+top_htmlhead <?php
 /* Copyright (C) 2023   Maximilien Rozniecki    <mrozniecki@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ else
 
 <form id="login" name="login" method="post" action="<?= $action ?>">
 	<!-- Add fields to send OpenID information -->
-	<input type="hidden" name="openid_mode" value="true" /> 
+	<input type="hidden" name="openid_mode" value="true" />
 	<input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />
 	<input type="hidden" name="session_state" value="<?php echo GETPOST('session_state'); ?>" />
 	<input type="hidden" name="code" value="<?php echo GETPOST('code'); ?>" />
