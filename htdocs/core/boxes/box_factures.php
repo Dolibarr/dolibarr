@@ -97,6 +97,7 @@ class box_factures extends ModeleBoxes
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
+			$sql .= " AND f.fk_statut > 0";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

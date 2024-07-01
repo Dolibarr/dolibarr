@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('projectsindex'));
-
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+$hookmanager = new HookManager($db);
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('projectsindex'));
+
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOSTINT('search_project_user');
-$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user');
+$mine = (GETPOST('mode', 'aZ09') == 'mine' || $search_project_user == $user->id) ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
+	$search_project_user = getDolGlobalString('MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX');
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -116,9 +116,10 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 }
 
 $morehtml = '';
-$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+
 $morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';

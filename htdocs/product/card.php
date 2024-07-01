@@ -74,6 +74,7 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+	$langs->load("mrp");
 }
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -197,7 +198,7 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', $fieldtype);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
@@ -964,6 +965,43 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
+							$defbomidac = 0; // to avoid cloning same BOM twice
+							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
+								$bomstatic = new BOM($db);
+								$bomclone = $bomstatic->createFromClone($user, $object->fk_default_bom);
+								if ((int) $bomclone < 0) {
+									setEventMessages($langs->trans('ErrorProductClone').' : '.$langs->trans('ErrorProductCloneBom'), null, 'warnings');
+								} else {
+									$defbomidac = $object->fk_default_bom;
+									$clone->fk_default_bom = $bomclone->id;
+									$clone->update($id, $user);
+									$bomclone->fk_product = $id;
+									$bomclone->label = $langs->trans('BOMofRef', $clone->ref);
+									$bomclone->update($user);
+									$bomclone->validate($user);
+								}
+							}
+							if (GETPOST('clone_otherboms')) {
+								$bomstatic = new BOM($db);
+								$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
+								if (is_array($bomlist)) {
+									foreach ($bomlist as $bom2clone) {
+										if ($bom2clone->id != $defbomidac) { // to avoid cloning same BOM twice
+											$bomclone = $bomstatic->createFromClone($user, $bom2clone->id);
+											if ((int) $bomclone < 0) {
+												setEventMessages($langs->trans('ErrorProductClone').' : '.$langs->trans('ErrorProductCloneBom'), null, 'warnings');
+											} else {
+												$bomclone->fk_product = $id;
+												$bomclone->label = $langs->trans('BOMofRef', $clone->ref);
+												$bomclone->update($user);
+												$bomclone->validate($user);
+											}
+										}
+									}
+								}
+							}
+						}
 						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
@@ -2889,7 +2927,16 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
-
+	if (isModEnabled('bom') && $user->hasRight('bom', 'write')) {
+		if ($object->fk_default_bom > 0) {
+			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_defbom', 'label' => $langs->trans("CloneDefBomProduct"), 'value' => getDolGlobalInt('BOM_CLONE_DEFBOM'));
+		}
+		$bomstatic = new BOM($db);
+		$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
+		if (is_array($bomlist) && count($bomlist) > 0) {
+			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_otherboms', 'label' => $langs->trans("CloneOtherBomsProduct"), 'value' => 0);
+		}
+	}
 	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 

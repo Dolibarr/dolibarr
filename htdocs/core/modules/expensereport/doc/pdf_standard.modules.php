@@ -411,21 +411,6 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
-					//$nblineFollowComment = 1;
-					// Search number of lines coming to know if there is enough room
-					// if ($i < ($nblines - 1))	// If it's not last line
-					// {
-					//     //Fetch current description to know on which line the next one should be placed
-					// 	$follow_comment = $object->lines[$i]->comments;
-					// 	$follow_type = $object->lines[$i]->type_fees_code;
-
-					// 	//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-					// 	$nbLineCommentNeed = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output);
-					// 	$nbLineTypeNeed = dol_nboflines_bis($follow_type,4,$outputlangs->charset_output);
-
-					//     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
-					// }
-
 					//$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
 

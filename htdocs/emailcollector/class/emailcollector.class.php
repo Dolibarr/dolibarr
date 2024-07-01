@@ -179,11 +179,6 @@ class EmailCollector extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -3076,7 +3071,7 @@ class EmailCollector extends CommonObject
 								$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
 								$projecttocreate->title = $subject;
-								$projecttocreate->date_start = $date;	// date of email
+								$projecttocreate->date_start = $dateemail;	// date of email
 								$projecttocreate->date_end = 0;
 								$projecttocreate->opp_status = $id_opp_status;
 								$projecttocreate->opp_percent = $percent_opp_status;
@@ -3222,7 +3217,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->note_private = $descriptionfull;
 								$tickettocreate->entity = $conf->entity;
 								$tickettocreate->email_msgid = $msgid;
-								$tickettocreate->email_date = $date;
+								$tickettocreate->email_date = $dateemail;
 								//$tickettocreate->fk_contact = $contactstatic->id;
 
 								$savesocid = $tickettocreate->socid;
@@ -3338,7 +3333,7 @@ class EmailCollector extends CommonObject
 								$candidaturetocreate->note_private = $descriptionfull;
 								$candidaturetocreate->entity = $conf->entity;
 								$candidaturetocreate->email_msgid = $msgid;
-								$candidaturetocreate->email_date = $date;		// date of email
+								$candidaturetocreate->email_date = $dateemail;		// date of email
 								$candidaturetocreate->status = $candidaturetocreate::STATUS_DRAFT;
 								//$candidaturetocreate->fk_contact = $contactstatic->id;
 

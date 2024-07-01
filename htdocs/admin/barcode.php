@@ -233,7 +233,7 @@ if (isModEnabled('product')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';

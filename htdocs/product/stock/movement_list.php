@@ -114,7 +114,7 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new MouvementStock($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fou
 $isNewObject = empty($object->id) && empty($object->rowid);
 
 // Clean variables not defined
-if (!isset($absolute_discount)) {
+if (empty($absolute_discount)) {
 	$absolute_discount = 0;
 }
-if (!isset($absolute_creditnote)) {
+if (empty($absolute_creditnote)) {
 	$absolute_creditnote = 0;
 }
 
@@ -52,28 +52,31 @@ if (!empty($discount_type)) {
 
 if ($fixedDiscount > 0) {
 	$translationKey = (empty($discount_type)) ? 'CompanyHasRelativeDiscount' : 'HasRelativeDiscountFromSupplier';
-	print $langs->trans($translationKey, $fixedDiscount).'.';
+	print $langs->trans($translationKey, $fixedDiscount);
 } else {
-	$translationKey = (empty($discount_type)) ? 'CompanyHasNoRelativeDiscount' : 'HasNoRelativeDiscountFromSupplier';
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
+	if ($conf->dol_optimize_smallscreen) {
+		$translationKey = 'RelativeDiscount';
+	} else {
+		$translationKey = (empty($discount_type)) ? 'CompanyHasNoRelativeDiscount' : 'HasNoRelativeDiscountFromSupplier';
+	}
+	print '<span class="opacitymedium">'.$langs->trans($translationKey).'</span>';
 }
-if ($isNewObject) {
-	print ' '.$addrelativediscount;
-}
+// Add link to edit the relative discount
+print ' '.$addrelativediscount;
 
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
 	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = empty($discount_type) ? 'CompanyHasDownPaymentOrCommercialDiscount' : 'HasDownPaymentOrCommercialDiscountFromSupplier';
-		$text = $langs->trans($translationKey, price($absolute_discount, 1, $outlangs, 1, -1, -1, $conf->currency)).'.';
+		$text = $langs->trans($translationKey, price($absolute_discount, 1, $langs, 1, -1, -1, $conf->currency)).'.';
 
 		if ($isInvoice && !$isNewObject && $object->statut > $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('AbsoluteDiscountUse'));
 		}
 
 		if ($isNewObject) {
-			$text .= $addabsolutediscount;
+			$text .= ' '.$addabsolutediscount;
 		}
 
 		if ($isNewObject) {
@@ -94,7 +97,7 @@ if ($absolute_creditnote > 0) {
 	// If validated, we show link "add credit note to payment"
 	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = empty($discount_type) ? 'CompanyHasCreditNote' : 'HasCreditNoteFromSupplier';
-		$text = $langs->trans($translationKey, price($absolute_creditnote, 1, $langs, 1, -1, -1, $conf->currency)).'.';
+		$text = $langs->trans($translationKey, price($absolute_creditnote, 1, $langs, 1, -1, -1, $conf->currency));
 
 		if ($isInvoice && !$isNewObject && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('CreditNoteDepositUse'));
@@ -117,8 +120,12 @@ if ($absolute_creditnote > 0) {
 }
 
 if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
-	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
-	print '<br class="hideonsmartphone"><span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
+	if ($conf->dol_optimize_smallscreen) {
+		$translationKey = 'AbsoluteDiscount';
+	} else {
+		$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
+	}
+	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'</span>';
 
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' '.$addabsolutediscount;

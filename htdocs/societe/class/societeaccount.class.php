@@ -154,11 +154,6 @@ class SocieteAccount extends CommonObject
 	public $note_private;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
