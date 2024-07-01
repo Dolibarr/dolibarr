@@ -2,6 +2,7 @@
 /* Copyright (C) 2022		Jeritiana Ravelojaona	<jeritiana.rav@smartone.ai>
  * Copyright (C) 2023-2024	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Maximilien Rozniecki	<mrozniecki@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,17 +61,17 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	if (GETPOSTISSET('username')) {
 		// OIDC does not require credentials here: pass on to next auth handler
 		$_SESSION["dol_loginmesg"] = "Not an OpenID Connect flow";
-		dol_syslog("functions_openid_connect::check_user_password_openid_connect not an OIDC flow");
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::not an OIDC flow");
 		return false;
 	} elseif (!GETPOSTISSET('state')) {
 		// No state received
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (no state received)";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::no state received", LOG_ERR);
 		return false;
 	} elseif (!GETPOSTISSET('code')) {
 		// No code received
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (no code received)";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::no code received", LOG_ERR);
 		return false;
 	}
 
@@ -78,10 +79,11 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	$state = GETPOST('state', 'aZ09');
 	dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
 
+
 	if ($state !== openid_connect_get_state()) {
 		// State does not match
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (state does not match)";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::state does not match", LOG_ERR);
 		return false;
 	}
 
@@ -94,29 +96,29 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
 	];
 
-	$token_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL'), 'POST', http_build_query($auth_param), 1, null, array('https'), 2);
+	$token_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL'), 'POST', http_build_query($auth_param), 1, array(), array('https'), 2);
 	$token_content = json_decode($token_response['content']);
 	dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
 
 	if ($token_response['curl_error_no']) {
 		// Token request error
 		$_SESSION["dol_loginmesg"] = "Network error: ".$token_response['curl_error_msg']." (".$token_response['curl_error_no'].")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$_SESSION["dol_loginmesg"], LOG_ERR);
 		return false;
 	} elseif ($token_response['http_code'] >= 400 && $token_response['http_code'] < 500) {
 		// HTTP Error
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_response['content'].")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$token_response['content'], LOG_ERR);
 		return false;
 	} elseif ($token_content->error) {
 		// Got token response but content is an error
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$token_content->error_description, LOG_ERR);
 		return false;
 	} elseif (!property_exists($token_content, 'access_token')) {
 		// Other token request error
 		$_SESSION["dol_loginmesg"] = "Token request error (".$token_response['http_code'].")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$_SESSION["dol_loginmesg"], LOG_ERR);
 		return false;
 	}
 
@@ -136,22 +138,22 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	if ($userinfo_response['curl_error_no']) {
 		// User info request error
 		$_SESSION["dol_loginmesg"] = "Network error: ".$userinfo_response['curl_error_msg']." (".$userinfo_response['curl_error_no'].")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$_SESSION["dol_loginmesg"], LOG_ERR);
 		return false;
 	} elseif ($userinfo_response['http_code'] >= 400 && $userinfo_response['http_code'] < 500) {
 		// HTTP Error
 		$_SESSION["dol_loginmesg"] = "OpenID Connect user info error: " . $userinfo_response['content'];
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$userinfo_response['content'], LOG_ERR);
 		return false;
 	} elseif ($userinfo_content->error) {
 		// Got user info response but content is an error
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$userinfo_content->error_description.")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$userinfo_content->error_description, LOG_ERR);
 		return false;
 	} elseif (!property_exists($userinfo_content, $login_claim)) {
 		// Other user info request error
 		$_SESSION["dol_loginmesg"] = "Userinfo request error (".$userinfo_response['http_code'].")";
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$_SESSION["dol_loginmesg"], LOG_ERR);
 		return false;
 	}
 
@@ -165,12 +167,12 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 	$resql = $db->query($sql);
 	if (!$resql) {
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::Error with sql query (".$db->error().")");
 		return false;
 	}
 	$obj = $db->fetch_object($resql);
 	if (!$obj) {
-		dol_syslog(''); // ToDo
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::Error no result from the query");
 		return false;
 	}
 

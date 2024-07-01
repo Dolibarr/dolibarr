@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('donationindex'));
 
 $langs->load("donations");

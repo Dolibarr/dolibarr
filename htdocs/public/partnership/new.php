@@ -79,7 +79,7 @@ if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewpartnershipcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);

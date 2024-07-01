@@ -118,7 +118,7 @@ class InfoBox
 			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
-		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
+		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 		$resql = $dbs->query($sql);
 		if ($resql) {
 			$num = $dbs->num_rows($resql);

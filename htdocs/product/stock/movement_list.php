@@ -114,7 +114,7 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new MouvementStock($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
@@ -1156,7 +1156,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -1261,7 +1261,7 @@ if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 if (!empty($arrayfields['m.value']['checked'])) {
 	// Qty
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="4" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
+	print '<input class="flat width50 right" type="text" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['m.price']['checked'])) {
@@ -1501,22 +1501,23 @@ while ($i < $imaxinloop) {
 			;
 			print '</td>'; // This is primary not movement id
 		}
+		// Date
 		if (!empty($arrayfields['m.datem']['checked'])) {
-			// Date
 			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuserrel').'</td>';
 		}
+		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			// Product ref
 			print '<td class="nowraponall">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
 			print "</td>\n";
 		}
+		// Product label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			// Product label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($productstatic->label).'">';
 			print $productstatic->label;
 			print "</td>\n";
 		}
+		// Lot
 		if (!empty($arrayfields['m.batch']['checked'])) {
 			print '<td class="center nowraponall">';
 			if ($productlot->id > 0) {
@@ -1526,9 +1527,11 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 		}
+		// Eatby
 		if (!empty($arrayfields['pl.eatby']['checked'])) {
 			print '<td class="center">'.dol_print_date($obj->eatby, 'day').'</td>';
 		}
+		// Sellby
 		if (!empty($arrayfields['pl.sellby']['checked'])) {
 			print '<td class="center">'.dol_print_date($obj->sellby, 'day').'</td>';
 		}
@@ -1544,34 +1547,39 @@ while ($i < $imaxinloop) {
 			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
+		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			// Inventory code
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a></td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTML($obj->inventorycode).'">';
+			if ($obj->inventorycode) {
+				print img_picto('', 'movement', 'class="pictofixedwidth"');
+				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a>';
+			}
+			print '</td>';
 		}
+		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			// Label of movement
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 		}
+		// Origin of movement
 		if (!empty($arrayfields['origin']['checked'])) {
-			// Origin of movement
 			print '<td class="nowraponall">'.$origin.'</td>';
 		}
+		// fk_project
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
-			// fk_project
 			print '<td>';
 			if ($obj->fk_project != 0) {
 				print $object->get_origin($obj->fk_project, 'project');
 			}
 			print '</td>';
 		}
+		// Type of movement
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
-			// Type of movement
 			print '<td class="center">';
 			print $object->getTypeMovement();
 			print '</td>';
 		}
+		// Qty
 		if (!empty($arrayfields['m.value']['checked'])) {
-			// Qty
 			print '<td class="right">';
 			if ($obj->qty > 0) {
 				print '<span class="stockmovemententry">';
@@ -1585,8 +1593,8 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 		}
+		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
-			// Price
 			print '<td class="right">';
 			if ($obj->price != 0) {
 				print price($obj->price);

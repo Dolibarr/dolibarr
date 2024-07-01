@@ -129,7 +129,7 @@ print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.
 
 // ZIP
 print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="minwidth100" name="zipcode" id="zipcode" value="'.dol_escape_htmltag(GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_ZIP') ? $conf->global->MAIN_INFO_ACCOUNTANT_ZIP : '')).'"></td></tr>'."\n";
+print '<input class="width100" name="zipcode" id="zipcode" value="'.dol_escape_htmltag(GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_ACCOUNTANT_ZIP') ? $conf->global->MAIN_INFO_ACCOUNTANT_ZIP : '')).'"></td></tr>'."\n";
 
 // Town/City
 print '<tr class="oddeven"><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';

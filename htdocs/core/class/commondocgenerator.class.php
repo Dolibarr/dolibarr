@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var Extrafields object
+	 * @var ?Extrafields object
 	 */
 	public $extrafieldsCache;
 
@@ -1368,7 +1368,7 @@ abstract class CommonDocGenerator
 
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1422,7 +1422,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extrafields if not already done
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1713,7 +1713,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

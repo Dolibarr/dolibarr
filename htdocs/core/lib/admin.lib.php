@@ -727,7 +727,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
  */
 function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
-	global $langs, $conf, $user, $form;
+	global $langs, $form;
 
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);

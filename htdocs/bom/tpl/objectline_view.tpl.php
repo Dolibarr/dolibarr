@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -102,7 +102,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product
-print '<td class="linecoldescription minwidth300imp">';
+print '<td class="linecoldescription bomline minwidth300imp">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
@@ -140,8 +140,8 @@ echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but 
 print '</td>';
 
 if ($filtertype != 1) {
-	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit nowrap left">';
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
+		print '<td class="linecoluseunit nowrap">';
 		$label = measuringUnitString($line->fk_unit, '', '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
@@ -163,8 +163,8 @@ if ($filtertype != 1) {
 	echo $line->efficiency;
 	print '</td>';
 } else {
-	// Unit
-	print '<td class="linecolunit nowrap right">';
+	// Unit											// For services, units are always enabled
+	print '<td class="linecolunit nowrap">';
 	$coldisplay++;
 
 	if (!empty($line->fk_unit)) {
@@ -176,12 +176,18 @@ if ($filtertype != 1) {
 
 	print '</td>';
 
+	// Qty frozen
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
+	print '</td>';
+
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
 		$res = $workstation->fetch($line->fk_default_workstation);
 
-		print '<td class="linecolworkstation nowrap right">';
+		print '<td class="linecolworkstation nowrap">';
 		$coldisplay++;
 		if ($res > 0) {
 			echo $workstation->getNomUrl(1);

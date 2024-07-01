@@ -52,7 +52,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 // Initialize context for list
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 

@@ -74,6 +74,7 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+	$langs->load("mrp");
 }
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -134,7 +135,7 @@ if (!empty($user->socid)) {
 }
 
 // Load object modCodeProduct
-$module = (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+$module = getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON', 'mod_codeproduct_leopard');
 if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
@@ -197,7 +198,7 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', $fieldtype);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
@@ -672,7 +673,8 @@ if (empty($reshook)) {
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 2; $i <= $produit_multiprices_limit; $i++) {
 					if (GETPOSTISSET("price_".$i)) {
 						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
 						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
@@ -690,6 +692,7 @@ if (empty($reshook)) {
 
 			if (!$ref && getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 				// Generate ref...
+				'@phan-var ModeleProductCode $modCodeProduct';
 				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
 
@@ -962,6 +965,43 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
+							$defbomidac = 0; // to avoid cloning same BOM twice
+							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
+								$bomstatic = new BOM($db);
+								$bomclone = $bomstatic->createFromClone($user, $object->fk_default_bom);
+								if ((int) $bomclone < 0) {
+									setEventMessages($langs->trans('ErrorProductClone').' : '.$langs->trans('ErrorProductCloneBom'), null, 'warnings');
+								} else {
+									$defbomidac = $object->fk_default_bom;
+									$clone->fk_default_bom = $bomclone->id;
+									$clone->update($id, $user);
+									$bomclone->fk_product = $id;
+									$bomclone->label = $langs->trans('BOMofRef', $clone->ref);
+									$bomclone->update($user);
+									$bomclone->validate($user);
+								}
+							}
+							if (GETPOST('clone_otherboms')) {
+								$bomstatic = new BOM($db);
+								$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
+								if (is_array($bomlist)) {
+									foreach ($bomlist as $bom2clone) {
+										if ($bom2clone->id != $defbomidac) { // to avoid cloning same BOM twice
+											$bomclone = $bomstatic->createFromClone($user, $bom2clone->id);
+											if ((int) $bomclone < 0) {
+												setEventMessages($langs->trans('ErrorProductClone').' : '.$langs->trans('ErrorProductCloneBom'), null, 'warnings');
+											} else {
+												$bomclone->fk_product = $id;
+												$bomclone->label = $langs->trans('BOMofRef', $clone->ref);
+												$bomclone->update($user);
+												$bomclone->validate($user);
+											}
+										}
+									}
+								}
+							}
+						}
 						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
@@ -1067,7 +1107,7 @@ if (empty($reshook)) {
 			$price_base_type = $object->price_base_type;
 
 			// If multiprice
-			if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $soc->price_level) {
 				$pu_ht = $object->multiprices[$soc->price_level];
 				$pu_ttc = $object->multiprices_ttc[$soc->price_level];
 				$price_base_type = $object->multiprices_base_type[$soc->price_level];
@@ -1279,7 +1319,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card');
 // Load object modBarCodeProduct
 $res = 0;
 if (isModEnabled('barcode') && getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
-	$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+	$module = strtolower(getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM'));
 	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 	foreach ($dirbarcode as $dirroot) {
 		$res = dol_include_once($dirroot.$module.'.php');
@@ -1323,7 +1363,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 
 		// Load object modCodeProduct
-		$module = (getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON') ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
+		$module = getDolGlobalString('PRODUCT_CODEPRODUCT_ADDON', 'mod_codeproduct_leopard');
 		if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
 		}
@@ -1440,7 +1480,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 											}
 							';
 						}
-						if (isset($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+						if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
 							print '
 											if (this.value == 2) {
 												$("#field_mask, #mask_option").toggleClass("hideobject");
@@ -1581,7 +1621,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 					print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 					print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1614,7 +1654,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 					print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
+					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 0);
 					print '</td></tr>';
 				}
 			}
@@ -1623,7 +1663,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td>';
-				print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, 'units');
+				print $form->selectUnits(empty($line->fk_unit) ? getDolGlobalString('PRODUCT_USE_UNITS') : $line->fk_unit, 'units');
 				print '</td></tr>';
 			}
 
@@ -1671,8 +1711,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Note (private, no output on invoices, propales...)
-			//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
-			//{
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
@@ -1714,7 +1752,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Price
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
 					print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
-					print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+					print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
 					print '</td></tr>';
 
 					// Min price
@@ -2889,7 +2927,16 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
-
+	if (isModEnabled('bom') && $user->hasRight('bom', 'write')) {
+		if ($object->fk_default_bom > 0) {
+			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_defbom', 'label' => $langs->trans("CloneDefBomProduct"), 'value' => getDolGlobalInt('BOM_CLONE_DEFBOM'));
+		}
+		$bomstatic = new BOM($db);
+		$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
+		if (is_array($bomlist) && count($bomlist) > 0) {
+			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_otherboms', 'label' => $langs->trans("CloneOtherBomsProduct"), 'value' => 0);
+		}
+	}
 	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 

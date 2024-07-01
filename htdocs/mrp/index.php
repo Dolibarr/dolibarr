@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('mrpindex'));
 
 // Load translation files required by the page
@@ -57,7 +57,11 @@ llxHeader('', $langs->trans("MRP"), '');
 print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 
 /*
@@ -151,7 +155,7 @@ if ($conf->use_javascript_ajax) {
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 /*
@@ -266,7 +270,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $object = new stdClass();
 $parameters = array(

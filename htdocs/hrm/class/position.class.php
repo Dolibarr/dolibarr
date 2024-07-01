@@ -111,7 +111,6 @@ class Position extends CommonObject
 	public $rowid;
 	public $ref;
 	public $description;
-	public $date_creation;
 	public $fk_contrat;
 	public $fk_user;
 	public $fk_job;

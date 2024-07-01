@@ -53,8 +53,9 @@ $massaction  = GETPOST('massaction', 'aZ09');
 $lineid      = GETPOSTINT('lineid');
 
 $msid  = GETPOSTINT('msid');
-$year  = GETPOSTINT("year");
-$month = GETPOSTINT("month");
+
+$year  = GETPOST("year");		// TODO Rename into search_year
+$month = GETPOST("month");		// TODO Rename into search_month
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement", 'alpha');
@@ -82,7 +83,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
@@ -107,7 +108,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -198,7 +199,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = "";
 	$search_batch = "";
 	$search_qty = '';
-	$sall = "";
+	$search_all = "";
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -234,7 +235,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
