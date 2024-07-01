@@ -1966,6 +1966,8 @@ CloseFiscalYear=Close accounting period
 DeleteFiscalYear=Delete accounting period
 ConfirmDeleteFiscalYear=Are you sure to delete this accounting period?
 ShowFiscalYear=Show accounting period
+##### Assets #####
+AssetNumberingModules=Assets numbering module
 AlwaysEditable=Can always be edited
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters
@@ -1978,6 +1980,7 @@ SortOrder=Sort order
 Format=Format
 TypePaymentDesc=0:Customer payment type, 1:Vendor payment type, 2:Both customers and suppliers payment type
 IncludePath=Include path (defined into variable %s)
+##### Expense reports #####
 ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
 ExpenseReportsRulesSetup=Setup of module Expense Reports - Rules
