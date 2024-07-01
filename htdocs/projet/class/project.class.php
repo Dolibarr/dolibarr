@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	    Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2017  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,14 @@ class Project extends CommonObject
 	 */
 	public $statut; // 0=draft, 1=opened, 2=closed
 
+	/**
+	 * @var int opportunity status
+	 */
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+
+	/**
+	 * @var string opportunity code
+	 */
 	public $opp_status_code;
 
 	/**
@@ -222,8 +229,14 @@ class Project extends CommonObject
 	 */
 	public $opp_percent; // opportunity probability
 
+	/**
+	 * @var float|'' opportunity weighted amount
+	 */
 	public $opp_weighted_amount; // opportunity weighted amount
 
+	/**
+	 * @var string email msgid
+	 */
 	public $email_msgid;
 
 	public $oldcopy;
