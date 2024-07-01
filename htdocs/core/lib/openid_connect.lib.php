@@ -28,28 +28,28 @@
  */
 function openid_connect_prepare_head()
 {
-    global $langs, $conf, $user;
-    $h = 0;
-    $head = array();
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = dol_buildpath("/openid_connect/admin/setup.php", 1);
-    $head[$h][1] = $langs->trans("Parameters");
-    $head[$h][2] = 'settings';
-    $h++;
+	$head[$h][0] = dol_buildpath("/openid_connect/admin/setup.php", 1);
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'settings';
+	$h++;
 
-    complete_head_from_modules($conf,$langs,null,$head,$h,'openid_connect_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'openid_connect_admin');
 
-    return $head;
+	return $head;
 }
 
 function openid_connect_get_state() {
-    return hash('sha256', session_id());
+	return hash('sha256', session_id());
 }
 
 function openid_connect_get_redirect_url() {
-    return DOL_MAIN_URL_ROOT . '/core/modules/openid_connect/callback.php';
+	return DOL_MAIN_URL_ROOT . '/core/modules/openid_connect/callback.php';
 }
 
 function openid_connect_get_url() {
-    return getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&redirect_uri=' . openid_connect_get_redirect_url() . '&scope=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') . '&response_type=code&state=' . openid_connect_get_state();
+	return getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&redirect_uri=' . openid_connect_get_redirect_url() . '&scope=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') . '&response_type=code&state=' . openid_connect_get_state();
 }

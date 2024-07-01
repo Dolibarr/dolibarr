@@ -42,29 +42,29 @@ print top_htmlhead('', '', 0, 0, $arrayofjs, array(), 0);
 $prefix = dol_getprefix('');
 $rollback_url = $_COOKIE["DOL_rollback_url_$prefix"];
 if (empty($rollback_url) || $rollback_url === '/')
-    $action = $dolibarr_main_url_root . '/index.php?mainmenu=home&leftmenu=';
+	$action = $dolibarr_main_url_root . '/index.php?mainmenu=home&leftmenu=';
 else
-    $action = $rollback_url;
+	$action = $rollback_url;
 ?>
 
 <form id="login" name="login" method="post" action="<?= $action ?>">
-    <!-- Add fields to send OpenID information -->
-    <input type="hidden" name="openid_mode" value="true" /> 
-    <input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />
-    <input type="hidden" name="session_state" value="<?php echo GETPOST('session_state'); ?>" />
-    <input type="hidden" name="code" value="<?php echo GETPOST('code'); ?>" />
-    <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
-    <!-- Add fields to send local user information -->
-    <input type="hidden" name="tz" id="tz" value="" />
-    <input type="hidden" name="tz_string" id="tz_string" value="" />
-    <input type="hidden" name="dst_observed" id="dst_observed" value="" />
-    <input type="hidden" name="dst_first" id="dst_first" value="" />
-    <input type="hidden" name="dst_second" id="dst_second" value="" />
-    <input type="hidden" name="screenwidth" id="screenwidth" value="" />
-    <input type="hidden" name="screenheight" id="screenheight" value="" />
+	<!-- Add fields to send OpenID information -->
+	<input type="hidden" name="openid_mode" value="true" /> 
+	<input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />
+	<input type="hidden" name="session_state" value="<?php echo GETPOST('session_state'); ?>" />
+	<input type="hidden" name="code" value="<?php echo GETPOST('code'); ?>" />
+	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
+	<!-- Add fields to send local user information -->
+	<input type="hidden" name="tz" id="tz" value="" />
+	<input type="hidden" name="tz_string" id="tz_string" value="" />
+	<input type="hidden" name="dst_observed" id="dst_observed" value="" />
+	<input type="hidden" name="dst_first" id="dst_first" value="" />
+	<input type="hidden" name="dst_second" id="dst_second" value="" />
+	<input type="hidden" name="screenwidth" id="screenwidth" value="" />
+	<input type="hidden" name="screenheight" id="screenheight" value="" />
 </form>
 <script type="text/javascript">
-    $(document).ready(function () {
-        document.forms['login'].submit();
-    });
+	$(document).ready(function () {
+		document.forms['login'].submit();
+	});
 </script>
