@@ -80,6 +80,8 @@ if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 }
 
+/** @var DoliDB $db */
+
 $sql = "SELECT DISTINCT c.ref, c.fk_soc, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel, s.rowid, s.nom as name, s.email, s.default_lang,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
@@ -91,7 +93,6 @@ if (is_numeric($duration_value)) {
 $sql .= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC, c.ref ASC"; // Order by email to allow one message per email
 
-// print $sql;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

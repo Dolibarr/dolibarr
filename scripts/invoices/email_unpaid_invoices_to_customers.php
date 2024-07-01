@@ -89,6 +89,8 @@ if (!empty($dolibarr_main_db_readonly)) {
 	exit(1);
 }
 
+/** @var DoliDB $db */
+
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') {
