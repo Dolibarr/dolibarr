@@ -115,6 +115,11 @@ class Entrepot extends CommonObject
 	public $warehouse_usage;
 
 	/**
+	 * @var	array	Warehouse usage ID labels
+	 */
+	public $warehouse_usage_label;
+
+	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'),
@@ -175,7 +180,7 @@ class Entrepot extends CommonObject
 		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 301),
-		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("MAIN_FEATURES_LEVEL")', 'visible' => 1, 'position' => 400, 'default' => 1, 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
+		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")', 'visible' => 1, 'position' => 400, 'default' => 1, 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 500, 'css' => 'minwidth50'),
@@ -203,7 +208,15 @@ class Entrepot extends CommonObject
 	 */
 	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
 
+	/**
+	 * Warehouse is being used for stock calculations
+	 */
+	const WAREHOUSE_COUNT = 1;
 
+	/**
+	 * Warehouse is NOT being used for stock calculations
+	 */
+	const WAREHOUSE_NOCOUNT = 2;
 
 	/**
 	 *  Constructor
@@ -222,6 +235,10 @@ class Entrepot extends CommonObject
 			$this->labelStatus[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
 			$this->labelStatus[self::STATUS_OPEN_ALL] = 'Opened';
+		}
+		$this->warehouse_usage_label[self::WAREHOUSE_COUNT] = 'WarehouseUsageCount';
+		if (getDolGlobalString('STOCK_USE_WAREHOUSE_USAGE')) {
+			$this->warehouse_usage_label[self::WAREHOUSE_NOCOUNT] = 'WarehouseUsageNoCount';
 		}
 	}
 
@@ -355,6 +372,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
+		$sql .= ", warehouse_usage = '".$this->db->escape($this->warehouse_usage)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
@@ -507,7 +525,7 @@ class Entrepot extends CommonObject
 			return -1;
 		}
 
-		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
+		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax, warehouse_usage,";
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
@@ -539,6 +557,7 @@ class Entrepot extends CommonObject
 				$this->country_id     = $obj->country_id;
 				$this->phone          = $obj->phone;
 				$this->fax            = $obj->fax;
+				$this->warehouse_usage= $obj->warehouse_usage;
 
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
