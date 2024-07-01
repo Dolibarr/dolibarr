@@ -1382,17 +1382,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 			print '<td class="maxwidthonsmartphone" colspan="3">';
-			print '<span class="customer-back opacitymedium">'.$langs->trans("Prospect").'</span><input id="prospect" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
+			print '<span class="customer-back opacitymedium"><label for="prospectinput">'.$langs->trans("Prospect").'</label></span><input id="prospectinput" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
-			print '<span class="customer-back">'.$langs->trans("Customer").'</span><input id="customer" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
+			print '<span class="customer-back"><label for="customerinput">'.$langs->trans("Customer").'</label></span><input id="customerinput" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
 				$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-				print '<span class="vendor-back">'.$langs->trans("Vendor").'</span><input id="supplier" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
+				print '<span class="vendor-back"><label for="supplierinput">'.$langs->trans("Vendor").'</label></span><input id="supplierinput" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -2126,17 +2126,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
 				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
-				print '<span class="customer-back opacitymedium">'.$langs->trans("Prospect").'</span><input id="prospect" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
+				print '<span class="customer-back opacitymedium"><label for="prospectinput">'.$langs->trans("Prospect").'</label></span><input id="prospectinput" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
-				print '<span class="customer-back">'.$langs->trans("Customer").'</span><input id="customer" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
+				print '<span class="customer-back"><label for="customerinput">'.$langs->trans("Customer").'</label></span><input id="customerinput" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 					// Supplier
 					$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-					print '<span class="vendor-back">'.$langs->trans("Vendor").'</span><input id="supplier" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
+					print '<span class="vendor-back"><label for="supplierinput">'.$langs->trans("Vendor").'</label></span><input id="supplierinput" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
 				print '</tr>';
