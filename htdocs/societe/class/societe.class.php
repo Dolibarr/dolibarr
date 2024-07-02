@@ -4502,6 +4502,7 @@ class Societe extends CommonObject
 
 		$this->code_client = 'CC-'.dol_print_date($now, 'dayhourlog');
 		$this->code_fournisseur = 'SC-'.dol_print_date($now, 'dayhourlog');
+		$this->typent_code = 'TE_OTHER';
 		$this->capital = 10000;
 		$this->client = 1;
 		$this->prospect = 1;
