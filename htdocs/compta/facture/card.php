@@ -2048,6 +2048,47 @@ if (empty($reshook)) {
 					if ($ret > 0) {
 						$nextSituationInvoice->insertExtraFields();
 					}
+
+					// Hooks
+					$regs = array();
+					// Parse element/subelement (ex: project_task)
+					$element = $subelement = $origin;
+					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+						$element = $regs[1];
+						$subelement = $regs[2];
+					}
+
+					// For compatibility
+					if ($element == 'order') {
+						$element = $subelement = 'commande';
+					}
+					if ($element == 'propal') {
+						$element = 'comm/propal';
+						$subelement = 'propal';
+					}
+					if ($element == 'contract') {
+						$element = $subelement = 'contrat';
+					}
+					if ($element == 'inter') {
+						$element = $subelement = 'ficheinter';
+					}
+					if ($element == 'shipping') {
+						$element = $subelement = 'expedition';
+					}
+					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+					$classname = ucfirst($subelement);
+					$srcobject = new $classname($db);
+
+
+					$srcobject->fetch($object->origin_id);
+					$srcobject->fetch_lines();
+					$parameters = array('objFrom' => $srcobject);
+					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $nextSituationInvoice, $action); // Note that $action and $object may have been
+					// modified by hook
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						$error++;
+					}
 				}
 			}
 		}
