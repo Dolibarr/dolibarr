@@ -907,8 +907,8 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  SupplierProposal $object    Object supplier proposal
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs

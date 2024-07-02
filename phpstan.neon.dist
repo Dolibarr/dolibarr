@@ -105,6 +105,7 @@ parameters:
 		- '#expects Mo#'
 		- '#expects Productlot#'
 		- '#expects Facture#'
+		- '#expects FactureFournisseur#'
 		- '#expects Paiement#'
 		- '#expects PgSql\\Result#'
 		- '#expects RecruitmentJobPosition#'

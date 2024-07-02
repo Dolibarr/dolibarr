@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +247,7 @@ function invoice_admin_prepare_head()
 /**
  * Return array head with list of tabs to view object information.
  *
- * @param   Facture     $object     Invoice object
+ * @param   FactureRec  $object     Invoice model object
  * @return array                    head array with tabs
  */
 function invoice_rec_prepare_head($object)
