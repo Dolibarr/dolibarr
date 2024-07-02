@@ -6106,6 +6106,8 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+/* .cke_notifications_area { display: none; } */
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
