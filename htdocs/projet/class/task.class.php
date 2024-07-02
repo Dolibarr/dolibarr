@@ -175,7 +175,10 @@ class Task extends CommonObjectLine
 	public $task_parent_ref;
 	public $task_parent_position;
 
-	// Billable state (boolean, default to 1)
+	/**
+	 * Status indicate whether the task is billable (time is meant to be added to invoice) '1' or not '0'
+	 * @var int billable 
+	 */
 	public $billable = 1;
 
 	/**
