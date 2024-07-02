@@ -365,13 +365,13 @@ function getNumberInvoicesPieChart($mode)
 
 		$amount_mode = (getDolGlobalInt('FACTURE_VALIDATED_IN_AMOUNT') == 1);
 
-		$sql = "SELECT";
+				$sql = "SELECT";
 		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late30";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' OR f.date_lim_reglement IS NULL", $amount_mode ? "f.total_ht" : 1, 0).") as notlatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd15, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate30";
 		if ($mode == 'customers') {
 			$element = 'invoice';
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
