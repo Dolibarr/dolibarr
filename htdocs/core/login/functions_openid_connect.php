@@ -92,7 +92,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
 		'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
 		'code'          => $auth_code,
-		'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
+		'redirect_uri'  => openid_connect_get_redirect_url()
 	];
 
 	$token_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL'), 'POST', http_build_query($auth_param), 1, array(), array('https'), 2);

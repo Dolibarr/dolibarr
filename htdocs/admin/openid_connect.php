@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 dol_include_once('/core/lib/openid_connect.lib.php');
 
 $langs->load("admin");
-$langs->load("openid_connect");
+$langs->load("openidconnect");
 
 if (!$user->admin) accessforbidden();
 
@@ -114,7 +114,7 @@ $form = new Form($db);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("openid_connectSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("OpenIDconnectSetup"),$linkback,'title_setup');
 print "<br>\n";
 
 $head = openid_connect_prepare_head();
