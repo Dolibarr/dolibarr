@@ -45,6 +45,7 @@ if (empty($rollback_url) || $rollback_url === '/')
 	$action = $dolibarr_main_url_root . '/index.php?mainmenu=home&leftmenu=';
 else
 	$action = $rollback_url;
+    setcookie('DOL_rollback_url_' . dol_getprefix(''), "", time() + 1, '/');
 ?>
 
 <form id="login" name="login" method="post" action="<?= $action ?>">
