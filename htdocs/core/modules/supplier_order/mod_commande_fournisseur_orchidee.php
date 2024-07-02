@@ -117,7 +117,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$thirdparty = new Societe($db);
 		$thirdparty->initAsSpecimen();
 
-		$numExample = $this->getNextValue($thirdparty, $order);
+		$numExample = $this->getNextValue($thirdparty, $supplierorder);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -134,7 +134,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -142,7 +142,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$mask = getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK");
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 
