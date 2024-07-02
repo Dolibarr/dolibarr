@@ -1535,7 +1535,7 @@ class Ticket extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $action, $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1597,6 +1597,15 @@ class Ticket extends CommonObject
 		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		$hookmanager->initHooks(array('ticketdao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -2660,7 +2669,7 @@ class Ticket extends CommonObject
 							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {
@@ -2712,7 +2721,7 @@ class Ticket extends CommonObject
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {

@@ -469,7 +469,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		}
 
 		// Warranty
-		if (!$errorforline) {
+		if (!$errorforline && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && isset($tabwarranty[$key])) {
 			if (is_array($tabwarranty[$key])) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
@@ -712,7 +712,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			if (is_array($tabrevenuestamp[$key])) {
+			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
 						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
@@ -864,22 +864,24 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		}
 
 		// Warranty
-		foreach ($tabwarranty[$key] as $k => $mt) {
-			//if ($mt) {
-			print '"'.$key.'"'.$sep;
-			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
-			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
-			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
-			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
-			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-			print '"'.$journal.'"';
-			print "\n";
-			//}
+		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && isset($tabwarranty[$key])) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				//if ($mt) {
+				print '"'.$key.'"'.$sep;
+				print '"'.$date.'"'.$sep;
+				print '"'.$val["ref"].'"'.$sep;
+				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+				print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+				print '"'.$langs->trans("Thirdparty").'"'.$sep;
+				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+				print '"'.$journal.'"';
+				print "\n";
+				//}
+			}
 		}
 
 		// Third party
@@ -953,22 +955,24 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		}
 
 		// Revenue stamp
-		foreach ($tabrevenuestamp[$key] as $k => $mt) {
-			//if ($mt) {
-			print '"'.$key.'"'.$sep;
-			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
-			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-			print '""'.$sep;
-			print '"'.$langs->trans("RevenueStamp").'"'.$sep;
-			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp").'"'.$sep;
-			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-			print '"'.$journal.'"';
-			print "\n";
-			//}
+		if (isset($tabrevenuestamp[$key])) {
+			foreach ($tabrevenuestamp[$key] as $k => $mt) {
+				//if ($mt) {
+				print '"'.$key.'"'.$sep;
+				print '"'.$date.'"'.$sep;
+				print '"'.$val["ref"].'"'.$sep;
+				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
+				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '""'.$sep;
+				print '"'.$langs->trans("RevenueStamp").'"'.$sep;
+				print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp").'"'.$sep;
+				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+				print '"'.$journal.'"';
+				print "\n";
+				//}
+			}
 		}
 	}
 }
@@ -1150,7 +1154,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		if (is_array($tabwarranty[$key])) {
+		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && isset($tabwarranty[$key]) && is_array($tabwarranty[$key])) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty warranty -->";
@@ -1298,7 +1302,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Revenue stamp
-		if (is_array($tabrevenuestamp[$key])) {
+		if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 			foreach ($tabrevenuestamp[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty revenuestamp -->";

@@ -77,6 +77,7 @@ ConfirmDeleteMemberType=Êtes-vous sur de vouloir supprimer ce type d' adhérent
 MemberTypeDeleted=Type d'adhérent supprimé
 MemberTypeCanNotBeDeleted=Ce type d'adhérent ne peut pas être supprimé
 NewSubscription=Nouvelle cotisation
+NewMembership=Nouvelle cotisation
 NewSubscriptionDesc=Ce formulaire permet de vous inscrire comme nouvel adhérent de l'association. Pour un renouvellement (si vous êtes déjà adhérent), contactez plutôt l'association par email %s.
 Subscription=Adhésion / cotisation
 AnyAmountWithAdvisedAmount=N'importe quel montant de votre choix, recommandé %s

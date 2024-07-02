@@ -58,6 +58,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$show_files = GETPOST('show_files', 'aZ');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOST('id', 'int');
@@ -587,7 +588,7 @@ if ($action == "transfert_stock" && !$cancel) {
 }
 
 // reverse mouvement of stock
-if ($action == 'confirm_reverse') {
+if ($action == 'confirm_reverse' && $confirm == "yes") {
 	$listMouvement = array();
 	$toselect = array_map('intval', $toselect);
 
@@ -1053,7 +1054,7 @@ if ($search_fk_project != '' && $search_fk_project != '-1') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

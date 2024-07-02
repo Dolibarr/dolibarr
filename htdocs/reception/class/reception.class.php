@@ -763,7 +763,7 @@ class Reception extends CommonObject
 				// qty wished in order supplier (origin)
 				foreach ($this->commandeFournisseur->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
+					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
 						continue;
 					}
 

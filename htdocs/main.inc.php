@@ -1559,13 +1559,13 @@ if (!function_exists("llxHeader")) {
 }
 
 
-			/**
-			 *  Show HTTP header. Called by top_htmlhead().
-			 *
-			 *  @param  string  $contenttype    Content type. For example, 'text/html'
-			 *  @param	int		$forcenocache	Force disabling of cache for the page
-			 *  @return	void
-			 */
+/**
+ *  Show HTTP header. Called by top_htmlhead().
+ *
+ *  @param  string  $contenttype    Content type. For example, 'text/html'
+ *  @param	int		$forcenocache	Force disabling of cache for the page
+ *  @return	void
+ */
 function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 {
 	global $db, $conf, $hookmanager;
@@ -1674,9 +1674,10 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 
 	// Referrer-Policy
 	// Say if we must provide the referrer when we jump onto another web page.
-	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'strict-origin' so browser doesn't send any referrer when going into another web site domain.
+	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'same-origin' so browser doesn't send any referrer at all when going into another web site domain.
+	// Note that we do not use 'strict-origin' as this breaks feature to restore filters when clicking on "back to page" link on some cases.
 	if (!defined('MAIN_SECURITY_FORCERP')) {
-		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "strict-origin");
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}
@@ -1689,21 +1690,21 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	//header("anti-csrf-token: ".newToken());
 }
 
-			/**
-			 * Ouput html header of a page. It calls also top_httphead()
-			 * This code is also duplicated into security2.lib.php::dol_loginfunction
-			 *
-			 * @param 	string 	$head			 Optionnal head lines
-			 * @param 	string 	$title			 HTML title
-			 * @param 	int    	$disablejs		 Disable js output
-			 * @param 	int    	$disablehead	 Disable head output
-			 * @param 	array  	$arrayofjs		 Array of complementary js files
-			 * @param 	array  	$arrayofcss		 Array of complementary css files
-			 * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
-			 * @param   int     $disablenofollow Disable nofollow tag for meta robots
-			 * @param   int     $disablenoindex  Disable noindex tag for meta robots
-			 * @return	void
-			 */
+/**
+ * Ouput html header of a page. It calls also top_httphead()
+ * This code is also duplicated into security2.lib.php::dol_loginfunction
+ *
+ * @param 	string 	$head			 Optionnal head lines
+ * @param 	string 	$title			 HTML title
+ * @param 	int    	$disablejs		 Disable js output
+ * @param 	int    	$disablehead	 Disable head output
+ * @param 	array  	$arrayofjs		 Array of complementary js files
+ * @param 	array  	$arrayofcss		 Array of complementary css files
+ * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
+ * @param   int     $disablenofollow Disable nofollow tag for meta robots
+ * @param   int     $disablenoindex  Disable noindex tag for meta robots
+ * @return	void
+ */
 function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = array(), $arrayofcss = array(), $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
@@ -2099,22 +2100,22 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 }
 
 
-			/**
-			 *  Show an HTML header + a BODY + The top menu bar
-			 *
-			 *  @param      string			$head    			Lines in the HEAD
-			 *  @param      string			$title   			Title of web page
-			 *  @param      string			$target  			Target to use in menu links (Example: '' or '_top')
-			 *	@param		int				$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
-			 *	@param		int				$disablehead		Do not output head section
-			 *	@param		array			$arrayofjs			Array of js files to add in header
-			 *	@param		array			$arrayofcss			Array of css files to add in header
-			 *  @param		string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
-			 *  @param      string			$helppagename    	Name of wiki page for help ('' by default).
-			 * 				     		    		            Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
-			 * 						                		    For other external page: http://server/url
-			 *  @return		void
-			 */
+/**
+ *  Show an HTML header + a BODY + The top menu bar
+ *
+ *  @param      string			$head    			Lines in the HEAD
+ *  @param      string			$title   			Title of web page
+ *  @param      string			$target  			Target to use in menu links (Example: '' or '_top')
+ *	@param		int				$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int				$disablehead		Do not output head section
+ *	@param		array			$arrayofjs			Array of js files to add in header
+ *	@param		array			$arrayofcss			Array of css files to add in header
+ *  @param		string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ *  @param      string			$helppagename    	Name of wiki page for help ('' by default).
+ * 				     		    		            Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ * 						                		    For other external page: http://server/url
+ *  @return		void
+ */
 function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = array(), $arrayofcss = array(), $morequerystring = '', $helppagename = '')
 {
 	global $user, $conf, $langs, $db, $form;
@@ -2362,13 +2363,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 }
 
 
-			/**
-			 * Build the tooltip on user login
-			 *
-			 * @param	int			$hideloginname		Hide login name. Show only the image.
-			 * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
-			 * @return  string                  		HTML content
-			 */
+/**
+ * Build the tooltip on user login
+ *
+ * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
+ * @return  string                  		HTML content
+ */
 function top_menu_user($hideloginname = 0, $urllogout = '')
 {
 	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
@@ -2530,7 +2531,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a valignmiddle" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	            '.$userImage.(empty($user->photo) ? '<!-- no photo so show also the login --><span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2574,7 +2575,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	        </div>
 	    </div>';
 	} else {
-		$btnUser = '<!-- div for user link -->
+		$btnUser = '<!-- div for user link text browser -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="valignmiddle">
 	    	'.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
@@ -2629,11 +2630,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	return $btnUser;
 }
 
-			/**
-			 * Build the tooltip on top menu quick add
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu quick add
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2704,11 +2705,11 @@ function top_menu_quickadd()
 	return $html;
 }
 
-			/**
-			 * Generate list of quickadd items
-			 *
-			 * @return string HTML output
-			 */
+/**
+ * Generate list of quickadd items
+ *
+ * @return string HTML output
+ */
 function printDropdownQuickadd()
 {
 	global $conf, $user, $langs, $hookmanager;
@@ -2883,11 +2884,11 @@ function printDropdownQuickadd()
 	return $dropDownQuickAddHtml;
 }
 
-			/**
-			 * Build the tooltip on top menu bookmark
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu bookmark
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_bookmark()
 {
 	global $langs, $conf, $db, $user;
@@ -2978,11 +2979,11 @@ function top_menu_bookmark()
 	return $html;
 }
 
-			/**
-			 * Build the tooltip on top menu tsearch
-			 *
-			 * @return  string                  HTML content
-			 */
+/**
+ * Build the tooltip on top menu tsearch
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_search()
 {
 	global $langs, $conf, $db, $user, $hookmanager;
@@ -3145,20 +3146,20 @@ function top_menu_search()
 	return $html;
 }
 
-			/**
-			 *  Show left menu bar
-			 *
-			 *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
-			 *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
-			 * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
-			 * 									         	For other external page: http://server/url
-			 *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
-			 *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
-			 *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
-			 *  @param  string	$title                      Title of web page
-			 *  @param  int  	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-			 *  @return	void
-			 */
+/**
+ *  Show left menu bar
+ *
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
+ *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
+ * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ * 									         	For other external page: http://server/url
+ *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
+ *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
+ *  @param  string	$title                      Title of web page
+ *  @param  int  	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+ *  @return	void
+ */
 function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_array_after = array(), $leftmenuwithoutmainarea = 0, $title = '', $acceptdelayedhtml = 0)
 {
 	global $user, $conf, $langs, $db, $form;
@@ -3403,12 +3404,12 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 }
 
 
-			/**
-			 *  Begin main area
-			 *
-			 *  @param	string	$title		Title
-			 *  @return	void
-			 */
+/**
+ *  Begin main area
+ *
+ *  @param	string	$title		Title
+ *  @return	void
+ */
 function main_area($title = '')
 {
 	global $conf, $langs, $hookmanager;
@@ -3464,13 +3465,13 @@ function main_area($title = '')
 }
 
 
-			/**
-			 *  Return helpbaseurl, helppage and mode
-			 *
-			 *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff,DE:ddd...' or 'http://localpage')
-			 *  @param  Translate	$langs				Language
-			 *  @return	array		Array of help urls
-			 */
+/**
+ *  Return helpbaseurl, helppage and mode
+ *
+ *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff,DE:ddd...' or 'http://localpage')
+ *  @param  Translate	$langs				Language
+ *  @return	array		Array of help urls
+ */
 function getHelpParamFor($helppagename, $langs)
 {
 	$helpbaseurl = '';
@@ -3515,22 +3516,22 @@ function getHelpParamFor($helppagename, $langs)
 }
 
 
-			/**
-			 *  Show a search area.
-			 *  Used when the javascript quick search is not used.
-			 *
-			 *  @param  string	$urlaction          Url post
-			 *  @param  string	$urlobject          Url of the link under the search box
-			 *  @param  string	$title              Title search area
-			 *  @param  string	$htmlmorecss        Add more css
-			 *  @param  string	$htmlinputname      Field Name input form
-			 *  @param	string	$accesskey			Accesskey
-			 *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
-			 *  @param	string	$img				Image to use
-			 *  @param	int		$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
-			 *  @param	int		$autofocus			Set autofocus on field
-			 *  @return	string
-			 */
+/**
+ *  Show a search area.
+ *  Used when the javascript quick search is not used.
+ *
+ *  @param  string	$urlaction          Url post
+ *  @param  string	$urlobject          Url of the link under the search box
+ *  @param  string	$title              Title search area
+ *  @param  string	$htmlmorecss        Add more css
+ *  @param  string	$htmlinputname      Field Name input form
+ *  @param	string	$accesskey			Accesskey
+ *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
+ *  @param	string	$img				Image to use
+ *  @param	int		$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
+ *  @param	int		$autofocus			Set autofocus on field
+ *  @return	string
+ */
 function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey = '', $prefhtmlinputname = '', $img = '', $showtitlebefore = 0, $autofocus = 0)
 {
 	global $langs, $user;

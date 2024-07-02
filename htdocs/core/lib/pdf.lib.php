@@ -1351,17 +1351,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 		}
 	}
-	// Show page nb only on iso languages (so default Helvetica font)
+
+	// Show page nb and apply correction for some font.
 	$pdf->SetXY($dims['wk'] - $dims['rm'] - 18 - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_X', 0), -$posy - getDolGlobalInt('PDF_FOOTER_PAGE_NUMBER_Y', 0));
-
-	if (getDolGlobalString('PDF_USE_GETALIASNBPAGE_FOR_TOTAL')) {
-		// $pagination = $pdf->getAliasNumPage().' / '.$pdf->getAliasNbPages(); 	// works with $pdf->Cell
-		$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();	// seems to not works with all fonts like ru_UK
-	} else {
-		$pagination = $pdf->PageNo().' / '.$pdf->getNumPages();		// seems to always work even with $pdf->Cell. But some users has reported wrong nb (no way to reproduce)
+	$pagination = $pdf->PageNo().' / '.$pdf->getAliasNbPages();
+	$fontRenderCorrection = 0;
+	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
+		$fontRenderCorrection = 10;
 	}
-
-	$pdf->MultiCell(18, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -1451,7 +1449,11 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
-		//var_dump($labelproductservice);exit;
+		if (getDolGlobalString('MARGIN_TOP_ZERO_UL')) {
+			$pdf->setListIndentWidth(5);
+			$TMarginList = ['ul' => [['h'=>0.1, ],['h'=>0.1, ]], 'li' => [['h'=>0.1, ],],];
+			$pdf->setHtmlVSpace($TMarginList);
+		}
 
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
@@ -2441,7 +2443,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if ($object->lines[$i]->situation_percent > 0) {
+			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
 				$progress = 1;

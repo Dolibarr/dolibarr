@@ -65,6 +65,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("BOM");
+
 $help_url = '';
 llxHeader('', $langs->trans("BOMsSetup"), $help_url);
 

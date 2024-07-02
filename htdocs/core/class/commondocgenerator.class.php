@@ -4,9 +4,10 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
+ * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,6 +376,7 @@ abstract class CommonDocGenerator
 			'company_juridicalstatus'=>$object->forme_juridique,
 			'company_outstanding_limit'=>$object->outstanding_limit,
 			'company_capital'=>$object->capital,
+			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
 			'company_idprof1'=>$object->idprof1,
 			'company_idprof2'=>$object->idprof2,
 			'company_idprof3'=>$object->idprof3,
@@ -1461,6 +1463,11 @@ abstract class CommonDocGenerator
 
 				if (empty($enabled)) {
 					continue;
+				}
+
+				// Load language if required
+				if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) {
+					$outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
 				}
 
 				$field = new stdClass();
