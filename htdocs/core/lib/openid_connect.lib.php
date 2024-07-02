@@ -32,7 +32,7 @@ function openid_connect_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/openid_connect/admin/setup.php", 1);
+	$head[$h][0] = dol_buildpath("/admin/openid_connect.php", 1);
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'settings';
 	$h++;
