@@ -107,10 +107,11 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 */
 	public function getExample()
 	{
-		global $mysoc, $db;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
 		$propal = new Propal($db);
 		$propal->initAsSpecimen();
 		$thirdparty = new Societe($db);
@@ -118,7 +119,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$numExample = $this->getNextValue($thirdparty, $propal);
 
 		if (!$numExample) {
-			$numExample = 'NotConfigured';
+			$numExample = $langs->trans('NotConfigured');
 		}
 
 		return $numExample;
