@@ -71,6 +71,7 @@ parameters:
 		- '#expects int, string given.#'
 		- '#expects int, float given.#'
 		- '#expects int, bool given.#'
+		- '#expects int, false given.#'
 		- '#expects int, true given.#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'
