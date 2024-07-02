@@ -1169,10 +1169,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Delete tasks with no children first, then task with children recursively
+	 *  Delete tasks with no children first, then task with children recursively
 	 *
-	 *  	@param     	User		$user		User
-	 *		@return		int				Return integer <0 if KO, 1 if OK
+	 *  @param   User	$user		User
+	 *  @return	 int				Return integer <0 if KO, 1 if OK
 	 */
 	public function deleteTasks($user)
 	{
@@ -1193,7 +1193,7 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 		if ($deleted && count($this->lines) < $countTasks) {
 			if (count($this->lines)) {
-				$this->deleteTasks($this->lines);
+				$this->deleteTasks($user);
 			}
 		}
 
