@@ -75,10 +75,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr = array();
 
 	// Home
-		$landingpage = (empty($user->conf->MAIN_LANDING_PAGE) ? (!getDolGlobalString('MAIN_LANDING_PAGE') ? '/index.php?mainmenu=home&amp;leftmenu=home' : $conf->global->MAIN_LANDING_PAGE) : $user->conf->MAIN_LANDING_PAGE);
-		$menu_arr[] = array(
+	$landingpage = (empty($user->conf->MAIN_LANDING_PAGE) ? (!getDolGlobalString('MAIN_LANDING_PAGE') ? '/index.php?mainmenu=home&amp;leftmenu=home' : $conf->global->MAIN_LANDING_PAGE) : $user->conf->MAIN_LANDING_PAGE);
+	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => $landingpage,
+		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
@@ -93,15 +93,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
-		);
+	);
 
-		// Members
-		$tmpentry = array(
+	// Members
+	$tmpentry = array(
 		'enabled' => isModEnabled('member'),
 		'perms' => $user->hasRight('adherent', 'lire'),
 		'module' => 'adherent'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Members',
 		'link' => '/adherents/index.php?mainmenu=members&amp;leftmenu=',
 		'title' => "MenuMembers",
@@ -118,10 +118,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 0 : 1),
 		'loadLangs' => array("members"),
 		'submenus' => array(),
-		);
+	);
 
-		// Third parties
-		$tmpentry = array(
+	// Third parties
+	$tmpentry = array(
 		'enabled' => (
 			(
 				isModEnabled('societe') &&
@@ -131,9 +131,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		),
 		'perms' => ($user->hasRight('societe', 'lire') || $user->hasRight('societe', 'contact', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
 		'module' => 'societe|fournisseur'
-		);
+	);
 
-		$menu_arr[] = array(
+	$menu_arr[] = array(
 		'name' => 'Companies',
 		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
 		'title' => "ThirdParties",
@@ -150,15 +150,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies") ? 0 : 1),
 		'loadLangs' => array("companies", "suppliers"),
 		'submenus' => array(),
-		);
+	);
 
-		// Products-Services
-		$tmpentry = array(
+	// Products-Services
+	$tmpentry = array(
 		'enabled' => (isModEnabled('product') || isModEnabled('service') || isModEnabled('shipping')),
 		'perms' => ($user->hasRight('product', 'read') || $user->hasRight('service', 'read') || $user->hasRight('expedition', 'lire')),
 		'module' => 'product|service'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Products',
 		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
 		'title' => (isModEnabled('product') && isModEnabled('service'))
@@ -177,15 +177,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 0 : 1),
 		'loadLangs' => array("products", "stocks"),
 		'submenus' => array(),
-		);
+	);
 
-		// MRP - GPAO
-		$tmpentry = array(
+	// MRP - GPAO
+	$tmpentry = array(
 		'enabled' => (isModEnabled('bom') || isModEnabled('mrp')),
 		'perms' => ($user->hasRight('bom', 'read') || $user->hasRight('mrp', 'read')),
 		'module' => 'bom|mrp'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'TMenuMRP',
 		'link' => '/mrp/index.php?mainmenu=mrp&amp;leftmenu=',
 		'title' => "TMenuMRP",
@@ -202,28 +202,28 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "mrp") ? 0 : 1),
 		'loadLangs' => array("mrp"),
 		'submenus' => array(),
-		);
+	);
 
-		// Projects
-		$tmpentry = array(
+	// Projects
+	$tmpentry = array(
 		'enabled' => (isModEnabled('project') ? 1 : 0),
 		'perms' => ($user->hasRight('projet', 'lire') ? 1 : 0),
 		'module' => 'projet'
-		);
+	);
 
-		if ($mode == 'jmobile') {
-			$titleboth = $langs->trans("LeadsOrProjects");
-		} else {
-			$titleboth = $langs->trans("Projects");
-		}
-		if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-			$titleboth = $langs->trans("Projects");
-		}
-		if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
-			$titleboth = $langs->trans("Leads");
-		}
+	if ($mode == 'jmobile') {
+		$titleboth = $langs->trans("LeadsOrProjects");
+	} else {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
+		$titleboth = $langs->trans("Leads");
+	}
 
-		$menu_arr[] = array(
+	$menu_arr[] = array(
 		'name' => 'Project',
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
 		'title' => $titleboth,
@@ -240,10 +240,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project") ? 0 : 1),
 		'loadLangs' => array("projects"),
 		'submenus' => array(),
-		);
+	);
 
-		// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
-		$tmpentry = array(
+	// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
+	$tmpentry = array(
 		'enabled' => (
 			isModEnabled('propal')
 			|| isModEnabled('order')
@@ -264,17 +264,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| $user->hasRight('ficheinter', 'lire')
 		),
 		'module' => 'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
-		);
+	);
 
-		$onlysupplierorder = $user->hasRight('fournisseur', 'commande', 'lire') &&
-		!$user->hasRight('propal', 'lire') &&
-		!$user->hasRight('commande', 'lire') &&
-		!$user->hasRight('supplier_order', 'lire') &&
-		!$user->hasRight('supplier_proposal', 'lire') &&
-		!$user->hasRight('contrat', 'lire') &&
-		!$user->hasRight('ficheinter', 'lire');
+	$onlysupplierorder = $user->hasRight('fournisseur', 'commande', 'lire') &&
+	!$user->hasRight('propal', 'lire') &&
+	!$user->hasRight('commande', 'lire') &&
+	!$user->hasRight('supplier_order', 'lire') &&
+	!$user->hasRight('supplier_proposal', 'lire') &&
+	!$user->hasRight('contrat', 'lire') &&
+	!$user->hasRight('ficheinter', 'lire');
 
-		$menu_arr[] = array(
+	$menu_arr[] = array(
 		'name' => 'Commercial',
 		'link' => ($onlysupplierorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu='),
 		'title' => "Commercial",
@@ -291,10 +291,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial") ? 0 : 1),
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
-		);
+	);
 
-		// Billing - Financial
-		$tmpentry = array(
+	// Billing - Financial
+	$tmpentry = array(
 		'enabled' => (
 			isModEnabled('invoice') ||
 			isModEnabled('don') ||
@@ -308,8 +308,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| $user->hasRight('tax', 'charges', 'lire') || $user->hasRight('salaries', 'read')
 			|| $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('loan', 'read') || $user->hasRight('margins', 'liretous')),
 		'module' => 'facture|supplier_invoice|don|tax|salaries|loan'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Compta',
 		'link' => '/compta/index.php?mainmenu=billing&amp;leftmenu=',
 		'title' =>  "MenuFinancial",
@@ -326,15 +326,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "billing") ? 0 : 1),
 		'loadLangs' => array("compta"),
 		'submenus' => array(),
-		);
+	);
 
-		// Bank
-		$tmpentry = array(
+	// Bank
+	$tmpentry = array(
 		'enabled' => (isModEnabled('bank') || isModEnabled('prelevement')),
 		'perms' => ($user->hasRight('banque', 'lire') || $user->hasRight('prelevement', 'lire') || $user->hasRight('paymentbybanktransfer', 'read')),
 		'module' => 'banque|prelevement|paymentbybanktransfer'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Bank',
 		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=&amp;search_status=opened',
 		'title' =>  "MenuBankCash",
@@ -351,15 +351,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank") ? 0 : 1),
 		'loadLangs' => array("compta", "banks"),
 		'submenus' => array(),
-		);
+	);
 
-		// Accounting
-		$tmpentry = array(
+	// Accounting
+	$tmpentry = array(
 		'enabled' => (isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport')),
 		'perms' => ($user->hasRight('compta', 'resultat', 'lire') || $user->hasRight('accounting', 'comptarapport', 'lire') || $user->hasRight('accounting', 'mouvements', 'lire') || $user->hasRight('asset', 'read') || $user->hasRight('intracommreport', 'read')),
 		'module' => 'comptabilite|accounting|asset|intracommreport'
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Accounting',
 		'link' => '/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=',
 		'title' =>  "MenuAccountancy",
@@ -376,16 +376,16 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
-		);
+	);
 
-		// HRM
-		$tmpentry = array(
+	// HRM
+	$tmpentry = array(
 		'enabled' => (isModEnabled('hrm') || (isModEnabled('holiday')) || isModEnabled('deplacement') || isModEnabled('expensereport') || isModEnabled('recruitment')),
 		'perms' => ($user->hasRight('user', 'user', 'lire') || $user->hasRight('holiday', 'read') || $user->hasRight('deplacement', 'lire') || $user->hasRight('expensereport', 'lire') || $user->hasRight('recruitment', 'recruitmentjobposition', 'read')),
 		'module' => 'hrm|holiday|deplacement|expensereport|recruitment'
-		);
+	);
 
-		$menu_arr[] = array(
+	$menu_arr[] = array(
 		'name' => 'HRM',
 		'link' => '/hrm/index.php?mainmenu=hrm&amp;leftmenu=',
 		'title' =>  "HRM",
@@ -402,21 +402,21 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
 		'loadLangs' => array("hrm", "holiday"),
 		'submenus' => array(),
-		);
+	);
 
-		// Tickets and Knowledge base
-		$tmpentry = array(
+	// Tickets and Knowledge base
+	$tmpentry = array(
 		'enabled' => (isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
 		'perms' => ($user->hasRight('ticket', 'read') || $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')),
 		'module' => 'ticket|knowledgemanagement'
-		);
-		$link = '';
-		if (isModEnabled('ticket')) {
-			$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
-		} else {
-			$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
-		}
-		$menu_arr[] = array(
+	);
+	$link = '';
+	if (isModEnabled('ticket')) {
+		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
+	} else {
+		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+	}
+	$menu_arr[] = array(
 		'name' => 'Ticket',
 		'link' => $link,
 		'title' =>  isModEnabled('ticket') ? "Tickets" : "MenuKnowledgeRecordShort",
@@ -433,15 +433,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
 		'loadLangs' => array("ticket", "knowledgemanagement"),
 		'submenus' => array(),
-		);
+	);
 
-		// Tools
-		$tmpentry = array(
+	// Tools
+	$tmpentry = array(
 		'enabled' => 1,
 		'perms' => 1,
 		'module' => ''
-		);
-		$menu_arr[] = array(
+	);
+	$menu_arr[] = array(
 		'name' => 'Tools',
 		'link' => '/core/tools.php?mainmenu=tools&amp;leftmenu=',
 		'title' =>  "Tools",
@@ -458,83 +458,83 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
 		'loadLangs' => array("other"),
 		'submenus' => array(),
-		);
+	);
 
-		// Add menus
-		foreach ($menu_arr as $key => $smenu) {
-			$smenu = (object) $smenu;
+	// Add menus
+	foreach ($menu_arr as $key => $smenu) {
+		$smenu = (object) $smenu;
 
-			if ($smenu->enabled) {
-				if ($smenu->session) {
-					$_SESSION['idmenu'] = '';
+		if ($smenu->enabled) {
+			if ($smenu->session) {
+				$_SESSION['idmenu'] = '';
+			}
+
+			// Load Langue
+			if (!empty($smenu->loadLangs)) {
+				$langs->loadLangs($smenu->loadLangs);
+			}
+
+			// Trans title
+			$mtitle = '';
+			if (is_array($smenu->title)) {
+				foreach ($smenu->title as $item) {
+					$mtitle .= $langs->trans($item);
 				}
+			} else {
+				$mtitle = $langs->trans($smenu->title);
+			}
+			// Add item
+			$menu->add($smenu->link, $mtitle, $smenu->level, $smenu->enabled, $smenu->target, $smenu->mainmenu, $smenu->leftmenu, $smenu->position, $smenu->id, $smenu->idsel, $smenu->classname, $smenu->prefix);
+		}
+	}
 
-				// Load Langue
-				if (!empty($smenu->loadLangs)) {
-					$langs->loadLangs($smenu->loadLangs);
-				}
+	// Show personalized menus
+	$menuArbo = new Menubase($db, 'eldy');
 
-				// Trans title
-				$mtitle = '';
-				if (is_array($smenu->title)) {
-					foreach ($smenu->title as $item) {
-						$mtitle .= $langs->trans($item);
-					}
-				} else {
-					$mtitle = $langs->trans($smenu->title);
-				}
-				// Add item
-				$menu->add($smenu->link, $mtitle, $smenu->level, $smenu->enabled, $smenu->target, $smenu->mainmenu, $smenu->leftmenu, $smenu->position, $smenu->id, $smenu->idsel, $smenu->classname, $smenu->prefix);
+	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
+
+	$num = count($newTabMenu);
+	for ($i = 0; $i < $num; $i++) {
+		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
+		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
+
+		$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
+		// url = url from host, shorturl = relative path into dolibarr sources
+		$url = $shorturl = $newTabMenu[$i]['url'];
+		if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {	// Do not change url content for external links
+			$tmp = explode('?', $newTabMenu[$i]['url'], 2);
+			$url = $shorturl = $tmp[0];
+			$param = (isset($tmp[1]) ? $tmp[1] : '');
+
+			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
+				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
+			}
+			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
+			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
+			//$shorturl = $shorturl.($param?'?'.$param:'');
+			$shorturl = $url;
+			if (DOL_URL_ROOT) {
+				$shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
 			}
 		}
 
-		// Show personalized menus
-		$menuArbo = new Menubase($db, 'eldy');
-
-		$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
-
-		$num = count($newTabMenu);
-		for ($i = 0; $i < $num; $i++) {
-			//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
-			$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
-
-			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
-
-			// url = url from host, shorturl = relative path into dolibarr sources
-			$url = $shorturl = $newTabMenu[$i]['url'];
-			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {	// Do not change url content for external links
-				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
-				$url = $shorturl = $tmp[0];
-				$param = (isset($tmp[1]) ? $tmp[1] : '');
-
-				if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
-					// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
-					$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-				}
-				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
-				//$shorturl = $shorturl.($param?'?'.$param:'');
-				$shorturl = $url;
-				if (DOL_URL_ROOT) {
-					$shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
-				}
-			}
-
-			$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
-			if ($showmode == 1) {
-				// Define the class (top menu selected or not)
-				if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) {
-					$classname = 'class="tmenusel"';
-				} elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) {
-					$classname = 'class="tmenusel"';
-				} else {
-					$classname = 'class="tmenu"';
-				}
-			} elseif ($showmode == 2) {
+		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
+		if ($showmode == 1) {
+			// Define the class (top menu selected or not)
+			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) {
+				$classname = 'class="tmenusel"';
+			} elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) {
+				$classname = 'class="tmenusel"';
+			} else {
 				$classname = 'class="tmenu"';
 			}
+		} elseif ($showmode == 2) {
+			$classname = 'class="tmenu"';
+		}
 
-			$menu->add(
+		$menu->add(
 			$shorturl,
 			$newTabMenu[$i]['titre'],
 			0,
@@ -547,60 +547,60 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$idsel,
 			$classname,
 			$newTabMenu[$i]['prefix']
-			);
+		);
+	}
+
+	// Sort on position
+	$menu->liste = dol_sort_array($menu->liste, 'position');
+
+	// Output menu entries
+	// Show logo company
+	if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
+		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+
+		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
+		if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
+			$logoContainerAdditionalClass = '';
 		}
 
-		// Sort on position
-		$menu->liste = dol_sort_array($menu->liste, 'position');
-
-		// Output menu entries
-		// Show logo company
-		if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-			$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
-
-			$logoContainerAdditionalClass = 'backgroundforcompanylogo';
-			if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
-				$logoContainerAdditionalClass = '';
-			}
-
-			if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
-				/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-				{
-				$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
-				}*/
-			} else {
-				$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
-				$logoContainerAdditionalClass = '';
-			}
-			$title = $langs->trans("GoIntoSetupToChangeLogo");
-
-			print "\n".'<!-- Show logo on menu -->'."\n";
-			print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
-
-			print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
-
-			print_end_menu_entry(4);
+		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+			{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
+			}*/
+		} else {
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
+			$logoContainerAdditionalClass = '';
 		}
+		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
-		//var_dump($menu->liste);
-		if (empty($noout)) {
-			foreach ($menu->liste as $menuval) {
-				print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-				print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
-				print_end_menu_entry($menuval['enabled']);
-			}
+		print "\n".'<!-- Show logo on menu -->'."\n";
+		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
+
+		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+
+		print_end_menu_entry(4);
+	}
+
+	//var_dump($menu->liste);
+	if (empty($noout)) {
+		foreach ($menu->liste as $menuval) {
+			print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+			print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
+			print_end_menu_entry($menuval['enabled']);
 		}
+	}
 
-		$showmode = 1;
-		if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			print_start_menu_entry('', 'class="tmenuend"', $showmode);
-			print_end_menu_entry($showmode);
-			print_end_menu_array();
-		}
+	$showmode = 1;
+	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		print_start_menu_entry('', 'class="tmenuend"', $showmode);
+		print_end_menu_entry($showmode);
+		print_end_menu_array();
+	}
 
-		return 0;
+	return 0;
 }
 
 
