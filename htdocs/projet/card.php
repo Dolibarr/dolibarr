@@ -174,6 +174,9 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = '';
+
+		// For backward compatibility
+		$object->statut = $object::STATUS_DRAFT;	// this already set for $object->status by $object->setStatut()
 	}
 
 	// Action add
