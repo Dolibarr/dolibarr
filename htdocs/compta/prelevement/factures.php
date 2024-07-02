@@ -323,16 +323,18 @@ if ($resql) {
 		$invoicetmpsupplier = new FactureFournisseur($db);
 	}
 
-	while ($i < min($num, $limit)) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
+
 		$itemurl = '';
 		$partyurl = '';
-		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($user instanceof User)) {
+		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($usertmp instanceof User)) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
 			$partyurl = $usertmp->getNomUrl(1);
-		} elseif ($invoicetmp instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
+		} elseif ($invoicetmpcustomer instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
 			} else {
@@ -351,9 +353,15 @@ if ($resql) {
 		print $itemurl;
 		print "</td>\n";
 
-		if ($object->type == 'bank-transfer' && !$salaryBonPl && $invoicetmp instanceof Facture) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
-			print dol_escape_htmltag($invoicetmp->ref_supplier);
+		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+			$labeltoshow = '';
+			if ($invoicetmp instanceof Facture) {
+				$labeltoshow = $invoicetmp->ref_supplier;
+			}
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($labeltoshow).'">';
+			if ($invoicetmp instanceof Facture) {
+				print dol_escape_htmltag($invoicetmp->ref_supplier);
+			}
 			print "</td>\n";
 		}
 
