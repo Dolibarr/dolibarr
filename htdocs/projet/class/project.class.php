@@ -1209,7 +1209,7 @@ class Project extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -1245,6 +1245,7 @@ class Project extends CommonObject
 			}
 
 			if (!$error) {
+				$this->statut = 1;
 				$this->status = 1;
 				$this->db->commit();
 				return 1;

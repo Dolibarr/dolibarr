@@ -546,6 +546,16 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .box-flex-container-column:not(:last-of-type) {
 	border-right: 1px solid #AAA;
 }
+.box-flex-container-column.kanban {
+	flex: 1;
+}
+.kanban.kanbancollapsed {
+	flex: unset;
+	width: 80px;
+}
+.kanban.kanbancollapsed .kanbanlabel, .text-vertical {
+	writing-mode: vertical-rl;
+}
 
 .box-flex-grow-zero {
 	flex-grow: 0 !important;
@@ -560,11 +570,17 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .box-flex-item.filler {
 	height: 0;
 }
-.box-flex-item {
+.box-flex-item, .kanbanlabel {
 	margin-top: 5px;
 	margin-<?php echo $right; ?>: 20px;
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
+}
+.kanbanlabel {
+	background: var(--colorbacktitle1);
+	padding: 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;

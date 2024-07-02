@@ -4809,6 +4809,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		max-width: calc(50%);
 	}
 
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
+	}
+
 	.clearbothonsmartphone {
 		clear: both;
 		display: block !important;
