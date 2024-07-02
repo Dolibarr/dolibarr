@@ -265,10 +265,6 @@ class Task extends CommonObjectLine
 	 * @var string task parent ref
 	 */
 	public $task_parent_ref;
-	
-	/**
-	 * @var int task parent rank
-	 */
 
 	/**
 	 * @var int task parent rank
@@ -277,7 +273,7 @@ class Task extends CommonObjectLine
 
 	/**
 	 * Status indicate whether the task is billable (time is meant to be added to invoice) '1' or not '0'
-	 * @var int billable 
+	 * @var int billable
 	 */
 	public $billable = 1;
 
