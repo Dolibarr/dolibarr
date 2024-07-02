@@ -78,7 +78,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$landingpage = (empty($user->conf->MAIN_LANDING_PAGE) ? (!getDolGlobalString('MAIN_LANDING_PAGE') ? '/index.php?mainmenu=home&amp;leftmenu=home' : $conf->global->MAIN_LANDING_PAGE) : $user->conf->MAIN_LANDING_PAGE);
 	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
+		'link' => $landingpage,
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
