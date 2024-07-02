@@ -103,7 +103,7 @@ parameters:
 		- '#expects LDAP\\Connection#'
 		- '#expects MultiCurrency#'
 		- '#expects Mo#'
-		- '#expects Product#'
+		- '#expects Productlot#'
 		- '#expects Facture#'
 		- '#expects Paiement#'
 		- '#expects PgSql\\Result#'
