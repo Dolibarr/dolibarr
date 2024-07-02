@@ -112,7 +112,6 @@ parameters:
 		- '#expects RemiseCheque#'
 		- '#expects Societe#'
 		- '#expects SupplierProposal#'
-		- '#expects Ticket#'
 		- '#expects Translate#'
 		- '#expects User#'
 		- '#expects CommonObjectLine#'
