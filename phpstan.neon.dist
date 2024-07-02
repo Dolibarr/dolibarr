@@ -95,7 +95,6 @@ parameters:
 		- '#expects object#'
 		- '#expects Adherent#'
 		- '#expects BOM#'
-		- '#expects Commande#'
 		- '#expects Contrat#'
 		- '#expects FTP\\Connection#'
 		- '#expects Holiday#'
