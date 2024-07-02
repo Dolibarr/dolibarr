@@ -141,11 +141,6 @@ class Mo extends CommonObject
 	public $note_private;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;
@@ -2097,13 +2092,14 @@ class MoLine extends CommonObjectLine
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 	public $role;
 	public $fk_mrp_production;
 	public $fk_stock_movement;
-	public $date_creation;
-	public $fk_user_creat;
-	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
 	public $fk_unit;

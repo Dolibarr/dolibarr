@@ -3735,16 +3735,16 @@ function dragAndDropFileUpload($htmlname)
 /**
  * Manage backup versions for a given file, ensuring only a maximum number of versions are kept.
  *
- * @param 	string 	$filetpl          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
+ * @param 	string 	$srcfile          	Full path of the source filename for the backups. Example /mydir/mydocuments/mymodule/filename.ext
  * @param 	int    	$max_versions     	The maximum number of backup versions to keep.
  * @param	string	$archivedir			Target directory of backups (without ending /). Keep empty to save into the same directory than source file.
  * @param	string	$suffix				'v' (versioned files) or 'd' (archived files after deletion)
  * @param	string	$moveorcopy			'move' or 'copy'
  * @return 	bool                    	Returns true if successful, false otherwise.
  */
-function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
+function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
-	$base_file_pattern = ($archivedir ? $archivedir : dirname($filetpl)).'/'.basename($filetpl).".".$suffix;
+	$base_file_pattern = ($archivedir ? $archivedir : dirname($srcfile)).'/'.basename($srcfile).".".$suffix;
 	$files_in_directory = glob($base_file_pattern . "*");
 
 	// Extract the modification timestamps for each file
@@ -3786,13 +3786,13 @@ function archiveOrBackupFile($filetpl, $max_versions = 5, $archivedir = '', $suf
 	}
 
 	$timestamp = dol_now('gmt');
-	$new_backup = $filetpl . ".v" . $timestamp;
+	$new_backup = $srcfile . ".v" . $timestamp;
 
 	// Move or copy the original file to the new backup with the timestamp
 	if ($moveorcopy == 'move') {
-		$result = dol_move($filetpl, $new_backup, '0', 1, 0, 0);
+		$result = dol_move($srcfile, $new_backup, '0', 1, 0, 0);
 	} else {
-		$result = dol_copy($filetpl, $new_backup, '0', 1, 0, 0);
+		$result = dol_copy($srcfile, $new_backup, '0', 1, 0, 0);
 	}
 
 	if (!$result) {

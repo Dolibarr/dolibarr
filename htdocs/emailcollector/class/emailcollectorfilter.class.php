@@ -90,11 +90,6 @@ class EmailCollectorFilter extends CommonObject
 	public $type;
 	public $rulevalue;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;

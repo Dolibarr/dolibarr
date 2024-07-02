@@ -655,17 +655,17 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string|null		Object creation date
+	 * @var integer|''|null		Object creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string|null		Object last validation date
+	 * @var integer|''|null		Object last validation date
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|string|null		Object last modification date
+	 * @var integer|''|null		Object last modification date
 	 */
 	public $date_modification;
 
@@ -677,14 +677,14 @@ abstract class CommonObject
 	public $tms;
 
 	/**
-	 * @var int|string|null
+	 * @var int|''|null
 	 * @deprecated Use $date_modification instead.
 	 * @see $date_modification
 	 */
 	private $date_update;
 
 	/**
-	 * @var integer|string|null		Object closing date
+	 * @var integer|''|null		Object closing date
 	 */
 	public $date_cloture;
 
@@ -3855,6 +3855,10 @@ abstract class CommonObject
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
+			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.
+			// For example, if you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%), on the first line you got 5,17 on HT total
+			// and 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total on second line (see #30051).
+			$forcedroundingmode = '0';
 			$fieldup = 'value_unit';
 			$base_price_type = 'TTC';
 		}
@@ -3901,7 +3905,7 @@ abstract class CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
+				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);
 				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -6538,7 +6542,7 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
 				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
-				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+				$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
@@ -9078,7 +9082,7 @@ abstract class CommonObject
 						}
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-						$out .= ($display_type == 'card' ? '</tr>' : '</div>');
+						$out .= ($display_type == 'card' ? '</tr>'."\n" : '</div>');
 						$e++;
 					}
 				}
