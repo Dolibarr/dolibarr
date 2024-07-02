@@ -102,7 +102,6 @@ parameters:
 		- '#expects Holiday#'
 		- '#expects LDAP\\Connection#'
 		- '#expects MultiCurrency#'
-		- '#expects Mo#'
 		- '#expects Productlot#'
 		- '#expects Facture#'
 		- '#expects FactureFournisseur#'

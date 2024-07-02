@@ -68,12 +68,12 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
 		$form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$text = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$text .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$text .= '<input type="hidden" name="action" value="updateMask">';
+		$text .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
+		$text .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -82,17 +82,17 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Prefix settings
-		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
+		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-		$texte .= '</tr>';
+		$text .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$text .= '</table>';
+		$text .= '</form>';
 
-		return $texte;
+		return $text;
 	}
 
 	/**
@@ -130,7 +130,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -138,7 +138,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$mask = getDolGlobalString("TICKET_UNIVERSAL_MASK");
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 
