@@ -115,7 +115,6 @@ parameters:
 		- '#expects User#'
 		- '#expects CommonObjectLine#'
 		- '#dol_eval expects#'
-		- '#dol_print_error expects#'
 		- '#check_authentication expects#'
 		- '#colorHexToHsl expects#'
 		- '#dolGetButtonTitle expects#'
