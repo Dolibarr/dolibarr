@@ -48,4 +48,4 @@ ALTER TABLE llx_contrat ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;
 
-ALTER TABLE `llx_expedition_package` CHANGE `dangerous_goods` `dangerous_goods` VARCHAR(20) NULL DEFAULT NULL;
+ALTER TABLE llx_expedition_package CHANGE dangerous_goods dangerous_goods VARCHAR(20) NULL DEFAULT NULL;
