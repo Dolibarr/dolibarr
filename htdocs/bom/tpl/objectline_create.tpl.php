@@ -23,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -110,7 +110,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
+print '<td class="bordertop nobottom linecoldescription bomline minwidth500imp">';
 
 // Predefined product/service
 if (isModEnabled("product") || isModEnabled("service")) {
@@ -157,7 +157,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="nobottom linecoluseunit">';
 		print '</td>';
 	}
 
@@ -184,8 +184,8 @@ if ($filtertype != 1) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$cUnit = new CUnits($this->db);
 	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
-	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
+	print '<td class="bordertop nobottom nowrap linecolunit">';
+	print $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 1);
 	print '</td>';
 
 	$coldisplay++;
@@ -193,7 +193,7 @@ if ($filtertype != 1) {
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
+	print '<td class="bordertop nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations('', 'idworkstations', 1);
 	print '</td>';
 

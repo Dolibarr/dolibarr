@@ -155,7 +155,7 @@ foreach ($modulesdir as $dir) {
 									ksort($arrayofnatures);
 								}
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								if ($modulequalified > 0) {
 									$modules[$i] = $objMod;
 									$filename[$i] = $modName;

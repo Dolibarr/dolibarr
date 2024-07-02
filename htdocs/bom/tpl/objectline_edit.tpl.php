@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -133,7 +133,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom nowrap linecolunit right">';
+		print '<td class="nobottom nowrap linecolunit">';
 		print  $formproduct->selectMeasuringUnits("fk_unit", '', (($line->fk_unit) ? $line->fk_unit : ''), 0, 0);
 		print '</td>';
 	}
@@ -155,7 +155,7 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolunit right">';
+	print '<td class="nobottom nowrap linecolunit">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
 
@@ -164,7 +164,7 @@ if ($filtertype != 1) {
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolworkstation right">';
+	print '<td class="nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 

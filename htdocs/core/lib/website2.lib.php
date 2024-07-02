@@ -715,7 +715,10 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 				break;
 			}
 		}
-		// This char can be used to execute RCE for example using with echo `ls`
+	}
+
+	// This char can be used to execute RCE for example using with echo `ls`
+	if (!$error) {
 		$forbiddenphpchars = array();
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 			$forbiddenphpchars = array("`");
@@ -727,18 +730,27 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 				break;
 			}
 		}
-		// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+	}
+
+	// Deny dynamic functions '${a}('  or  '$a[b]('  => So we refuse '}('  and  ']('
+	if (!$error) {
 		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
 		}
-		// Deny dynamic functions $xxx(
-		if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
+	}
+
+	// Deny dynamic functions '$xxx('
+	if (!$error) {
+		if (preg_match('/\$[a-z0-9_\-\/\*]+\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 		}
 	}
 
+	// No need to block $conf->global->aaa() because PHP try to run method aaa an not function into $conf->global->aaa.
+
+	// Then check if installmodules does not block dynamic PHP code change.
 	if ($phpfullcodestringold != $phpfullcodestring) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);

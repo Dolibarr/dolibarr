@@ -138,11 +138,6 @@ class Workstation extends CommonObject
 	public $type;	// HUMAN, MACHINE, ...
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int User ID
 	 */
 	public $fk_user_creat;

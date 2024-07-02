@@ -103,7 +103,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 $accounting = new AccountingAccount($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('accountancyadminaccount'));
 
 

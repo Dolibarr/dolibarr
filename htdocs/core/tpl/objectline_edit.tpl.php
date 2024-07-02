@@ -23,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -387,6 +387,7 @@ $coldisplay++;
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
+
 	print '<script>';
 	if ($prefillDates) {
 		?>
@@ -415,10 +416,13 @@ $coldisplay++;
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		if ($res  > 0) {
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
+		if ($res > 0) {
 			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
-				print  'jQuery("#date_start").addClass("error");';
+				print  'jQuery("#date_start").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}
@@ -430,11 +434,13 @@ $coldisplay++;
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		// on doit fetch le product là !!! pour connaître le type
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
 		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
-				print  'jQuery("#date_end").addClass("error");';
+				print  'jQuery("#date_end").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}

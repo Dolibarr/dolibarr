@@ -44,7 +44,7 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-// Get information of journal
+// Get information of a journal
 $object = new AccountingJournal($db);
 $result = $object->fetch($id_journal);
 if ($result > 0) {

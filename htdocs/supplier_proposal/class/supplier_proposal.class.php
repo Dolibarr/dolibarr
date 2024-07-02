@@ -104,6 +104,7 @@ class SupplierProposal extends CommonObject
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
 
 	/**
+	 * @var int
 	 * @deprecated
 	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
@@ -114,7 +115,7 @@ class SupplierProposal extends CommonObject
 	public $date;
 
 	/**
-	 * @var integer|string date_livraison
+	 * @var null|int|'' date_livraison
 	 */
 	public $delivery_date;
 
@@ -125,21 +126,10 @@ class SupplierProposal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @deprecated
 	 * @see $date_validation
 	 */
 	public $datev;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 
 	public $user_author_id;
 
@@ -953,7 +943,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
-		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
+		$sql .= ", ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".((int) $conf->entity);
@@ -1528,7 +1518,7 @@ class SupplierProposal extends CommonObject
 	{
 		if ($user->hasRight('supplier_proposal', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
+			$sql .= " SET date_livraison = ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
