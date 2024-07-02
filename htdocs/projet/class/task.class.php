@@ -173,6 +173,10 @@ class Task extends CommonObjectLine
 
 	// store parent ref and position
 	public $task_parent_ref;
+	
+	/**
+	 * @var int task parent rank
+	 */
 	public $task_parent_position;
 
 	/**
