@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -713,7 +714,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
 	$projectoktoentertime = 1;
-	if ($object->id > 0 && $object->statut == Project::STATUS_CLOSED) {
+	if ($object->id > 0 && $object->status == Project::STATUS_CLOSED) {
 		$projectoktoentertime = 0;
 		print '<div class="warning">';
 		$langs->load("errors");
@@ -721,7 +722,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</div>';
 	}
 
-	if ($object->id > 0 && $object->statut == Project::STATUS_DRAFT) {
+	if ($object->id > 0 && $object->status == Project::STATUS_DRAFT) {
 		$projectoktoentertime = 0;
 		print '<div class="warning">';
 		$langs->load("errors");
@@ -743,7 +744,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+	$obj = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj();

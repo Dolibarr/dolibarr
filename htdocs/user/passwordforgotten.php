@@ -107,7 +107,7 @@ if (empty($reshook)) {
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 
-				header("Location: ".DOL_URL_ROOT.'/');
+				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
 				exit;
 			} else {
 				$langs->load("errors");

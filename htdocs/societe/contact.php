@@ -66,11 +66,12 @@ $errors = array();
 
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel 	= GETPOST('cancel', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
-$confirm 	= GETPOST('confirm');
-$socid 		= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$action			= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel 		= GETPOST('cancel', 'alpha');
+$backtopage 	= GETPOST('backtopage', 'alpha');
+$confirm 		= GETPOST('confirm');
+$socid 			= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$selectedfields = GETPOST('selectedfields', 'alpha');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -206,7 +207,8 @@ print '<br>';
 if ($action != 'presend') {
 	// Contacts list
 	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+		$showuserlogin = in_array('u.user', explode(',', $selectedfields)) ? 1 : 0;
+		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, $showuserlogin);
 	}
 }
 if ($action == 'delete') {
