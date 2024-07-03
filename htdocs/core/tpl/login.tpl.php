@@ -106,7 +106,10 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 // If OpenID Connect is set as an authentication
 if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
 	// Set a cookie to transfer rollback page information
-	setcookie('DOL_rollback_url_' . dol_getprefix(''), $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	}
 
 	// Auto redirect if OpenID Connect is the only authentication
 	if ($conf->file->main_authentication === 'openid_connect') {
