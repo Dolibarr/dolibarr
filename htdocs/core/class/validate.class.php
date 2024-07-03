@@ -335,4 +335,20 @@ class Validate
 		}
 		return false;
 	}
+
+	/**
+	 * Check for all values in db for an element
+	 * @see self::isFetchable()
+	 *
+	 * @param integer  $id of element
+	 * @param string $element_type the element type
+	 * @return boolean Validity is ok or not
+	 * @throws Exception
+	 */
+	public function isFetchableElement($id, $element_type)
+	{
+		// TODO use newObjectByElement() introduce in V20 by PR #30036 for better errors management
+		$elementProperty = getElementProperties($element_type);
+		return $this->isFetchable($id, $elementProperty['classname'], $elementProperty['classpath'].'/'.$elementProperty['classfile'].'.class.php');
+	}
 }
