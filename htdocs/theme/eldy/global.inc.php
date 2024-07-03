@@ -1034,6 +1034,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddinglarge {
+	padding: 6px !important;
+}
 .nowidthimp {
 	width: unset !important;
 }
@@ -4804,6 +4807,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.tabBar .arearef .pagination.paginationref {
 		max-width: calc(50%);
+	}
+
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
 	}
 
 	.clearbothonsmartphone {

@@ -131,6 +131,7 @@ class Task extends CommonObjectLine
 	/**
 	 * @var int ID
 	 * @deprecated use status instead
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -154,6 +155,9 @@ class Task extends CommonObjectLine
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int rank
+	 */
 	public $rang;
 
 	public $timespent_min_date;
@@ -181,6 +185,9 @@ class Task extends CommonObjectLine
 	public $comments = array();
 
 	// Properties calculated from sum of llx_element_time linked to task
+	/**
+	 * @var int is task to be billed
+	 */
 	public $tobill;
 
 	/**
@@ -189,27 +196,79 @@ class Task extends CommonObjectLine
 	public $billed;
 
 	// Properties to store project information
+	/**
+	 * @var string project ref
+	 */
 	public $projectref;
+
+	/**
+	 * @var int project status
+	 */
 	public $projectstatus;
+
+	/**
+	 * @var string project label
+	 */
 	public $projectlabel;
+
+	/**
+	 * @var float|'' opportunity amount
+	 */
 	public $opp_amount;
+
+	/**
+	 * @var float|'' opportunity percent
+	 */
 	public $opp_percent;
+
+	/**
+	 * @var int opportunity status
+	 */
 	public $fk_opp_status;
+
 	public $usage_bill_time;
+
+	/**
+	 * @var int is project public
+	 */
 	public $public;
+
 	public $array_options_project;
 
 	// Properties to store thirdparty of project information
+
+	/**
+	 * @var int ID of thirdparty
+	 * @deprecated
+	 * @see $thirdparty_id
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID of thirdparty
+	 */
 	public $thirdparty_id;
+
+	/**
+	 * @var string name of thirdparty
+	 */
 	public $thirdparty_name;
+
+	/**
+	 * @var string email of thirdparty
+	 */
 	public $thirdparty_email;
 
 	// store parent ref and position
+	/**
+	 * @var string task parent ref
+	 */
 	public $task_parent_ref;
+
+	/**
+	 * @var int task parent rank
+	 */
 	public $task_parent_position;
-
-
 
 	/**
 	 * @var float budget_amount

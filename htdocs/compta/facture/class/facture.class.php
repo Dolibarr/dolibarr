@@ -120,7 +120,7 @@ class Facture extends CommonInvoice
 	public $datem;
 
 	/**
-	 * @var int	Date expected for delivery
+	 * @var null|int|''	Date expected for delivery
 	 */
 	public $delivery_date; // Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 
@@ -776,7 +776,7 @@ class Facture extends CommonInvoice
 						$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 					}
 				} else {
-					dol_print_error($resqlcontact);
+					dol_print_error($this->db, $resqlcontact);
 				}
 			}
 

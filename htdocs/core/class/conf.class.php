@@ -724,12 +724,12 @@ class Conf extends stdClass
 				$this->global->MAIN_UMASK = '0660'; // Default mask
 			} else {
 				// We remove the execute bits on the file umask
-				$tmpumask = (octdec($this->global->MAIN_UMASK) & 0666);
+				$tmpumask = (octdec(getDolGlobalString('MAIN_UMASK')) & 0666);
 				$tmpumask = decoct($tmpumask);
-				if (!preg_match('/^0/', $tmpumask)) {
+				if (!preg_match('/^0/', $tmpumask)) {	// Convert string '123' into octal representation '0123'
 					$tmpumask = '0'.$tmpumask;
 				}
-				if (empty($tmpumask) || $tmpumask === '0') {
+				if (empty($tmpumask)) {		// when $tmpmask is null, '', or '0'
 					$tmpumask = '0664';
 				}
 				$this->global->MAIN_UMASK = $tmpumask;
