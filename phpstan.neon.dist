@@ -111,7 +111,6 @@ parameters:
 		- '#expects FactureFournisseur#'
 		- '#expects Paiement#'
 		- '#expects PgSql\\Result#'
-		- '#expects RecruitmentJobPosition#'
 		- '#expects Societe#'
 		- '#expects SupplierProposal#'
 		- '#expects User#'
