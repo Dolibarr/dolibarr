@@ -98,6 +98,16 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
+if (DOL_VERSION  != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
+	$langs->loadLangs(['admin']);
+	print "\n<!-- Start of warning text -->\n";
+	print '<div class="warning">';
+	print img_warning('') . ' ';
+	print $langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE'));
+	print '</div>';
+	print "\n<!-- End of warning text -->\n";
+}
+
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 	if (getDolGlobalString('MAIN_MOTD')) {
