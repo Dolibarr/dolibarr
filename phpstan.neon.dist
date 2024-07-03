@@ -103,7 +103,6 @@ parameters:
 		- '#expects Adherent#'
 		- '#expects BOM#'
 		- '#expects FTP\\Connection#'
-		- '#expects Holiday#'
 		- '#expects LDAP\\Connection#'
 		- '#expects MultiCurrency#'
 		- '#expects Productlot#'
