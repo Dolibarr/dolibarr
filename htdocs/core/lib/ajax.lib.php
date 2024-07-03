@@ -128,7 +128,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					                var results = (maxResults > 0) ? data.slice(0, maxResults) : data;
 					                response($.map(results, function(item) {
 					                    if (autoselect == 1 && data.length == 1) {
-					                        $("#search_'+$htmlnamejquery+'").val(item.value);
+					                        echo '$("#search_' . $htmlnamejquery . '").val(item.value);';
 					                        $("#'+$htmlnamejquery+'").val(item.key).trigger("change");
 					                    }
 					                    var label = "";
@@ -147,7 +147,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					                            textarea[key] = item[value];
 					                        });
 					                    }
-					
 					                    console.log("Return value from GET to the rest of code");
 					                    return {
 					                        label: label,
