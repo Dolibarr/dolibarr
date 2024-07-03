@@ -345,9 +345,9 @@ if (empty($validpaymentmethod)) {
 $creditor = $mysoc->name;
 $paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
-if (!empty($conf->global->$paramcreditorlong)) {
+if (getDolGlobalString($paramcreditorlong)) {
 	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
-} elseif (!empty($conf->global->$paramcreditor)) {
+} elseif (getDolGlobalString($paramcreditor)) {
 	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
@@ -897,7 +897,7 @@ print "\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
