@@ -139,7 +139,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$entity = getEntity('ticketnumber', 1, $ticket);
 
 		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
-		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date, 'next', false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client ?? '', $date, 'next', false, null, $entity);
 
 		return $numFinal;
 	}

@@ -476,6 +476,28 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 *
+	 * Check if ref exists or not
+	 *
+	 * @param string $action    Action
+	 * @param string $getRef    Reference of object
+	 * @return bool
+	 */
+	public function checkExistingRef(string $action, string $getRef): bool
+	{
+		$test = new self($this->db);
+
+		if ($test->fetch('', $getRef) > 0) {
+			if (($action == 'add') || ($action == 'update' && $this->ref != $getRef)) {
+				return true;
+			}
+		}
+
+		$this->ref = $getRef;
+		return false;
+	}
+
+	/**
 	 *  Create object into database
 	 *
 	 *  @param  User $user      User that creates
@@ -2835,8 +2857,11 @@ class Ticket extends CommonObject
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
 										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
-
-								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
+								/**DEBUT SPECIFIQUE ATM **/
+								if (empty($conf->global->TICKET_REMOVE_TRACK_URL)) {
+									$message .= '<br>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a><br>';
+								}
+								/**FIN SPECIFIQUE ATM **/
 
 								// Build final message
 								$message = $message_intro.'<br><br>'.$message;

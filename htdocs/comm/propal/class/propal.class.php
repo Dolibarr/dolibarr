@@ -1472,6 +1472,14 @@ class Propal extends CommonObject
 				}
 			}
 		}
+		/**DEBUT SPECIFIQUE ATM **/
+		elseif ($objsoc->socid != $object->socid) { // TODO : A mettre en V20 standard de Dolibarr
+			// we have a different thirdparty selected and we checked $targetThirdPartyVat
+			foreach ($object->lines as $line) {
+				$line->tva_tx = get_default_tva($mysoc, $objsoc, $line->fk_product);
+			}
+		}
+		/**FIN SPECIFIQUE ATM **/
 
 		$object->id = 0;
 		$object->ref = '';

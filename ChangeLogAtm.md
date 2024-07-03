@@ -1,0 +1,7 @@
+- Backport from 20.0 :
+  - Added hook into getElementProperties to handle $element_properties array
+- Backport from 17.0_atm : 
+    - Add soc TVA on clone propal (dev to integrate in 20.0)
+    - Hide external user in combobox
+    - FIX hide non employee user
+    - Mention "B2B" for direct debit voucher

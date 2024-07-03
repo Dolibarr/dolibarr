@@ -2084,6 +2084,15 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
+		/**DEBUT SPECIFIQUE ATM **/
+		if (!empty(getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) || $notdisabled) {
+			$sql .= " AND u.employee <> 0";
+		}
+		if (!empty(getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) || $notdisabled) {
+			$sql .= " AND u.fk_soc IS NULL";
+		}
+		/**FIN SPECIFIQUE ATM **/
+
 		if (!empty($morefilter)) {
 			$sql .= " " . $morefilter;
 		}
@@ -8074,7 +8083,8 @@ class Form
 				}
 			}
 		}
-
+	//	var_dump($objectdesc);exit;
+		if(empty($objectdesc)) $objectdesc = $objectdescorig;
 		if ($objectdesc) {
 			// Example of value for $objectdesc:
 			// Bom:bom/class/bom.class.php:0:t.status=1
@@ -8096,7 +8106,7 @@ class Form
 
 			// Load object according to $id and $element
 			$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
-
+		//	var_dump($objecttmp);exit;
 			// Fallback to another solution to get $objecttmp
 			if (empty($objecttmp) && !empty($classpath)) {
 				dol_include_once($classpath);
