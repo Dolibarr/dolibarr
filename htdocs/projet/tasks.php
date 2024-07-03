@@ -89,6 +89,7 @@ $search_timespend = GETPOST('search_timespend');
 $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
+$search_task_billable = GETPOST('search_task_billable');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -148,6 +149,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
+$billable = (GETPOST('billable', 'aZ') == 'yes'? 1 : 0);
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
@@ -176,6 +178,7 @@ $arrayfields = array(
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
 	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
+	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => 1, 'position' => 13);
 }
 
 // Extra fields
@@ -234,6 +237,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
+		$search_task_billable = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -315,6 +319,9 @@ if (!empty($search_progresscalc)) {
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+if ($search_task_billable) {
+	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
+}
 //var_dump($morewherefilterarray);
 
 $morewherefilter = '';
@@ -364,6 +371,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$task->date_end = $date_end;
 			$task->progress = $progress;
 			$task->budget_amount = $budget_amount;
+			$task->billable = $billable;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -556,6 +564,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
+	}
+	if ($search_task_billable) {
+		$param .= '&search_task_billable='.urlencode($search_task_billable);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -794,6 +805,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
+	print '</td></tr>';
+
+	// Billable
+	print '<tr><td>'.$langs->trans("Billable").'</td><td>';
+	print $form->selectyesno('billable');
 	print '</td></tr>';
 
 	// Date start task
@@ -1054,6 +1070,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</td>';
 	}
 
+	if (!empty($arrayfields['t.billable']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_task_billable', $search_task_billable, 0, false, 1);
+		print '</td>';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
@@ -1125,6 +1147,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
+	}
+
+	if (!empty($arrayfields['t.billable']['checked'])) {
+		print_liste_field_titre($arrayfields['t.billable']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}
 	// Extra fields
 	$disablesortlink = 1;

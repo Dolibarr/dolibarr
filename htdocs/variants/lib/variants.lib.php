@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2022       Open-Dsi		            <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   ProductAttribute	$object	Object related to tabs
+ * @return  array						Array of tabs to show
  */
 function productAttributePrepareHead($object)
 {
