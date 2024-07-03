@@ -131,7 +131,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("Parameters"), 0, 'act
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 $var=true;
