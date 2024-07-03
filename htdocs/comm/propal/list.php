@@ -638,14 +638,14 @@ if ($search_availability) {
 $societe_add_ref_in_list = (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST) ? $conf->global->SOCIETE_ADD_REF_IN_LIST : 0); // Récupérer la valeur de SOCIETE_ADD_REF_IN_LIST
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($societe_add_ref_in_list == 1) {
-		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe); 
+		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe);
 	} else {
-		$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe); 
+		$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
 	}
 } else {
 	if ($search_societe) {
 		if ($societe_add_ref_in_list == 1) {
-			$sql .= natural_search(array('s.nom', 's.code_client'), $search_societe); 
+			$sql .= natural_search(array('s.nom', 's.code_client'), $search_societe);
 		} else {
 			$sql .= natural_search('s.nom', $search_societe);
 		}
@@ -655,7 +655,7 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	}
 }
 // Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
-if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) { 
+if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
 	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
