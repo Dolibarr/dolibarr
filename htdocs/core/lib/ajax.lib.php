@@ -123,7 +123,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
 						source: function(request, response) {
 					        var maxResults = '.(getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') ? getDolGlobalString('AJAX_LIMIT_AUTOCOMPLETE_RESULTS') : '0').'; // Définir maxResults par défaut à 0
-					        $.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
+					       	$.get("<?php echo $url . ($urloption ? '?' . $urloption : ''); ?>", { "<?php echo str_replace('.', '_', $htmlname); ?>": request.term }, function(data){
 					            if (data != null) {
 					                var results = (maxResults > 0) ? data.slice(0, maxResults) : data;
 					                response($.map(results, function(item) {
