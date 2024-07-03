@@ -113,10 +113,8 @@ parameters:
 		- '#expects Translate#'
 		- '#expects User#'
 		- '#expects CommonObjectLine#'
-		- '#dol_eval expects#'
 		- '#check_authentication expects#'
 		- '#colorHexToHsl expects#'
-		- '#dolGetButtonTitle expects#'
 	internalErrorsCountLimit: 50
 	cache:
 		nodesByFileCountMax: 512
