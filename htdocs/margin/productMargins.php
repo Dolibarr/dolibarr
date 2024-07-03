@@ -247,6 +247,9 @@ if (is_array($listofcateg)) {
 	}
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::productMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {

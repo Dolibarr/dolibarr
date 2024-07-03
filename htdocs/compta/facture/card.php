@@ -4483,7 +4483,7 @@ if ($action == 'create') {
 			'remove_file',
 			'',
 			'no',
-			2
+			1
 		);
 	}
 
