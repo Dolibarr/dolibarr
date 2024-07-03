@@ -110,7 +110,6 @@ parameters:
 		- '#expects RemiseCheque#'
 		- '#expects Societe#'
 		- '#expects SupplierProposal#'
-		- '#expects Translate#'
 		- '#expects User#'
 		- '#expects CommonObjectLine#'
 		- '#check_authentication expects#'
