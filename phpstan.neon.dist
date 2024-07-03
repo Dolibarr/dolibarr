@@ -107,7 +107,6 @@ parameters:
 		- '#expects Paiement#'
 		- '#expects PgSql\\Result#'
 		- '#expects RecruitmentJobPosition#'
-		- '#expects RemiseCheque#'
 		- '#expects Societe#'
 		- '#expects SupplierProposal#'
 		- '#expects User#'
