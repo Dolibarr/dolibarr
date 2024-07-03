@@ -1286,7 +1286,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') {
+			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (empty($url)) {
@@ -1533,7 +1533,7 @@ class FormFile
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 
-						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6) {	// 6=Media file manager
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 3 || $useinecm == 6) {	// 6=Media file manager
 							$newmodulepart = $modulepart;
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
@@ -1595,7 +1595,7 @@ class FormFile
 							if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
