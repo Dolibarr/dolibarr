@@ -364,13 +364,15 @@ function getNumberInvoicesPieChart($mode)
 		date_add($datenowadd30, $interval30days);
 		date_add($datenowadd15, $interval15days);
 
-		$sql = "SELECT";
-		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' OR f.date_lim_reglement IS NULL", 1, 0).") as nbnotlatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
+		$amount_mode = (getDolGlobalInt('FACTURE_VALIDATED_IN_AMOUNT') == 1);
+
+				$sql = "SELECT";
+		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as late15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement >= '".date_format($datenowsub15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as latenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd15, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd15, 'Y-m-d')."' AND f.date_lim_reglement < '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($datenowadd30, 'Y-m-d')."'", $amount_mode ? "f.total_ht" : 1, 0).") as notlate30";
 		if ($mode == 'customers') {
 			$element = 'invoice';
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -404,7 +406,7 @@ function getNumberInvoicesPieChart($mode)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				*/
-				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
+				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->late30, $obj->late15, $obj->latenow, $obj->notlatenow, $obj->notlate15, $obj->notlate30);
 				$i++;
 			}
 			if (!empty($dataseries[0])) {
