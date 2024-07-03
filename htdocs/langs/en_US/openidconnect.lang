@@ -18,3 +18,5 @@ MainAuthenticationOidcRedirectUrlName=Redirect URL
 MainAuthenticationOidcRedirectUrlDesc=Redirect URL to authorize on the OpenID provider side
 MainAuthenticationOidcLogoutRedirectUrlName=Dolibarr logout URL
 MainAuthenticationOidcLogoutRedirectUrlDesc=Dolibarr logout URL to authorize on the OpenID provider side
+MainAuthenticationOidcLoginClaimName=OpenID Connect login claim
+MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email

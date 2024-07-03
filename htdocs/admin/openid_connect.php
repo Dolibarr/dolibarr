@@ -44,6 +44,13 @@ $errors = [];
 $error = 0;
 
 if ($action == 'set') {
+    $client_id = GETPOST('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM', 'alpha');
+    $res = dolibarr_set_const($db, 'MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM', $client_id, 'chaine', 0, '', 0);
+    if (!$res > 0) {
+        $errors[] = $db->lasterror();
+        $error++;
+    }
+
     $client_id = GETPOST('MAIN_AUTHENTICATION_OIDC_CLIENT_ID', 'alpha');
     $res = dolibarr_set_const($db, 'MAIN_AUTHENTICATION_OIDC_CLIENT_ID', $client_id, 'chaine', 0, '', 0);
     if (!$res > 0) {
@@ -135,6 +142,15 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
 print "</tr>\n";
+
+// MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM
+$var = !$var;
+print '<tr ' . $bc[$var] . '>' . "\n";
+print '<td>'.$langs->trans("MainAuthenticationOidcLoginClaimName").'</td>'."\n";
+print '<td>'.$langs->trans("MainAuthenticationOidcLoginClaimDesc").'</td>'."\n";
+print '<td align="right">' . "\n";
+print '<input name="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" id="MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM') ? GETPOST('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM', 'nohtml') : (!empty($conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM) ? $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM : ''))).'"></td></tr>';
+print '</td></tr>' . "\n";
 
 // MAIN_AUTHENTICATION_OIDC_CLIENT_ID
 $var = !$var;
