@@ -111,6 +111,7 @@ parameters:
 		- '#expects Paiement#'
 		- '#expects PgSql\\Result#'
 		- '#expects Societe#'
+		- '#expects ''''\|Societe#'
 		- '#expects SupplierProposal#'
 		- '#expects User#'
 		- '#expects CommonObjectLine#'
