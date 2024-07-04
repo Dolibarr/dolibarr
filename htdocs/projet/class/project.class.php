@@ -1129,10 +1129,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Delete tasks with no children first, then task with children recursively
+	 *  Delete tasks with no children first, then task with children recursively
 	 *
-	 *  	@param     	User		$user		User
-	 *		@return		int				Return integer <0 if KO, 1 if OK
+	 *  @param   User	$user		User
+	 *  @return	 int				Return integer <0 if KO, 1 if OK
 	 */
 	public function deleteTasks($user)
 	{
@@ -1153,7 +1153,7 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 		if ($deleted && count($this->lines) < $countTasks) {
 			if (count($this->lines)) {
-				$this->deleteTasks($this->lines);
+				$this->deleteTasks($user);
 			}
 		}
 
@@ -1169,7 +1169,7 @@ class Project extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -1206,6 +1206,7 @@ class Project extends CommonObject
 
 			if (!$error) {
 				$this->statut = 1;
+				$this->status = 1;
 				$this->db->commit();
 				return 1;
 			} else {

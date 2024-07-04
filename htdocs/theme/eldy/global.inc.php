@@ -2466,7 +2466,9 @@ div.fichehalfright {
 div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
-
+div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstcolumn > div > table.noborder, div.secondcolumn > div > table.noborder {
+	margin-bottom: 14px;
+}
 
 /* Force values on one column for small screen */
 @media only screen and (max-width: 1024px)
@@ -4800,6 +4802,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		max-width: calc(50%);
 	}
 
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
+	}
+
 	.clearbothonsmartphone {
 		clear: both;
 		display: block !important;
@@ -6098,6 +6108,8 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+/* .cke_notifications_area { display: none; } */
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
