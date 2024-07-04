@@ -43,6 +43,7 @@ ALTER TABLE llx_inventory DROP COLUMN datec;
 DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='evaluation';
 
 ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
