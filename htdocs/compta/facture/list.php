@@ -147,8 +147,8 @@ $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 
-$search_late = GETPOST('search_late');
-if ($search_late == 'late') {
+$search_option = GETPOST('search_option');
+if ($search_option == 'late') {
 	$search_status = '1';
 }
 
@@ -177,7 +177,7 @@ $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user-
 $now = dol_now();
 $error = 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
@@ -398,7 +398,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$search_late = '';
+	$search_option = '';
 	$socid = 0;
 }
 
@@ -859,7 +859,7 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
-if ($search_late == 'late') {
+if ($search_option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 /*if ($search_sale > 0) {
@@ -1181,8 +1181,8 @@ if ($search_pos_source) {
 if ($show_files) {
 	$param .= '&show_files='.urlencode((string) ($show_files));
 }
-if ($search_late) {
-	$param .= "&search_late=".urlencode($search_late);
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -1322,7 +1322,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<label for="search_late">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_late" id="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();

@@ -200,13 +200,20 @@ class Entrepot extends CommonObject
 
 	/**
 	 * Warehouse open and only operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 * Used when ENTREPOT_EXTRA_STATUS is on;
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
 
+
 	/**
-	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
+	 * Warehouse that must be include for stock calculation (default)
 	 */
-	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
+	const USAGE_INTERNAL = 1;
+
+	/**
+	 * Warehouse that must be excluded for stock calculation (scrapping stock, virtual warehouses, ...)
+	 */
+	const USAGE_EXTTERNAL = 2;
 
 	/**
 	 * Warehouse is being used for stock calculations

@@ -172,7 +172,7 @@ if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some

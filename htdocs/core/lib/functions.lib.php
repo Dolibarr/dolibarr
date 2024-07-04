@@ -2659,7 +2659,7 @@ function dol_get_fiche_end($notab = 0)
  *  @param	CommonObject $object	Object to show
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
- *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	int|bool $shownav	  	Show Condition (navigation is shown if value is 1 or true)
  *  @param	string	$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Name of the field (object->ref) to use to select next et previous
  *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
@@ -14451,7 +14451,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

@@ -2448,7 +2448,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other
 {
 	display: none;
 }
-<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
@@ -4874,10 +4874,18 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	height: 54px;
 	padding: 3px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
 		max-width: calc(50%);
+	}
+
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
 	}
 
 	.clearbothonsmartphone {

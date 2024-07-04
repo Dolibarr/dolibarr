@@ -75,7 +75,7 @@ if (!$sortfield) {
 	$sortfield = "c.dateadh";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Subscription($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('subscriptionlist'));

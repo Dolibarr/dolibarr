@@ -41,7 +41,7 @@ $id = GETPOSTINT('id');
 $object = new PaiementFourn($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 

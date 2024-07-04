@@ -461,16 +461,6 @@ class Product extends CommonObject
 	public $imgWidth;
 	public $imgHeight;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
 	//! Id du fournisseur
 	public $product_fourn_id;
 
@@ -2390,7 +2380,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		if ($newprice !== '' || $newprice === 0) {
+		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));

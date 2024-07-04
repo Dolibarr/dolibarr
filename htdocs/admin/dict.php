@@ -133,7 +133,7 @@ if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == DI
 	$search_country_id = $mysoc->country_id;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin'));
 
 $allowed = $user->admin;
@@ -2756,7 +2756,15 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((!empty($obj->{$value}) ? $obj->{$value} : '')).'" name="'. $value .'"></td>';
 		} elseif ($value == 'code' && isset($obj->{$value})) {
-			print '<td><input type="text" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'"></td>';
+			print '<td>';
+			if ($tabname == 'c_paiement' && in_array($obj->{$value}, array('LIQ', 'CB', 'VIR'))) {
+				// Case of code that should not be modified
+				print '<input type="hidden" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+				print $obj->{$value};
+			} else {
+				print '<input type="text" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+			}
+			print '</td>';
 		} elseif ($value == 'unit') {
 			print '<td>';
 			$units = array(

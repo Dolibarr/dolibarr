@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2007-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2016		Jonathan TISSEAU		<jonathan.tisseau@86dev.fr>
- * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2007-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
+ * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -981,16 +982,16 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
 			//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
 		}
 	}
 

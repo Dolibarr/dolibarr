@@ -445,7 +445,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
-		if (!empty($conf->global->$paramfreetext)) {
+		if (getDolGlobalString($paramfreetext)) {
 			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 

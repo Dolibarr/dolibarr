@@ -6,7 +6,8 @@
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,7 @@ class Task extends CommonObjectLine
 	/**
 	 * @var int ID
 	 * @deprecated use status instead
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -154,6 +156,9 @@ class Task extends CommonObjectLine
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int rank
+	 */
 	public $rang;
 
 	public $timespent_min_date;
@@ -181,6 +186,9 @@ class Task extends CommonObjectLine
 	public $comments = array();
 
 	// Properties calculated from sum of llx_element_time linked to task
+	/**
+	 * @var int is task to be billed
+	 */
 	public $tobill;
 
 	/**
@@ -189,27 +197,85 @@ class Task extends CommonObjectLine
 	public $billed;
 
 	// Properties to store project information
+	/**
+	 * @var string project ref
+	 */
 	public $projectref;
+
+	/**
+	 * @var int project status
+	 */
 	public $projectstatus;
+
+	/**
+	 * @var string project label
+	 */
 	public $projectlabel;
+
+	/**
+	 * @var float|'' opportunity amount
+	 */
 	public $opp_amount;
+
+	/**
+	 * @var float|'' opportunity percent
+	 */
 	public $opp_percent;
+
+	/**
+	 * @var int opportunity status
+	 */
 	public $fk_opp_status;
+
 	public $usage_bill_time;
+
+	/**
+	 * @var int is project public
+	 */
 	public $public;
+
 	public $array_options_project;
 
 	// Properties to store thirdparty of project information
+
+	/**
+	 * @var int ID of thirdparty
+	 * @deprecated
+	 * @see $thirdparty_id
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID of thirdparty
+	 */
 	public $thirdparty_id;
+
+	/**
+	 * @var string name of thirdparty
+	 */
 	public $thirdparty_name;
+
+	/**
+	 * @var string email of thirdparty
+	 */
 	public $thirdparty_email;
 
 	// store parent ref and position
+	/**
+	 * @var string task parent ref
+	 */
 	public $task_parent_ref;
+
+	/**
+	 * @var int task parent rank
+	 */
 	public $task_parent_position;
 
-
+	/**
+	 * Status indicate whether the task is billable (time is meant to be added to invoice) '1' or not '0'
+	 * @var int billable
+	 */
+	public $billable = 1;
 
 	/**
 	 * @var float budget_amount
@@ -303,6 +369,7 @@ class Task extends CommonObjectLine
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
 		$sql .= ", priority";
+		$sql .= ", billable";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -320,6 +387,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
+		$sql .= ", ".((int) $this->billable);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -397,7 +465,8 @@ class Task extends CommonObjectLine
 		$sql .= " t.priority,";
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
-		$sql .= " t.rang";
+		$sql .= " t.rang,";
+		$sql .= " t.billable";
 		if (!empty($loadparentdata)) {
 			$sql .= ", t2.ref as task_parent_ref";
 			$sql .= ", t2.rang as task_parent_position";
@@ -449,6 +518,7 @@ class Task extends CommonObjectLine
 					$this->task_parent_ref      = $obj->task_parent_ref;
 					$this->task_parent_position = $obj->task_parent_position;
 				}
+				$this->billable = $obj->billable;
 
 				// Retrieve all extrafield
 				$this->fetch_optionals();
@@ -536,7 +606,8 @@ class Task extends CommonObjectLine
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? ((int) $this->rang) : "0").",";
-		$sql .= " priority=".((!empty($this->priority)) ? ((int) $this->priority) : "0");
+		$sql .= " priority=".((!empty($this->priority)) ? ((int) $this->priority) : "0").",";
+		$sql .= " billable=".((int) $this->billable);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -961,6 +1032,7 @@ class Task extends CommonObjectLine
 		$this->priority = 0;
 		$this->note_private = 'This is a specimen private note';
 		$this->note_public = 'This is a specimen public note';
+		$this->billable = 1;
 
 		return 1;
 	}
@@ -1004,7 +1076,7 @@ class Task extends CommonObjectLine
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang, t.priority,";
-		$sql .= " t.budget_amount,";
+		$sql .= " t.budget_amount, t.billable,";
 		$sql .= " t.note_public, t.note_private,";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
@@ -1119,7 +1191,7 @@ class Task extends CommonObjectLine
 			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority,";
-			$sql .= " t.budget_amount,";
+			$sql .= " t.budget_amount, t.billable,";
 			$sql .= " t.note_public, t.note_private,";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
@@ -1213,6 +1285,8 @@ class Task extends CommonObjectLine
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
+
+					$tasks[$i]->billable = $obj->billable;
 
 					if ($loadextras) {
 						if (!empty($extrafields->attributes['projet']['label'])) {
