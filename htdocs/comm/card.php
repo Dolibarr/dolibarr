@@ -64,6 +64,9 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
@@ -311,6 +314,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
+$project = new Project($db);
 
 $title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
@@ -825,7 +829,7 @@ if ($object->id > 0) {
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$langs->load("propal");
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
 		$sql .= ", p.total_tva";
 		$sql .= ", p.total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
@@ -846,7 +850,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllPropals").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllPropals").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -860,6 +864,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				$propal_static->id = $objp->propalid;
 				$propal_static->ref = $objp->ref;
+				$propal_static->fk_project = $objp->fk_projet;
 				$propal_static->ref_client = $objp->ref_client;	// deprecated
 				$propal_static->ref_customer = $objp->ref_client;
 				$propal_static->total_ht = $objp->total_ht;
@@ -892,6 +897,11 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
+				print '</td><td class="left">';
+				if ($propal_static->fk_project > 0) {
+					$project->fetch($propal_static->fk_project);
+					print $project->getNomUrl(1);
+				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
@@ -922,7 +932,7 @@ if ($object->id > 0) {
 		$param ="";
 
 		$sql = "SELECT s.nom, s.rowid";
-		$sql .= ", c.rowid as cid, c.entity, c.total_ht";
+		$sql .= ", c.rowid as cid, c.fk_projet, c.entity, c.total_ht";
 		$sql .= ", c.total_tva";
 		$sql .= ", c.total_ttc";
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
@@ -958,7 +968,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -970,6 +980,7 @@ if ($object->id > 0) {
 
 				$commande_static->id = $objp->cid;
 				$commande_static->ref = $objp->ref;
+				$commande_static->fk_project = $objp->fk_projet;
 				$commande_static->ref_client = $objp->ref_client;
 				$commande_static->total_ht = $objp->total_ht;
 				$commande_static->total_tva = $objp->total_tva;
@@ -1004,6 +1015,11 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
 				}
+				print '</td><td class="left">';
+				if ($commande_static->fk_project > 0) {
+					$project->fetch($commande_static->fk_project);
+					print $project->getNomUrl(1);
+				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->order->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/commande/card.php?id='.$objp->cid;
@@ -1031,7 +1047,7 @@ if ($object->id > 0) {
 	 */
 	if (isModEnabled("expedition") && $user->hasRight('expedition', 'lire')) {
 		$sql = 'SELECT e.rowid as id';
-		$sql .= ', e.ref, e.entity';
+		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut as statut';
 		$sql .= ', s.nom';
@@ -1069,6 +1085,7 @@ if ($object->id > 0) {
 
 				$sendingstatic->id = $objp->id;
 				$sendingstatic->ref = $objp->ref;
+				$sendingstatic->fk_project = $objp->fk_projet;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
@@ -1098,6 +1115,11 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
 				}
+				print '</td><td class="left">';
+				if ($sendingstatic->fk_project > 0) {
+					$project->fetch($sendingstatic->fk_project);
+					print $project->getNomUrl(1);
+				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/expedition/card.php?id='.$objp->cid;
@@ -1109,7 +1131,7 @@ if ($object->id > 0) {
 					print '<td class="right"><b>!!!</b></td>';
 				}
 
-				print '<td class="nowrap right centpercent">'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
+				print '<td class="nowrap right">'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
 				print "</tr>\n";
 				$i++;
 			}
@@ -1128,7 +1150,7 @@ if ($object->id > 0) {
 	 * Latest contracts
 	 */
 	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
@@ -1146,7 +1168,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				//print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
@@ -1159,6 +1181,7 @@ if ($object->id > 0) {
 
 				$contrat->id = $objp->id;
 				$contrat->ref = $objp->ref ? $objp->ref : $objp->id;
+				$contrat->fk_project = $objp->fk_projet;
 				$contrat->ref_customer = $objp->refcus;
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->statut = $objp->contract_status;
@@ -1205,6 +1228,11 @@ if ($object->id > 0) {
 						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 					}
 				}
+				print '</td><td class="left">';
+				if ($contrat->fk_project > 0) {
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
@@ -1236,7 +1264,7 @@ if ($object->id > 0) {
 	 * Latest interventions
 	 */
 	if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_projet, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1253,7 +1281,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="3"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllInterventions").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<td colspan="4"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllInterventions").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1265,6 +1293,7 @@ if ($object->id > 0) {
 
 				$fichinter_static->id = $objp->id;
 				$fichinter_static->ref = $objp->ref;
+				$fichinter_static->fk_project = $objp->fk_projet;
 				$fichinter_static->statut = $objp->fk_statut;
 
 				print '<tr class="oddeven">';
@@ -1295,6 +1324,11 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
+				print '</td><td class="left">';
+				if ($fichinter_static->fk_project > 0) {
+					$project->fetch($fichinter_static->fk_project);
+					print $project->getNomUrl(1);
+				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = getMultidirOutput($fichinter_static).'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
@@ -1322,7 +1356,7 @@ if ($object->id > 0) {
 	 *   Latest invoices templates
 	 */
 	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
-		$sql = 'SELECT f.rowid as id, f.titre as ref';
+		$sql = 'SELECT f.rowid as id, f.titre as ref, f.fk_projet';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
@@ -1350,7 +1384,7 @@ if ($object->id > 0) {
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 				print '<tr class="liste_titre">';
-				$colspan = 4;
+				$colspan = 5;
 				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
 					$colspan++;
 				}
@@ -1368,6 +1402,7 @@ if ($object->id > 0) {
 
 				$invoicetemplate->id = $objp->id;
 				$invoicetemplate->ref = $objp->ref;
+				$invoicetemplate->fk_project = $objp->fk_projet;
 				$invoicetemplate->suspended = $objp->suspended;
 				$invoicetemplate->frequency = $objp->frequency;
 				$invoicetemplate->unit_frequency = $objp->unit_frequency;
@@ -1380,6 +1415,11 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
+				print '</td><td class="left">';
+				if ($invoicetemplate->fk_project > 0) {
+					$project->fetch($invoicetemplate->fk_project);
+					print $project->getNomUrl(1);
+				}
 				print '</td>';
 
 				if ($objp->frequency && $objp->date_last_gen > 0) {
@@ -1423,7 +1463,7 @@ if ($object->id > 0) {
 	 *   Latest invoices
 	 */
 	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
-		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
+		$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.fk_projet';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
@@ -1449,7 +1489,7 @@ if ($object->id > 0) {
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 				print '<tr class="liste_titre">';
-				$colspan = 5;
+				$colspan = 6;
 				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
 					$colspan++;
 				}
@@ -1467,6 +1507,7 @@ if ($object->id > 0) {
 
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->ref;
+				$facturestatic->fk_project = $objp->fk_projet;
 				$facturestatic->type = $objp->type;
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
@@ -1506,6 +1547,11 @@ if ($object->id > 0) {
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
+				}
+				print '</td><td class="left">';
+				if ($facturestatic->fk_project > 0) {
+					$project->fetch($facturestatic->fk_project);
+					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
