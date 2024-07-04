@@ -40,6 +40,11 @@ ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
 
 ALTER TABLE llx_inventory DROP COLUMN datec;
 
+UPDATE llx_document_model SET nom='standard_expensereport' WHERE nom='standard' AND type='expensereport';
+UPDATE llx_document_model SET nom='standard_stock' WHERE nom='standard' AND type='stock';
+UPDATE llx_document_model SET name='standard_movementstock' WHERE nom='standard' AND type='mouvement';
+UPDATE llx_document_model SET nom='standard_evaluation' WHERE nom='standard' AND type='evaluation';
+-- if rename failed delete old models
 DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
