@@ -788,7 +788,7 @@ return [
         'htdocs/core/modules/societe/mod_codecompta_aquarium.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/modules/societe/mod_codecompta_digitaria.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/core/modules/societe/modules_societe.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/stock/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/stock/modules_stock.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredMethod'],
