@@ -1034,6 +1034,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddinglarge {
+	padding: 6px !important;
+}
 .nowidthimp {
 	width: unset !important;
 }
@@ -4806,6 +4809,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		max-width: calc(50%);
 	}
 
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
+	}
+
 	.clearbothonsmartphone {
 		clear: both;
 		display: block !important;
@@ -5447,7 +5458,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 
 
 /* ============================================================================== */
-/* Calendar picker                                                                */
+/* Calendar date picker                                                           */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5455,6 +5466,22 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
 {
 	border: unset;
+}
+
+div#ui-datepicker-div {
+	width: 300px;
+	box-shadow: 2px 5px 15px #aaa;
+	border: unset;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+.ui-datepicker .ui-datepicker table {
+	font-size: unset;
+}
+.ui-datepicker .ui-widget-header {
+	border: unset;
+	background: unset;
 }
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
@@ -6415,7 +6442,7 @@ div#ecm-layout-west {
 	vertical-align: top;
 }
 div#ecm-layout-center {
-	width: calc(100% - 390px);
+	width: calc(100% - 405px);
 	vertical-align: top;
 	float: right;
 }

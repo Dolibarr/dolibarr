@@ -2380,7 +2380,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		if ($newprice !== '' || $newprice === 0) {
+		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));

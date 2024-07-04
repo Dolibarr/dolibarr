@@ -165,6 +165,7 @@ class ProjectTest extends CommonClassTest
 		$localobject = new Task($db);
 		$localobject->initAsSpecimen();
 		$localobject->fk_project = $idproject;
+		$localobject->billable = 1;
 		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);
