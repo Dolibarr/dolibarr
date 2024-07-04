@@ -40,7 +40,9 @@ ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
 
 ALTER TABLE llx_inventory DROP COLUMN datec;
 
-UPDATE llx_document_model SET nom='standard_expensereport' WHERE nom='standard' AND type='expensereport';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
 
 ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
