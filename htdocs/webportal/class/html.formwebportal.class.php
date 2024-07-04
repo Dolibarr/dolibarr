@@ -556,7 +556,7 @@ class FormWebPortal extends Form
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalString($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
