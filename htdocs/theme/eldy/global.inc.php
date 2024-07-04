@@ -2466,7 +2466,9 @@ div.fichehalfright {
 div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
-
+div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstcolumn > div > table.noborder, div.secondcolumn > div > table.noborder {
+	margin-bottom: 14px;
+}
 
 /* Force values on one column for small screen */
 @media only screen and (max-width: 1024px)
