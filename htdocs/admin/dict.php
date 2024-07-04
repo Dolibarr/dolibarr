@@ -2757,7 +2757,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td><input type="text" class="flat minwidth75" value="'.price((!empty($obj->{$value}) ? $obj->{$value} : '')).'" name="'. $value .'"></td>';
 		} elseif ($value == 'code' && isset($obj->{$value})) {
 			print '<td>';
-			if ($tabname == 'c_paiement' && in_array($obj->{$value}, array('LIQ', 'CB', 'VIR'))) {
+			if ($tabname == 'c_paiement' && in_array($obj->{$value}, array('LIQ', 'CB', 'CHQ', 'VIR'))) {
 				// Case of code that should not be modified
 				print '<input type="hidden" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
 				print $obj->{$value};
