@@ -1135,7 +1135,7 @@ class Contrat extends CommonObject
 							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 						}
 					} else {
-						dol_print_error($resqlcontact);
+						dol_print_error($this->db, $resqlcontact);
 					}
 				}
 			}
@@ -1731,7 +1731,7 @@ class Contrat extends CommonObject
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, (float) price2num($tvatx), $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -2796,9 +2796,9 @@ class Contrat extends CommonObject
 					if ($expirationdate && $expirationdate < $enddatetoscan) {
 						dol_syslog("Define the newdate of end of services from expirationdate=".$expirationdate);
 						$newdate = $expirationdate;
-						$protecti = 0;	//$protecti is to avoid infinite loop
+						$protecti = 0;	// $protecti is to avoid infinite loop
 						while ($newdate < $enddatetoscan && $protecti < 1000) {
-							$newdate = dol_time_plus_duree($newdate, $duration_value, $duration_unit);
+							$newdate = dol_time_plus_duree($newdate, (int) $duration_value, $duration_unit);
 							$protecti++;
 						}
 

@@ -324,7 +324,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'ORDER_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 

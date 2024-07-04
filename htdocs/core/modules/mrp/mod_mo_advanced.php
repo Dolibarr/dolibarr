@@ -66,12 +66,12 @@ class mod_mo_advanced extends ModeleNumRefMos
 
 		$form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstMo" value="MRP_MO_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$text = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$text .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$text .= '<input type="hidden" name="action" value="updateMask">';
+		$text .= '<input type="hidden" name="maskconstMo" value="MRP_MO_ADVANCED_MASK">';
+		$text .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -80,17 +80,17 @@ class mod_mo_advanced extends ModeleNumRefMos
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMo" value="'.getDolGlobalString('MRP_MO_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMo" value="'.getDolGlobalString('MRP_MO_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-		$texte .= '</tr>';
+		$text .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$text .= '</table>';
+		$text .= '</form>';
 
-		return $texte;
+		return $text;
 	}
 
 	/**
@@ -100,19 +100,23 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
+		$mo = new Mo($db);
+		$mo->initAsSpecimen();
+		$product = new Product($db);
+		$product->initAsSpecimen();
+
+
+		$numExample = $this->getNextValue($product, $mo);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
@@ -125,7 +129,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
 	public function getNextValue($objprod, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
