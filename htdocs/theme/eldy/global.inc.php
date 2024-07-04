@@ -6426,7 +6426,7 @@ div#ecm-layout-west {
 	vertical-align: top;
 }
 div#ecm-layout-center {
-	width: calc(100% - 390px);
+	width: calc(100% - 405px);
 	vertical-align: top;
 	float: right;
 }
