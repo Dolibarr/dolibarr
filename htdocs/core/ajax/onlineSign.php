@@ -183,7 +183,7 @@ if ($action == "importSignature") {
 									$pdf->useTemplate($tppl);
 									$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
 									if ($propalsignonspecificpage < 0) {
-										$propalsignonspecificpage = $pagecount - substr($propalsignonspecificpage, 1);
+										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
 									}
 
 									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $propalsignonspecificpage == $i) {
