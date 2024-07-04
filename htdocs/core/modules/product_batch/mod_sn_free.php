@@ -75,7 +75,14 @@ class mod_sn_free extends ModeleNumRefBatch
 	 */
 	public function getExample()
 	{
-		return $this->getNextValue(null, null);
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		return $this->getNextValue($thirdparty, null);
 	}
 
 	/**
