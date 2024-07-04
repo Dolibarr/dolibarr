@@ -904,7 +904,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  MouvementStock	$object     Object to show
+	 *  @param  Entrepot	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
@@ -1127,7 +1127,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	MouvementStock	$object			Object to show
+	 *  @param	Entrepot	$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text

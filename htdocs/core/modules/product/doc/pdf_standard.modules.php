@@ -732,7 +732,7 @@ class pdf_standard extends ModelePDFProduct
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && getDolGlobalString('PRODUCT_DRAFT_WATERMARK')) {
+		if ($object->status == 0 && getDolGlobalString('PRODUCT_DRAFT_WATERMARK')) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
