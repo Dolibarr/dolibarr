@@ -724,7 +724,7 @@ return [
         'htdocs/core/modules/fichinter/modules_fichinter.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/holiday/modules_holiday.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/hrm/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/modules_evaluation.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
