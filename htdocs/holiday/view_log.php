@@ -80,7 +80,7 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
@@ -89,7 +89,7 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 $arrayfields = array();
 $arrayofmassactions = array();
 
-if (empty($conf->holiday->enabled)) {
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module not enabled');
 }
 

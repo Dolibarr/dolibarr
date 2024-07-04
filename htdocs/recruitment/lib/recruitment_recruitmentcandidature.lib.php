@@ -25,7 +25,7 @@
 /**
  * Prepare array of tabs for RecruitmentCandidature
  *
- * @param	RecruitmentJobPosition	$object		RecruitmentCandidature
+ * @param	RecruitmentCandidature	$object		RecruitmentCandidature
  * @return 	array					Array of tabs
  */
 function recruitmentCandidaturePrepareHead($object)

@@ -175,7 +175,7 @@ class Entrepot extends CommonObject
 		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 301),
-		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("MAIN_FEATURES_LEVEL")', 'visible' => 1, 'position' => 400, 'default' => 1, 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
+		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")', 'visible' => 1, 'position' => 400, 'default' => 1, 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 500, 'css' => 'minwidth50'),
@@ -195,13 +195,20 @@ class Entrepot extends CommonObject
 
 	/**
 	 * Warehouse open and only operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 * Used when ENTREPOT_EXTRA_STATUS is on;
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
 
+
 	/**
-	 * Warehouse open and any operations are allowed, but warehouse is not included into calculation of stock.
+	 * Warehouse that must be include for stock calculation (default)
 	 */
-	const STATUS_OPENEXT_ALL = 3;	// TODO Implement this
+	const USAGE_INTERNAL = 1;
+
+	/**
+	 * Warehouse that must be excluded for stock calculation (scrapping stock, virtual warehouses, ...)
+	 */
+	const USAGE_EXTTERNAL = 2;
 
 
 

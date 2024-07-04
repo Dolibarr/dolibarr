@@ -645,7 +645,7 @@ BILL_SUPPLIER_DELETEInDolibarr=Supplier invoice deleted
 UnitPriceXQtyLessDiscount=Unit price x Qty - Discount
 CustomersInvoicesArea=Customer billing area
 SupplierInvoicesArea=Supplier billing area
-SituationTotalRayToRest=Remainder to pay without taxe
+SituationTotalRayToRest=Remainder to pay without tax
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

@@ -5,10 +5,10 @@
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -90,7 +91,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('adherent', 'membercard', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('membercard', 'globalcard'));
 
 // Fetch object
@@ -1453,7 +1454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 		$head = member_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user', 0, '', '', 0, '', 1);
 
 		// Confirm create user
 		if ($action == 'create_user') {

@@ -139,11 +139,6 @@ class CommandeFournisseur extends CommonOrder
 	public $date;
 
 	/**
-	 * @var int Date of the purchase order creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int Date of the purchase order validation
 	 */
 	public $date_valid;
@@ -170,7 +165,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Expected Delivery Date
+	 *  @var null|int|'' Expected Delivery Date
 	 */
 	public $delivery_date;
 

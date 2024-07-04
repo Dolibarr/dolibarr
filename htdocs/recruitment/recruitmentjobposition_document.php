@@ -59,7 +59,7 @@ if (!$sortfield) {
 }
 //if (! $sortfield) $sortfield="position_name";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new RecruitmentJobPosition($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('recruitmentjobpositiondocument', 'globalcard')); 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentjobposition/".get_exdir(0, 0, 0, 1, $object);

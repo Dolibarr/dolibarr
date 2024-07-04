@@ -92,7 +92,7 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));

@@ -62,7 +62,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;

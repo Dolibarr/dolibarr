@@ -85,16 +85,6 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer	date_modification
-	 */
-	public $date_modification;
-
-	/**
 	 * @var integer Default home page
 	 */
 	public $fk_default_home;

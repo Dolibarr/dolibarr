@@ -190,19 +190,19 @@ class Commande extends CommonOrder
 	public $demand_reason_code;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 */
 	public $date;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 * @deprecated
 	 * @see $date
 	 */
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
+	 * @var null|int|''	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 
@@ -363,7 +363,12 @@ class Commande extends CommonOrder
 	 * Shipment on process
 	 */
 	const STATUS_SHIPMENTONPROCESS = 2;		// We set this status when a shipment is validated
-	const STATUS_ACCEPTED = 2; 				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+
+	/**
+	 * For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+	 * @deprecated
+	 */
+	const STATUS_ACCEPTED = 2;
 
 	/**
 	 * Closed (Sent, billed or not)
@@ -1131,7 +1136,7 @@ class Commande extends CommonOrder
 								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 							}
 						} else {
-							dol_print_error($resqlcontact);
+							dol_print_error($this->db, $resqlcontact);
 						}
 					}
 
