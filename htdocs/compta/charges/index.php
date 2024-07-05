@@ -108,7 +108,7 @@ if ($sortorder) {
 	$param .= '&sortorder='.$sortorder;
 }
 
-$totalnboflines = 0;
+$totalnboflines = '';
 $num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -123,6 +123,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
 
 if ($year) {
@@ -138,7 +139,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -309,7 +310,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
@@ -378,6 +379,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			$i++;
 		}
+
+
 		print '<tr class="liste_total">';
 
 		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
@@ -481,7 +484,7 @@ while ($j < $numlt) {
 
 			$i++;
 		}
-		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("Total").'</td>';
+		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		print '<td class="right">'.price($total)."</td>";
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
