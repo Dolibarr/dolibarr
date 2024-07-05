@@ -70,7 +70,10 @@ class Product extends CommonObject
 		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
-		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo'),
+		'bom_bom' => array('name' => 'BOM', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bomline', 'parentkey' => 'fk_bom'),
 	);
 
 	/**
@@ -1437,38 +1440,6 @@ class Product extends CommonObject
 					$this->errors[] = $this->db->lasterror();
 				}
 			}
-
-            // Cancel delete product on Bom
-            if(! $error) {
-                $sql = " SELECT fk_product";
-                $sql .= " FROM ".$this->db->prefix().'bom_bom';
-                $sql .= " WHERE fk_product =".(int) $this->id;
-
-                $result = $this->db->query($sql);
-                if($result) {
-                    $nbrows = $this->db->num_rows($result);
-                    if($nbrows > 0) {
-                        $error++;
-                        $this->errors[] = $langs->trans("ProductIsUsed");
-                    }
-                }
-            }
-
-            // Cancel delete product on BomLine
-            if(! $error) {
-                $sql = " SELECT fk_product";
-                $sql .= " FROM ".$this->db->prefix().'bom_bomline';
-                $sql .= " WHERE fk_product =". (int) $this->id;
-
-                $result = $this->db->query($sql);
-                if($result) {
-                    $nbrows = $this->db->num_rows($result);
-                    if($nbrows > 0) {
-                        $error++;
-                        $this->errors[] = $langs->trans("ProductIsUsed");
-                    }
-                }
-            }
 
 			// Delete all child tables
 			if (!$error) {
