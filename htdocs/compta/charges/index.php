@@ -222,7 +222,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 				$s .= $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 			}
 			$s .= $obj->num_payment;
-			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($s).'>';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($s).'">';
 			print $s;
 			print '</td>';
 
