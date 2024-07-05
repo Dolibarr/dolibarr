@@ -134,24 +134,6 @@ print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'<
 print "<br>";
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
-	// Social contributions only
-	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-	if (isModEnabled("bank")) {
-		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	}
-	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print "</tr>\n";
-
 	$sql = "SELECT c.id, c.libelle as label,";
 	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
 	$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
@@ -184,11 +166,33 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 
+		// Social contributions only
+		//print_barre_liste($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, '', 0, $nav, '', $limit, 1);
+		print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
+		if (isModEnabled("bank")) {
+			print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+		}
+		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print "</tr>\n";
+
+
 		$total = 0;
 		$totalpaid = 0;
 
 		$i = 0;
-		while ($i < min($num, $limit)) {
+		//$imaxinloop = ($limit ? min($num, $limit) : $num);
+		$imaxinloop = $num;		// We want to show all (we can't use navigation when there is 2 tables shown)
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -281,12 +285,6 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 // VAT
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
-	print "<br>";
-
-	$tva = new Tva($db);
-
-	print load_fiche_titre($langs->trans("VATDeclarations").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
-
 	$sql = "SELECT ptva.rowid, pv.rowid as id_tva, pv.amount as amount_tva, ptva.amount, pv.label, pv.datev as dm, ptva.datep as date_payment, ptva.fk_bank, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
@@ -313,26 +311,34 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$total = 0;
 		$totaltopay = 0;
 
+		print "<br>";
+
+		$labeltax = $langs->transcountry("VAT", $mysoc->country_code);
+
+		print load_fiche_titre($labeltax.($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
-		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
-		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 		if (isModEnabled("bank")) {
 			print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 		}
-		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 
-		while ($i < $num) {
+		//$imaxinloop = ($limit ? min($num, $limit) : $num);
+		$imaxinloop = $num;		// We want to show all (we can't use navigation when there is 2 tables shown)
+
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($result);
 
 			$totaltopay = $totaltopay + $obj->amount_tva;
 			$total = $total + $obj->amount;
-
 
 			print '<tr class="oddeven">';
 
@@ -435,9 +441,9 @@ if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 while ($j < $numlt) {
 	print "<br>";
 
-	$tva = new Tva($db);
+	$labeltax = $langs->transcountry(($j == 1 ? "LT1" : "LT2"), $mysoc->country_code);
 
-	print load_fiche_titre($langs->transcountry(($j == 1 ? "LT1Payments" : "LT2Payments"), $mysoc->country_code).($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+	print load_fiche_titre($labeltax.($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
 
 	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
