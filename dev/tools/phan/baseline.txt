@@ -47,7 +47,7 @@ return [
     // PhanPluginConstantVariableNull : 10+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanPluginSuspiciousParamPosition : 10+ occurrences
-    // PhanRedefineClass : 10+ occurrences
+    // PhanRedefineClass : 3 occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
     // PhanEmptyFQSENInClasslike : 5 occurrences
     // PhanInvalidFQSENInClasslike : 4 occurrences
@@ -740,7 +740,7 @@ return [
         'htdocs/core/modules/mailings/xinputfile.modules.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/mailings/xinputuser.modules.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/member/doc/doc_generic_member_odt.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeSuspiciousNonTraversableForeach'],
-        'htdocs/core/modules/member/doc/pdf_standard.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanRedefineClass'],
+        'htdocs/core/modules/member/doc/pdf_standard_member.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/modules/member/modules_member.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/modFacture.class.php' => ['PhanPluginDuplicateExpressionAssignmentOperation'],
@@ -761,7 +761,7 @@ return [
         'htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/printsheet/modules_labels.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
-        'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/product/modules_product.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/product_batch/mod_lot_advanced.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/product_batch/mod_lot_free.php' => ['PhanTypeMismatchArgumentProbablyReal'],
@@ -804,7 +804,7 @@ return [
         'htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php' => ['PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/supplier_order/mod_commande_fournisseur_orchidee.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/supplier_order/modules_commandefournisseur.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
-        'htdocs/core/modules/supplier_payment/doc/pdf_standard.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/supplier_payment/mod_supplier_payment_brodator.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/supplier_payment/modules_supplier_payment.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php' => ['PhanPluginConstantVariableBool', 'PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],

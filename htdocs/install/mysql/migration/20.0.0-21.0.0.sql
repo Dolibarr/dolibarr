@@ -44,11 +44,15 @@ UPDATE llx_document_model SET nom='standard_expensereport' WHERE nom='standard' 
 UPDATE llx_document_model SET nom='standard_stock' WHERE nom='standard' AND type='stock';
 UPDATE llx_document_model SET name='standard_movementstock' WHERE nom='standard' AND type='mouvement';
 UPDATE llx_document_model SET nom='standard_evaluation' WHERE nom='standard' AND type='evaluation';
+UPDATE llx_document_model SET nom='standard_supplierpayment' WHERE nom='standard' AND type='supplier_payment';
+UPDATE llx_document_model SET nom='standard_member' WHERE nom='standard' AND type='member';
 -- if rename failed delete old models
 DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
 DELETE FROM llx_document_model WHERE nom='standard' AND type='evaluation';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='supplier_payment';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='member';
 
 ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
