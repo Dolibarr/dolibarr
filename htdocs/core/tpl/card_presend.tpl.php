@@ -387,6 +387,7 @@ if ($action == 'presend') {
 	$formmail->param['fileinit'] = array($file);
 
 	// Show form
+	$formmail->findToDefaultDestination($object);
 	print $formmail->get_form();
 
 	print dol_get_fiche_end();

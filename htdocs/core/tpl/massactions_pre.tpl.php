@@ -306,6 +306,7 @@ if ($massaction == 'presend') {
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
 	} else {
+		$formmail->findToDefaultDestination($object);
 		print $formmail->get_form();
 	}
 
