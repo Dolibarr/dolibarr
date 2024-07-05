@@ -108,7 +108,7 @@ if ($sortorder) {
 	$param .= '&sortorder='.$sortorder;
 }
 
-$totalnboflines = 0;
+$totalnboflines = '';
 $num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -123,6 +123,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
 
 if ($year) {
@@ -138,13 +139,13 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	if (isModEnabled("bank")) {
 		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	}
@@ -205,7 +206,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+			print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
@@ -214,12 +215,17 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
-			// Type payment
-			print '<td>';
+
+			// Payment mode
+			$s = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				$s .= $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment.'</td>';
+			$s .= $obj->num_payment;
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($s).'>';
+			print $s;
+			print '</td>';
+
 			// Account
 			if (isModEnabled("bank")) {
 				print '<td>';
@@ -309,12 +315,12 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 		if (isModEnabled("bank")) {
 			print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 		}
@@ -346,12 +352,15 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Date
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_payment), 'day')."</td>\n";
 
-			// Type payment
-			print '<td>';
+			// Payment mode
+			$s = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				$s .= $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment.'</td>';
+			$s .= $obj->num_payment;
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($s).'">';
+			print $s;
+			print '</td>';
 
 			// Account
 			if (isModEnabled("bank")) {
@@ -378,6 +387,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			$i++;
 		}
+
+
 		print '<tr class="liste_total">';
 
 		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
@@ -481,7 +492,7 @@ while ($j < $numlt) {
 
 			$i++;
 		}
-		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("Total").'</td>';
+		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		print '<td class="right">'.price($total)."</td>";
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
