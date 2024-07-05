@@ -1456,7 +1456,7 @@ class Product extends CommonObject
 								$error++;
 							} else {
 								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-								EcmFiles::updateAfterRename($this->db, $olddir, $newdir, 'product');
+								EcmFiles::updateAfterRename($this->db, "produit/".dol_sanitizeFileName($this->oldcopy->ref), "produit/".dol_sanitizeFileName($this->ref));
 							}
 						}
 					}

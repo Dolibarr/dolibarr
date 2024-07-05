@@ -890,12 +890,18 @@ class EcmFiles extends CommonObject
 	 * @param  DoliDB $dbs DoliDB
 	 * @param  string $olddir old directory
 	 * @param  string $newdir new directory
-	 * @param  string $module module
 	 * @return void
 	 */
-	public static function updateAfterRename($dbs, $olddir, $newdir, $module)
+	public static function updateAfterRename($dbs, $olddir, $newdir)
 	{
-		// var_dump($olddir, $newdir, $module);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'ecm_files SET';
+		$sql .= ' filepath = "'.$dbs->escape($newdir).'"';
+		//$sql .= ', fullpath_orig = "'.$dbs->escape($newdir)."'";
+		$sql .= ' WHERE ';
+		$sql .= ' filepath = "'.$dbs->escape($olddir).'"';
+		// $sql .= ' AND fullpath_orig = "'.$dbs->escape($olddir).'"';
+
+		$dbs->query($sql);
 	}
 
 	/**
