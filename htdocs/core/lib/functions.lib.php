@@ -8353,23 +8353,21 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		// Amount keys formated in a currency
-		if ($object->element =='facture') {
-			if (is_object($object)) {
-				$totalpaye			= $object->getSommePaiement();
-				$totalcreditnotes	= $object->getSumCreditNotesUsed();
-				$totaldeposits		= $object->getSumDepositsUsed();
-				$resteapayer		= price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-			}
-			$substitutionarray['__FACDATE__']			= is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '') : '';
-			$substitutionarray['__FACDATELIMREG__']		= is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '') : '';
-			$substitutionarray['__FACTOTALTTC_2D__']	= is_object($object) ? number_format($object->total_ttc, 2, ',', ' ') : '';
-			$substitutionarray['__FACTOTALHT_2D__']		= is_object($object) ? number_format($object->total_ht, 2, ',', ' ') : '';
-			$substitutionarray['__FACTOTALHT_2DC__']	= is_object($object) ? price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__FACTOTALTTC_2DC__']	= is_object($object) ? price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__FACREST_2D__']		= is_object($object) ? number_format($resteapayer, 2, ',', ' ') : '';
-			$substitutionarray['__FACREST_2DC__']		= is_object($object) ? price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__SIT_NUM__']			= is_object($object) ? (isset($object->situation_counter) ? $object->situation_counter : '') : '';
-        }
+		if (is_object($object) && $object->element == 'facture') {
+			$totalpaye = $object->getSommePaiement();
+			$totalcreditnotes = $object->getSumCreditNotesUsed();
+			$totaldeposits = $object->getSumDepositsUsed();
+			$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+			$substitutionarray['__FACDATE__'] = (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '');
+			$substitutionarray['__FACDATELIMREG__'] = (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '');
+			$substitutionarray['__FACTOTALTTC_2D__'] = number_format($object->total_ttc, 2, ',', ' ');
+			$substitutionarray['__FACTOTALHT_2D__'] = number_format($object->total_ht, 2, ',', ' ');
+			$substitutionarray['__FACTOTALHT_2DC__'] = price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__FACTOTALTTC_2DC__'] = price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__FACREST_2D__'] = number_format($resteapayer, 2, ',', ' ');
+			$substitutionarray['__FACREST_2DC__'] = price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__SIT_NUM__'] = ($object->situation_counter ?? '');
+		}
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
