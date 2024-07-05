@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -887,21 +887,21 @@ class EcmFiles extends CommonObject
 	/**
 	 * updateAfterRename update entry in ecmfiles if exist to avoid losing info
 	 *
-	 * @param  DoliDB $dbs DoliDB
+	 * @param  DoliDB $db DoliDB
 	 * @param  string $olddir old directory
 	 * @param  string $newdir new directory
 	 * @return void
 	 */
-	public static function updateAfterRename($dbs, $olddir, $newdir)
+	public static function updateAfterRename($db, $olddir, $newdir)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'ecm_files SET';
-		$sql .= ' filepath = "'.$dbs->escape($newdir).'"';
+		$sql .= ' filepath = "'.$db->escape($newdir).'"';
 		//$sql .= ', fullpath_orig = "'.$dbs->escape($newdir)."'";
 		$sql .= ' WHERE ';
-		$sql .= ' filepath = "'.$dbs->escape($olddir).'"';
+		$sql .= ' filepath = "'.$db->escape($olddir).'"';
 		// $sql .= ' AND fullpath_orig = "'.$dbs->escape($olddir).'"';
 
-		$dbs->query($sql);
+		$db->query($sql);
 	}
 
 	/**
