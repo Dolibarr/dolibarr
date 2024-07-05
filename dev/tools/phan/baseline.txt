@@ -704,7 +704,7 @@ return [
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/mod_expedition_ribera.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/expedition/modules_expedition.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expensereport/mod_expensereport_sand.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/expensereport/modules_expensereport.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/export/export_csviso.modules.php' => ['PhanPluginUnknownArrayMethodParamType'],
