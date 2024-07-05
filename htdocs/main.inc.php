@@ -1347,8 +1347,13 @@ if (!defined('NOLOGIN')) {
 		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
 	if ((int) $conf->liste_limit <= 0) {
-		// Mode automatic. TODO Define a value according to height
+		// Mode automatic.
 		$conf->liste_limit = 15;
+		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+			$conf->liste_limit = 10;
+		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+			$conf->liste_limit = 20;
+		}
 	}
 
 	// Replace conf->css by personalized value if theme not forced

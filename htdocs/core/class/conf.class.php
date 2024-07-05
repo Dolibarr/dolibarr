@@ -813,8 +813,13 @@ class Conf extends stdClass
 			// conf->liste_limit = constant to limit size of lists
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic. TODO Define a value according to height
+				// Mode automatic.
 				$this->liste_limit = 15;
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+					$this->liste_limit = 10;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+					$this->liste_limit = 20;
+				}
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
