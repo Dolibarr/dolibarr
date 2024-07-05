@@ -474,7 +474,8 @@ print ' ';
 print '&nbsp;&nbsp;';
 print $langs->trans("Type").': ';
 $formcompany = new FormCompany($db);
-$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam = getDolGlobalString("SOCIETE_SORT_ON_TYPEENT", 'ASC'); 
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 
 print '</td>';
