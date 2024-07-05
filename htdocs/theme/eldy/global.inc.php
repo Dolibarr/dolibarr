@@ -2475,7 +2475,9 @@ div.fichehalfright {
 div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
-
+div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstcolumn > div > table.noborder, div.secondcolumn > div > table.noborder {
+	margin-bottom: 14px;
+}
 
 /* Force values on one column for small screen */
 @media only screen and (max-width: 1024px)
@@ -4739,7 +4741,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	min-height: 40px;
 	padding-right: 0px;
 	padding-left: 0px;
-	padding-bottom: 10px;
+	/* padding-bottom: 10px; */
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
