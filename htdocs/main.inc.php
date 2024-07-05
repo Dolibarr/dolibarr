@@ -1342,17 +1342,18 @@ if (!defined('NOLOGIN')) {
 	 * Overwrite some configs globals (try to avoid this and have code to use instead $user->conf->xxx)
 	 */
 
-	// Set liste_limit
-	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {
-		$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT; // Can be 0
+	// Set liste_limit from user setup
+	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {	// If a user setup exists
+		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
-	if (isset($user->conf->PRODUIT_LIMIT_SIZE)) {
-		$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE; // Can be 0
+	if ((int) $conf->liste_limit <= 0) {
+		// Mode automatic. TODO Define a value according to height
+		$conf->liste_limit = 15;
 	}
 
 	// Replace conf->css by personalized value if theme not forced
-	if (!getDolGlobalString('MAIN_FORCETHEME') && !empty($user->conf->MAIN_THEME)) {
-		$conf->theme = $user->conf->MAIN_THEME;
+	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
+		$conf->theme = getDolUserString('MAIN_THEME');
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
 } else {
@@ -1373,14 +1374,14 @@ if (GETPOST('theme', 'aZ09')) {
 if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 	$conf->use_javascript_ajax = 0;
 } else {
-	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT)) {
-		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
+	if (getDolUserString('MAIN_DISABLE_JAVASCRIPT')) {
+		$conf->use_javascript_ajax = !getDolUserString('MAIN_DISABLE_JAVASCRIPT');
 	}
 }
 
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
-if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER');
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
 		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
 	}
@@ -1389,7 +1390,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MA
 //var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = getDolUserString('MAIN_OPTIMIZEFORCOLORBLIND');
 
 // Set terminal output option according to conf->browser.
 if (GETPOSTINT('dol_hide_leftmenu') || !empty($_SESSION['dol_hide_leftmenu'])) {

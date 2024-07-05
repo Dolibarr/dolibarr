@@ -434,7 +434,15 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
+		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
+	}
+	print '">';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
+		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
