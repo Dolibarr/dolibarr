@@ -2796,9 +2796,9 @@ class Contrat extends CommonObject
 					if ($expirationdate && $expirationdate < $enddatetoscan) {
 						dol_syslog("Define the newdate of end of services from expirationdate=".$expirationdate);
 						$newdate = $expirationdate;
-						$protecti = 0;	//$protecti is to avoid infinite loop
+						$protecti = 0;	// $protecti is to avoid infinite loop
 						while ($newdate < $enddatetoscan && $protecti < 1000) {
-							$newdate = dol_time_plus_duree($newdate, $duration_value, $duration_unit);
+							$newdate = dol_time_plus_duree($newdate, (int) $duration_value, $duration_unit);
 							$protecti++;
 						}
 
