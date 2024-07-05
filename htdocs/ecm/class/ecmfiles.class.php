@@ -117,12 +117,12 @@ class EcmFiles extends CommonObject
 	public $extraparams;
 
 	/**
-	 * @var int|string date create
+	 * @var int|'' date create
 	 */
 	public $date_c = '';
 
 	/**
-	 * @var int|string date modify
+	 * @var int|'' date modify
 	 */
 	public $date_m = '';
 

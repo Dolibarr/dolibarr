@@ -873,7 +873,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			while ($i <= $MAXFTP) {
 				$paramkey = 'FTP_NAME_'.$i;
 				//print $paramkey;
-				if (!empty($conf->global->$paramkey)) {
+				if (getDolGlobalString($paramkey)) {
 					$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 					$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
 				}
