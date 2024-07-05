@@ -1454,6 +1454,9 @@ class Product extends CommonObject
 								$langs->load("errors");
 								$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 								$error++;
+							} else {
+								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+								EcmFiles::updateAfterRename($this->db, $olddir, $newdir, 'product');
 							}
 						}
 					}
