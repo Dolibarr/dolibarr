@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003 Steve Dillon
- * Copyright (C) 2003 Laurent Passebecq
- * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+/* Copyright (C) 2003 		Steve Dillon
+ * Copyright (C) 2003 		Laurent Passebecq
+ * Copyright (C) 2001-2003 	Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003 	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file		htdocs/core/modules/member/doc/pdf_standard.class.php
+ *	\file		htdocs/core/modules/member/doc/pdf_standard_member.class.php
  *	\ingroup	member
  *	\brief		File of class to generate PDF document of labels
  */
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-class pdf_standard extends CommonStickerGenerator
+class pdf_standard_member extends CommonStickerGenerator
 {
 	/**
 	 * Dolibarr version of the loaded document
