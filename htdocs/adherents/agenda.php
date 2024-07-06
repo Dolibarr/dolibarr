@@ -135,7 +135,7 @@ if ($object->id > 0) {
 
 	$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
 
-	llxHeader("", $title, $help_url);
+	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

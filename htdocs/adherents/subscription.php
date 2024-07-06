@@ -444,7 +444,7 @@ $title = $langs->trans("Member")." - ".$langs->trans("Subscriptions");
 
 $help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
 
-llxHeader("", $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-subscription');
 
 
 $param = '';

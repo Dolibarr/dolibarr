@@ -251,7 +251,7 @@ $formproduct = new FormProduct($db);
 
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $langs->trans("MembersTypeSetup"), $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

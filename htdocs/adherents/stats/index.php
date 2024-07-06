@@ -69,7 +69,7 @@ $memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-member page-stats');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 

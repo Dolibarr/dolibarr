@@ -83,7 +83,11 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+$title = $langs->trans('MemberType')." - ".$langs->trans('LDAP');
+
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $langs->trans("MembersTypeSetup"), $help_url, '', 0, 0, '', '', '', 'mod-member page-type_ldap');
 
 $form = new Form($db);
 
