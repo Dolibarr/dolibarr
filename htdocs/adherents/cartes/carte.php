@@ -266,7 +266,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 $form = new Form($db);
 
 $title = $langs->trans('MembersCards');
-
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $langs->trans("MembersCards"), $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
