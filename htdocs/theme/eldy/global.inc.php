@@ -8302,15 +8302,15 @@ table.jPicker {
 		height: 50px;
 
 		z-index: 202;
-		min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		width: 200px;          /* must be width of menu + padding + padding of sidenav */
+		min-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		max-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		width: 245px;          /* must be width of menu + padding + padding of sidenav */
 	}
 	.loginbuttonexternal {
 		width: 260px;
 	}
 	.side-nav-vert .user-menu .dropdown-menu {
-		width: 234px !important;
+		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
 	}
 	div.login_block_other {
 		margin-right: unset;
