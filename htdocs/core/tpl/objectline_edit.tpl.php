@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024 Alexandre Spangaro <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -298,10 +299,18 @@ $coldisplay++;
 	</td>
 
 	<?php
-	// Progession for situation invoices
+	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
+			$old_fieldv = $line->get_allprev_progress($line->fk_facture);
+			$fieldv = $tmp_fieldv + $old_fieldv;
+
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+		} else {
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
+		}
 		$coldisplay++;
 		print '<td></td>';
 	}
@@ -378,6 +387,7 @@ $coldisplay++;
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
+
 	print '<script>';
 	if ($prefillDates) {
 		?>
@@ -406,10 +416,13 @@ $coldisplay++;
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		if ($res  > 0) {
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
+		if ($res > 0) {
 			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
-				print  'jQuery("#date_start").addClass("error");';
+				print  'jQuery("#date_start").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}
@@ -421,11 +434,13 @@ $coldisplay++;
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		// on doit fetch le product là !!! pour connaître le type
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
 		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
-				print  'jQuery("#date_end").addClass("error");';
+				print  'jQuery("#date_end").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}

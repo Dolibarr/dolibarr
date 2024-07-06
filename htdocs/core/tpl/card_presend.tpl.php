@@ -69,7 +69,9 @@ if ($action == 'presend') {
 	$outputlangs = $langs;
 	$newlang = '';
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-		$newlang = $object->thirdparty->default_lang;
+		if (is_object($object->thirdparty)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
@@ -187,6 +189,8 @@ if ($action == 'presend') {
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
+	$formmail->withlayout = 1;
+	$formmail->withaiprompt = 'html';
 
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
@@ -388,6 +392,8 @@ if ($action == 'presend') {
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
+	$formmail->param['object_entity'] = $object->entity;
+
 	// Show form
 	print $formmail->get_form();
 

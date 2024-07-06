@@ -50,17 +50,6 @@ class RecruitmentJobPosition extends CommonObject
 	public $table_element = 'recruitment_recruitmentjobposition';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for recruitmentjobposition. Must be the part after the 'object_' into object_recruitmentjobposition.png
 	 */
 	public $picto = 'recruitmentjobposition';
@@ -153,8 +142,20 @@ class RecruitmentJobPosition extends CommonObject
 	 * @var string label
 	 */
 	public $label;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var int ID thirdparty
+	 */
 	public $fk_soc;
+
+	/**
+	 * @var int ID project
+	 */
 	public $fk_project;
 	public $fk_user_recruiter;
 
@@ -174,7 +175,6 @@ class RecruitmentJobPosition extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -194,6 +194,9 @@ class RecruitmentJobPosition extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

@@ -98,7 +98,7 @@ if (!$sortorder) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancysupplierlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -234,7 +234,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("SuppliersVentilation"), $help_url);
+llxHeader('', $langs->trans("SuppliersVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-supplier page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -452,8 +452,8 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate"),
-		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount"),
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
@@ -691,9 +691,9 @@ if ($result) {
 
 		// Description of line
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
+		print '<td class="tdoverflowmax150 small classfortooltip" title="'.dol_escape_htmltag($text).'">';
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION');
+		print dol_trunc($text, $trunclength);
 		print '</td>';
 
 		print '<td class="right nowraponall amount">';

@@ -99,7 +99,7 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
 
@@ -618,7 +618,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-admin page-mails_templates');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -808,7 +808,7 @@ if ($action == 'create') {
 	print '</td>';
 	print "</tr>";
 
-	print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
+	print '<tr class="oddeven nodrag nodrop nohover"><td colspan="9">';
 
 	// Show fields for topic, join files and body
 	$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
@@ -864,7 +864,8 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '</form>';
-	print '<br><br>';
+
+	print '<br><br><br>';
 }
 
 // List of available record in database
@@ -890,7 +891,7 @@ $param = '&id='.((int) $id);
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
-if ($search_lang > 0) {
+if (!empty($search_lang) && $search_lang != '-1') {
 	$param .= '&search_lang='.urlencode($search_lang);
 }
 if ($search_type_template != '-1') {
@@ -1197,7 +1198,7 @@ if ($num) {
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -1261,7 +1262,7 @@ if ($num) {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(1);
+								$valuetoshow = $fuser->getNomUrl(-1);
 								$class .= ' tdoverflowmax100';
 							}
 						}
@@ -1382,13 +1383,13 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
-					print $user->getNomUrl(1); // Me
+					print $user->getNomUrl(-1); // Me
 					$forcedvalue = $user->id;
 				} else {
 					if ($obj && !empty($obj->$value) && $obj->$value > 0) {
 						$fuser = new User($db);
 						$fuser->fetch($obj->$value);
-						print $fuser->getNomUrl(1);
+						print $fuser->getNomUrl(-1);
 						$forcedvalue = $fuser->id;
 					} else {
 						$forcedvalue = $obj->$value;

@@ -50,17 +50,6 @@ class Availabilities extends CommonObject
 	public $table_element = 'bookcal_availabilities';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 'fk_bookcal_calendar@bookcal_calendar';
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for availabilities. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'availabilities@bookcal' if picto is file 'img/object_availabilities.png'.
 	 */
 	public $picto = 'fa-calendar-check';
@@ -140,7 +129,6 @@ class Availabilities extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $last_main_doc;
@@ -202,6 +190,9 @@ class Availabilities extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_bookcal_calendar@bookcal_calendar';
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1086,11 +1077,6 @@ class AvailabilitiesLine extends CommonObjectLine
 	// We should have a field rowid, fk_availabilities and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1098,5 +1084,6 @@ class AvailabilitiesLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		$this->isextrafieldmanaged = 0;
 	}
 }

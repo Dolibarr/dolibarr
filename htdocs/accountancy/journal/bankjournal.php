@@ -4,15 +4,15 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2022  Open-DSI      			<support@open-dsi.fr>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2022  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Eric Seigne	            <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,6 +242,7 @@ if ($result) {
 	// one line tabpay = line into bank
 	// one line for bank record = tabbq
 	// one line for thirdparty record = tabtp
+	// Note: tabcompany is used to store the subledger account
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -289,7 +290,8 @@ if ($result) {
 		);
 
 		// Set accountancy code for user
-		// $obj->accountancy_code is the accountancy_code of table u=user but it is defined only if a link with type 'user' exists)
+		// $obj->accountancy_code is the accountancy_code of table u=user (but it is defined only if
+		// a link with type 'user' exists and user as a subledger account)
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
@@ -408,13 +410,26 @@ if ($result) {
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
+
+					// For a payment of social contribution, we have a link sc + user.
+					// but we already fill the $tabpay[$obj->rowid]["soclib"] in the line 'sc'.
+					// If we fill it here to, we must concat.
 					if ($userstatic->id > 0) {
-						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+						if ($is_sc) {
+							$tabpay[$obj->rowid]["soclib"] .= ' '.$userstatic->getNomUrl(1, 'accountancy', 0);
+						} else {
+							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+						}
 					} else {
 						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					}
+
 					if ($compta_user) {
-						$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+						if ($is_sc) {
+							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
+						} else {
+							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
@@ -431,6 +446,8 @@ if ($result) {
 						$chargestatic->label = $links[$key]['label'];
 					}
 					$chargestatic->ref = $chargestatic->label;
+					//$chargestatic->fetch($chargestatic->id);
+
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
@@ -667,7 +684,14 @@ if (!$error && $action == 'writebookkeeping') {
 			// Line into bank account
 			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt) {
-					$accountingaccount->fetch(null, $k, true);	// $k is accounting bank account. TODO We should use a cache here to avoid this fetch
+					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch(0, $k, true);	// $k is accounting account of the bank.
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+					} else {
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+					}
+
 					$account_label = $accountingaccount->label;
 
 					$reflabel = '';
@@ -1089,8 +1113,8 @@ if (empty($action) || $action == 'view') {
 	$variousstatic = new PaymentVarious($db);
 
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
-
-	llxHeader('', dol_string_nohtmltag($title));
+	$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-bankjournal');
 
 	$nom = $title;
 	$builddate = dol_now();

@@ -150,7 +150,7 @@ $nameforformuserfile = 'formuserfileecm';
 
 print '<div class="inline-block valignmiddle floatright">';
 
-// For to attach a new file
+// Zone to attach a new file
 if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>

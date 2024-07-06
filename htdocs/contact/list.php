@@ -65,7 +65,7 @@ if ($contextpage == 'poslist') {
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
-if ($user->socid) {
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contact', $contactid, '');
@@ -184,7 +184,7 @@ if ($type == "c") {
 	$urlfiche = "";
 }
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));
@@ -258,7 +258,7 @@ if (isModEnabled('socialnetworks')) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
-				'position' => 300
+				'position' => 299
 			);
 		}
 	}
@@ -280,9 +280,9 @@ if (($id > 0 || !empty($ref)) && $action != 'add') {
 	}
 }
 
-$permissiontoread = $user->hasRight('societe', 'lire');
-$permissiontodelete = $user->hasRight('societe', 'supprimer');
-$permissiontoadd = $user->hasRight('societe', 'creer');
+$permissiontoread = $user->hasRight('societe', 'contact', 'lire');
+$permissiontodelete = $user->hasRight('societe', 'contact', 'supprimer');
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -424,9 +424,10 @@ if (empty($reshook)) {
 if ($search_priv < 0) {
 	$search_priv = '';
 }
-// the user has not right to see other third-party than their own
+
+// The user has no rights to see other third-party than their own
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
+	$socid = $user->socid;
 }
 
 
@@ -534,7 +535,6 @@ if ($search_priv != '0' && $search_priv != '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
-
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -766,6 +766,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1630,7 +1631,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

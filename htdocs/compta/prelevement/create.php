@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -301,7 +301,7 @@ if ($nb) {
 			$title = $langs->trans('BankToPayCreditTransfer').': ';
 		}
 		print '<span class="hideonsmartphone">'.$title.'</span>';
-		print img_picto('', 'bank_account');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
@@ -460,6 +460,9 @@ if ($resql) {
 	$i = 0;
 
 	$param = '';
+	if ($type) {
+		$param .= '&type=' . urlencode((string) $type);
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
@@ -556,11 +559,13 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-				$bac->fetch(0, $obj->socid);
+				$bac->fetch(0, '', $obj->socid);
 
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
-				$invoicestatic->ref_supplier = $obj->ref_supplier;
+				if ($type == 'bank-transfer') {
+					$invoicestatic->ref_supplier = $obj->ref_supplier;
+				}
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->uid);

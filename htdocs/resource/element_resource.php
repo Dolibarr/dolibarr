@@ -301,7 +301,8 @@ if ($reshook < 0) {
 $form = new Form($db);
 
 $pagetitle = $langs->trans('ResourceElementPage');
-llxHeader('', $pagetitle, '');
+$help_url = '';
+llxHeader('', $pagetitle, $help_url, '', 0, 0, '', '', '', 'mod-resource page-element_resource');
 
 $now = dol_now();
 $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
@@ -325,7 +326,7 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'action') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);

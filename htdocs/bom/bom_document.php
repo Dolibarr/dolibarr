@@ -64,7 +64,7 @@ if (!$sortfield) {
 }
 //if (! $sortfield) $sortfield="position_name";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('bomdocument', 'globalcard')); // Note that conf->
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/".get_exdir(0, 0, 0, 1, $object);
@@ -106,7 +106,7 @@ $title = $langs->trans("BillOfMaterials").' - '.$langs->trans("Files");
 $help_url = 'EN:Module_BOM';
 $morehtmlref = "";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_documents');
 
 if ($object->id) {
 	/*

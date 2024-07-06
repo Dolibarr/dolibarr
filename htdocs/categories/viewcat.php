@@ -89,7 +89,7 @@ if (is_numeric($type)) {
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
 /*
@@ -876,7 +876,8 @@ if ($type == Categorie::TYPE_CONTACT) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AssignCategoryTo").' &nbsp;';
-				print $form->selectContacts('', '', 'elemid');
+				//print $form->selectcontacts('', '', 'elemid');
+				print $form->select_contact(0, '', 'elemid', '', '', '', 0, 'maxwidth300 widthcentpercentminusx');
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
 				print '</table>';

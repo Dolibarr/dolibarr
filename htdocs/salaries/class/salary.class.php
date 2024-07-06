@@ -826,7 +826,7 @@ class Salary extends CommonObject
 			}
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -858,7 +858,7 @@ class Salary extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$bac->fetch(0, $mysoc->id);
+			$bac->fetch(0, '', $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";

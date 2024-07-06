@@ -74,7 +74,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-loan');
 
 $form = new Form($db);
 if (isModEnabled('accounting')) {

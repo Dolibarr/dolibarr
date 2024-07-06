@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,16 +139,6 @@ class Mailing extends CommonObject
 	public $joined_file4;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var int date validate
-	 */
-	public $date_validation;
-
-	/**
 	 * @var int|null date sending
 	 */
 	public $date_envoi;
@@ -161,11 +152,6 @@ class Mailing extends CommonObject
 	 * @var array statut dest
 	 */
 	public $statut_dest = array();
-
-	/**
-	 * @var array labelStatus
-	 */
-	public $labelStatus = array();
 
 	/**
 	 * @var array substitutionarray
@@ -762,10 +748,10 @@ class Mailing extends CommonObject
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->title)) {
-			$datas['title'] .= '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
+			$datas['title'] = '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
 		}
 		if (isset($this->sujet)) {
-			$datas['subject'] .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
+			$datas['subject'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
 		}
 
 		return $datas;
@@ -904,7 +890,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param	string	$desc			Desc error
+	 *  @param	string	$desc			Description of error to show as tooltip
 	 *  @return string        			Label
 	 */
 	public static function libStatutDest($status, $mode = 0, $desc = '')
@@ -938,9 +924,10 @@ class Mailing extends CommonObject
 		}
 
 		$param = array();
-		if ($status == - 1) {
-			$param = array('badgeParams'=>array('attr'=>array('title'=>$desc)));
+		if ($status == -1) {
+			$param = array('badgeParams' => array('attr' => array('title' => $desc)));
 		}
+
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', $param);
 	}
 }

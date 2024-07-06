@@ -153,6 +153,16 @@ if (empty($pageid)) {
 	include DOL_DOCUMENT_ROOT.'/public/error-404.php';
 	exit;
 }
+if (empty($pageref)) {
+	$objectpage = new WebsitePage($db);
+	$result = $objectpage->fetch($pageid);
+	if ($result > 0) {
+		$pageref = $objectpage->ref;
+	}
+}
+if (preg_match('/^_(library|service)_page_/', $pageref)) {
+	$originalcontentonly = 1;
+}
 
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
@@ -224,7 +234,9 @@ if (!file_exists($original_file_osencoded)) {
 
 // Output page content
 define('USEDOLIBARRSERVER', 1);
-print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
+if (!isset($originalcontentonly)) {
+	print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
+}
 include_once $original_file_osencoded; // Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
 if (is_object($db)) {

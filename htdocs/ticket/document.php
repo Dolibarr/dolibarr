@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+$hookmanager->initHooks(array('documentticketcard', 'globalcard'));
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
@@ -100,6 +101,12 @@ $permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -118,7 +125,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
 if ($object->id) {
 	/*
@@ -204,6 +211,25 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+	// same as above for every messages
+	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
+	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$file_msg_array = array();
+		$numrows = $db->num_rows($resql);
+		for ($i=0; $i < $numrows; $i++) {
+			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
+			$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+			if (count($file_msg)) {
+				$file_msg_array = array_merge($file_msg, $file_msg_array);
+			}
+		}
+		if (count($file_msg_array)) {
+			$filearray = array_merge($filearray, $file_msg_array);
+		}
+	}
+
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

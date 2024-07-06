@@ -227,7 +227,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
 
 if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
@@ -361,7 +361,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			print '<input type="hidden" name="action" value="add_contact">';
 			print '<input type="hidden" name="email" value="'.$_SESSION['email_customer'].'">';
 			print '<tr><td>'.$langs->trans("AddContributor").'</td><td>';
-			print $form->selectcontacts($object->dao->fk_soc, '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			//print $form->selectcontacts($object->dao->fk_soc, '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print $form->select_contact($object->dao->fk_soc, '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400', true);
 			print '<input type="submit" class="button smallpaddingimp reposition" name="btn_add_contact" value="'.$langs->trans('Add').'" />';
 			print '</td></tr></form>';
 		}

@@ -428,10 +428,10 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 }
 
 /**
- * Get list of existing objects from directory
+ * Get list of existing objects from a directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    Return integer <=0 if KO, array if OK
+ * @return 	array|int                   Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -1237,7 +1237,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 		if ($key === 'tabcond') {
 			$conditions = array_map(
 				/**
-				 * @param bool|int|string $val
+				 * @param mixed $val
 				 * @return string|int
 				 */
 				function ($val) use ($module) {
@@ -1287,11 +1287,11 @@ function updateDictionaryInFile($module, $file, $dicts)
  * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
  * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
  *
- * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
- * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
- * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
- * @param array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return int<-1,-1>|void Return int < 0 if error, return nothing on success
+ * @param 	string 		$modulename 	The lowercase name of the module for which the dictionary table is being created.
+ * @param 	string 		$file 			The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param 	string 		$namedic 		The name of the dictionary, which will also be used as the base for the table name.
+ * @param 	array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @return 	int<-1,-1> 					Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1299,7 +1299,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 
 	if (empty($namedic)) {
 		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
-		return;
+		return -1;
 	}
 	if (!file_exists($file)) {
 		return -1;
@@ -1319,7 +1319,6 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
-
 	$primaryKey = 'rowid';
 	foreach ($columns as $key => $value) {
 		if ($key === 'rowid') {
@@ -1336,7 +1335,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
-		return;
+		return -1;
 	} else {
 		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
@@ -1364,6 +1363,8 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
+
+	return -1;
 }
 
 /**

@@ -115,6 +115,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$ret = $newobject->createFromOrder($object, $user);
 				if ($ret < 0) {
 					$this->setErrorsFromObject($newobject);
+				} else {
+					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
+						if ($ret < 0) {
+							$this->setErrorsFromObject($newobject);
+						}
+					}
 				}
 
 				$object->clearObjectLinkedCache();
@@ -234,7 +241,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			// First classify billed the order to allow the proposal classify process
 			if (isModEnabled('order') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER')) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
-				if (count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
+				if (!empty($object->linkedObjects['commande']) && count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
 					$orderLinked = reset($object->linkedObjects['commande']);
 					$orderLinked->fetchObjectLinked($orderLinked->id, '', $orderLinked->element);
 					if (count($orderLinked->linkedObjects['facture']) >= 1) {
@@ -573,10 +580,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					break;
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) {
-						setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
-					}
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 				}
 			}
 			// Automatically create intervention
@@ -606,7 +611,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	}
 
 	/**
-	 * @param Object $conf                  Dolibarr settings object
+	 * @param Conf  $conf                   Dolibarr settings object
 	 * @param float $totalonlinkedelements  Sum of total amounts (excl VAT) of
 	 *                                      invoices linked to $object
 	 * @param float $object_total_ht        The total amount (excl VAT) of the object

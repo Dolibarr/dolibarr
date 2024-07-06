@@ -105,16 +105,6 @@ class WebsitePage extends CommonObject
 	 */
 	public $status;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 
@@ -132,6 +122,12 @@ class WebsitePage extends CommonObject
 	 * @var string id of external object
 	 */
 	public $fk_object;
+
+	/**
+	 * @var int			Another ID that is the $id but with an offset so that ID of pages of the website start at 1
+	 */
+	public $newid;
+
 
 	const STATUS_DRAFT = 0;			// offline
 	const STATUS_VALIDATED = 1;		// online
@@ -367,7 +363,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      	$filtermode   	No more used
 	 * @return WebSitePage[]|int<-1,-1>    	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($websiteid = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -399,7 +395,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.object_type,";
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		if (!empty($websiteid)) {
+			$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		}
 
 		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
 		if (is_array($filter)) {
@@ -432,7 +430,11 @@ class WebsitePage extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				if (!empty($websiteid)) {
+					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				} else {
+					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				}
 			}
 
 			$filter = '';

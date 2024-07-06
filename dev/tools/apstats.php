@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024 	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -39,8 +39,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
-
-$phpstanlevel = 3;
 
 // Include Dolibarr environment
 if (!is_readable("{$path}../../htdocs/config/config.php")) {
@@ -99,11 +97,12 @@ while ($i < $argc) {
 	$i++;
 }
 
+// PHPSTAN setup
+$PHPSTANLEVEL = 4;
 
-// Configuration is required, otherwise phan is disabled.
+// PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
-// BASELINE is ignored if it does not exist
-$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";
+$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";		// BASELINE is ignored if it does not exist
 $PHAN_MIN_PHP = "7.0";
 $PHAN_MEMORY_OPT = "--memory-limit 5G";
 
@@ -141,7 +140,16 @@ if ($dirscc != 'disabled') {
 // Get technical debt with PHPStan
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --version';
+	print 'Execute PHPStan to get the version: '.$commandcheck."\n";
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
+$phpstanversion = $output_arrtd[0];
+
+$output_arrtd = array();
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
@@ -875,7 +883,7 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
 	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
@@ -889,6 +897,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+
 	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
 
 	$html .= '<tr style="vertical-align: top;">';
@@ -947,8 +956,6 @@ foreach ($arrayofalerts as $key => $alert) {
 	// Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 
-	$arrayofalerts[$key]['description'] .= ']]>';
-
 	// Branches
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['branch'])) {
@@ -957,6 +964,8 @@ foreach ($arrayofalerts as $key => $alert) {
 		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.$listofbranchnames;
 	}
 	$html .= '</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]>';
 
 	$html .= '</tr>';
 }
@@ -986,15 +995,20 @@ if ($fh) {
 	fwrite($fh, '<channel>'."\n");
 	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	//fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
+	fwrite($fh, '<language>en-US</language>'."\n");
+	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
+	/*
+	<lastBuildDate>Mon, 29 Apr 2024 11:33:54 +0000</lastBuildDate>
+	<atom:link href="https://cti.dolibarr.org/security-index.rss" rel="self" type="application/rss+xml" />
+	*/
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
-	}
-	if ($url_flux) {
-		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
 	// Image
 	fwrite($fh, '<image>'."\n");
 	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
 	if ($url_site) {
 		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
 	}
@@ -1005,9 +1019,13 @@ if ($fh) {
 
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		// Description of alert, list of links to sources and branches of fixes
 		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
-		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
+		$tmpdate = strtotime($alert['created_at']);
+		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+
 		fwrite($fh, '</item>'."\n");
 	}
 
@@ -1016,9 +1034,9 @@ if ($fh) {
 
 	fclose($fh);
 
-	print 'Generation of RSS output file '.$outputfilerss.' done.'."\n";
+	print 'Generation of RSS output file '.$outputdir.'/'.$outputfilerss.' done.'."\n";
 } else {
-	print 'Failed to generate the RSS file '.$outputfilerss."\n";
+	print 'Failed to generate the RSS file '.$outputdir.'/'.$outputfilerss."\n";
 }
 
 
@@ -1035,7 +1053,7 @@ if ($dirphpstan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpstanversion.' - level '.$PHPSTANLEVEL.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
@@ -1106,9 +1124,9 @@ if ($fh) {
 	fwrite($fh, $html);
 	fclose($fh);
 
-	print 'Generation of output file '.$outputfile.' done.'."\n";
+	print 'Generation of output file '.$outputpath.' done.'."\n";
 } else {
-	print 'Failed to open '.$outputfile.' for output.'."\n";
+	print 'Failed to open '.$outputpath.' for output.'."\n";
 }
 
 

@@ -56,7 +56,7 @@ if ($result <= 0) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
@@ -101,8 +101,8 @@ if (empty($reshook)) {
 		$object->update($user);
 	}
 
-	// Reopend
-	if ($action == 'reopen') {
+	// Valid or Reopend
+	if ($action == 'reopen' || $action == 'validate') {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
@@ -341,9 +341,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
-if ($action != 'edit') {
+//if ($action != 'edit') {
 	print ajax_autoselect("opensurveyurl", $url, 'image');
-}
+//}
 
 print '</td></tr>';
 
@@ -375,6 +375,11 @@ print '<div class="tabsAction">';
 if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
+
+	if ($object->status == Opensurveysondage::STATUS_DRAFT) {
+		// Validate button
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Valid").'</a>';
+	}
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		// Close button

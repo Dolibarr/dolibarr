@@ -182,9 +182,10 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
+		// Get barcode type configuration for products if $type not set
 		if (empty($type)) {
 			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
-		} //get barcode type configuration for companies if $type not set
+		}
 
 		// Get Mask value
 		$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
@@ -246,7 +247,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK'))) {
 			$result = -2;
 		} else {
@@ -255,7 +256,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {

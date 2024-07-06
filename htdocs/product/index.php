@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -104,7 +104,7 @@ if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
+llxHeader("", $langs->trans("ProductsAndServices"), $helpurl, '', 0, 0, '', '', '', 'mod-product page-index');
 
 print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product');
 
@@ -525,7 +525,7 @@ if (isModEnabled('stock')) {
 
 
 $latestmovement = '';
-if (isModEnabled('product')) {
+if (isModEnabled('stock')) {
 	// Latest movements
 	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
@@ -543,6 +543,7 @@ if (isModEnabled('product')) {
 	$sql .= $db->plimit($max, 0);
 
 	dol_syslog("Index:list stock movements", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -621,6 +622,14 @@ if (isModEnabled('product')) {
 			$i++;
 		}
 		$db->free($resql);
+
+		if (empty($num)) {
+			$colspan = 4;
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		}
 
 		$latestmovement .= "</table>";
 		$latestmovement .= '</div>';

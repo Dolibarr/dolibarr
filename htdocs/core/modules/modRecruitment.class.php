@@ -360,7 +360,7 @@ class modRecruitment extends DolibarrModules
 		/* END MODULEBUILDER EXPORT RECRUITMENTJOBPOSITION */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT RECRUITMENTJOBPOSITION */
 		/*
 		 $langs->load("recruitment");

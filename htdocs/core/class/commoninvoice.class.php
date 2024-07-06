@@ -441,7 +441,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
-	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int}>		 Array with list of payments
+	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
@@ -985,7 +985,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, $this->socid);
+			$bac->fetch(0, '', $this->socid);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
@@ -1138,8 +1138,8 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-			$bac = new CompanyBankAccount($this->db);	// table societe_rib
-			$result = $bac->fetch(0, $this->socid, 1, 'ban');
+			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
+			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
 				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
 				$this->errors[] = $this->error;
@@ -1506,7 +1506,7 @@ abstract class CommonInvoice extends CommonObject
 									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
 									$stripefailurecode = 'BADPAYMENTMODE';
 									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$postactionmessages = [];  // @phan-suppress-current-line PhanPluginRedundantAssignment
+									$postactionmessages = [];
 
 									$object = $this;
 
@@ -1651,7 +1651,51 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
+	/**
+	 * Build string for EPC QR Code
+	 *
+	 * @return	string			String for EPC QR Code
+	 */
+	public function buildEPCQrCodeString()
+	{
+		global $mysoc;
 
+		// Convert total_ttc to a string with 2 decimal places
+		$totalTTCString = number_format($this->total_ttc, 2, '.', '');
+
+		// Initialize an array to hold the lines of the QR code
+		$lines = array();
+
+		// Add the standard elements to the QR code
+		$lines = [
+			'BCD',  // Service Tag (optional)
+			'002',  // Version (optional)
+			'1',	// Character set (optional)
+			'SCT',  // Identification (optional)
+		];
+
+		// Add the bank account information
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$bankAccount = new Account($this->db);
+		if ($this->fk_account > 0) {
+			$bankAccount->fetch($this->fk_account);
+			$lines[] = $bankAccount->bic; //BIC (required)
+			$lines[] = $mysoc->name; //Name (required)
+			$lines[] = $bankAccount->iban; //IBAN (required)
+		} else {
+			$lines[] = ""; //BIC (required)
+			$lines[] = $mysoc->name; //Name (required)
+			$lines[] = ""; //IBAN (required)
+		}
+
+		// Add the amount and reference
+		$lines[] = 'EUR' . $totalTTCString; // Amount (optional)
+		$lines[] = ''; // Payment reference (optional)
+		$lines[] = $this->ref; // Remittance Information (optional)
+
+		// Join the lines with newline characters and return the result
+		return implode("\n", $lines);
+	}
 	/**
 	 * Build string for ZATCA QR Code (Arabi Saudia)
 	 *

@@ -20,7 +20,7 @@
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,17 +128,6 @@ class Societe extends CommonObject
 	public $picto = 'company';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -188,14 +177,14 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,length?:string|int,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1),
+		'nom' => array('type' => 'varchar(128)', 'length'=>128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -572,26 +561,12 @@ class Societe extends CommonObject
 	 */
 	public $name_bis;
 
-	//Log data
-
-	/**
-	 * Date of last update
-	 * @var integer|string
-	 */
-	public $date_modification;
-
 	/**
 	 * User that made last update
 	 * @var User
 	 * @deprecated
 	 */
 	public $user_modification;
-
-	/**
-	 * Date of creation
-	 * @var integer|string
-	 */
-	public $date_creation;
 
 	/**
 	 * User that created the thirdparty
@@ -889,6 +864,8 @@ class Societe extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		$this->client = 0;
 		$this->prospect = 0;
 		$this->fournisseur = 0;
@@ -954,6 +931,10 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -992,7 +973,10 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."',";
+			$sql .= " '".$this->db->escape($this->name_alias)."',";
+			$sql .= " ".((int) $this->entity).",";
+			$sql .= " '".$this->db->idate($this->date_creation)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
@@ -1012,6 +996,7 @@ class Societe extends CommonObject
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
@@ -2474,7 +2459,7 @@ class Societe extends CommonObject
 				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
 			}
 
-			$discount->tva_tx = price2num($vatrate);
+			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -3338,7 +3323,7 @@ class Societe extends CommonObject
 
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$bac->fetch(0, $this->id);
+		$bac->fetch(0, '', $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
 			if ($mode == 'label') {
@@ -4405,8 +4390,8 @@ class Societe extends CommonObject
 			} else { // For backward compatibility
 				dol_syslog("Your setup of State has an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
-				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_code = getState($state_id, '2', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_label = getState($state_id, '0', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 			}
 		}
 		$this->state_id = $state_id;
@@ -4517,6 +4502,7 @@ class Societe extends CommonObject
 
 		$this->code_client = 'CC-'.dol_print_date($now, 'dayhourlog');
 		$this->code_fournisseur = 'SC-'.dol_print_date($now, 'dayhourlog');
+		$this->typent_code = 'TE_OTHER';
 		$this->capital = 10000;
 		$this->client = 1;
 		$this->prospect = 1;
@@ -4983,7 +4969,7 @@ class Societe extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				$result = $bac->fetch(0, $this->id);
+				$result = $bac->fetch(0, '', $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
 				} else {

@@ -46,6 +46,7 @@ InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
 MailSentBy
+MaxNbOfLinesForBoxes
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
@@ -66,9 +67,14 @@ SuppliersOrdersRunning
 TasksOnOpenedProject
 ThirdPartyCustomersWithIdProf12
 TicketPublicInfoCreateTicket
+Title1
+Title2
 TitreRequestCP
 UseAsciiDocFormat
+UsePassword
 ViewPageInNewTab
+WEBSITE_PAGE_EXAMPLE
+WebpageContent
 YourTicketSuccessfullySaved
 #
 # ██████╗  █████╗ ██████╗ ████████╗██████╗
@@ -230,7 +236,6 @@ Control
 Convert
 Core
 Count
-CreateFichInter
 CreateRemoteOrder
 CreateRepeatableIntervention
 Created
@@ -601,7 +606,6 @@ NoTypeOfPagePleaseEditDictionary
 NoURL
 No_record_on_multicurrency_rate
 NobodyHasPermissionToValidateExpenseReport
-NotARecurringInterventionalTemplate
 NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated
 NotEnoughForAllOrders
 NotFound
@@ -665,7 +669,6 @@ PendingCreditTransferToComplete
 PendingCreditTransferToCompleteShort
 PendingDirectDebitToComplete
 PendingDirectDebitToCompleteShort
-PermissionAdvanced
 Picto
 PlanStripe
 Poll
@@ -926,7 +929,6 @@ WebServiceKey
 WebServiceURL
 Website
 WebsiteMustBeSameThanClonedPageIfTranslation
-Weighted
 WelcomeOnOnlineSignaturePage
 WidgetDisabledAsModuleDisabled
 Widgets

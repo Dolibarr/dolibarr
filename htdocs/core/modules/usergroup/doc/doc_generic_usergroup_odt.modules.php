@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -352,7 +352,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'user_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
@@ -422,46 +422,41 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					}
 				}
 				// Replace tags of lines
+				$foundtagforlines = 1;
 				try {
-					$foundtagforlines = 1;
-					try {
-						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfExceptionSegmentNotFound $e) {
-						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					} catch (OdfException $e) {
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
-					if ($foundtagforlines) {
-						foreach ($object->members as $u) {
-							$tmparray = $this->get_substitutionarray_each_var_object($u, $outputlangs);
-							unset($tmparray['object_pass']);
-							unset($tmparray['object_pass_indatabase']);
-							complete_substitutions_array($tmparray, $outputlangs, $object, $user, "completesubstitutionarray_users");
-							// Call the ODTSubstitutionLine hook
-							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$u);
-							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-							foreach ($tmparray as $key => $val) {
-								try {
-									if (!is_array($val)) {
-										$listlines->setVars($key, $val, true, 'UTF-8');
-									}
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_WARNING);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_WARNING);
+					$listlines = $odfHandler->setSegment('lines');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforlines) {
+					foreach ($object->members as $u) {
+						$tmparray = $this->get_substitutionarray_each_var_object($u, $outputlangs);
+						unset($tmparray['object_pass']);
+						unset($tmparray['object_pass_indatabase']);
+						complete_substitutions_array($tmparray, $outputlangs, $object, $user, "completesubstitutionarray_users");
+						// Call the ODTSubstitutionLine hook
+						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$u);
+						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						foreach ($tmparray as $key => $val) {
+							try {
+								if (!is_array($val)) {
+									$listlines->setVars($key, $val, true, 'UTF-8');
 								}
+							} catch (SegmentException $e) {
+								dol_syslog($e->getMessage(), LOG_WARNING);
 							}
-							$listlines->merge();
 						}
-						$odfHandler->mergeSegment($listlines);
+						$listlines->merge();
 					}
-				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace labels translated

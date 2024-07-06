@@ -362,8 +362,8 @@ class modAdherent extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref'=>array(
 				'rule'=>'getrefifauto',
-				'class'=>(!getDolGlobalString('MEMBER_ADDON') ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
-				'path'=>"/core/modules/member/".(!getDolGlobalString('MEMBER_ADDON') ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+				'class' => getDolGlobalString('MEMBER_ADDON', 'mod_member_simple'),
+				'path'=>"/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -431,7 +431,7 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Permissions
 		$this->remove($options);

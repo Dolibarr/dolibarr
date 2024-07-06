@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Alexandre Spangaro   <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +19,9 @@
  */
 
 /**
- * \file    htdocs/asset/admin/setup.php
+ * \file	htdocs/asset/admin/setup.php
  * \ingroup asset
- * \brief   Asset setup page.
+ * \brief	Asset setup page.
  */
 
 // Load Dolibarr environment
@@ -196,10 +197,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = assetAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "asset");
 
-// Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("AssetSetupPage").'</span>';
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
@@ -207,7 +204,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("AssetNumberingModules", $myTmpObjectKey), '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
@@ -235,7 +232,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 							'@phan-var-force CommonNumRefGenerator $module';
 
-							// Show modules according to features level
+							// Show modules according to feature level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
@@ -250,7 +247,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								print $module->info($langs);
 								print '</td>';
 
-								// Show example of numbering model
+								// Show example of the numbering model
 								print '<td class="nowrap">';
 								$tmp = $module->getExample();
 								if (preg_match('/^Error/', $tmp)) {
@@ -331,7 +328,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {

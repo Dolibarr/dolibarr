@@ -29,20 +29,24 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOSTINT('id');
-$valueid = GETPOSTINT('valueid');
+$id = GETPOSTINT('id');                             // ID of the parent Product
 $ref = GETPOST('ref', 'alpha');
-$weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
-$price_impact_percent = (bool) GETPOST('price_impact_percent');
-if ($price_impact_percent) {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 2);
-} else {
-	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 'MU');
-}
-$level_price_impact = GETPOST('level_price_impact', 'array');
-$level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 
-$reference = GETPOST('reference', 'alpha');
+$combination_id = GETPOSTINT('combination_id');     // ID of the combination
+
+$reference = GETPOST('reference', 'alpha');         // Reference of the variant Product
+
+$weight_impact = GETPOSTFLOAT('weight_impact', 2);
+$price_impact_percent = (bool) GETPOST('price_impact_percent');
+$price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOSTFLOAT('price_impact', 'MU');
+
+// for PRODUIT_MULTIPRICES
+$level_price_impact = GETPOST('level_price_impact', 'array');
+$level_price_impact = array_map('price2num', $level_price_impact);
+$level_price_impact = array_map('floatval', $level_price_impact);
+$level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
+$level_price_impact_percent = array_map('boolval', $level_price_impact_percent);
+
 $form = new Form($db);
 
 $action = GETPOST('action', 'aZ09');
@@ -58,8 +62,8 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : $ref);
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$fieldvalue = $id ?: $ref;
+$fieldtype = !empty($ref) ? 'ref' : 'rowid';
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -70,8 +74,8 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-$selected = "";
+$selectedvariant = isset($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
+$selected = '';
 // Security check
 if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
@@ -81,10 +85,10 @@ if ($user->socid > 0) { // Protection if external user
 }
 
 if ($object->id > 0) {
-	if ($object->type == $object::TYPE_PRODUCT) {
+	if ($object->type == Product::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
 	}
-	if ($object->type == $object::TYPE_SERVICE) {
+	if ($object->type == Product::TYPE_SERVICE) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
@@ -154,10 +158,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		// for conf PRODUIT_MULTIPRICES
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			$level_price_impact = array_map('price2num', $level_price_impact);
-		} else {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -270,8 +271,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
-} elseif ($action === 'update' && $valueid > 0) {
-	if ($prodcomb->fetch($valueid) < 0) {
+} elseif ($action === 'update' && $combination_id > 0) {
+	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -280,15 +281,13 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 	// for conf PRODUIT_MULTIPRICES
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$level_price_impact = array_map('price2num', $level_price_impact);
-
-		$prodcomb->variation_price = (float) $level_price_impact[1];
-		$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
+		$prodcomb->variation_price = $level_price_impact[1];
+		$prodcomb->variation_price_percentage = $level_price_impact_percent[1];
 	} else {
 		$level_price_impact = array(1 => $price_impact);
 		$level_price_impact_percent = array(1 => $price_impact_percent);
 
-		$prodcomb->variation_price = (float) $price_impact;
+		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
@@ -343,7 +342,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id, true);
 
 if ($action === 'confirm_deletecombination') {
-	if ($prodcomb->fetch($valueid) > 0) {
+	if ($prodcomb->fetch($combination_id) > 0) {
 		$db->begin();
 
 		if ($prodcomb->delete($user) > 0 && (empty($delete_product) || ($delete_product == 'on' && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0))) {
@@ -358,7 +357,7 @@ if ($action === 'confirm_deletecombination') {
 		$action = '';
 	}
 } elseif ($action === 'edit') {
-	if ($prodcomb->fetch($valueid) < 0) {
+	if ($prodcomb->fetch($combination_id) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -370,12 +369,12 @@ if ($action === 'confirm_deletecombination') {
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
 
-	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($valueid);
+	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($combination_id);
 } elseif ($action === 'confirm_copycombination') {
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
 
-	if ($prodstatic->fetch('', $dest_product) > 0) {
+	if ($prodstatic->fetch(0, $dest_product) > 0) {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
 			if ($prodcomb->copyAll($user, $object->id, $prodstatic) > 0) {
@@ -612,9 +611,9 @@ if (!empty($id) || !empty($ref)) {
 
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
-		if ($valueid > 0) {
-			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
+		print '<input type="hidden" name="action" value="'.(($combination_id > 0) ? "update" : "create").'">'."\n";
+		if ($combination_id > 0) {
+			print '<input type="hidden" name="combination_id" value="'.$combination_id.'">'."\n";
 		}
 
 		print dol_get_fiche_head();
@@ -687,10 +686,9 @@ if (!empty($id) || !empty($ref)) {
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					foreach ($productCombination2ValuePairs1 as $key => $val) {
-						$result1 = $prodattr->fetch($val->fk_prod_attr);
-						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-						//print 'rr'.$result1.' '.$result2;
+					foreach ($productCombination2ValuePairs1 as $pc2v) {
+						$result1 = $prodattr->fetch($pc2v->fk_prod_attr);
+						$result2 = $prodattr_val->fetch($pc2v->fk_prod_attr_val);
 						if ($result1 > 0 && $result2 > 0) {
 							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
@@ -787,11 +785,11 @@ if (!empty($id) || !empty($ref)) {
 		print '</form>';
 	} else {
 		if ($action === 'delete') {
-			if ($prodcomb->fetch($valueid) > 0) {
+			if ($prodcomb->fetch($combination_id) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".urlencode((string) ($id))."&valueid=".urlencode((string) ($valueid)),
+					"combinations.php?id=".urlencode((string) ($id))."&combination_id=".urlencode((string) ($combination_id)),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
@@ -931,14 +929,8 @@ if (!empty($id) || !empty($ref)) {
 
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
-				$iMax = count($productCombination2ValuePairs);
-
-				for ($i = 0; $i < $iMax; $i++) {
-					echo dol_htmlentities($productCombination2ValuePairs[$i]);
-					if ($i !== ($iMax - 1)) {
-						echo ', ';
-					}
+				foreach ($comb2val->fetchByFkCombination($currcomb->id) as $pc2v) {
+					print dol_htmlentities($pc2v).'<br>';
 				}
 				print '</td>';
 				print '<td class="right">'.($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '').'</td>';
@@ -949,8 +941,8 @@ if (!empty($id) || !empty($ref)) {
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
 
 				print '<td class="right">';
-				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
-				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
+				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&combination_id='.$currcomb->id.'">'.img_edit().'</a>';
+				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&combination_id='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Action column

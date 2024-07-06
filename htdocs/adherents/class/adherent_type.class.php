@@ -51,12 +51,6 @@ class AdherentType extends CommonObject
 	public $picto = 'members';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string
 	 * @deprecated Use label
 	 * @see $label
@@ -151,6 +145,8 @@ class AdherentType extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->status = 1;
 	}
 

@@ -859,8 +859,9 @@ class FormMail extends Form
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
-							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
+							$entity = (isset($this->param['object_entity']) ? $this->param['object_entity'] : $conf->entity);
+							if ($entity > 1) {
+								$relativepathtofile = str_replace('/'.$entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
@@ -870,7 +871,8 @@ class FormMail extends Form
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).$listofnames[$key];
 
-							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
+							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
+
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile input-nobottom" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).'&id=removedfile_'.$key.'">'.img_delete($langs->trans("Remove"), 'id="removedfile_'.$key.'" name="removedfile_'.$key.'"', 'removedfile input-nobottom').'</a>';
@@ -1005,57 +1007,19 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
 				$out .= '</td>';
-				$out .= '<td>';
+				$out .= '<td class="tdtop">';
 
-				// Add link to add layout
-				if ($this->withlayout && $this->withfckeditor) {
-					$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
-					$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-					$out .= $langs->trans("FillMessageWithALayout").'...';
-					$out .= '</a> &nbsp; &nbsp; ';
+				$formmail = $this;
+				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
+				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+				$formatforouput = '';
+				$htmlname = 'message';
 
-					$out .= '<script>
-						$(document).ready(function() {
-  							$("#linkforlayouttemplates").click(function() {
-								console.log("We click on linkforlayouttemplates");
-								event.preventDefault();
-								jQuery("#template-selector").toggle();
-								//jQuery("#template-selector").attr("style", "aaa");
-								jQuery("#ai_input").hide();
-							});
-						});
-					</script>
-					';
-				}
-				// Add link to add AI content
-				if ($this->withaiprompt && isModEnabled('ai')) {
-					$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
-					$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
-					$out .= $langs->trans("FillMessageWithAIContent").'...';
-					$out .= '</a>';
+				// Fill $out
+				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-					$out .= '<script>
-						$(document).ready(function() {
-  							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
-								event.preventDefault();
-								jQuery("#ai_input").toggle();
-								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
-								}
-							});
-						});
-					</script>
-					';
-				}
-				if ($this->withfckeditor) {
-					$out .= $this->getModelEmailTemplate();
-				}
-				if ($this->withaiprompt && isModEnabled('ai')) {
-					$out .= $this->getSectionForAIPrompt($this->withaiprompt);
-				}
 				$out .= '</td>';
 				$out .= '</tr>';
 
@@ -1442,13 +1406,18 @@ class FormMail extends Form
 	/**
 	 * Return Html code for AI instruction of message and autofill result
 	 *
+	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
 	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
-	public function getSectionForAIPrompt($format = '', $htmlContent = 'message')
+	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
 	{
 		global $langs;
+
+		$langs->load("other");
+
+		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
 		$out = '<tr id="ai_input" class="hidden">';
 		$out .= '<td>';
@@ -1458,8 +1427,8 @@ class FormMail extends Form
 		$out .= '<td>';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
-		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly">';
-		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>'.$langs->trans("AIProcessingPleaseWait");
+		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly margintoponly">';
+		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
 		$out .= "</td></tr>\n";
 
@@ -1474,6 +1443,8 @@ class FormMail extends Form
 				});
 
 				$('#generate_button').click(function() {
+					console.log('We click on generate ai button');
+
 					var instructions = $('#ai_instructions').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
@@ -1487,7 +1458,7 @@ class FormMail extends Form
 						}
 					}, 2000);
 
-					//editor on readonly
+					// set editor in readonly
         			if (CKEDITOR.instances.".$htmlContent.") {
 						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 					}
@@ -1498,17 +1469,26 @@ class FormMail extends Form
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({
-							'format': '".dol_escape_js($format)."',
-							'instructions': instructions,
+							'format': '".dol_escape_js($format)."',			/* the format for output */
+							'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+							'instructions': instructions,					/* the prompt string */
 						}),
 						success: function(response) {
-							console.log('Add response into field ".$htmlContent.": '+response);
+							console.log('Add response into field \'".$htmlContent."\': '+response);
 
 							jQuery('#".$htmlContent."').val(response);
+							//jQuery('#".$htmlContent."preview').val(response);
 
-							if (CKEDITOR.instances && CKEDITOR.instances.".$htmlContent." && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
-								CKEDITOR.instances.".$htmlContent.".setReadOnly(0);
-								CKEDITOR.instances.".$htmlContent.".setData(response);
+							if (CKEDITOR.instances) {
+								var editorInstance = CKEDITOR.instances.".$htmlContent.";
+								if (editorInstance) {
+									editorInstance.setReadOnly(0);
+									editorInstance.setData(response);
+								}
+								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+								//if (editorInstancepreview) {
+								//	editorInstancepreview.setData(response);
+								//}
 							}
 
 							// remove readonly
@@ -1536,7 +1516,7 @@ class FormMail extends Form
 	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field to fill
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
 	 * @return 	string      				HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
@@ -1547,10 +1527,12 @@ class FormMail extends Form
 		$templates = array(
 			'empty' => 'empty',
 			'basic' => 'basic',
-			'news'  => 'news',
-			'commerce' => 'commerce',
-			//'text' => 'text'
 		);
+		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
+			$templates['news'] = 'news';
+			$templates['commerce'] = 'commerce';
+			//$templates['text'] = 'text';
+		//}
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);
@@ -1565,11 +1547,13 @@ class FormMail extends Form
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for email");
+						var template = $(this).data("template");
+
+						console.log("We choose a layout for email template "+template);
+
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
 
-						var template = $(this).data("template");
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);

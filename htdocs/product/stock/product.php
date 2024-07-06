@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('stockproduct', 'card', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockproductcard', 'globalcard'));
 
 $error = 0;
@@ -556,7 +556,7 @@ if ($id > 0 || $ref) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_stock_product');
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
@@ -937,7 +937,7 @@ if (empty($reshook)) {
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
@@ -947,7 +947,7 @@ if (empty($reshook)) {
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
 			}
@@ -1187,7 +1187,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
 							print $langs->trans("TransferStock");
 							print '</a>';
@@ -1199,7 +1199,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '</td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("CorrectStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=correction&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
 							print $langs->trans("CorrectStock");
 							print '</a>';
@@ -1292,18 +1292,24 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 		$pse = new ProductStockEntrepot($db);
 		$lines = $pse->fetchAll($id);
 
+		$visibleWarehouseEntities = explode(',', getEntity('stock')); 	// For MultiCompany compatibility
+
 		if (!empty($lines)) {
 			$var = false;
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
-				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
-				print '<td class="right">'.$line['desiredstock'].'</td>';
-				if ($user->hasRight('produit', 'creer')) {
-					print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+
+				if (!isModEnabled("multicompany") || in_array($ent->entity, $visibleWarehouseEntities)) {
+					// Display only warehouses from our entity and entities sharing stock with actual entity
+					print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
+					print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
+					print '<td class="right">'.$line['desiredstock'].'</td>';
+					if ($user->hasRight('produit', 'creer')) {
+						print '<td class="right"><a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse&token='.newToken().'">'.img_delete().'</a></td>';
+					}
+					print '</tr>';
 				}
-				print '</tr>';
 			}
 		}
 

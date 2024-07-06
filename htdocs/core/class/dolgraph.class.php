@@ -755,14 +755,14 @@ class DolGraph
 			$this->error = "Call to draw method was made but SetData was is an empty dataset";
 			dol_syslog(get_class($this) . "::draw " . $this->error, LOG_WARNING);
 		}
-		$call = "draw_" . $this->_library;
+		$call = "draw_" . $this->_library;	// Example "draw_jflot"
 
 		return call_user_func_array(array($this, $call), array($file, $fileurl));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Build a graph using JFlot library. Input when calling this method should be:
+	 * Build a graph into ->stringtoshow using the JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
@@ -777,7 +777,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_jflot($file, $fileurl)
+	private function draw_jflot($file, $fileurl) // @phpstan-ignore-line
 	{
 		// phpcs:enable
 		global $langs;
@@ -1064,7 +1064,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_chart($file, $fileurl)
+	private function draw_chart($file, $fileurl) // @phpstan-ignore-line
 	{
 		// phpcs:enable
 		global $langs;
@@ -1103,7 +1103,7 @@ class DolGraph
 			$values = array(); // Array with horizontal y values (specific values of a series) for each abscisse x (with x=0,1,2,...)
 			$series[$i] = "";
 
-			// Fill array $values
+			// Fill array $series from $this->data
 			$x = 0;
 			foreach ($this->data as $valarray) {	// Loop on each x
 				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
@@ -1549,7 +1549,7 @@ class DolGraph
 	}
 
 	/**
-	 * Output HTML string to show graph
+	 * Output HTML string ->stringtoshow to show the graph
 	 *
 	 * @param	int|string		$shownographyet    Show graph to say there is not enough data or the message in $shownographyet if it is a string.
 	 * @return	string							   HTML string to show graph

@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,8 +252,6 @@ class FormWebPortal extends Form
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$out = '';
@@ -283,9 +282,8 @@ class FormWebPortal extends Form
 
 		//var_dump($file_list);
 		// For ajax treatment
-		$out .= '<!-- html.formfile::getDocumentsLink -->' . "\n";
+		$out .= '<!-- html.formwebportal::getDocumentsLink -->' . "\n";
 		if (!empty($file_list)) {
-			$out = '';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -322,13 +320,13 @@ class FormWebPortal extends Form
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="button"';
+				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$tmpout .= '>';
-				//$tmpout .= img_mime($relativepath, $file["name"]);
+				$tmpout .= img_mime($relativepath, $file["name"]);
 				$tmpout .= strtoupper($ext);
 				$tmpout .= '</a>';
 			}
@@ -338,6 +336,31 @@ class FormWebPortal extends Form
 			}
 		}
 
+		return $out;
+	}
+
+	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object Object linked to the document to be signed
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if (!empty($url)) {
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= $langs->trans("Sign");
+			$out .= '</a>';
+		}
 		return $out;
 	}
 
@@ -533,7 +556,7 @@ class FormWebPortal extends Form
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalString($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -597,13 +620,13 @@ class FormWebPortal extends Form
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
-	 * @param array|null $val Array of properties for field to show
-	 * @param string $key Key of attribute
-	 * @param string|array $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string $moreparam [=''] To add more parameters on html input tag
-	 * @param string $keysuffix [=''] Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $keyprefix [=''] Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $morecss [=''] Value for css to define style/length of field. May also be a numeric.
+	 * @param array|null 	$val 			Array of properties for field to show
+	 * @param string 		$key 			Key of attribute
+	 * @param string|array 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param string 		$moreparam 		To add more parameters on html input tag
+	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -913,7 +936,11 @@ class FormWebPortal extends Form
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-					$data = $this->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categorytype = $InfoFieldList[5];
+					if (is_numeric($categorytype)) {
+						$categorytype = Categorie::$MAP_ID_TO_CODE[$categorytype]; // For backward compatibility
+					}
+					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="' . $data_key . '"';
@@ -961,13 +988,14 @@ class FormWebPortal extends Form
 
 		$label = empty($val['label']) ? '' : $val['label'];
 		$type = empty($val['type']) ? '' : $val['type'];
-		$size = empty($val['css']) ? '' : $val['css'];
+		$css = empty($val['css']) ? '' : $val['css'];
+		$picto = empty($val['picto']) ? '' : $val['picto'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$size = $reg[1];
+			$css = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
@@ -1048,7 +1076,7 @@ class FormWebPortal extends Form
 			if ($type == 'array') {
 				$value = implode('<br>', $value);
 			} else {
-				dol_syslog(__METHOD__ . 'ERROR unexpected type=$type for array value='.((string) json_encode($value)), LOG_ERR);
+				dol_syslog(__METHOD__."Unexpected type=".$type." for array value=".((string) json_encode($value)), LOG_ERR);
 			}
 			//
 			// Then the cases where $value is not an array (hence string)

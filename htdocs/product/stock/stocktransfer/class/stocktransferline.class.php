@@ -46,21 +46,9 @@ class StockTransferLine extends CommonObjectLine
 	public $table_element = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for stocktransferline. Must be the part after the 'object_' into object_stocktransferline.png
 	 */
 	public $picto = 'stocktransferline@stocktransfer';
-
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -110,6 +98,10 @@ class StockTransferLine extends CommonObjectLine
 	);
 	public $rowid;
 	public $amount;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;
@@ -135,6 +127,9 @@ class StockTransferLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -419,7 +414,7 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
@@ -437,18 +432,6 @@ class StockTransferLine extends CommonObjectLine
 		$movementstock->origin_id = $this->fk_stocktransfer;
 
 		if (empty($this->batch)) { // no batch for line
-			/*$result = $p->correct_stock(
-				$user,
-				$fk_entrepot,
-				$this->qty,
-				$direction, // 1=décrémentation
-				$label,
-				empty($direction) ? $this->pmp : 0,
-				$code_inv,
-				'stocktransfer',
-				$this->fk_stocktransfer
-			);*/
-
 			$result = $movementstock->_create(
 				$user,
 				$p->id,
@@ -461,8 +444,8 @@ class StockTransferLine extends CommonObjectLine
 			);
 
 			if ($result < 0) {
-				setEventMessages($p->error, $p->errors, 'errors');
-				return 0;
+				$this->setErrorsFromObject($movementstock);
+				return -1;
 			}
 		} else {
 			if ($p->hasbatch()) {
@@ -471,24 +454,10 @@ class StockTransferLine extends CommonObjectLine
 					$firstrecord = array_shift($arraybatchinfo);
 					$dlc = $firstrecord['eatby'];
 					$dluo = $firstrecord['sellby'];
-					//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
 				} else {
 					$dlc = '';
 					$dluo = '';
 				}
-
-				/*$result = $p->correct_stock_batch(
-					$user,
-					$fk_entrepot,
-					$this->qty,
-					$direction,
-					$label,
-					empty($direction) ? $this->pmp : 0,
-					$dlc,
-					$dluo,
-					$this->batch,
-					$code_inv
-				);*/
 
 				$result = $movementstock->_create(
 					$user,
@@ -506,11 +475,12 @@ class StockTransferLine extends CommonObjectLine
 				);
 
 				if ($result < 0) {
-					setEventMessages($p->error, $p->errors, 'errors');
-					return 0;
+					$this->setErrorsFromObject($movementstock);
+					return $result;
 				}
 			} else {
-				setEventMessages($langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl()), '', 'errors');
+				$this->error=$langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
+				$this->errors[]= $this->error;
 				return -1;
 			}
 		}
