@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -885,6 +885,25 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
+	 * updateAfterRename update entries in ecmfiles if exist to avoid losing info
+	 *
+	 * @param  string $olddir old directory
+	 * @param  string $newdir new directory
+	 * @return void
+	 */
+	public function updateAfterRename($olddir, $newdir)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'ecm_files SET';
+		$sql .= ' filepath = "'.$this->db->escape($newdir).'"';
+		//$sql .= ', fullpath_orig = "'.$dbs->escape($newdir)."'";
+		$sql .= ' WHERE ';
+		$sql .= ' filepath = "'.$this->db->escape($olddir).'"';
+		// $sql .= ' AND fullpath_orig = "'.$dbs->escape($olddir).'"';
+
+		$this->db->query($sql);
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -906,7 +925,7 @@ class EcmFiles extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("MyModule").'</u>';
+		$label = '<u>'.$langs->trans("File").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
