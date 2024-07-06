@@ -577,7 +577,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $user, $form, $hookmanager;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -645,6 +645,7 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -654,6 +655,7 @@ class ChargeSociales extends CommonObject
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
