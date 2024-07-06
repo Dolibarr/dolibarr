@@ -885,23 +885,22 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
-	 * updateAfterRename update entry in ecmfiles if exist to avoid losing info
+	 * updateAfterRename update entries in ecmfiles if exist to avoid losing info
 	 *
-	 * @param  DoliDB $db DoliDB
 	 * @param  string $olddir old directory
 	 * @param  string $newdir new directory
 	 * @return void
 	 */
-	public static function updateAfterRename($db, $olddir, $newdir)
+	public function updateAfterRename($olddir, $newdir)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'ecm_files SET';
-		$sql .= ' filepath = "'.$db->escape($newdir).'"';
+		$sql .= ' filepath = "'.$this->db->escape($newdir).'"';
 		//$sql .= ', fullpath_orig = "'.$dbs->escape($newdir)."'";
 		$sql .= ' WHERE ';
-		$sql .= ' filepath = "'.$db->escape($olddir).'"';
+		$sql .= ' filepath = "'.$this->db->escape($olddir).'"';
 		// $sql .= ' AND fullpath_orig = "'.$dbs->escape($olddir).'"';
 
-		$db->query($sql);
+		$this->db->query($sql);
 	}
 
 	/**
@@ -926,7 +925,7 @@ class EcmFiles extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("MyModule").'</u>';
+		$label = '<u>'.$langs->trans("File").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
