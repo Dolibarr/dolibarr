@@ -136,9 +136,10 @@ if ($action == 'update' || $action == 'add') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_emails');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_emails');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
