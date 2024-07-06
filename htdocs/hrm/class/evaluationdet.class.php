@@ -53,15 +53,14 @@ class EvaluationLine extends CommonObjectLine
 	public $table_element = 'hrm_evaluationdet';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 * @see CommonObjectLine
 	 */
-	public $ismultientitymanaged = 0;
+	public $parent_element = 'hrm_evaluation';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 1;
+	public $fk_parent_attribute = 'fk_evaluation';
 
 	/**
 	 * @var string String with name of icon for evaluationdet. Must be the part after the 'object_' into object_evaluationdet.png
@@ -117,7 +116,6 @@ class EvaluationLine extends CommonObjectLine
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
 	public $rowid;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_skill;
@@ -173,6 +171,9 @@ class EvaluationLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

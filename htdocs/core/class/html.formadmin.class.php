@@ -73,7 +73,7 @@ class FormAdmin
 	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		if (getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')) {
 			if (!is_array($filter)) {
@@ -234,10 +234,16 @@ class FormAdmin
 									$prefix = '3';
 								}
 
+								$morelabel = '';
+								if (preg_match('/^auguria/i', $file)) {
+									$morelabel .= ' <span class="opacitymedium">('.$langs->trans("Unstable").')</span>';
+								}
 								if ($file == $selected) {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected>'.$filelib.'</option>';
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected data-html="'.dol_escape_htmltag($filelib.$morelabel).'">'.$filelib.$morelabel;
+									$menuarray[$prefix.'_'.$file] .= '</option>';
 								} else {
-									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'">'.$filelib.'</option>';
+									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" data-html="'.dol_escape_htmltag($filelib.$morelabel).'">'.$filelib.$morelabel;
+									$menuarray[$prefix.'_'.$file] .= '</option>';
 								}
 							}
 						}
@@ -254,6 +260,7 @@ class FormAdmin
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
+
 			if ($newprefix == '1' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1)) {
 				continue;
 			}
@@ -262,7 +269,7 @@ class FormAdmin
 			}
 			if ($newprefix != $oldprefix) {	// Add separators
 				// Affiche titre
-				print '<option value="-1" disabled>';
+				print '<option value="-2" disabled>';
 				if ($newprefix == '0') {
 					print '-- '.$langs->trans("VersionRecommanded").' --';
 				}
@@ -278,9 +285,12 @@ class FormAdmin
 				print '</option>';
 				$oldprefix = $newprefix;
 			}
-			print $val."\n"; // Show menu entry
+
+			print $val."\n"; // Show menu entry ($val contains the <option> tags
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 
 		return;
 	}
@@ -341,12 +351,10 @@ class FormAdmin
 
 		ksort($menuarray);
 
-		// Affichage liste deroulante des menus
-		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
-		$oldprefix = '';
+		// Show combo list of menu handlers
+		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
-			$newprefix = $tab[0];
 			print '<option value="'.$key.'"';
 			if ($key == $selected) {
 				print '	selected';

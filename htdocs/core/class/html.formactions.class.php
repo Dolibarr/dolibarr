@@ -77,11 +77,41 @@ class FormActions
 		);
 		// +ActionUncomplete
 
+		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
+			//var_dump($selected);
+			if ($selected == 'done') {
+				$selected = '100';
+			}
+			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+			if ($showempty) {
+				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+			}
+			foreach ($listofstatus as $key => $val) {
+				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
+				if ($key == '50' && $onlyselect == 2) {
+					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
+				}
+			}
+			print '</select>';
+			if ($selected == 0 || $selected == 100) {
+				$canedit = 0;
+			}
+
+			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
+
+			if (empty($onlyselect)) {
+				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				print '<span class="hideonsmartphone hideifna">%</span>';
+			}
+		} else {
+			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
+		}
+
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
 			print '<script nonce="'.getNonce().'" type="text/javascript">';
 			print "
-                var htmlname = '".$htmlname."';
+                var htmlname = '".dol_escape_js($htmlname)."';
 
                 $(document).ready(function () {
                 	select_status();
@@ -122,35 +152,6 @@ class FormActions
                     }
                 }
                 </script>\n";
-		}
-		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
-			//var_dump($selected);
-			if ($selected == 'done') {
-				$selected = '100';
-			}
-			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
-			if ($showempty) {
-				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
-			}
-			foreach ($listofstatus as $key => $val) {
-				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
-				if ($key == '50' && $onlyselect == 2) {
-					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
-				}
-			}
-			print '</select>';
-			if ($selected == 0 || $selected == 100) {
-				$canedit = 0;
-			}
-
-			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
-
-			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
-				print '<span class="hideonsmartphone hideifna">%</span>';
-			}
-		} else {
-			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
 		}
 	}
 
@@ -254,10 +255,10 @@ class FormActions
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
 			print "\n";
@@ -275,6 +276,21 @@ class FormActions
 
 					// Ref
 					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
+
+					// Date
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					if ($actioncomm->datef) {
+						$tmpa = dol_getdate($actioncomm->datep);
+						$tmpb = dol_getdate($actioncomm->datef);
+						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
+							}
+						} else {
+							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+						}
+					}
+					print '</td>';
 
 					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
@@ -323,20 +339,7 @@ class FormActions
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
 
-					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
-					if ($actioncomm->datef) {
-						$tmpa = dol_getdate($actioncomm->datep);
-						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-							}
-						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
-						}
-					}
-					print '</td>';
+					// Status
 					print '<td class="right">';
 					print $actioncomm->getLibStatut(3);
 					print '</td>';

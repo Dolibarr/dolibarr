@@ -44,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
 
 // Security check
 if ($user->socid) {
@@ -109,7 +109,8 @@ $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_contact');
 
 // View and edit mode
 

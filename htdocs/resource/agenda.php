@@ -75,7 +75,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
@@ -83,7 +83,7 @@ $hookmanager->initHooks(array('agendaresource'));
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
@@ -136,7 +136,8 @@ if ($object->id > 0) {
 	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->ref." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = '';
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

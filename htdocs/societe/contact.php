@@ -66,11 +66,12 @@ $errors = array();
 
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel 	= GETPOST('cancel', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
-$confirm 	= GETPOST('confirm');
-$socid 		= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$action			= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel 		= GETPOST('cancel', 'alpha');
+$backtopage 	= GETPOST('backtopage', 'alpha');
+$confirm 		= GETPOST('confirm');
+$socid 			= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$selectedfields = GETPOST('selectedfields', 'alpha');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -87,7 +88,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartycontact', 'globalcard'));
 
 if ($object->fetch($socid) <= 0 && $action == 'view') {
@@ -197,7 +198,7 @@ print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'comp
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 
 print dol_get_fiche_end();
 
@@ -206,7 +207,8 @@ print '<br>';
 if ($action != 'presend') {
 	// Contacts list
 	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+		$showuserlogin = in_array('u.user', explode(',', $selectedfields)) ? 1 : 0;
+		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, $showuserlogin);
 	}
 }
 if ($action == 'delete') {

@@ -137,7 +137,7 @@ $form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
 $help_url = 'EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra|DE:Modul_Barcode';
-llxHeader('', $langs->trans("BarcodeSetup"), $help_url);
+llxHeader('', $langs->trans("BarcodeSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-barcode');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BarcodeSetup"), $linkback, 'title_setup');
@@ -233,7 +233,7 @@ if (isModEnabled('product')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';

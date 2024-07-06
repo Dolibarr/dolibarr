@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
- * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2005-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
+ * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -79,7 +81,7 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
 
 
@@ -181,6 +183,7 @@ if (empty($reshook)) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			// Clear cache of widgets (because we may have modified the length of cached widget lists)
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
 			dol_delete_dir_recursive($cachedir);
 
@@ -199,7 +202,7 @@ $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firs
 $title = $person_name." - ".$langs->trans('Card');
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_param_ihm');
 
 // List of possible landing pages
 $tmparray = array();
@@ -251,7 +254,11 @@ if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
-			$tmparray['sep'.$i] = array('data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>', 'label'=>'--- '.$langs->trans("Bookmarks"));
+			$tmparray['sep'.$i] = array(
+				'data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>',
+				'label'=>'--- '.$langs->trans("Bookmarks"),
+				'picto' => '',
+			);
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
@@ -500,7 +507,7 @@ if ($action == 'edit') {
 		}
 		print '<a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
 		$s = '';
-		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
+		if (isset($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto']) && !empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
 			$s = img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
 		}
 		if (empty($s)) {

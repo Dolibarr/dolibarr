@@ -48,12 +48,6 @@ class IntracommReport extends CommonObject
 	 */
 	public $fk_element = 'fk_intracommreport';
 
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
 	public $picto = 'intracommreport';
 
 	/**
@@ -106,6 +100,8 @@ class IntracommReport extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->exporttype = 'deb';
 	}
 

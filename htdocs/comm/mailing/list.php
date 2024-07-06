@@ -61,7 +61,7 @@ $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : 
 $search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mailing($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
@@ -301,7 +301,7 @@ if ($filteremail) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

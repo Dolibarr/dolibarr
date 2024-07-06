@@ -89,7 +89,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new PaymentVarious($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -358,7 +358,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);

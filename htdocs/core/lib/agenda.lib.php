@@ -96,20 +96,20 @@ function print_actions_filter(
 		$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 	}
 	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'minwidth200 maxwidth250 widthcentpercentminusx');
 	print '</div>';
 
 	if ($canedit) {
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		if (isModEnabled('resource')) {
@@ -119,7 +119,7 @@ function print_actions_filter(
 			// Resource
 			print '<div class="divsearchfield">';
 			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
-			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, null, '', 2, 0, 'maxwidth500');
+			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, [], [], 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 			print '</div>';
 		}
 	}
@@ -127,7 +127,7 @@ function print_actions_filter(
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
-		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
+		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -137,7 +137,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
-		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -149,14 +149,14 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'));
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'), 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto($langs->trans("Status"), 'setup', 'class="pictofixedwidth inline-block"');
+		print img_picto($langs->trans("Status"), 'status', 'class="pictofixedwidth inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}

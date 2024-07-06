@@ -210,7 +210,7 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-supplier_order');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
@@ -546,6 +546,14 @@ if (isModEnabled('reception')) {
 }
 print "</td>\n";
 print "</tr>\n";
+
+
+// Disallow to classify billed a supplier order without invoice
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderClassifyBilledWithoutInvoice"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("SupplierOrderClassifyBilledWithoutInvoiceHelp"), 1, 'help') . '</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_DISABLE_CLASSIFY_BILLED_FROM_SUPPLIER_ORDER');
+print '</td></tr>';
 
 print '</table></div><br>';
 

@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+$hookmanager->initHooks(array('documentticketcard', 'globalcard'));
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
@@ -100,6 +101,12 @@ $permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -118,7 +125,7 @@ if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
+llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
 if ($object->id) {
 	/*

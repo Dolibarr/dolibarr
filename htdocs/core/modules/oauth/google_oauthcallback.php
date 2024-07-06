@@ -165,7 +165,9 @@ if (!GETPOST('code')) {
 	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
 	if ($forlogin) {
-		$apiService->setApprouvalPrompt('force');
+		// Set approval_prompt
+		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
+		$apiService->setApprouvalPrompt($approval_prompt);
 	}
 
 	// This may create record into oauth_state before the header redirect.

@@ -56,7 +56,7 @@ $TBomLineId = GETPOST('bomlineid', 'array');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
 
@@ -83,7 +83,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 if (GETPOSTINT('fk_bom') > 0) {
 	$objectbom->fetch(GETPOSTINT('fk_bom'));
@@ -282,7 +282,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {
@@ -794,7 +794,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
 					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 					} else {
 						$langs->load("errors");
 						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
@@ -804,7 +804,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&object=mo', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=mo', 'clone', $permissiontoadd);
 			}
 
 			// Cancel - Reopen

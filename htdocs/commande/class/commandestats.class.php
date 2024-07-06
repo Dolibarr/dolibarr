@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/commande/class/commandestats.class.php
- *  \ingroup    commandes
+ *  \ingroup    orders
  *  \brief      File of class to manage order statistics
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
@@ -48,7 +48,7 @@ class CommandeStats extends Stats
 	public $field;
 	public $field_line;
 	public $categ_link;
-	public $where;
+	public $where = '';
 	public $join;
 
 

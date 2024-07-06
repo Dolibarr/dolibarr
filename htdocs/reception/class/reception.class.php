@@ -70,12 +70,6 @@ class Reception extends CommonObject
 	public $table_element_line = "receptiondet_batch";
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dollyrevert';
@@ -118,11 +112,6 @@ class Reception extends CommonObject
 	public $date_reception;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;
@@ -154,6 +143,8 @@ class Reception extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	}
 
 	/**
@@ -771,7 +762,7 @@ class Reception extends CommonObject
 				// qty wished in origin (purchase order, ...)
 				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
+					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
 						continue;
 					}
 
@@ -1442,6 +1433,7 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
+		$this->status               = 1;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1457,6 +1449,10 @@ class Reception extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
+
+		$this->tracking_number = 'TRACKID-ABC123';
+
+		$this->fk_incoterms = 1;
 
 		$nbp = 5;
 		$xnbp = 0;

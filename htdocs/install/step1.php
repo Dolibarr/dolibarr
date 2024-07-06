@@ -96,6 +96,8 @@ if (@file_exists($forcedfile)) {
 		if (!empty($argv[4])) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
+		// In mode 3 the main_url is custom
+		if ($force_install_noedit != 3)
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
@@ -114,7 +116,7 @@ if (@file_exists($forcedfile)) {
 			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
-	if ($force_install_noedit == 2) {
+	if (($force_install_noedit == 2) || ($force_install_noedit == 3)) {
 		if (!empty($force_install_type)) {
 			$db_type = $force_install_type;
 		}
@@ -872,7 +874,6 @@ function write_conf_file($conffile)
 		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
 		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
 		fwrite($fp, '//'."\n");
-
 		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
 		fwrite($fp, "\n");
 
@@ -933,7 +934,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -951,67 +952,67 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDF_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDF_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_FPDF_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_FPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDF_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDF_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDF_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_TCPDF_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_TCPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDF_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDI_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDI_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_FPDI_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_FPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDI_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDI_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDI_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_TCPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDI_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_GEOIP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_GEOIP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_GEOIP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_GEOIP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_NUSOAP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_NUSOAP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_NUSOAP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_NUSOAP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_NUSOAP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATH)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATH = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_ODTPHP_PATH = '';
 		}
 		fwrite($fp, '$dolibarr_lib_ODTPHP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATH)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) {
 			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
 		}
 		fwrite($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)).'";');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_CKEDITOR)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_CKEDITOR = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_CKEDITOR = '';
 		}
 		fwrite($fp, '$dolibarr_js_CKEDITOR=\''.dol_escape_php($force_dolibarr_js_CKEDITOR, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_JQUERY = '';
 		}
 		fwrite($fp, '$dolibarr_js_JQUERY=\''.dol_escape_php($force_dolibarr_js_JQUERY, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY_UI)) {
 			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY_UI = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_js_JQUERY_UI = '';
 		}
 		fwrite($fp, '$dolibarr_js_JQUERY_UI=\''.dol_escape_php($force_dolibarr_js_JQUERY_UI, 1).'\';');
 		fwrite($fp, "\n");
@@ -1020,13 +1021,13 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
 			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_font_DOL_DEFAULT_TTF = '';
 		}
 		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF, 1).'\';');
 		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
 			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
 		}
 		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD, 1).'\';');
 		fwrite($fp, "\n");

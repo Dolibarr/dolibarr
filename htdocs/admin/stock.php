@@ -170,7 +170,7 @@ if ($action == 'specimen') {
 $form = new Form($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("StockSetup"));
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-stock');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
@@ -264,7 +264,7 @@ if (isModEnabled('order')) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (isModEnabled('expedition'))
+//if (isModEnabled('shipping'))
 //{
 
 print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
@@ -494,7 +494,7 @@ if ($virtualdiffersfromphysical) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help(1, $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
 	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 

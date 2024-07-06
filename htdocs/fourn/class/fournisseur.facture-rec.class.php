@@ -26,7 +26,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/class/fournisseur.facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File for class to manage invoice templates
  */
 
@@ -164,8 +164,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 	/* Override fields in CommonObject
 	public $entity;
-	public $date_creation;
-	public $date_modification;
 	public $total_ht;
 	public $total_tva;
 	public $total_ttc;
@@ -1591,7 +1589,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1610,7 +1608,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1629,7 +1627,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1651,7 +1649,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -2029,6 +2027,10 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;

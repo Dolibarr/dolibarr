@@ -66,7 +66,7 @@ if ($socid < 0) {
 $fieldvalue = ($id > 0 ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatscard', 'globalcard'));
 
 $tmp = dol_getdate(dol_now());
@@ -101,7 +101,7 @@ $htmlother = new FormOther($db);
 if (!($id > 0) && empty($ref) || $notab) {
 	$notab = 1;
 
-	llxHeader("", $langs->trans("ProductStatistics"));
+	llxHeader("", $langs->trans("ProductStatistics"), '', '', 0, 0, '', '', '', 'mod-product page-stats_card_general');
 
 	$type = GETPOSTINT('type');
 
@@ -137,7 +137,8 @@ if (!($id > 0) && empty($ref) || $notab) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	//HERE
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stats_card_by_product');
 }
 
 

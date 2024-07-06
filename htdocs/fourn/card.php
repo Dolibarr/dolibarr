@@ -73,7 +73,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartysupplier', 'globalcard'));
 
 // Security check
@@ -275,13 +275,15 @@ if ($object->id > 0) {
 	}
 
 	// VAT reverse-charge by default on supplier invoice or not
-	print '<tr>';
-	print '<td class="titlefield">';
-	print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
-	print '</td><td>';
-	print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').' disabled>';
-	print '</td>';
-	print '</tr>';
+	if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
+		print '<tr>';
+		print '<td class="titlefield">';
+		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+		print '</td><td>';
+		print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+		print '</td>';
+		print '</tr>';
+	}
 
 	// TVA Intra
 	print '<tr><td class="nowrap">';
@@ -584,7 +586,7 @@ if ($object->id > 0) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent lastrecordtable">';
 		print '<tr class="liste_titre'.(($num == 0) ? ' nobottom' : '').'">';
-		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td class="right" colspan="2">';
 		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllProductReferencesOfSupplier").'</span><span class="badge marginleftonlyshort">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
@@ -609,7 +611,7 @@ if ($object->id > 0) {
 				print '<td>';
 				print dol_escape_htmltag($objp->supplier_ref);
 				print '</td>';
-				print '<td class="maxwidthonsmartphone">';
+				print '<td class="tdoverflowmax200">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
 				//print '<td class="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';

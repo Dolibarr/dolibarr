@@ -14,6 +14,7 @@
  * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
 
 /**
  *	\file       htdocs/commande/list.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      Page to list orders
  */
 
@@ -87,6 +88,7 @@ $socid = GETPOSTINT('socid');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
+$search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -146,7 +148,7 @@ if (!$sortorder) {
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
@@ -172,6 +174,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	'c.rowid' => array('label' => "ID", 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10, 'searchall' => 1),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 20),
@@ -273,6 +276,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$search_id = '';
 		$search_ref = '';
 		$search_ref_customer = '';
 		$search_company = '';
@@ -359,6 +363,7 @@ if (empty($reshook)) {
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
 
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new Commande($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -369,6 +374,7 @@ if (empty($reshook)) {
 			$objecttmp = new Facture($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
@@ -383,6 +389,10 @@ if (empty($reshook)) {
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
+				}
+
+				if (empty($objecttmp->note_public)) {
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -549,6 +559,11 @@ if (empty($reshook)) {
 				}
 			}
 
+			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
+				$objecttmp->update($user);
+			}
+
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
 
 			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
@@ -654,6 +669,9 @@ if (empty($reshook)) {
 			}
 			if ($search_deliveryyear) {
 				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
+			}
+			if ($search_id) {
+				$param .= '&search_id='.urlencode((string) $search_id);
 			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
@@ -898,6 +916,9 @@ if (!$permissiontoreadallthirdparty) {
 	$sql .= ")";
 }
 
+if ($search_id > 0) {
+	$sql .= natural_search('c.rowid', $search_id);
+}
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
 }
@@ -1236,6 +1257,9 @@ if ($search_datedelivery_start) {
 if ($search_datedelivery_end) {
 	$param .= '&search_datedelivery_end_day='.dol_print_date($search_datedelivery_end, '%d').'&search_datedelivery_end_month='.dol_print_date($search_datedelivery_end, '%m').'&search_datedelivery_end_year='.dol_print_date($search_datedelivery_end, '%Y');
 }
+if ($search_id) {
+	$param .= '&search_id='.urlencode((string) $search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1527,9 +1551,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -1559,6 +1580,13 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+
+// Line numbering
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 
@@ -1856,6 +1884,10 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -2145,7 +2177,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2158,6 +2190,14 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

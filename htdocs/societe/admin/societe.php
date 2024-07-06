@@ -626,7 +626,7 @@ foreach ($dirsociete as $dirroot) {
 						$htmltooltip .= '<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
 					}
 					$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((!empty($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
+					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((isset($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
 
 					print '<td class="center nowrap">';
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
@@ -817,7 +817,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';

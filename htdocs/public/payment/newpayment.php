@@ -96,9 +96,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
-$noheaderfooter = GETPOSTINT("noheaderfooter");
-$isembed = GETPOSTINT("isembed");
-$ws = GETPOSTINT("ws");
+$ws = GETPOSTINT("ws"); // Website reference where the newpayment page is embedded
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -215,10 +213,6 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
-}
-
-if ($isembed) {
-	$FULLTAG .= ($FULLTAG ? '.' : '').'EMB='.$isembed;
 }
 
 if ($ws) {
@@ -351,9 +345,9 @@ if (empty($validpaymentmethod)) {
 $creditor = $mysoc->name;
 $paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
-if (!empty($conf->global->$paramcreditorlong)) {
+if (getDolGlobalString($paramcreditorlong)) {
 	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
-} elseif (!empty($conf->global->$paramcreditor)) {
+} elseif (getDolGlobalString($paramcreditor)) {
 	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
@@ -895,8 +889,6 @@ print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print '<input type="hidden" name="ws" value="'.$ws.'">';
-print '<input type="hidden" name="isembed" value="'.$isembed.'">';
-print '<input type="hidden" name="noheaderfooter" value="'.$noheaderfooter.'">';
 print "\n";
 
 
@@ -905,7 +897,7 @@ print "\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -923,7 +915,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 }
 
 // Output html code for logo
-if ($urllogo && !$noheaderfooter) {
+if ($urllogo && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
@@ -933,7 +925,7 @@ if ($urllogo && !$noheaderfooter) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
-} elseif ($creditor && !$noheaderfooter) {
+} elseif ($creditor && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print $creditor;
@@ -987,9 +979,9 @@ if (empty($text)) {
 print $text;
 
 // Output payment summary form
-print '<tr><td align="center">';
-print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="center">';	// class=center does not have the payment button centered so we keep align here.
+print '<table class="centpercent left" id="tablepublicpayment">';
+print '<tr class="hideonsmartphone"><td colspan="2" align="left" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -1180,6 +1172,7 @@ if ($source == 'order') {
 if ($source == 'invoice') {
 	$found = true;
 	$langs->load("bills");
+	$form->load_cache_types_paiements();
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -1275,6 +1268,15 @@ if ($source == 'invoice') {
 	print '<input type="hidden" name="tag" value="'.(empty($tag) ? '' : $tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add a warning if we try to pay an invoice set to be paid in credit transfer
+	if ($invoice->status == $invoice::STATUS_VALIDATED && $invoice->mode_reglement_id > 0 && $form->cache_types_paiements[$invoice->mode_reglement_id]["code"] == "VIR") {
+		print '<tr class="CTableRow2 center"><td class="CTableRow2" colspan="2">';
+		print '<div class="warning maxwidth1000">';
+		print $langs->trans("PayOfBankTransferInvoice");
+		print '</div>';
+		print '</td></tr>'."\n";
+	}
 
 	// Shipping address
 	$shipToName = $invoice->thirdparty->name;
@@ -2137,24 +2139,31 @@ if ($action != 'dopayment') {
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
-				print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-				print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
-				print '<br>';
-				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_stripe").click(function(){
-								$("#dopayment_stripe").click();
+				$showbutton = 1;
+				if (getDolGlobalString(strtoupper($source).'_FORCE_DISABLE_STRIPE')) {	// Example: MEMBER_FORCE_DISABLE_STRIPE
+					$showbutton = 0;
+				}
+
+				if ($showbutton) {
+					print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+					print '<input type="hidden" name="noidempotency" value="'.GETPOSTINT('noidempotency').'">';
+					print '<br>';
+					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
+					print '</div>';
+					print '<script>
+							$( document ).ready(function() {
+								$("#div_dopayment_stripe").click(function(){
+									$("#dopayment_stripe").click();
+								});
+								$("#dopayment_stripe").click(function(e){
+									$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
+								    e.stopPropagation();
+									return true;
+								});
 							});
-							$("#dopayment_stripe").click(function(e){
-								$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
-							    e.stopPropagation();
-								return true;
-							});
-						});
-					  </script>
-				';
+						  </script>
+					';
+				}
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
@@ -2162,34 +2171,41 @@ if ($action != 'dopayment') {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}
 
-				print '<div class="button buttonpayment" id="div_dopayment_paypal">';
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
-					print '<div style="line-height: 1em">&nbsp;</div>';
+				$showbutton = 1;
+				if (getDolGlobalString(strtoupper($source).'_FORCE_DISABLE_PAYPAL')) {	// Example: MEMBER_FORCE_DISABLE_PAYPAL
+					$showbutton = 0;
 				}
-				print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
-					print '<br>';
-					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
-					print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
-				}
-				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
-					//print '<br>';
-					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
-				}
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_paypal").click(function(){
-								$("#dopayment_paypal").click();
+
+				if ($showbutton) {
+					print '<div class="button buttonpayment" id="div_dopayment_paypal">';
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
+						print '<div style="line-height: 1em">&nbsp;</div>';
+					}
+					print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
+						print '<br>';
+						print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
+						print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
+					}
+					if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
+						//print '<br>';
+						//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
+					}
+					print '</div>';
+					print '<script>
+							$( document ).ready(function() {
+								$("#div_dopayment_paypal").click(function(){
+									$("#dopayment_paypal").click();
+								});
+								$("#dopayment_paypal").click(function(e){
+									$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
+								    e.stopPropagation();
+									return true;
+								});
 							});
-							$("#dopayment_paypal").click(function(e){
-								$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
-							    e.stopPropagation();
-								return true;
-							});
-						});
-					  </script>
-				';
+						  </script>
+					';
+				}
 			}
 		}
 	} else {
@@ -2396,13 +2412,18 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					$arrayforcheckout = array(
 						'payment_method_types' => array('card'),
 						'line_items' => array(array(
-							'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
-							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-							'amount' => $amountstripe,
-							'currency' => $currency,
-							//'images' => array($urllogofull),
+							'price_data' => array(
+								'currency' => $currency,
+								'unit_amount' => $amountstripe,
+								'product_data' => array(
+									'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
+									'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+									//'images' => array($urllogofull),
+								),
+							),
 							'quantity' => 1,
 						)),
+						'mode' => 'payment',
 						'client_reference_id' => $FULLTAG,
 						'success_url' => $urlok,
 						'cancel_url' => $urlko,
@@ -2723,7 +2744,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	}
 }
 
-if (!$noheaderfooter) {
+if (!$ws) {
 	htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 }
 

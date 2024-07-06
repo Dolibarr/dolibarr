@@ -59,8 +59,8 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'evaluation';
 
 $arrayofparameters = array(
-	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1),
+	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1, 'css' => ''),
+	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1, 'css' => ''),
 );
 
 $error = 0;
@@ -213,7 +213,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "HRMSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-hrm');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';

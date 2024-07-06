@@ -580,10 +580,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					break;
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) {
-						setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
-					}
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 				}
 			}
 			// Automatically create intervention
@@ -613,7 +611,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	}
 
 	/**
-	 * @param Object $conf                  Dolibarr settings object
+	 * @param Conf  $conf                   Dolibarr settings object
 	 * @param float $totalonlinkedelements  Sum of total amounts (excl VAT) of
 	 *                                      invoices linked to $object
 	 * @param float $object_total_ht        The total amount (excl VAT) of the object

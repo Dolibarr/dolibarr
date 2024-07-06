@@ -36,6 +36,10 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "contracts"));
 
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contratagenda';
+
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) {
@@ -48,8 +52,6 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
@@ -86,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -222,7 +224,6 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
-
 	// Actions buttons
 
 	/*$objthirdparty=$object;
@@ -274,8 +275,7 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print load_fiche_titre($langs->trans("ActionsOnContract").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), $newcardbutton, '');
-		//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnContract"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

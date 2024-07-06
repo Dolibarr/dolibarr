@@ -90,7 +90,7 @@ $type = $db->type;
 //var_dump($db);
 
 $help_url = 'EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('', '', $help_url);
+llxHeader('', '', $help_url, '', 0, 0, '', '', '', 'mod-admin page-tools_dolibarr_export');
 
 print '<script type="text/javascript">
 jQuery(document).ready(function() {';
@@ -604,7 +604,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -683,7 +683,7 @@ print '</div>';
 print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';

@@ -420,7 +420,7 @@ class modSociete extends DolibarrModules
 		}
 		$keyforselect = 'socpeople';
 		$keyforelement = 'contact';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect = 'societe';
 		$keyforelement = 'company';

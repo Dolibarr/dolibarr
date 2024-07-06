@@ -111,7 +111,7 @@ if ($permission) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
-		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
+		<div class="tagtd"><span class="paddingleft"><?php echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM'); ?></span></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
 		<div class="tagtd maxwidthonsmartphone">
 		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
@@ -141,7 +141,7 @@ if ($permission) {
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400'); ?></div>
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
@@ -164,11 +164,14 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
-			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print img_object('', 'contact', 'class="pictofixedwidth"');
+			//print $form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print $form->select_contact(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp maxwidth400 widthcentpercentminusx', true);
+
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
@@ -183,7 +186,7 @@ if ($permission) {
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400'); ?>
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">

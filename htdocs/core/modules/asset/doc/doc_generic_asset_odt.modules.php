@@ -139,14 +139,19 @@ class doc_generic_asset_odt extends ModelePDFAsset
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'">';
-		$texte .= '<br></div></div>';
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="ASSET_ASSET_ADDON_PDF_ODT_PATH">';
+		}
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
@@ -182,7 +187,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Asset	$object				Object source to build document
+	 *	@param		Asset		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -317,7 +322,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'ORDER_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
@@ -327,10 +332,10 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->asset->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->asset->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -341,9 +346,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
-				//print html_entity_decode($odfHandler->__toString());
-				//print exit;
-
 
 				// Make substitutions into odt of freetext
 				try {
@@ -391,44 +393,39 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					}
 				}
 				// Replace tags of lines
+				$foundtagforlines = 1;
 				try {
-					$foundtagforlines = 1;
-					try {
-						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfExceptionSegmentNotFound $e) {
-						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					} catch (OdfException $e) {
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
-					if ($foundtagforlines) {
-						$linenumber = 0;
-						foreach ($object->lines as $line) {
-							$linenumber++;
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
-							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-							// Call the ODTSubstitutionLine hook
-							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
-							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								}
+					$listlines = $odfHandler->setSegment('lines');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforlines) {
+					$linenumber = 0;
+					foreach ($object->lines as $line) {
+						$linenumber++;
+						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
+						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+						// Call the ODTSubstitutionLine hook
+						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
+						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						foreach ($tmparray as $key => $val) {
+							try {
+								$listlines->setVars($key, $val, true, 'UTF-8');
+							} catch (SegmentException $e) {
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
-							$listlines->merge();
 						}
-						$odfHandler->mergeSegment($listlines);
+						$listlines->merge();
 					}
-				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace labels translated

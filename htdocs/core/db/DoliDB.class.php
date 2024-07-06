@@ -179,11 +179,12 @@ abstract class DoliDB implements Database
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
+	 * @param	int		$allowschars		1=Allow a-z chars
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
@@ -200,8 +201,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
+				return 1;
+			} else {
+				return 0;
 			}
-			return (int) $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
@@ -418,8 +421,8 @@ abstract class DoliDB implements Database
 	 */
 	public function getRows($sql)
 	{
-		if (! preg_match('/LIMIT \d+$/', $sql)) {
-			return false;
+		if (!preg_match('/LIMIT \d+$/', $sql)) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
 		$resql = $this->query($sql);

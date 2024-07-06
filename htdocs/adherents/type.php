@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
- * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
@@ -174,7 +175,12 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			$backurlforlist = $_SERVER["PHP_SELF"];
+
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $id, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
+
+			header("Location: " . $urltogo);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -243,9 +249,10 @@ if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+$title = $langs->trans("MembersTypeSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -266,7 +273,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$param = '';
 		if (!empty($mode)) {
-			$param .= '&mode'.urlencode($mode);
+			$param .= '&mode='.urlencode($mode);
 		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
@@ -432,6 +439,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 

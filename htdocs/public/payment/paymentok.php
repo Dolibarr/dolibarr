@@ -128,32 +128,27 @@ if (empty($paymentmethod)) {
 
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
-// Detect $isembed
-$isembed = preg_match('/EMB=([^\.]+)/', $FULLTAG, $reg_emb) ? $reg_emb[1] : 0;
-if ($isembed) {
-	dol_syslog("paymentok.php page is called into an iframe.", LOG_DEBUG, 0, '_payment');
-}
-
 // Detect $ws
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
 	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
-$validpaymentmethod = array();
-if (isModEnabled('paypal')) {
-	$validpaymentmethod['paypal'] = 'paypal';
-}
-if (isModEnabled('paybox')) {
-	$validpaymentmethod['paybox'] = 'paybox';
-}
-if (isModEnabled('stripe')) {
-	$validpaymentmethod['stripe'] = 'stripe';
-}
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 // Security check
 if (empty($validpaymentmethod)) {
 	httponly_accessforbidden('No valid payment mode');
+}
+
+// Common variables
+$creditor = $mysoc->name;
+$paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
+$paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
+if (getDolGlobalString($paramcreditorlong)) {
+	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
+} elseif (getDolGlobalString($paramcreditor)) {
+	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
 
@@ -225,7 +220,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -252,6 +247,12 @@ if (empty($doactionsthenredirect)) {
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
+		print '</div>';
+	} elseif ($creditor) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print $creditor;
+		print '</div>';
 		print '</div>';
 	}
 	if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
@@ -2080,22 +2081,12 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
-		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentok&fulltag='.$FULLTAG;
-		if (!empty($isembed)) {
-			print "<script>window.top.location.href = \"". $ext_urlok ."\";</script>";
-		} else {
-			header("Location: ".$ext_urlok);
-			exit;
-		}
+		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.$ws.'&pageref=paymentko&fulltag='.$FULLTAG;
-		if (!empty($isembed)) {
-			print "<script>window.top.location.href = \"". $ext_urlko ."\";</script>";
-		} else {
-			header("Location: ".$ext_urlko);
-			exit;
-		}
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 	}
 }

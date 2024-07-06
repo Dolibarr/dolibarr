@@ -75,17 +75,6 @@ class Expedition extends CommonObject
 	public $table_element_line = "expeditiondet";
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'dolly';
@@ -193,11 +182,6 @@ class Expedition extends CommonObject
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_valid
 	 */
 	public $date_valid;
@@ -236,17 +220,28 @@ class Expedition extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var int
+	 */
+	public $signed_status = 0;
+
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
 
 	/**
 	 * Validated status
+	 * -> parcel is ready to be sent
+	 * prev status : draft
+	 * next status : closed or shipment_in_progress
 	 */
 	const STATUS_VALIDATED = 1;
 
 	/**
 	 * Closed status
+	 * -> parcel was received by customer / end of process
+	 * prev status : validated or shipment_in_progress
+	 *
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -254,6 +249,27 @@ class Expedition extends CommonObject
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
+
+	/**
+	 * Expedition in progress
+	 * -> package exit the warehouse and is now
+	 *    in the truck or into the hand of the deliverer
+	 * prev status : validated
+	 * next status : closed
+	 */
+	const STATUS_SHIPMENT_IN_PROGRESS = 3;
+
+
+	/**
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/**
+	 * Signed status
+	 */
+	const STATUS_SIGNED = 1;
+
 
 
 	/**
@@ -266,6 +282,9 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		// List of long language codes for status
 		$this->labelStatus = array();
@@ -596,6 +615,7 @@ class Expedition extends CommonObject
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
 		$sql .= ", e.note_private, e.note_public";
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
+		$sql .= ', e.signed_status';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', s.libelle as shipping_method';
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
@@ -646,7 +666,7 @@ class Expedition extends CommonObject
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
-
+				$this->signed_status        = $obj->signed_status;
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
 
@@ -1602,8 +1622,9 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
+		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
@@ -1680,6 +1701,7 @@ class Expedition extends CommonObject
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
+				$line->fk_fournprice = $obj->fk_fournprice;
 				$line->label = $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -1721,6 +1743,7 @@ class Expedition extends CommonObject
 				$line->info_bits = $obj->info_bits;
 				$line->price = $obj->price;
 				$line->subprice = $obj->subprice;
+				$line->fk_remise_except = $obj->fk_remise_except;
 				$line->remise_percent = $obj->remise_percent;
 
 				$this->total_ht += $tabprice[0];
@@ -1728,6 +1751,9 @@ class Expedition extends CommonObject
 				$this->total_ttc += $tabprice[2];
 				$this->total_localtax1 += $tabprice[9];
 				$this->total_localtax2 += $tabprice[10];
+
+				$line->date_start       = $this->db->jdate($obj->date_start);
+				$line->date_end         = $this->db->jdate($obj->date_end);
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
@@ -2625,6 +2651,15 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element = 'expeditiondet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'expedition';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_expedition';
 
 	/**
 	 * Id of the line. Duplicate of $id.

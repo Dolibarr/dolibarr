@@ -70,9 +70,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
-$project = new Project($db);
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
+$project = new Project($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); // Note that conf->hooks_modules contains array of activated contexes
@@ -269,6 +269,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $form = new Form($db);
 $now = dol_now();
 
@@ -616,7 +617,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -632,7 +633,6 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -667,7 +667,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
@@ -681,7 +680,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.((int) $id));
@@ -724,7 +723,7 @@ foreach ($search as $key => $val) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -875,7 +874,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}

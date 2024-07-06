@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -100,10 +101,9 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans("Member")." - ".$langs->trans("Note");
-
 $help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
 
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_note');
 
 $form = new Form($db);
 

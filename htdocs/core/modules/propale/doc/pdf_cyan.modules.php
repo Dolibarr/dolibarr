@@ -7,7 +7,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,7 +171,7 @@ class pdf_cyan extends ModelePDFPropales
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 
 		//  Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('PROPALE_DRAFT_WATERMARK')) {
+		if ($object->status == $object::STATUS_DRAFT && getDolGlobalString('PROPALE_DRAFT_WATERMARK')) {
 			$this->watermark = getDolGlobalString('PROPALE_DRAFT_WATERMARK');
 		}
 
@@ -340,7 +340,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforsignature = !getDolGlobalString('PROPAL_DISABLE_SIGNATURE') ? (pdfGetHeightForHtmlContent($pdf, $outputlangs->transnoentities("ProposalCustomerSignature")) + 10) : 0;
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 				//print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
 
@@ -567,6 +567,10 @@ class pdf_cyan extends ModelePDFPropales
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
+
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+					}
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -1578,7 +1582,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("PdfCommercialProposalTitle");
 		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -1592,7 +1596,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
@@ -1602,11 +1606,12 @@ class pdf_cyan extends ModelePDFPropales
 		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
+		$ref_customer = $object->ref_customer ?: $object->ref_client;
+		if ($ref_customer) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -1864,7 +1869,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -1897,6 +1902,24 @@ class pdf_cyan extends ModelePDFPropales
 		 */
 
 		$rank = 0; // do not use negative rank
+		$this->cols['position'] = array(
+			'rank' => $rank,
+			'width' => 10,
+			'status' => getDolGlobalInt('PDF_CYAN_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
+			'title' => array(
+				'textkey' => '#', // use lang key is useful in somme case with module
+				'align' => 'C',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'C',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+
+		$rank = 5; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
 			'width' => false, // only for desc

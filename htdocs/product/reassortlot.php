@@ -128,14 +128,8 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('reassortlotlist'));
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
 // Definition of array of fields for columns
 $arrayfields = array(
@@ -153,6 +147,13 @@ $arrayfields = array(
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service', 0, 'product&product');
+$result = restrictedArea($user, 'stock');
 
 
 /*
@@ -530,7 +531,7 @@ if ($search_stock_physique) {
 /*if ($eatby)		$param.="&eatby=".$eatby;
 if ($sellby)	$param.="&sellby=".$sellby;*/
 
-llxHeader("", $title, $helpurl, $texte);
+llxHeader("", $title, $helpurl, $texte, 0, 0, '', '', '', 'mod-product page-reassortlot');
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'."\n";
 if ($optioncss != '') {

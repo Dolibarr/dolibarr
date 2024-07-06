@@ -82,7 +82,7 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplier_proposalcard', 'globalcard'));
 
 $object = new SupplierProposal($db);
@@ -163,11 +163,11 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
@@ -1132,15 +1132,16 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields('PROPOSAL_SUPPLIER_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'PROPOSAL_SUPPLIER_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -1277,14 +1278,14 @@ if ($action == 'create') {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
-			if (getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE')) {
+			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
 					$("#socid").change(function() {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
-						$("form[name=add]").submit();
+						$("form[name=addprop]").submit();
 					});
 				});
 				</script>';
@@ -1323,6 +1324,7 @@ if ($action == 'create') {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+			print img_picto('', 'bank', 'class="pictofixedwidth"');
 			$form->select_comptes(GETPOST('fk_account') > 0 ? GETPOSTINT('fk_account') : $fk_account, 'fk_account', 0, '', 1);
 			print '</td></tr>';
 		}
@@ -1998,7 +2000,7 @@ if ($action == 'create') {
 				// Validate
 				if ($object->statut == SupplierProposal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0 && $usercanvalidate) {
 					if (count($object->lines) > 0) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate&token='.newToken().'">'.$langs->trans('Validate').'</a></div>';
 					}
 					// else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 				}

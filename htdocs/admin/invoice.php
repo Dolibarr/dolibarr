@@ -26,7 +26,7 @@
 
 /**
  *      \file       htdocs/admin/invoice.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 
@@ -277,7 +277,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
+llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura', '', 0, 0, '', '', '', 'mod-admin page-invoice');
 
 $form = new Form($db);
 
@@ -463,6 +463,7 @@ print '</div>';
 /*
  *  Document templates generators
  */
+
 print '<br>';
 print load_fiche_titre($langs->trans("BillsPDFModules"), '', '');
 
@@ -532,6 +533,9 @@ foreach ($dirmodels as $reldir) {
 								$modulequalified = 0;
 							}
 							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'disabled') {
 								$modulequalified = 0;
 							}
 
@@ -825,6 +829,7 @@ print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 print '</td></tr>';
+
 
 // Allow external download
 print '<tr class="oddeven">';

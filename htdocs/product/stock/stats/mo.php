@@ -45,7 +45,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('batchproductstatsmo'));
 
 // Load variable for pagination
@@ -109,7 +109,7 @@ if ($id > 0 || !empty($ref)) {
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock-stats_mo');
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);

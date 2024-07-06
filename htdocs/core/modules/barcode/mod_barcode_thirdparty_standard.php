@@ -247,7 +247,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK'))) {
 			$result = -2;
 		} else {
@@ -256,7 +256,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {

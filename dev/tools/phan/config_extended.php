@@ -65,6 +65,12 @@ $config['suppress_issue_types'] = [
 		'PhanDeprecatedProperty',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
+		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
+		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
+		'PhanTypeObjectUnsetDeclaredProperty',
+		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
@@ -85,6 +91,7 @@ $config['suppress_issue_types'] = [
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 ];
 

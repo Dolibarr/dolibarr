@@ -31,7 +31,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage payments of customers invoices
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -128,7 +128,7 @@ class Paiement extends CommonObject
 	public $author;
 
 	/**
-	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement. Can get value from code using ...
 	 */
 	public $paiementid;
 

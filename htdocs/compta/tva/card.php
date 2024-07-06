@@ -66,7 +66,7 @@ if (empty($refund)) {
 $datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 $datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Tva($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('tax', 'charges', 'lire');
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -487,7 +487,7 @@ if ($action == 'create') {
 	if (isModEnabled("bank")) {
 		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
-		print img_picto('', 'bank_account', 'pictofixedwidth');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes(GETPOSTINT("accountid"), "accountid", 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // List of bank account available
 		print '</td></tr>';
 	}

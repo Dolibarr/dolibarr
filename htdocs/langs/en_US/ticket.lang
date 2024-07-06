@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Ticket system for issue or request management
-
 Permission56001=See tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 Permission56006=Export tickets
-
 Tickets=Tickets
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
-
 TicketTypeShortCOM=Commercial question
 TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
@@ -41,29 +33,24 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Other
-
 TicketSeverityShortLOW=Low
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=High
 TicketSeverityShortBLOCKING=Critical, Blocking
-
 TicketCategoryShortOTHER=Other
-
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
 MenuListNonClosed=Open tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Contributor
 TypeContact_ticket_internal_SUPPORTTEC=Assigned user
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
-
 OriginEmail=Reporter Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Read
 Assigned=Assigned
@@ -72,18 +59,13 @@ NeedMoreInformationShort=Waiting for feedback
 Waiting=Waiting
 SolvedClosed=Solved
 Deleted=Deleted
-
 # Dict
 Severity=Severity
 TicketGroupIsPublic=Group is public
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
 # Email templates
 MailToSendTicketMessage=To send email from ticket message
-
-#
 # Admin page
-#
 TicketSetup=Ticket module setup
 TicketSettings=Settings
 TicketPublicAccess=A public interface requiring no identification is available at the following url
@@ -155,10 +137,7 @@ TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
 TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
 TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
 # Index & list page
-#
 TicketsIndex=Tickets area
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
@@ -173,10 +152,7 @@ ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=Ticket
 TicketCard=Ticket card
 CreateTicket=Create ticket
@@ -276,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on t
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Ticket %s read by %s
 NoLogForThisTicket=No log for this ticket yet
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
 TicketLogReopen=Ticket %s re-open
-
-#
 # Public pages
-#
 TicketSystem=Ticket system
 ShowListTicketWithTrackId=Display ticket list from track ID
 ShowTicketWithTrackId=Display ticket from track ID
@@ -328,7 +298,6 @@ NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -340,12 +309,8 @@ TicketNotificationRecipient=Notification recipient
 TicketNotificationLogMessage=Log message
 TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
 TicketNotificationNumberEmailSent=Notification email sent: %s
-
 ActionsOnTicket=Events on ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Latest created tickets
 BoxLastTicketDescription=Latest %s created tickets
 BoxLastTicketContent=

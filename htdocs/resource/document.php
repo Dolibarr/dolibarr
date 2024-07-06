@@ -73,7 +73,7 @@ if (!$sortfield) {
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'resource';
@@ -95,8 +95,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $form = new Form($db);
-
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_documents');
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();

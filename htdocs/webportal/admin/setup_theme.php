@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalthemesetup', 'globalsetup'));
 
 // Parameters
@@ -71,19 +71,19 @@ $item->defaultFieldValue = $webPortalTheme->primaryColorHex;
 
 // Logo URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_MENU_LOGO_URL');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 
 // Background URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND');
-$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'http://');
+$item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
 $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK')->setAsYesNo();

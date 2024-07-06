@@ -45,14 +45,6 @@ class Subscription extends CommonObject
 	public $table_element = 'subscription';
 
 	/**
-	 * Does this object supports the multicompany module ?
-	 *
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'payment';
@@ -132,6 +124,8 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 
@@ -560,7 +554,7 @@ class Subscription extends CommonObject
 
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
-		$return .= $this->getNomUrl(-1);
+		$return .= $this->getNomUrl(0);
 		$return .= '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -570,11 +564,11 @@ class Subscription extends CommonObject
 		}
 
 		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
-			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="margintoponly amount inline-block">'.price($this->amount).'</span>';
+			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
 			if (!empty($arraydata['bank'])) {
 				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 			}

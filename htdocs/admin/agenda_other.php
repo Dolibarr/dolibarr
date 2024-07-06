@@ -182,11 +182,13 @@ if ($action == 'set') {
  * View
  */
 
+$form = new Form($db);
 $formactions = new FormActions($db);
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-agenda_other');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -202,7 +204,7 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
  *  Miscellaneous
  */
 
-// Define array def of models
+// Define an array def of models
 $def = array();
 
 $sql = "SELECT nom";

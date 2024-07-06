@@ -35,8 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('agenda', 'contrat', 'companies'));
+$langs->loadLangs(array('agenda', 'contracts', 'companies'));
 
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contratagenda';
 
 if (GETPOST('actioncode', 'array')) {
@@ -51,8 +53,6 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 
@@ -73,10 +73,10 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Contrat($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 // Security check
@@ -226,9 +226,8 @@ print dol_get_fiche_end();
 
 $morehtmlright = '';
 
-$morehtmlright = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
+$morehtmlright .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/contrat/messaging.php?id='.$object->id, '', 2);
 $morehtmlright .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id, '', 1);
-
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

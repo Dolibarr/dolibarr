@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -53,26 +53,59 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+/**
+ * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
+ *
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmojiBis()
+ */
+function getArrayOfEmoji()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
 
 /**
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	string		$matches			String of numeric entity
- * @return	string							New value
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @return	string									New value
  */
 function realCharForNumericEntities($matches)
 {
 	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
 	//print  ' $newstringnumentity='.$newstringnumentity;
 
-	if (preg_match('/^x/i', $newstringnumentity)) {
+	if (preg_match('/^x/i', $newstringnumentity)) {		// if numeric is hexadecimal
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	} else {
+		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
+	}
+
+	// The numeric values we want in UTF8 instead of entities because it is emoji
+	$arrayofemojis = getArrayOfEmoji();
+	foreach ($arrayofemojis as $valarray) {
+		if ($newstringnumentity >= hexdec($valarray[0]) && $newstringnumentity <= hexdec($valarray[1])) {
+			// This is a known emoji
+			return html_entity_decode($matches[0], ENT_COMPAT | ENT_HTML5, 'UTF-8');
+		}
 	}
 
 	return '&#'.$matches[1]; // Value will be unchanged because regex was /&#(  )/
@@ -125,9 +158,9 @@ function testSqlAndScriptInject($val, $type)
 	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	// Example of valid UTF8 chars:
-	// utf8=utf8mb3:    '\x09', '\x0A', '\x0D', '\x7E'
-	// utf8=utf8mb3: 	'\xE0\xA0\x80'
-	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
+	// utf8 or utf8mb3: '\x09', '\x0A', '\x0D', '\x7E'
+	// utf8 or utf8mb3: '\xE0\xA0\x80'
+	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (so this may be refused by the database insert if pagecode is utf8=utf8mb3)
 	$newval = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 
 	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
@@ -247,6 +280,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 					//$errormessage .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');	// Disabled to avoid text injection
 
 					$errormessage2 = 'page='.htmlentities((empty($_SERVER["REQUEST_URI"]) ? '' : $_SERVER["REQUEST_URI"]), ENT_COMPAT, 'UTF-8');
+					$errormessage2 .= ' paramtype='.htmlentities((string) $type, ENT_COMPAT, 'UTF-8');
 					$errormessage2 .= ' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8');
 					$errormessage2 .= ' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8');
 
@@ -410,23 +444,23 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
 		$ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	} elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (isset($_POST["username"]) && in_array($_POST["username"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
 	} elseif (defined('NOREQUIREDB')) {
 		$ok = 1; // We let working pages that don't need database access (xxx.css.php)
 	} elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 		$ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
-	} elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (session_id() && isset($_SESSION["dol_login"]) && in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working if user is allowed admin
 	}
 	if (!$ok) {
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
-			print 'Sorry, your application is offline. Only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/';
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
@@ -488,6 +522,7 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 				$newurl = preg_replace('/^http:/i', 'https:', $_SERVER["SCRIPT_URI"]);
 			}
 		} else {
+			// If HTTPS is not defined in DOL_MAIN_URL_ROOT,
 			// Check HTTPS environment variable (Apache/mod_ssl only)
 			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
@@ -554,7 +589,11 @@ if ($checkifupgraderequired) {
 		if (!getDolGlobalString('MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE') || $rescomp < 3) {
 			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
 			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
-			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			if (php_sapi_name() === "cli") {
+				print "main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Try to run upgrade process.\n";
+			} else {
+				header("Location: ".DOL_URL_ROOT."/install/index.php");
+			}
 			exit;
 		}
 	}
@@ -587,7 +626,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
-		// All GET actions (except the listed exception that are post actions) and mass actions are processed as sensitive.
+		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
 		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are not sensitive so legitimate
 			$sensitiveget = true;
 		}
@@ -1121,7 +1160,7 @@ if (!defined('NOLOGIN')) {
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		} else {
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 
 			// Code for search criteria persistence.
@@ -1303,17 +1342,23 @@ if (!defined('NOLOGIN')) {
 	 * Overwrite some configs globals (try to avoid this and have code to use instead $user->conf->xxx)
 	 */
 
-	// Set liste_limit
-	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {
-		$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT; // Can be 0
+	// Set liste_limit from user setup
+	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {	// If a user setup exists
+		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
-	if (isset($user->conf->PRODUIT_LIMIT_SIZE)) {
-		$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE; // Can be 0
+	if ((int) $conf->liste_limit <= 0) {
+		// Mode automatic.
+		$conf->liste_limit = 15;
+		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+			$conf->liste_limit = 10;
+		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+			$conf->liste_limit = 20;
+		}
 	}
 
 	// Replace conf->css by personalized value if theme not forced
-	if (!getDolGlobalString('MAIN_FORCETHEME') && !empty($user->conf->MAIN_THEME)) {
-		$conf->theme = $user->conf->MAIN_THEME;
+	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
+		$conf->theme = getDolUserString('MAIN_THEME');
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
 } else {
@@ -1334,14 +1379,14 @@ if (GETPOST('theme', 'aZ09')) {
 if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 	$conf->use_javascript_ajax = 0;
 } else {
-	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT)) {
-		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
+	if (getDolUserString('MAIN_DISABLE_JAVASCRIPT')) {
+		$conf->use_javascript_ajax = !getDolUserString('MAIN_DISABLE_JAVASCRIPT');
 	}
 }
 
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
-if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER');
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
 		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
 	}
@@ -1350,7 +1395,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MA
 //var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = getDolUserString('MAIN_OPTIMIZEFORCOLORBLIND');
 
 // Set terminal output option according to conf->browser.
 if (GETPOSTINT('dol_hide_leftmenu') || !empty($_SESSION['dol_hide_leftmenu'])) {
@@ -1716,9 +1761,10 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 
 	// Referrer-Policy
 	// Say if we must provide the referrer when we jump onto another web page.
-	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'strict-origin' so browser doesn't send any referrer when going into another web site domain.
+	// Default browser are 'strict-origin-when-cross-origin' (only domain is sent on other domain switching), we want more so we use 'same-origin' so browser doesn't send any referrer at all when going into another web site domain.
+	// Note that we do not use 'strict-origin' as this breaks feature to restore filters when clicking on "back to page" link on some cases.
 	if (!defined('MAIN_SECURITY_FORCERP')) {
-		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "strict-origin");
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}
@@ -1936,8 +1982,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// LEAFLET AND GEOMAN
-		print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.css'.($ext ? '?'.$ext : '')."\">\n";
-		print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.css'.($ext ? '?'.$ext : '')."\">\n";
+		if (getDolGlobalString('MAIN_USE_GEOPHP')) {
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.css'.($ext ? '?'.$ext : '')."\">\n";
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.css'.($ext ? '?'.$ext : '')."\">\n";
+		}
 
 		// CSS forced by modules (relative url starting with /)
 		if (!empty($conf->modules_parts['css'])) {
@@ -2094,8 +2142,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
 
 			// Leaflet TODO use dolibarr files
-			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			if (getDolGlobalString('MAIN_USE_GEOPHP')) {
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}
 
 			// JS forced by modules (relative url starting with /)
 			if (!empty($conf->modules_parts['js'])) {		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
@@ -2590,7 +2640,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a valignmiddle" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	            '.$userImage.(empty($user->photo) ? '<!-- no photo so show also the login --><span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft valignmiddle small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2634,7 +2684,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	        </div>
 	    </div>';
 	} else {
-		$btnUser = '<!-- div for user link -->
+		$btnUser = '<!-- div for user link text browser -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="valignmiddle" alt="'.$langs->trans("MyUserCard").'">
 	    	'.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft small">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
@@ -2720,13 +2770,14 @@ function top_menu_quickadd()
 		}
 	}
 
-	$html .= '<!-- div for quick add link -->
+	if (!empty($conf->use_javascript_ajax)) {
+		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
         <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
-	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {    // This may be set by some pages that use different jquery version to avoid errors
-		$html .= '
+		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
+			$html .= '
         <!-- Code to show/hide the user drop-down for the quick add -->
         <script>
         jQuery(document).ready(function() {
@@ -2765,7 +2816,9 @@ function top_menu_quickadd()
         });
         </script>
         ';
+		}
 	}
+
 	return $html;
 }
 
@@ -3268,7 +3321,9 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 					$stringforfirstkey .= ' CTL +';
 				}
 
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1, $stringforfirstkey.' s');
+				//$textsearch = $langs->trans("Search");
+				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {
@@ -3498,7 +3553,7 @@ function main_area($title = '')
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'aZ09'))) {
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
 			print '<!-- Begin show mysoc info header -->'."\n";
@@ -3765,20 +3820,22 @@ if (!function_exists("llxFooter")) {
 				<script>
 				jQuery(document).ready(function () {
 					$('a.documentpreview').click(function() {
+						console.log("Call /blockedlog/ajax/block-add on a.documentpreview");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_PREVIEW'
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
 					$('a.documentdownload').click(function() {
+						console.log("Call /blockedlog/ajax/block-add a.documentdownload");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id:<?php echo $object->id; ?>
-									, element:'<?php echo $object->element ?>'
+									, element:'<?php echo dol_escape_js($object->element) ?>'
 									, action:'DOC_DOWNLOAD'
 									, token: '<?php echo currentToken(); ?>'
 								}
@@ -3884,7 +3941,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;

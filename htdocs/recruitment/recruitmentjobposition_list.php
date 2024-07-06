@@ -58,7 +58,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new RecruitmentJobPosition($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
@@ -118,7 +118,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields['nbapplications'] = array('type'=>'integer', 'label'=>'Applications', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -372,7 +372,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -490,7 +490,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}

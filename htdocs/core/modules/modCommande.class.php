@@ -27,7 +27,7 @@
  *		\defgroup   commande     Module orders
  *		\brief      Module pour gerer le suivi des commandes
  *		\file       htdocs/core/modules/modCommande.class.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Description and activation file for the module command
  */
 
@@ -66,7 +66,7 @@ class modCommande extends DolibarrModules
 		$this->dirs = array("/commande/temp");
 
 		// Config pages
-		$this->config_page_url = array("commande.php");
+		$this->config_page_url = array("order.php");
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -209,7 +209,8 @@ class modCommande extends DolibarrModules
 			'c.fk_user_author' => 'CreatedById', 'uc.login' => 'CreatedByLogin', 'c.fk_user_valid' => 'ValidatedById', 'uv.login' => 'ValidatedByLogin',
 			'pj.ref' => 'ProjectRef', 'cd.rowid' => 'LineId', 'cd.description' => "LineDescription", 'cd.product_type' => 'TypeOfLineServiceOrProduct',
 			'cd.tva_tx' => "LineVATRate", 'cd.qty' => "LineQty", 'cd.total_ht' => "LineTotalHT", 'cd.total_tva' => "LineTotalVAT", 'cd.total_ttc' => "LineTotalTTC",
-			'p.rowid' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel'
+			'p.rowid' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel',
+			'cir.label'=>'Source',
 		);
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
@@ -241,6 +242,7 @@ class modCommande extends DolibarrModules
 			'cd.description' => "Text", 'cd.product_type' => 'Boolean', 'cd.tva_tx' => "Numeric", 'cd.qty' => "Numeric", 'cd.total_ht' => "Numeric", 'cd.total_tva' => "Numeric",
 			'cd.total_ttc' => "Numeric", 'p.rowid' => 'List:product:ref::product', 'p.ref' => 'Text', 'p.label' => 'Text', 'd.nom' => 'Text',
 			'c.entity' => 'List:entity:label:rowid',
+			'cir.label'=>'Text',
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'd.nom' => 'company', 'co.label' => 'company',
@@ -279,6 +281,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as sm ON c.fk_shipping_method = sm.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as cir ON cir.rowid = c.fk_input_reason';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON c.fk_projet = pj.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON c.fk_user_author = uc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON c.fk_user_valid = uv.rowid';
@@ -305,7 +308,7 @@ class modCommande extends DolibarrModules
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
+		$import_sample = array('c.facture' => '0 or 1');
 		$this->import_fields_array[$r] = array(
 			'c.ref'               => 'Ref*',
 			'c.ref_client'        => 'RefCustomer',
@@ -321,7 +324,7 @@ class modCommande extends DolibarrModules
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
 			'c.note_public'       => 'Note',
-			'c.facture'           => 'Invoice(1/0)',
+			'c.facture'           => 'Billed',
 			'c.date_livraison'    => 'DeliveryDate',
 			'c.fk_cond_reglement' => 'Payment Condition',
 			'c.fk_mode_reglement' => 'Payment Mode',
@@ -414,10 +417,10 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 
-		$import_extrafield_sample = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$import_extrafield_sample = array();
 		$keyforselect = 'commandedet';
 		$keyforelement = 'orderline';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commandedet'];

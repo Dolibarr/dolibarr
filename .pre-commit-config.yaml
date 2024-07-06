@@ -131,6 +131,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
           ]
       - alias: php-cs-with-cache
         id: php-cs
@@ -141,6 +142,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
             --cache=.cache/pre-commit/dolibarr-php-cs.cache,
             .,
           ]

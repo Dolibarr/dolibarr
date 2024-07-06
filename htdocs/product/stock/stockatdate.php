@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockatdate'));
 
 // Security check
@@ -366,15 +366,16 @@ if ($mode == 'future') {
 
 // TODO Move this action into a separated files: We should not mix output with MIME type HTML and MIME type CSV in the same file.
 if ($ext == 'csv') {
-	header("Content-Type: text/csv");
+	top_httphead("text/csv");
+	//header("Content-Type: text/csv");
 	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d", $date):'').".csv");
 
 	// Lines of title
-	print implode("\t", ($mode == 'future')?
+	print implode(";", ($mode == 'future') ?
 		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
 		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
-	llxHeader('', $title, $helpurl, '');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
 
 	$head = array();
 
@@ -467,15 +468,20 @@ if ($ext == 'csv') {
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	if ($num) {
-		print "<p><a href=\"stockatdate.php?output=csv&sortfield=$sortfield&sortorder=$sortorder&type=$type&mode=$mode".
-			(isset($productid)?"&productid=$productid":'').
+		print '<p>';
+		print '<a href="stockatdate.php?output=csv&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&type='.((int) $type).'&mode='.urlencode($mode).
+			(($productid > 0)?"&productid=".((int) $productid):'').
 			$param_warehouse.
 			"&search_ref=".dol_escape_htmltag($search_ref).
 			"&search_nom=".dol_escape_htmltag($search_nom).
 			(GETPOSTISSET('dateday')?"&dateday=".GETPOSTINT('dateday'):'').
 			(GETPOSTISSET('datemonth')?"&datemonth=".GETPOSTINT('datemonth'):'').
 			(GETPOSTISSET('dateyear')?"&dateyear=".GETPOSTINT('dateyear'):'').
-			"\" title=\"Download CSV\" />Download CSV</a></p>";
+			'" title="Download CSV" />';
+		print img_picto('', 'download', 'class="pictofixedwidth"');
+		print 'Download CSV';
+		print '</a>';
+		print '</p>';
 	}
 	print '<table class="liste centpercent">';
 
@@ -526,9 +532,12 @@ if ($ext == 'csv') {
 		print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 	} else {
 		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
-		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
-		print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").')';
+		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
+		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
+		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
+		$tooltiptext = $langs->trans("MovementsSinceDate");
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
 		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -579,14 +588,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if (!is_numeric($currentstock)) {
 					$currentstock = 0;
 				}
-				$currentstock += $stock_prod_warehouse[$objp->rowid][$val];
+				$currentstock += empty($stock_prod_warehouse[$objp->rowid][$val]) ? 0 : $stock_prod_warehouse[$objp->rowid][$val];
 			}
 			//} else {
 			//	$currentstock = $objp->stock_reel;
 			//}
 		} else {
 			//if ($productid > 0) {
-			$currentstock = $stock_prod[$objp->rowid];
+			$currentstock = empty($stock_prod[$objp->rowid]) ? 0 : $stock_prod[$objp->rowid];
 			//} else {
 			//	$currentstock = $objp->stock;
 			//}
@@ -602,34 +611,34 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$nbofmovement = 0;
 			if (!empty($search_fk_warehouse)) {
 				foreach ($search_fk_warehouse as $val) {
-					$stock -= $movements_prod_warehouse[$objp->rowid][$val];
-					$nbofmovement += $movements_prod_warehouse_nb[$objp->rowid][$val];
+					$stock -= empty($movements_prod_warehouse[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse[$objp->rowid][$val];
+					$nbofmovement += empty($movements_prod_warehouse_nb[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse_nb[$objp->rowid][$val];
 				}
 			} else {
-				$stock -= $movements_prod[$objp->rowid];
-				$nbofmovement += $movements_prod_nb[$objp->rowid];
+				$stock -= empty($movements_prod[$objp->rowid]) ? 0 : $movements_prod[$objp->rowid];
+				$nbofmovement += empty($movements_prod_nb[$objp->rowid]) ? 0 : $movements_prod_nb[$objp->rowid];
 			}
 		}
 
 
 		if ($ext == 'csv') {
 			if ($mode == 'future') {
-				print implode("\t", array(
+				print implode(";", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
-					'"'.price(price2num($currentstock, 'MS')).'"',
-					'"'.price(price2num($stock, 'MS')).'"',
-					'"'.price(price2num($virtualstock, 'MS')).'"'))."\r\n";
+					'"'.price2num($currentstock, 'MS').'"',
+					'"'.price2num($stock, 'MS').'"',
+					'"'.price2num($virtualstock, 'MS').'"'))."\r\n";
 				$totalvirtualstock += $virtualstock;
 			} else {
-				print implode("\t", array(
+				print implode(";", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
 					'"'.price(price2num($stock, 'MS')).'"',
-					price2num($stock * $objp->pmp, 'MT')?'"'.price(price2num($stock * $objp->pmp, 'MT'), 1).'"':'',
-					empty($conf->global->PRODUIT_MULTIPRICES)?'"'.price(price2num($stock * $objp->price, 'MT'), 1).'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
+					price2num($stock * $objp->pmp, 'MT')?'"'.price2num($stock * $objp->pmp, 'MT').'"':'',
+					!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price2num($stock * $objp->price, 'MT').'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
 					"$nbofmovement",
-					'"'.price(price2num($currentstock, 'MS')).'"'))."\r\n";
+					'"'.price2num($currentstock, 'MS').'"'))."\r\n";
 				$totalbuyingprice += $stock * $objp->pmp;
 				$totalsellingprice += $stock * $objp->price;
 			}
@@ -663,8 +672,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print '<td class="right">'.($stock ? price(price2num($stock, 'MS')) : ('<span class="opacitymedium">0</span>')).'</td>';
 
 				// PMP value
-				print '<td class="right">';
 				$estimatedvalue = $stock * $objp->pmp;
+				print '<td class="right" title="'.dolPrintHTMLForAttribute($langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").'): '.price(price2num($objp->pmp, 'MU'), 1)).'">';
 				if (price2num($estimatedvalue, 'MT')) {
 					print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
 				} else {
@@ -674,7 +683,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print '</td>';
 
 				// Selling value
-				print '<td class="right">';
+				print '<td class="right"';
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+					print ' title="'.dolPrintHTMLForAttribute($langs->trans("SellingPrice").' ('.$langs->trans("Currently").'): '.price(price2num($objp->price, 'MU'), 1));
+				}
+				print '">';
 				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 					print '<span class="amount">';
 					if ($stock || (float) ($stock * $objp->price)) {
@@ -688,14 +701,30 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				}
 				print '</td>';
 
+				// Movements
 				print '<td class="right">';
 				if ($nbofmovement > 0) {
-					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
-					foreach ($search_fk_warehouse as $val) {
-						print($val > 0 ? '&search_warehouse='.$val : '');
+					$url = DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
+					if (GETPOSTISSET('datemonth')) {
+						$url .= '&search_date_startday='.GETPOSTINT('dateday');
+						$url .= '&search_date_startmonth='.GETPOSTINT('datemonth');
+						$url .= '&search_date_startyear='.GETPOSTINT('dateyear');
 					}
-					print '">'.$langs->trans("Movements").'</a>';
-					print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
+					if (count($search_fk_warehouse) > 1) {
+						$url = '';	// Do not show link, multi warehouse as filter not managed yet by target page
+					} else {
+						foreach ($search_fk_warehouse as $val) {
+							$url .= ($val > 0 ? '&search_warehouse='.((int) $val) : '');
+						}
+					}
+					if ($url) {
+						print '<a href="'.$url.'">';
+					}
+					print $langs->trans("Movements");
+					print '<span class="tabs paddingleft"><span class="badge">'.$nbofmovement.'</span></span>';
+					if ($url) {
+						print '</a>';
+					}
 				}
 				print '</td>';
 
@@ -730,21 +759,21 @@ if ($mode == 'future') {
 }
 
 if ($ext=='csv') {
-	print implode("\t",
+	print implode(";",
 		($mode == 'future')?array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
-		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '',
+		$productid > 0 ? price2num($totalcurrentstock, 'MS') : '',
 		'',
 		price(price2num($totalvirtualstock, 'MS'))):
 		array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
 		'',
-		'"'.price(price2num($totalbuyingprice, 'MT')).'"',
-		!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price(price2num($totalsellingprice, 'MT')).'"':'',
+		'"'.price2num($totalbuyingprice, 'MT').'"',
+		!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price2num($totalsellingprice, 'MT').'"':'',
 		'',
-		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : ''));
+		$productid > 0 ? price2num($totalcurrentstock, 'MS') : ''));
 } else {
 	if (empty($date) || !$dateIsValid) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';

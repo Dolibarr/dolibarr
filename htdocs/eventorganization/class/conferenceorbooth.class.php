@@ -50,18 +50,6 @@ class ConferenceOrBooth extends ActionComm
 	public $table_element = 'actioncomm';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int<0,1>  Does this object support extrafields ?
-	 * 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
 	 */
 	public $picto = 'conferenceorbooth';
@@ -122,7 +110,7 @@ class ConferenceOrBooth extends ActionComm
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(t.usage_organize_event:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '$conf->societe->enabled', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'csslist' => 'tdoverflowmax100', 'css' => 'maxwidth500'),
 		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3),
-		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'Format', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width100', 'csslist' => 'tdoverflowmax100'),
+		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'ConferenceOrBoothFormat', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width200', 'csslist' => 'tdoverflowmax100'),
 		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '2',),
 		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '3',),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
@@ -158,9 +146,12 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['id']['visible'] = 0;
@@ -203,17 +194,20 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
-	 * Set Percentage from status
+	 * Set the percentage of actioncomm from the status of the booth or conference
 	 *
 	 * @return void
 	 */
 	protected function setPercentageFromStatus()
 	{
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_SUGGESTED || $this->status == self::STATUS_NOT_QUALIFIED || $this->status == self::STATUS_CANCELED) {
+			$this->percentage = -1;
+		}
+		if ($this->status == self::STATUS_CONFIRMED) {
+			$this->percentage = 0;
+		}
 		if ($this->status == self::STATUS_DONE) {
 			$this->percentage = 100;
-		}
-		if ($this->status == self::STATUS_DRAFT) {
-			$this->percentage = 0;
 		}
 	}
 
@@ -354,7 +348,9 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = 0)
 	{
 		$this->setPercentageFromStatus();
+
 		$this->setActionCommFields($user);
+
 		return parent::update($user, $notrigger);
 	}
 

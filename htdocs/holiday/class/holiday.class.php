@@ -45,12 +45,6 @@ class Holiday extends CommonObject
 	public $table_element = 'holiday';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_holiday';
@@ -201,6 +195,8 @@ class Holiday extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 
@@ -1304,7 +1300,7 @@ class Holiday extends CommonObject
 				}
 
 				// We found a record, user is on holiday by default, so is not available is true.
-				$isavailablemorning = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailablemorning = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_start'] && $record['halfday'] == 2) {
 						continue;
@@ -1315,7 +1311,7 @@ class Holiday extends CommonObject
 					$isavailablemorning = false;
 					break;
 				}
-				$isavailableafternoon = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailableafternoon = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) {
 						continue;

@@ -5,7 +5,8 @@
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Task($db);
 $hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
@@ -264,9 +265,6 @@ if (empty($reshook)) {
 if (empty($search_projectstatus) && $search_projectstatus == '') {
 	$search_projectstatus = 1;
 }
-
-
-
 
 /*
  * View
@@ -705,7 +703,7 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -987,6 +985,7 @@ print '</tr>'."\n";
 
 $totalarray = array(
 	'nbfield' => 0,
+	'type' => [],
 	'val' => array(
 		't.planned_workload' => 0,
 		't.duration_effective' => 0,
@@ -1000,8 +999,10 @@ $totalarray = array(
 	'totalbilledfield' => 0,
 	'totalbudget_amountfield' => 0,
 	'totalbudgetamount' => 0,
+	'totalbudget' => 0,
 	'totaltobill' => 0,
 	'totalbilled' => 0,
+	'totalizable' => [],
 );
 
 // Fields title label
@@ -1351,7 +1352,7 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 				}
-				if (!isset($totalarray['val']['planned_workload'])) {
+				if (!isset($totalarray['val']['t.planned_workload'])) {
 					$totalarray['val']['t.planned_workload'] = 0;
 				}
 				$totalarray['val']['t.planned_workload'] += $obj->planned_workload;

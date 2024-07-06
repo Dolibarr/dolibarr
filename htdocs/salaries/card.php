@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
@@ -82,7 +82,7 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
 if ($id > 0 || !empty($ref)) {
@@ -569,7 +569,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -626,7 +626,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if (isModEnabled("bank")) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		print img_picto('', 'bank_account', 'class="paddingrighonly"');
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}

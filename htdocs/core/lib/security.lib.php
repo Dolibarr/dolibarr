@@ -193,7 +193,7 @@ function dolDecrypt($chain, $key = '')
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id
-			$key = $conf->file->instance_unique_id;
+			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
@@ -1234,7 +1234,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

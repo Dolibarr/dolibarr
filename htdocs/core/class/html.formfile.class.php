@@ -594,7 +594,7 @@ class FormFile
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
-					$modellist = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$modellist = array();
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -714,7 +714,7 @@ class FormFile
 			$out .= '<tr class="liste_titre">';
 			$addcolumforpicto = ($delallowed || $printer || $morepicto);
 			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -890,7 +890,11 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
-					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					$out .= '<a class="documentdownload paddingright" ';
+					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						$out .= 'target="_blank" ';
+					}
+					$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
@@ -1081,8 +1085,8 @@ class FormFile
 		$out .= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (!empty($file_list)) {
 			$out = '<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
-    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
+				<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
+				<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -1129,7 +1133,11 @@ class FormFile
 				}
 
 				// Download
-				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
+				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						$tmpout .= 'target="_blank" ';
+				}
+				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -1141,7 +1149,7 @@ class FormFile
 			}
 			$out .= $tmpout;
 			$out .= '</ul></div></dd>
-    			</dl>';
+				</dl>';
 
 			if (!$found) {
 				$out = '';
@@ -1167,12 +1175,11 @@ class FormFile
 	 * 	@param	 int			$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string			$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int			$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int			$useinecm			Change output for use in ecm module:
-	 * 												0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
+	 * 	@param	 int			$useinecm			Change output to add more information:
+	 * 												0, 4, 5, 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 												1: Add link to edit ECM entry
 	 * 												2: Add rename and crop link
-	 *                                  		    4: Add a preview column
-	 *                                  		    5: Add link to edit ECM entry and Add a preview column
+	 *                                  		    5: Add link to edit ECM entry and add a preview column
 	 * 	@param	 string			$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int			$maxlength          Maximum length of file name shown.
 	 *  @param	 string			$title				Title before list. Use 'none' to disable title.
@@ -1227,6 +1234,7 @@ class FormFile
 		}
 		// For example here $upload_dir = '/pathtodocuments/commande/SO2001-123/'
 		// For example here $upload_dir = '/pathtodocuments/tax/vat/1'
+		// For example here $upload_dir = '/home/ldestailleur/git/dolibarr_dev/documents/fournisseur/facture/6/1/SI2210-0013' and relativedir='fournisseur/facture/6/1/SI2210-0013'
 
 		$hookmanager->initHooks(array('formfile'));
 		$parameters = array(
@@ -1278,7 +1286,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') {
+			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			}
 			if (empty($url)) {
@@ -1290,7 +1298,7 @@ class FormFile
 				print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="renamefile">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="id" value="'.(is_object($object) ? $object->id : '').'">';
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
 
@@ -1349,15 +1357,25 @@ class FormFile
 			$nboflines = 0;
 			$lastrowid = 0;
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
-				if ($file['name'] != '.'
-						&& $file['name'] != '..'
-						&& !preg_match('/\.meta$/i', $file['name'])) {
+				if ($file['name'] != '.' && $file['name'] != '..' && !preg_match('/\.meta$/i', $file['name'])) {
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
-					$filepath = $file['level1name'].'/'.$file['name'];
-					$modulepart = basename(dirname($file['path']));
-					$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					//var_dump($filearray[$key]);
+
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+
+					if (empty($relativepath) || empty($modulepart)) {
+						$filepath = $file['level1name'].'/'.$file['name'];
+					} else {
+						$filepath = $relativepath.$file['name'];
+					}
+					if (empty($modulepart)) {
+						$modulepart = basename(dirname($file['path']));
+					}
+					if (empty($relativepath)) {
+						$relativepath = preg_replace('/\/(.+)/', '', $filepath) . '/';
+					}
 
 					$editline = 0;
 					$nboflines++;
@@ -1369,11 +1387,15 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwith200 tdoverflowmax500">';
+					print '<td class="minwith200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
-					print '<a class="paddingright valignmiddle" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print '<a class="paddingright valignmiddle" ';
+					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+						print 'target="_blank" ';
+					}
+					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) {
 						print '&attachment=1';
 					}
@@ -1387,7 +1409,10 @@ class FormFile
 						print $relativepath;
 					}
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha')) && $file['level1name'] == dirname(GETPOST('urlfile', 'alpha'))) {
+
+					//var_dump(dirname($filepath).' - '.dirname(GETPOST('urlfile', 'alpha')));
+
+					if (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha')) && dirname($filepath) == dirname(GETPOST('urlfile', 'alpha'))) {
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
 						if (!preg_match('/\/$/', $section_dir)) {
@@ -1458,8 +1483,6 @@ class FormFile
 							}
 							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
-						} else {
-							print '&nbsp;';
 						}
 						print '</td>';
 					}
@@ -1510,7 +1533,7 @@ class FormFile
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 
-						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6) {	// 6=Media file manager
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 3 || $useinecm == 6) {	// 6=Media file manager
 							$newmodulepart = $modulepart;
 							if (in_array($modulepart, array('product', 'produit', 'service'))) {
 								$newmodulepart = 'produit|service';
@@ -1572,7 +1595,7 @@ class FormFile
 							if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1593,7 +1616,7 @@ class FormFile
 						}
 					} else {
 						print '<td class="right">';
-						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
+						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
 						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
@@ -1949,7 +1972,11 @@ class FormFile
 				// Check if document source has external module part, if it the case use it for module part on document.php
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
+				print '<a ';
+				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
+					print 'target="_blank" ';
+				}
+				print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}
