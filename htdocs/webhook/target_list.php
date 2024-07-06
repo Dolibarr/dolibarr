@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array('other'));
+$langs->loadLangs(array('other', 'admin'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';    // The action 'add', 'create', 'edit', 'update', 'view', ...
