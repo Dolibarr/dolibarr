@@ -999,7 +999,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$reg = [];
 							$qtyhourservice = 0;
 							if (preg_match('/^(\d+)([a-z]+)$/', $tmpproduct->duration, $reg)) {
-								$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+								$qtyhourservice = convertDurationtoHour($reg[1], (string) $reg[2]);
 							}
 							$qtyhourforline = 0;
 							if ($line->fk_unit) {
