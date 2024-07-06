@@ -510,7 +510,7 @@ ModuleCompanyCodeCustomerDigitaria=%s followed by the truncated customer name by
 ModuleCompanyCodeSupplierDigitaria=%s followed by the truncated supplier name by the number of characters: %s for the supplier accounting code.
 Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to create and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce a third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1=validation, 2=first approval and 3=second approval if amount is enough).<br>Set this to empty if one approval (2 steps) is enough, set it to a very low value (0.1) if a second approval (3 steps) is always required.
 UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
-WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. It is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
 WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
 WarningPHPMailB=- Some Email Service Providers (like Yahoo) do not allow you to send an email from another server than their own server. Your current setup uses the server of the application to send email and not the server of your email provider, so some recipients (the one compatible with the restrictive DMARC protocol), will ask your email provider if they can accept your email and some email providers (like Yahoo) may respond "no" because the server is not theirs, so few of your sent Emails may not be accepted for delivery (be careful also of your email provider's sending quota).
 WarningPHPMailC=- Using the SMTP server of your own Email Service Provider to send emails is also interesting so all emails sent from application will also be saved into your "Sent" directory of your mailbox.
@@ -1169,6 +1169,8 @@ NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), yo
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
+TranslationFound=Translation found
+TheTranslationIsSearchedFromKey=The translation is searched from the translation key: <b>%s</b>
 TranslationKey=Translation key
 ValueOfConstantKey=Value of a configuration constant
 ConstantIsOn=Option %s is on

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,9 +291,9 @@ class RssParser
 
 					xml_set_object($xmlparser, $this);
 					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
-					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element'); // @phpstan-ignore-line
 					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
-					xml_set_character_data_handler($xmlparser, 'feed_cdata');
+					xml_set_character_data_handler($xmlparser, 'feed_cdata'); // @phpstan-ignore-line
 
 					$status = xml_parse($xmlparser, $str, false);
 
