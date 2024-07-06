@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2021 NextGestion 			<contact@nextgestion.com>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		NextGestion					<contact@nextgestion.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans("Partnership");
-llxHeader('', $title);
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_partnership');
 
 $form = new Form($db);
 
