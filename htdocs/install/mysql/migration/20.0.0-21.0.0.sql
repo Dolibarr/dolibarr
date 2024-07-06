@@ -62,3 +62,5 @@ ALTER TABLE llx_contrat ADD COLUMN total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_expedition_package MODIFY COLUMN dangerous_goods varchar(60) DEFAULT '0';
+
+ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER model_pdf;
