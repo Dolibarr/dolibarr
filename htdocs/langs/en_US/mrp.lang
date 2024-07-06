@@ -135,7 +135,7 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Quantity cannot be split
 NoRemainQtyToDispatch=No quantity remaining to divide
 THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.

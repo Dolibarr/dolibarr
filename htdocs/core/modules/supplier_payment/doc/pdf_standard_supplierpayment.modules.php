@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2022           Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2010-2011  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2010-2014  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_payment/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoice payment file with the standard model
  */
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 /**
  *	Class to generate the supplier invoices payment file with the standard model
  */
-class pdf_standard extends ModelePDFSuppliersPayments
+class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 {
 	/**
 	 * @var DoliDB Database handler
@@ -232,7 +233,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
