@@ -2048,6 +2048,15 @@ if (empty($reshook)) {
 					if ($ret > 0) {
 						$nextSituationInvoice->insertExtraFields();
 					}
+
+					// Hooks
+					$parameters = array('origin' => $origin);
+					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $nextSituationInvoice, $action); // Note that $action and $object may have been
+					// modified by hook
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						$error++;
+					}
 				}
 			}
 		}
