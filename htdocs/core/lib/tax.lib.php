@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2021-2022  Open-Dsi            <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -687,16 +688,16 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  The function gets the Tax in split results, as the Tax declaration asks
  *  to report the amounts for different Tax rates as different lines.
  *
- *  @param	string	$type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
- *  @param	DoliDB	$db          	Database handler object
- *  @param  int		$y           	Year
- *  @param  int		$q           	Quarter
- *  @param  string	$date_start  	Start date
- *  @param  string	$date_end    	End date
- *  @param  int		$modetax     	Not used
- *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
- *  @param  int		$m           	Month
- *  @return array|int               Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @param	string		 $type          Tax type, either 'vat', 'localtax1' or 'localtax2'
+ *  @param	DoliDB		 $db          	Database handler object
+ *  @param  int			 $y           	Year
+ *  @param  int			 $q           	Quarter
+ *  @param  int|''		 $date_start  	Start date
+ *  @param  int|''		 $date_end    	End date
+ *  @param  int			 $modetax     	Not used
+ *  @param  'sell'|'buy' $direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
+ *  @param  int			 $m           	Month
+ *  @return array|int               	Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
