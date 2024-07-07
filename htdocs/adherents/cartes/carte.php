@@ -268,7 +268,7 @@ $form = new Form($db);
 $title = $langs->trans('MembersCards');
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersCards"), $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', $adherentstatic->picto);
 
