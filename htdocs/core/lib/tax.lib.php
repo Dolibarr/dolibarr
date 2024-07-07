@@ -99,16 +99,16 @@ function tax_prepare_head(ChargeSociales $object)
 /**
  *  Look for collectable VAT clients in the chosen year (and month)
  *
- *  @param	string	$type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
- *  @param	DoliDB	$db          	Database handle
- *  @param  int		$y           	Year
- *  @param  string	$date_start  	Start date
- *  @param  string	$date_end    	End date
- *  @param  int		$modetax     	Not used
- *  @param  string	$direction   	'sell' or 'buy'
- *  @param  int		$m				Month
- *  @param  int		$q           	Quarter
- *  @return array|int               Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developed, -3 if error
+ *  @param	string		 $type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
+ *  @param	DoliDB		 $db          	Database handle
+ *  @param  int			 $y           	Year
+ *  @param  int|''		 $date_start  	Start date
+ *  @param  int|''		 $date_end    	End date
+ *  @param  int			 $modetax     	Not used
+ *  @param  'sell'|'buy' $direction     'sell' or 'buy'
+ *  @param  int			 $m				Month
+ *  @param  int			 $q           	Quarter
+ *  @return array|int               	Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
