@@ -47,7 +47,7 @@ return [
     // PhanPluginConstantVariableNull : 10+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanPluginSuspiciousParamPosition : 10+ occurrences
-    // PhanRedefineClass : 10+ occurrences
+    // PhanRedefineClass : 3 occurrences
     // PhanTypeMismatchDimFetchNullable : 10+ occurrences
     // PhanEmptyFQSENInClasslike : 5 occurrences
     // PhanInvalidFQSENInClasslike : 4 occurrences
@@ -704,7 +704,7 @@ return [
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/mod_expedition_ribera.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/expedition/modules_expedition.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/expensereport/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expensereport/mod_expensereport_sand.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/expensereport/modules_expensereport.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/export/export_csviso.modules.php' => ['PhanPluginUnknownArrayMethodParamType'],
@@ -724,7 +724,7 @@ return [
         'htdocs/core/modules/fichinter/modules_fichinter.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/holiday/modules_holiday.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/hrm/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/modules_evaluation.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty'],
@@ -740,11 +740,11 @@ return [
         'htdocs/core/modules/mailings/xinputfile.modules.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/mailings/xinputuser.modules.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/member/doc/doc_generic_member_odt.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeSuspiciousNonTraversableForeach'],
-        'htdocs/core/modules/member/doc/pdf_standard.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanRedefineClass'],
+        'htdocs/core/modules/member/doc/pdf_standard_member.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
         'htdocs/core/modules/member/modules_member.class.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/modFacture.class.php' => ['PhanPluginDuplicateExpressionAssignmentOperation'],
-        'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginEmptyStatementIf', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginEmptyStatementIf', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/movement/modules_movement.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
@@ -761,7 +761,7 @@ return [
         'htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php' => ['PhanPluginUnknownArrayMethodParamType'],
         'htdocs/core/modules/printsheet/modules_labels.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall'],
-        'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/product/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/product/modules_product.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/product_batch/mod_lot_advanced.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/product_batch/mod_lot_free.php' => ['PhanTypeMismatchArgumentProbablyReal'],
@@ -788,7 +788,7 @@ return [
         'htdocs/core/modules/societe/mod_codecompta_aquarium.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/modules/societe/mod_codecompta_digitaria.php' => ['PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeInvalidLeftOperandOfNumericOp', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/core/modules/societe/modules_societe.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/core/modules/stock/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanRedefineClass', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/stock/modules_stock.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php' => ['PhanPluginDuplicateExpressionAssignmentOperation', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredMethod'],
@@ -804,7 +804,7 @@ return [
         'htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php' => ['PhanPossiblyUndeclaredVariable'],
         'htdocs/core/modules/supplier_order/mod_commande_fournisseur_orchidee.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/supplier_order/modules_commandefournisseur.php' => ['PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownPropertyType'],
-        'htdocs/core/modules/supplier_payment/doc/pdf_standard.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanRedefineClass', 'PhanUndeclaredMethod'],
+        'htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredMethod'],
         'htdocs/core/modules/supplier_payment/mod_supplier_payment_brodator.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/supplier_payment/modules_supplier_payment.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php' => ['PhanPluginConstantVariableBool', 'PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredMethod', 'PhanUndeclaredProperty'],

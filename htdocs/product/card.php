@@ -1593,7 +1593,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print img_picto('', 'clock', 'class="pictofixedwidth"');
 				print '<input name="duration_value" size="4" value="'.GETPOSTINT('duration_value').'">';
-				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
+				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_unit') ? GETPOST('duration_unit', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
 				print ' &nbsp; &nbsp; &nbsp; ';

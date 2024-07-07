@@ -817,17 +817,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Lines to consume
 
+		print '<!-- Lines to consume -->'."\n";
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="clearboth"></div>';
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
-		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
+		$permissiontoaddaconsumeline = ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED) ? 1 : -2;
 		$parameters = array('morecss' => 'reposition');
+		$helpText = '';
+		if ($permissiontoaddaconsumeline == -2) {
+			$helpText = $langs->trans('MOIsClosed');
+		}
 
 		$newcardbutton = '';
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLines'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
+			$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLines'), $helpText, 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
 		}
 
 		print load_fiche_titre($langs->trans('Consumption'), $newcardbutton, '', 0, '', '', '');
@@ -994,7 +999,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$reg = [];
 							$qtyhourservice = 0;
 							if (preg_match('/^(\d+)([a-z]+)$/', $tmpproduct->duration, $reg)) {
-								$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+								$qtyhourservice = convertDurationtoHour($reg[1], (string) $reg[2]);
 							}
 							$qtyhourforline = 0;
 							if ($line->fk_unit) {

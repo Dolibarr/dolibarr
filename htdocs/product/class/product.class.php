@@ -1446,14 +1446,19 @@ class Product extends CommonObject
 						$olddir = $conf->product->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
 						$newdir = $conf->product->dir_output."/".dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir)) {
-							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							//$res = dol_move($olddir, $newdir);
+							// include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							// $res = dol_move($olddir, $newdir);
 							// do not use dol_move with directory
 							$res = @rename($olddir, $newdir);
 							if (!$res) {
 								$langs->load("errors");
 								$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 								$error++;
+							} else {
+								// to keep old entries with the new dir
+								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+								$ecmfiles = new EcmFiles($this->db);
+								$ecmfiles->updateAfterRename("produit/".dol_sanitizeFileName($this->oldcopy->ref), "produit/".dol_sanitizeFileName($this->ref));
 							}
 						}
 					}
