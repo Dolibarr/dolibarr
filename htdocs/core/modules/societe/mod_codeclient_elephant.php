@@ -117,7 +117,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
-		// Date of switch to that numberring model
+		// Date of switch to that numbering model
 		$datedb = getDolGlobalString('COMPANY_ELEPHANT_DATE_START');
 		// After save, default dolibarr store data like displayed : 20/05/2024 and we need a timestamp -> override data
 		if (!empty($datedb)) {
