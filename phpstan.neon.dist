@@ -87,7 +87,6 @@ parameters:
 		- '#run_sql expects int, string#'
 		- '#expects int, float#'
 		- '#expects int, null#'
-		- '#expects int, true given.#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'
 		- '#expects float\|string#'
