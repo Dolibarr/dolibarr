@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2020	Ferran Marcet		  	<fmarcet@2byte.es>
- * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
- * Copyright (C) 2023       Nick Fragoulis
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2010-2017	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1077,14 +1078,13 @@ if (empty($reshook)) {
  * View
  */
 
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
-
 $title = $object->ref." - ".$langs->trans('Contract');
 if ($action == 'create') {
 	$title = $langs->trans("NewContract");
 }
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -2315,64 +2315,63 @@ if ($action == 'create') {
 llxFooter();
 
 $db->close();
-?>
 
-<?php
 if (isModEnabled('margin') && $action == 'editline') {
-	// TODO Why this ? To manage margin on contracts ??>
-<script type="text/javascript">
-$(document).ready(function() {
-  var idprod = $("input[name='idprod']").val();
-  var fournprice = $("input[name='fournprice']").val();
-  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
-  if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
-		  'idprod': idprod,
-		  'token': token
-		  }, function(data) {
-		if (data.length > 0) {
-		  var options = '';
-		  var trouve=false;
-		  $(data).each(function() {
-			options += '<option value="'+this.id+'" price="'+this.price+'"';
-			if (fournprice > 0) {
-				if (this.id == fournprice) {
-				  options += ' selected';
-				  $("#buying_price").val(this.price);
-				  trouve = true;
+	// TODO Why this ? To manage margin on contracts ?
+	print "\n".'<script type="text/javascript">'."\n";
+	?>
+	$(document).ready(function() {
+	  var idprod = $("input[name='idprod']").val();
+	  var fournprice = $("input[name='fournprice']").val();
+	  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+	  if (idprod > 0) {
+		  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+			  'idprod': idprod,
+			  'token': token
+			  }, function(data) {
+			if (data.length > 0) {
+			  var options = '';
+			  var trouve=false;
+			  $(data).each(function() {
+				options += '<option value="'+this.id+'" price="'+this.price+'"';
+				if (fournprice > 0) {
+					if (this.id == fournprice) {
+					  options += ' selected';
+					  $("#buying_price").val(this.price);
+					  trouve = true;
+					}
 				}
+				options += '>'+this.label+'</option>';
+			  });
+			  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
+			  $("#fournprice").html(options);
+			  if (trouve) {
+				$("#buying_price").hide();
+				$("#fournprice").show();
+			  }
+			  else {
+				$("#buying_price").show();
+			  }
+			  $("#fournprice").change(function() {
+				var selval = $(this).find('option:selected').attr("price");
+				if (selval)
+				  $("#buying_price").val(selval).hide();
+				else
+				  $('#buying_price').show();
+			  });
 			}
-			options += '>'+this.label+'</option>';
-		  });
-		  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
-		  $("#fournprice").html(options);
-		  if (trouve) {
-			$("#buying_price").hide();
-			$("#fournprice").show();
-		  }
-		  else {
-			$("#buying_price").show();
-		  }
-		  $("#fournprice").change(function() {
-			var selval = $(this).find('option:selected').attr("price");
-			if (selval)
-			  $("#buying_price").val(selval).hide();
-			else
+			else {
+			  $("#fournprice").hide();
 			  $('#buying_price').show();
-		  });
+			}
+		  },
+		  'json');
 		}
 		else {
 		  $("#fournprice").hide();
 		  $('#buying_price').show();
 		}
-	  },
-	  'json');
-	}
-	else {
-	  $("#fournprice").hide();
-	  $('#buying_price').show();
-	}
-});
-</script>
+	});
 	<?php
+	print "\n".'<script type="text/javascript">'."\n";
 }
