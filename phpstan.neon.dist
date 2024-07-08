@@ -86,7 +86,6 @@ parameters:
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
 		- '#expects int, float#'
-		- '#expects int, null#'
 		- '#expects int, bool given.#'
 		- '#expects int, false given.#'
 		- '#expects int, true given.#'
