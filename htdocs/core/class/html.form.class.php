@@ -1458,7 +1458,7 @@ class Form
 			// Immediate load of all database
 			$multiple = false;
 			$disableifempty = 0;
-			$options_only = false;
+			$options_only = 0;
 			$limitto = '';
 
 			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
