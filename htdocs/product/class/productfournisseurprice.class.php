@@ -327,7 +327,11 @@ class ProductFournisseurPrice extends CommonObject
 		if (isset($filter['customsql'])) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
 		}
-		$filter = $filter['uss'] ?? "";
+		//some part of dolibarr main code use $filter as array like $filter['t.xxxx'] =
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		$records = array();
 
@@ -342,6 +346,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {

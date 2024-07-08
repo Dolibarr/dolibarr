@@ -442,6 +442,7 @@ class ProductCustomerPrice extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year

@@ -867,6 +867,7 @@ class Ticket extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
