@@ -116,7 +116,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
-		dol_print_error(null, 'Bad value of input parameter for tax_by_rate');
+		dol_print_error(null, 'Bad value of input parameter for tax_by_thirdparty');
 	}
 
 	$list = array();
@@ -474,14 +474,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	}
 
 	if (!$sql) {
-		dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
+		dol_syslog("Tax.lib.php::tax_by_thirdparty no accountancy module enabled".$sql, LOG_ERR);
 		return -1; // -1 = Not accountancy module enabled
 	}
 	if ($sql == 'TODO') {
 		return -2; // -2 = Feature not yet available
 	}
 	if ($sql != 'TODO') {
-		dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
+		dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$company_id = -1;
@@ -596,14 +596,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " ORDER BY e.rowid";
 
 		if (!$sql) {
-			dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
+			dol_syslog("Tax.lib.php::tax_by_thirdparty no accountancy module enabled".$sql, LOG_ERR);
 			return -1; // -1 = Not accountancy module enabled
 		}
 		if ($sql == 'TODO') {
 			return -2; // -2 = Feature not yet available
 		}
 		if ($sql != 'TODO') {
-			dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
+			dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$company_id = -1;
