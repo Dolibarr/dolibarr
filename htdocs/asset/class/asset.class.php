@@ -398,6 +398,11 @@ class Asset extends CommonObject
 		if (isset($filter['customsql'])) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
 		}
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		} else {
+			$filter = '';
+		}
 
 
 		$records = array();
