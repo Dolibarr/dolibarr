@@ -344,7 +344,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'CONTRACT_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $tmparray);
 				}
 

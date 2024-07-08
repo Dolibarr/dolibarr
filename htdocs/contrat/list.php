@@ -1203,7 +1203,7 @@ while ($i < $imaxinloop) {
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="center nocellnopadd">';
 			print $obj->zip;
 			print '</td>';
 			if (!$i) {

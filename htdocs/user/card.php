@@ -1959,18 +1959,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				print '</td></tr>';
 			}
-
-			print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
-			print '<td>';
-			if ($object->datepreviouslogin) {
-				print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+			if ((getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) || (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 1 && $object->id == $user->id)) {
+				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
+				print '<td>';
+				if ($object->datepreviouslogin) {
+					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+				}
+				if ($object->datelastlogin) {
+					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			if ($object->datelastlogin) {
-				print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
-			}
-			print '</td>';
-			print "</tr>\n";
-
 			print '</table>';
 			print '</div>';
 

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +89,7 @@ $search_timespend = GETPOST('search_timespend');
 $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
+$search_task_billable = GETPOST('search_task_billable');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -147,6 +149,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOSTINT('progress');
 $budget_amount = GETPOSTFLOAT('budget_amount');
+$billable = (GETPOST('billable', 'aZ') == 'yes'? 1 : 0);
 $label = GETPOST('label', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOSTISSET('planned_workloadhour') ? GETPOSTINT('planned_workloadhour') : '');
@@ -175,6 +178,7 @@ $arrayfields = array(
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
 	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
+	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => 1, 'position' => 13);
 }
 
 // Extra fields
@@ -233,6 +237,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
+		$search_task_billable = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -314,6 +319,9 @@ if (!empty($search_progresscalc)) {
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+if ($search_task_billable) {
+	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
+}
 //var_dump($morewherefilterarray);
 
 $morewherefilter = '';
@@ -363,6 +371,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$task->date_end = $date_end;
 			$task->progress = $progress;
 			$task->budget_amount = $budget_amount;
+			$task->billable = $billable;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -556,6 +565,9 @@ if ($id > 0 || !empty($ref)) {
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
 	}
+	if ($search_task_billable) {
+		$param .= '&search_task_billable='.urlencode($search_task_billable);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -713,7 +725,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
 	$projectoktoentertime = 1;
-	if ($object->id > 0 && $object->statut == Project::STATUS_CLOSED) {
+	if ($object->id > 0 && $object->status == Project::STATUS_CLOSED) {
 		$projectoktoentertime = 0;
 		print '<div class="warning">';
 		$langs->load("errors");
@@ -721,7 +733,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</div>';
 	}
 
-	if ($object->id > 0 && $object->statut == Project::STATUS_DRAFT) {
+	if ($object->id > 0 && $object->status == Project::STATUS_DRAFT) {
 		$projectoktoentertime = 0;
 		print '<div class="warning">';
 		$langs->load("errors");
@@ -743,7 +755,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+	$obj = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj();
@@ -793,6 +805,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
+	print '</td></tr>';
+
+	// Billable
+	print '<tr><td>'.$langs->trans("Billable").'</td><td>';
+	print $form->selectyesno('billable');
 	print '</td></tr>';
 
 	// Date start task
@@ -1053,6 +1070,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</td>';
 	}
 
+	if (!empty($arrayfields['t.billable']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_task_billable', $search_task_billable, 0, false, 1);
+		print '</td>';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
@@ -1124,6 +1147,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
+	}
+
+	if (!empty($arrayfields['t.billable']['checked'])) {
+		print_liste_field_titre($arrayfields['t.billable']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}
 	// Extra fields
 	$disablesortlink = 1;

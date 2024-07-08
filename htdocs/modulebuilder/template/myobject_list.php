@@ -98,7 +98,8 @@ $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements sele
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -479,6 +480,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {

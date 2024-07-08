@@ -659,11 +659,11 @@ class Form
 		$extrastyle = '';
 		if ($direction < 0) {
 			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-left: 3px;';
+			$extrastyle = 'padding: 0px; padding-left: 2px;';
 		}
 		if ($direction > 0) {
 			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-right: 3px;';
+			$extrastyle = 'padding: 0px; padding-right: 2px;';
 		}
 
 		$classfortooltip = 'classfortooltip';
@@ -9713,7 +9713,7 @@ class Form
 	 * @param string 	$labelno 		Label for No
 	 * @return    string                See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'width75', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
 
@@ -9726,7 +9726,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat width75' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"' . $disabled . '>' . "\n";
+		$resultyesno = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"' . $disabled . '>' . "\n";
 		if ($useempty) {
 			$resultyesno .= '<option value="-1"' . (($value < 0) ? ' selected' : '') . '>&nbsp;</option>' . "\n";
 		}

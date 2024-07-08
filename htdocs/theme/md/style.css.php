@@ -4874,10 +4874,18 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	height: 54px;
 	padding: 3px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
 		max-width: calc(50%);
+	}
+
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
 	}
 
 	.clearbothonsmartphone {
@@ -5442,7 +5450,7 @@ div.ui-tooltip.mytooltip {
 
 
 /* ============================================================================== */
-/* Calendar picker                                                                */
+/* Calendar date picker                                                                */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5450,6 +5458,22 @@ div.ui-tooltip.mytooltip {
 html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
 {
 	border: unset;
+}
+
+div#ui-datepicker-div {
+	width: 300px;
+	box-shadow: 2px 5px 15px #aaa;
+	border: unset;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+.ui-datepicker .ui-datepicker table {
+	font-size: unset;
+}
+.ui-datepicker .ui-widget-header {
+	border: unset;
+	background: unset;
 }
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
@@ -6097,6 +6121,9 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
+}
 
 
 /* ============================================================================== */
@@ -6398,7 +6425,7 @@ div#ecm-layout-west {
 	vertical-align: top;
 }
 div#ecm-layout-center {
-	width: calc(100% - 390px);
+	width: calc(100% - 405px);
 	vertical-align: top;
 	float: right;
 }

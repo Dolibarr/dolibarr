@@ -776,7 +776,7 @@ class Facture extends CommonInvoice
 						$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 					}
 				} else {
-					dol_print_error($resqlcontact);
+					dol_print_error($this->db, $resqlcontact);
 				}
 			}
 
@@ -3224,7 +3224,7 @@ class Facture extends CommonInvoice
 						// Check for mandatory prof id (but only if country is other than ours)
 						if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id) {
 							$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
-							if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+							if (!$vallabel && getDolGlobalString($idprof_mandatory)) {
 								$langs->load("errors");
 								$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);

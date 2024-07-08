@@ -726,8 +726,7 @@ function detect_dolibarr_main_document_root()
  */
 function detect_dolibarr_main_data_root($dolibarr_main_document_root)
 {
-	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
-	$dolibarr_main_data_root .= "/documents";
+	$dolibarr_main_data_root = preg_replace("/\/[^\/]+$/", "/documents", $dolibarr_main_document_root);
 	return $dolibarr_main_data_root;
 }
 

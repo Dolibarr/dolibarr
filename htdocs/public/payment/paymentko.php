@@ -233,7 +233,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -275,7 +275,7 @@ if (empty($doactionsthenredirect)) {
 	print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_KO';
-	if (!empty($conf->global->$key)) {
+	if (getDolGlobalString($key)) {
 		print $conf->global->$key;
 	}
 

@@ -89,7 +89,7 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 $arrayfields = array();
 $arrayofmassactions = array();
 
-if (empty($conf->holiday->enabled)) {
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module not enabled');
 }
 

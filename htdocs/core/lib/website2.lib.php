@@ -278,7 +278,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
 		$tplcontent .= "// END PHP ?>\n";
 	} else {
-		$tplcontent .= "<?php\n// This is a library page.\n?>\n";
+		$tplcontent .= "<?php // BEGIN PHP\n";
+		$tplcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
+		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
+		$tplcontent .= "} // Not already loaded\n";
+		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		$tplcontent .= "// END PHP ?>\n";
+
 		$tplcontent .= $objectpage->content;
 	}
 
@@ -715,7 +724,10 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 				break;
 			}
 		}
-		// This char can be used to execute RCE for example using with echo `ls`
+	}
+
+	// This char can be used to execute RCE for example using with echo `ls`
+	if (!$error) {
 		$forbiddenphpchars = array();
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 			$forbiddenphpchars = array("`");
@@ -727,18 +739,27 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 				break;
 			}
 		}
-		// Deny dynamic functions '${a}('  or  '$a[b]('  or  '$a->b('  => So we refuse '}('  and  ']('
+	}
+
+	// Deny dynamic functions '${a}('  or  '$a[b]('  => So we refuse '}('  and  ']('
+	if (!$error) {
 		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
 		}
-		// Deny dynamic functions '$xxx(' or '$a->b('
-		if (preg_match('/\$[a-z0-9_\-\>\/\*]+\(/ims', $phpfullcodestring)) {
+	}
+
+	// Deny dynamic functions '$xxx('
+	if (!$error) {
+		if (preg_match('/\$[a-z0-9_\-\/\*]+\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 		}
 	}
 
+	// No need to block $conf->global->aaa() because PHP try to run method aaa an not function into $conf->global->aaa.
+
+	// Then check if installmodules does not block dynamic PHP code change.
 	if ($phpfullcodestringold != $phpfullcodestring) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);

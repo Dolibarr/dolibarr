@@ -138,7 +138,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 
 		$date = ($object->date_bom ? $object->date_bom : $object->date);
 
-		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', '', $date);
 
 		return  $numFinal;
 	}

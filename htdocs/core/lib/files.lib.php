@@ -1468,11 +1468,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
 {
-	global $db, $user, $langs;
+	global $db, $user;
 	global $hookmanager;
-
-	// Load translation files required by the page
-	$langs->loadLangs(array('other', 'errors'));
 
 	if (empty($nolog)) {
 		dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
