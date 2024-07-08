@@ -892,7 +892,7 @@ class EvaluationLine extends CommonObjectLine
 		$this->lines = array();
 
 		$objectline = new EvaluationLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_evaluationdet:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_evaluationdet:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);

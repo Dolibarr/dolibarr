@@ -169,7 +169,7 @@ if (empty($reshook)) {
 	if ($action == 'close') {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
-		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
+		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, ['uss' => "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')"], 'AND');
 
 		$errors = 0;
 		// we go through the evaldets of the eval

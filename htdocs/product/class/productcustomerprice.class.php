@@ -394,7 +394,11 @@ class ProductCustomerPrice extends CommonObject
 		if (isset($filter['customsql'])) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
 		}
-		$filter = $filter['uss'] ?? "";
+		//some part of dolibarr main code use $filter as array like 't.fk_product' => $prod->id
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";

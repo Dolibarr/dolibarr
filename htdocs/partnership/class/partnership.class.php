@@ -1190,7 +1190,7 @@ class Partnership extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PartnershipLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_partnership:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_partnership:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

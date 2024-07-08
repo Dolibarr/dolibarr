@@ -944,7 +944,7 @@ class StockTransfer extends CommonObject
 		$this->lines = array();
 
 		$objectline = new StockTransferLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, "(fk_stocktransfer:=:".((int) $this->id).")");
+		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, ['uss' => "(fk_stocktransfer:=:".((int) $this->id).")"]);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

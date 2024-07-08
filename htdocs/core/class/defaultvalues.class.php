@@ -252,7 +252,11 @@ class DefaultValues extends CommonObject
 		if (isset($filter['customsql'])) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
 		}
-		$filter = $filter['uss'] ?? "";
+		//some part of dolibarr main code use $filter as array like 't.page' => 'comm/action/card.php'
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		$records = array();
 

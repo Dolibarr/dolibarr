@@ -961,7 +961,7 @@ class Position extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PositionLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_position:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_position:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
@@ -1037,7 +1037,7 @@ class Position extends CommonObject
 	{
 		$TPosition = array();
 
-		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, '(fk_user:=:'.((int) $userid).')');
+		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, ['uss' => '(fk_user:=:'.((int) $userid).')']);
 
 		return $TPosition;
 	}

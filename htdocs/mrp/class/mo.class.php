@@ -931,7 +931,7 @@ class Mo extends CommonObject
 			if (!empty($fk_movement)) {
 				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, ['uss' => '(fk_stock_movement:=:'.((int) $fk_movement).')']);
 				$moline = array_shift($TArrayMoLine);
 
 				$movement = new MouvementStock($this->db);
@@ -1637,7 +1637,7 @@ class Mo extends CommonObject
 		if (!empty($rolefilter)) {
 			$filter .= " AND (role:=:'".$this->db->escape($rolefilter)."')";
 		}
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $filter);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => $filter]);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

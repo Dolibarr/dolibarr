@@ -1078,7 +1078,7 @@ if (empty($reshook)) {
 
 				$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
 
-				$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+				$result = $prodcustprice->fetchAll('', '', 0, 0, ['uss' => $filter]);
 				if ($result) {
 					if (count($prodcustprice->lines) > 0) {
 						$pu_ht = price($prodcustprice->lines [0]->price);

@@ -981,7 +981,7 @@ class KnowledgeRecord extends CommonObject
 		$this->lines = array();
 
 		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_knowledgerecord:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

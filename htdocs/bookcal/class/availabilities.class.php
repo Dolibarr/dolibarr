@@ -934,7 +934,7 @@ class Availabilities extends CommonObject
 		$this->lines = array();
 
 		$objectline = new AvailabilitiesLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_availabilities:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_availabilities:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

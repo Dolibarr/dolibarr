@@ -1089,7 +1089,7 @@ class MyObject extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_myobject:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_myobject:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);

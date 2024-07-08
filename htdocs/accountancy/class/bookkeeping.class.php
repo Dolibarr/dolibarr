@@ -1038,7 +1038,8 @@ class BookKeeping extends CommonObject
 	 * @param string 		$sortfield                      Sort field
 	 * @param int 			$limit                          Limit
 	 * @param int 			$offset                         Offset limit
-	 * @param string|array 	$filter                         Filter array
+	 * @param array			$filter       					Filter as an Universal Search string.
+	 * 														Example: $filter['uss'] =
 	 * @param string 		$filtermode                     Filter mode (AND or OR)
 	 * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
 	 * @return int                                          Return integer <0 if KO, >0 if OK
@@ -1050,7 +1051,11 @@ class BookKeeping extends CommonObject
 		if (isset($filter['customsql'])) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
 		}
-		$filter = $filter['uss'] ?? "";
+		//some part of dolibarr main code use $filter as array like $filter['t.reconciled_option'] = $search_not_reconciled
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

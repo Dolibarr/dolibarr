@@ -224,7 +224,7 @@ class Evaluation extends CommonObject
 		if ($resultcreate > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 			$skillRank = new SkillRank($this->db);
-			$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $this->fk_job).") AND (objecttype:=:'job')");
+			$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, ['uss' => '(fk_object:=:'.((int) $this->fk_job).") AND (objecttype:=:'job')"]);
 
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
@@ -912,7 +912,7 @@ class Evaluation extends CommonObject
 		$this->lines = array();
 
 		$objectline = new EvaluationLine($this->db);
-		$result = $objectline->fetchAll('ASC', '', 0, 0, '(fk_evaluation:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', '', 0, 0, ['uss' => '(fk_evaluation:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);

@@ -912,7 +912,7 @@ class RecruitmentCandidature extends CommonObject
 		$this->lines = array();
 
 		$objectline = new RecruitmentCandidatureLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_recruitmentcandidature:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_recruitmentcandidature:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

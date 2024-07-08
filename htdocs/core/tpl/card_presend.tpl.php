@@ -229,7 +229,7 @@ if ($action == 'presend') {
 	if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 		$listeuser = array();
 		$fuserdest = new User($db);
-		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, "(t.statut:=:1) AND (t.employee:=:1) AND (t.email:isnot:NULL) AND (t.email:!=:'')", 'AND', true);
+		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, ['uss' => "(t.statut:=:1) AND (t.employee:=:1) AND (t.email:isnot:NULL) AND (t.email:!=:'')"], 'AND', true);
 		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');

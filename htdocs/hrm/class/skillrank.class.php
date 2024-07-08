@@ -211,7 +211,7 @@ class SkillRank extends CommonObject
 	{
 		global $langs;
 
-		$filter = '(fk_object:=:'.((int) $this->fk_object).") AND (objecttype:=:'".$this->db->escape($this->objecttype)."') AND (fk_skill:=:".((int) $this->fk_skill).")";
+		$filter = ['uss' => '(fk_object:=:'.((int) $this->fk_object).") AND (objecttype:=:'".$this->db->escape($this->objecttype)."') AND (fk_skill:=:".((int) $this->fk_skill).")"];
 
 		$alreadyLinked = $this->fetchAll('ASC', 'rowid', 0, 0, $filter);
 		if (!empty($alreadyLinked)) {
@@ -921,7 +921,7 @@ class SkillRank extends CommonObject
 
 		/*
 		$objectline = new SkillRankLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_skillrank:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_skillrank:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

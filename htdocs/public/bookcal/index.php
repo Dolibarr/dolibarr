@@ -427,7 +427,7 @@ if ($action == 'afteradd') {
 		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
 		$arrayofavailabledays = array();
 
-		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, '(status:=:1) AND (fk_bookcal_calendar:=:'.((int) $id).')');
+		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, ['uss' => '(status:=:1) AND (fk_bookcal_calendar:=:'.((int) $id).')']);
 		if ($arrayofavailabilities < 0) {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {

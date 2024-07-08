@@ -141,7 +141,7 @@ function conferenceorboothProjectPrepareHead($object)
 	} else {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorbooth.class.php';
 		$conforbooth = new ConferenceOrBooth($db);
-		$result = $conforbooth->fetchAll('', '', 0, 0, '(t.fk_project:=:' . ((int) $object->id) . ')');
+		$result = $conforbooth->fetchAll('', '', 0, 0, ['uss' => '(t.fk_project:=:' . ((int) $object->id) . ')']);
 		if (!is_array($result) && $result < 0) {
 			setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
 		} else {
@@ -167,7 +167,7 @@ function conferenceorboothProjectPrepareHead($object)
 	} else {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendees = new ConferenceOrBoothAttendee($db);
-		$result = $attendees->fetchAll('', '', 0, 0, '(t.fk_project:=:' . ((int) $object->id) . ')');
+		$result = $attendees->fetchAll('', '', 0, 0, ['uss' => '(t.fk_project:=:' . ((int) $object->id) . ')']);
 		if (!is_array($result) && $result < 0) {
 			setEventMessages($attendees->error, $attendees->errors, 'errors');
 		} else {

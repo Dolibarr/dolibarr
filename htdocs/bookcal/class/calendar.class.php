@@ -926,7 +926,7 @@ class Calendar extends CommonObject
 		$this->lines = array();
 
 		$objectline = new CalendarLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_calendar:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_calendar:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
