@@ -310,3 +310,4 @@ MergeTasks=Fusionner tâches
 TaskMergeSuccess=Les tâches ont été fusionnées
 ErrorTaskIdIsMandatory=Erreur : l'ID de tâche est obligatoire
 ErrorsTaskMerge=Une erreur s'est produite lors de la fusion des tâches
+Billable = Facturable

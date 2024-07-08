@@ -331,7 +331,7 @@ class FormCompany extends Form
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
-							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
+							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
 								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
@@ -887,7 +887,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss);
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened

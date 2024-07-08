@@ -1226,6 +1226,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => 1, 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => 0, 'position' => 45),
 		't.statut' => array('label' => "Status", 'checked' => 1, 'position' => 50, 'class' => 'center'),
+		'u.user'=>array('label'=>"DolibarrLogin", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
 	// Extra fields
 	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
@@ -1798,7 +1799,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	$sql = '';
 
 	if (isModEnabled('agenda')) {
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
 		// Recherche histo sur actioncomm
@@ -2339,7 +2340,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '</td>';
 
 			// Linked object
-			$out .= '<td class="nowraponall">';
+			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
 					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];
@@ -2674,7 +2675,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center centpercent opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

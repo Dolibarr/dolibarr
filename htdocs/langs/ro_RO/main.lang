@@ -10,7 +10,7 @@ DIRECTION=ltr
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
 # freeserif is for Tamil or Ethiopian
-FONTFORPDF=helvetica
+FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
 SeparatorThousand=Space

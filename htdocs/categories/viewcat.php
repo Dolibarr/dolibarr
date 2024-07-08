@@ -89,7 +89,7 @@ if (is_numeric($type)) {
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
 /*

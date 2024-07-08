@@ -44,7 +44,7 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $bankcateg = new BankCateg($db);
 
 

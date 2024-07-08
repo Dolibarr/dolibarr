@@ -104,7 +104,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercard', 'globalcard'));
 
 $result = restrictedArea($user, 'commande', $id);
@@ -116,7 +116,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
 
 // Permissions / Rights
 $usercanread    =  $user->hasRight("commande", "lire");
@@ -180,11 +180,11 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
@@ -1513,16 +1513,17 @@ if (empty($reshook)) {
 
 	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->insertExtraFields('ORDER_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'ORDER_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -2248,7 +2249,12 @@ if ($action == 'create' && $usercancreate) {
 				}
 			}
 			if ($nbMandated > 0) {
-				$text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+				if (getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
+					setEventMessages($langs->trans("mandatoryPeriodNeedTobeSetMsgValidate"), null, 'errors');
+					$error++;
+				} else {
+					$text .= '<div><span class="clearboth nowraponall warning">'.img_warning().$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+				}
 			}
 
 			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
@@ -2361,7 +2367,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			if (!$error) {
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 240);
 			}
 		}
 
@@ -2981,11 +2987,15 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				$arrayforbutaction = array();
-
 				// Create a purchase order
-				$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+
+
+				if (! getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER')) {
+					$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+				}
+
 				/*if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {
-					if ($usercancreatepurchaseorder) {
+					if ($usercancreatepurchaseorder) { isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0
 						print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id, '');
 					}
 				}*/
@@ -3080,7 +3090,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Clone
 				if ($usercancreate) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&amp;token='.newToken().'&amp;id='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id.'&socid='.$object->socid, '');
 				}
 
 				// Cancel order

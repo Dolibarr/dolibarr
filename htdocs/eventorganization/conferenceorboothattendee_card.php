@@ -54,7 +54,7 @@ $conf_or_booth_id = GETPOSTINT('conforboothid');
 $fk_project = GETPOSTINT('fk_project');
 $withproject = 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -105,7 +105,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Now we have loaded the attendee, we can force the project (in case value provided as parameter is wrong or value not provided)
 if ($object->fk_project > 0) {

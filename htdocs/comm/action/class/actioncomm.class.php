@@ -1321,7 +1321,7 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -1847,7 +1847,7 @@ class ActionComm extends CommonObject
 	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
 		global $conf;
 
@@ -2007,14 +2007,14 @@ class ActionComm extends CommonObject
 				$sql .= " p.date_start_event as datep,"; // Start
 				$sql .= " p.date_end_event as datep2,"; // End
 				$sql .= " p.datec, p.tms as datem,";
-				$sql .= " p.title as label, '' as code, p.note_private, p.note_public, 0 as type_id,";
+				$sql .= " p.title as label, '' as code, p.note_public, p.note_private, 0 as type_id,";
 				$sql .= " p.fk_soc,";
 				$sql .= " p.fk_user_creat as fk_user_author, p.fk_user_modif as fk_user_mod,";
 				$sql .= " 0 as fk_user_action,";
 				$sql .= " 0 as fk_contact, 100 as percentage,";
 				$sql .= " 0 as fk_element, '' as elementtype,";
 				$sql .= " 1 as priority, 0 as fulldayevent, p.location, 0 as transparency,";
-				$sql .= " u.firstname, u.lastname, u.email,";
+				$sql .= " u.firstname, u.lastname, '".$this->db->escape(getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."' as email,";
 				$sql .= " s.nom as socname,";
 				$sql .= " 0 as type_id, '' as type_code, '' as type_label";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -2060,7 +2060,7 @@ class ActionComm extends CommonObject
 				$sql .= " a.datep,"; // Start
 				$sql .= " a.datep2,"; // End
 				$sql .= " a.datec, a.tms as datem,";
-				$sql .= " a.label, a.code, a.note as note_private, '' as note_public, a.fk_action as type_id,";
+				$sql .= " a.label, a.code, '' as note_public, a.note as note_private, a.fk_action as type_id,";
 				$sql .= " a.fk_soc,";
 				$sql .= " a.fk_user_author, a.fk_user_mod,";
 				$sql .= " a.fk_user_action,";
@@ -2231,7 +2231,11 @@ class ActionComm extends CommonObject
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
 
-					$event['desc'] = $obj->note_private;
+					if (!empty($filters['module']) && $filters['module'] == 'project@eventorganization') {
+						$event['desc'] = $obj->note_public;
+					} else {
+						$event['desc'] = $obj->note_private;
+					}
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
 					$event['duration'] = $duration; // Not required with type 'journal'
@@ -2243,13 +2247,13 @@ class ActionComm extends CommonObject
 					$event['category'] = $obj->type_label;
 					$event['email'] = $obj->email;
 
+					// Public URL of event
 					if ($eventorganization != '') {
-						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-						//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-						$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
-						$event['url'] = $url;
+						$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $obj->id).'&type=global&noregistration=1';
+						$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $obj->id), 'md5');
+						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+
+						$event['url'] = $link_subscription;
 					}
 
 					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));

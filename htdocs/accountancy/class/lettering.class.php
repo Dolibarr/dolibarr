@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -291,79 +291,136 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$ids			ids array
 	 * @param	int			$notrigger		no trigger
+	 * @param	bool		$partial		Partial lettering
 	 * @return	int
 	 */
-	public function updateLettering($ids = array(), $notrigger = 0)
+	public function updateLettering($ids = array(), $notrigger = 0, $partial = false)
 	{
-		$error = 0;
-
-		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
-		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
-
-		$sql = "SELECT DISTINCT ab2.lettering_code";
-		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		$sql .=	" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
-		$sql .=	" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
-		$sql .=	" AND ab2.lettering_code != ''";
-		$sql .=	" ORDER BY ab2.lettering_code DESC";
-		$sql .=	" LIMIT 1 ";
-
-		$resqla = $this->db->query($sql);
-		if ($resqla) {
-			$obj = $this->db->fetch_object($resqla);
-			$lettre = (empty($obj->lettering_code) ? $lettre : $obj->lettering_code);
-			if (!empty($obj->lettering_code)) {
-				$lettre++;
-			}
-			$this->db->free($resqla);
-		} else {
-			$this->errors[] = 'Error'.$this->db->lasterror();
-			$error++;
-		}
-
-		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
-		$resqlb = $this->db->query($sql);
-		if ($resqlb) {
-			$obj = $this->db->fetch_object($resqlb);
-			if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
-				$this->errors[] = 'Total not exacts '.round(abs($obj->deb), 2).' vs '.round(abs($obj->cred), 2);
-				$error++;
-			}
-			$this->db->free($resqlb);
-		} else {
-			$this->errors[] = 'Erreur sql'.$this->db->lasterror();
-			$error++;
-		}
-
-		// Update request
 		$now = dol_now();
+		$error = 0;
 		$affected_rows = 0;
 
-		if (!$error) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-			$sql .= " lettering_code='".$this->db->escape($lettre)."'";
-			$sql .= ", date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
-			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
+		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
+		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
-			dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$this->db->begin();
+
+		// Check partial / normal lettering case
+		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " ORDER BY ab.lettering_code DESC";
+
+		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (empty($obj->lettering_code)) continue;
+
+				// Remove normal lettering code if set partial lettering
+				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
+					if (!empty($obj->bookkeeping_ids)) $ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
+					// Delete partial lettering code if set normal lettering
+					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+					$sql2 .= " lettering_code = NULL";
+					$sql2 .= ", date_lettering = NULL";
+					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+
+					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
+					$resql2 = $this->db->query($sql2);
+					if (!$resql2) {
+						$this->errors[] = 'Error' . $this->db->lasterror();
+						$error++;
+						break;
+					}
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			$this->errors[] = 'Error' . $this->db->lasterror();
+			$error++;
+		}
+
+		if (!$error && !empty($ids)) {
+			// Get next code
+			$sql = "SELECT DISTINCT ab2.lettering_code";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
+			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " ORDER BY ab2.lettering_code DESC";
+
+			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error ".$this->db->lasterror();
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (!empty($obj->lettering_code) &&
+						(($partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) ||
+							(!$partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)))
+					) {
+						$letter = $obj->lettering_code;
+						$letter++;
+						break;
+					}
+				}
+				$this->db->free($resql);
 			} else {
-				$affected_rows = $this->db->affected_rows($resql);
+				$this->errors[] = 'Error' . $this->db->lasterror();
+				$error++;
+			}
+
+			// Test amount integrity
+			if (!$error && !$partial) {
+				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
+				$sql .= " rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+
+				dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					if ($obj = $this->db->fetch_object($resql)) {
+						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
+							$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
+							$error++;
+						}
+					}
+					$this->db->free($resql);
+				} else {
+					$this->errors[] = 'Erreur sql' . $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			// Update lettering code
+			if (!$error) {
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
+				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
+				$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+
+				dol_syslog(__METHOD__ . " - Update lettering code", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = "Error " . $this->db->lasterror();
+				} else {
+					$affected_rows = $this->db->affected_rows($resql);
+				}
 			}
 		}
 
 		// Commit or rollback
 		if ($error) {
+			$this->db->rollback();
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			return -1 * $error;
 		} else {
+			$this->db->commit();
 			return $affected_rows;
 		}
 	}

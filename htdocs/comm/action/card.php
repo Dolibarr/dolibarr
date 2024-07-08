@@ -135,7 +135,7 @@ if ($id > 0 && $action != 'add') {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 $parameters = array('socid' => $socid);
@@ -1593,7 +1593,7 @@ if ($action == 'create') {
 		$hasPermissionOnLinkedObject = 0;
 
 		$elProp = getElementProperties($origin);
-		if ($user->hasRight($elProp['module'], 'read')) {
+		if ($user->hasRight($elProp['module'], 'read') || $user->hasRight($elProp['module'], $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);

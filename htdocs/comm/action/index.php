@@ -168,7 +168,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
@@ -495,35 +495,35 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $viewmode = '<div class="navmode inline-block">';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'list' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_month' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_week' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
 $viewmode .= '<a class="btnTitle'.($mode == 'show_day' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_peruser' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.(isset($object->datep) ? dol_print_date($object->datep, '%Y') : $year).'&month='.(isset($object->datep) ? dol_print_date($object->datep, '%m') : $month).'&day='.(isset($object->datep) ? dol_print_date($object->datep, '%d') : $day).$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow" title="'.dolPrintHTML($langs->trans("ViewPerUser")).'">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
 $parameters = array();
@@ -540,8 +540,8 @@ $viewmode .= '</div>';
 $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before the navigation tools
 
 
-$newcardbutton = '';
 $newparam = '';
+$newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
@@ -594,6 +594,7 @@ if (isModEnabled("bookcal")) {
 
 if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
+
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthdays"); jQuery(".family_birthday").toggle(); });'."\n";
@@ -621,14 +622,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
+	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
-		// Holiday calendar
 		$s .= '
             <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
 					? ' checked' : '') . '>
-                <label for="check_holiday">
+                <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
             </div>';
@@ -665,19 +666,19 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday" class="labelcalendar"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Bookcal Calendar
 	if (isModEnabled("bookcal")) {
 		if (!empty($bookcalcalendars["calendars"])) {
 			foreach ($bookcalcalendars["calendars"] as $key => $value) {
 				$label = $value['label'];
-				$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
+				$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
 			}
 		}
 	}
@@ -2070,13 +2071,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//print 'border: 1px solid #ccc" width="100%"';
 					print '">';
 					print '<tr>';
-					print '<td class="tdoverflow nobottom centpercent '.($nowrapontd ? 'nowrap ' : '').'cal_event'.($event->type_code == 'BIRTHDAY' ? ' cal_event_birthday' : '').'">';
+					print '<td class="tdoverflow nobottom small centpercent '.($nowrapontd ? 'nowrap ' : '').'cal_event'.($event->type_code == 'BIRTHDAY' ? ' cal_event_birthday' : '').'">';
+					print '<!-- left section of event -->';
 
 					$daterange = '';
 
 					if ($event->type_code == 'BIRTHDAY') {
 						// It's birthday calendar
-						$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
+						$picb = '<i class="fas fa-birthday-cake inline-block valignmiddle"></i>';
 						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
 						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						//var_dump($event);

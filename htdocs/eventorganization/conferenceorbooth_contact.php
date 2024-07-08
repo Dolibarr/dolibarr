@@ -54,7 +54,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $withproject = GETPOSTINT('withproject');
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -67,7 +67,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {

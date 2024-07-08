@@ -395,7 +395,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	int		$rowid		Id of object to load
 	 *  @param	string	$ref		Ref of direct debit
-	 *	@return	int					>0 if OK, <0 if KO
+	 *	@return	int					>0 if OK, 0=Not found, <0 if KO
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -448,11 +448,11 @@ class BonPrelevement extends CommonObject
 
 				return 1;
 			} else {
-				dol_syslog(get_class($this) . "::Fetch Erreur aucune ligne retournee");
-				return -1;
+				dol_syslog(get_class($this) . "::Fetch no record found");
+				return 0;
 			}
 		} else {
-			return -2;
+			return -1;
 		}
 	}
 
@@ -2342,7 +2342,7 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr($this->raison_sociale . "                           ", 0, 24));
 
-		// Reference de la remise creancier D1 sur 7 caracteres
+		// Ref of thirdparty on 7 characters
 
 		fwrite($this->file, substr($this->reference_remise . "                           ", 0, 7));
 

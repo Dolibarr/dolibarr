@@ -139,7 +139,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDb $db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 		$this->status = 0;

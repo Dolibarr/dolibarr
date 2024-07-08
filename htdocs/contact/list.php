@@ -184,7 +184,7 @@ if ($type == "c") {
 	$urlfiche = "";
 }
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));

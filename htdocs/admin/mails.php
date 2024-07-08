@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2007-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2016		Jonathan TISSEAU		<jonathan.tisseau@86dev.fr>
- * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2007-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
+ * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,18 +448,24 @@ if ($action == 'edit') {
 	// Auth mode
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		print '<tr class="oddeven smtp_auth_method"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>';
+		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
-			print '<input type="radio" id="radio_pw" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="LOGIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
+			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
-			print '&nbsp; &nbsp; &nbsp;';
-			print '<input type="radio" id="radio_plain" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="PLAIN"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<br>';
+			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype, 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
 			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
-			print '&nbsp; &nbsp; &nbsp;';
-			print '<input type="radio" id="radio_oauth" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="XOAUTH2"'.(getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') == 'XOAUTH2' ? ' checked' : '').'> ';
+			print '<br>';
+			print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'> ';
 			print '<label for="radio_oauth" >'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
+			if (!isModEnabled('oauth')) {
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword=oauth">'.$langs->trans("EnableModuleX", "OAuth").'</a>';
+			} else {
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/admin/oauth.php">'.$langs->trans("SetupModuleX", " OAuth").'</a>';
+			}
 		} else {
-			$value = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
+			$value = getDolGlobalString($vartosmtpstype, 'LOGIN');
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE"), $htmltext, 1, 'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTPS_AUTH_TYPE" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="'.$value.'">';
@@ -592,7 +599,7 @@ if ($action == 'edit') {
 
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
@@ -663,6 +670,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
+
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
@@ -676,9 +684,9 @@ if ($action == 'edit') {
 		}
 		print $text;
 
-		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
 			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
-			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning', 'nomargintop');
+			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'help', 'nomargintop');
 		}
 
 		print '</td></tr>';
@@ -823,139 +831,145 @@ if ($action == 'edit') {
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);
 			//print $messagetoshow;
-			print info_admin($messagetoshow, 0, 0, 'warning nomargintop');
+			print info_admin($messagetoshow, 0, 0, 'warning', 'nomargintop', '', 'warning');
 		}
 
 		print '<br>';
+	}
 
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td></td></tr>';
 
-		// Disable
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
+	// Disable
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
+	} else {
+		print yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
 		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 			print img_warning($langs->trans("Disabled"));
 		}
-		print '</td></tr>';
-
-		if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
-			// Force e-mail recipient
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
-			if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
-				if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-					print img_warning($langs->trans("ErrorBadEMail"));
-				} else {
-					print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
-				}
-			}
-			print '</td></tr>';
-		}
-
-		print '</table>';
-		print '</div>';
-
-
-		print '<br>';
-
-
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
-
-		// From
-		$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
-		print ' '.$help;
-		print '</td>';
-		print '<td>' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-		if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
-			print img_warning($langs->trans("Mandatory"));
-		} elseif (!isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) {
-			print img_warning($langs->trans("ErrorBadEMail"));
-		}
-		print '</td></tr>';
-
-		// Default from type
-		$liste = array();
-		$liste['user'] = $langs->trans('UserEmail');
-		$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
-		$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-		$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				if ($obj) {
-					$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
-				}
-				$i++;
-			}
-		} else {
-			dol_print_error($db);
-		}
-
-		print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
-		print '<td>';
-		if (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'robot') {
-			print $langs->trans('RobotEmail');
-		} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'user') {
-			print $langs->trans('UserEmail');
-		} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'company') {
-			print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
-		} else {
-			$id = preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
-			if ($id > 0) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
-				$emailsenderprofile = new EmailSenderProfile($db);
-				$emailsenderprofile->fetch($id);
-				print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
-			}
-		}
-		print '</td></tr>';
-
-		// Errors To
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-		print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
-		if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) {
-			print img_warning($langs->trans("ErrorBadEMail"));
-		}
-		print '</td></tr>';
-
-		// Autocopy to
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-		print '<td>';
-		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
-			$listofemail = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
-			$i = 0;
-			foreach ($listofemail as $key => $val) {
-				if ($i) {
-					print ', ';
-				}
-				$val = trim($val);
-				print $val;
-				if (!isValidEmail($val, 0, 1)) {
-					print img_warning($langs->trans("ErrorBadEMail", $val));
-				}
-				$i++;
-			}
-		} else {
-			print '&nbsp;';
-		}
-		print '</td></tr>';
-
-		//Add user to select destinaries list
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
-		//Disable autoselect to
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
-
-		print '</table>';
-		print '</div>';
 	}
+	print '</td></tr>';
+
+	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+		// Force e-mail recipient
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
+		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
+			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+				print img_warning($langs->trans("ErrorBadEMail"));
+			} else {
+				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
+			}
+		}
+		print '</td></tr>';
+	}
+
+	print '</table>';
+	print '</div>';
+
+
+	print '<br>';
+
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
+
+	// From
+	$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
+	print ' '.$help;
+	print '</td>';
+	print '<td>' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
+		print img_warning($langs->trans("Mandatory"));
+	} elseif (!isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) {
+		print img_warning($langs->trans("ErrorBadEMail"));
+	}
+	print '</td></tr>';
+
+	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+	$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+	print '<td>';
+	if (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'robot') {
+		print $langs->trans('RobotEmail');
+	} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'user') {
+		print $langs->trans('UserEmail');
+	} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'company') {
+		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
+	} else {
+		$id = preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
+		if ($id > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
+			$emailsenderprofile = new EmailSenderProfile($db);
+			$emailsenderprofile->fetch($id);
+			print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
+		}
+	}
+	print '</td></tr>';
+
+	// Errors To
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
+	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) {
+		print img_warning($langs->trans("ErrorBadEMail"));
+	}
+	print '</td></tr>';
+
+	// Autocopy to
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	print '<td>';
+	if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
+		$listofemail = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
+		$i = 0;
+		foreach ($listofemail as $key => $val) {
+			if ($i) {
+				print ', ';
+			}
+			$val = trim($val);
+			print $val;
+			if (!isValidEmail($val, 0, 1)) {
+				print img_warning($langs->trans("ErrorBadEMail", $val));
+			}
+			$i++;
+		}
+	} else {
+		print '&nbsp;';
+	}
+	print '</td></tr>';
+
+	//Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
+	//Disable autoselect to
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
 
 	print dol_get_fiche_end();
 
@@ -968,16 +982,16 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
 			//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
 		}
 	}
 

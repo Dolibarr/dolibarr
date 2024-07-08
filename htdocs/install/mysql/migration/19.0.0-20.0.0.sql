@@ -333,6 +333,7 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values (
 
 
 DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_user NOT IN (SELECT rowid FROM llx_user);
 
 ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
 
@@ -392,3 +393,12 @@ ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge
 ALTER TABLE llx_product ADD INDEX idx_product_entity_fk_product_type (entity, fk_product_type);
 
 ALTER TABLE llx_element_categorie ADD INDEX idx_element_categorie_fk_categorie (fk_categorie);
+
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1021, 102, 1.2, 'percent', 'Συντελεστής 1,2 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1022, 102, 2.4, 'percent', 'Συντελεστής 2,4 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1023, 102, 3.6, 'percent', 'Συντελεστής 3,6 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
+
+ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+
+UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';

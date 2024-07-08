@@ -6,17 +6,17 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
+ * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $socialnetworks = getArrayOfSocialNetworks();
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartycard', 'globalcard'));
 
 if ($socid > 0) {
@@ -283,11 +283,15 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOSTINT('client') && GETPOSTINT('client') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
+		if (GETPOSTINT('customer') && GETPOSTINT('customer') < 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 			$error++;
 		}
-		if (GETPOSTISSET('fournisseur') && GETPOSTINT('fournisseur') < 0) {
+		if (GETPOSTINT('prospect') && GETPOSTINT('prospect') < 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Prospect")), null, 'errors');
+			$error++;
+		}
+		if (GETPOSTISSET('supplier') && GETPOSTINT('supplier') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
 			$error++;
 		}
@@ -375,8 +379,13 @@ if (empty($reshook)) {
 
 			$object->typent_code			= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code'); // Force typent_code too so check in verify() will be done on new type
 
-			$object->client					= GETPOSTINT('client');
-			$object->fournisseur			= GETPOSTINT('fournisseur');
+			// Calculate the type of the thirdparty
+			$customer = (GETPOSTINT('customer') > 0 ? 1 : 0);
+			$prospect = (GETPOSTINT('prospect') > 0 ? 2 : 0);
+			$prospectcustomer = $customer + $prospect;
+
+			$object->client					= $prospectcustomer;
+			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
 
 			$object->commercial_id			= GETPOSTINT('commercial_id');
 			$object->default_lang			= GETPOST('default_lang');
@@ -1350,18 +1359,71 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
-			// Prospect/Customer
-			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			$selected = (GETPOSTISSET('client') ? GETPOSTINT('client') : $object->client);
-			print $formcompany->selectProspectCustomerType($selected);
-			print '</td>';
-
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
+			// Prospect/Customer/Supplier
+			$selected = $object->client;
+			$selectedcustomer = 0;
+			$selectedprospect = 0;
+			switch ($selected) {
+				case 1:
+					$selectedcustomer = 1;
+					break;
+				case 2:
+					$selectedprospect = 1;
+					break;
+				case 3:
+					$selectedprospect = 1;
+					$selectedcustomer = 1;
+					break;
+				default:
+					break;
 			}
 
-			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+			$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+			print '<td class="maxwidthonsmartphone" colspan="3">';
+			print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+
+			print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+
+			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
+				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
+				// Supplier
+				$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+			}
+			// Add js to manage the background of nature
+			if ($conf->use_javascript_ajax) {
+				print '<script>
+				function refreshNatureCss() {
+					jQuery(".spannature").each(function( index ) {
+						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+							if (index+1 == 1) {
+								jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+							}
+							if (index+1 == 2) {
+								jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+							}
+							if (index+1 == 3) {
+								jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+							}
+						} else {
+							jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+						}
+					});
+				}
+				jQuery(".spannature").click(function(){
+					console.log("We click on a nature");
+					refreshNatureCss();
+				});
+				refreshNatureCss();
+				</script>';
+			}
+			print '</td>';
+			print '</tr>';
+
+			print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 			print '<table class="nobordernopadding"><tr><td>';
 			$tmpcode = $object->code_client;
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
@@ -1372,48 +1434,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$s = $modCodeClient->getToolTip($langs, $object, 0);
 			print $form->textwithpicto('', $s, 1);
 			print '</td></tr></table>';
-			print '</td></tr>';
 
-			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
-				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
-				// Supplier
-				print '<tr>';
-				print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
-				$default = -1;
-				if (getDolGlobalString('THIRDPARTY_SUPPLIER_BY_DEFAULT')) {
-					$default = 1;
+			print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
+
+			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+				print '<table class="nobordernopadding"><tr><td>';
+				$tmpcode = $object->code_fournisseur;
+				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 				}
-				print $form->selectyesno("fournisseur", (GETPOSTINT('fournisseur') != '' ? GETPOSTINT('fournisseur') : (GETPOSTINT("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOSTINT("type") == '' ? 1 : 0), 1);
-				print '</td>';
-
-
-				if ($conf->browser->layout == 'phone') {
-					print '</tr><tr>';
-				}
-
-				print '<td>';
-				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-					print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
-				}
+				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				print '</td><td>';
-				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-					print '<table class="nobordernopadding"><tr><td>';
-					$tmpcode = $object->code_fournisseur;
-					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
-						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-					}
-					print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-					print '</td><td>';
-					$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
-					print $form->textwithpicto('', $s, 1);
-					print '</td></tr></table>';
-				}
-				print '</td></tr>';
+				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+				print $form->textwithpicto('', $s, 1);
+				print '</td></tr></table>';
 			}
+			print '</td></tr>';
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 
 			// Barcode
@@ -2090,78 +2130,99 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td>';
 				}
 
-				// Prospect/Customer
-				print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
-				print '<td class="maxwidthonsmartphone">';
-				print $formcompany->selectProspectCustomerType($object->client);
-				print '</td>';
-				if ($conf->browser->layout == 'phone') {
-					print '</tr><tr>';
+				// Prospect/Customer/Supplier
+				$selected = $object->client;
+				$selectedcustomer = 0;
+				$selectedprospect = 0;
+				switch ($selected) {
+					case 1:
+						$selectedcustomer = 1;
+						break;
+					case 2:
+						$selectedprospect = 1;
+						break;
+					case 3:
+						$selectedprospect = 1;
+						$selectedcustomer = 1;
+						break;
+					default:
+						break;
 				}
-				print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 
-				print '<table class="nobordernopadding"><tr><td>';
-				if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto) {
-					$tmpcode = $object->code_client;
-					if (empty($tmpcode) && !empty($object->oldcopy->code_client)) {
-						$tmpcode = $object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-					}
-					if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
-						$tmpcode = $modCodeClient->getNextValue($object, 0);
-					}
-					print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-				} elseif ($object->codeclient_modifiable()) {
-					print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="24">';
-				} else {
-					print $object->code_client;
-					print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
+				// Nature of thirdparty
+				$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
+				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
+				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+				print '<td class="maxwidthonsmartphone" colspan="3">';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+
+				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
+					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
+					// Supplier
+					$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
+					print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
 				}
+
+				// Add js to manage the background of nature
+				if ($conf->use_javascript_ajax) {
+					print '<script>
+						function refreshNatureCss() {
+							jQuery(".spannature").each(function( index ) {
+								console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+								if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+									if (index+1 == 1) {
+										jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+									}
+									if (index+1 == 2) {
+										jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+									}
+									if (index+1 == 3) {
+										jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+									}
+								} else {
+									jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+								}
+							});
+						}
+						jQuery(".spannature").click(function(){
+							console.log("We click on a nature");
+							refreshNatureCss();
+						});
+						refreshNatureCss();
+						</script>';
+				}
+				print '</td>';
+				print '</tr>';
+				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+				print '<table class="nobordernopadding"><tr><td>';
+				$tmpcode = $object->code_client;
+				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
+					$tmpcode = $modCodeClient->getNextValue($object, 0);
+				}
+				print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				print '</td><td>';
 				$s = $modCodeClient->getToolTip($langs, $object, 0);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
 
-				print '</td></tr>';
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 
-				// Supplier
-				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')))
-					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
-					print '<tr>';
-					print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
-					print '<td class="maxwidthonsmartphone">';
-					print $form->selectyesno("fournisseur", $object->fournisseur, 1, false, 0, 1);
-					print '</td>';
-					if ($conf->browser->layout == 'phone') {
-						print '</tr><tr>';
-					}
-					print '<td>';
-					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-						print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
-					}
-					print '</td>';
-					print '<td>';
+				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
-					if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) {
-						$tmpcode = $object->code_fournisseur;
-						if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) {
-							$tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-						}
-						if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
-							$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-						}
-						print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-					} elseif ($object->codefournisseur_modifiable()) {
-						print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="24">';
-					} else {
-						print $object->code_fournisseur;
-						print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
+					$tmpcode = $object->code_fournisseur;
+					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 					}
+					print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 					print '</td><td>';
 					$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
 					print $form->textwithpicto('', $s, 1);
 					print '</td></tr></table>';
-					print '</td></tr>';
 				}
+				print '</td></tr>';
+
 
 				// Barcode
 				if (isModEnabled('barcode')) {
@@ -2613,7 +2674,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		$head = societe_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 

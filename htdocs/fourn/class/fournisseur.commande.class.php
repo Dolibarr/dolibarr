@@ -65,6 +65,11 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'CommandeFournisseurLigne';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
@@ -134,11 +139,6 @@ class CommandeFournisseur extends CommonOrder
 	public $date;
 
 	/**
-	 * @var int Date of the purchase order creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int Date of the purchase order validation
 	 */
 	public $date_valid;
@@ -165,7 +165,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Expected Delivery Date
+	 *  @var null|int|'' Expected Delivery Date
 	 */
 	public $delivery_date;
 

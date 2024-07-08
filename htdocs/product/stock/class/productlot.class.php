@@ -1117,7 +1117,7 @@ class Productlot extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs, $user;
+		global $langs;
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 

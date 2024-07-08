@@ -8,6 +8,7 @@
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -88,6 +89,8 @@ if ($nolinesbefore) {
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	} else {
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+		print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
 		if (isModEnabled('workstation')) {
 			print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		}
@@ -107,7 +110,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
+print '<td class="bordertop nobottom linecoldescription bomline minwidth500imp">';
 
 // Predefined product/service
 if (isModEnabled("product") || isModEnabled("service")) {
@@ -120,9 +123,9 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	$statustoshow = -1;
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
 	} else {
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOSTINT('combinations'), 1);
 	}
 	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
@@ -154,7 +157,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="nobottom linecoluseunit">';
 		print '</td>';
 	}
 
@@ -181,12 +184,16 @@ if ($filtertype != 1) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$cUnit = new CUnits($this->db);
 	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
-	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
+	print '<td class="bordertop nobottom nowrap linecolunit">';
+	print $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 1);
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
+	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations('', 'idworkstations', 1);
 	print '</td>';
 

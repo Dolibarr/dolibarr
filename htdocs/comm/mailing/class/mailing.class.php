@@ -139,16 +139,6 @@ class Mailing extends CommonObject
 	public $joined_file4;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var int date validate
-	 */
-	public $date_validation;
-
-	/**
 	 * @var int|null date sending
 	 */
 	public $date_envoi;
@@ -900,7 +890,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param	string	$desc			Desc error
+	 *  @param	string	$desc			Description of error to show as tooltip
 	 *  @return string        			Label
 	 */
 	public static function libStatutDest($status, $mode = 0, $desc = '')
@@ -934,9 +924,10 @@ class Mailing extends CommonObject
 		}
 
 		$param = array();
-		if ($status == - 1) {
-			$param = array('badgeParams'=>array('attr'=>array('title'=>$desc)));
+		if ($status == -1) {
+			$param = array('badgeParams' => array('attr' => array('title' => $desc)));
 		}
+
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', $param);
 	}
 }

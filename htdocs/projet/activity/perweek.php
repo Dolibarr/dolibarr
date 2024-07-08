@@ -707,11 +707,12 @@ print "</tr>\n";
 $colspan = 1 + (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : 2);
 
 // Show lines with total
-if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax && count($tasksarray) >= getDolGlobalInt('NBLINES_TO_DUPLICATE_TOTAL_TIMESPENT_ON_TOP', 10)) {
 	print '<tr class="liste_total hideonsmartphone">';
 	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
-	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+	$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+	print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 	print '</td>';
 	if (!empty($arrayfields['timeconsumed']['checked'])) {
 		print '<td class="liste_total"></td>';
@@ -735,7 +736,7 @@ if ($conf->use_javascript_ajax) {
 		}
 		print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
-	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+	print '<td class="liste_total center"></td>';
 	print '</tr>';
 }
 
@@ -804,13 +805,15 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
+		$j = 0;
 		for ($idw = 0; $idw < 7; $idw++) {
+			$j++;
 			$cssweekend = '';
 			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 				$cssweekend = 'weekend';
 			}
 
-			print '<td class="center hide'.$idw.' '.($cssweekend ? ' '.$cssweekend : '').'">';
+			print '<td class="center hide'.$idw.' '.($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'">';
 			$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 			$timeonothertasks = ($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
 			if ($timeonothertasks) {
@@ -828,14 +831,17 @@ if (count($tasksarray) > 0) {
 		print '<tr class="liste_total">';
 		print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 		print $langs->trans("Total");
-		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
+		$htmltooltip = $langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0);
+		print '<span class="opacitymediumbycolor"> <div class="totalDayAll inline-block bold">&nbsp;</div> '.($usertoprocess->weeklyhours ? ' / '.$form->textwithpicto(price($usertoprocess->weeklyhours, 1, $langs, 0, 0), $htmltooltip) : '').'</strong></span>';
 		print '</td>';
 		if (!empty($arrayfields['timeconsumed']['checked'])) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
 
+		$j = 0;
 		for ($idw = 0; $idw < 7; $idw++) {
+			$j++;
 			$cssweekend = '';
 			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 				$cssweekend = 'weekend';
@@ -852,9 +858,9 @@ if (count($tasksarray) > 0) {
 				$cssonholiday .= 'onholidayafternoon ';
 			}
 
-			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+			print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
-		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+		print '<td class="liste_total center"></td>';
 		print '</tr>';
 	}
 } else {

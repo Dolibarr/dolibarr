@@ -137,7 +137,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 
 		$date = $object->date ?? '';
 
-		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentcandidature', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentcandidature', 'ref', '', '', $date);
 
 		return  $numFinal;
 	}

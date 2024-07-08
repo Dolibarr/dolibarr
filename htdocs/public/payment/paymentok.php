@@ -141,6 +141,16 @@ if (empty($validpaymentmethod)) {
 	httponly_accessforbidden('No valid payment mode');
 }
 
+// Common variables
+$creditor = $mysoc->name;
+$paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
+$paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
+if (getDolGlobalString($paramcreditorlong)) {
+	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
+} elseif (getDolGlobalString($paramcreditor)) {
+	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
+}
+
 
 $ispaymentok = false;
 // If payment is ok
@@ -210,7 +220,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -237,6 +247,12 @@ if (empty($doactionsthenredirect)) {
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
+		print '</div>';
+	} elseif ($creditor) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print $creditor;
+		print '</div>';
 		print '</div>';
 	}
 	if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {

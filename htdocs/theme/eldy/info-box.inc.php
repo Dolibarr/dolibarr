@@ -340,6 +340,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php } ?>
 }
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #b7d5c0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
@@ -403,6 +416,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114 !important;
+}
+
+/* Disable colors on left vmenu */
+a.vmenu span, span.vmenu, span.vmenu span {
+	/* To force no color on picto in left menu */
+	/* color: var(--colortextbackvmenu) !important; */
 }
 
 .infobox-adherent, .infobox-member {
@@ -527,6 +546,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-container-column:not(:last-of-type) {
 	border-right: 1px solid #AAA;
 }
+.box-flex-container-column.kanban {
+	flex: 1;
+}
+.kanban.kanbancollapsed {
+	flex: unset;
+	width: 80px;
+}
+.kanban.kanbancollapsed .kanbanlabel, .text-vertical {
+	writing-mode: vertical-rl;
+}
 
 .box-flex-grow-zero {
 	flex-grow: 0 !important;
@@ -541,15 +570,33 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .box-flex-item.filler {
 	height: 0;
 }
-.box-flex-item {
+.box-flex-item, .kanbanlabel {
 	margin-top: 5px;
 	margin-<?php echo $right; ?>: 20px;
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
 }
+.kanbanlabel {
+	background: var(--colorbacktitle1);
+	padding: 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+}
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+
+/* css for small kanban */
+.box-flex-item-small {
+	width: 200px !important;
+}
+.box-flex-item-small .info-box-sm .info-box-content {
+	margin-left: 0;
+}
+.box-flex-item-small .info-box-icon.bg-infobox-action {
+	display: none;
+}
+
 
 .info-box-title {
 	width: calc(100% - 20px);

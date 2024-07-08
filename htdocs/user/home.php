@@ -52,7 +52,7 @@ if ($user->socid > 0) {
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('userhome'));
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
@@ -323,7 +323,7 @@ print $boxlist;
 
 print '</div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardUsersGroups', $parameters, $object); // Note that $action and $object may have been modified by hook
 

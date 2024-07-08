@@ -1185,8 +1185,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1205,8 +1205,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Decode html entities
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1970,7 +1970,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				// For case of tag with attribute
 				$reg = array();
 				if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
-					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must never have [ ] inside the attribute string
+					$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);
+					$tmpattributes = str_ireplace('href="https:', '__HREFHTTPSA', $tmpattributes);
 					$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
 					$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
@@ -1997,6 +1999,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[(.*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
 
+			$result = str_ireplace('__HREFHTTPA', 'href="http:', $result);
+			$result = str_ireplace('__HREFHTTPSA', 'href="https:', $result);
 			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
 			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
 			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
@@ -2655,7 +2659,7 @@ function dol_get_fiche_end($notab = 0)
  *  @param	CommonObject $object	Object to show
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
- *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	int|bool $shownav	  	Show Condition (navigation is shown if value is 1 or true)
  *  @param	string	$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Name of the field (object->ref) to use to select next et previous
  *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
@@ -2748,7 +2752,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} elseif ($object->element == 'bom') {
-		/** @var Bom $object */
+		/** @var BOM $object */
 		'@phan-var-force Bom $object';
 		$width = 80;
 		$cssclass = 'photowithmargin photoref';
@@ -3964,9 +3968,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
+ *  @param	string	$morecss		Add more css
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0)
+function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = '')
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -3983,7 +3988,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	}
 
 	// Short format for small screens
-	if ($conf->dol_optimize_smallscreen) {
+	if (!empty($conf->dol_optimize_smallscreen) && $separ != 'hidenum') {
 		$separ = '';
 	}
 
@@ -4269,9 +4274,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 		if ($adddivfloat == 1) {
-			$rep .= '<div class="nospan float" style="margin-right: 10px">';
+			$rep .= '<div class="nospan float'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">';
 		} elseif (empty($adddivfloat)) {
-			$rep .= '<span style="margin-right: 10px;">';
+			$rep .= '<span'.($morecss ? ' class="'.$morecss.'"' : '').' style="margin-right: 10px;">';
 		}
 
 		$rep .= $newphoneastart;
@@ -4865,7 +4870,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
-				'check-circle', 'check-square', 'currency', 'multicurrency',
+				'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
 				'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
 				'commercial', 'companies',
@@ -4889,7 +4894,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
@@ -4942,8 +4947,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
 				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
 				'service' => 'concierge-bell',
-				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch', 'stripe' => 'stripe-s',
-				'supplier' => 'building',
+				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
+				'status' => 'stop-circle',
+				'stripe' => 'stripe-s',	'supplier' => 'building',
 				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
 				'title_agenda' => 'calendar-alt',
 				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
@@ -5030,7 +5036,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'propal' => 'infobox-propal', 'proposal' => 'infobox-propal','private' => 'infobox-project',
 				'reception' => 'flip infobox-order_supplier', 'recruitmentjobposition' => 'infobox-adherent', 'recruitmentcandidature' => 'infobox-adherent',
 				'resource' => 'infobox-action',
-				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
+				'salary' => 'infobox-bank_account', 'shapes' => 'infobox-adherent', 'shipment' => 'infobox-commande', 'stripe' => 'infobox-bank_account', 'supplier_invoice' => 'infobox-order_supplier', 'supplier_invoicea' => 'infobox-order_supplier', 'supplier_invoiced' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier', 'supplier_order' => 'infobox-order_supplier', 'supplier_proposal' => 'infobox-supplier_proposal',
 				'ticket' => 'infobox-contrat', 'title_accountancy' => 'infobox-bank_account', 'title_hrm' => 'infobox-holiday', 'expensereport' => 'infobox-expensereport', 'trip' => 'infobox-expensereport', 'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
@@ -5731,9 +5737,10 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error', 'warning', 'xxx'=Other
  *  @param	string	$morecss			More CSS ('', 'warning', 'error')
  *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
+ *  @param	string	$picto				'' or 'warning'
  *	@return	string						String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
 	global $conf, $langs;
 
@@ -5745,7 +5752,11 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		}
 
 		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
-		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$fa = 'info-circle';
+		if ($picto == 'warning') {
+			$fa = 'exclamation-triangle';
+		}
+		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -6205,7 +6216,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  */
 function print_barre_liste($title, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
-	global $conf;
+	global $conf, $langs;
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
@@ -6246,7 +6257,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '<div class="titre inline-block">';
 	print $title;	// $title may contains HTML
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
-		print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
+		print '<span class="opacitymedium colorblack marginleftonly" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
 
@@ -6377,7 +6388,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 
 	if (empty($hidenavigation)) {
 		if ((int) $limit > 0 && empty($hideselectlimit)) {
-			$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
+			$pagesizechoices = '10:10,15:15,20:20,25:25,50:50,100:100,250:250,500:500,1000:1000';
 			$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
 			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 			//$pagesizechoices.=',2:2';
@@ -12012,14 +12023,14 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 /**
  * Output the badge of a status.
  *
- * @param   string  $statusLabel		Label of badge no html : use in alt attribute for accessibility
- * @param   string  $statusLabelShort	Short label of badge no html
- * @param   string  $html				Optional : label of badge with html
- * @param   string  $statusType			status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
- * @param   int<0,6>	$displayMode	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
- * @param   string  $url				The url for link
- * @param   array<string,mixed>	$params	Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
- * @return  string						Html status string
+ * @param   string  			$statusLabel		Label of badge no html : use in alt attribute for accessibility
+ * @param   string  			$statusLabelShort	Short label of badge no html
+ * @param   string  			$html				Optional : label of badge with html
+ * @param   string  			$statusType			status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
+ * @param   int<0,6>			$displayMode		0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+ * @param   string  			$url				The url for link
+ * @param   array<string,mixed>	$params				Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
+ * @return  string									Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
@@ -12090,7 +12101,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
+		if (empty($dolGetBadgeParams['attr']['title'])) {
+			$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
+		} else {	// If a title was forced from $params['badgeParams']['attr']['title'], we set the class to get it as a tooltip.
+			$dolGetBadgeParams['attr']['class'] .= ' classfortooltip';
+			// And if we use tooltip, we can output title in HTML
+			$dolGetBadgeParams['attr']['title'] = dol_htmlentitiesbr($dolGetBadgeParams['attr']['title'], 1);
+		}
 
 		if ($displayMode == 3) {
 			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
@@ -12737,6 +12754,13 @@ function getElementProperties($elementType)
 		$classfile = 'ccountry';
 		$classname = 'Ccountry';
 		$table_element = 'c_country';
+		$subelement = '';
+	} elseif ($elementType == 'knowledgerecord') {
+		$module = '';
+		$classpath = 'knowledgemanagement/class';
+		$classfile = 'knowledgerecord';
+		$classname = 'KnowledgeRecord';
+		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	}
 
@@ -14328,6 +14352,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
  */
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
+	$m = array();
 	if ($hourTime === 'getpost') {
 		$hour   = GETPOSTINT($prefix . 'hour');
 		$minute = GETPOSTINT($prefix . 'minute');
@@ -14351,11 +14376,11 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
  * request.
  *
- * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param ?int $timestamp If null, the timestamp will be created from request data
- * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @return string Portion of URL with query parameters for the specified date
+ * @param 	string $prefix 		Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param 	?int $timestamp 	If null, the timestamp will be created from request data
+ * @param 	string $hourTime 	If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param 	string $gm 			If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return 	string 				Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
@@ -14431,7 +14456,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

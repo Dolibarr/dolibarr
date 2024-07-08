@@ -183,7 +183,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
@@ -431,40 +431,41 @@ if ($conf->use_javascript_ajax) {
 	}
 }
 
+$mode = 'show_peruser';
 $massactionbutton = '';
 
-$viewmode = '';
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+
+$viewmode = '<div class="navmode inline-block">';
+
+$viewmode .= '<a class="btnTitle'.($mode == 'list' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_month' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_week' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_day' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle btnTitleSelected reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_peruser' ? ' btnTitleSelected' : '').' reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
-
-$viewmode .= '<span class="marginrightonly"></span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow" title="'.dolPrintHTML($langs->trans("ViewPerUser")).'">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
 $parameters = array();
@@ -475,6 +476,10 @@ if (empty($reshook)) {
 } elseif ($reshook > 1) {
 	$viewmode = $hookmanager->resPrint;
 }
+
+$viewmode .= '</div>';
+
+$viewmode .= '<span class="marginrightonly"></span>';
 
 
 $newparam = '';
@@ -510,6 +515,9 @@ print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, 
 $link = '';
 //print load_fiche_titre('', $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
 
+
+$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
+
 // Local calendar
 $newtitle = '<div class="nowrap clear inline-block minheight30">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
@@ -517,6 +525,17 @@ $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
 
 $s = $newtitle;
+
+// Calendars from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
+if (empty($reshook)) {
+	$s .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$s = $hookmanager->resPrint;
+}
+
+$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 
 print $s;
 
@@ -820,28 +839,12 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
 
 	if ($canedit && $mode == 'show_peruser') {
-		// Filter on hours
-		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
-		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">'.$langs->trans("Hours").'</span>';
-		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
-		if (empty($conf->dol_use_jmobile)) {
-			print ' - ';
-		} else {
-			print '</div><div class="ui-block-b">';
-		}
-		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		if (empty($conf->dol_use_jmobile)) {
-			print ' '.$langs->trans("H");
-		}
-		print '</div></div>';
-
-		print '<br>';
-
 		// Filter on days
-		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
-		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">';
+		print img_picto('', 'clock', 'class="fawidth30 inline-block marginleftonly"');
+		print $langs->trans("DaysOfWeek").'</span>';
+		print "\n";
+		print '<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
@@ -873,7 +876,27 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo "</tr>\n";
 
 	echo '<tr class="liste_titre">';
-	echo '<td></td>';
+	echo '<td>';
+
+	// Filter on hours
+	print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">';
+	print img_picto('', 'clock', 'class="fawidth30 inline-block marginleftonly"');
+	print $langs->trans("Hours").'</span>';
+	print "\n";
+	print '<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
+	print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+	if (empty($conf->dol_use_jmobile)) {
+		print ' - ';
+	} else {
+		print '</div><div class="ui-block-b">';
+	}
+	print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+	if (empty($conf->dol_use_jmobile)) {
+		print ' '.$langs->trans("H");
+	}
+	print '</div></div>';
+
+	echo '</td>';
 	$i = 0;
 	while ($i < 7) {
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d) {
@@ -983,9 +1006,12 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		//if ($username->login != 'admin') continue;
 
 		$var = !$var;
+
 		echo "<tr>";
 		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var ? ' cal_impair' : '').'">';
+		print '<span class="paddingrightimp">';
 		print $username->getNomUrl(-1, '', 0, 0, 20, 1, '', 'paddingleft');
+		print '</span>';
 		print '</td>';
 		$tmpday = $sav;
 

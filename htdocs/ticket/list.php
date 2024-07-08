@@ -85,7 +85,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
@@ -1054,9 +1054,10 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		// Show here line of result
+		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
@@ -1072,34 +1073,27 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Fields
 		foreach ($object->fields as $key => $val) {
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
 			}
+
 			if (in_array($val['type'], array('timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 			}
 			if (in_array($key, array('ref', 'fk_project'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
+
 			if ($key == 'fk_statut' || $key == 'severity_code') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
 			}
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td';
-				if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
-					print ' class="';
-				}
-				print $cssforfield;
-				if ($cssforfield && array_key_exists('css', $val) && $val['css']) {
-					print ' ';
-				}
-				if (array_key_exists('css', $val)) {
-					print $val['css'];
-				}
-				if ($cssforfield || (array_key_exists('css', $val) && $val['css'])) {
-					print '"';
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
+					print ' title="'.dol_escape_htmltag($object->$key).'"';
 				}
 				print '>';
 				if ($key == 'fk_statut') {
@@ -1211,6 +1205,7 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
@@ -1222,9 +1217,9 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print '</tr>'."\n";

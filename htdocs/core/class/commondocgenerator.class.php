@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var Extrafields object
+	 * @var ?Extrafields object
 	 */
 	public $extrafieldsCache;
 
@@ -309,7 +309,7 @@ abstract class CommonDocGenerator
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, 0);
+			$mysoc->state = getState($mysoc->state_code, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -365,7 +365,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_thirdparty = array(
@@ -431,7 +431,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_contact = array(
@@ -1368,7 +1368,7 @@ abstract class CommonDocGenerator
 
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1422,7 +1422,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extrafields if not already done
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1713,7 +1713,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

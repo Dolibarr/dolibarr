@@ -86,7 +86,7 @@ $type_element = GETPOSTISSET('type_element') ? GETPOST('type_element') : '';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('consumptioncontact'));
 
 $result = restrictedArea($user, 'contact', $object->id, 'socpeople&societe');

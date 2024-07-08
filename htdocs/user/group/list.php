@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
- * Copyright (C) 2019-2021	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -169,6 +169,9 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
@@ -185,11 +188,29 @@ if ($search_all) {
 }
 $sql .= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec, g.tms";
 
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-if ($limit) {
-	$sql .= $db->plimit($limit + 1, $offset);
-}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -198,9 +219,6 @@ if (!$resql) {
 }
 
 $num = $db->num_rows($resql);
-
-
-$nbtotalofrecords = $num;
 
 $i = 0;
 
@@ -282,7 +300,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 
 if ($caneditperms) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=', '', $caneditperms);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=', '', $caneditperms ? 1 : 0);
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);

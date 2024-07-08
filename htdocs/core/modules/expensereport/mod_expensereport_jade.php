@@ -170,7 +170,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.((int) $ref_number_int).' WHERE rowid = '.((int) $object->id);
 			$resqlbis = $db->query($sqlbis);
 			if (!$resqlbis) {
-				dol_print_error($resqlbis);
+				dol_print_error($db, $resqlbis);
 				exit;
 			}
 

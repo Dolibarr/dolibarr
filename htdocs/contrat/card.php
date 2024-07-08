@@ -67,6 +67,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
+$idline = GETPOSTINT('elrowid') ? GETPOSTINT('elrowid') : GETPOSTINT('rowid');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -82,7 +83,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
@@ -151,9 +152,9 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
 	if ($action == 'confirm_active' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_start = '';
@@ -707,13 +708,12 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 
 		if (!$error) {
 			$objectline = new ContratLigne($db);
-			if ($objectline->fetch(GETPOSTINT('elrowid')) < 0) {
+			if ($objectline->fetch($idline) < 0) {
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 				$error++;
 			}
@@ -1594,7 +1594,7 @@ if ($action == 'create') {
 
 
 				// Line in view mode
-				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid) {
+				if ($action != 'editline' || $idline != $objp->rowid) {
 					$moreparam = '';
 					if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 						$moreparam = 'style="display: none;"';
@@ -1663,18 +1663,18 @@ if ($action == 'create') {
 
 					// Icon move, update et delete (status contract 0=draft,1=validated,2=closed)
 					print '<td class="nowraponall right">';
-					if ($user->hasRight('contrat', 'creer') && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->status >= 0)) {
 						print '<!-- link to move service line into another contract -->';
 						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');
 						print '</a>';
 					}
-					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && ($object->status >= 0)) {
 						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
-					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && ($object->status >= 0)) {
 						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=deleteline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
@@ -1872,17 +1872,17 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
+			if ($action == 'deleteline' && !$cancel && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == $idline) {
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".((int) $object->id)."&lineid=".((int) $idline), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
 				if ($ret == 'html') {
-					print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
+					print '<table class="notopnoleftnoright centpercent"><tr class="oddeven" height="6"><td></td></tr></table>';
 				}
 			}
 
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($action == 'move' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
+			if ($action == 'move' && !$cancel && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == $idline) {
 				$arraycontractid = array();
 				foreach ($arrayothercontracts as $contractcursor) {
 					$arraycontractid[$contractcursor->id] = $contractcursor->ref;
@@ -1893,8 +1893,8 @@ if ($action == 'create') {
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOSTINT('rowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
-				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".((int) $object->id)."&lineid=".((int) $idline), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion, 'yes');
+				print '<table class="notopnoleftnoright centpercent"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
 			// Area with status and activation info of line

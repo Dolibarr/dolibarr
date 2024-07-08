@@ -77,7 +77,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
@@ -1308,7 +1308,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $s;
 							print '</td>';
 							print '<td>';
-							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
+							print dol_print_date($companypaymentmodetemp->date_modification, 'dayhour', 'tzuserrel');
 							print '</td>';
 							// Fields from hook
 							$parameters = array('arrayfields' => array(), 'obj' => $obj, 'linetype' => 'stripecard');

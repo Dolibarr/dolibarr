@@ -71,7 +71,7 @@ if (!$sortfield) {
 }
 //if (! $sortfield) $sortfield="position_name";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
@@ -84,7 +84,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity ? $object->entity : $conf->entity]."/conferenceorbooth/".get_exdir(0, 0, 0, 1, $object);

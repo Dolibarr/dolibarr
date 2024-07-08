@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
- *       \brief      Page to define emailing targets
+ *       \brief      Page to define or view emailing targets
  */
 
 // Load Dolibarr environment
@@ -71,7 +71,7 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 $sqlmessage = '';
@@ -895,18 +895,18 @@ if ($object->fetch($id) >= 0) {
 
 				// Date sent
 				print '<td class="center nowraponall">';
-				if ($obj->status != $object::STATUS_DRAFT) {
+				if ($obj->status != $object::STATUS_DRAFT) {		// If status of target line is not draft
 					// Date sent
-					print $obj->date_envoi;
+					print $obj->date_envoi;		// @TODO Must store date in date format
 				}
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)
 				print '<td class="nowrap center">';
-				if ($obj->status == $object::STATUS_DRAFT) {
-					print $object::libStatutDest($obj->status, 2, '');
+				if ($obj->status == $object::STATUS_DRAFT) {		// If status of target line is not draft
+					print $object::libStatutDest((int) $obj->status, 2, '');
 				} else {
-					print $object::libStatutDest($obj->status, 2, $obj->error_text);
+					print $object::libStatutDest((int) $obj->status, 2, $obj->error_text);
 				}
 				print '</td>';
 
@@ -914,7 +914,7 @@ if ($object->fetch($id) >= 0) {
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
-					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
+					if ($obj->status == $object::STATUS_DRAFT) {	// If status of target line is not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}

@@ -68,6 +68,10 @@ class FactureFournisseur extends CommonInvoice
 	public $table_element_line = 'facture_fourn_det';
 
 	/**
+	 * @var string	Name of class line
+	 */
+	public $class_element_line = 'SupplierInvoiceLine';
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture_fourn';
@@ -2759,6 +2763,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$datas = [];
 		$moretitle = $params['moretitle'] ?? '';
+
 		$picto = $this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$picto .= 'r'; // Replacement invoice
@@ -2770,7 +2775,7 @@ class FactureFournisseur extends CommonInvoice
 			$picto .= 'd'; // Deposit invoice
 		}
 
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		$datas['picto'] = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$datas['picto'] .= '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
 		} elseif ($this->type == self::TYPE_CREDIT_NOTE) {
@@ -2780,8 +2785,8 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$alreadypaid = -1;
-			if (isset($this->alreadypaid)) {
-				$alreadypaid = $this->alreadypaid;
+			if (isset($this->totalpaid)) {
+				$alreadypaid = $this->totalpaid;
 			}
 
 			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
@@ -2878,6 +2883,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_DEPOSIT) {
 			$picto .= 'd'; // Deposit invoice
 		}
+
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -2915,7 +2921,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($picto ? $picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($max ? dol_trunc($ref, $max) : $ref);
@@ -3346,10 +3352,21 @@ class FactureFournisseur extends CommonInvoice
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
+		$picto = $this->picto;
+		if ($this->type == self::TYPE_REPLACEMENT) {
+			$picto .= 'r'; // Replacement invoice
+		}
+		if ($this->type == self::TYPE_CREDIT_NOTE) {
+			$picto .= 'a'; // Credit note
+		}
+		if ($this->type == self::TYPE_DEPOSIT) {
+			$picto .= 'd'; // Deposit invoice
+		}
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+		$return .= img_picto('', $picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
@@ -3827,12 +3844,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int 	Situation progress percentage
+	 * @var float 	Situation progress percentage
 	 */
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 	Previous situation line id reference
 	 */
 	public $fk_prev_id;
 

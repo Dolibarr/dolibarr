@@ -309,6 +309,7 @@ class SecurityTest extends CommonClassTest
 		$_GET["param3"] = '"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
 		$_GET["param4a"] = '..&#47;../dir';
 		$_GET["param4b"] = '..&#92;..\dirwindows';
+		$_GET["param4c"] = '\a123 \123 \u123 \x123';
 		$_GET["param5"] = "a_1-b";
 		$_POST["param6"] = "&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"] = '<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
@@ -358,19 +359,23 @@ class SecurityTest extends CommonClassTest
 
 		$result = GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'a/b#e(pr)qq-rr/cc', 'Test on param2');
+		$this->assertEquals('a/b#e(pr)qq-rr\cc', $result, 'Test on param2');
 
 		$result = GETPOST("param3", 'alpha');  // Must return string sanitized from char "
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'na/b#e(pr)qq-rr/cc', 'Test on param3');
+		$this->assertEquals('na/b#e(pr)qq-rr\cc', $result, 'Test on param3');
 
 		$result = GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dir');
+		$this->assertEquals('dir', $result);
 
 		$result = GETPOST("param4b", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dirwindows');
+		$this->assertEquals('dirwindows', $result);
+
+		$result = GETPOST("param4c", 'alpha');  // Must return string sanitized from ../
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('\a123 /123 /u123 /x123', $result);
 
 		// Test with aZ09
 
@@ -1186,35 +1191,6 @@ class SecurityTest extends CommonClassTest
 
 
 	/**
-	 * testCheckLoginPassEntity
-	 *
-	 * @return	void
-	 */
-	public function testCheckLoginPassEntity()
-	{
-		$login = checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login = checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
-
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin');
-
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
-	}
-
-
-	/**
 	 * testRealCharforNumericEntities()
 	 *
 	 * @return int
@@ -1277,5 +1253,34 @@ class SecurityTest extends CommonClassTest
 
 
 		return 0;
+	}
+
+
+	/**
+	 * testCheckLoginPassEntity
+	 *
+	 * @return	void
+	 */
+	public function testCheckLoginPassEntity()
+	{
+		$login = checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login = checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login = checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
+
+		$login = checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin');
+
+		$login = checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 }

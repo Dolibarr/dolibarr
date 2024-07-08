@@ -108,7 +108,7 @@ $opclotureyear = GETPOSTINT('opclotureyear');
 $filter_opcloture = GETPOST('filter_opcloture', 'alpha');
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ContratLigne($db);
 $hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);

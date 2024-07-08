@@ -64,7 +64,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOSTINT('id');
 $socid = GETPOSTINT('socid');
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
@@ -83,7 +83,7 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
 if ($id > 0) {
@@ -890,7 +890,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 				print '<td colspan="3">';
 				$contactType = $object->listeTypeContacts('external', '', 1);
-				print $form->multiselectarray('roles', $contactType, array(), 0, 0, 'minwidth500');
+				print img_picto('', 'contact', 'class="pictofixedwidth"').$form->multiselectarray('roles', $contactType, array(), 0, 0, '', 0, '90%');
 				print '</td></tr>';
 			}
 
@@ -1092,6 +1092,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print img_picto('', 'object_email', 'class="pictofixedwidth"');
 			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			if (isModEnabled('mailing')) {
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
 				$langs->load("mails");
 				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
 				print '<td>'.$object->getNbOfEMailings().'</td>';
@@ -1192,7 +1195,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($object->socid)) {
 				print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 				print '<td colspan="3">';
-				print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$formcompany->showRoles("roles", $object, 'edit', $object->roles, '');
 				print '</td></tr>';
 			}
 
@@ -1448,10 +1451,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
+		// Contact by default for
 		if (!empty($object->socid)) {
 			print '<tr><td class="titlefield">'.$langs->trans("ContactByDefaultFor").'</td>';
 			print '<td>';
-			print $formcompany->showRoles("roles", $object, 'view', $object->roles);
+			print $formcompany->showRoles("roles", $object, 'view', $object->roles, '');
 			print '</td></tr>';
 		}
 

@@ -487,22 +487,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
-						$percent = (round(($cumulative_ht[$case] - $cumulative_ht[$caseprev]) / $cumulative_ht[$caseprev], 4) * 100);
-						//print "X $cumulative_ht[$case] - $cumulative_ht[$caseprev] - $cumulative_ht[$caseprev] - $percent X";
+					if (!empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
+						$percent = (round(($cumulative[$case] - $cumulative[$caseprev]) / $cumulative[$caseprev], 4) * 100);
+						//print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (!empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '-100%';
 					}
-					if (empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
+					if (empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (isset($cumulative[$caseprev]) && empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '+0%';
 					}
-					if (!isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
+					if (!isset($cumulative[$caseprev]) && empty($cumulative[$case])) {
 						print '-';
 					}
 				} else {
@@ -527,9 +527,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				$total_ht[$annee] += (empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case]);
 			}
 			if (empty($total[$annee])) {
-				$total[$annee] = empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
+				$total[$annee] = empty($cumulative[$case]) ? 0 : $cumulative[$case];
 			} else {
-				$total[$annee] += empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
+				$total[$annee] += empty($cumulative[$case]) ? 0 : $cumulative[$case];
 			}
 		}
 	}
@@ -627,24 +627,24 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if (!empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
-			$percent = (round(($total_ht[$annee] - $total_ht[$annee - 1]) / $total_ht[$annee - 1], 4) * 100);
+		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
+			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if (!empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
+		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
+		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
+		if (empty($total[$annee - 1]) && empty($total[$annee])) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {
 		print '<td class="borderrightlight right">';
-		if (!empty($total_ht[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
+		if (!empty($total[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
 			print '-';
 		} else {
 			print '&nbsp;';

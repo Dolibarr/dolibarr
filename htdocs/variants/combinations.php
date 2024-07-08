@@ -40,8 +40,12 @@ $weight_impact = GETPOSTFLOAT('weight_impact', 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOSTFLOAT('price_impact', 'MU');
 
+// for PRODUIT_MULTIPRICES
 $level_price_impact = GETPOST('level_price_impact', 'array');
+$level_price_impact = array_map('price2num', $level_price_impact);
+$level_price_impact = array_map('floatval', $level_price_impact);
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
+$level_price_impact_percent = array_map('boolval', $level_price_impact_percent);
 
 $form = new Form($db);
 
@@ -154,10 +158,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		// for conf PRODUIT_MULTIPRICES
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			$level_price_impact = array_map('price2num', $level_price_impact);
-		} else {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -280,15 +281,13 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 	// for conf PRODUIT_MULTIPRICES
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$level_price_impact = array_map('price2num', $level_price_impact);
-
-		$prodcomb->variation_price = (float) $level_price_impact[1];
-		$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
+		$prodcomb->variation_price = $level_price_impact[1];
+		$prodcomb->variation_price_percentage = $level_price_impact_percent[1];
 	} else {
 		$level_price_impact = array(1 => $price_impact);
 		$level_price_impact_percent = array(1 => $price_impact_percent);
 
-		$prodcomb->variation_price = (float) $price_impact;
+		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 

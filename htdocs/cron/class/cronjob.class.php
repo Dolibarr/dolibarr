@@ -518,7 +518,7 @@ class Cronjob extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset ppage
-	 * @param	int				$status			Display active or not
+	 * @param	int				$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
 	 * @param	string|array	$filter			Filter USF.
 	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0

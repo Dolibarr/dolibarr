@@ -18,6 +18,7 @@
 						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 					$date = $overview[0]->udate;
+					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$dateb = $this->db->jdate($data[$j]->datea);
 					$link->datea = $this->db->jdate($obj->datea);
 					$object->periode = $newdateperiod;
@@ -281,21 +282,6 @@
  *	@param	string[] 	$TWeek			array of week numbers
  *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
  * @param	array		$TWeek					Array of week numbers
- * Copyright (C) 2019		Tim Otte    			<otte@meuser.it>
- * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
- * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
- * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
- * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
- * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2023		Udo Tamm			<dev@dolibit.de>
- * Copyright (C) 2024		Noé Cendrier			<noe.cendrier@altairis.fr>
- * add german links 2020    Udo Tamm            <dev@dolibit.de>
 $TFirstDays = getFirstDayOfEachWeek($TWeek, $year);
 $TFirstDays[reset($TWeek)] = '01'; //first day of month
 $TLastDays = getLastDayOfEachWeek($TWeek, $year);

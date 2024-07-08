@@ -112,16 +112,25 @@ if (!GETPOST('buttonreset', 'alpha')) {
 $dirins = DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules = 'https://www.dolistore.com/';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
-// Execution Time
-$max_execution_time_for_deploy = (!getDolGlobalString('MODULE_UPLOAD_MAX_EXECUTION_TIME') ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+// Increase limit of time. Works only if we are not in safe mode
+$max_execution_time_for_deploy = getDolGlobalInt('MODULE_UPLOAD_MAX_EXECUTION_TIME', 300); // 5mn if not defined
+if (!empty($max_execution_time_for_deploy)) {
+	$err = error_reporting();
+	error_reporting(0); // Disable all errors
+	//error_reporting(E_ALL);
+	@set_time_limit($max_execution_time_for_deploy);
+	error_reporting($err);
+}
+// Other method - TODO is this required ?
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
 	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
 }
+
 
 $dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 $allowonlineinstall = true;
@@ -455,7 +464,7 @@ foreach ($modulesdir as $dir) {
 								}
 								ksort($arrayofnatures);
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
 
@@ -558,15 +567,13 @@ asort($orders);
 
 $nbofactivatedmodules = count($conf->modules);
 
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('export', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
-}
-if (in_array('import', $conf->modules)) {
-	$nbmodulesnotautoenabled--;
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
 }
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');

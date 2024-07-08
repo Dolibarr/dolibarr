@@ -141,11 +141,6 @@ class Mo extends CommonObject
 	public $note_private;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;
@@ -334,11 +329,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -744,7 +739,6 @@ class Mo extends CommonObject
 				$error++;
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
@@ -1971,9 +1965,13 @@ class Mo extends CommonObject
 		}
 		if (!empty($arraydata['product'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			if (property_exists($this, 'qty')) {
+				$return .= ' <span class="info-box-label">('.$langs->trans("Qty").' '.$this->qty.')</span>';
+			}
+		} else {
+			if (property_exists($this, 'qty')) {
+				$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -2094,13 +2092,14 @@ class MoLine extends CommonObjectLine
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 	public $role;
 	public $fk_mrp_production;
 	public $fk_stock_movement;
-	public $date_creation;
-	public $fk_user_creat;
-	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
 	public $fk_unit;
@@ -2160,7 +2159,7 @@ class MoLine extends CommonObjectLine
 	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
-			$this->error = 'BadValueForQty';
+			$this->error = 'ErrorEmptyValueForQty';
 			return -1;
 		}
 

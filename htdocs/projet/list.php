@@ -59,6 +59,7 @@ $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 $title = $langs->trans("Projects");
 
@@ -190,7 +191,7 @@ if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
@@ -266,10 +267,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Add a groupby field. Set $groupby and $groupbyvalues.
 // TODO Move this into a inc file
-if ($mode == 'kanban') {
+$groupbyvalues = array();
+$groupofcollpasedvalues = array();
+if ($mode == 'kanban' && $groupby) {
 	$groupbyold = null;
-	$groupbyvalues = array();
-	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
 		$groupbyfield = $object->fields[$groupbyfield]['alias'];
@@ -282,7 +283,8 @@ if ($mode == 'kanban') {
 		} elseif (!empty($object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'])) {
 			$groupbyvalues = $object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'];
 		} else {
-			// If type is 'integer:Object:classpath'
+			// var_dump($object->fields[$groupby]['type']);
+			// If type is 'integer:Object:classpath', for example "integer:CLeadStatus:core/class/cleadstatus.class.php"
 			// TODO
 			// $groupbyvalues = ...
 
@@ -291,7 +293,7 @@ if ($mode == 'kanban') {
 			$sql .= " WHERE active = 1";
 			//$sql .= " AND cls.code <> 'LOST'";
 			//$sql .= " AND cls.code <> 'WON'";
-			$sql .= $db->order('cls.rowid', 'ASC');
+			$sql .= $db->order('cls.rowid', 'ASC');	// Must use the same order key than the key in $groupby
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -303,10 +305,13 @@ if ($mode == 'kanban') {
 					$i++;
 				}
 			}
+
+			$groupofcollpasedvalues = array(6,7);	// LOST and WON
 		}
 		//var_dump($groupbyvalues);
 	}
-	if ($groupby) {
+	// Add a filter on the group by if not yet included first
+	if ($groupby && !preg_match('/^'.preg_quote($db->sanitize($groupby), '/').'/', $sortfield)) {
 		//var_dump($arrayfields);
 		$sortfield = $db->sanitize($groupby).($sortfield ? ",".$sortfield : "");
 		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
@@ -851,6 +856,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
+}
+
 if ($socid) {
 	$param .= '&socid='.urlencode((string) $socid);
 }
@@ -1105,7 +1114,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+print '<input type="hidden" name="groupby" value="'.$groupby.'">';
 
 // Show description of content
 $texthelp = '';
@@ -1646,7 +1655,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban'.(empty($groupby) ? '' : ' trkanbangroupby').'"><td colspan="'.$savnbfield.'">';
 		}
 
 		if (!empty($groupby)) {
@@ -1654,17 +1663,32 @@ while ($i < $imaxinloop) {
 				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns
 			}
 			// Start kanban column
-			if ($groupbyold !== $obj->$groupbyfield) {
+			if (is_null($obj->$groupbyfield)) {
+				$groupbyvalue = 'undefined';
+			} else {
+				$groupbyvalue = $obj->$groupbyfield;
+			}
+			if ($groupbyold !== $groupbyvalue) {
 				if (!is_null($groupbyold)) {
 					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
-				// TODO Create kanban column for all values into $groupbyvalues, until we reach the new $obj->$groupbyfield
-				//
-				//var_dump($groupbyvalues);
-				//var_dump($obj->$groupbyfield);
-				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';	// Start new column
+				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
+					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
+					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) { continue; }
+					if ($tmpcursor >= $groupbyvalue) { continue; }
+					// We found a possible column with no value, we output the empty column
+					print '<div class="box-flex-container-column kanban column';
+					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+						print ' kanbancollapsed';
+					}
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
+					print '</div>';	// Start and end the new column
+				}
+				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'">';	// Start new column
+				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$groupbyvalue]) ? 'Undefined' : $groupbyvalues[$groupbyvalue]).'</div>';
 			}
-			$groupbyold = $obj->$groupbyfield;
+			$groupbyold = $groupbyvalue;
 		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
@@ -1679,13 +1703,25 @@ while ($i < $imaxinloop) {
 		}
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
-		print $object->getKanbanView('', $arrayofdata);
+		print $object->getKanbanView('', $arrayofdata, ($groupby ? 'small' : ''));
 
 		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {
 			// Close kanban column
 			if (!empty($groupby)) {
 				print '</div>';	// end box-flex-container
+				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
+					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
+					if ($tmpcursor <= $groupbyvalue) { continue; }
+					// We found a possible column with no value, we output the empty column
+					print '<div class="box-flex-container-column kanban column';
+					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+						print ' kanbancollapsed';
+					}
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue) ? 'Undefined' : $tmpgroupbyvalue).'</div>';
+					print '</div>';	// Start and end the new column
+				}
 				print '</div>';	// end box-flex-container-columns
 			} else {
 				print '</div>';	// end box-flex-container
@@ -1711,7 +1747,7 @@ while ($i < $imaxinloop) {
 
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';

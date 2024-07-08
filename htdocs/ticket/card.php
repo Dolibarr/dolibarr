@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -84,7 +84,7 @@ if (GETPOST('actioncode', 'array')) {
 }
 
 
-// Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketcard', 'globalcard'));
 
 $object = new Ticket($db);
@@ -114,7 +114,7 @@ if (GETPOST('modelselected', 'alpha')) {
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $track_id || $ref) {
 	$res = $object->fetch($id, $ref, $track_id);
 	if ($res >= 0) {
@@ -656,7 +656,7 @@ if (empty($reshook)) {
 
 
 	$permissiondellink = $user->hasRight('ticket', 'write');
-	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
@@ -1060,7 +1060,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
 		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->hasRight('ticket', 'manage')) {
-			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.urlencode($object->track_id).'&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
+			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.urlencode($object->track_id).'&set=assign_ticket">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
@@ -1162,7 +1162,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="submit" class="button smallpaddingimp" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			// Button to edit Properties
-			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $user->hasRight('ticket', 'write')) {
+			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !getDolGlobalInt('TICKET_DISALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $user->hasRight('ticket', 'write')) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}

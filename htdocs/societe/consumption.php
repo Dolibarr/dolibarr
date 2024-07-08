@@ -91,7 +91,7 @@ $thirdTypeSelect = GETPOST("third_select_id", 'aZ09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
 
 
@@ -443,6 +443,8 @@ $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPO
 $button = '<input type="submit" class="button buttonform small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $total_qty = 0;
+$total_ht = 0;
+
 $param = '';
 
 if ($sql_select) {
@@ -524,7 +526,6 @@ if ($sql_select) {
 	print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-
 	$i = 0;
 	while (($objp = $db->fetch_object($resql)) && $i < min($num, $limit)) {
 		$documentstatic->id = $objp->doc_id;
@@ -536,6 +537,7 @@ if ($sql_select) {
 		$documentstatic->status = $objp->status;
 		$documentstatic->paye = $objp->paid;
 		$documentstatic->alreadypaid = $objp->paid;
+		$documentstatic->totalpaid = $objp->paid;
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
@@ -718,9 +720,7 @@ if ($sql_select) {
 		$total_qty += $objp->prod_qty;
 
 		print '<td class="right"><span class="amount">'.price($objp->total_ht).'</span></td>';
-		if (empty($total_ht)) {
-			$total_ht = 0;
-		}
+
 		$total_ht += (float) $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';

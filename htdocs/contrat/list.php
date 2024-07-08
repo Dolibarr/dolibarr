@@ -146,7 +146,7 @@ if ($search_status == '') {
 	$search_status = 1;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
 $hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
@@ -1203,7 +1203,7 @@ while ($i < $imaxinloop) {
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print '<td class="nocellnopadd">';
+			print '<td class="center nocellnopadd">';
 			print $obj->zip;
 			print '</td>';
 			if (!$i) {

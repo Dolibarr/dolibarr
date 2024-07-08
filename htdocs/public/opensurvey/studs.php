@@ -60,7 +60,7 @@ $nblines = $object->fetch_lines();
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
-if (empty($conf->opensurvey->enabled)) {
+if (!isModEnabled('opensurvey')) {
 	httponly_accessforbidden('Module Survey not enabled');
 }
 

@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -132,7 +133,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom nowrap linecolunit right">';
+		print '<td class="nobottom nowrap linecolunit">';
 		print  $formproduct->selectMeasuringUnits("fk_unit", '', (($line->fk_unit) ? $line->fk_unit : ''), 0, 0);
 		print '</td>';
 	}
@@ -154,12 +155,16 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolunit right">';
+	print '<td class="nobottom nowrap linecolunit">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolworkstation right">';
+	print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOST('qty_frozen', 'int') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolworkstation">';
 	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 

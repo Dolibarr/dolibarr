@@ -1029,7 +1029,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$dims = $pdf->getPageDimensions();
 
 	// Line of free text
-	if (empty($hidefreetext) && !empty($conf->global->$paramfreetext)) {
+	if (empty($hidefreetext) && getDolGlobalString($paramfreetext)) {
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
 		$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
@@ -1633,7 +1633,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				// Check if description must be output
 				if (!empty($object->element)) {
 					$tmpkey = 'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_'.strtoupper($object->element);
-					if (!empty($conf->global->$tmpkey)) {
+					if (getDolGlobalString($tmpkey)) {
 						$hidedesc = 1;
 					}
 				}
@@ -2452,7 +2452,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if ($object->lines[$i]->situation_percent > 0) {
+			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
 				$progress = 1;
@@ -2500,13 +2500,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
-				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
-				}
-			} elseif (count($objects) == 1) {
+			if (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');

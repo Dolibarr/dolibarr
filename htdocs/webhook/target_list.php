@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array('other'));
+$langs->loadLangs(array('other', 'admin'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';    // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -66,7 +66,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;

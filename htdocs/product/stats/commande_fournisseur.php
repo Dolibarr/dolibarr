@@ -44,7 +44,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatssupplierorder'));
 
 $mesg = '';
@@ -106,7 +106,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-stats_commande_fournisseur');
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', 'mod-product page-stats_commande_fournisseur');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);

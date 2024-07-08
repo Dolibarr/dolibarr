@@ -46,7 +46,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'produit|service');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
@@ -498,7 +498,7 @@ if ($usevirtualstock) {
 	}
 	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ")))";
 	$sql .= ")";
-	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+	if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
 		$sql .= " AND (";
 		$sql .= " pse.desiredstock > 0)";
 	}
@@ -524,7 +524,7 @@ if ($usevirtualstock) {
 		$sql .= " (" . $sqlalertstock . " >= 0 AND (" . $sqlalertstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')))';
 	}
 	$sql .= ')';
-	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+	if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
 		$sql .= " AND (";
 		$sql .= " pse.desiredstock > 0)";
 	}
@@ -947,10 +947,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Desired stock
-		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
+		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->desiredstockpse ? $desiredstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $desiredstock).'</td>';
 
 		// Limit stock for alert
-		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $alertstockwarehouse : $alertstock).'</td>';
+		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->seuil_stock_alertepse ? $alertstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $alertstock).'</td>';
 
 		// Current stock (all warehouses)
 		print '<td class="right">' . $warning . $stock;

@@ -116,7 +116,6 @@ class EvaluationLine extends CommonObjectLine
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 	);
 	public $rowid;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_skill;

@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
@@ -77,7 +78,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array($object->element.'card', 'globalcard'));
 
 $upload_dir = $conf->don->dir_output;
@@ -412,6 +413,8 @@ if (empty($reshook)) {
  * View
  */
 
+$bankaccountstatic = new Account($db);
+
 $title = $langs->trans("Donation");
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
@@ -627,7 +630,7 @@ if (!empty($id) && $action == 'edit') {
 	print '</td>';
 
 	// Amount
-	if ($object->statut == 0) {
+	if ($object->status == 0) {
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
@@ -842,8 +845,10 @@ if (!empty($id) && $action != 'edit') {
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql .= "c.code as type_code,c.libelle as paiement_type";
+	$sql .= " c.code as type_code, c.libelle as paiement_type,";
+	$sql .= " b.fk_account";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.rowid = ".((int) $id);
@@ -857,13 +862,16 @@ if (!empty($id) && $action != 'edit') {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$total = 0;
+
 		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
+		if (isModEnabled("bank")) {
+			print '<td>'.$langs->trans("BankAccount").'</td>';
+		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
@@ -875,6 +883,28 @@ if (!empty($id) && $action != 'edit') {
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 			$labeltype = ($langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+			if (isModEnabled("bank")) {
+				$bankaccountstatic->fetch($objp->fk_account);
+				/*$bankaccountstatic->id = $objp->fk_bank;
+				$bankaccountstatic->ref = $objp->baref;
+				$bankaccountstatic->label = $objp->baref;
+				$bankaccountstatic->number = $objp->banumber;
+				$bankaccountstatic->currency_code = $objp->bacurrency_code;
+
+				if (isModEnabled('accounting')) {
+					$bankaccountstatic->account_number = $objp->account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($objp->fk_accountancy_journal);
+					$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+				}
+				*/
+				print '<td class="nowraponall">';
+				if ($bankaccountstatic->id) {
+					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
+				print '</td>';
+			}
 			print '<td class="right">'.price($objp->amount)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;
@@ -882,12 +912,17 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		if ($object->paid == 0) {
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+			$colspan = 3;
+			if (isModEnabled("bank")) {
+				$colspan++;
+			}
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
+			$resteapayeraffiche = $remaintopay;
 
-			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print '<tr><td colspan="'.$colspan.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
 			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
@@ -912,22 +947,22 @@ if (!empty($id) && $action != 'edit') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 	if (empty($reshook)) {
 		// Re-open
-		if ($permissiontoadd && $object->statut == $object::STATUS_CANCELED) {
+		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 		}
 
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-		if ($object->statut == $object::STATUS_DRAFT) {
+		if ($object->status == $object::STATUS_DRAFT) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
 		}
 
-		if (($object->statut == $object::STATUS_DRAFT || $object->statut == $object::STATUS_VALIDATED) && $totalpaid == 0 && $object->paid == 0) {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && $totalpaid == 0 && $object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_cancel&token='.newToken().'">'.$langs->trans("ClassifyCanceled")."</a></div>";
 		}
 
 		// Create payment
-		if ($object->statut == $object::STATUS_VALIDATED && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+		if ($object->status == $object::STATUS_VALIDATED && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			if ($remaintopay == 0) {
 				print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 			} else {
@@ -936,13 +971,13 @@ if (!empty($id) && $action != 'edit') {
 		}
 
 		// Classify 'paid'
-		if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
+		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
-			if ($object->statut == $object::STATUS_CANCELED || $object->statut == $object::STATUS_DRAFT) {
+			if ($object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";

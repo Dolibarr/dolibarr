@@ -79,7 +79,7 @@ if ($object->id > 0) {
 $upload_dir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contract';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');	// Used by the include of actions_dellink.inc.php

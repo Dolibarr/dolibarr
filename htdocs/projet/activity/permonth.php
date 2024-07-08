@@ -707,8 +707,10 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';
 		}
+		$j = 0;
 		foreach ($TWeek as $weekNb) {
-			print '<td class="center hide">';
+			$j++;
+			print '<td class="center hide'.($j <= 1 ? ' borderleft' : '').'">';
 
 			$timeonothertasks = ($totalforeachweek[$weekNb] - $totalforvisibletasks[$weekNb]);
 			if ($timeonothertasks) {
@@ -733,8 +735,10 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total"></td>';
 		}
 
+		$j = 0;
 		foreach ($TWeek as $weekNb) {
-			print '<td class="liste_total hide'.$weekNb.'" align="center"><div class="totalDay'.$weekNb.'">'.convertSecondToTime($totalforvisibletasks[$weekNb], 'allhourmin').'</div></td>';
+			$j++;
+			print '<td class="liste_total hide'.$weekNb.' center'.($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$weekNb.'">'.convertSecondToTime($totalforvisibletasks[$weekNb], 'allhourmin').'</div></td>';
 		}
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';

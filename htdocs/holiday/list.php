@@ -99,7 +99,7 @@ $search_valideur     = GETPOST('search_valideur', 'intcomma');
 $search_status       = GETPOST('search_status', 'intcomma');
 $search_type         = GETPOST('search_type', 'intcomma');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('holidaylist')); // Note that conf->hooks_modules contains array

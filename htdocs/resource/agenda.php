@@ -75,7 +75,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
@@ -83,7 +83,7 @@ $hookmanager->initHooks(array('agendaresource'));
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 

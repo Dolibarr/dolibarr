@@ -873,7 +873,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			while ($i <= $MAXFTP) {
 				$paramkey = 'FTP_NAME_'.$i;
 				//print $paramkey;
-				if (!empty($conf->global->$paramkey)) {
+				if (getDolGlobalString($paramkey)) {
 					$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 					$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
 				}
@@ -1126,15 +1126,13 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup', 0, '', '', '', '<i class="fa fa-tools fa-fw paddingright pictofixedwidth"></i>');
 
 		if ($usemenuhider || empty($leftmenu) || $leftmenu == "setup") {
+			// Define $nbmodulesnotautoenabled - TODO This code is at different places
 			$nbmodulesnotautoenabled = count($conf->modules);
-			if (in_array('fckeditor', $conf->modules)) {
-				$nbmodulesnotautoenabled--;
-			}
-			if (in_array('export', $conf->modules)) {
-				$nbmodulesnotautoenabled--;
-			}
-			if (in_array('import', $conf->modules)) {
-				$nbmodulesnotautoenabled--;
+			$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+			foreach ($listofmodulesautoenabled as $moduleautoenable) {
+				if (in_array($moduleautoenable, $conf->modules)) {
+					$nbmodulesnotautoenabled--;
+				}
 			}
 
 			// Load translation files required by the page
@@ -1533,7 +1531,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		if (isModEnabled('order')) {
 			$langs->load("orders");
 			if (isModEnabled('invoice')) {
-				$newmenu->add("/commande/list.php?leftmenu=orders&amp;search_status=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->hasRight('commande', 'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'order', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add("/commande/list.php?leftmenu=orders&amp;search_status=-3&amp;search_billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->hasRight('commande', 'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'order', 'class="paddingright pictofixedwidth"'));
 			}
 			//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->hasRight('commande',  'lire'));
 		}
@@ -1542,7 +1540,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		if (isModEnabled('supplier_invoice')) {
 			if (getDolGlobalString('SUPPLIER_MENU_ORDER_RECEIVED_INTO_INVOICE')) {
 				$langs->load("supplier");
-				$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->hasRight('commande', 'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'supplier_order', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;search_billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->hasRight('commande',  'lire'), '', $mainmenu, 'orders', 0, '', '', '', img_picto('', 'supplier_order', 'class="paddingright pictofixedwidth"'));
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->hasRight('commande',  'lire'));
 			}
 		}
@@ -2387,7 +2385,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		// Expense report
 		if (isModEnabled('expensereport')) {
 			$langs->loadLangs(array("trips", "bills"));
-			$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->hasRight('expensereport', 'lire'), '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'trip', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->hasRight('expensereport', 'lire'), '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'expensereport', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/expensereport/card.php?action=create&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->hasRight('expensereport', 'creer'));
 			$newmenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->hasRight('expensereport', 'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "expensereport") {

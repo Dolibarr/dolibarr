@@ -46,7 +46,7 @@ if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('commercialindex'));
 
@@ -111,17 +111,20 @@ llxHeader("", $langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 $tmp = getCustomerProposalPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 $tmp = getCustomerOrderPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 
 /*
@@ -598,7 +601,9 @@ if (isModEnabled('intervention')) {
 	}
 }
 
-print '</div><div class="fichetwothirdright">';
+
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
 
 /*
  * Last modified customers or prospects
@@ -1317,6 +1322,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 	}
 }
 
+print '</div>';
 print '</div>';
 print '</div>';
 

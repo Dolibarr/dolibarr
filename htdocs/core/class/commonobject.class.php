@@ -655,17 +655,17 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string|null		Object creation date
+	 * @var integer|''|null		Object creation date
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string|null		Object last validation date
+	 * @var integer|''|null		Object last validation date
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|string|null		Object last modification date
+	 * @var integer|''|null		Object last modification date
 	 */
 	public $date_modification;
 
@@ -677,14 +677,14 @@ abstract class CommonObject
 	public $tms;
 
 	/**
-	 * @var int|string|null
+	 * @var int|''|null
 	 * @deprecated Use $date_modification instead.
 	 * @see $date_modification
 	 */
 	private $date_update;
 
 	/**
-	 * @var integer|string|null		Object closing date
+	 * @var integer|''|null		Object closing date
 	 */
 	public $date_cloture;
 
@@ -3855,6 +3855,10 @@ abstract class CommonObject
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
+			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.
+			// For example, if you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%), on the first line you got 5,17 on HT total
+			// and 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total on second line (see #30051).
+			$forcedroundingmode = '0';
 			$fieldup = 'value_unit';
 			$base_price_type = 'TTC';
 		}
@@ -3901,7 +3905,7 @@ abstract class CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
+				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);
 				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -3962,7 +3966,11 @@ abstract class CommonObject
 				$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
 				if ($forcedroundingmode == '1') {	// Check if we need adjustment onto line for vat. TODO This works on the company currency but not on foreign currency
-					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+					if ($base_price_type == 'TTC') {
+						$tmpvat = price2num($total_ttc_by_vats[$obj->vatrate] * $obj->vatrate / (100 + $obj->vatrate), 'MT', 1);
+					} else {
+						$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+					}
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
@@ -3974,8 +3982,13 @@ abstract class CommonObject
 							$error++;
 							break;
 						}
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
-						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+						if ($base_price_type == 'TTC') {
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
+						} else {
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+						}
 
 						$resqlfix = $this->db->query($sqlfix);
 
@@ -3984,9 +3997,14 @@ abstract class CommonObject
 						}
 
 						$this->total_tva = (float) price2num($this->total_tva - (float) $diff, '', 1);
-						$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
 						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - (float) $diff, '', 1);
-						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						if ($base_price_type == 'TTC') {
+							$this->total_ht = (float) price2num($this->total_ht + (float) $diff, '', 1);
+							$total_ht_by_vats[$obj->vatrate] = (float) price2num($total_ht_by_vats[$obj->vatrate] + (float) $diff, '', 1);
+						} else {
+							$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
+							$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						}
 					}
 				}
 
@@ -4001,17 +4019,19 @@ abstract class CommonObject
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					$prev_sits = $this->get_prev_sits();
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+						$prev_sits = $this->get_prev_sits();
 
-					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
-						$this->total_ht -= $sit->total_ht;
-						$this->total_tva -= $sit->total_tva;
-						$this->total_localtax1 -= $sit->total_localtax1;
-						$this->total_localtax2 -= $sit->total_localtax2;
-						$this->total_ttc -= $sit->total_ttc;
-						$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
-						$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
-						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
+							$this->total_ht -= $sit->total_ht;
+							$this->total_tva -= $sit->total_tva;
+							$this->total_localtax1 -= $sit->total_localtax1;
+							$this->total_localtax2 -= $sit->total_localtax2;
+							$this->total_ttc -= $sit->total_ttc;
+							$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+							$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+							$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+						}
 					}
 				}
 			}
@@ -6522,7 +6542,7 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
 				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
-				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+				$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
@@ -6934,7 +6954,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -7197,6 +7217,15 @@ abstract class CommonObject
 				$result = $this->insertExtraFields('', $user);
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error) {
+				$parameters = array('key' => $key);
+				global $action;
+				$reshook = $hookmanager->executeHooks('updateExtraFieldBeforeCommit', $parameters, $this, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 			}
 
@@ -7463,7 +7492,8 @@ abstract class CommonObject
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				if (!empty($param['options'])) {
-					$out .= "<br>";
+					// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+					//var_dump($param['options']);
 					$out .= $form->selectarray($keyprefix.$key.$keysuffix."_multiinput", $param['options'], '', 1, 0, 0, "flat maxwidthonphone".$morecss);
 					$out .= "<script>";
 					$out .= '
@@ -8429,6 +8459,17 @@ abstract class CommonObject
 
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
+
+					if ($classname && !class_exists($classname)) {
+						// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
+						// TODO use newObjectByElement() introduce in V20 by PR #30036 for better errors management
+						$element_prop = getElementProperties($classname);
+						if ($element_prop) {
+							$classname = $element_prop['classname'];
+						}
+					}
+
+
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
@@ -8551,7 +8592,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
+		if (!isset($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
@@ -8727,7 +8768,14 @@ abstract class CommonObject
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
 			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
-				$this->setFieldError($fieldKey, $validate->error);
+				$lastIsFetchableError = $validate->error;
+
+				// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
+				if ($validate->isFetchableElement($fieldValue, $classname)) {
+					return true;
+				}
+
+				$this->setFieldError($fieldKey, $lastIsFetchableError);
 				return false;
 			} else {
 				return true;
@@ -8865,6 +8913,8 @@ abstract class CommonObject
 								} else {
 									$value = $getposttemp;
 								}
+							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
+								$value =( !empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0' ) ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
@@ -9043,7 +9093,7 @@ abstract class CommonObject
 						}
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-						$out .= ($display_type == 'card' ? '</tr>' : '</div>');
+						$out .= ($display_type == 'card' ? '</tr>'."\n" : '</div>');
 						$e++;
 					}
 				}
@@ -9804,7 +9854,7 @@ abstract class CommonObject
 						if (empty($obj->$field)) {
 							$this->$field = null;
 						} else {
-							$this->$field = (float) $obj->$field;
+							$this->$field = (int) $obj->$field;
 						}
 					} else {
 						if (isset($obj->$field) && (!is_null($obj->$field) || (array_key_exists('notnull', $info) && $info['notnull'] == 1))) {

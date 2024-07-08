@@ -607,6 +607,14 @@ if ($action == 'create') {
 			}
 		}
 
+		// Due date
+		print '<tr>';
+		print '<td class="titlefield">' . $langs->trans('DateDue') . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
 		// Validate
 		/*
 		print '<tr>';

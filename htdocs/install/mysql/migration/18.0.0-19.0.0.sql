@@ -218,3 +218,5 @@ ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP O
 UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
 
 UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+UPDATE llx_c_tva SET taux = 3, note = 'Νήσων υπερμειωμένος Φ.Π.Α.' WHERE fk_pays = 102 AND taux = 16;

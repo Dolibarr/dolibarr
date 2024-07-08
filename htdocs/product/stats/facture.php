@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
 
+$action = GETPOST('action', 'aZ');
+
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
@@ -46,7 +48,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
 $extrafields = new ExtraFields($db);
 
@@ -152,7 +154,7 @@ if ($id > 0 || !empty($ref)) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl, '', '', 0, 0, '', '', '', 'mod-product page-stats_facture');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stats_facture');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -359,8 +361,8 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->datef), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
-						print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
+						print '<td class="right">'.price($objp->total_ht)."</td>\n";
+						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
 						// Fields from hook
 						$parameters = array();
 						$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -377,7 +379,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';
-				print '<td align="right">'.price($total_ht).'</td>';
+				print '<td class="right">'.price($total_ht).'</td>';
 				print '<td></td>';
 				print "</table>";
 				print '</div>';

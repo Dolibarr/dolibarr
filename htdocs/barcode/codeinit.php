@@ -184,7 +184,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					if ($file == $conf->global->BARCODE_PRODUCT_ADDON_NUM) {
+					if ($file == getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						try {
 							dol_include_once($dirroot.$file.'.php');
 						} catch (Exception $e) {
