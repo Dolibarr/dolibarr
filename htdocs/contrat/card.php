@@ -2321,59 +2321,59 @@ $db->close();
 if (isModEnabled('margin') && $action == 'editline') {
 	// TODO Why this ? To manage margin on contracts ?
 ?>
-<script type="text/javascript">
-$(document).ready(function() {
-  var idprod = $("input[name='idprod']").val();
-  var fournprice = $("input[name='fournprice']").val();
-  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
-  if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
-		  'idprod': idprod,
-		  'token': token
-		  }, function(data) {
-		if (data.length > 0) {
-		  var options = '';
-		  var trouve=false;
-		  $(data).each(function() {
-			options += '<option value="'+this.id+'" price="'+this.price+'"';
-			if (fournprice > 0) {
-				if (this.id == fournprice) {
-				  options += ' selected';
-				  $("#buying_price").val(this.price);
-				  trouve = true;
+	<script type="text/javascript">
+	$(document).ready(function() {
+	  var idprod = $("input[name='idprod']").val();
+	  var fournprice = $("input[name='fournprice']").val();
+	  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+	  if (idprod > 0) {
+		  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+			  'idprod': idprod,
+			  'token': token
+			  }, function(data) {
+			if (data.length > 0) {
+			  var options = '';
+			  var trouve=false;
+			  $(data).each(function() {
+				options += '<option value="'+this.id+'" price="'+this.price+'"';
+				if (fournprice > 0) {
+					if (this.id == fournprice) {
+					  options += ' selected';
+					  $("#buying_price").val(this.price);
+					  trouve = true;
+					}
 				}
+				options += '>'+this.label+'</option>';
+			  });
+			  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
+			  $("#fournprice").html(options);
+			  if (trouve) {
+				$("#buying_price").hide();
+				$("#fournprice").show();
+			  }
+			  else {
+				$("#buying_price").show();
+			  }
+			  $("#fournprice").change(function() {
+				var selval = $(this).find('option:selected').attr("price");
+				if (selval)
+				  $("#buying_price").val(selval).hide();
+				else
+				  $('#buying_price').show();
+			  });
 			}
-			options += '>'+this.label+'</option>';
-		  });
-		  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
-		  $("#fournprice").html(options);
-		  if (trouve) {
-			$("#buying_price").hide();
-			$("#fournprice").show();
-		  }
-		  else {
-			$("#buying_price").show();
-		  }
-		  $("#fournprice").change(function() {
-			var selval = $(this).find('option:selected').attr("price");
-			if (selval)
-			  $("#buying_price").val(selval).hide();
-			else
+			else {
+			  $("#fournprice").hide();
 			  $('#buying_price').show();
-		  });
+			}
+		  },
+		  'json');
 		}
 		else {
 		  $("#fournprice").hide();
 		  $('#buying_price').show();
 		}
-	  },
-	  'json');
-	}
-	else {
-	  $("#fournprice").hide();
-	  $('#buying_price').show();
-	}
-});
+	});
 </script>
 	<?php
 }
