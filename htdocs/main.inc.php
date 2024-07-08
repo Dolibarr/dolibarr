@@ -158,9 +158,9 @@ function testSqlAndScriptInject($val, $type)
 	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	// Example of valid UTF8 chars:
-	// utf8=utf8mb3:    '\x09', '\x0A', '\x0D', '\x7E'
-	// utf8=utf8mb3: 	'\xE0\xA0\x80'
-	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
+	// utf8 or utf8mb3: '\x09', '\x0A', '\x0D', '\x7E'
+	// utf8 or utf8mb3: '\xE0\xA0\x80'
+	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (so this may be refused by the database insert if pagecode is utf8=utf8mb3)
 	$newval = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 
 	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
