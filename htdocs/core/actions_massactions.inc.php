@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024 Frédéric France <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -761,7 +761,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	foreach ($listofobjectref as $tmppdf) {
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
-	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
 
 	// build list of files with full path
 	$files = array();
