@@ -2372,6 +2372,6 @@ if (isModEnabled('margin') && $action == 'editline') {
 		  $('#buying_price').show();
 		}
 	});
-<?php
+	<?php
 	print "\n".'<script type="text/javascript">'."\n";
 }
