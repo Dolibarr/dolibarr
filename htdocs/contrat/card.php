@@ -2315,13 +2315,11 @@ if ($action == 'create') {
 llxFooter();
 
 $db->close();
-?>
 
-<?php
 if (isModEnabled('margin') && $action == 'editline') {
 	// TODO Why this ? To manage margin on contracts ?
+	print "\n".'<script type="text/javascript">'."\n";
 ?>
-	<script type="text/javascript">
 	$(document).ready(function() {
 	  var idprod = $("input[name='idprod']").val();
 	  var fournprice = $("input[name='fournprice']").val();
@@ -2374,6 +2372,6 @@ if (isModEnabled('margin') && $action == 'editline') {
 		  $('#buying_price').show();
 		}
 	});
-</script>
-	<?php
+<?php
+	print "\n".'<script type="text/javascript">'."\n";
 }
