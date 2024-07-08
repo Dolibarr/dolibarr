@@ -2319,7 +2319,7 @@ $db->close();
 if (isModEnabled('margin') && $action == 'editline') {
 	// TODO Why this ? To manage margin on contracts ?
 	print "\n".'<script type="text/javascript">'."\n";
-?>
+	?>
 	$(document).ready(function() {
 	  var idprod = $("input[name='idprod']").val();
 	  var fournprice = $("input[name='fournprice']").val();
