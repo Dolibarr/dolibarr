@@ -4086,15 +4086,20 @@ class User extends CommonObject
 	 *  @param	string		$sortfield		sort field
 	 *  @param	int			$limit			limit page
 	 *  @param	int			$offset			page
-	 * 	@param  string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * 	@param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] =  '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * 	@param  string      $filtermode   	No more used
 	 *  @param  bool        $entityfilter	Activate entity filter
 	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND', $entityfilter = false)
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $entityfilter = false)
 	{
 		global $conf, $user;
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$sql = "SELECT t.rowid";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t ';

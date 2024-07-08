@@ -433,14 +433,19 @@ class MyObject extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	Limit the number of lines returned
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] = '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$records = array();
 

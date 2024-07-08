@@ -235,13 +235,19 @@ class ProductStockEntrepot extends CommonObject
 	 * @param string 		$sortfield  	Sort field
 	 * @param int    		$limit      	Limit
 	 * @param int    		$offset     	Offset limit
-	 * @param string|array  $filter     	Filter USF.
+	 * @param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] =
 	 * @param string 		$filtermode 	Filter mode (AND or OR)
 	 * @return int|array 					Return integer <0 if KO, array if OK
 	 */
-	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";

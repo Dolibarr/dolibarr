@@ -519,13 +519,19 @@ class Cronjob extends CommonObject
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset ppage
 	 * @param	int				$status			Display active or not
-	 * @param	string|array	$filter			Filter USF.
+	 * @param  array			$filter       	Filter as an Universal Search string.
+	 * 											Example: $filter['uss'] =
 	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0
 	 */
-	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = array(), int $processing = -1)
 	{
 		$this->lines = array();
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";

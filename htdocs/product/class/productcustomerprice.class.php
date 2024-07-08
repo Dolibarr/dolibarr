@@ -383,12 +383,19 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	string 			$sortfield 	Sort field
 	 * @param 	int 			$limit 		Limit page
 	 * @param 	int 			$offset 	offset
-	 * @param 	string|array 	$filter 	Filter USF.
+	 * @param  array			$filter     Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] =
 	 * @return 	int 						Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array())
 	{
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
+
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
 		}

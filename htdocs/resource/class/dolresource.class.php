@@ -605,11 +605,18 @@ class Dolresource extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset page
-	 * @param	string|array	$filter			Filter USF.
+	 * @param	array			$filter       	Filter as an Universal Search string.
+	 * 											Example: $filter['uss'] =
 	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = array())
 	{
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 

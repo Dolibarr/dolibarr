@@ -483,13 +483,19 @@ class Mo extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int         		$limit        	Limit
 	 * @param  int         		$offset       	Offset
-	 * @param  string|array     $filter       	Filter USF.
+	 * @param  array			$filter       	Filter as an Universal Search string.
+	 * 											Example: $filter['uss'] =
 	 * @param  string      		$filtermode   	Filter mode (AND or OR)
 	 * @return array|int                 		int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$records = array();
 
@@ -2190,13 +2196,19 @@ class MoLine extends CommonObjectLine
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array $filter       	Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] =
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$records = array();
 
