@@ -107,7 +107,7 @@ if ($action != '') {
 	    header("Location: " . $_SERVER["PHP_SELF"]);
         exit;
     } else {
-        setEventMessages(/*$langs->trans("Error")*/'', $errors, 'errors');
+        setEventMessages('', $errors, 'errors');
     }
 }
 
