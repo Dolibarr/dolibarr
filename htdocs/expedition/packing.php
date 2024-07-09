@@ -35,3 +35,50 @@
  *	\ingroup    expedition
  *	\brief      List of shipment packages
  */
+
+// Load Dolibarr environment
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings', 'companies'));
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+
+$object = new Expedition($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+
+	if (!empty($object->origin)) {
+		$typeobject = $object->origin;
+		$origin = $object->origin;
+		$object->fetch_origin();
+	}
+
+	// Linked documents
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+		$objectsrc = new Commande($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+		$objectsrc = new Propal($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
