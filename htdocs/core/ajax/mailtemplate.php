@@ -19,7 +19,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require_once '../../main.inc.php';
-require_once './files.lib.php';
+require_once '../lib/files.lib.php';
 
 top_httphead();
 
