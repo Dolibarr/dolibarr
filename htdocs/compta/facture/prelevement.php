@@ -127,8 +127,7 @@ if (empty($reshook)) {
 				}
 			}
 			$action = '';
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans('unprocessedRequest').' '.(price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) <= 0 ? $langs->trans('paymentsCoveringEntireInvoice') :  $langs->trans('requestedAmountExceedsOutstanding', price2num(GETPOST('withdraw_request_amount', 'alpha')), price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')))), null, 'errors');
 		}
 		$action = '';
@@ -642,7 +641,7 @@ if ($object->id > 0) {
 			print '<input type = "submit" class = "button valignmiddle" value = "'.$langs->trans('Modify').'">';
 		} else {
 			if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-			print img_warning($langs->trans('NoDefaultIBANFound'));
+				print img_warning($langs->trans('NoDefaultIBANFound'));
 			}
 		}
 		print '</form>';
