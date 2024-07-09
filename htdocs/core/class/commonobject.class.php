@@ -3855,6 +3855,10 @@ abstract class CommonObject
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
+			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.
+			// For example, if you have 2 lines with same TTC amounts (6,2 Unit price TTC and VAT rate 20%), on the first line you got 5,17 on HT total
+			// and 5,16 on HT total and 1,04 on VAT total to get 6,20 on TTT total on second line (see #30051).
+			$forcedroundingmode = '0';
 			$fieldup = 'value_unit';
 			$base_price_type = 'TTC';
 		}
@@ -3901,7 +3905,7 @@ abstract class CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
+				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);
 				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
