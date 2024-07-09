@@ -1474,7 +1474,7 @@ foreach ($listofreferent as $key => $value) {
 
 					print '<td class="right">';
 					if ($othermessage) {
-						print $othermessage;
+						print '<span class="opacitymedium">'.$othermessage.'</span>';
 					}
 					if (isset($total_ht_by_line)) {
 						if (!$qualifiedfortotal) {

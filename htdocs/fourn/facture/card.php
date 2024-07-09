@@ -423,9 +423,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$old_date_echeance = $object->date_echeance;
 			$new_date_echeance = $object->calculate_date_lim_reglement();
-			if ($new_date_echeance > $old_date_echeance) {
+			if ($new_date_echeance) {
 				$object->date_echeance = $new_date_echeance;
 			}
 			if ($object->date_echeance < $object->date) {
@@ -489,7 +488,7 @@ if (empty($reshook)) {
 
 		$object->date = $newdate;
 		$date_echence_calc = $object->calculate_date_lim_reglement();
-		if (!empty($object->date_echeance) && $object->date_echeance < $date_echence_calc) {
+		if (!empty($object->date_echeance)) {
 			$object->date_echeance = $date_echence_calc;
 		}
 		if ($object->date_echeance && $object->date_echeance < $object->date) {

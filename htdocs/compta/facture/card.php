@@ -3391,9 +3391,6 @@ if ($action == 'create') {
 	if (empty($reshook)) {
 		print '<table class="border centpercent">';
 
-		// Ref
-		//print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
-
 		$exampletemplateinvoice = new FactureRec($db);
 		$invoice_predefined = new FactureRec($db);
 		if (empty($origin) && empty($originid) && GETPOSTINT('fac_rec') > 0) {
@@ -3533,7 +3530,7 @@ if ($action == 'create') {
 		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
 		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3, 'standardonsmartphone');
+		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
 		print '<table class="nobordernopadding"><tr>';
 		print '<td>';
 		print $desc;
@@ -3720,7 +3717,7 @@ if ($action == 'create') {
 				$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
 				$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>';
 			}
@@ -3729,7 +3726,7 @@ if ($action == 'create') {
 			$tmp = '<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
 			$text = $tmp.'<label for="radio_replacement" class="opacitymedium">'.$langs->trans("InvoiceReplacement").'</label> ';
 			//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'replacementonsmartphone');
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', 'nowraponall', 0, 3, 'replacementonsmartphone');
 			print $desc;
 			print '</div></div>';
 		}
@@ -3885,12 +3882,12 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Discounts for the known third party
 		if ($socid > 0) {
-			// Discounts for third party
 			print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="2">';
 
-			$thirdparty = $soc;
-			$discount_type = 0;
+			$thirdparty = $soc;	// used by object_discounts.tpl.php
+			$discount_type = 0;	// used by object_discounts.tpl.php
 			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
@@ -3920,7 +3917,7 @@ if ($action == 'create') {
 		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</td></tr>';
 
-
+		// Warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
 			if (in_array(GETPOSTINT('type'), $retainedWarrantyInvoiceAvailableType)) {
@@ -4049,7 +4046,7 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="2" class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code');
+			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth100 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 

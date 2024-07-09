@@ -628,7 +628,7 @@ function ajax_event($htmlname, $events)
  * 	@param  array       $input                  Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
  * 	@param  int|null    $entity                 Entity. Current entity is used if null.
  *  @param  int         $revertonoff            1=Revert on/off
- *  @param  int	        $strict                 Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param  int	        $strict                 0=Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
  *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param  int         $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param  int	        $forcenoajax            1 = Force to use a ahref link instead of ajax code.

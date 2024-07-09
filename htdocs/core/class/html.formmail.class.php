@@ -859,8 +859,9 @@ class FormMail extends Form
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
-							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
+							$entity = (isset($this->param['object_entity']) ? $this->param['object_entity'] : $conf->entity);
+							if ($entity > 1) {
+								$relativepathtofile = str_replace('/'.$entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
@@ -870,7 +871,8 @@ class FormMail extends Form
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).$listofnames[$key];
 
-							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
+							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
+
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile input-nobottom" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).'&id=removedfile_'.$key.'">'.img_delete($langs->trans("Remove"), 'id="removedfile_'.$key.'" name="removedfile_'.$key.'"', 'removedfile input-nobottom').'</a>';
@@ -1555,7 +1557,7 @@ class FormMail extends Form
 					var contentHtml = $(this).data("content");
 					var csrfToken = "'.newToken().'";
 
-					// get value of sujet input 
+					// get value of sujet input
 					var subject = $("#sujet").val();
 
 					// Remplacer la variable de substitution dans le contenu HTML
