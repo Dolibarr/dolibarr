@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,8 +131,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ConferenceOrBooth").' - '.$langs->trans("Files");
-$help_url = '';
-llxHeader('', $title, $help_url);
+$help_url='EN:Module_Event_Organization';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card_documents');
 
 $result = $projectstatic->fetch($object->fk_project);
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
