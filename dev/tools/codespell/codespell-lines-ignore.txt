@@ -58,7 +58,7 @@
 				$this->datee        = $this->db->jdate($obj->datee);
 				$this->periode = $this->db->jdate($obj->period);
 				$tmp = array('id_users' => $obj->id_users, 'nom' => $obj->name, 'reponses' => $obj->reponses);
-				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
+				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, 1); // Disable hook for the moment
 				//si les reponses ne concerne pas la colonne effacée, on concatenate
 				GETPOST("mouvement", 'alpha'),
 				GETPOSTINT("mouvement"),
