@@ -6490,16 +6490,16 @@ class Form
 	}
 
 	/**
-	 *    Return array of currencies in user language
+	 * Return array of currencies in user language
 	 *
-	 * @param string $selected Preselected currency code
-	 * @param string $htmlname Name of HTML select list
-	 * @param integer $useempty 1=Add empty line
-	 * @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
-	 * @param bool $excludeConfCurrency false = If company current currency not in table, we add it into list. Should always be available.
-	 *                                  true = we are in currency_rate update , we don't want to see conf->currency in select
-	 * @param string $morecss More css
-	 * @return    string
+	 * @param 	string 	$selected 				Preselected currency code
+	 * @param 	string 	$htmlname 				Name of HTML select list
+	 * @param 	integer $useempty 				1=Add empty line
+	 * @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 * @param 	bool 	$excludeConfCurrency 	false = If company current currency not in table, we add it into list. Should always be available.
+	 *                                  		true = we are in currency_rate update , we don't want to see conf->currency in select
+	 * @param 	string 	$morecss 				More css
+	 * @return  string							HTML component
 	 */
 	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
 	{

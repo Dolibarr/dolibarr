@@ -118,8 +118,9 @@ if (getDolGlobalString('MAIN_MOTD')) {
  */
 
 // Specific warning to propose to upgrade invoice situation to progressive mode
-if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 ) {
-	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode"));
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$langs->loadLangs(array("admin"));
+	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
 	print "<br>";
 }
 

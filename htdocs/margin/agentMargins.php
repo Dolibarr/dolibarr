@@ -226,7 +226,9 @@ if (!empty($enddateyear)) {
 	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
-
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
