@@ -135,12 +135,12 @@ class FormWebsite
 				$lasttypecontainer = '';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if (in_array($obj->typecontainer, array('library', 'service'))) {
-						/*if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
+					/*if (in_array($obj->typecontainer, array('library', 'service'))) {
+						if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
 							$i++;
 							continue;
-						}*/
-					}
+						}
+					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
 						$transcodecontainer = ucfirst($obj->typecontainer);

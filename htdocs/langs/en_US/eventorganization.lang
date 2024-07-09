@@ -114,6 +114,7 @@ EventType = Event type
 LabelOfBooth=Booth label
 LabelOfconference=Conference label
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+EventRegistrationAreClosed=Event registration are closed
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 MaxNbOfAttendeesReached=The maximum number of participants has been reached

@@ -2015,9 +2015,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td,
+	div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
+	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
+		height: 28px !important;
+	}
+
 
 	div.tabs div.tab a.tab  {
 		max-width: 200px;
@@ -2070,8 +2075,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 200px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; min-width: unset; }
-	.titlefieldcreate { width: auto !important; }
+	.titlefield { width: auto; min-width: 125px; }
+	.titlefieldcreate { width: auto !important; min-width: 125px; }
 
 	#tooltip {
 		position: absolute;

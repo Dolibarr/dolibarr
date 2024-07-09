@@ -727,13 +727,13 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 				break;
 			}
 		}
-		// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
+		// Deny dynamic functions '${a}('  or  '$a[b]('  or  '$a->b('  => So we refuse '}('  and  ']('
 		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
 		}
-		// Deny dynamic functions $xxx(
-		if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
+		// Deny dynamic functions '$xxx(' or '$a->b('
+		if (preg_match('/\$[a-z0-9_\-\>\/\*]+\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 		}
