@@ -635,7 +635,7 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
-$societe_add_ref_in_list = (!empty(getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) ? getDolGlobalString('SOCIETE_ADD_REF_IN_LIST') : 0); // Récupérer la valeur de SOCIETE_ADD_REF_IN_LIST
+$societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($societe_add_ref_in_list == 1) {
 		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe);
