@@ -25,10 +25,11 @@ top_httphead();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
 	$content = $_POST['content'];
+	$selectedPosts = isset($_POST['selectedPosts']) ? json_decode($_POST['selectedPosts'], true) : [];
 
-
-	$content = str_replace('<!-- PHP_START -->', '<?php ', $content);
-	$content = str_replace('<!-- PHP_END -->', ' ?>', $content);
+	if (!empty($selectedPosts)) {
+		$content = str_replace('<!-- PHP_START -->', '<?php $selectedPosts = ' . var_export($selectedPosts, true) . '; ?>', $content);
+	}
 
 	$directory = DOL_DATA_ROOT . '/mailing/email_template';
 	if (!is_dir($directory)) {

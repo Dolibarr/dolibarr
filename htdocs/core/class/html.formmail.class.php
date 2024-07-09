@@ -1515,16 +1515,26 @@ class FormMail extends Form
 	 * Return HTML code for selection of email layout
 	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
-	 * @return 	string      				HTML for model email boxes
+	 * @return  string                      HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+		global $websitepage, $langs, $user, $keyword;
 
-		$out = '<div id="template-selector" class="template-container hidden">';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
+		$websitepage = new WebsitePage($this->db);
+
+		// Fetch blogs
+		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 5, 0, array('type_container' => 'blogpost', 'keywords' => $keyword));
+
+		$out = '<div id="template-selector" class="template-container">';
 		$templates = array(
 			'empty' => 'empty',
 			'basic' => 'basic',
+			'news' => 'news',
+			'commerce' => 'commerce'
 		);
 		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
 			$templates['news'] = 'news';
@@ -1542,24 +1552,58 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
+		$out .= '<div id="post-dropdown-container">';
+		$out .= '<ul class="dropdown">';
+		if (!empty($arrayofblogs)) {
+			foreach ($arrayofblogs as $blog) {
+				$out .= '<li>';
+				$out .= '<input type="checkbox" class="post-checkbox" ';
+				$out .= 'data-title="'.htmlentities($blog->title).'" ';
+				$out .= 'data-description="'.htmlentities($blog->description).'" ';
+				$out .= 'data-user_fullname="__USER_FULLNAME__" ';
+				$out .= 'data-date_creation="'.htmlentities($blog->date_creation).'" ';
+				$out .= 'data-image="'.htmlentities($blog->image).'" ';
+				$out .= 'style="margin-right: 10px;">';
+				$out .= '<label for="post_'.$blog->id.'">'.$blog->title.'</label>';
+				$out .= '</li>';
+			}
+		} else {
+			$out .= '<li>No posts available</li>';
+		}
+		$out .= '</ul>';
+		$out .= '</div>';
+
 		$out .= '<script type="text/javascript">
-			$(document).ready(function() {
-				$(".template-option").click(function() {
-					var template = $(this).data("template");
+		$(document).ready(function() {
+			$(".template-option").click(function() {
+				var template = $(this).data("template");
 
-					console.log("We choose a layout for email template " + template);
+				console.log("We choose a layout for email template " + template);
 
-					$(".template-option").removeClass("selected");
-					$(this).addClass("selected");
+				$(".template-option").removeClass("selected");
+				$(this).addClass("selected");
 
-					var contentHtml = $(this).data("content");
-					var csrfToken = "'.newToken().'";
+				var subject = $("#sujet").val();
 
-					// Envoyer le contenu HTML à process_template.php pour traitement PHP
+				var contentHtml = $(this).data("content");
+				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+				if (template === "news") {
+					$("#post-dropdown-container").show();
+					$(".dropdown").show(); 
+					console.log("Displaying dropdown for news template");
+				} else {
+					$("#post-dropdown-container").hide();
+
+					var csrfToken = "' .newToken().'";
 					$.ajax({
 						type: "POST",
 						url: "/core/lib/process_template.lib.php",
-						data: { content: contentHtml, token: csrfToken },
+						data: {
+							content: contentHtml,
+							selectedPosts: "[]", 
+							token: csrfToken
+						},
 						success: function(response) {
 							jQuery("#'.$htmlContent.'").val(response);
 							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
@@ -1571,9 +1615,64 @@ class FormMail extends Form
 							console.error("An error occurred: " + xhr.responseText);
 						}
 					});
-				});
+				}
 			});
-		</script>';
+
+			$(".post-checkbox").change(function() {
+				var contentHtml = $(".template-option.selected").data("content");
+
+				updateSelectedPostsContent(contentHtml);
+			});
+
+			function updateSelectedPostsContent(contentHtml) {
+				var selectedPosts = [];
+				$(".post-checkbox:checked").each(function() {
+					var postValues = $(this).val().split("|");
+					console.log(postValues);
+					var post = {
+						title: $(this).data("title"),
+						description: $(this).data("description"),
+						user_fullname: $(this).data("user_fullname"),
+						date_creation: $(this).data("date_creation"),
+						image: $(this).data("image")
+					};
+					selectedPosts.push(post);
+				});
+
+				var subject = $("#sujet").val();
+
+				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+				var csrfToken = "'.newToken().'";
+				$.ajax({
+					type: "POST",
+					url: "/core/lib/process_template.lib.php",
+					data: {
+						content: contentHtml,
+						selectedPosts: JSON.stringify(selectedPosts),
+						token: csrfToken
+					},
+					success: function(response) {
+						jQuery("#'.$htmlContent.'").val(response);
+						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+						if (editorInstance) {
+							editorInstance.setData(response);
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error("An error occurred: " + xhr.responseText);
+					}
+				});
+			}
+
+			$(document).bind("click", function(e) {
+				var $clicked = $(e.target);
+				if (!$clicked.parents().hasClass("dropdown") && !$clicked.hasClass("template-option")) {
+					$(".dropdown").hide();
+				}
+			});
+		});
+	</script>';
 
 		return $out;
 	}
