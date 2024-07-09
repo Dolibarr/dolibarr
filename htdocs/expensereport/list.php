@@ -136,7 +136,7 @@ if ($search_user == '') {
 	$search_user = -1;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ExpenseReport($db);
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);

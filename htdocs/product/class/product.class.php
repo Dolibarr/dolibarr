@@ -428,7 +428,7 @@ class Product extends CommonObject
 	public $accountancy_code_buy_export;
 
 	/**
-	 * @var string|int	Main Barcode value, -1 for auto code
+	 * @var string|int	Main Barcode value, -1 or 'auto' for auto code
 	 */
 	public $barcode;
 
@@ -460,16 +460,6 @@ class Product extends CommonObject
 	//! Size of image
 	public $imgWidth;
 	public $imgHeight;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
 
 	//! Id du fournisseur
 	public $product_fourn_id;
@@ -687,11 +677,11 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Insert product into database
+	 * Insert product into database
 	 *
-	 * @param  User $user      User making insert
-	 * @param  int  $notrigger Disable triggers
-	 * @return int                         Id of product/service if OK, < 0 if KO
+	 * @param  User 	$user      		User making insert
+	 * @param  int  	$notrigger 		Disable triggers
+	 * @return int                      Id of product/service if OK, < 0 if KO
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -826,7 +816,7 @@ class Product extends CommonObject
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-		if ($this->barcode == -1) {
+		if ($this->barcode == '-1' || $this->barcode == 'auto') {
 			$this->barcode = $this->get_barcode($this, $this->barcode_type_code);
 		}
 
@@ -924,7 +914,7 @@ class Product extends CommonObject
 
 							$result = $this->_log_price($user);
 							if ($result > 0) {
-								if ($this->update($id, $user, true, 'add') <= 0) {
+								if ($this->update($id, $user, 1, 'add') <= 0) {
 									$error++;
 								}
 							} else {
@@ -1456,14 +1446,19 @@ class Product extends CommonObject
 						$olddir = $conf->product->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
 						$newdir = $conf->product->dir_output."/".dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir)) {
-							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							//$res = dol_move($olddir, $newdir);
+							// include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							// $res = dol_move($olddir, $newdir);
 							// do not use dol_move with directory
 							$res = @rename($olddir, $newdir);
 							if (!$res) {
 								$langs->load("errors");
 								$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 								$error++;
+							} else {
+								// to keep old entries with the new dir
+								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+								$ecmfiles = new EcmFiles($this->db);
+								$ecmfiles->updateAfterRename("produit/".dol_sanitizeFileName($this->oldcopy->ref), "produit/".dol_sanitizeFileName($this->ref));
 							}
 						}
 					}
@@ -2390,7 +2385,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		if ($newprice !== '' || $newprice === 0) {
+		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
@@ -6613,7 +6608,7 @@ class Product extends CommonObject
 				continue;
 			}
 
-			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, true) < 0) {
+			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, 1) < 0) {
 				return -1;
 			}
 		}

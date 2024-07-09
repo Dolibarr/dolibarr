@@ -64,7 +64,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;

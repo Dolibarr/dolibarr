@@ -137,7 +137,7 @@ class FormListWebPortal
 		// load module libraries
 		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$objectclass = 'WebPortal' . ucfirst($elementEn);
 		$object = new $objectclass($this->db);
 

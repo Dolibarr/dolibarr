@@ -246,7 +246,7 @@ class Form
 
 		// When option to edit inline is activated
 		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
-			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
+			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
 				$editaction = GETPOST('action', 'aZ09');
@@ -659,11 +659,11 @@ class Form
 		$extrastyle = '';
 		if ($direction < 0) {
 			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-left: 3px;';
+			$extrastyle = 'padding: 0px; padding-left: 2px;';
 		}
 		if ($direction > 0) {
 			$extracss = ($extracss ? $extracss . ' ' : '') . ($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-right: 3px;';
+			$extrastyle = 'padding: 0px; padding-right: 2px;';
 		}
 
 		$classfortooltip = 'classfortooltip';
@@ -1458,7 +1458,7 @@ class Form
 			// Immediate load of all database
 			$multiple = false;
 			$disableifempty = 0;
-			$options_only = false;
+			$options_only = 0;
 			$limitto = '';
 
 			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
@@ -6490,16 +6490,16 @@ class Form
 	}
 
 	/**
-	 *    Return array of currencies in user language
+	 * Return array of currencies in user language
 	 *
-	 * @param string $selected Preselected currency code
-	 * @param string $htmlname Name of HTML select list
-	 * @param integer $useempty 1=Add empty line
-	 * @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
-	 * @param bool $excludeConfCurrency false = If company current currency not in table, we add it into list. Should always be available.
-	 *                                  true = we are in currency_rate update , we don't want to see conf->currency in select
-	 * @param string $morecss More css
-	 * @return    string
+	 * @param 	string 	$selected 				Preselected currency code
+	 * @param 	string 	$htmlname 				Name of HTML select list
+	 * @param 	integer $useempty 				1=Add empty line
+	 * @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 * @param 	bool 	$excludeConfCurrency 	false = If company current currency not in table, we add it into list. Should always be available.
+	 *                                  		true = we are in currency_rate update , we don't want to see conf->currency in select
+	 * @param 	string 	$morecss 				More css
+	 * @return  string							HTML component
 	 */
 	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
 	{
@@ -9713,7 +9713,7 @@ class Form
 	 * @param string 	$labelno 		Label for No
 	 * @return    string                See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'width75', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
 
@@ -9726,7 +9726,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat width75' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"' . $disabled . '>' . "\n";
+		$resultyesno = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"' . $disabled . '>' . "\n";
 		if ($useempty) {
 			$resultyesno .= '<option value="-1"' . (($value < 0) ? ' selected' : '') . '>&nbsp;</option>' . "\n";
 		}

@@ -447,7 +447,6 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 }
 if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
-	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
@@ -3552,6 +3551,26 @@ if (!GETPOST('hide_websitemenu')) {
 														},
 														success: function(response) {
 															console.log(response);
+															var $lastWebsitebar = $(".websitebar").last();
+															var $span = $("<span></span>").html("'.$langs->trans("Saved").'").css({
+																\'display\': \'block\',
+																\'position\': \'absolute\',
+																\'margin-top\': \'6px\',
+																\'right\': \'5px\',
+																\'background-color\': \'#e3f0db\',
+																\'color\': \'#446548\',
+																\'font-size\': \'14px\',
+																\'padding\': \'0px 5px\',
+																\'z-index\': 1000
+															});
+															$lastWebsitebar.after($span);
+
+															// Close message after 2 seconds
+															setTimeout(function() {
+																$span.fadeOut(500, function() {
+																	$(this).remove();
+																});
+															}, 2000);
 														}
 													});
 

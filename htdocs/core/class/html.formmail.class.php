@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -726,7 +726,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtouser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -775,7 +775,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -859,8 +859,9 @@ class FormMail extends Form
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
-							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
+							$entity = (isset($this->param['object_entity']) ? $this->param['object_entity'] : $conf->entity);
+							if ($entity > 1) {
+								$relativepathtofile = str_replace('/'.$entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
@@ -870,7 +871,8 @@ class FormMail extends Form
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).$listofnames[$key];
 
-							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
+							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
+
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile input-nobottom" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).'&id=removedfile_'.$key.'">'.img_delete($langs->trans("Remove"), 'id="removedfile_'.$key.'" name="removedfile_'.$key.'"', 'removedfile input-nobottom').'</a>';

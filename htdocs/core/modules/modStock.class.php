@@ -5,6 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,14 +83,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
+		$this->const[$r][2] = "standard_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "stdmovement";
+		$this->const[$r][2] = "standard_movement_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 

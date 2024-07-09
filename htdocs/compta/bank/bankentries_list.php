@@ -141,7 +141,7 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -659,21 +659,23 @@ if ($search_thirdparty_user) {
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
+	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, 0, 1).")";
 
 	$sql .= " OR b.rowid IN ";
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, 0, 1);
 	$sql .= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;
 	$arrayoffixedlabels = array(
 		'payment_salary',
-		'CustomerInvoicePayment', 'CustomerInvoicePaymentBack',
-		'SupplierInvoicePayment', 'SupplierInvoicePaymentBack',
+		'CustomerInvoicePayment',
+		'CustomerInvoicePaymentBack',
+		'SupplierInvoicePayment',
+		'SupplierInvoicePaymentBack',
 		'DonationPayment',
 		'ExpenseReportPayment',
 		'SocialContributionPayment',

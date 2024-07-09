@@ -66,14 +66,29 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
 $extrafields = new ExtraFields($db);
 
 $holiday = new Holiday($db);
 
+$arrayfields = array(
+	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
+	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
+	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
+	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
+);
 
-if (empty($conf->holiday->enabled)) {
+$permissiontoread = $user->hasRight('holiday', 'read');
+$permissiontoreadall = $user->hasRight('holiday', 'readall');
+$permissiontowrite = $user->hasRight('holiday', 'write');
+$permissiontowriteall = $user->hasRight('holiday', 'writeall');
+$permissiontodelete = $user->hasRight('holiday', 'delete');
+
+$permissiontoapprove = $user->hasRight('holiday', 'approve');
+$permissiontosetup = $user->hasRight('holiday', 'define_holiday');
+
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -86,13 +101,6 @@ if ($user->socid > 0) {
 if (!$user->hasRight('holiday', 'read')) {
 	accessforbidden();
 }
-
-$arrayfields = array(
-	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
-	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
-	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
-	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
-);
 
 
 /*
@@ -128,14 +136,11 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Holiday';
 	$objectlabel = 'Holiday';
-	$permissiontoread = $user->hasRight('holiday', 'read');
-	$permissiontodelete = $user->hasRight('holiday', 'delete');
-	$permissiontoapprove = $user->hasRight('holiday', 'approve');
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// If there is an update action
-	if ($action == 'update' && GETPOSTISSET('update_cp')) {
+	if ($action == 'update' && GETPOSTISSET('update_cp') && $permissiontosetup) {
 		$error = 0;
 		$nbok = 0;
 
@@ -233,7 +238,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if ($user->hasRight("holiday", "approve")) {
+if ($permissiontosetup) {
 	$arrayofmassactions['preincreaseholiday'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("IncreaseHolidays");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -252,7 +257,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title = $langs->trans("MenuConfCP");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, '', '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, 0, '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
@@ -294,7 +299,7 @@ $filters = '';
 
 // Filter on array of ids of all children
 $userchilds = array();
-if (!$user->hasRight('holiday', 'readall')) {
+if (!$permissiontoreadall) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(implode(', ', $userchilds)).')';
 }
@@ -322,7 +327,7 @@ if (count($typeleaves) == 0) {
 	//print '</div>';
 } else {
 	$canedit = 0;
-	if ($user->hasRight('holiday', 'define_holiday')) {
+	if ($permissiontosetup) {
 		$canedit = 1;
 	}
 
@@ -407,7 +412,7 @@ if (count($typeleaves) == 0) {
 		}
 	}
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
-		print_liste_field_titre((!$user->hasRight('holiday', 'define_holiday') ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+		print_liste_field_titre($permissiontosetup ? 'Note' : '', $_SERVER["PHP_SELF"]);
 	}
 	print_liste_field_titre('');
 	// Action column
@@ -421,7 +426,7 @@ if (count($typeleaves) == 0) {
 		$arrayofselected = is_array($toselect) ? $toselect : array();
 
 		// If user has not permission to edit/read all, we must see only subordinates
-		if (!$user->hasRight('holiday', 'readall')) {
+		if (!$permissiontoreadall) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
 				continue; // This user is not into hierarchy of current user, we hide it.
 			}
@@ -506,7 +511,7 @@ if (count($typeleaves) == 0) {
 
 		// Button modify
 		print '<td class="center">';
-		if ($user->hasRight('holiday', 'define_holiday')) {	// Allowed to set the balance of any user
+		if ($permissiontosetup) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";

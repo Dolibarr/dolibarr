@@ -394,10 +394,11 @@ if ($socid > 0) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print ' &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';
+			print '<br>';
 		}
 	}
 
@@ -533,7 +534,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
@@ -680,7 +681,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';

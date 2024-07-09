@@ -61,7 +61,7 @@ $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : 
 $search_messtype = GETPOST("search_messtype", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mailing($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes

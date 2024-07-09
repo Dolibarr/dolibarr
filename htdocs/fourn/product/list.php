@@ -74,7 +74,7 @@ if ($user->socid) {
 
 $catid = GETPOST('catid', 'intcomma');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 

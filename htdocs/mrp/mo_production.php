@@ -59,7 +59,7 @@ $fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
@@ -86,7 +86,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
@@ -817,17 +817,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Lines to consume
 
+		print '<!-- Lines to consume -->'."\n";
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="clearboth"></div>';
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
-		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
+		$permissiontoaddaconsumeline = ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED) ? 1 : -2;
 		$parameters = array('morecss' => 'reposition');
+		$helpText = '';
+		if ($permissiontoaddaconsumeline == -2) {
+			$helpText = $langs->trans('MOIsClosed');
+		}
 
 		$newcardbutton = '';
 		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLines'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
+			$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLines'), $helpText, 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
 		}
 
 		print load_fiche_titre($langs->trans('Consumption'), $newcardbutton, '', 0, '', '', '');
@@ -994,7 +999,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$reg = [];
 							$qtyhourservice = 0;
 							if (preg_match('/^(\d+)([a-z]+)$/', $tmpproduct->duration, $reg)) {
-								$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+								$qtyhourservice = convertDurationtoHour($reg[1], (string) $reg[2]);
 							}
 							$qtyhourforline = 0;
 							if ($line->fk_unit) {

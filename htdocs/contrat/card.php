@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2020	Ferran Marcet		  	<fmarcet@2byte.es>
- * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
- * Copyright (C) 2023       Nick Fragoulis
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2010-2017	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
+$idline = GETPOSTINT('elrowid') ? GETPOSTINT('elrowid') : GETPOSTINT('rowid');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -82,7 +84,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
@@ -151,9 +153,9 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be 'include', not 'include_once'
 
 	if ($action == 'confirm_active' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_start = '';
@@ -707,13 +709,12 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 
 		if (!$error) {
 			$objectline = new ContratLigne($db);
-			if ($objectline->fetch(GETPOSTINT('elrowid')) < 0) {
+			if ($objectline->fetch($idline) < 0) {
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 				$error++;
 			}
@@ -1077,14 +1078,13 @@ if (empty($reshook)) {
  * View
  */
 
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
-
 $title = $object->ref." - ".$langs->trans('Contract');
 if ($action == 'create') {
 	$title = $langs->trans("NewContract");
 }
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1594,7 +1594,7 @@ if ($action == 'create') {
 
 
 				// Line in view mode
-				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid) {
+				if ($action != 'editline' || $idline != $objp->rowid) {
 					$moreparam = '';
 					if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 						$moreparam = 'style="display: none;"';
@@ -1663,18 +1663,18 @@ if ($action == 'create') {
 
 					// Icon move, update et delete (status contract 0=draft,1=validated,2=closed)
 					print '<td class="nowraponall right">';
-					if ($user->hasRight('contrat', 'creer') && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->status >= 0)) {
 						print '<!-- link to move service line into another contract -->';
 						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');
 						print '</a>';
 					}
-					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && ($object->status >= 0)) {
 						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
-					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
+					if ($user->hasRight('contrat', 'creer') && ($object->status >= 0)) {
 						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=deleteline&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
@@ -1872,17 +1872,17 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
+			if ($action == 'deleteline' && !$cancel && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == $idline) {
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".((int) $object->id)."&lineid=".((int) $idline), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
 				if ($ret == 'html') {
-					print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
+					print '<table class="notopnoleftnoright centpercent"><tr class="oddeven" height="6"><td></td></tr></table>';
 				}
 			}
 
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($action == 'move' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
+			if ($action == 'move' && !$cancel && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == $idline) {
 				$arraycontractid = array();
 				foreach ($arrayothercontracts as $contractcursor) {
 					$arraycontractid[$contractcursor->id] = $contractcursor->ref;
@@ -1893,8 +1893,8 @@ if ($action == 'create') {
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOSTINT('rowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
-				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".((int) $object->id)."&lineid=".((int) $idline), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion, 'yes');
+				print '<table class="notopnoleftnoright centpercent"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
 			// Area with status and activation info of line
@@ -2315,64 +2315,63 @@ if ($action == 'create') {
 llxFooter();
 
 $db->close();
-?>
 
-<?php
 if (isModEnabled('margin') && $action == 'editline') {
-	// TODO Why this ? To manage margin on contracts ??>
-<script type="text/javascript">
-$(document).ready(function() {
-  var idprod = $("input[name='idprod']").val();
-  var fournprice = $("input[name='fournprice']").val();
-  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
-  if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
-		  'idprod': idprod,
-		  'token': token
-		  }, function(data) {
-		if (data.length > 0) {
-		  var options = '';
-		  var trouve=false;
-		  $(data).each(function() {
-			options += '<option value="'+this.id+'" price="'+this.price+'"';
-			if (fournprice > 0) {
-				if (this.id == fournprice) {
-				  options += ' selected';
-				  $("#buying_price").val(this.price);
-				  trouve = true;
+	// TODO Why this ? To manage margin on contracts ?
+	print "\n".'<script type="text/javascript">'."\n";
+	?>
+	$(document).ready(function() {
+	  var idprod = $("input[name='idprod']").val();
+	  var fournprice = $("input[name='fournprice']").val();
+	  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+	  if (idprod > 0) {
+		  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+			  'idprod': idprod,
+			  'token': token
+			  }, function(data) {
+			if (data.length > 0) {
+			  var options = '';
+			  var trouve=false;
+			  $(data).each(function() {
+				options += '<option value="'+this.id+'" price="'+this.price+'"';
+				if (fournprice > 0) {
+					if (this.id == fournprice) {
+					  options += ' selected';
+					  $("#buying_price").val(this.price);
+					  trouve = true;
+					}
 				}
+				options += '>'+this.label+'</option>';
+			  });
+			  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
+			  $("#fournprice").html(options);
+			  if (trouve) {
+				$("#buying_price").hide();
+				$("#fournprice").show();
+			  }
+			  else {
+				$("#buying_price").show();
+			  }
+			  $("#fournprice").change(function() {
+				var selval = $(this).find('option:selected').attr("price");
+				if (selval)
+				  $("#buying_price").val(selval).hide();
+				else
+				  $('#buying_price').show();
+			  });
 			}
-			options += '>'+this.label+'</option>';
-		  });
-		  options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
-		  $("#fournprice").html(options);
-		  if (trouve) {
-			$("#buying_price").hide();
-			$("#fournprice").show();
-		  }
-		  else {
-			$("#buying_price").show();
-		  }
-		  $("#fournprice").change(function() {
-			var selval = $(this).find('option:selected').attr("price");
-			if (selval)
-			  $("#buying_price").val(selval).hide();
-			else
+			else {
+			  $("#fournprice").hide();
 			  $('#buying_price').show();
-		  });
+			}
+		  },
+		  'json');
 		}
 		else {
 		  $("#fournprice").hide();
 		  $('#buying_price').show();
 		}
-	  },
-	  'json');
-	}
-	else {
-	  $("#fournprice").hide();
-	  $('#buying_price').show();
-	}
-});
-</script>
+	});
 	<?php
+	print "\n".'<script type="text/javascript">'."\n";
 }

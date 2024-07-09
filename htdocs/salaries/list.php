@@ -66,7 +66,7 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new PaymentSalary($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;

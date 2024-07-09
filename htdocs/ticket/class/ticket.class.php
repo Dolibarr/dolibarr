@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
- * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
- * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2018  Jean-François Ferry 	<hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
+ * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ class Ticket extends CommonObject
 	public $status;
 
 	/**
-	 * @var string State resolution
+	 * @var null|integer State resolution
 	 */
 	public $resolution;
 
@@ -233,7 +233,7 @@ class Ticket extends CommonObject
 	public $email_msgid;
 
 	/**
-	 * @var string 	Email Date
+	 * @var null|int|'' 	Email Date
 	 */
 	public $email_date;
 
@@ -429,12 +429,12 @@ class Ticket extends CommonObject
 			}
 		}
 
-		if (isset($this->fk_statut)) {
-			$this->fk_statut = (int) $this->fk_statut;
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
 		}
 
 		if (isset($this->resolution)) {
-			$this->resolution = trim($this->resolution);
+			$this->resolution = (int) $this->resolution;
 		}
 
 		if (isset($this->progress)) {
@@ -556,7 +556,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? ((int) $user->id) : 'NULL') : ($this->fk_user_create > 0 ? ((int) $this->fk_user_create) : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? ((int) $this->fk_user_assign) : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
-			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
+			$sql .= " ".(!isDolTms($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
 			$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
@@ -566,7 +566,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->type_code) ? 'NULL' : "'".$this->db->escape($this->type_code)."'").",";
 			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
 			$sql .= " ".(!isset($this->severity_code) ? 'NULL' : "'".$this->db->escape($this->severity_code)."'").",";
-			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
+			$sql .= " ".(!isDolTms($this->datec) ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
@@ -1050,12 +1050,12 @@ class Ticket extends CommonObject
 			}
 		}
 
-		if (isset($this->fk_statut)) {
-			$this->fk_statut = (int) $this->fk_statut;
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
 		}
 
 		if (isset($this->resolution)) {
-			$this->resolution = trim($this->resolution);
+			$this->resolution = (int) $this->resolution;
 		}
 
 		if (isset($this->progress)) {
@@ -1096,14 +1096,14 @@ class Ticket extends CommonObject
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? (int) $this->fk_user_assign : "null").",";
 		$sql .= " subject=".(isset($this->subject) ? "'".$this->db->escape($this->subject)."'" : "null").",";
 		$sql .= " message=".(isset($this->message) ? "'".$this->db->escape($this->message)."'" : "null").",";
-		$sql .= " fk_statut=".(isset($this->fk_statut) ? (int) $this->fk_statut : "0").",";
+		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "0").",";
 		$sql .= " resolution=".(isset($this->resolution) ? (int) $this->resolution : "null").",";
 		$sql .= " progress=".(isset($this->progress) ? "'".$this->db->escape($this->progress)."'" : "null").",";
 		$sql .= " timing=".(isset($this->timing) ? "'".$this->db->escape($this->timing)."'" : "null").",";
 		$sql .= " type_code=".(isset($this->type_code) ? "'".$this->db->escape($this->type_code)."'" : "null").",";
 		$sql .= " category_code=".(isset($this->category_code) ? "'".$this->db->escape($this->category_code)."'" : "null").",";
 		$sql .= " severity_code=".(isset($this->severity_code) ? "'".$this->db->escape($this->severity_code)."'" : "null").",";
-		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " datec=".(isDolTms($this->datec) ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
 		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
@@ -1316,9 +1316,9 @@ class Ticket extends CommonObject
 		$this->subject = 'Subject of ticket';
 		$this->message = 'Message of ticket';
 		$this->status = 0;
-		$this->resolution = '1';
+		$this->resolution = 1;
 		$this->progress = 10;
-		//$this->timing = '30';
+		// $this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
@@ -2772,7 +2772,7 @@ class Ticket extends CommonObject
 							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$this->subject;
 
 							// Message send
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {
@@ -2824,7 +2824,7 @@ class Ticket extends CommonObject
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {

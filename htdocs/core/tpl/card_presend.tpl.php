@@ -392,6 +392,8 @@ if ($action == 'presend') {
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
+	$formmail->param['object_entity'] = $object->entity;
+
 	// Show form
 	print $formmail->get_form();
 

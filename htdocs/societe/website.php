@@ -72,7 +72,7 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Societe($db);
 $objectwebsiteaccount = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);

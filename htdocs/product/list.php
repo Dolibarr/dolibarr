@@ -16,6 +16,7 @@
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ if ((string) $type == '0') {
 	}
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
 $hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
@@ -2155,7 +2156,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.fk_state']['checked'])) {
 			print '<td>';
 			if (!empty($obj->fk_state)) {
-				print  getState($obj->fk_state, 0, $db);
+				print  getState($obj->fk_state, '0', $db);
 			}
 			print '</td>';
 			if (!$i) {
