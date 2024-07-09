@@ -82,3 +82,19 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expedition', $object->id, '');
+
+/*
+ * Actions
+ */
+
+/*
+ * View
+ */
+
+$help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
+
+llxHeader('', $object->ref.' - '.$langs->trans("Packing"), $help_url);//todo check Packing translation
+
+// End of page
+llxFooter();
+$db->close();
