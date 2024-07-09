@@ -1032,6 +1032,10 @@ class Conf extends stdClass
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 			}
 
+			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
 				$this->dol_hide_topmenu = $this->global->MAIN_HIDE_TOP_MENU;
