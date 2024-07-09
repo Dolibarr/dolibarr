@@ -404,11 +404,8 @@ if ($morewherefilter) {	// Get all task without any filter, so we can show total
 }
 $projectsrole = $taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, null, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
 $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, ($project->id ? $project->id : 0), 0, $onlyopenedproject);
-//var_dump($usertoprocess);
-//var_dump($projectsrole);
-//var_dump($taskrole);
 
-llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
+llxHeader('', $title, '', '', 0, 0, array('/core/js/timesheet.js'));
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
