@@ -2522,7 +2522,7 @@ class AccountLine extends CommonObjectLine
 				// TODO Do no try the insert if link already exists
 			}
 
-			$this->rappro = 1;
+			$this->rappro = (int) $conciliated;
 
 			$this->db->commit();
 			return 1;

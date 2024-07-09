@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2004-2009	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,9 +152,9 @@ if ($object->id > 0) {
 	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
-	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+	$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

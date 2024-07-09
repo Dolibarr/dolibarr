@@ -1609,7 +1609,7 @@ class CommandeFournisseur extends CommonOrder
 						0,
 						$line->product_type,
 						$line->info_bits,
-						false,
+						0,
 						$line->date_start,
 						$line->date_end,
 						$line->array_options,
