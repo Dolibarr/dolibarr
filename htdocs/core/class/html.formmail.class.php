@@ -1565,7 +1565,7 @@ class FormMail extends Form
 					// Envoyer le contenu HTML à process_template.php pour traitement PHP
 					$.ajax({
 						type: "POST",
-						url: "/core/lib/process_template.lib.php",
+						url: "/core/ajax/mailtemplate.php",
 						data: { content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.$htmlContent.'").val(response);
