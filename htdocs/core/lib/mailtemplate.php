@@ -19,18 +19,18 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require_once '../../main.inc.php';
-require_once './files.lib.php';
+require_once '../lib/files.lib.php';
 
 top_httphead();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
-	$content = $_POST['content'];
+	$content = GETPOST('content');
 
 
 	$content = str_replace('<!-- PHP_START -->', '<?php ', $content);
 	$content = str_replace('<!-- PHP_END -->', ' ?>', $content);
 
-	$directory = DOL_DATA_ROOT . '/mailing/email_template';
+	$directory = $conf->admin->dir_temp . '/mailing/email_template';
 	if (!is_dir($directory)) {
 		dol_mkdir($directory);
 	}
