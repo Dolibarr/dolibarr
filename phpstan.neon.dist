@@ -48,7 +48,7 @@ parameters:
 	ignoreErrors:
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
-		- '#Function llx.* invoked with#'
+		- '#Function llxHeaderVierge invoked with#'
 		- '#always exists and is not falsy#'
 		- '#always exists and is not nullable#'
 		- '#is always fal#'
