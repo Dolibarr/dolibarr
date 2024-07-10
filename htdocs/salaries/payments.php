@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/salaries/list.php
+ *	    \file       htdocs/salaries/payments.php
  *      \ingroup    salaries
  *		\brief     	List of salaries payments
  */
@@ -326,7 +326,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

@@ -517,7 +517,7 @@ if ($resql) {
 	// Output page
 	// --------------------------------------------------------------------
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 	$param = '';
 	if (!empty($mode)) {

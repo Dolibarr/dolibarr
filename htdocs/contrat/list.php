@@ -585,7 +585,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans("Contracts"));
+llxHeader('', $langs->trans("Contracts"), '', 0, 0, '', '', '', 'bodyforlist');
 
 $i = 0;
 
