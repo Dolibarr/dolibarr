@@ -1629,6 +1629,7 @@ class Contrat extends CommonObject
 
 				if (empty($error)) {
 					// Call trigger
+					$this->context['line_id'] = $contractlineid;
 					$result = $this->call_trigger('LINECONTRACT_INSERT', $user);
 					if ($result < 0) {
 						$error++;
@@ -1822,6 +1823,7 @@ class Contrat extends CommonObject
 
 			if (empty($error)) {
 				// Call trigger
+				$this->context['line_id'] = $rowid;
 				$result = $this->call_trigger('LINECONTRACT_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
@@ -1858,6 +1860,7 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0) {
 			// Call trigger
+			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
 			if ($result < 0) {
 				return -1;
