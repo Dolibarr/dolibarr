@@ -29,7 +29,7 @@
  */
 
 /**
- *	\file       htdocs/commande/list.php
+ *	\file       htdocs/commande/list_det.php
  *	\ingroup    order
  *	\brief      Page to list orders
  */

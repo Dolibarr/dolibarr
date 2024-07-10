@@ -641,8 +641,10 @@ $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $shipment = new Expedition($db);
 
-$helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
+$title = $langs->trans('ListOfSendings');
+$help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $sql = 'SELECT';
 if ($search_all || $search_user > 0) {

@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/salaries/list.php
  *      \ingroup    salaries
- *		\brief     	List of salaries payments
+ *		\brief     	List of salaries
  */
 
 // Load Dolibarr environment

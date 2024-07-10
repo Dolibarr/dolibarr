@@ -736,7 +736,7 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 }
 
 //llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
-llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'mod-product page-list');
+llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist mod-product page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

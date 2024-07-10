@@ -290,7 +290,7 @@ $i = 0;
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $langs->trans('ListPayment'), '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

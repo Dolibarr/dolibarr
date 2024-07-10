@@ -305,7 +305,7 @@ if ($projectid > 0 || $projectref) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
 
 
 if ($projectid > 0) {

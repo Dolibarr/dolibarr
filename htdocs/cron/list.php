@@ -237,9 +237,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $cronjob = new Cronjob($db);
 
-$pagetitle = $langs->trans("CronList");
+$title = $langs->trans("CronList");
 
-llxHeader('', $pagetitle);
+llxHeader('', $title, '', 0, 0, '', '', '', 'bodyforlist');
 
 $TTestNotAllowed = array();
 $sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
@@ -423,7 +423,7 @@ if ($mode == 'modulesetup') {
 }
 
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, ($mode == 'modulesetup' ? '' : 'title_setup'), 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, ($mode == 'modulesetup' ? '' : 'title_setup'), 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendCronRef";

@@ -1021,7 +1021,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {

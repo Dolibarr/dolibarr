@@ -241,7 +241,7 @@ $result = $object->updateBalance();
 $title = $langs->trans('CPTitreMenu');
 $help_url = '';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $max_year = 5;
 $min_year = 10;

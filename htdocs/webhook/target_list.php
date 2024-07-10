@@ -371,7 +371,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 $title = $langs->trans("Targets");
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-webhook page-target_list');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-webhook page-target_list');
 
 if ($mode == 'modulesetup') {
 	require_once 'lib/webhook.lib.php';
