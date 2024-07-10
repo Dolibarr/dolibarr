@@ -1771,19 +1771,18 @@ if ($action == 'create') {
 					if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 						$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 					}
-					$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
-					$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc')?GETPOST('product_desc'):$objp->description, '', 92, 'dolibarr_details', '', false, true, $enable, $nbrows, '90%');
+					$doleditor = new DolEditor('product_desc', (GETPOSTISSET('product_desc')?GETPOST('product_desc'):$objp->description), '', 92, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '90%');
 					$doleditor->Create();
 
 					print '</td>';
 
 					// VAT
 					print '<td class="right">';
-					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), $mysoc, $object->thirdparty, $objp->fk_product, $objp->info_bits, $objp->product_type, 0, 1);
+					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), $mysoc, $object->thirdparty, $currentLineProductId, $objp->info_bits, $objp->product_type, 0, 1);
 					print '</td>';
 
 					// Price
-					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.GETPOSTISSET('elprice')?GETPOST('elprice'):price($objp->subprice).'"></td>';
+					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice')?GETPOST('elprice'):price($objp->subprice)).'"></td>';
 
 					// Price multicurrency
 					/*if (isModEnabled("multicurrency")) {
@@ -1791,12 +1790,12 @@ if ($action == 'create') {
 					 }*/
 
 					// Quantity
-					print '<td class="center"><input size="2" type="text" name="elqty" value="'.GETPOSTISSET('elqty')?GETPOST('elqty'):$objp->qty.'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty')?GETPOST('elqty'):$objp->qty).'"></td>';
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
-						print $form->selectUnits(GETPOSTISSET('unit')?GETPOST('unit'):$objp->fk_unit, "unit");
+						print $form->selectUnits((GETPOSTISSET('unit')?GETPOST('unit'):$objp->fk_unit), "unit");
 						print '</td>';
 					}
 
@@ -1808,7 +1807,7 @@ if ($action == 'create') {
 						if ($objp->fk_product) {
 							print '<select id="fournprice" name="fournprice"></select>';
 						}
-						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
+						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price((GETPOSTISSET('buying_price')?GETPOST('buying_price'):$objp->pa_ht), 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
