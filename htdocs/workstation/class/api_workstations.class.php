@@ -102,8 +102,8 @@ class Workstations extends DolibarrApi
 	 * @param  int    $page					Page number
 	 * @param  string $sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param string  $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-   * @return array						Array of workstation objects
-   */
+	 * @return array						Array of workstation objects
+	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
