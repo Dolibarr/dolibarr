@@ -49,7 +49,7 @@ if (empty($rollback_url) || $rollback_url === '/') {
 }
 ?>
 
-<form id="login" name="login" method="post" action="<?= $action ?>">
+<form id="login" name="login" method="post" action="<?php echo $action; ?>">
 	<!-- Add fields to send OpenID information -->
 	<input type="hidden" name="openid_mode" value="true" />
 	<input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />
