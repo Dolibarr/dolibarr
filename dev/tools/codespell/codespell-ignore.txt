@@ -68,6 +68,7 @@ unvalidate
 
 # Some french strings
 somme
+caracteres
 cas
 sur
 Datas
