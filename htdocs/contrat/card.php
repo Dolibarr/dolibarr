@@ -1800,7 +1800,7 @@ if ($action == 'create') {
 					}
 
 					// Discount
-					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent.'">%</td>';
+					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent).'">%</td>';
 
 					if (!empty($usemargins)) {
 						print '<td class="right">';
