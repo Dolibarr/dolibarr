@@ -1415,7 +1415,7 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
+			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 				$object->ref_client = '';
 			}
 
