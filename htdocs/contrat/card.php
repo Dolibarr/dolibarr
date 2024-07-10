@@ -707,7 +707,6 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 
@@ -813,6 +812,7 @@ if (empty($reshook)) {
 			$result = $objectline->update($user);
 			if ($result < 0) {
 				$error++;
+				$action = 'editline';
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
@@ -1594,7 +1594,7 @@ if ($action == 'create') {
 
 
 				// Line in view mode
-				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid) {
+				if ($action != 'editline' || GETPOST('elrowid') != $objp->rowid) {
 					$moreparam = '';
 					if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') {
 						$moreparam = 'style="display: none;"';
@@ -1665,17 +1665,17 @@ if ($action == 'create') {
 					print '<td class="nowraponall right">';
 					if ($user->hasRight('contrat', 'creer') && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
-						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&elrowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');
 						print '</a>';
 					}
 					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
-						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&elrowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
 					if ($user->hasRight('contrat', 'creer') && ($object->statut >= 0)) {
-						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=deleteline&token='.newToken().'&rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=deleteline&token='.newToken().'&elrowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -1738,8 +1738,11 @@ if ($action == 'create') {
 					// Ligne carac
 					print '<tr class="oddeven">';
 					print '<td>';
+					$currentLineProductId=GETPOSTISSET('idprod')?GETPOST('idprod'):(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
+
+						// TODO: As $canchangeproduct is set just before, in what usecase it can be empty ?
 						if (empty($canchangeproduct)) {
 							$productstatic->id = $objp->fk_product;
 							$productstatic->type = $objp->ptype;
@@ -1747,19 +1750,19 @@ if ($action == 'create') {
 							$productstatic->entity = $objp->pentity;
 							print $productstatic->getNomUrl(1, '', 32);
 							print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
-							print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
+							print '<input type="hidden" name="idprod" value="'.$currentLineProductId.'">';
 						} else {
 							$senderissupplier = 0;
 							if (empty($senderissupplier)) {
-								print $form->select_produits((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+								print $form->select_produits($currentLineProductId, 'idprod');
 							} else {
-								$form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+								$form->select_produits_fournisseurs($currentLineProductId, 'idprod');
 							}
 						}
 						print '<br>';
 					} else {
 						print $objp->label ? $objp->label.'<br>' : '';
-						print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
+						print '<input type="hidden" name="idprod" value="'.$currentLineProductId.'">';
 					}
 
 					// editeur wysiwyg
@@ -1769,7 +1772,7 @@ if ($action == 'create') {
 						$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 					}
 					$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
-					$doleditor = new DolEditor('product_desc', $objp->description, '', 92, 'dolibarr_details', '', false, true, $enable, $nbrows, '90%');
+					$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc')?GETPOST('product_desc'):$objp->description, '', 92, 'dolibarr_details', '', false, true, $enable, $nbrows, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -1780,7 +1783,7 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Price
-					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.GETPOSTISSET('elprice')?GETPOST('elprice'):price($objp->subprice).'"></td>';
 
 					// Price multicurrency
 					/*if (isModEnabled("multicurrency")) {
@@ -1788,17 +1791,17 @@ if ($action == 'create') {
 					 }*/
 
 					// Quantity
-					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.GETPOSTISSET('elqty')?GETPOST('elqty'):$objp->qty.'"></td>';
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
-						print $form->selectUnits($objp->fk_unit, "unit");
+						print $form->selectUnits(GETPOSTISSET('unit')?GETPOST('unit'):$objp->fk_unit, "unit");
 						print '</td>';
 					}
 
 					// Discount
-					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent.'">%</td>';
 
 					if (!empty($usemargins)) {
 						print '<td class="right">';
@@ -1872,8 +1875,8 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
+			if ($action == 'deleteline' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('elrowid')) {
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('elrowid'), $langs->trans("DeleteContractLine"), $langs->trans("ConfirmDeleteContractLine"), "confirm_deleteline", '', 0, 1);
 				if ($ret == 'html') {
 					print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 				}
@@ -1882,7 +1885,7 @@ if ($action == 'create') {
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($action == 'move' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('rowid')) {
+			if ($action == 'move' && !$_REQUEST["cancel"] && $user->hasRight('contrat', 'creer') && $object->lines[$cursorline - 1]->id == GETPOST('elrowid')) {
 				$arraycontractid = array();
 				foreach ($arrayothercontracts as $contractcursor) {
 					$arraycontractid[$contractcursor->id] = $contractcursor->ref;
@@ -1893,7 +1896,7 @@ if ($action == 'create') {
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOSTINT('rowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOSTINT('elrowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
