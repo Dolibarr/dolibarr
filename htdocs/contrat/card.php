@@ -2317,12 +2317,11 @@ if ($action == 'create') {
 llxFooter();
 
 $db->close();
-?>
 
-<?php
+
+// TODO Why this on the page when editing margin for contracts ?
 if (isModEnabled('margin') && $action == 'editline') {
-	// TODO Why this ? To manage margin on contracts
-?>
+	?>
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
