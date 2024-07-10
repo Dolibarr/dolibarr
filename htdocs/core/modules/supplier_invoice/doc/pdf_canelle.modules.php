@@ -1229,7 +1229,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact)) ? $object->contact : null), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;
