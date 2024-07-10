@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2024 Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2012		Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ if (!$user->hasRight('cron', 'read')) {
 }
 
 $permissiontoread = $user->hasRight('cron', 'read');
-$permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
+$permissiontoadd = $user->hasRight('cron', 'create') ? $user->hasRight('cron', 'create') : $user->hasRight('cron', 'write');
 $permissiontodelete = $user->hasRight('cron', 'delete');
 $permissiontoexecute = $user->hasRight('cron', 'execute');
 
