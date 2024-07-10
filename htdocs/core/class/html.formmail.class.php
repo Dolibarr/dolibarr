@@ -1600,7 +1600,7 @@ class FormMail extends Form
 					var csrfToken = "' .newToken().'";
 					$.ajax({
 						type: "POST",
-						url: "/core/lib/process_template.lib.php",
+						url: "/core/ajax/mailtemplate.php",
 						data: {
 							content: contentHtml,
 							selectedPosts: "[]", 
@@ -1648,7 +1648,7 @@ class FormMail extends Form
 				var csrfToken = "'.newToken().'";
 				$.ajax({
 					type: "POST",
-					url: "/core/lib/process_template.lib.php",
+					url: "/core/ajax/mailtemplate.php",
 					data: {
 						content: contentHtml,
 						selectedPosts: JSON.stringify(selectedPosts),
