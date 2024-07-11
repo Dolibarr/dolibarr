@@ -883,7 +883,7 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$paramsCat .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 
-llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat);
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();

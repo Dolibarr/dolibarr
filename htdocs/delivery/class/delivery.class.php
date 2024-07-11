@@ -420,7 +420,7 @@ class Delivery extends CommonObject
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-						$numref = $objMod->delivery_get_num($soc, $this);
+						$numref = $objMod->getNextValue($soc, $this);
 					} else {
 						$numref = $this->ref;
 					}
