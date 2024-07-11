@@ -33,7 +33,7 @@ $path = dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+	exit(1);
 }
 
 require_once $path."../htdocs/master.inc.php";
@@ -51,7 +51,7 @@ $buildzip = 0;
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
-	exit -1;
+	exit(1);
 }
 
 
@@ -87,7 +87,7 @@ while ($i < $argc) {
 if (empty($release)) {
 	print "Error: Missing release parameter\n";
 	print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-	exit -1;
+	exit(2);
 }
 
 $savrelease = $release;
@@ -107,21 +107,21 @@ if (empty($includecustom)) {
 		if (DOL_VERSION != $tmpverbis[0] && $savrelease != 'auto') {
 			print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
 			print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-			exit -1;
+			exit(3);
 		}
 	} else {
 		$tmpverter = explode('-', DOL_VERSION, 2);
 		if ($tmpverter[0] != $tmpverbis[0]) {
 			print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must have value without prefix ('.$tmpverter[0].') that is exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
 			print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-			exit -1;
+			exit(4);
 		}
 	}
 } else {
 	if (!preg_match('/'.preg_quote(DOL_VERSION, '/').'-/', $release)) {
 		print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parameter (ex: '.DOL_VERSION.'-mydistrib).'."\n";
 		print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
-		exit -1;
+		exit(5);
 	}
 }
 
@@ -147,7 +147,7 @@ $outputfile = $outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile, 'w');
 if (empty($fp)) {
 	print 'Failed to open file '.$outputfile."\n";
-	exit(-1);
+	exit(6);
 }
 
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");

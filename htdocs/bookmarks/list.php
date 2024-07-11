@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2022 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-bookmarks page-list');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist mod-bookmarks page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

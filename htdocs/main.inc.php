@@ -444,23 +444,23 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
 		$ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	} elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (isset($_POST["username"]) && in_array($_POST["username"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
 	} elseif (defined('NOREQUIREDB')) {
 		$ok = 1; // We let working pages that don't need database access (xxx.css.php)
 	} elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 		$ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
-	} elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (session_id() && isset($_SESSION["dol_login"]) && in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working if user is allowed admin
 	}
 	if (!$ok) {
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
-			print 'Sorry, your application is offline. Only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/';
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}

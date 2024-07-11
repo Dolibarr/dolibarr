@@ -40,6 +40,19 @@ ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
 
 ALTER TABLE llx_inventory DROP COLUMN datec;
 
+UPDATE llx_document_model SET nom='standard_expensereport' WHERE nom='standard' AND type='expensereport';
+UPDATE llx_document_model SET nom='standard_stock' WHERE nom='standard' AND type='stock';
+UPDATE llx_document_model SET name='standard_movementstock' WHERE nom='standard' AND type='mouvement';
+UPDATE llx_document_model SET nom='standard_evaluation' WHERE nom='standard' AND type='evaluation';
+UPDATE llx_document_model SET nom='standard_supplierpayment' WHERE nom='standard' AND type='supplier_payment';
+UPDATE llx_document_model SET nom='standard_member' WHERE nom='standard' AND type='member';
+-- if rename failed delete old models
+DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='evaluation';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='supplier_payment';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='member';
 
 ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
@@ -47,3 +60,7 @@ ALTER TABLE llx_contrat ADD COLUMN localtax2 double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_expedition_package MODIFY COLUMN dangerous_goods varchar(60) DEFAULT '0';
+
+ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER model_pdf;
