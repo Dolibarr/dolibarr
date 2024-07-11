@@ -35,6 +35,7 @@ if (!function_exists('json_encode') || defined('PHPUNIT_MODE')) {
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
 	 * @see json_encode()
+	 * @deprecated Use native PHP json module
 	 */
 	function dol_json_encode($elements)
 	{
@@ -278,6 +279,7 @@ if (!function_exists('json_decode') || defined('PHPUNIT_MODE')) {
 	 * @param	bool	$assoc		False return an object, true return an array. Try to always use it with true !
 	 * @return 	mixed				Object or Array or false on error
 	 * @see json_decode()
+	 * @deprecated Use native PHP json module
 	 */
 	function dol_json_decode($json, $assoc = false)
 	{
