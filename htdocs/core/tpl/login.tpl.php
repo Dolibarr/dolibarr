@@ -366,7 +366,7 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	if (empty($conf->global->MAIN_AUTHENTICATION_OPENID_URL)) {
+	if (!getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL")) {
 		$url = openid_connect_get_url();
 	} else {
 		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();

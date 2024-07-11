@@ -100,7 +100,7 @@ if (GETPOST('dol_use_jmobile')) {
 }
 
 // Logout openid_connect sessions using OIDC logout URL if defined
-if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && !empty($conf->global->MAIN_AUTHENTICATION_OIDC_LOGOUT_URL)) {
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL")) {
 	// We need the full URL
 	if (strpos($url, '/') === 0) {
 		$url = DOL_MAIN_URL_ROOT . $url;
