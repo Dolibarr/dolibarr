@@ -45,7 +45,7 @@
  *					This file contains all frequently used functions.
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 // Function for better PHP x compatibility
 if (!function_exists('utf8_encode')) {
