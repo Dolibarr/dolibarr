@@ -190,10 +190,10 @@ print '<br>';
 print '<strong>JSON</strong>: ';
 $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 $test = !in_array('json', $loadedExtensions);
-if ($test) {
+if ($test || function_exists('dol_json_decode')) {
 	print img_picto('', 'error').' '.$langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
 } else {
-	print img_picto('', 'tick').' '.$langs->trans("Available");
+	print img_picto('', 'tick').' '.$langs->trans("Available").' <span class="opacitymedium">(PHP native so not emulated, safe)</span>';
 }
 print '<br>';
 
