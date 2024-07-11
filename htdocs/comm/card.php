@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -63,9 +64,6 @@ if (isModEnabled('member')) {
 }
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
