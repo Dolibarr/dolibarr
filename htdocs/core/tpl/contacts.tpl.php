@@ -255,11 +255,13 @@ foreach (array('internal', 'external') as $source) {
 			$entry->contact_id   = $userstatic->id;
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
+			$entry->contact_warning = false;
 		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
+			$entry->contact_warning = ($contactstatic->user_id > 0);
 		}
 
 		if ($contact['source'] == 'internal') {
@@ -325,14 +327,27 @@ if ($permission) {
 print "</tr>";
 
 foreach ($list as $entry) {
-	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
-
-	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span></td>';
-	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
-	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
-
+?>
+	<tr class="oddeven" data-rowid="<?= $entry->id ?>">
+		<td class="tdoverflowmax200" data-thirdparty_id="<?= ((int) $entry->thirdparty_id) ?>" data-thirdparty_name="<?= dol_escape_htmltag($entry->thirdparty_name) ?>">
+			<?= $entry->thirdparty_html ?>
+		</td>
+		<td class="tdoverflowmax200" data-contact_id="<?=  ((int) $entry->contact_id) ?>">
+			<?= $entry->contact_html ?>
+		</td>
+		<td class="nowrap" data-nature="<?= dol_escape_htmltag($entry->nature) ?>">
+			<span class="opacitymedium">
+				<?= dol_escape_htmltag($entry->nature_html) ?>
+				</span>
+				<?= ($entry->contact_warning ? img_picto($langs->trans("ThisContactHasAnUser"), 'warning') : '') ?>
+		</td>
+		<td class="tdoverflowmax200" data-type_id="<?= ((int) $entry->type_id) ?>" data-type="<?=  dol_escape_htmltag($entry->type) ?>">
+			<?= dol_escape_htmltag($entry->type) ?>
+		</td>
+		<td class="tdoverflowmax200 center" data-status_id="<?= ((int) $entry->status) ?>">
+			<?= $entry->status_html ?>
+		</td>
+<?php
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
 		$href .= '?id='.((int) $object->id);
