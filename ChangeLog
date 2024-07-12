@@ -21,7 +21,7 @@ WARNING:
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
-* The emulated version of json_encode is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
+* The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
 
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
