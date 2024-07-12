@@ -239,8 +239,9 @@ $form = new Form($db);
 $cronjob = new Cronjob($db);
 
 $title = $langs->trans("CronList");
+$help_url = '';
 
-llxHeader('', $title, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $TTestNotAllowed = array();
 $sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
