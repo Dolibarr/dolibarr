@@ -170,3 +170,6 @@ SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
 RefSalary=Salary
 NoSalaryInvoiceToWithdraw=No salary waiting for a '%s'. Go on tab '%s' on salary card to make a request.
 SalaryInvoiceWaitingWithdraw=Salaries waiting for payment by credit transfer
+unprocessedRequest=Unprocessed request
+paymentsCoveringEntireInvoice=Payments already cover the entire bill
+requestedAmountExceedsOutstanding=The requested amount exceeds the unpaid amount
