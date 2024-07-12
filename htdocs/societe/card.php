@@ -1453,7 +1453,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 
 			// Barcode
@@ -2726,7 +2726,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border tableforfield centpercent">';
 
 			// Type Prospect/Customer/Supplier
-			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print '<tr><td class="titlefieldhalf">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 			print $object->getTypeUrl(1);
 			print '</td></tr>';
 
@@ -2779,6 +2779,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
 			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
+				if (!empty($conf->dol_optimize_smallscreen)) {
+					$idprof = $langs->transcountry('ProfId'.$i.'Short', $object->country_code);
+				}
 				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					print '<tr>';
 					print '<td>'.$idprof.'</td><td>';

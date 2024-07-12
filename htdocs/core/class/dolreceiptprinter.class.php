@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -697,6 +698,9 @@ class dolReceiptPrinter extends Printer
 			dol_syslog("dolReceiptPrinter::sendToPrinter: error=".$this->error, LOG_ERR);
 			return $reshook;
 		}
+
+		// escape special characters for xml_parse_into_struct
+		$this->template = htmlspecialchars($this->template, ENT_QUOTES | ENT_XML1);
 
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
