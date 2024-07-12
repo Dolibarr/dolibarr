@@ -89,7 +89,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * View
  */
 
-llxHeader('', $langs->trans("CommentPage"),'', '', 0, 0, '', '', '', 'mod-project project-tasks page-task_comment');
+llxHeader('', $langs->trans("CommentPage"), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-task_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);
