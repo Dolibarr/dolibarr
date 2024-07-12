@@ -99,7 +99,7 @@ $tasktmp = new Task($db);
 $title = $langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("", $title);
+llxHeader("", $title,'', '', 0, 0, '', '', '', 'mod-project project-activity page-dashboard');
 
 
 // Title for combo list see all projects
