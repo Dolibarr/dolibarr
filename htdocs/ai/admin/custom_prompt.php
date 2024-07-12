@@ -296,6 +296,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
 			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
 			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '<a class="viewfielda reposition marginleftonly addBlack" href="#"  data-key="'.$key.'" title="'.$langs->trans("AddBlackList").'"><i class="fa fa-plus-circle"></i></a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
@@ -322,6 +323,14 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';
 			$out .= '<br><input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
 
+			$out .= '<td></td>';
+			$out .= '</td>';
+			$out .= '</tr>';
+			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven hideobject">';
+			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
+			$out .= '<td>';
+			$out .= '<textarea class="flat minwidth500" id="blacklist" name="blacklists[]" rows="6"></textarea>';
+			$out .= '<br><input type="submit" class="button small submitBtn" name="add_on_blacklist" value="'.dol_escape_htmltag($langs->trans("Add")).'"/>';
 			$out .= '</td>';
 			$out .= '</tr>';
 			$out .= '</form>';
@@ -368,9 +377,13 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 				$(this).data('state', 'edit');
 			}
 		});
+		$('.viewfielda.addBlack').on('click', function(event) {
+			event.preventDefault();
+			var key = $(this).data('key');
+			$('#fichetwothirdright-' + key).toggle();
+			$('#fichethirdleft-' + key).toggle();
+		});
 	});
-
-
     </script>";
 
 	print $out;
