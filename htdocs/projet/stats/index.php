@@ -64,7 +64,7 @@ $formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
-llxHeader('', $langs->trans('Projects'),'', '', 0, 0, '', '', '', 'mod-project page-stats');
+llxHeader('', $langs->trans('Projects'), '', '', 0, 0, '', '', '', 'mod-project page-stats');
 
 $title = $langs->trans("ProjectsStatistics");
 $dir = $conf->project->dir_output.'/temp';
