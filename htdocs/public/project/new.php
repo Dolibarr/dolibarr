@@ -214,7 +214,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
