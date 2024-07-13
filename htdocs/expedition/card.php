@@ -1137,6 +1137,43 @@ if ($action == 'create') {
 			print '});'."\n";
 			print '</script>'."\n";
 
+			if (getDolGlobalString("SHIPPING_SELECT_VIA_LOT_SN")) { // activate parts selection via lot / serial number
+				print '<script>
+				function auto_sn_filler() {
+					var text = $("#auto_sn_filler_text");
+					var inputValue = text.val();
+					var qty = jQuery("span#".concat(inputValue)).closest("td").prev("td").find("input");
+					if (qty.length) {
+						var intValue = parseInt(qty.val(), 10);
+						if (!isNaN(intValue)) {
+							intValue++;
+							qty.val(intValue);
+						}
+					text.val("");
+					text.focus();
+					}
+				}
+
+				$(document).ready(function(){
+					$("#auto_sn_filler_button").on("click", function() {
+						auto_sn_filler();
+					});
+
+					$("#auto_sn_filler_text").on("keypress", function(event) {
+						if (event.which === 13) {
+							event.preventDefault();
+							auto_sn_filler();
+						}
+					});
+				});
+				</script>';
+
+				print '<div class="right">';
+				print '<input type="text" id="auto_sn_filler_text" size="20" value="">';
+				print '<input type="button" class="button" id="auto_sn_filler_button" value="Add via Lot/Serial">';
+				print '</div>';
+			}
+
 			print '<br>';
 
 			print '<table class="noborder centpercent">';
@@ -1468,7 +1505,7 @@ if ($action == 'create') {
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 									$detail .= '<br>';
-									print $detail;
+									print '<span id='.$dbatch->batch.'>'.$detail.'</span>';
 
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0) {

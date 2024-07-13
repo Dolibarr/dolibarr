@@ -436,6 +436,14 @@ print '<td class="center" >';
 print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
 print '</td></tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_SELECT_VIA_LOT_SN');
+print '</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" >';
+print ajax_constantonoff('SHIPPING_SELECT_VIA_LOT_SN');
+print '</td></tr>';
+
 print '</table><br>';
 print '<br>';
 
