@@ -1100,7 +1100,7 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * optionally hour, minute, second) fields to return a timestamp.
  *
  * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate)
- * @param 	string 		$hourTime  'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
+ * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
  *                      		    hour, minute, second respectively (for instance '23:59:59')
  * @param 	string 		$gm 		Passed to dol_mktime
  * @return 	int|string  			Date as a timestamp, '' or false if error
