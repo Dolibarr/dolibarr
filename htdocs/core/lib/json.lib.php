@@ -265,6 +265,7 @@ if (!function_exists('json_encode')) {
 	 */
 	function json_encode($elements)
 	{
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return dol_json_encode($elements);
 	}
 }
@@ -427,6 +428,7 @@ if (!function_exists('json_decode')) {
 	 */
 	function json_decode($json, $assoc = false)
 	{
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return dol_json_decode($json, $assoc);
 	}
 }
