@@ -1410,7 +1410,9 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			$object->ref_client = '';
+			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+				$object->ref_client = '';
+			}
 
 			// TODO Change product price if multi-prices
 		} else {
