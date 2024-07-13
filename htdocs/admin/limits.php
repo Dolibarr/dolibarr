@@ -245,7 +245,7 @@ if (empty($mysoc->country_code)) {
 } else {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
-	
+
 	// LRR totals
 	$tot_ht = 0;
 	$tot_vat = 0;
