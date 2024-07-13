@@ -179,6 +179,7 @@ $accountstatic = new Account($db);
 $userstatic = new User($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
+$title = $langs->trans('ListPayment');
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -290,7 +291,7 @@ $i = 0;
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans('ListPayment'), '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

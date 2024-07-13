@@ -195,7 +195,9 @@ $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
 $projectstatic = new Project($db);
 
-llxHeader('', $langs->trans("SocialContributions"), '', 0, 0, '', '', '', 'bodyforlist');
+$title = $langs->trans("SocialContributions");
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
