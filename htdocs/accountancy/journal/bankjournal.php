@@ -212,10 +212,10 @@ if ($result) {
 	$tabtype = array();
 	$tabmoreinfo = array();
 
-	// Loop on each line into llx_bank table. For each line, we should get:
-	// one line tabpay = line into bank
-	// one line for bank record = tabbq
-	// one line for thirdparty record = tabtp
+	// Loop on each line into the table llx_bank. For each line, we should set:
+	// one line for bank record => tabbq
+	// one line for payment => tabpay
+	// one line for thirdparty or user record => tabtp
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -307,15 +307,25 @@ if ($result) {
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
 			$is_sc = false;
+			$is_expensereport = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
 					break;
 				}
+				if ($v['type'] == 'payment_expensereport') {
+					$is_expensereport = true;
+					break;
+				}
 			}
+
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc) continue;
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_expensereport) {
+					// We must avoid as much as possible this "continue". If we want to jump to next loop, it means we don't want to process
+					// the case the link is user (often because managed by hard coded code into another link), and we must avoid this.
+					continue;
+				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
