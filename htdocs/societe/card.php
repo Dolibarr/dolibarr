@@ -1542,6 +1542,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
+			// URL
+			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
+
 			// Email
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalString('SOCIETE_EMAIL_MANDATORY')).'</td>';
 			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
@@ -1589,10 +1593,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<td class="individualline" '.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($object->no_email) ? 0 : 1)), 1, false, 1).'</td>';
 				print '</tr>';
 			}
-
-			// URL
-			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 			// Social networks
 			if (isModEnabled('socialnetworks')) {
@@ -2176,7 +2176,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Nature of thirdparty
 				$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
-				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+				print '<tr class="marginbottomlarge height50"><td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 
@@ -2263,7 +2263,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
 
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2326,13 +2326,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// EMail
 				print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalString('SOCIETE_EMAIL_MANDATORY'))).'</td>';
-				print '<td colspan="3">';
+				print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>';
 				print img_picto('', 'object_email', 'class="pictofixedwidth"');
 				print '<input type="text" name="email" id="email" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'">';
-				print '</td></tr>';
+				print '</td>';
 
 				// Unsubscribe
 				if (isModEnabled('mailing')) {
+					if ($conf->browser->layout == 'phone') {
+						print '</tr><tr>';
+					}
 					if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 						print "\n".'<script type="text/javascript">'."\n";
 
@@ -2358,14 +2361,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
-					print '<tr>';
 					print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 					print '<td>';
 					$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
 					print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : $object->no_email), 1, false, $useempty);
 					print '</td>';
-					print '</tr>';
 				}
+				print '</tr>';
 
 				// Social network
 				if (isModEnabled('socialnetworks')) {
