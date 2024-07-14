@@ -53,7 +53,7 @@ trait CommonSocialNetworks
 		}
 
 		if ($nbofnetworks > 1) {
-			print '<tr><td><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" colspan="'.$colspan.'" id="socialnetworklnk" href="#"></a>';
+			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
 			//print '</td>';
 			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
 			//print '<br>';
