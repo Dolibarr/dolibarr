@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -970,6 +970,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .uppercase {
 	text-transform: uppercase;
+}
+.marginpopup {
+	margin: 20px;
 }
 .nounderline {
 	text-decoration: none;

@@ -41,7 +41,7 @@ $WS_METHOD = 'checkVat';
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"), '', '', 0, 0, '', '', '', 'marginpopup');
 
 print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
@@ -144,7 +144,7 @@ if (!$vatNumber) {
 }
 
 print '<br>';
-print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
+print '<span class="opacitymedium">'.$langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'</span><br>';
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
 

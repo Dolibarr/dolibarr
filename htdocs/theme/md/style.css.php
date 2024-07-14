@@ -1155,6 +1155,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
