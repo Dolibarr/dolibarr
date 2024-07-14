@@ -44,7 +44,6 @@ ProfId2PT=Prof. id 2 (INSZ-nummer)
 ProfId3PT=Prof. Id 3 (Commerciële fiche aantal)
 ProfId2TN=Prof. id 2 (Fiscale inschrijving)
 ProfId2DZ=Kunst.
-VATReturn=BTW teruggave
 SupplierRelativeDiscount=Relatieve leverancierskorting
 HasRelativeDiscountFromSupplier=U heeft een standaardkorting van <b>%s%%</b> van deze verkoper
 HasNoRelativeDiscountFromSupplier=U heeft standaard geen relatieve korting van deze leverancier
