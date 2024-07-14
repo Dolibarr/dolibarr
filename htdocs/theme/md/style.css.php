@@ -5003,6 +5003,9 @@ a.valignmiddle.dashboardlineindicator {
 .height30 {
 	height: 30px !important;
 }
+.height50 {
+	height: 50px !important;
+}
 
 tr.box_titre {
 	height: 26px !important;
