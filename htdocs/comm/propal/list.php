@@ -876,7 +876,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 }
 
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $param = '&search_status='.urlencode($search_status);
 if (!empty($mode)) {
