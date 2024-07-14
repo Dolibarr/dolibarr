@@ -144,14 +144,16 @@ if (!$vatNumber) {
 }
 
 print '<br>';
-print '<span class="opacitymedium">'.$langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'</span><br>';
+print '<span class="opacitymedium small">'.$langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'</span><br>';
 print '<br>';
-print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
+print '<div class="center"><input type="button" class="button small" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
 
 if ($messagetoshow) {
 	print '<br><br>';
-	print "\n".'Error returned:<br>';
-	print nl2br($messagetoshow);
+	print '<span class="opacitymedium small">Error returned:</small>'."\n";
+	print '<textarea class="small centpercent">';
+	print dol_htmlentitiesbr($messagetoshow, 1);
+	print '</textarea>';
 }
 
 print '</div>';
