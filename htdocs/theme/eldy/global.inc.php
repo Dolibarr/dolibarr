@@ -5062,8 +5062,10 @@ div.info {
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
