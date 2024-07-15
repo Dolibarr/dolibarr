@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo	    <jlb@j1b.org>
- * Copyright (C) 2004-2019	Laurent Destailleur	    <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		    <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2019		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,10 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $staticbom = new BOM($db);
 $staticmo = new Mo($db);
 
-llxHeader('', $langs->trans("MRP"), '');
+$title = $langs->trans('MRP');
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-index');
 
 print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
 
