@@ -64,7 +64,7 @@ $objectstatic = new Fichinter($db);
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-fichinter page-stats_index');
 
 print load_fiche_titre($title, '', 'intervention');
 
