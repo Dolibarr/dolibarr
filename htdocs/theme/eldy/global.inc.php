@@ -2959,44 +2959,6 @@ a.tmenuimage:hover{
 	text-decoration: none;
 }
 
-
-/* Post Dropdown Container for news template */
-#post-dropdown-container {
-	display: none;
-	margin-bottom: 10px;
-}
-
-.dropdown {
-	background: #fff;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	padding: 10px;
-	position: relative;
-	z-index: 10;
-	width: 30%;
-	max-height: 300px;
-	overflow-y: auto;
-}
-
-.dropdown li {
-	padding: 5px;
-	list-style: none;
-}
-
-.dropdown input[type="checkbox"] {
-	margin-right: 10px;
-}
-
-.dropdown label {
-	cursor: pointer;
-	color: #333;
-}
-
-.dropdown .no-posts {
-	padding: 5px;
-	color: #888;
-}
-
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
 /* Text hidden by default */

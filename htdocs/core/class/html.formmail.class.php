@@ -1595,7 +1595,7 @@ class FormMail extends Form
 						url: "/core/ajax/mailtemplate.php",
 						data: {
 							content: contentHtml,
-							selectedPosts: "[]", 
+							selectedPosts: "[]",
 							token: csrfToken
 						},
 						success: function(response) {
