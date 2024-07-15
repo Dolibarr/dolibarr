@@ -443,7 +443,7 @@ if ($object->id > 0) {
 	print '<br>';
 
 	// Lien recap
-	$boxstat .= '<div class="box box-halfright">';
+	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
