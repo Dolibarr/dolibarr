@@ -545,14 +545,14 @@ function ClickProduct(position, qty = 1) {
 			} else {
 				$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken(); ?>&id=' + invoiceid, function (data) {
 					if (data['paye'] == 1 && data['status'] == <?php echo Facture::STATUS_CLOSED; ?>) {
-						console.log("Creating new invoice"); 
+						console.log("Creating new invoice");
 						createNewInvoice(idproduct, qty);
 					} else if (data['paye'] == 0 && data['status'] == <?php echo Facture::STATUS_DRAFT; ?>) {
 						console.log("Adding product to invoice"); 
 						addProductToInvoice(idproduct, qty, invoiceid);
 					} else if (data['paye'] == 0 && data['status'] == <?php echo Facture::STATUS_VALIDATED; ?>) {
 						console.log("Invoice not completely paid"); 
-						alert('Invoice not completly paid !');
+						alert('Invoice not completely paid !');
 						
 					} 
 				});
