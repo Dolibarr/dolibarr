@@ -52,7 +52,6 @@ ProfId4UA=Prof Id 4 (certificado)
 ProfId2DZ=Arte.
 VATIntra=RUT
 VATIntraShort=RUT
-VATReturn=Devolución de IVA
 SupplierRelativeDiscount=Descuento relativo del proveedor
 CompanyHasAbsoluteDiscount=Este cliente tiene descuentos disponibles (notas de crédito o anticipos) para <b> %s </b> %s
 CompanyHasDownPaymentOrCommercialDiscount=Este cliente tiene descuentos disponibles (comerciales, anticipos) para <b> %s </b> %s
