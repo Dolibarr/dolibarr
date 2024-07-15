@@ -1370,7 +1370,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 // Creation date
 if (!empty($arrayfields['p.datec']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1381,7 +1381,7 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 }
 // Modification date
 if (!empty($arrayfields['p.tms']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -2083,7 +2083,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['p.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
