@@ -2083,7 +2083,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['p.datec']['checked'])) {
-			print '<td class="center nowraponall">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
