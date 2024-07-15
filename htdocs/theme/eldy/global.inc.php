@@ -1071,6 +1071,12 @@ td.wordbreak img, td.wordbreakimp img {
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
+/* CSS used for extrafield text */
+.shortmessagecut {
+	max-height: 125px;
+	max-width: 100%;
+	overflow-y: auto;
+}
 .longmessagecut {
 	max-height: 250px;
 	max-width: 100%;
