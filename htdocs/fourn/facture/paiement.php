@@ -387,7 +387,7 @@ $formother = new FormOther($db);
 $supplierstatic = new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $langs->trans('ListPayment'), '', '', 0, 0, '', '', '', 'mod-fourn-facture page-paiement');
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement') {
 	$object = new FactureFournisseur($db);
