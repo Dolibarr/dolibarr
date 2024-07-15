@@ -205,7 +205,7 @@ if ($object->id > 0) {
 		$title = $object->name." - ".$langs->trans('Supplier');
 	}
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fourn page-card');
 
 	/*
 	 * Show tabs
