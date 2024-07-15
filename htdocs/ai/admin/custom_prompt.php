@@ -280,7 +280,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("Blacklists").' '.img_help(1, 'Words must be separate by coma (",")').'</span>';
+	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("BlackListWords").' '.img_help(1, 'Words must be separate by coma (",")').'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
