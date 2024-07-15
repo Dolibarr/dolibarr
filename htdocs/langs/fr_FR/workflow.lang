@@ -17,7 +17,7 @@ descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Lorsqu'une facture client
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Lorsqu'une expédition est validée, classez les commandes client source liées comme expédiées (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Lorsqu'une expédition est clôturée, classez les commandes client sources liées comme expédiées (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Lorsqu'une facture fournisseur est validée, classez le devis fournisseur source lié comme facturé (et si le montant de la facture est le même que le montant total du devis lié)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Lorsqu'une facture fournisseur est validée, classez le devis fournisseur source lié comme facturé (et si le montant de la facture est le même que le montant total des devis liés)
 # Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Lorsqu'une facture fournisseur est validée, classez la commande d'achat source lié comme facturé (et si le montant de la facture est le même que le montant total des commandes liées)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Lorsqu'une réception est validée, classez la commande d'achat source liée comme reçu (et si la quantité reçue par toutes les réceptions est la même que dans la commande d'achat à mettre à jour)

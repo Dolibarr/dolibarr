@@ -644,7 +644,7 @@ $shipment = new Expedition($db);
 $title = $langs->trans('ListOfSendings');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
 
 $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
