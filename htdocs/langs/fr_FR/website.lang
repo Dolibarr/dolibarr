@@ -46,10 +46,11 @@ RealURL=URL réelle
 ViewWebsiteInProduction=Pré-visualiser le site web en utilisant l'URL de la page d'accueil
 Virtualhost=Hôte virtuel ou nom de domaine
 VirtualhostDesc=Le nom de l'hôte virtuel ou du domaine (par exemple : www.mywebsite.com, mybigcompany.net, ...)
+ToDeployYourWebsiteOnLiveYouHave3Solutions=Pour déployer ce site en live, vous avez 3 solutions...
 SetHereVirtualHost=<u> Utilisation avec Apache/NGinx/...</u> <br> Créez sur votre serveur Web (Apache, Nginx, ...) un hôte virtuel dédié avec PHP activé et un répertoire racine sur <br> <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exemple à utiliser dans la configuration de l'hôte virtuel Apache:
-YouCanAlsoTestWithPHPS=<u> Utilisation avec un serveur PHP incorporé </u> <br> Sous environnement de développement, vous pouvez préférer tester le site avec le serveur Web PHP intégré (PHP 5.5 requis) en exécutant <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP= <u> Exécutez votre site web avec un autre hébergeur Dolibarr </u> <br> Si vous n'avez pas de serveur web comme Apache ou NGinx disponible sur internet, vous pouvez exporter et importer votre site web sur une autre instance de Dolibarr fournie par un autre hébergeur Dolibarr qui offre une intégration complète du module Site Web. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
+YouCanAlsoTestWithPHPS=<u>Utiliser avec le serveur PHP intégré</u><br>Dans l'environnement de développement, vous pouvez préférez tester le site avec le serveur web embarqué PHP en exécutant
+YouCanAlsoDeployToAnotherWHP=<u>Gérez votre site Web dans un fournisseur d'hébergement Web Dolibarr</u><br>Si vous n'avez pas de serveur web comme Apache ou NGinx disponible sur internet, vous pouvez exporter et importer votre site web sur une autre instance Dolibarr fournie par un autre hébergeur Dolibarr qui offre une intégration complète avec le module Site Internet. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Vérifiez également que l'utilisateur du virtual host (par exemple www-data) a la permission <strong> %s </strong> sur les fichiers dans<br><strong> %s </strong>
 ReadPerm=Lire
 WritePerm=Écrire
@@ -305,7 +306,7 @@ firstnameContainsLettersOnly=<b>Prénom</b> doit contenir des lettres et espaces
 lastnameContainsLettersOnly=<b>Nom</b> doit contenir des lettres et espaces uniquement
 passwordCriteria=<b>Le mot de passe</b> doit répondre aux critères suivants :<br>- 12 caractères<br>- 1 lettre majuscule<br>- 1 chiffre<br>- Aucun caractère spécial<br>- Évitez de répéter les caractères plus de 3 fois<br>
 errorOccurred=Une erreur est survenue.
-accountCreation=CRÉER UN COMPTE
+accountCreation=Créer un compte
 errorsOccurred=Il y a %s erreur%s
 taxIdentificationNumber=Numéro d'identification fiscale
 register=S'inscrire
