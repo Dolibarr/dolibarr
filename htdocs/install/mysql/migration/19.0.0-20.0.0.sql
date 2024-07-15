@@ -402,3 +402,7 @@ INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active)
 ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
 
 UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
+
+ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+
+ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
