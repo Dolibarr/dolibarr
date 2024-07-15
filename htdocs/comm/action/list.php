@@ -685,7 +685,7 @@ $viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
 
 $viewmode = '<div class="navmode inline-block">';
 
-$viewmode .= '<a class="btnTitle'.(($mode == 'list' || $mode == 'show_list') ? ' btnTitleSelected' : '').' btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.(($mode == 'list' ||$mode == 'show_list') ? ' btnTitleSelected' : '').' btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
