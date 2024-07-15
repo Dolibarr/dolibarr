@@ -16,13 +16,14 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=您将被重定向到受保护的Stripe页面以输入您的信用卡信息
 Continue=下一个
 ToOfferALinkForOnlinePayment=网址为%s支付
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnOrder=提供%s销售订单线上支付页面的网址
 ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
 ToOfferALinkForOnlinePaymentOnMemberSubscription=为会员订阅提供 %s 在线支付页面的网址
 ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=使用网址<b> %s </b>设置Stripe，以便在Stripe验证时自动创建付款。
 AccountParameter=帐户参数
 UsageParameter=使用参数
@@ -71,9 +72,19 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
 STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

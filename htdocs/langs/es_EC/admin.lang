@@ -188,7 +188,6 @@ CurrentMenuHandler=Controlador de menús actual
 Orientation=Orientacion
 SpaceX=Espacio X
 SpaceY=Espacio Y
-NoticePeriod=Periodo de notificación
 Emails=Correos electrónicos
 EMailsSetup=Configuración de correo electrónico
 EmailSenderProfiles=Perfiles de remitentes de correos electrónicos

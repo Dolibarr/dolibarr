@@ -200,8 +200,8 @@ MembersStatisticsDesc=Alege statisticile pe care doreşti să le citeşti...
 MenuMembersStats=Statistici
 LastMemberDate=Data ultimei adeziuni
 LatestSubscriptionDate=Data ultimei contribuţii
-MemberNature=Natura membrului
-MembersNature=Natura membrilor
+MemberNature=Natură membru
+MembersNature=Natură membri
 Public=%s poate publica calitatea mea de membru în <a target="_blank" href="%s">registrul public</a>
 MembershipPublic=Adeziune publică
 NewMemberbyWeb=Membru nou adăugat. În aşteptarea validării
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s adeziune/abonare(i) create
 XSubsriptionErrors=%s adeziune/abonare(i) cu eroare
 CreateSubscription=Creare adeziune
 WarningNoComplementaryActionDone=Nu se va executa nicio acțiune complementară la înregistrare cu această acțiune în masă
+NewMembership=Adeziune/abonament nou

@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Δεν βρέθηκε προϊόν προς απο
 WeightVolShort=Βάρος/Όγκος
 ValidateOrderFirstBeforeShipment=Θα πρέπει πρώτα να επικυρώσετε την παραγγελία πριν να μπορέσετε να πραγματοποιήσετε αποστολές.
 NoLineGoOnTabToAddSome=Χωρίς γραμμή, μεταβείτε στην καρτέλα "%s" για προσθήκη
+CreateInvoiceForThisCustomerFromSendings=Τιμολόγηση αποστολών
+IfValidateInvoiceIsNoSendingStayUnbilled=Εάν η επικύρωση τιμολογίου είναι «Όχι», η αποστολή θα παραμείνει στην κατάσταση «Μη τιμολογημένη» μέχρι να επικυρωθεί το τιμολόγιο.
+OptionToSetSendingBilledNotEnabled=Η επιλογή από την ενότητα Ροή εργασιών, για να ορίσετε την αποστολή σε "Τιμολογημένη" αυτόματα όταν επικυρώνεται το τιμολόγιο, δεν είναι ενεργοποιημένη, επομένως θα πρέπει να ορίσετε την κατάσταση των αποστολών σε "Τιμολογημένες" με μη αυτόματο τρόπο μετά τη δημιουργία του τιμολόγιου.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Πληρέστερο υπόδειγμα εγγράφου γι
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Η σταθερά EXPEDITION_ADDON_NUMBER δεν έχει οριστεί
 SumOfProductVolumes=Άθροισμα όγκου του προϊόντος
 SumOfProductWeights=Άθροισμα βάρους προϊόντων
-
 # warehouse details
 DetailWarehouseNumber= Λεπτομέρειες Αποθήκης
 DetailWarehouseFormat= Α: %s (Ποσότητα: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Εμφάνιση της τελευταίας ημερομηνίας εισαγωγής εγγραφής στο απόθεμα κατά τη δημιουργία αποστολής για σειριακό αριθμό ή παρτίδα
 CreationOptions=Διαθέσιμες επιλογές κατά τη δημιουργία αποστολής
-
 ShipmentDistribution=Διανομή αποστολής
-
 ErrorTooManyCombinationBatchcode=Δεν έγινε αποστολή της γραμμής %s καθώς βρέθηκαν πάρα πολλοί συνδυασμοί αποθήκης, προϊόντος, κωδικών παρτίδας (%s).
 ErrorNoCombinationBatchcode=Δεν έγινε αποθήκευση της γραμμής %s καθώς δεν βρέθηκε συνδυασμός αποθήκης, προϊόντος, κωδικού παρτίδας(%s,%s,%s).
-
 ErrorTooMuchShipped=Η ποσότητα προς αποστολή δεν πρέπει να είναι μεγαλύτερη από την ποσότητα που παραγγέλθηκε για τη γραμμή %s

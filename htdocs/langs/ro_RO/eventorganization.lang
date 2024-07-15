@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizare evenimente
 EventOrganizationDescription = Organizare evenimente utilizând modulul Proiecte
 EventOrganizationDescriptionLong= Gestionați organizarea unui eveniment (spectacol, conferință, participanți sau speak-eri, cu pagini publice pentru propuneri, vot sau înregistrare) 
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organizare evenimente
 EventOrganizationConferenceOrBoothMenuLeft = Conferinţe sau Stand-uri
-
 PaymentEvent=Plată eveniment
-
-#
+EventFee=Fără eveniment
 # Admin page
-#
 NewRegistration=Înregistrare
 EventOrganizationSetup=Configurare Organizare evenimente
 EventOrganization=Organizare eveniment
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Șablon email de utilizat atunci
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Șablon email de utilizat atunci când se trimit email-uri în masă "Trimite email-uri" la lista de participanți 
 EVENTORGANIZATION_FILTERATTENDEES_CAT = În formularul de creare/adăugare participant, se restricționează lista de terți după categorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = În formularul pentru a creare/adăugare participant, se restricționează lista terților după natură
-
-#
 # Object
-#
 OrganizedEvent=Eveniment organizat
 EventOrganizationConfOrBooth= Conferinţe sau Stand-uri
-EventOrganizationConfOrBoothes=Conferințe sau Standuri
+EventOrganizationConfOrBoothes=Conferințe sau Stand-uri
 ManageOrganizeEvent = Administrează organizarea unui eveniment
 ConferenceOrBooth = Conferinţe sau Stand-uri
 ConferenceOrBoothTab = Conferinţe sau Stand-uri
@@ -63,10 +50,7 @@ DateOfRegistration = Dată înregistrare
 ConferenceOrBoothAttendee = Participant la Conferinţă sau Stand
 ApplicantOrVisitor=Aplicant sau vizitator
 Speaker=Speaker
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Solicitarea pentru conferinţă a fost recepţionată
 YourOrganizationEventBoothRequestWasReceived = Solicitarea ta pentru stand a fost primită
 EventOrganizationEmailAskConf = Solicitare conferinţă
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Înscriere la eveniment
 EventOrganizationMassEmailAttendees = Comunicare către participanţi
 EventOrganizationMassEmailSpeakers = Comunicare către speaker-i
 ToSpeakers=Către speaker-i
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permite vizitatorilor să propună conferinţe
 AllowUnknownPeopleSuggestConfHelp=Permite persoanelor necunoscute să propună o conferință pe care doresc să o facă 
 AllowUnknownPeopleSuggestBooth=Permite persoanelor cunoscute să solicite un stand
@@ -88,29 +69,29 @@ PriceOfRegistration=Preţ înregistrare
 PriceOfRegistrationHelp=Preț de plătit pentru înregistrare sau participare la eveniment 
 PriceOfBooth=Preț înscriere pentru stand
 PriceOfBoothHelp=Preț înscriere pentru stand
+EventOrganizationICSLinkProject=Asociere ICS pentru eveniment
 EventOrganizationICSLink=Link ICS pentru conferinţe
 ConferenceOrBoothInformation=Informații despre conferință sau stand
+ConferenceOrBoothFormat=Mod conferință sau stand
+ConferenceOrBoothFormatID=ID conferință sau stand
+ConferenceOrBoothFormatCode=Cod mod conferință sau stand
+ConferenceOrBoothFormatLabel=Etichetă mod conferință sau stand
 Attendees=Participanți
-ListOfAttendeesOfEvent=Lista participanților la proiectul eveniment
+ListOfAttendeesOfEvent=Listă participanți la proiecte de tip eveniment
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Link descărcare ICS
 EVENTORGANIZATION_SECUREKEY = Seed de securizare a cheii paginii de înregistrare publică pentru a propune o conferință
 SERVICE_BOOTH_LOCATION = Serviciu utilizat pentru linia de facturare privind locaţia standului
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Serviciu utilizat pentru linia de factură aferentă unui abonament de participare la un eveniment
 NbVotes=Număr de voturi
-
-#
 # Status
-#
 EvntOrgDraft = Schiţă
 EvntOrgSuggested = Sugerat
 EvntOrgConfirmed = Confirmat
 EvntOrgNotQualified = Ne-calificat
 EvntOrgDone = Efectuat
 EvntOrgCancelled = Anulat
-
-#
 # Other
-#
 SuggestForm = Pagină de propuneri
 SuggestOrVoteForConfOrBooth = Pagină pentru sugestii sau vot
 EvntOrgRegistrationHelpMessage = Aici, puteți vota pentru o conferință sau puteți propune una nouă pentru eveniment. De asemenea, puteți aplica pentru a avea un stand în timpul evenimentului.
@@ -133,6 +114,7 @@ EventType = Tip eveniment
 LabelOfBooth=Etichetă stand
 LabelOfconference=Etichetă conferinţă
 ConferenceIsNotConfirmed=Înregistrarea nu este disponibilă, conferinţa nu a fost confirmată încă
+EventRegistrationAreClosed=Înregistrările la eveniment sunt închise
 DateMustBeBeforeThan=%s trebuie să fie înainte de %s
 DateMustBeAfterThan=%s trebuie să fie după %s
 MaxNbOfAttendeesReached=Numărul maxim de participanți a fost atins 
@@ -174,6 +156,7 @@ DateEndEvent=Dată sfârșit eveniment
 ModifyStatus=Modificare status
 ConfirmModifyStatus=Confirmare modificare status
 ConfirmModifyStatusQuestion=Ești sigur că vrei să modifici înregistrăr(ile) selectate %s ?
-RecordsUpdated = %s înregistrări actualizate
-RecordUpdated = Înregistrare actualizată
-NoRecordUpdated = Nicio înregistrare actualizată
+RecordsUpdated=%s înregistrări actualizate
+RecordUpdated=Înregistrare actualizată
+NoRecordUpdated=Nicio înregistrare actualizată
+ProfitPerValidatedAttendee=Profit per participant

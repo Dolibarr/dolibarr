@@ -114,7 +114,6 @@ ForAnswersSeeForum=Pour toute autre question/aide, vous pouvez utiliser le forum
 HelpCenterDesc1=Voici quelques ressources pour obtenir de l'aide et du support avec Dolibarr.
 HelpCenterDesc2=Certaines de ces ressources ne sont disponibles qu'en <b>anglais</b>.
 ContentForLines=Contenu à afficher pour chaque produit ou service (à partir de la variable __LINES__ de Contenu)
-NoticePeriod=Période de préavis
 NewByMonth=Nouveau par mois
 Emails=Courriels
 EMailsSetup=Configuration des courriels
@@ -169,7 +168,7 @@ LastActivationAuthor=Dernier auteur d'activation
 LastActivationIP=Dernière activation IP
 GenericMaskCodes=Vous pouvez saisir n'importe quel masque de numérotation. Dans ce masque, les balises suivantes peuvent être utilisées :<br><b>{000000}</b> correspond à un nombre qui sera incrémenté à chaque %s. Entrez autant de zéros que la longueur souhaitée du compteur. Le compteur sera complété par des zéros en partant de la gauche afin d'avoir autant de zéros que le masque. <br><b>{000000+000}</b> identique au précédent mais un décalage correspondant au nombre à droite du signe + est appliqué à partir du premier %s. <br><b>{000000@x}</b> identique au précédent mais le compteur est remis à zéro lorsque le mois x est atteint (x compris entre 1 et 12, ou 0 pour utiliser les premiers mois de l'exercice défini dans votre configuration, ou 99 pour une remise à zéro tous les mois). Si cette option est utilisée et que x est égal ou supérieur à 2, alors la séquence {aa}{mm} ou {aaaa}{mm} est également requise. <br><b>{dd}</b> jour (01 à 31).<br><b>{mm}</b> mois (01 à 12).<br><b>{yy}</b>, <b> {aaaa}</b> ou <b>{y}</b> année sur 2, 4 ou 1 numéros. <br>
 GenericMaskCodes2=<b>{cccc}</b> le code client sur n caractères<br><b>{cccc000}</b> le code client sur n caractères est suivi d'un compteur dédié au client. Ce compteur dédié au client est réinitialisé en même temps que le compteur global.<br><b>{tttt} </b> Le code du tiers type sur n caractères (voir menu Accueil - Paramétrage - Dictionnaire - Types de tiers). Si vous ajoutez cette balise, le compteur sera différent pour chaque type de tiers.<br>
-GenericMaskCodes3EAN=Tous les autres caractères du masque resteront intacts (sauf * ou ? en 13ème position dans EAN13).<br>Les espaces ne sont pas autorisés.<br></span class='notranslate'><br>Dans EAN13, le dernier caractère après le dernier } en 13ème position doit être * ou ? . Elle sera remplacée par la clé calculée.<br>
+GenericMaskCodes3EAN=Tous les autres caractères du masque resteront intacts (sauf * ou ? en 13ème position dans EAN13).<br>Les espaces ne sont pas autorisés.<br>Dans EAN13, le dernier caractère après le dernier } en 13ème position doit être * ou ? . Il sera remplacée par la clé calculée.<br>
 GenericMaskCodes4a=<u>Exemple sur le 99e %s du tiers TheCompany, avec la date 2023-01-31 :</u><br>
 GenericMaskCodes4b=<u>Exemple sur un tiers créé le 31/01/2023 :</u><br>
 GenericMaskCodes4c=<u>Exemple sur un produit créé le 31/01/2023 :</u><br>
@@ -245,7 +244,7 @@ UseDoubleApproval=Utilisez une approbation de 3 étapes lorsque le montant (sans
 WarningPHPMailB=- Certains fournisseurs de services de messagerie (comme Yahoo) ne vous permettent pas d'envoyer un e-mail depuis un autre serveur que leur propre serveur. Votre configuration actuelle utilise le serveur de l'application pour envoyer des e-mails et non le serveur de votre fournisseur de messagerie, donc certains destinataires (celui compatible avec le protocole restrictif DMARC) demanderont à votre fournisseur de messagerie s'ils peuvent accepter votre e-mail et certains fournisseurs de messagerie (comme Yahoo) peuvent répondre « non » parce que le serveur ne leur appartient pas, donc peu de vos e-mails envoyés peuvent ne pas être acceptés pour la livraison (faites également attention au quota d'envoi de votre fournisseur de messagerie).
 WarningPHPMailC=- Utiliser le serveur SMTP de votre propre fournisseur de services de messagerie pour envoyer des emails est également intéressant car tous les emails envoyés depuis l'application seront également enregistrés dans votre répertoire "Envoyés" de votre boîte mail.
 WarningPHPMailD=Il est donc recommandé de changer le mode d'envoi des e-mails vers la valeur « SMTP ».
-WarningPHPMailDbis=Si vous souhaitez vraiment conserver la méthode "PHP" par défaut pour envoyer des e-mails, ignorez simplement cet avertissement ou supprimez-le en %sen cliquant ici<span class='notranslate'>%s< /envergure>.
+WarningPHPMailDbis=Si vous souhaitez vraiment conserver la méthode "PHP" par défaut pour envoyer des e-mails, ignorez simplement cet avertissement ou supprimez-le en %sen cliquant ici%s.
 WarningPHPMail2=Si votre fournisseur de messagerie SMTP doit restreindre le client de messagerie à certaines adresses IP (très rare), voici l'adresse IP de l'agent utilisateur de messagerie (MUA) de votre application ERP CRM : <strong>%s</strong>.
 WarningPHPMailSPF=Si le nom de domaine dans votre adresse email d'expéditeur est protégé par un enregistrement SPF (demandez à votre registraire de nom de domaine), vous devez ajouter les IP suivantes dans l'enregistrement SPF du DNS de votre domaine : <strong>%s</strong>.
 ActualMailSPFRecordFound=Enregistrement SPF réel trouvé (pour l'e-mail %s) : %s
@@ -589,7 +588,6 @@ SetupDescription2=Les deux sections suivantes sont obligatoires (les deux premi�
 SetupDescription3=<a href="%s">%s -> %s</a> <br><br>Paramètres de base utilisés pour personnaliser le comportement par défaut de votre application (par exemple pour les fonctionnalités liées au pays).
 SetupDescription4=<a href="%s">%s -> %s</a> <br><br>Ce logiciel est une suite de nombreux modules/applications. Les modules liés à vos besoins doivent être activés et configurés. Les entrées de menu apparaîtront avec l'activation de ces modules.
 SetupDescription5=D'autres entrées du menu Configuration gèrent les paramètres facultatifs.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'></a>< /envergure>
 SetupDescription4b=Ce logiciel est une suite de nombreux modules/applications. Les modules liés à vos besoins doivent être activés. Les entrées de menu apparaîtront avec l'activation de ces modules.
 NoSecurityEventsAreAduited=Aucun événement de sécurité n’est audité. Vous pouvez les activer depuis le menu %s
 InfoDolibarr=À propos de Dolibarr
@@ -868,6 +866,7 @@ ClickToDialUrlDesc=URL appelée lorsqu'un clic sur la photo du téléphone est e
 ClickToDialDesc=Ce module transforme les numéros de téléphone, lors de l'utilisation d'un ordinateur de bureau, en liens cliquables. Un clic appellera le numéro. Ceci peut être utilisé pour démarrer l'appel téléphonique lors de l'utilisation d'un soft phone sur votre bureau ou lors de l'utilisation d'un système CTI basé sur le protocole SIP par exemple. Remarque : Lorsque vous utilisez un smartphone, les numéros de téléphone sont toujours cliquables.
 ClickToDialUseTelLink=Utilisez juste un lien "tel: " sur les numéros de téléphone
 ClickToDialUseTelLinkDesc=Utilisez cette méthode si vos utilisateurs disposent d'un softphone ou d'une interface logicielle, installé sur le même ordinateur que le navigateur, et appelé lorsque vous cliquez sur un lien commençant par « tel : » dans votre navigateur. Si vous avez besoin d'un lien commençant par "sip:" ou d'une solution serveur complète (pas besoin d'installation de logiciel local), vous devez le définir sur "Non" et remplir le champ suivant.
+CashDesk=Point de vente
 CashDeskSetup=Configuration du module Point de Vente
 CashDeskThirdPartyForSell=Tiers générique par défaut à utiliser pour les ventes
 ForbidSalesToTheDefaultCustomer=Ne pas permettre d'enregistrer les ventes sur un tiers générique (il faut utiliser un tiers différent pour chaque vente)
@@ -994,7 +993,7 @@ DetectionNotPossible=La détection n'est pas possible
 UrlToGetKeyToUseAPIs=URL pour obtenir le jeton pour utiliser l'API (une fois le jeton reçu, il est enregistré dans la table des utilisateurs de la base de données et doit être fourni à chaque appel d'API)
 ListOfAvailableAPIs=Liste des API disponibles
 activateModuleDependNotSatisfied=Le module "%s" dépend du module "%s", qui est manquant, donc le module " %1$s" peut ne pas fonctionner correctement. Veuillez installer le module "%2$s" ou désactiver le module "%1$s" si vous voulez être à l'abri de toute surprise.
-CommandIsNotInsideAllowedCommands=La commande que vous essayez d'exécuter ne figure pas dans la liste des commandes autorisées définies dans le paramètre <strong>$dolibarr_main_restrict_os_commands</strong> dans le <span fichier class='notranslate'><strong></span>conf.php</strong>.
+CommandIsNotInsideAllowedCommands=La commande que vous essayez d'exécuter ne figure pas dans la liste des commandes autorisées définies dans le paramètre <strong>$dolibarr_main_restrict_os_commands</strong> dans le fichier <strong>conf.php</strong>.
 LandingPage=Page d'atterrissage
 SamePriceAlsoForSharedCompanies=Si vous utilisez un module multi-entreprises, avec le choix "Tarif unique", le prix sera également le même pour toutes les entreprises si les produits sont partagés entre environnements
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les autorisations pour les modules activés ont été données uniquement aux utilisateurs administratifs. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
@@ -1003,7 +1002,7 @@ TypeCdr=Utilisez "Aucun" si la date du délai de paiement est la date de la fact
 BaseCurrency=Monnaie de référence de la société (entrer dans la configuration de l'entreprise pour modifier cela)
 WarningNoteModuleInvoiceForFrenchLaw=Ce module %s est conforme aux lois françaises (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=Ce module %s est conforme à la loi française (Loi Finance 2016) car le module Non Reversible Logs est automatiquement activé.
-WarningInstallationMayBecomeNotCompliantWithLaw=Vous essayez d'installer le module %s qui est un module externe. L'activation d'un module externe signifie que vous faites confiance à l'éditeur de ce module et que vous êtes sûr que ce module n'a pas d'impact négatif sur le comportement de votre application et qu'il est conforme aux lois de votre pays (<span class='notranslate'>%s</ durée>). Si le module introduit une fonctionnalité illégale, vous devenez responsable de l'utilisation de logiciels illégaux.
+WarningInstallationMayBecomeNotCompliantWithLaw=Vous essayez d'installer le module %s qui est un module externe. L'activation d'un module externe signifie que vous faites confiance à l'éditeur de ce module et que vous êtes sûr que ce module n'a pas d'impact négatif sur le comportement de votre application et qu'il est conforme aux lois de votre pays (%s). Si le module introduit une fonctionnalité illégale, vous devenez responsable de l'utilisation de logiciels illégaux.
 MAIN_PDF_MARGIN_LEFT=Marge gauche sur PDF
 MAIN_PDF_MARGIN_RIGHT=Marge droite sur PDF
 MAIN_PDF_MARGIN_TOP=Marge supérieure sur PDF

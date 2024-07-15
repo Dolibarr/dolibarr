@@ -15,6 +15,10 @@ ListOfBOMs=Listas de materiais - BOM
 ListOfManufacturingOrders=Pedimentos de fabricación
 NewBOM=Nova listaxe de materiais
 ProductBOMHelp=Produto para crear (ou desmontar) con esta Lista de Materiais <br> Nota: Os produtos coa propiedade 'Natureza do produto' = 'Materia prima' non están visibles nesta listaxe. 
+CloneDefBomProduct=Clonar a lista de materiais predeterminada para usar na fabricación dun produto
+CloneOtherBomsProduct=Clonar todas as listas de materiais que se poidan utilizar para fabricar o produto
+BOMofRef=BOM de %s
+ErrorProductCloneBom=Erro: non se puido clonar a BOM
 BOMsNumberingModules=Modelos de numeración BOM
 BOMsModelModule=Padróns de documentos BOM
 MOsNumberingModules=Modelos de numeración PF
@@ -65,6 +69,8 @@ ToProduce=A poducir
 ToObtain=Obter
 QtyAlreadyConsumed=Cant. xa consumida
 QtyAlreadyProduced=Cant. xa producida
+QtyAlreadyConsumedShort=Cantidade consumida
+QtyAlreadyProducedShort=Cantidade producida
 QtyRequiredIfNoLoss=Cantidade precisa para producir a cantidade definida na BOM se non hai perdas (se a eficiencia de fabricación é 100%%)
 ConsumeOrProduce=Consumir ou producir
 ConsumeAndProduceAll=Consumir e producir todo
@@ -98,6 +104,7 @@ WorkstationSetup = Configuración de estacións de traballo
 WorkstationSetupPage = Páxina de configuración de estacións de traballo
 WorkstationList=Listaxe de estacións de traballo
 WorkstationCreate=Axuntar nova estación de traballo
+NewWorkstation=Nova estación de traballo
 ConfirmEnableWorkstation=Está certo de querer activar a estación de traballo <b>%s</b>?
 EnableAWorkstation=Activar a estación de traballo
 ConfirmDisableWorkstation=Está certo de querer desactivar a estación de traballo <b>%s</b>?
@@ -128,10 +135,8 @@ Manufacturing=Fabricación
 Disassemble=Desmontar
 ProducedBy=Producido por
 QtyTot=Cant. total
-
+MOIsClosed=A orde de fabricación está pechada
 QtyCantBeSplit= A cantidade non se pode dividir
 NoRemainQtyToDispatch=Non queda ningunha cantidade por dividir
-
 THMOperatorEstimatedHelp=Custo estimado do operador por hora. Usarase para estimar o custo dunha lista de materiais usando esta estación de traballo.
 THMMachineEstimatedHelp=Custo estimado da máquina por hora. Usarase para estimar o custo dunha lista de materiais usando esta estación de traballo.
-

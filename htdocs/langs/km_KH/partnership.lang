@@ -4,89 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=ការគ្រប់គ្រងភាពជាដៃគូ
+PartnershipDescription=ការគ្រប់គ្រងភាពជាដៃគូម៉ូឌុល
+PartnershipDescriptionLong= ការគ្រប់គ្រងភាពជាដៃគូម៉ូឌុល
+Partnership=ភាពជាដៃគូ
+Partnerships=ភាពជាដៃគូ
+AddPartnership=បន្ថែមភាពជាដៃគូ
+CancelPartnershipForExpiredMembers=ភាពជាដៃគូ៖ បោះបង់ភាពជាដៃគូរបស់សមាជិកជាមួយនឹងការជាវដែលផុតកំណត់
+PartnershipCheckBacklink=ភាពជាដៃគូ៖ ពិនិត្យមើលការយោង backlink
 # Menu
-#
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=ភាពជាដៃគូថ្មី។
+NewPartnershipbyWeb=សំណើភាពជាដៃគូរបស់អ្នកត្រូវបានបន្ថែមដោយជោគជ័យ។ យើងអាចទាក់ទងអ្នកក្នុងពេលឆាប់ៗនេះ...
+ListOfPartnerships=បញ្ជីនៃភាពជាដៃគូ
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-
-#
+PartnershipSetup=ការរៀបចំភាពជាដៃគូ
+PartnershipAbout=អំពីភាពជាដៃគូ
+PartnershipAboutPage=ភាពជាដៃគូអំពីទំព័រ
+partnershipforthirdpartyormember=ស្ថានភាពដៃគូត្រូវតែកំណត់នៅលើ 'ភាគីទីបី' ឬ 'សមាជិក'
+PARTNERSHIP_IS_MANAGED_FOR=ភាពជាដៃគូគ្រប់គ្រងសម្រាប់
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks ដើម្បីពិនិត្យមើល
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb នៃថ្ងៃមុនពេលលុបចោលស្ថានភាពនៃភាពជាដៃគូនៅពេលដែលការជាវបានផុតកំណត់
+ReferingWebsiteCheck=ពិនិត្យគេហទំព័រយោង
+ReferingWebsiteCheckDesc=អ្នកអាចបើកមុខងារមួយដើម្បីពិនិត្យមើលថាដៃគូរបស់អ្នកបានបន្ថែម backlink ទៅកាន់ដែនគេហទំព័ររបស់អ្នកនៅលើគេហទំព័ររបស់ពួកគេផ្ទាល់។
+PublicFormRegistrationPartnerDesc=Dolibarr អាចផ្តល់ឱ្យអ្នកនូវ URL/គេហទំព័រសាធារណៈ ដើម្បីអនុញ្ញាតឱ្យអ្នកទស្សនាខាងក្រៅស្នើសុំឱ្យជាផ្នែកមួយនៃកម្មវិធីភាពជាដៃគូ។
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+DeletePartnership=លុបភាពជាដៃគូ
+PartnershipDedicatedToThisThirdParty=ភាពជាដៃគូឧទ្ទិសដល់ភាគីទីបីនេះ។
+PartnershipDedicatedToThisMember=ភាពជាដៃគូឧទ្ទិសដល់សមាជិកនេះ។
+DatePartnershipStart=ថ្ងៃ​ចាប់ផ្តើម
+DatePartnershipEnd=កាលបរិច្ឆេទបញ្ចប់
+ReasonDecline=បដិសេធហេតុផល
+ReasonDeclineOrCancel=ហេតុផលសម្រាប់ការបដិសេធ ឬលុបចោល
+PartnershipAlreadyExist=ភាពជាដៃគូមានរួចហើយ
+ManagePartnership=គ្រប់គ្រងភាពជាដៃគូ
+BacklinkNotFoundOnPartnerWebsite=រកមិនឃើញ Backlink នៅលើគេហទំព័រដៃគូទេ។
+ConfirmClosePartnershipAsk=តើអ្នកប្រាកដថាចង់លុបចោលភាពជាដៃគូនេះទេ?
+PartnershipType=ប្រភេទភាពជាដៃគូ
+PartnershipRefApproved=ភាពជាដៃគូ %s ត្រូវបានអនុម័ត
+KeywordToCheckInWebsite=ប្រសិនបើអ្នកចង់ពិនិត្យមើលថាពាក្យគន្លឹះដែលបានផ្តល់ឱ្យមានវត្តមាននៅក្នុងគេហទំព័ររបស់ដៃគូនីមួយៗ កំណត់ពាក្យគន្លឹះនេះនៅទីនេះ
 PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
+PartnershipAccepted=ទទួលយក
+PartnershipRefused=បដិសេធ
 PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=ដៃគូគឺ
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=ភាពជាដៃគូនឹងត្រូវបានលុបចោលក្នុងពេលឆាប់ៗនេះ
+SendingEmailOnPartnershipRefused=ភាពជាដៃគូបានបដិសេធ
+SendingEmailOnPartnershipAccepted=ភាពជាដៃគូត្រូវបានទទួលយក
+SendingEmailOnPartnershipCanceled=ភាពជាដៃគូត្រូវបានលុបចោល
+YourPartnershipWillSoonBeCanceledTopic=ភាពជាដៃគូនឹងត្រូវបានលុបចោលក្នុងពេលឆាប់ៗនេះ
+YourPartnershipRefusedTopic=ភាពជាដៃគូបានបដិសេធ
+YourPartnershipAcceptedTopic=ភាពជាដៃគូត្រូវបានទទួលយក
+YourPartnershipCanceledTopic=ភាពជាដៃគូត្រូវបានលុបចោល
+YourPartnershipWillSoonBeCanceledContent=យើងសូមជូនដំណឹងដល់អ្នកថា ភាពជាដៃគូរបស់យើងនឹងត្រូវបានលុបចោលក្នុងពេលឆាប់ៗនេះ (យើងមិនទទួលបានការបន្ត ឬតម្រូវការជាមុនសម្រាប់ភាពជាដៃគូរបស់យើងមិនត្រូវបានបំពេញ)។ សូមទាក់ទងមកយើងខ្ញុំ ប្រសិនបើអ្នកបានទទួលវាដោយសារមានកំហុស។
+YourPartnershipRefusedContent=យើង​សូម​ជម្រាប​ជូន​អ្នក​ថា​សំណើ​ភាព​ជា​ដៃគូ​របស់​អ្នក​ត្រូវ​បាន​បដិសេធ។ តម្រូវការជាមុនមិនត្រូវបានបំពេញ។ សូមទាក់ទងមកយើងខ្ញុំ ប្រសិនបើអ្នកត្រូវការព័ត៌មានបន្ថែម។
+YourPartnershipAcceptedContent=យើង​សូម​ជម្រាប​ជូន​អ្នក​ថា​សំណើ​ភាព​ជា​ដៃគូ​របស់​អ្នក​ត្រូវ​បាន​ទទួល​យក​ហើយ។
+YourPartnershipCanceledContent=យើងសូមជូនដំណឹងដល់អ្នកថាភាពជាដៃគូរបស់យើងត្រូវបានលុបចោល។ សូមទាក់ទងមកយើងខ្ញុំ ប្រសិនបើអ្នកត្រូវការព័ត៌មានបន្ថែម។
+CountLastUrlCheckError=ចំនួននៃកំហុសសម្រាប់ការពិនិត្យ URL ចុងក្រោយ
+LastCheckBacklink=កាលបរិច្ឆេទពិនិត្យ URL ចុងក្រោយ
+NewPartnershipRequest=ពាក្យសុំដៃគូថ្មី។
+NewPartnershipRequestDesc=ទម្រង់បែបបទនេះអនុញ្ញាតឱ្យអ្នកស្នើសុំឱ្យក្លាយជាផ្នែកមួយនៃកម្មវិធីភាពជាដៃគូរបស់យើង។ ប្រសិនបើអ្នកត្រូវការជំនួយក្នុងការបំពេញទម្រង់នេះ សូមទាក់ទងតាមអ៊ីមែល <b>%s<span class='notranslate'></b></ វិសាលភាព> ។
+ThisUrlMustContainsAtLeastOneLinkToWebsite=ទំព័រនេះត្រូវតែមានយ៉ាងហោចណាស់តំណមួយទៅកាន់ដែនមួយក្នុងចំណោមដែនខាងក្រោម៖ %s
+IPOfApplicant=IP របស់អ្នកដាក់ពាក្យ

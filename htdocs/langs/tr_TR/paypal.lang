@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modülü kurulumu
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalDesc=Bu modül, müşterilerin <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> aracılığıyla ödeme yapmasına olanak tanır. Bu, geçici bir ödeme için veya bir Dolibarr nesnesiyle (fatura, sipariş, ...) ilgili bir ödeme için kullanılabilir.
 PaypalOrCBDoPayment=PayPal ile Öde (Kart veya PayPal)
 PaypalDoPayment=PayPal ile öde
 PAYPAL_API_SANDBOX=Test/sandbox modu
@@ -8,12 +8,12 @@ PAYPAL_API_USER=API kullanıcı adı
 PAYPAL_API_PASSWORD=API parolası
 PAYPAL_API_SIGNATURE=API imzası
 PAYPAL_SSLVERSION=Curl SSL Sürümü
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Yalnızca "Entegre" ödeme (Kredi kartı+PayPal) veya "PayPal" teklif edin
 PaypalModeIntegral=Tümlev
 PaypalModeOnlyPaypal=Yalnızca PayPal
-ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
+ONLINE_PAYMENT_CSS_URL=Çevrimiçi ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+PAYPAL_ADD_PAYMENT_URL=Bir belgeyi e-postayla gönderdiğinizde PayPal ödeme URL'sini ekleyin
 NewOnlinePaymentReceived=Yeni online ödeme alındı
 NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu
 ONLINE_PAYMENT_SENDEMAIL=Her ödeme denemesinden sonra bildirimler için e-posta adresi (başarılı veya başarısız olan)
@@ -27,10 +27,11 @@ ShortErrorMessage=Kısa Hata Mesajı
 ErrorCode=Hata Kodu
 ErrorSeverityCode=Hata Önem Kodu
 OnlinePaymentSystem=Online ödeme sistemi
-PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalLiveEnabled=PayPal "canlı" modu etkin (aksi takdirde test/korumalı alan modu)
 PaypalImportPayment=PayPal ödemelerini içe aktar
-PostActionAfterPayment=Post actions after payments
-ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
-ValidationOfPaymentFailed=Validation of payment has failed
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+PostActionAfterPayment=Ödemelerden sonra işlemleri yayınlayın
+ARollbackWasPerformedOnPostActions=Tüm Gönderme işlemlerinde geri alma işlemi gerçekleştirildi. Gerekirse gönderi işlemlerini manuel olarak tamamlamanız gerekir.
+ValidationOfPaymentFailed=Ödemenin doğrulanması başarısız oldu
+CardOwner=kart sahibi
+PayPalBalance=Paypal kredisi
+OnlineSubscriptionPaymentLine=Çevrimiçi abonelik %s<br>üzerine kaydedildi %s<span class=' aracılığıyla ödendi notranslate'><br></span>Kaynak IP adresi: %s<br>İşlem Kimliği: %s 
