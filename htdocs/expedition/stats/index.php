@@ -61,7 +61,7 @@ restrictedArea($user, 'expedition');
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_index');
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
