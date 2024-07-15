@@ -230,9 +230,10 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '<td></td>';
 	$out .= '</tr>';
 	$out .= '</thead>';
+
 	$out .= '<tbody>';
 	$out .= '<tr class="oddeven">';
-	$out .= '<td class="col-setup-title">';
+	$out .= '<td class="col-setup-title titlefield">';
 	$out .= '<span id="module" class="spanforparamtooltip">'.$langs->trans("Feature").'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
@@ -280,7 +281,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("BlackListWords").' '.img_help(1, 'Words must be separate by coma (",")').'</span>';
+	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("BlackListWords").' '.img_help(1, 'Words must be separated by a coma (",")').'</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
@@ -301,28 +302,28 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
 	if (!empty($currentConfigurations)) {
-		$out = '<table class="noborder centpercent">';
 		foreach ($currentConfigurations as $key => $config) {
 			if (!empty($key) && !preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
 				continue;
 			}
 
+			$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
+			$out .= '<input type="hidden" name="action" value="updatePrompts">';
+
+			$out .= '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
+			$out .= '<td class="titlefield">'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
 			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
 			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
-			$out .= '<a class="viewfielda reposition marginleftonly addBlack" href="#"  data-key="'.$key.'" title="'.$langs->trans("AddBlackList").'"><i class="fa fa-plus-circle"></i></a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
 			$out .= '</thead>';
 			$out .= '<tbody>';
 
-			$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
-			$out .= '<input type="hidden" name="action" value="updatePrompts">';
 			$out .= '<tr class="oddeven">';
 			$out .= '<td class="col-setup-title">';
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
@@ -331,6 +332,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<textarea class="flat minwidth500" id="prePromptInput_'.$key.'" name="prePrompt" rows="2" disabled>'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
+
 			$out .= '<tr class="oddeven">';
 			$out .= '<td class="col-setup-title">';
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
@@ -338,26 +340,27 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<td>';
 			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';
 			$out .= '</td>';
-
-			$out .= '<td></td>';
-
 			$out .= '</tr>';
-			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven hideobject">';
+
+			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
 			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500" id="blacklist_'.$key.'" name="blacklists" rows="6">'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
+			$out .= '<textarea class="flat minwidth500" id="blacklist_'.$key.'" name="blacklists" rows="6" disabled>'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
+
 			$out .= '<tr>';
 			$out .= '<td></td>';
 			$out .= '<td>';
 			$out .= '<input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
 			$out .= '</td>';
+			$out .= '</tr>';
+
+			$out .= '</tbody>';
+			$out .= '</table>';
 
 			$out .= '</form>';
 		}
-		$out .= '</tbody>';
-		$out .= '</table>';
 	}
 
 
@@ -401,12 +404,6 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 				$(this).html($(this).data('icon-edit'));
 				$(this).data('state', 'edit');
 			}
-		});
-		$('.viewfielda.addBlack').on('click', function(event) {
-			event.preventDefault();
-			var key = $(this).data('key');
-			$('#fichetwothirdright-' + key).toggle();
-			$('#fichethirdleft-' + key).toggle();
 		});
 	});
     </script>";
