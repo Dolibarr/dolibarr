@@ -122,7 +122,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_note');
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');

@@ -1155,6 +1155,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -4999,6 +5002,9 @@ a.valignmiddle.dashboardlineindicator {
 }
 .height30 {
 	height: 30px !important;
+}
+.height50 {
+	height: 50px !important;
 }
 
 tr.box_titre {

@@ -53,7 +53,7 @@ trait CommonSocialNetworks
 		}
 
 		if ($nbofnetworks > 1) {
-			print '<tr><td><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" colspan="'.$colspan.'" id="socialnetworklnk" href="#"></a>';
+			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
 			//print '</td>';
 			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
 			//print '<br>';
@@ -76,7 +76,6 @@ trait CommonSocialNetworks
 				print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 			}
 		}
-		print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 		if ($nbofnetworks > 1) {
 			print '<script nonce="'.getNonce().'" type="text/javascript">

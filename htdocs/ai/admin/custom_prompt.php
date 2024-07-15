@@ -73,9 +73,9 @@ $arrayofaifeatures = array(
 	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
 	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
 	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
+	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
 	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused'),
-	'audiotext' => array('label' => 'AudioText', 'picto'=>'', 'status'=>'notused')
+	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
 );
 
 

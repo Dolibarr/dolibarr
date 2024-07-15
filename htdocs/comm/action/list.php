@@ -73,7 +73,7 @@ if (GETPOST('search_actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 // Search Fields
@@ -91,7 +91,7 @@ if ($search_status == '' && !GETPOSTISSET('search_status')) {
 	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
-	$mode = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_list');
 }
 
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
@@ -191,7 +191,7 @@ if ($user->socid && $socid) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$mode = 'list';
+	$mode = 'show_list';
 	$massaction = '';
 }
 
@@ -276,6 +276,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+
 /*
  * View
  */
@@ -294,9 +295,9 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 
 $now = dol_now();
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 $title = $langs->trans("Agenda");
-llxHeader('', $title, $help_url, 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
 $listofextcals = array();
@@ -684,7 +685,7 @@ $viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
 
 $viewmode = '<div class="navmode inline-block">';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'list' ? ' btnTitleSelected' : '').' btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.(($mode == 'list' || $mode == 'show_list') ? ' btnTitleSelected' : '').' btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
