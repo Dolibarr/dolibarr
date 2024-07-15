@@ -1529,7 +1529,7 @@ class FormMail extends Form
 		$websitepage = new WebsitePage($this->db);
 
 		// Fetch blogs
-		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 5, 0, array('type_container' => 'blogpost', 'keywords' => $keyword));
+		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost', 'keywords' => $keyword));
 
 		$out = '<div id="template-selector" class="template-container">';
 		$templates = array(
@@ -1554,25 +1554,18 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
-		$out .= '<div id="post-dropdown-container">';
-		$out .= '<ul class="dropdown">';
+		// Prepare the array for multiselect
+		$blogArray = array();
 		if (!empty($arrayofblogs)) {
 			foreach ($arrayofblogs as $blog) {
-				$out .= '<li>';
-				$out .= '<input type="checkbox" class="post-checkbox" ';
-				$out .= 'data-title="'.htmlentities($blog->title).'" ';
-				$out .= 'data-description="'.htmlentities($blog->description).'" ';
-				$out .= 'data-user_fullname="__USER_FULLNAME__" ';
-				$out .= 'data-date_creation="'.htmlentities($blog->date_creation).'" ';
-				$out .= 'data-image="'.htmlentities($blog->image).'" ';
-				$out .= 'style="margin-right: 10px;">';
-				$out .= '<label for="post_'.$blog->id.'">'.$blog->title.'</label>';
-				$out .= '</li>';
+				$blogArray[$blog->id] = substr(htmlentities($blog->title), 0, 30);
 			}
-		} else {
-			$out .= '<li>No posts available</li>';
 		}
-		$out .= '</ul>';
+
+		// Use the multiselect array function to create the dropdown
+		$out .= '<div id="post-dropdown-container" style="display:none;">';
+		$out .= '<label for="blogpost-select">Select Posts: </label>';
+		$out .= self::multiselectarray('blogpost-select', $blogArray);
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
@@ -1592,7 +1585,6 @@ class FormMail extends Form
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
-					$(".dropdown").show(); 
 					console.log("Displaying dropdown for news template");
 				} else {
 					$("#post-dropdown-container").hide();
@@ -1620,59 +1612,53 @@ class FormMail extends Form
 				}
 			});
 
-			$(".post-checkbox").change(function() {
+			$("#blogpost-select").change(function() {
+				var selectedIds = $(this).val();
 				var contentHtml = $(".template-option.selected").data("content");
 
-				updateSelectedPostsContent(contentHtml);
+				updateSelectedPostsContent(contentHtml, selectedIds);
 			});
 
-			function updateSelectedPostsContent(contentHtml) {
-				var selectedPosts = [];
-				$(".post-checkbox:checked").each(function() {
-					var postValues = $(this).val().split("|");
-					console.log(postValues);
-					var post = {
-						title: $(this).data("title"),
-						description: $(this).data("description"),
-						user_fullname: $(this).data("user_fullname"),
-						date_creation: $(this).data("date_creation"),
-						image: $(this).data("image")
-					};
-					selectedPosts.push(post);
-				});
-
-				var subject = $("#sujet").val();
-
-				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
-
-				var csrfToken = "'.newToken().'";
+			function updateSelectedPostsContent(contentHtml, selectedIds) {
+				var csrfToken = "' .newToken().'";
 				$.ajax({
 					type: "POST",
-					url: "/core/ajax/mailtemplate.php",
+					url: "/core/ajax/getnews.php",
 					data: {
-						content: contentHtml,
-						selectedPosts: JSON.stringify(selectedPosts),
-						token: csrfToken
+						selectedIds: JSON.stringify(selectedIds),
+						token : csrfToken
 					},
 					success: function(response) {
-						jQuery("#'.$htmlContent.'").val(response);
-						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
-						if (editorInstance) {
-							editorInstance.setData(response);
-						}
+						var selectedPosts = JSON.parse(response);
+						var subject = $("#sujet").val();
+
+						contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+						$.ajax({
+							type: "POST",
+							url: "/core/ajax/mailtemplate.php",
+							data: {
+								content: contentHtml,
+								selectedPosts: JSON.stringify(selectedPosts),
+								token: csrfToken
+							},
+							success: function(response) {
+								jQuery("#'.$htmlContent.'").val(response);
+								var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+								if (editorInstance) {
+									editorInstance.setData(response);
+								}
+							},
+							error: function(xhr, status, error) {
+								console.error("An error occurred: " + xhr.responseText);
+							}
+						});
 					},
 					error: function(xhr, status, error) {
 						console.error("An error occurred: " + xhr.responseText);
 					}
 				});
 			}
-
-			$(document).bind("click", function(e) {
-				var $clicked = $(e.target);
-				if (!$clicked.parents().hasClass("dropdown") && !$clicked.hasClass("template-option")) {
-					$(".dropdown").hide();
-				}
-			});
 		});
 	</script>';
 
