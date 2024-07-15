@@ -153,12 +153,12 @@ foreach ($arrayoffunctionstodisable as $functiontodisable) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$todisabletext .= ' <span class="opacitymedium">'.$functiontodisable.'</span>';
 		$i++;
 	}
 }
 if ($todisabletext) {
-	print $langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 $todisabletext = '';
@@ -168,19 +168,21 @@ foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$todisabletext .= ' <span class="opacitymedium">'.$functiontodisable.'</span>';
 		$i++;
 	}
 }
 if ($todisabletext) {
-	print $langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 
-print $langs->trans("PHPFunctionsRequiredForCLI").': ';
 if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
-	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning');
+	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
+print $langs->trans("PHPFunctionsRequiredForCLI").': ';
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
@@ -332,8 +334,8 @@ print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+	print $langs->trans("None");
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("StaticIPsOfUsers")).')</span>';
 } else {
 	print $dolibarr_main_restrict_ip;
 }
@@ -371,7 +373,7 @@ print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
 }
 print '</div>';
 
@@ -645,7 +647,7 @@ print '<br>';
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
-	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; (If unset: \'md5\')</span>';
 }
 if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.getDolGlobalString('MAIN_SECURITY_SALT', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').'<br>';
@@ -659,7 +661,7 @@ if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
 	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</div><br>';
+	print '</div>';
 }
 print '<br>';
 
