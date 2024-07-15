@@ -1077,6 +1077,12 @@ td.wordbreak img, td.wordbreakimp img {
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
+/* CSS used for extrafield text */
+.shortmessagecut {
+	max-height: 125px;
+	max-width: 100%;
+	overflow-y: auto;
+}
 .longmessagecut {
 	max-height: 250px;
 	max-width: 100%;
@@ -5062,8 +5068,10 @@ div.info {
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;

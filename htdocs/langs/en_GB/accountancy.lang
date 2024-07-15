@@ -20,7 +20,6 @@ Addanaccount=Add a financial account
 AccountAccounting=Financial Account
 ShowAccountingAccount=Show finance account
 ShowAccountingJournal=Show finance journal
-MenuVatAccounts=VAT accounts
 ProductsBinding=Product accounts
 Binding=Link to accounts
 CustomersVentilation=Linked Customer invoice
