@@ -4,37 +4,31 @@ IntracommReportSetup = Dahili iletişim raporu modül ayarları
 IntracommReportAbout = Dahili iletişim raporu hakkında
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_NUM_AGREMENT=Anlaşma Sayısı (CISD'ye göre teslim edilir)
+INTRACOMMREPORT_TYPE_ACTEUR=Oyunculuk türü
+INTRACOMMREPORT_ROLE_ACTEUR=Oyunculuk Rolü
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les tanıtımları
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Expeditions'ın yükümlülükleri
+INTRACOMMREPORT_CATEG_FRAISDEPORT="Liman Limanı" türündeki hizmet kategorisi
+INTRACOMMREPORT_NUM_DECLARATION=Beyanname sayısı
 # Menu
 MenuIntracommReport=Dahili iletişim raporu
-MenuIntracommReportNew=New declaration
+MenuIntracommReportNew=Yeni beyan
 MenuIntracommReportList=Liste
-
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
-
+NewDeclaration=Yeni beyan
+Declaration=beyan
+AnalysisPeriod=Analiz dönemi
+TypeOfDeclaration=Beyan türü
+DEB=Mal değişim beyanı (DEB)
+DES=Hizmet değişimi beyanı (DES)
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
-
+IntracommReportTitle=ProDouane formatında XML dosyasının hazırlanması
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of analysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
-
+IntracommReportList=Oluşturulan bildirimlerin listesi
+IntracommReportNumber=Beyanname sayısı
+IntracommReportPeriod=Analiz dönemi
+IntracommReportTypeDeclaration=Beyan türü
+IntracommReportDownload=XML dosyasını indir
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Taşıma modu

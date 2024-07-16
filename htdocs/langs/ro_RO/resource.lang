@@ -9,33 +9,30 @@ ActionsOnResource=Evenimente despre această resursă
 ResourcePageIndex=Listă resurse
 ResourceSingular=Resursă
 ResourceCard=Fişă resursă
+NewResource=Resursă nouă
 AddResource=Creare resursă
 ResourceFormLabel_ref=Nume resursă
-ResourceType=Tip resursă
 ResourceFormLabel_description=Descriere resursă
-
+ResourceType=Tip resursă
+ResourceTypeID=ID tip resursă
+ResourceTypeLabel=Etichetă tip resursă
 ResourcesLinkedToElement=Resurse legate de elementul
 
 ShowResource=Arată resursă
-
 ResourceElementPage=Resurse element
 ResourceCreatedWithSuccess=Resursa a fost creată cu succes
 RessourceLineSuccessfullyDeleted=Linie resursă ștearsă
 RessourceLineSuccessfullyUpdated=Linie resursă actualizată
 ResourceLinkedWithSuccess=Resursă asociată cu succes
-
 ConfirmDeleteResource=Confirmaţi ştergerea acestei resurse
 RessourceSuccessfullyDeleted=Resursă ştearsă
 DictionaryResourceType=Tipuri resurse
-
 SelectResource=Selectare resursă
-
 IdResource=Id resursă
 AssetNumber=Număr serial
 ResourceTypeCode=Cod tip resursă
 ImportDataset_resource_1=Resurse
-
 ErrorResourcesAlreadyInUse=O parte din resurse sunt deja în uz
 ErrorResourceUseInEvent= %sutilizată în %seveniment
-
 MaxUsers=Număr maxim de utilizatori (locuri, scaune etc.)
+MaxUsersLabel=Maxim de utilizatori

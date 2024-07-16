@@ -178,7 +178,7 @@ LastBills=En son %s fatura
 LatestTemplateInvoices=En son %s şablon fatura
 LatestCustomerTemplateInvoices=En son %s müşteri şablon faturası
 LatestSupplierTemplateInvoices=En son %s tedarikçi şablon faturası
-LastCustomersBills=En yeni %s müşteri faturaları
+LastCustomersBills=En yeni %s müşteri faturaları 
 LastSuppliersBills=En son %s tedarikçi faturası
 AllBills=Tüm faturalar
 AllCustomerTemplateInvoices=Tüm şablon faturaları
@@ -189,7 +189,7 @@ SuppliersDraftInvoices=Tedarikçi taslak faturaları
 Unpaid=Ödenmemiş
 ErrorNoPaymentDefined=Hata Ödeme tanımlanmadı
 ConfirmDeleteBill=Bu faturayı silmek istediğinizden emin misiniz?
-ConfirmValidateBill=Bu faturayı <b>%s<span class='notranslate'></b></span referansıyla doğrulamak istediğinizden emin misiniz? >?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
 ConfirmUnvalidateBill=<b>%s</b> faturasını taslak durumuna değiştirmek istediğinizden emin misiniz?
 ConfirmClassifyPaidBill=<b>%s</b> faturasının durumunu ödenmiş olarak değiştirmek istediğinizden emin misiniz?
 ConfirmCancelBill=<b>%s</b> faturasını iptal etmek istediğinizden emin misiniz?
@@ -211,7 +211,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Bazı ülkelerde bu seçim anc
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Eğer diğerlerinin hiçbiri uymuyorsa bu seçimi kullanın
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=Bir <b>kötü müşteri</b> borcunu ödemeyi reddeden müşteridir.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Bu seçenek, bazı ürün iadelerinden dolayı ödeme tamamlanamazsa, kullanılır.
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Ödenmemiş tutar <b>aracı banka ücretleridir</b> ve doğrudan <b></span'dan kesilir. >Müşteri tarafından ödenen >doğru miktar<span class='notranslate'></b>.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Ödenmeyen tutar stopaj olduğundan hiçbir zaman ödenmeyecektir.
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Diğerlerinin tümü uygun değilse, örneğin aşağıdaki durumda bu seçeneği kullanın:<br>- bazı ürünler geri gönderildiği için ödeme tamamlanamadı<br> span>- indirim unutulduğu için talep edilen tutar çok önemli<br>Her durumda, fazla talep edilen tutar muhasebe sisteminde bir alacak dekontu oluşturularak düzeltilmelidir.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>Kötü bir tedarikçi</b>, ödemeyi reddettiğimiz bir tedarikçidir.
@@ -379,7 +379,7 @@ DisabledBecauseReplacedInvoice=Eylem engellendi, çünkü fatura değiştirilmi�
 DescTaxAndDividendsArea=Bu alan, özel harcamalar için yapılan tüm ödemelerin bir özetini sunar. Sadece sabit yıl içinde ödemeleri olan kayıtlar buraya dahil edilir.
 NbOfPayments=Ödeme sayısı
 SplitDiscount=İndirimi ikiye böl
-ConfirmSplitDiscount=<b>%s</b> < tutarındaki bu indirimi bölmek istediğinizden emin misiniz? span class='notranslate'>%s</span>'ı iki küçük indirime mi bölmek istiyorsunuz?
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
 TypeAmountOfEachNewDiscount=İki bölümün her biri için giriş tutarı:
 TotalOfTwoDiscountMustEqualsOriginal=Yeni iki indirimin toplamı orijinal indirim tutarına eşit olmalıdır.
 ConfirmRemoveDiscount=Bu indirimi kaldırmak istediğinizden emin misiniz?
@@ -571,9 +571,9 @@ PDFCrabeDescription=Fatura PDF şablonu Crabe. Eksiksiz bir fatura şablonu (Sü
 PDFSpongeDescription=Fatura PDF şablonu Sünger. Eksiksiz bir fatura şablonu
 PDFOctopusDescription=Invoice PDF template Octopus. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Standart faturalar için %syymm-nnnn biçiminde ve yy'nin yıl, mm olduğu kredi notları için %syymm-nnnn biçiminde dönüş numarası aydır ve nnnn, ara vermeden ve 0'a dönüş olmadan otomatik olarak artan sıralı bir sayıdır
-MarsNumRefModelDesc1=Standart faturalar için %syymm-nnnn biçiminde dönüş numarası, değiştirme faturaları için %syymm-nnnn, <span class=' peşinat faturaları için notranslate'>%s</span>yymm-nnnn ve kredi notları için %syymm-nnnn; burada yy yıl, mm ay ve nnnn sıralı bir otomatiktir. sayıyı ara vermeden ve 0'a dönmeden artırma
+MarsNumRefModelDesc1=Standart faturalar için %syymm-nnnn biçiminde dönüş numarası, değiştirme faturaları için %syymm-nnnn, %syymm-nnnn ve kredi notları için %syymm-nnnn; burada yy yıl, mm ay ve nnnn sıralı bir otomatiktir. sayıyı ara vermeden ve 0'a dönmeden artırma
 TerreNumRefModelError=$syymm ile başlayan bir fatura hali hazırda vardır ve bu sıra dizisi için uygun değildir. Bu modülü etkinleştirmek için onu kaldırın ya da adını değiştirin.
-CactusNumRefModelDesc1=Standart faturalar için %syymm-nnnn, kredi notları için %syymm-nnnn ve <span class=' biçiminde dönüş numarası notranslate'>%s</span>yymm-nnnn peşinat faturaları için; burada yy yılı, mm ayı ve nnnn ara vermeden ve 0'a dönüş olmadan sıralı otomatik artan bir sayıdır
+CactusNumRefModelDesc1=Standart faturalar için %syymm-nnnn, kredi notları için %syymm-nnnn ve %syymm-nnnn peşinat faturaları için; burada yy yılı, mm ayı ve nnnn ara vermeden ve 0'a dönüş olmadan sıralı otomatik artan bir sayıdır
 EarlyClosingReason=Erken kapanma nedeni
 EarlyClosingComment=Erken kapanış notu
 ##### Types de contacts #####
@@ -626,7 +626,7 @@ invoiceLineProgressError=Fatura satırı ilerleyişi sonraki fatura satırından
 updatePriceNextInvoiceErrorUpdateline=Hata: Fatura satırında fiyatı güncelleyin: %s
 ToCreateARecurringInvoice=Bu sözleşme için yinelenen fattura oluşturmak için önce bu taslak faturayı oluşturun sonra onu bir fatura şablonuna dönüştürün ve sonraki faturaların oluşması için süre tanımlayın.
 ToCreateARecurringInvoiceGene=Gelecekteki faturaları düzenli ve manuel olarak oluşturmak için yalnızca <strong>%s - %s - %s</strong> menüsüne gidin.
-ToCreateARecurringInvoiceGeneAuto=Bu tür faturaların otomatik olarak oluşturulmasını istiyorsanız yöneticinizden <strong>%s<span class='notranslate modülünü etkinleştirmesini ve kurmasını isteyin '></strong></span>. Her iki yöntemin de (manuel ve otomatik), kopyalanma riski olmadan birlikte kullanılabileceğini unutmayın.
+ToCreateARecurringInvoiceGeneAuto=Bu tür faturaların otomatik olarak oluşturulmasını istiyorsanız yöneticinizden <strong>%s</strong>. Her iki yöntemin de (manuel ve otomatik), kopyalanma riski olmadan birlikte kullanılabileceğini unutmayın.
 DeleteRepeatableInvoice=Fatura şablonunu sil
 ConfirmDeleteRepeatableInvoice=Şablon faturasını silmek istediğinizden emin misiniz?
 CreateOneBillByThird=Üçüncü taraf başına bir fatura oluşturun (aksi takdirde seçilen nesne başına bir fatura)

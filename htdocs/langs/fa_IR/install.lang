@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=انتقال‌دادن حمل‌نقل‌های 
 MigrationShippingDelivery=ارتقا دادن مخزن حمل‌نقل
 MigrationShippingDelivery2=ارتقادادن مخزن حمل‌ونقل 2
 MigrationFinished=انتقال/مهاجرت خاتمه یافت
-LastStepDesc=<strong>آخرین قدم</strong> : در این قسمت نام‌کاربری و گذرواژه‌ای را که برای ورود به Dolibarr لازم است تعیین نمائید. <b> این مشخصات را گم نکنید، زیرا حساب اصلی برای مدیریت همۀ حساب‌های کاربری دیگر است.</b>
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=فعال‌کردن واحد %s
 ShowEditTechnicalParameters=برای نمایش/ویرایش مؤلفه‌های پیشرفته (حالت تخصصی) اینجا کلیک کنید
 WarningUpgrade=هشدار: \nآیا ابتدا از پایگاه داده پشتیبانی گرفته‌اید؟\nپشتیبان‌گیری از پایگاه‌داده جدا پیشنهاد می‌شود. امکان از دادن داده‌ها در حین انجام عملیات وجود دارد( مثل مشکلاتی که در  MySQL نسخۀ 5.5.40/41/42/43 پیش آمده بود) ، لذا ضروری است که پیش از شروع انتقال/مهاجرت یک نسخۀ پشتیبان تهیه نمائید.\n\nکلید OK را برای آغاز پردازش انتقال/مهاجرت بفشرید..
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=شما از جادوی برپاسازی Dolibarr از یک 
 KeepDefaultValuesMamp=شما از جادوی برپاسازی Dolibarr از DoliMamp استفاده کرده‌اید، بنابراین مقادیر تعیین شده در این قسمت، قبلا بهینه‌سازی شده است. تنها در صورتی این مقادیر را تغییر دهید که بدانید چه می‌کنید.
 KeepDefaultValuesProxmox=شما از جادوی برپاسازی Dolibarr از Proxmox virtual appliance استفاده کرده‌اید، بنابراین مقادیر تعیین شده در این قسمت، قبلا بهینه‌سازی شده است. تنها در صورتی این مقادیر را تغییر دهید که بدانید چه می‌کنید.
 UpgradeExternalModule=اجرای یک پردازش ارتقای مخصوص برای یک واحد خارجی
-SetAtLeastOneOptionAsUrlParameter=حداقل یک گزینه به‌عنوان یک مؤلفه در URL انتخاب نمائید. برای مثال: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=چیزی برای پاک‌کردن/حذف وجود ندارد
 NothingToDo=کاری برای انجام وجود ندارد
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=برنامه تلاش کرده است خود ر�
 YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=برای مراجعه به برنامه این‌جا کلیک کنید
 ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Loaded
 FunctionTest=Function test
 NodoUpgradeAfterDB=No action requested by external modules after upgrade of database

@@ -15,6 +15,10 @@ ListOfBOMs=Llistats de materials - LDM
 ListOfManufacturingOrders=Ordres de fabricació
 NewBOM=Llista de materials nova
 ProductBOMHelp=Producte per a crear (o desmuntar) amb aquesta LDM.<br>Nota: els productes amb la propietat 'Naturalesa del producte' = 'Matèria primera' no són visibles en aquesta llista.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=Plantilles de numeració de LDM
 BOMsModelModule=Plantilles de document de la Llistat de Materials
 MOsNumberingModules=Models de numeració OF
@@ -46,7 +50,7 @@ DateStartPlannedMo=Data d’inici prevista
 DateEndPlannedMo=Data prevista de finalització
 KeepEmptyForAsap=Buit significa "Tan aviat com sigui possible"
 EstimatedDuration=Durada estimada
-EstimatedDurationDesc=Durada estimada per fabricar (o desmuntar) aquest producte mitjançant aquesta llista de material
+EstimatedDurationDesc=Durada estimada per a fabricar (o desmuntar) aquest producte amb aquesta Llista de Materials
 ConfirmValidateBom=Esteu segur que voleu validar la llista de materials amb la referència <strong> %s </strong> (podreu utilitzar-la per a crear noves Ordres de fabricació)
 ConfirmCloseBom=Esteu segur que voleu cancel·lar aquesta LDM (ja no la podreu utilitzar per a crear noves ordres de fabricació)?
 ConfirmReopenBom=Esteu segur que voleu tornar a obrir aquesta LDM (podeu utilitzar-la per a crear noves ordres de fabricació)
@@ -100,6 +104,7 @@ WorkstationSetup = Configuració d’estacions de treball
 WorkstationSetupPage = Pàgina de configuració de les estacions de treball
 WorkstationList=Llista d’estacions de treball
 WorkstationCreate=Afegeix una nova estació de treball
+NewWorkstation=Nova estació de treball
 ConfirmEnableWorkstation=Esteu segur que voleu habilitar l'estació de treball <b> %s </b>?
 EnableAWorkstation=Activa una estació de treball
 ConfirmDisableWorkstation=Esteu segur que voleu desactivar l'estació de treball <b> %s </b>?
@@ -130,10 +135,8 @@ Manufacturing=Fabricació
 Disassemble=Desmuntar
 ProducedBy=Produït per
 QtyTot=Qtat. total
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= La quantitat no es pot dividir
 NoRemainQtyToDispatch=No queda cap quantitat per dividir
-
 THMOperatorEstimatedHelp=Cost estimat de l'operador per hora. S'utilitzarà per estimar el cost d'una LDM utilitzant aquesta estació de treball.
 THMMachineEstimatedHelp=Cost estimat de la màquina per hora. S'utilitzarà per estimar el cost d'una LDM utilitzant aquesta estació de treball.
-

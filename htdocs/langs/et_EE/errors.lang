@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Failis on %s real ebaõige e-posti aadressi süntaks (n
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields have been left blank.
 ErrorSubjectIsRequired=Meili teema on kohustuslik
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Kausta loomine ebaõnnestus. Kontrolli, et veebiserveri kasutajal on piisavalt õigusi Dolibarri dokumentide kausta kirjutamiseks. Kui PHP <b>safe_mode</b> parameeter on sisse lülitatud, siis kontrolli, et veebiserveri kasutaja (või grupp) on Dolibarri PHP failide omanik.
 ErrorNoMailDefinedForThisUser=Antud kasutaja e-posti aadressi pole määratletud
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Error, the string to replace into is empty
 ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
 ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Error, this login is outside the validity date range
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Date start must be less than date end
+ErrorEndHourIsNull=End date cannot be zero
+ErrorStartHourIsNull=Start date cannot be zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Selle liikme jaoks määrati parool. Kasutajakontot aga ei loodud. Nii et see parool on salvestatud, kuid seda ei saa kasutada Dolibarri sisselogimiseks. Seda võib kasutada väline moodul/liides, kuid kui te ei pea liikmele sisselogimist ega parooli määrama, saate liikmemooduli seadistustest keelata valiku "Halda iga liikme sisselogimist". Kui teil on vaja sisselogimist hallata, kuid parooli pole vaja, võite selle hoiatuse vältimiseks selle välja tühjaks jätta. Märkus. E-posti saab kasutada ka sisselogimiseks, kui liige on kasutajaga lingitud.
@@ -344,7 +351,8 @@ WarningConfFileMustBeReadOnly=Hoiatus: seadistuste fail (<b>htdocs/conf/conf.php
 WarningsOnXLines=<b>%s</b> lähtekirjega on seotud hoiatus(ed)
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be chosen by default until you check your module setup.
 WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable the installation/migration tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Omitting the creation of this file is a grave security risk.
-WarningUntilDirRemoved=This security warning will remain active as long as the vulnerability is present.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
+WarningUntilDirRemoved=See hoiatus jääb aktiivseks seni, kuni põhjus pole kõrvaldatud.
 WarningCloseAlways=Hoiatus: sulgemine toimub isegi siis, kui lähte- ja sihtelementide summa erineb. Lülita see funktsioon sisse ainult siis, kui tead, mida teed.
 WarningUsingThisBoxSlowDown=Hoiatus: selle kasti kasutamine muudab kõik seda kasti kasutavad lehed märgatavalt aeglaseks.
 WarningClickToDialUserSetupNotComplete=Sinu kasutaja ClickToDial info seadistamine ei ole lõpetatud (vaata oma kasutaja kaardi ClickToDial sakki).
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Module <b>%s</b> has been disabled. Don't forget to e
 WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Stock movement already reversed
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
 SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
 SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
-
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
 ErrorTooManyAttempts= Liiga palju katseid, proovige hiljem uuesti
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed

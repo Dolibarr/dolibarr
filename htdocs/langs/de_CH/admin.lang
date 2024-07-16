@@ -149,7 +149,6 @@ Orientation=Orientierung
 SpaceX=Leerraum X
 SpaceY=Leerraum Y
 ContentForLines=Inhalt, der für jedes Produkt oder jede Dienstleistung angezeigt werden soll (von Variable __LINES__ des Inhalts)
-NoticePeriod=Kündigungsfrist
 EMailsSetup=E-Mail Einstellungen
 EMailsDesc=Auf dieser Seite können Sie Parameter oder Optionen für den E-Mail-Versand einstellen.
 EmailSenderProfiles=Absenderprofil

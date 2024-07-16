@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekrytointi
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Hallinnoi ja ja seuraa uusien työpaikkojen rekrytointikampanjoita
-
-#
 # Admin page
-#
 RecruitmentSetup = Rekrytointiasetukset
 RecruitmentSetupPage = Kirjoita tähän rekrytointimoduulin päävaihtoehtojen asetukset
 RecruitmentArea=Rekrytointialue
 PublicInterfaceRecruitmentDesc=Työpaikkojen julkiset sivut ovat julkisia URL-osoitteita, joissa näkyy ja vastaus avoimiin työpaikkoihin. Jokaiselle avoimelle työlle on yksi erilainen linkki, joka löytyy jokaisesta työtietueesta.
 EnablePublicRecruitmentPages=Ota käyttöön avoimien töiden julkiset sivut
 
-#
-# About page
-#
-RecruitmentAbout = Tietoja rekrytoinnista
-RecruitmentAboutPage = Rekrytointi sivusta
 NbOfEmployeesExpected=Odotettu työntekijöiden määrä
 JobLabel=Työpaikan etiketti
 WorkPlace=Työpaikka
@@ -47,7 +34,6 @@ PositionToBeFilled=Asema
 PositionsToBeFilled=Työpaikat
 ListOfPositionsToBeFilled=Luettelo työpaikoista
 NewPositionToBeFilled=Uusia työpaikkoja
-
 JobOfferToBeFilled=Työpaikka täytettävänä
 ThisIsInformationOnJobPosition=Tietoa täytettävästä työpaikasta
 ContactForRecruitment=Ota yhteyttä rekrytointiin
@@ -77,4 +63,4 @@ WeAreRecruiting=Olemme rekrytoimassa. Tämä on lista avoimista työpaikoista, j
 NoPositionOpen=Tällä hetkellä ei avoimia paikkoja
 ConfirmClose=Vahvista peruutus
 ConfirmCloseAsk=Haluatko varmasti peruuttaa tämän rekrytointiehdokkaan
-recruitment=Rekrytointi
+Recruitment=Recruitment

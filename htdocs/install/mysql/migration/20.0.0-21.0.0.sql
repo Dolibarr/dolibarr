@@ -64,3 +64,11 @@ ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;
 ALTER TABLE llx_expedition_package MODIFY COLUMN dangerous_goods varchar(60) DEFAULT '0';
 
 ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER model_pdf;
+
+-- a dictionary can not have entity = 0
+ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
+ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;
+ALTER TABLE llx_c_hrm_public_holiday MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
+UPDATE llx_c_hrm_public_holiday SET entity = 1 WHERE entity = 0;
+ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(entity, code);
+ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
