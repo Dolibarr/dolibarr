@@ -1687,7 +1687,7 @@ LDAPDescUsers=Šī lapa ļauj definēt LDAP atribūti vārdu LDAP kokā uz katru
 LDAPDescGroups=Šī lapa ļauj definēt LDAP atribūti vārdu LDAP kokā uz katru datiem, uz Dolibarr grupām.
 LDAPDescMembers=Šī lapa ļauj definēt LDAP atribūtu nosaukumus LDAP kokā katram ierakstam, kas atrodams Dolibarr dalībnieku modulī.
 LDAPDescMembersTypes=Šī lapa ļauj definēt LDAP atribūtu nosaukumu LDAP kokā katram Dolibarr dalībnieku tipam atrasti datiem.
-LDAPDescValues=Vērtību piemēri ir paredzēti <b>OpenLDAP</b> ar šādām ielādētām shēmām: b0aee83365837fz. core.schema, cosine.schema, inetorgperson.schema<span class='notranslate'></b>). Ja izmantojat šīs vērtības un OpenLDAP, modificējiet savu LDAP konfigurācijas failu <b>slapd.conf</b>, lai tiktu ielādētas visas šīs shēmas.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=Par apstiprinātu piekļuvi (par rakstīšanas piekļuvi piemēram)
 PerfDolibarr=Performance uzstādīšana / optimizēt ziņojums
 YouMayFindPerfAdviceHere=Šajā lapā ir sniegtas dažas pārbaudes vai ieteikumi saistībā ar veiktspēju.

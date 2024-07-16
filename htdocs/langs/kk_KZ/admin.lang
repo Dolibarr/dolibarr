@@ -1687,7 +1687,7 @@ LDAPDescUsers=Бұл бет Dolibarr пайдаланушыларынан таб
 LDAPDescGroups=Бұл бет Dolibarr топтарынан табылған әрбір деректер үшін LDAP ағашында LDAP атрибуттарының атауын анықтауға мүмкіндік береді.
 LDAPDescMembers=Бұл бет Dolibarr мүшелері модулінде табылған әрбір деректер үшін LDAP ағашында LDAP атрибуттарының атауын анықтауға мүмкіндік береді.
 LDAPDescMembersTypes=Бұл бет Dolibarr мүшелерінің түрлерінде табылған әрбір деректер үшін LDAP ағашында LDAP атрибуттарының атауын анықтауға мүмкіндік береді.
-LDAPDescValues=Мысал мәндері келесі жүктелген схемалары бар <b>OpenLDAP</b> үшін жасалған: b0aee3736 core.schema, cosine.schema, inetorgperson.schema<span class='notranslate'></b>). Егер сіз осы мәндерді және OpenLDAP қолдансаңыз, LDAP конфигурация файлын <b>slapd.conf</b> барлық схемалар жүктелуі үшін өзгертіңіз.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=Аутентификацияланған рұқсат үшін (мысалы, жазуға рұқсат үшін)
 PerfDolibarr=Өнімділікті реттеу/оңтайландыру есебі
 YouMayFindPerfAdviceHere=Бұл бетте өнімділікке қатысты кейбір тексерулер немесе кеңестер берілген.
