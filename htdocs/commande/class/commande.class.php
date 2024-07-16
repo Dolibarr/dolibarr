@@ -621,7 +621,7 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->statut <= self::STATUS_DRAFT && !getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 			return 0;
 		}
 
