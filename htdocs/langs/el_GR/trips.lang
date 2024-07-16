@@ -105,7 +105,7 @@ ShowExpenseReport=Εμφάνιση αναφοράς εξόδων
 ShowTrip=Εμφάνιση αναφοράς εξόδων
 TripCard=Καρτέλα αναφοράς εξόδων
 TripId=Αναγνωριστικό αναφοράς εξόδων
-TripNDF=Πληροφορίες αναφοράς εξόδων 
+TripNDF=Πληροφορίες αναφοράς εξόδων
 TripSociete=Πληροφορίες εταιρίας
 Trips=Αναφορές εξόδων
 TripsAndExpenses=Αναφορές εξόδων
@@ -119,7 +119,7 @@ ValidatedWaitingApproval=Επικυρώθηκε (αναμονή για έγκρ�
 ValideTrip=Έγκριση αναφοράς εξόδων
 ExpenseReportPayments=πληρωμές αναφορών εξόδων
 TaxUndefinedForThisCategory = Ο φόρος δεν έχει καθοριστεί για αυτήν την κατηγορία
-errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό των εξόδων χιλιομέτρων
+errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό του κόστους ταξιδιού
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 ## Dictionary

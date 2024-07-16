@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=Kembalikan dilakukan pada semua tindakan Post
 ValidationOfPaymentFailed=Validasi pembayaran gagal
 CardOwner=Pemegang kartu
 PayPalBalance=Kredit Paypal
-OnlineSubscriptionPaymentLine=Langganan online dicatat pada %s<br>Dibayar melalui %s<br>Alamat IP asal: %s<br>ID Transaksi: %s 
+OnlineSubscriptionPaymentLine=Langganan online dicatat pada %s<br>Dibayar melalui %s<br>Alamat IP asal: %s<br>ID Transaksi: %s

@@ -16,7 +16,7 @@ ResourceFormLabel_description=Erőforrás leírása
 ResourceType=Erőforrás típusa
 ResourceTypeID=Erőforrástípus azonosítója
 ResourceTypeLabel=Erőforrás típusa címke
-ResourcesLinkedToElement=Elemhez kapcsolt erőforrások 
+ResourcesLinkedToElement=Elemhez kapcsolt erőforrások
 
 ShowResource=Mutassa meg az erőforrást
 ResourceElementPage=Erőforrások

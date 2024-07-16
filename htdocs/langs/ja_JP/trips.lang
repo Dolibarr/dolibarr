@@ -55,7 +55,7 @@ ExpenseReportConstraintViolationWarning=最大金額超過（ルール%s）：%s
 ExpenseReportDateEnd=日付の末尾
 ExpenseReportDateStart=開始日
 ExpenseReportDomain=適用するドメイン
-ExpenseReportIkDesc=以前に定義したカテゴリと範囲ごとに、キロメートル費用の計算を変更できる。 <b> d </b>はキロメートル単位の距離 
+ExpenseReportIkDesc=以前に定義したカテゴリと範囲ごとに、キロメートル費用の計算を変更できる。 <b> d </b>はキロメートル単位の距離
 ExpenseReportLimitAmount=最大金額
 ExpenseReportLimitOn=制限
 ExpenseReportLine=経費報告行
@@ -118,9 +118,9 @@ ValidateAndSubmit=検証して承認のために提出
 ValidatedWaitingApproval=検証済(承認待ち)
 ValideTrip=経費報告書を承認する
 ExpenseReportPayments=経費報告書支払
-TaxUndefinedForThisCategory = このカテゴリの税金は未定義 
+TaxUndefinedForThisCategory = このカテゴリの税金は未定義
 errorComputeTtcOnMileageExpense=走行距離費用の計算エラー
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=一括操作で削除できるのは下書き状態の要素のみ 
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=一括操作で削除できるのは下書き状態の要素のみ
 
 ## Dictionary
 EX_BRE=朝食

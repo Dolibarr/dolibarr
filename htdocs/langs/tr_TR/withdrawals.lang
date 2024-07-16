@@ -151,7 +151,7 @@ ADDDAYS=Yürütme Tarihine gün ekleyin
 NoDefaultIBANFound=Bu üçüncü taraf için varsayılan IBAN bulunamadı
 ### Notifications
 InfoCreditSubject=Otomatik ödeme talimatının %s tarafından banka tarafından ödenmesi
-InfoCreditMessage=Otomatik ödeme talimatı %s banka tarafından ödendi<br>Ödeme verileri: %s 
+InfoCreditMessage=Otomatik ödeme talimatı %s banka tarafından ödendi<br>Ödeme verileri: %s
 InfoTransSubject=Otomatik ödeme talimatının %s bankaya iletilmesi
 InfoTransMessage=Otomatik ödeme talimatı %s, %s %s tarafından bankaya gönderildi. .<br><br>
 InfoTransData=Tutarı: %s<br> Yöntemi: %s<br>Tarihi: %s

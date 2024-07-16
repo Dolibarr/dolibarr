@@ -17,8 +17,8 @@ NewBOM=Llista de materials nova
 ProductBOMHelp=Producte per a crear (o desmuntar) amb aquesta LDM.<br>Nota: els productes amb la propietat 'Naturalesa del producte' = 'Matèria primera' no són visibles en aquesta llista.
 CloneDefBomProduct=Clone the default BOM to use to manufacture the product
 CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
-BOMofRef=BOM of %s
-ErrorProductCloneBom=Error: Failed to clone a BOM
+BOMofRef=Escandall de %s
+ErrorProductCloneBom=Error: no s'ha pogut clonar un escandall
 BOMsNumberingModules=Plantilles de numeració de LDM
 BOMsModelModule=Plantilles de document de la Llistat de Materials
 MOsNumberingModules=Models de numeració OF

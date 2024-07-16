@@ -92,7 +92,7 @@ StandardContractsTemplate=Plantilla de contracte Standard
 ContactNameAndSignature=Per %s, nom i signatura:
 OnlyLinesWithTypeServiceAreUsed=Només es clonaran les línies amb el tipus «Servei».
 ConfirmCloneContract=Esteu segur que voleu clonar el contracte <b> %s </b>?
-LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius 
+LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius
 SendContractRef=Informació del contracte __REF__
 OtherContracts=Altres contractes
 ##### Types de contacts #####

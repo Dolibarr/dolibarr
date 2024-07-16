@@ -151,7 +151,7 @@ ADDDAYS=הוסף ימים לתאריך הביצוע
 NoDefaultIBANFound=לא נמצא ברירת מחדל IBAN עבור צד שלישי זה
 ### Notifications
 InfoCreditSubject=תשלום של הוראת תשלום בהוראת קבע %s על ידי הבנק
-InfoCreditMessage=הוראת התשלום %s שולמה על ידי הבנק<br>נתוני התשלום: %s 
+InfoCreditMessage=הוראת התשלום %s שולמה על ידי הבנק<br>נתוני התשלום: %s
 InfoTransSubject=העברת הוראת תשלום בהוראת קבע %s לבנק
 InfoTransMessage=הוראת התשלום בהוראת קבע %s נשלחה לבנק על ידי %s %s .<br><br>
 InfoTransData=כמות: %s<br>שיטה: %s<br>תאריך: %s
