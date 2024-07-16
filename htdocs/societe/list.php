@@ -100,8 +100,8 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = GETPOSTINT("search_sale");
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
-$searchCategoryCustomerOperator = 0;
-$searchCategorySupplierOperator = 0;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
 	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
